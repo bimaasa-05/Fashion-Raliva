@@ -132,7 +132,7 @@
 @push('modals')
 <!-- Detailed Store Modal -->
 <div aria-labelledby="modal-title" aria-modal="true" class="fixed inset-0 z-[100] hidden items-center justify-center px-gutter pt-12 pb-safe bg-scrim/40 backdrop-blur-sm" id="store-modal" role="dialog">
-    <div class="fixed inset-0 bg-tertiary/20 backdrop-blur-md transition-opacity" onclick="closeStoreModal()"></div>
+    <div class="fixed inset-0 bg-scrim/20 backdrop-blur-md transition-opacity" onclick="closeStoreModal()"></div>
     <div class="bg-surface w-full max-w-3xl max-h-[795px] overflow-y-auto border border-muted-border shadow-2xl relative z-10 flex flex-col">
         <div class="sticky top-0 bg-surface/95 backdrop-blur-sm border-b border-muted-border p-6 flex justify-between items-center z-20">
             <h2 class="font-display-lg text-headline-lg-mobile md:text-headline-lg" id="modal-title">Detail Toko</h2>
@@ -168,7 +168,7 @@
 </div>
 <!-- Reject Reason Modal -->
 <div aria-labelledby="reject-title" class="fixed inset-0 z-[110] hidden items-center justify-center px-gutter bg-scrim/50 backdrop-blur-sm" id="reject-modal" role="dialog">
-    <div class="fixed inset-0 bg-tertiary/20" onclick="closeRejectModal()"></div>
+    <div class="fixed inset-0 bg-scrim/20" onclick="closeRejectModal()"></div>
     <div class="bg-surface w-full max-w-md border border-muted-border p-8 relative z-10 shadow-2xl">
         <h3 class="font-display-lg text-title-md mb-4" id="reject-title">Berikan Alasan Penolakan</h3>
         <p class="text-on-surface-variant text-sm mb-6">Pesan ini akan dikirim ke pemilik toko.</p>

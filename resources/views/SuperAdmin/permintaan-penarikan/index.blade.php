@@ -162,7 +162,7 @@
     </section>
 </div>
 
-<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-tertiary/50 backdrop-blur-sm" id="approve-dialog">
+<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-scrim/50 backdrop-blur-sm" id="approve-dialog">
     <div class="bg-surface-container-lowest border border-muted-border p-section-gap max-w-md w-full shadow-2xl rounded-lg">
         <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4">Konfirmasi Pencairan</h3>
         <p class="font-body-md text-body-md text-on-surface-variant mb-8">Anda akan menyetujui pencairan sebesar <span class="font-title-md text-gold-accent">Rp 12.500.000</span> ke LUNARA Fashion. Tindakan ini akan menandai pengajuan sebagai diproses.</p>
@@ -174,7 +174,7 @@
     </div>
 </div>
 
-<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-tertiary/50 backdrop-blur-sm" id="reject-dialog">
+<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-scrim/50 backdrop-blur-sm" id="reject-dialog">
     <div class="bg-surface-container-lowest border border-error/20 p-section-gap max-w-md w-full shadow-2xl rounded-lg">
         <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-error mb-4">Tolak Pencairan</h3>
         <p class="font-body-md text-body-md text-on-surface-variant mb-4">Apakah Anda yakin ingin menolak pengajuan pencairan dari LUNARA Fashion?</p>

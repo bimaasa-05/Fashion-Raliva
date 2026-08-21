@@ -83,7 +83,7 @@
 
 @push('modals')
 <!-- Detail Modal -->
-<div class="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-enter bg-on-background/50 backdrop-blur-sm" id="detailModal">
+<div class="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-enter bg-scrim/50 backdrop-blur-sm" id="detailModal">
     <div class="bg-surface w-full max-w-2xl max-h-[795px] overflow-y-auto flex flex-col md:flex-row relative">
         <button class="absolute top-4 right-4 z-10 p-2 bg-surface/80 rounded-full hover:bg-surface transition-colors" onclick="closeDetailModal()"><span class="material-symbols-outlined text-on-surface">close</span></button>
         <div class="w-full md:w-1/2 aspect-[3/4] md:aspect-auto bg-surface-container-low"><img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyCcrmTRfGfsxs_N3ci9i5HchBHGyO7-NS4KaH08rxg5KEVTQHbujUhwRjP9Cx_oAJKlFkLeJNg41S_nDTbkkzwgSEQfWZ9NXhtb_992MQQ44WF2XQZesWGCO4i0dPy_0JlpR_71A7X9_EyfbAghnliaoPC73GgYX51dz9qI45IIUycAoqM8RVEla78vBAU5SiPyPHbzn330s4nqHZ6svj6g_3f2NDhPd_5gqbC1NfSCUDBM-qSUzc-w" /></div>
@@ -107,7 +107,7 @@
     </div>
 </div>
 <!-- Reject Reason Modal -->
-<div class="fixed inset-0 z-[70] flex items-center justify-center p-4 modal-enter bg-on-background/50 backdrop-blur-sm hidden" id="rejectModal">
+<div class="fixed inset-0 z-[70] flex items-center justify-center p-4 modal-enter bg-scrim/50 backdrop-blur-sm hidden" id="rejectModal">
     <div class="bg-surface w-full max-w-md p-container-margin relative">
         <h3 class="font-title-md text-title-md text-on-surface mb-4">Alasan Penolakan</h3>
         <textarea class="w-full border border-outline-variant bg-transparent p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary mb-4" placeholder="Tulis alasan di sini..." rows="4"></textarea>

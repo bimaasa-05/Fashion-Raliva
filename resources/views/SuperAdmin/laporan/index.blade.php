@@ -228,9 +228,14 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const ctx = document.getElementById('revenueChart').getContext('2d');
+        const isDark = document.documentElement.classList.contains('dark');
+        const gridColor = isDark ? '#333333' : '#E9E8E7';
+        const tickColor = isDark ? '#BAB8B8' : '#747878';
+        const tooltipBg = isDark ? '#F0EEEE' : '#1b1c1c';
+        const tooltipText = isDark ? '#111111' : '#ffffff';
         Chart.defaults.font.family = 'Manrope, sans-serif';
-        Chart.defaults.color = '#747878';
-        Chart.defaults.scale.grid.color = '#E9E8E7';
+        Chart.defaults.color = tickColor;
+        Chart.defaults.scale.grid.color = gridColor;
         new Chart(ctx, {
             type: 'line',
             data: {
@@ -253,7 +258,7 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1b1c1c', titleFont: { family: 'Manrope', size: 12, weight: '700' }, bodyFont: { family: 'Manrope', size: 14 }, padding: 12, cornerRadius: 0, displayColors: false, callbacks: { label: function (context) { return 'Rp ' + context.parsed.y + 'M'; } } } },
+                plugins: { legend: { display: false }, tooltip: { backgroundColor: tooltipBg, titleColor: tooltipText, bodyColor: tooltipText, titleFont: { family: 'Manrope', size: 12, weight: '700' }, bodyFont: { family: 'Manrope', size: 14 }, padding: 12, cornerRadius: 0, displayColors: false, callbacks: { label: function (context) { return 'Rp ' + context.parsed.y + 'M'; } } } },
                 scales: { x: { grid: { display: false, drawBorder: false }, ticks: { font: { size: 11 } } }, y: { grid: { drawBorder: false, borderDash: [4, 4] }, ticks: { callback: function (value) { return value + 'M'; }, font: { size: 11 }, maxTicksLimit: 6 }, beginAtZero: true } },
                 interaction: { intersect: false, mode: 'index' }
             }

@@ -4,6 +4,13 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>RALIVA - @yield('title', 'Super Admin')</title>
+    <script>
+        (function () {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
@@ -13,57 +20,59 @@
             theme: {
                 extend: {
                     colors: {
-                        "on-background": "#1b1c1c",
-                        "on-surface": "#1b1c1c",
-                        "surface-container": "#efeded",
-                        "surface-variant": "#e3e2e2",
-                        "tertiary-fixed": "#e3e2df",
+                        "on-background": "rgb(var(--c-on-surface) / <alpha-value>)",
+                        "on-surface": "rgb(var(--c-on-surface) / <alpha-value>)",
+                        "surface-container": "rgb(var(--c-sc) / <alpha-value>)",
+                        "surface-variant": "rgb(var(--c-sc-highest) / <alpha-value>)",
+                        "tertiary-fixed": "rgb(var(--c-sc-highest) / <alpha-value>)",
                         "secondary-container": "#fdd177",
                         "gold-accent": "#C9A24D",
-                        "on-error": "#ffffff",
-                        "background": "#fbf9f9",
-                        "on-tertiary-container": "#848482",
+                        "on-error": "rgb(var(--c-on-error) / <alpha-value>)",
+                        "background": "rgb(var(--c-background) / <alpha-value>)",
+                        "on-tertiary-container": "rgb(var(--c-on-muted) / <alpha-value>)",
                         "on-secondary-fixed-variant": "#5c4300",
                         "on-primary-fixed": "#1c1b1b",
-                        "surface-dim": "#dbdad9",
-                        "surface-container-high": "#e9e8e7",
+                        "surface-dim": "rgb(var(--c-surface-dim) / <alpha-value>)",
+                        "surface-container-high": "rgb(var(--c-sc-high) / <alpha-value>)",
                         "on-primary-fixed-variant": "#474646",
                         "on-secondary-fixed": "#261a00",
-                        "error": "#ba1a1a",
-                        "on-primary-container": "#858383",
-                        "tertiary": "#000000",
-                        "surface-container-lowest": "#ffffff",
+                        "error": "rgb(var(--c-error) / <alpha-value>)",
+                        "on-primary-container": "rgb(var(--c-on-muted) / <alpha-value>)",
+                        "tertiary": "rgb(var(--c-primary) / <alpha-value>)",
+                        "surface-container-lowest": "rgb(var(--c-sc-lowest) / <alpha-value>)",
                         "on-tertiary-fixed-variant": "#464745",
-                        "on-error-container": "#93000a",
-                        "primary-fixed-dim": "#c8c6c5",
-                        "error-container": "#ffdad6",
-                        "surface-container-highest": "#e3e2e2",
-                        "surface-container-low": "#f5f3f3",
+                        "on-error-container": "rgb(var(--c-on-error-container) / <alpha-value>)",
+                        "primary-fixed-dim": "rgb(var(--c-primary-fixed-dim) / <alpha-value>)",
+                        "error-container": "rgb(var(--c-error-container) / <alpha-value>)",
+                        "surface-container-highest": "rgb(var(--c-sc-highest) / <alpha-value>)",
+                        "surface-container-low": "rgb(var(--c-sc-low) / <alpha-value>)",
                         "primary-container": "#1c1b1b",
-                        "outline-variant": "#c4c7c7",
-                        "inverse-primary": "#c8c6c5",
+                        "outline-variant": "rgb(var(--c-outline-variant) / <alpha-value>)",
+                        "inverse-primary": "rgb(var(--c-primary-fixed-dim) / <alpha-value>)",
                         "on-tertiary": "#ffffff",
                         "secondary-fixed-dim": "#ebc168",
-                        "warm-bg": "#FBF9F9",
-                        "on-primary": "#ffffff",
-                        "primary": "#000000",
-                        "tertiary-container": "#1a1c1a",
-                        "secondary": "#795905",
-                        "surface": "#fbf9f9",
+                        "warm-bg": "rgb(var(--c-background) / <alpha-value>)",
+                        "on-primary": "rgb(var(--c-on-primary) / <alpha-value>)",
+                        "primary": "rgb(var(--c-primary) / <alpha-value>)",
+                        "tertiary-container": "rgb(var(--c-tertiary-container) / <alpha-value>)",
+                        "secondary": "rgb(var(--c-secondary) / <alpha-value>)",
+                        "surface": "rgb(var(--c-surface) / <alpha-value>)",
                         "secondary-fixed": "#ffdf9f",
-                        "inverse-on-surface": "#f2f0f0",
+                        "inverse-on-surface": "rgb(var(--c-inverse-on-surface) / <alpha-value>)",
                         "on-tertiary-fixed": "#1a1c1a",
                         "tertiary-fixed-dim": "#c7c6c4",
-                        "surface-bright": "#fbf9f9",
-                        "muted-border": "#E9E8E7",
-                        "surface-tint": "#5f5e5e",
-                        "outline": "#747878",
-                        "primary-fixed": "#e5e2e1",
-                        "deep-onyx": "#111111",
-                        "on-surface-variant": "#444748",
+                        "surface-bright": "rgb(var(--c-background) / <alpha-value>)",
+                        "muted-border": "rgb(var(--c-border) / <alpha-value>)",
+                        "surface-tint": "rgb(var(--c-surface-tint) / <alpha-value>)",
+                        "outline": "rgb(var(--c-outline) / <alpha-value>)",
+                        "primary-fixed": "rgb(var(--c-primary-fixed) / <alpha-value>)",
+                        "deep-onyx": "rgb(var(--c-deep-onyx) / <alpha-value>)",
+                        "on-surface-variant": "rgb(var(--c-on-surface-variant) / <alpha-value>)",
                         "on-secondary": "#ffffff",
-                        "inverse-surface": "#303031",
-                        "on-secondary-container": "#775804"
+                        "inverse-surface": "rgb(var(--c-inverse-surface) / <alpha-value>)",
+                        "on-secondary-container": "#775804",
+                        "sidebar": "rgb(var(--c-sidebar) / <alpha-value>)",
+                        "scrim": "rgb(var(--c-scrim) / <alpha-value>)"
                     },
                     borderRadius: {
                         "DEFAULT": "0.25rem",
@@ -99,7 +108,71 @@
         }
     </script>
     <style>
-        body { background-color: #fbf9f9; }
+        :root {
+            --c-background: 251 249 249;
+            --c-surface: 251 249 249;
+            --c-surface-dim: 219 218 217;
+            --c-sc-lowest: 255 255 255;
+            --c-sc-low: 245 243 243;
+            --c-sc: 239 237 237;
+            --c-sc-high: 233 232 231;
+            --c-sc-highest: 227 226 226;
+            --c-primary-fixed: 229 226 225;
+            --c-primary-fixed-dim: 200 198 197;
+            --c-inverse-on-surface: 242 240 240;
+            --c-inverse-surface: 48 48 49;
+            --c-on-surface: 27 28 28;
+            --c-on-surface-variant: 68 71 72;
+            --c-on-muted: 133 131 131;
+            --c-outline: 116 120 120;
+            --c-outline-variant: 196 199 199;
+            --c-border: 233 232 231;
+            --c-primary: 0 0 0;
+            --c-deep-onyx: 17 17 17;
+            --c-on-primary: 255 255 255;
+            --c-secondary: 121 89 5;
+            --c-error: 186 26 26;
+            --c-on-error: 255 255 255;
+            --c-error-container: 255 218 214;
+            --c-on-error-container: 147 0 10;
+            --c-tertiary-container: 26 28 26;
+            --c-surface-tint: 95 94 94;
+            --c-sidebar: 17 17 17;
+            --c-scrim: 0 0 0;
+        }
+
+        .dark {
+            --c-background: 18 18 18;
+            --c-surface: 18 18 18;
+            --c-surface-dim: 10 10 10;
+            --c-sc-lowest: 20 20 20;
+            --c-sc-low: 26 26 26;
+            --c-sc: 33 33 33;
+            --c-sc-high: 41 41 41;
+            --c-sc-highest: 51 51 51;
+            --c-primary-fixed: 44 44 44;
+            --c-primary-fixed-dim: 64 64 64;
+            --c-inverse-on-surface: 30 30 30;
+            --c-inverse-surface: 238 236 236;
+            --c-on-surface: 240 238 238;
+            --c-on-surface-variant: 186 184 184;
+            --c-on-muted: 178 176 176;
+            --c-outline: 138 141 141;
+            --c-outline-variant: 58 58 58;
+            --c-border: 44 44 44;
+            --c-primary: 240 238 238;
+            --c-deep-onyx: 240 238 238;
+            --c-on-primary: 17 17 17;
+            --c-secondary: 235 193 104;
+            --c-error: 255 179 171;
+            --c-on-error: 60 14 12;
+            --c-error-container: 93 26 22;
+            --c-on-error-container: 255 218 214;
+            --c-tertiary-container: 74 74 74;
+            --c-surface-tint: 170 168 168;
+        }
+
+        body { background-color: rgb(var(--c-background)); }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         @keyframes drawLine { to { stroke-dashoffset: 0; } }
@@ -114,13 +187,19 @@
             <span class="material-symbols-outlined">menu</span>
         </button>
         <span class="font-display-lg text-headline-md tracking-widest text-on-surface">RALIVA</span>
-        <button class="text-on-surface hover:opacity-80 transition-opacity">
-            <span class="material-symbols-outlined">search</span>
-        </button>
+        <div class="flex items-center gap-2">
+            <button type="button" class="theme-toggle text-on-surface hover:opacity-80 transition-opacity" aria-label="Ganti tema">
+                <span class="material-symbols-outlined icon-moon">dark_mode</span>
+                <span class="material-symbols-outlined icon-sun hidden">light_mode</span>
+            </button>
+            <button class="text-on-surface hover:opacity-80 transition-opacity">
+                <span class="material-symbols-outlined">search</span>
+            </button>
+        </div>
     </header>
 
     <!-- Side Navigation Drawer -->
-    <aside id="sidebar" class="flex fixed md:sticky top-0 left-0 z-50 flex-col h-screen pt-section-gap pb-[88px] md:pb-section-gap px-container-margin w-64 border-r border-white/10 bg-deep-onyx -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+    <aside id="sidebar" class="flex fixed md:sticky top-0 left-0 z-50 flex-col h-screen pt-section-gap pb-[88px] md:pb-section-gap px-container-margin w-64 border-r border-white/10 bg-sidebar -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
         <div class="mb-12">
             <span class="font-display-lg text-display-lg text-white tracking-widest block mb-8">RALIVA</span>
         </div>
@@ -146,6 +225,10 @@
                 <p class="text-on-surface-variant font-body-md text-sm mt-0.5">@yield('header-subtitle', 'Ini yang terjadi hari ini.')</p>
             </div>
             <div class="flex items-center gap-6">
+                <button type="button" class="theme-toggle text-on-surface hover:text-secondary transition-colors" aria-label="Ganti tema">
+                    <span class="material-symbols-outlined icon-moon">dark_mode</span>
+                    <span class="material-symbols-outlined icon-sun hidden">light_mode</span>
+                </button>
                 <button class="relative text-on-surface hover:text-secondary transition-colors">
                     <span class="material-symbols-outlined">notifications</span>
                     <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
@@ -222,6 +305,22 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeSidebar();
         });
+
+        const updateThemeIcons = () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            document.querySelectorAll('.theme-toggle .icon-moon').forEach((el) => el.classList.toggle('hidden', isDark));
+            document.querySelectorAll('.theme-toggle .icon-sun').forEach((el) => el.classList.toggle('hidden', !isDark));
+        };
+
+        document.querySelectorAll('.theme-toggle').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                updateThemeIcons();
+            });
+        });
+
+        updateThemeIcons();
     </script>
     @stack('scripts')
 </body>
