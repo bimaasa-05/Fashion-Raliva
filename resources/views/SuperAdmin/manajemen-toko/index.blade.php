@@ -2,9 +2,10 @@
 
 @section('title', 'Manajemen Toko')
 
-@section('header-title', 'Store Management')
+@section('header-title', 'Data Toko')
+@section('header-badge', 'Kelola')
 
-@section('header-subtitle', 'Manage vendor accounts, verify credentials, and oversee marketplace health.')
+@section('header-subtitle', 'Verifikasi, tolak, tangguhkan, dan aktifkan kembali toko penjual.')
 
 @push('styles')
 <style>
@@ -21,14 +22,14 @@
 <!-- Header Section -->
 <section class="px-gutter md:px-container-margin pt-section-gap pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
     <div>
-        <h2 class="font-display-lg text-display-lg-mobile md:text-display-lg mb-2">Store Management</h2>
-        <p class="text-on-surface-variant font-body-md max-w-2xl">Manage vendor accounts, verify credentials, and oversee marketplace health.</p>
+        <h2 class="font-display-lg text-display-lg-mobile md:text-display-lg mb-2">Manajemen Toko</h2>
+        <p class="text-on-surface-variant font-body-md max-w-2xl">Verifikasi dokumen toko dan jaga agar hanya toko yang memenuhi aturan yang dapat beroperasi.</p>
     </div>
     <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
-        <button class="px-4 py-2 border-b-2 border-primary text-primary font-label-sm uppercase tracking-wider">All</button>
-        <button class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Pending</button>
-        <button class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Active</button>
-        <button class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Suspended</button>
+        <button class="px-4 py-2 border-b-2 border-primary text-primary font-label-sm uppercase tracking-wider">Semua</button>
+        <button class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Menunggu</button>
+        <button class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Aktif</button>
+        <button class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Ditangguhkan</button>
     </div>
 </section>
 
@@ -46,16 +47,16 @@
                         <p class="text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Elara Vance</p>
                     </div>
                 </div>
-                <span class="px-2 py-1 bg-surface-container-high text-on-surface text-[10px] font-bold tracking-widest uppercase border border-muted-border">Active</span>
+                <span class="px-2 py-1 bg-surface-container-high text-on-surface text-[10px] font-bold tracking-widest uppercase border border-muted-border">Aktif</span>
             </div>
             <div class="grid grid-cols-3 gap-4 border-t border-muted-border pt-6">
                 <div class="text-center">
                     <span class="block font-title-md text-on-surface">124</span>
-                    <span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Products</span>
+                    <span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Produk</span>
                 </div>
                 <div class="text-center border-l border-muted-border pl-4">
                     <span class="block font-title-md text-on-surface">892</span>
-                    <span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Orders</span>
+                    <span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Pesanan</span>
                 </div>
                 <div class="text-center border-l border-muted-border pl-4">
                     <span class="block font-title-md text-on-surface flex items-center justify-center gap-1">4.9 <span class="material-symbols-outlined text-[16px] filled text-secondary">star</span></span>
@@ -74,11 +75,11 @@
                         <p class="text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Julian Thorne</p>
                     </div>
                 </div>
-                <span class="px-2 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold tracking-widest uppercase border border-secondary/20">Pending</span>
+                <span class="px-2 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold tracking-widest uppercase border border-secondary/20">Menunggu</span>
             </div>
             <div class="grid grid-cols-3 gap-4 border-t border-muted-border pt-6">
-                <div class="text-center"><span class="block font-title-md text-on-surface">12</span><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Products</span></div>
-                <div class="text-center border-l border-muted-border pl-4"><span class="block font-title-md text-on-surface-variant">--</span><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Orders</span></div>
+                <div class="text-center"><span class="block font-title-md text-on-surface">12</span><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Produk</span></div>
+                <div class="text-center border-l border-muted-border pl-4"><span class="block font-title-md text-on-surface-variant">--</span><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Pesanan</span></div>
                 <div class="text-center border-l border-muted-border pl-4"><span class="block font-title-md text-on-surface-variant">--</span><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Rating</span></div>
             </div>
         </article>
@@ -93,11 +94,11 @@
                         <p class="text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Maya Rossi</p>
                     </div>
                 </div>
-                <span class="px-2 py-1 bg-error-container text-on-error-container text-[10px] font-bold tracking-widest uppercase border border-error/20">Suspended</span>
+                <span class="px-2 py-1 bg-error-container text-on-error-container text-[10px] font-bold tracking-widest uppercase border border-error/20">Ditangguhkan</span>
             </div>
             <div class="grid grid-cols-3 gap-4 border-t border-muted-border pt-6">
-                <div class="text-center"><span class="block font-title-md text-on-surface-variant">45</span><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Products</span></div>
-                <div class="text-center border-l border-muted-border pl-4"><span class="block font-title-md text-on-surface-variant">112</span><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Orders</span></div>
+                <div class="text-center"><span class="block font-title-md text-on-surface-variant">45</span><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Produk</span></div>
+                <div class="text-center border-l border-muted-border pl-4"><span class="block font-title-md text-on-surface-variant">112</span><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Pesanan</span></div>
                 <div class="text-center border-l border-muted-border pl-4"><span class="block font-title-md text-on-surface-variant flex items-center justify-center gap-1">3.2 <span class="material-symbols-outlined text-[16px] filled">star</span></span><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mt-1">Rating</span></div>
             </div>
         </article>
@@ -141,7 +142,7 @@
     <div class="fixed inset-0 bg-tertiary/20 backdrop-blur-md transition-opacity" onclick="closeStoreModal()"></div>
     <div class="bg-surface w-full max-w-3xl max-h-[795px] overflow-y-auto border border-muted-border shadow-2xl relative z-10 flex flex-col">
         <div class="sticky top-0 bg-surface/95 backdrop-blur-sm border-b border-muted-border p-6 flex justify-between items-center z-20">
-            <h2 class="font-display-lg text-headline-lg-mobile md:text-headline-lg" id="modal-title">Store Details</h2>
+            <h2 class="font-display-lg text-headline-lg-mobile md:text-headline-lg" id="modal-title">Detail Toko</h2>
             <button class="text-on-surface-variant hover:text-on-surface transition-colors p-2 -mr-2" onclick="closeStoreModal()"><span class="material-symbols-outlined">close</span></button>
         </div>
         <div class="p-6 md:p-8 flex-grow">
@@ -149,26 +150,26 @@
                 <div class="w-32 h-32 rounded-full bg-surface-variant overflow-hidden border border-muted-border flex-shrink-0 self-start"><span class="font-title-md text-on-surface-variant flex items-center justify-center w-full h-full text-2xl">NS</span></div>
                 <div class="flex-grow">
                     <div class="flex items-center gap-3 mb-2"><h3 class="font-display-lg text-headline-lg">NOIRÉ Studio</h3><span class="material-symbols-outlined text-secondary text-[20px]" title="Verified Business">verified</span></div>
-                    <p class="text-on-surface-variant mb-6 font-body-md max-w-lg">Minimalist everyday essentials crafted with sustainable materials. Focused on timeless silhouettes.</p>
+                    <p class="text-on-surface-variant mb-6 font-body-md max-w-lg">Koleksi esensial minimalis sehari-hari dengan bahan berkelanjutan. Fokus pada siluet timeless.</p>
                     <div class="grid grid-cols-2 gap-y-4 gap-x-8 border-t border-b border-muted-border py-4 mb-6">
-                        <div><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Owner</span><span class="font-title-md text-on-surface">Julian Thorne</span></div>
-                        <div><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Status</span><span class="text-secondary font-semibold">Pending Review</span></div>
-                        <div><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Joined</span><span class="font-body-md text-on-surface">Oct 24, 2023</span></div>
-                        <div><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Location</span><span class="font-body-md text-on-surface">Paris, FR</span></div>
+                        <div><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Pemilik</span><span class="font-title-md text-on-surface">Julian Thorne</span></div>
+                        <div><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Status</span><span class="text-secondary font-semibold">Menunggu Tinjauan</span></div>
+                        <div><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Bergabung</span><span class="font-body-md text-on-surface">24 Okt 2023</span></div>
+                        <div><span class="block text-label-sm font-label-sm text-on-surface-variant uppercase mb-1">Lokasi</span><span class="font-body-md text-on-surface">Jakarta, ID</span></div>
                     </div>
                     <div class="mb-8">
-                        <h4 class="font-title-md text-title-md mb-4 uppercase tracking-wider">Verification Documents</h4>
+                        <h4 class="font-title-md text-title-md mb-4 uppercase tracking-wider">Dokumen Verifikasi</h4>
                         <ul class="space-y-3">
-                            <li class="flex items-center justify-between p-3 border border-muted-border bg-surface-container-lowest"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-on-surface-variant">description</span><span class="font-body-md">Business License.pdf</span></div><button class="text-primary font-label-sm uppercase hover:underline">View</button></li>
-                            <li class="flex items-center justify-between p-3 border border-muted-border bg-surface-container-lowest"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-on-surface-variant">badge</span><span class="font-body-md">Owner_ID.jpg</span></div><button class="text-primary font-label-sm uppercase hover:underline">View</button></li>
+                            <li class="flex items-center justify-between p-3 border border-muted-border bg-surface-container-lowest"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-on-surface-variant">description</span><span class="font-body-md">Izin_Usaha.pdf</span></div><button class="text-primary font-label-sm uppercase hover:underline">Lihat</button></li>
+                            <li class="flex items-center justify-between p-3 border border-muted-border bg-surface-container-lowest"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-on-surface-variant">badge</span><span class="font-body-md">KTP_Pemilik.jpg</span></div><button class="text-primary font-label-sm uppercase hover:underline">Lihat</button></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
         <div class="sticky bottom-0 bg-surface border-t border-muted-border p-6 flex justify-end gap-4 z-20">
-            <button class="px-6 py-3 border border-muted-border text-on-surface font-label-sm uppercase tracking-wider hover:bg-surface-container-low transition-colors" onclick="openRejectModal()">Reject</button>
-            <button class="px-8 py-3 bg-deep-onyx text-on-primary font-label-sm uppercase tracking-wider hover:bg-primary-fixed-dim transition-colors">Approve Store</button>
+            <button class="px-6 py-3 border border-muted-border text-on-surface font-label-sm uppercase tracking-wider hover:bg-surface-container-low transition-colors" onclick="openRejectModal()">Tolak</button>
+            <button class="px-8 py-3 bg-deep-onyx text-on-primary font-label-sm uppercase tracking-wider hover:bg-primary-fixed-dim transition-colors">Setujui Toko</button>
         </div>
     </div>
 </div>
@@ -176,12 +177,12 @@
 <div aria-labelledby="reject-title" class="fixed inset-0 z-[110] hidden items-center justify-center px-gutter bg-scrim/50 backdrop-blur-sm" id="reject-modal" role="dialog">
     <div class="fixed inset-0 bg-tertiary/20" onclick="closeRejectModal()"></div>
     <div class="bg-surface w-full max-w-md border border-muted-border p-8 relative z-10 shadow-2xl">
-        <h3 class="font-display-lg text-title-md mb-4" id="reject-title">Provide Rejection Reason</h3>
-        <p class="text-on-surface-variant text-sm mb-6">This message will be sent to the store owner.</p>
-        <textarea class="w-full border border-muted-border bg-surface-container-lowest p-3 font-body-md focus:border-primary focus:ring-0 mb-6 min-h-[120px] resize-none" placeholder="e.g., Incomplete business registration documents..."></textarea>
+        <h3 class="font-display-lg text-title-md mb-4" id="reject-title">Berikan Alasan Penolakan</h3>
+        <p class="text-on-surface-variant text-sm mb-6">Pesan ini akan dikirim ke pemilik toko.</p>
+        <textarea class="w-full border border-muted-border bg-surface-container-lowest p-3 font-body-md focus:border-primary focus:ring-0 mb-6 min-h-[120px] resize-none" placeholder="Misal: Dokumen izin usaha belum lengkap..."></textarea>
         <div class="flex justify-end gap-3">
-            <button class="px-4 py-2 text-on-surface-variant font-label-sm uppercase tracking-wider hover:text-on-surface transition-colors" onclick="closeRejectModal()">Cancel</button>
-            <button class="px-6 py-2 border border-error text-error font-label-sm uppercase tracking-wider hover:bg-error-container transition-colors">Confirm Rejection</button>
+            <button class="px-4 py-2 text-on-surface-variant font-label-sm uppercase tracking-wider hover:text-on-surface transition-colors" onclick="closeRejectModal()">Batal</button>
+            <button class="px-6 py-2 border border-error text-error font-label-sm uppercase tracking-wider hover:bg-error-container transition-colors">Konfirmasi Penolakan</button>
         </div>
     </div>
 </div>

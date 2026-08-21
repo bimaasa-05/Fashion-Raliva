@@ -119,48 +119,13 @@
         </button>
     </header>
 
-    <!-- Side Navigation Drawer (Desktop) -->
-    <aside id="sidebar" class="hidden md:flex flex-col h-screen py-section-gap px-container-margin w-64 border-r border-outline-variant bg-surface sticky top-0 transition-transform duration-300 ease-in-out">
+    <!-- Side Navigation Drawer -->
+    <aside id="sidebar" class="flex fixed md:sticky top-0 left-0 z-50 flex-col h-screen pt-section-gap pb-[88px] md:pb-section-gap px-container-margin w-64 border-r border-white/10 bg-deep-onyx -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
         <div class="mb-12">
-            <span class="font-display-lg text-display-lg text-on-surface tracking-widest block mb-8">RALIVA</span>
+            <span class="font-display-lg text-display-lg text-white tracking-widest block mb-8">RALIVA</span>
         </div>
-        <nav class="flex-1 flex flex-col gap-4">
-            <a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low p-2 rounded transition-colors @if(request()->routeIs('superadmin.dashboard')) text-secondary font-bold bg-surface-container-low @endif" href="{{ route('superadmin.dashboard') }}">
-                <span class="material-symbols-outlined @if(request()->routeIs('superadmin.dashboard')) fill @endif">dashboard</span>
-                <span class="font-title-md text-title-md">Dashboard</span>
-            </a>
-            <a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low p-2 rounded transition-colors @if(request()->routeIs('superadmin.manajemen-toko')) text-secondary font-bold bg-surface-container-low @endif" href="{{ route('superadmin.manajemen-toko') }}">
-                <span class="material-symbols-outlined @if(request()->routeIs('superadmin.manajemen-toko')) fill @endif">storefront</span>
-                <span class="font-title-md text-title-md">Toko</span>
-            </a>
-            <a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low p-2 rounded transition-colors @if(request()->routeIs('superadmin.moderasi-produk')) text-secondary font-bold bg-surface-container-low @endif" href="{{ route('superadmin.moderasi-produk') }}">
-                <span class="material-symbols-outlined @if(request()->routeIs('superadmin.moderasi-produk')) fill @endif">inventory_2</span>
-                <span class="font-title-md text-title-md">Produk</span>
-            </a>
-            <a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low p-2 rounded transition-colors @if(request()->routeIs('superadmin.laporan')) text-secondary font-bold bg-surface-container-low @endif" href="{{ route('superadmin.laporan') }}">
-                <span class="material-symbols-outlined @if(request()->routeIs('superadmin.laporan')) fill @endif">receipt_long</span>
-                <span class="font-title-md text-title-md">Laporan</span>
-            </a>
-            <a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low p-2 rounded transition-colors @if(request()->routeIs('superadmin.manajemen-pengguna')) text-secondary font-bold bg-surface-container-low @endif" href="{{ route('superadmin.manajemen-pengguna') }}">
-                <span class="material-symbols-outlined @if(request()->routeIs('superadmin.manajemen-pengguna')) fill @endif">group</span>
-                <span class="font-title-md text-title-md">Pengguna</span>
-            </a>
-            <a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low p-2 rounded transition-colors @if(request()->routeIs('superadmin.komisi-global')) text-secondary font-bold bg-surface-container-low @endif" href="{{ route('superadmin.komisi-global') }}">
-                <span class="material-symbols-outlined @if(request()->routeIs('superadmin.komisi-global')) fill @endif">currency_exchange</span>
-                <span class="font-title-md text-title-md">Komisi</span>
-            </a>
-            <a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low p-2 rounded transition-colors @if(request()->routeIs('superadmin.permintaan-penarikan')) text-secondary font-bold bg-surface-container-low @endif" href="{{ route('superadmin.permintaan-penarikan') }}">
-                <span class="material-symbols-outlined @if(request()->routeIs('superadmin.permintaan-penarikan')) fill @endif">attach_money</span>
-                <span class="font-title-md text-title-md">Penarikan</span>
-            </a>
-            <a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low p-2 rounded transition-colors @if(request()->routeIs('superadmin.riwayat-aktivitas')) text-secondary font-bold bg-surface-container-low @endif" href="{{ route('superadmin.riwayat-aktivitas') }}">
-                <span class="material-symbols-outlined @if(request()->routeIs('superadmin.riwayat-aktivitas')) fill @endif">history</span>
-                <span class="font-title-md text-title-md">Riwayat</span>
-            </a>
-            <a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-low p-2 rounded transition-colors @if(request()->routeIs('superadmin.menu')) text-secondary font-bold bg-surface-container-low @endif" href="{{ route('superadmin.menu') }}">
-                <span class="material-symbols-outlined @if(request()->routeIs('superadmin.menu')) fill @endif">menu</span>
-                <span class="font-title-md text-title-md">Menu</span>
-            </a>
+        <nav class="flex-1 overflow-y-auto">
+            @include('partials.sidebar-menu')
         </nav>
     </aside>
 
@@ -168,11 +133,16 @@
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 md:hidden hidden opacity-0 transition-opacity duration-300"></div>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col min-w-0">
+    <main class="flex-1 flex flex-col min-w-0 pb-[72px] md:pb-0">
         <!-- Desktop Header -->
         <header class="hidden md:flex justify-between items-center px-container-margin py-8 bg-surface">
             <div>
-                <h1 class="font-headline-lg text-headline-lg text-on-surface">@yield('header-title', 'Dashboard')</h1>
+                <div class="flex items-center gap-3">
+                    <h1 class="font-headline-lg text-headline-lg text-on-surface">@yield('header-title', 'Dashboard')</h1>
+                    @hasSection('header-badge')
+                        <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-label-sm uppercase tracking-wider">@yield('header-badge')</span>
+                    @endif
+                </div>
                 <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Ini yang terjadi hari ini.')</p>
             </div>
             <div class="flex items-center gap-6">
@@ -188,8 +158,13 @@
 
         <!-- Mobile Greeting -->
         <div class="md:hidden px-container-margin py-6">
-            <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">@yield('header-title', 'Dashboard')</h1>
-            <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Here is what\'s happening today.')</p>
+            <div class="flex items-center gap-3 flex-wrap">
+                <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">@yield('header-title', 'Dashboard')</h1>
+                @hasSection('header-badge')
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">@yield('header-badge')</span>
+                @endif
+            </div>
+            <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Ini yang terjadi hari ini.')</p>
         </div>
 
         <div class="px-container-margin pb-section-gap flex flex-col gap-section-gap max-w-7xl mx-auto w-full">
@@ -222,16 +197,30 @@
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const sidebarOverlay = document.getElementById('sidebar-overlay');
 
+        const openSidebar = () => {
+            sidebar.classList.remove('-translate-x-full');
+            sidebarOverlay.classList.remove('hidden');
+            requestAnimationFrame(() => sidebarOverlay.classList.remove('opacity-0'));
+        };
+
+        const closeSidebar = () => {
+            sidebar.classList.add('-translate-x-full');
+            sidebarOverlay.classList.add('opacity-0');
+            setTimeout(() => sidebarOverlay.classList.add('hidden'), 300);
+        };
+
         sidebarToggle?.addEventListener('click', () => {
-            sidebar.classList.toggle('-translate-x-full');
-            sidebarOverlay.classList.toggle('hidden');
-            sidebarOverlay.classList.toggle('opacity-0');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                openSidebar();
+            } else {
+                closeSidebar();
+            }
         });
 
-        sidebarOverlay?.addEventListener('click', () => {
-            sidebar.classList.add('-translate-x-full');
-            sidebarOverlay.classList.add('hidden');
-            sidebarOverlay.classList.add('opacity-0');
+        sidebarOverlay?.addEventListener('click', closeSidebar);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeSidebar();
         });
     </script>
     @stack('scripts')
