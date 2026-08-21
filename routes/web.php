@@ -20,6 +20,13 @@ use App\Http\Controllers\SuperAdmin\KategoriProdukController;
 use App\Http\Controllers\SuperAdmin\KurirController;
 use App\Http\Controllers\SuperAdmin\PajakBiayaController;
 use App\Http\Controllers\SuperAdmin\PromoPlatformController;
+use App\Http\Controllers\SuperAdmin\KomplainController as SaKomplainController;
+use App\Http\Controllers\SuperAdmin\PengirimanController as SaPengirimanController;
+use App\Http\Controllers\SuperAdmin\StokController as SaStokController;
+use App\Http\Controllers\SuperAdmin\ProduksiController;
+use App\Http\Controllers\SuperAdmin\GudangController;
+use App\Http\Controllers\SuperAdmin\SaldoTokoController;
+use App\Http\Controllers\SuperAdmin\ProdukController;
 use App\Http\Controllers\Admin\DashboardOperasionalController;
 use App\Http\Controllers\Admin\DataPesananController as AdminDataPesananController;
 use App\Http\Controllers\Admin\VerifikasiPembayaranController;
@@ -33,6 +40,8 @@ use App\Http\Controllers\Admin\PromoController;
 use App\Http\Controllers\Admin\PermintaanProduksiController;
 use App\Http\Controllers\Admin\KoordinasiGudangController;
 use App\Http\Controllers\Admin\ProfilController as AdminProfilController;
+use App\Http\Controllers\Admin\LaporanController as AdminLaporanController;
+use App\Http\Controllers\Admin\RiwayatAktivitasController as AdminRiwayatAktivitasController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -58,6 +67,13 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/riwayat-aktivitas', [RiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
     Route::get('/pengaturan-sistem', [PengaturanSistemController::class, 'index'])->name('pengaturan-sistem');
     Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
+    Route::get('/komplain', [SaKomplainController::class, 'index'])->name('komplain');
+    Route::get('/pengiriman', [SaPengirimanController::class, 'index'])->name('pengiriman');
+    Route::get('/stok', [SaStokController::class, 'index'])->name('stok');
+    Route::get('/produksi', [ProduksiController::class, 'index'])->name('produksi');
+    Route::get('/gudang', [GudangController::class, 'index'])->name('gudang');
+    Route::get('/saldo-toko', [SaldoTokoController::class, 'index'])->name('saldo-toko');
+    Route::get('/produk', [ProdukController::class, 'index'])->name('produk');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -74,4 +90,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/permintaan-produksi', [PermintaanProduksiController::class, 'index'])->name('permintaan-produksi');
     Route::get('/koordinasi-gudang', [KoordinasiGudangController::class, 'index'])->name('koordinasi-gudang');
     Route::get('/profil', [AdminProfilController::class, 'index'])->name('profil');
+    Route::get('/laporan', [AdminLaporanController::class, 'index'])->name('laporan');
+    Route::get('/riwayat-aktivitas', [AdminRiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
 });
