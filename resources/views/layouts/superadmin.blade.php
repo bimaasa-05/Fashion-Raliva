@@ -142,9 +142,9 @@
         }
 
         .dark {
-            --c-background: 18 18 18;
-            --c-surface: 18 18 18;
-            --c-surface-dim: 10 10 10;
+            --c-background: 14 14 14;
+            --c-surface: 14 14 14;
+            --c-surface-dim: 8 8 8;
             --c-sc-lowest: 20 20 20;
             --c-sc-low: 26 26 26;
             --c-sc: 33 33 33;
@@ -158,8 +158,8 @@
             --c-on-surface-variant: 186 184 184;
             --c-on-muted: 178 176 176;
             --c-outline: 138 141 141;
-            --c-outline-variant: 58 58 58;
-            --c-border: 44 44 44;
+            --c-outline-variant: 46 46 46;
+            --c-border: 34 34 34;
             --c-primary: 240 238 238;
             --c-deep-onyx: 240 238 238;
             --c-on-primary: 17 17 17;
@@ -170,6 +170,7 @@
             --c-on-error-container: 255 218 214;
             --c-tertiary-container: 74 74 74;
             --c-surface-tint: 170 168 168;
+            --c-sidebar: 28 28 28;
         }
 
         body { background-color: rgb(var(--c-background)); }
@@ -177,6 +178,11 @@
         .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         @keyframes drawLine { to { stroke-dashoffset: 0; } }
         .animate-line { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: drawLine 2s ease-out forwards; }
+        .sidebar-scroll { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.18) transparent; }
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 9999px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
     </style>
     @stack('styles')
 </head>
@@ -192,18 +198,24 @@
                 <span class="material-symbols-outlined icon-moon">dark_mode</span>
                 <span class="material-symbols-outlined icon-sun hidden">light_mode</span>
             </button>
-            <button class="text-on-surface hover:opacity-80 transition-opacity">
-                <span class="material-symbols-outlined">search</span>
+            <button class="relative text-on-surface hover:text-secondary transition-colors" aria-label="Notifikasi">
+                <span class="material-symbols-outlined">notifications</span>
+                <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
             </button>
+            @include('partials.profile-menu', ['compact' => true])
         </div>
     </header>
 
     <!-- Side Navigation Drawer -->
     <aside id="sidebar" class="flex fixed md:sticky top-0 left-0 z-50 flex-col h-screen pt-section-gap pb-[88px] md:pb-section-gap px-container-margin w-64 border-r border-white/10 bg-sidebar -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
-        <div class="mb-12">
-            <span class="font-display-lg text-display-lg text-white tracking-widest block mb-8">RALIVA</span>
+        <div class="mb-12 flex items-center gap-3">
+            <img src="{{ asset('images/logo.svg') }}" alt="Logo Raliva" class="w-11 h-11 rounded-xl shrink-0" />
+            <div>
+                <span class="font-display-lg text-title-md text-white tracking-widest block leading-tight">RALIVA</span>
+                <span class="text-gold-accent/80 font-label-sm text-[10px] uppercase tracking-wider">Super Admin</span>
+            </div>
         </div>
-        <nav class="flex-1 overflow-y-auto">
+        <nav class="sidebar-scroll flex-1 overflow-y-auto">
             @include('partials.sidebar-menu')
         </nav>
     </aside>
@@ -233,9 +245,7 @@
                     <span class="material-symbols-outlined">notifications</span>
                     <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
                 </button>
-                <div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden">
-                    <img alt="Admin Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuUf094pPsvMlxNz9CEzztLZIPfB4q2FE_6HM73O8sFoIt42FkBx43D1cxFlylMdSolVSJZNCBDrc8ttYGcVUIYXcsS0AUGBhcZYBAFGqcAXzmuJyVyjyJY6CXvyxdr0Zwzlwi2Tw3Djm9F2wtwaOLZklTUYLsRg7NCbF9hgI1uCTcTdgGi-0zShSJMzVkR1HYp_C02xOHHVWnGLI4_rrhbWQnSlrZ2VpmUbZL0Gc18YDjNwDrrkAcPg" />
-                </div>
+                @include('partials.profile-menu')
             </div>
         </header>
 
@@ -256,23 +266,25 @@
     </main>
 
     <!-- Bottom Nav Bar (Mobile) -->
+    @php
+        $bottomNav = [
+            ['route' => 'superadmin.dashboard', 'icon' => 'dashboard', 'label' => 'Beranda'],
+            ['route' => 'superadmin.data-pesanan', 'icon' => 'shopping_cart', 'label' => 'Pesanan'],
+            ['route' => 'superadmin.moderasi-produk', 'icon' => 'inventory_2', 'label' => 'Moderasi'],
+            ['route' => 'superadmin.laporan', 'icon' => 'bar_chart', 'label' => 'Laporan'],
+            ['route' => 'superadmin.profil', 'icon' => 'person', 'label' => 'Profil'],
+        ];
+    @endphp
     <nav class="md:hidden flex justify-around items-center w-full h-[72px] bg-surface border-t border-outline-variant px-xs pb-safe fixed bottom-0 z-50 shadow-sm">
-        <a class="flex flex-col items-center justify-center text-secondary" href="{{ route('superadmin.dashboard') }}">
-            <span class="material-symbols-outlined fill">dashboard</span>
-            <span class="font-label-sm text-label-sm mt-1">Home</span>
-        </a>
-        <a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors" href="{{ route('superadmin.manajemen-toko') }}">
-            <span class="material-symbols-outlined">storefront</span>
-            <span class="font-label-sm text-label-sm mt-1">Stores</span>
-        </a>
-        <a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors" href="{{ route('superadmin.laporan') }}">
-            <span class="material-symbols-outlined">receipt_long</span>
-            <span class="font-label-sm text-label-sm mt-1">Orders</span>
-        </a>
-        <a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors" href="{{ route('superadmin.manajemen-pengguna') }}">
-            <span class="material-symbols-outlined">person</span>
-            <span class="font-label-sm text-label-sm mt-1">Account</span>
-        </a>
+        @foreach ($bottomNav as $item)
+            @php
+                $isActive = request()->routeIs($item['route']);
+            @endphp
+            <a class="flex flex-col items-center justify-center {{ $isActive ? 'text-secondary' : 'text-on-surface-variant hover:text-secondary transition-colors' }}" href="{{ route($item['route']) }}">
+                <span class="material-symbols-outlined {{ $isActive ? 'fill' : '' }}">{{ $item['icon'] }}</span>
+                <span class="font-label-sm text-label-sm mt-1">{{ $item['label'] }}</span>
+            </a>
+        @endforeach
     </nav>
 
     <script>
@@ -303,7 +315,31 @@
         sidebarOverlay?.addEventListener('click', closeSidebar);
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeSidebar();
+            if (e.key === 'Escape') {
+                closeSidebar();
+                document.querySelectorAll('[data-profile-menu]').forEach((m) => m.classList.add('hidden'));
+            }
+        });
+
+        const allProfileMenus = document.querySelectorAll('[data-profile-menu]');
+
+        document.querySelectorAll('[data-profile-toggle]').forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const menu = btn.parentElement.querySelector('[data-profile-menu]');
+                allProfileMenus.forEach((m) => {
+                    if (m !== menu) m.classList.add('hidden');
+                });
+                menu?.classList.toggle('hidden');
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            document.querySelectorAll('[data-profile-container]').forEach((container) => {
+                if (!container.contains(e.target)) {
+                    container.querySelector('[data-profile-menu]')?.classList.add('hidden');
+                }
+            });
         });
 
         const updateThemeIcons = () => {
@@ -321,6 +357,14 @@
         });
 
         updateThemeIcons();
+
+        document.querySelectorAll('[data-sidebar-group-button]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const group = btn.parentElement.querySelector('[data-sidebar-group]');
+                group?.classList.toggle('hidden');
+                btn.querySelector('.material-symbols-outlined')?.classList.toggle('rotate-180');
+            });
+        });
     </script>
     @stack('scripts')
 </body>
