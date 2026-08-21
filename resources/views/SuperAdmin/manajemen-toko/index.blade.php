@@ -19,19 +19,12 @@
 @endpush
 
 @section('content')
-<!-- Header Section -->
-<section class="px-gutter md:px-container-margin pt-section-gap pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
-    <div>
-        <h2 class="font-display-lg text-display-lg-mobile md:text-display-lg mb-2">Manajemen Toko</h2>
-        <p class="text-on-surface-variant font-body-md max-w-2xl">Verifikasi dokumen toko dan jaga agar hanya toko yang memenuhi aturan yang dapat beroperasi.</p>
-    </div>
-    <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
-        <button class="px-4 py-2 border-b-2 border-primary text-primary font-label-sm uppercase tracking-wider">Semua</button>
-        <button class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Menunggu</button>
-        <button class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Aktif</button>
-        <button class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Ditangguhkan</button>
-    </div>
-</section>
+<div class="flex flex-wrap gap-3 border-b border-muted-border pb-4">
+    <button class="px-4 py-2 border-b-2 border-primary text-primary font-label-sm uppercase tracking-wider">Semua</button>
+    <button class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Menunggu</button>
+    <button class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Aktif</button>
+    <button class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Ditangguhkan</button>
+</div>
 
 <!-- Store Grid -->
 <section class="px-gutter md:px-container-margin py-8">
