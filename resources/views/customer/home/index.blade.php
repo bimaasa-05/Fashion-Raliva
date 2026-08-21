@@ -131,7 +131,7 @@
 <body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0">
 <!-- TopAppBar -->
 <header class="fixed top-0 w-full z-50 bg-surface dark:bg-surface text-on-surface dark:text-on-surface flex justify-between items-center px-container-margin h-16 border-b border-outline-variant flat no shadows">
-<button class="hover:opacity-80 transition-opacity">
+<button class="hover:opacity-80 transition-opacity" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
 <h1 class="font-display-lg text-headline-md tracking-widest text-on-surface dark:text-on-surface">RALIVA</h1>
@@ -337,4 +337,5 @@
 <span class="font-label-sm text-[10px]">Account</span>
 </a>
 </nav>
+@include('customer._partials.drawer')
 </body></html>

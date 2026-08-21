@@ -122,7 +122,7 @@
 <!-- TopAppBar -->
 <header class="bg-surface dark:bg-surface text-on-surface dark:text-on-surface sticky full-width top-0 border-b border-outline-variant flat no shadows z-40">
 <div class="flex justify-between items-center w-full px-container-margin h-16">
-<button aria-label="Menu" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 -ml-2">
+<button aria-label="Menu" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 -ml-2" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
 <h1 class="font-display-lg text-headline-md tracking-widest text-on-surface dark:text-on-surface">RALIVA</h1>
@@ -275,4 +275,5 @@
 <span class="font-label-sm text-label-sm text-[10px]">Account</span>
 </a>
 </nav>
+@include('customer._partials.drawer')
 </body></html>
