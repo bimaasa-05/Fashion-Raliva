@@ -8,23 +8,23 @@
         ],
         [
             'label' => 'Manajemen',
-            'collapsible' => true,
             'items' => [
                 ['route' => 'superadmin.manajemen-pengguna', 'icon' => 'group', 'text' => 'Data Pengguna'],
                 ['route' => 'superadmin.manajemen-toko', 'icon' => 'storefront', 'text' => 'Data Toko'],
                 ['route' => 'superadmin.moderasi-produk', 'icon' => 'inventory_2', 'text' => 'Moderasi Produk'],
                 ['route' => 'superadmin.kategori-produk', 'icon' => 'category', 'text' => 'Kategori Produk'],
                 ['route' => 'superadmin.paket-slot-produk', 'icon' => 'package_2', 'text' => 'Paket Slot Produk'],
+                ['route' => 'superadmin.produk', 'icon' => 'checkroom', 'text' => 'Data Produk'],
             ],
         ],
         [
             'label' => 'Transaksi',
-            'collapsible' => true,
             'items' => [
                 ['route' => 'superadmin.data-pesanan', 'icon' => 'shopping_cart', 'text' => 'Data Pesanan'],
                 ['route' => 'superadmin.data-pembayaran', 'icon' => 'payments', 'text' => 'Data Pembayaran'],
                 ['route' => 'superadmin.pengembalian-dana', 'icon' => 'assignment_return', 'text' => 'Pengembalian Dana'],
                 ['route' => 'superadmin.permintaan-penarikan', 'icon' => 'attach_money', 'text' => 'Pencairan Dana'],
+                ['route' => 'superadmin.komplain', 'icon' => 'support_agent', 'text' => 'Komplain'],
             ],
         ],
         [
@@ -32,6 +32,16 @@
             'items' => [
                 ['route' => 'superadmin.komisi-global', 'icon' => 'currency_exchange', 'text' => 'Komisi Raliva'],
                 ['route' => 'superadmin.pajak-biaya', 'icon' => 'request_quote', 'text' => 'Pajak & Biaya Layanan'],
+                ['route' => 'superadmin.saldo-toko', 'icon' => 'account_balance_wallet', 'text' => 'Saldo Toko'],
+            ],
+        ],
+        [
+            'label' => 'Operasional',
+            'items' => [
+                ['route' => 'superadmin.pengiriman', 'icon' => 'local_shipping', 'text' => 'Pengiriman'],
+                ['route' => 'superadmin.stok', 'icon' => 'inventory', 'text' => 'Stok'],
+                ['route' => 'superadmin.produksi', 'icon' => 'precision_manufacturing', 'text' => 'Produksi'],
+                ['route' => 'superadmin.gudang', 'icon' => 'warehouse', 'text' => 'Gudang'],
             ],
         ],
         [
@@ -39,7 +49,7 @@
             'items' => [
                 ['route' => 'superadmin.promo-platform', 'icon' => 'local_offer', 'text' => 'Promo Platform'],
                 ['route' => 'superadmin.data-bank', 'icon' => 'account_balance', 'text' => 'Data Bank'],
-                ['route' => 'superadmin.kurir', 'icon' => 'local_shipping', 'text' => 'Kurir'],
+                ['route' => 'superadmin.kurir', 'icon' => 'moped', 'text' => 'Kurir'],
             ],
         ],
         [
@@ -54,7 +64,7 @@
 <div class="space-y-2">
     @foreach ($menuGroups as $group)
         @php
-            $collapsible = !empty($group['collapsible']);
+            $collapsible = count($group['items']) >= 4;
             $isActive = collect($group['items'])->contains(fn ($item) => request()->routeIs($item['route']));
         @endphp
         <div class="space-y-1 {{ $loop->first ? '' : 'pt-4' }}">

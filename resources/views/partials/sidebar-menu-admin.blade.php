@@ -8,7 +8,6 @@
         ],
         [
             'label' => 'Transaksi',
-            'collapsible' => true,
             'items' => [
                 ['route' => 'admin.pesanan', 'icon' => 'shopping_cart', 'text' => 'Data Pesanan'],
                 ['route' => 'admin.verifikasi-pembayaran', 'icon' => 'fact_check', 'text' => 'Verifikasi Pembayaran'],
@@ -24,7 +23,6 @@
         ],
         [
             'label' => 'Katalog',
-            'collapsible' => true,
             'items' => [
                 ['route' => 'admin.produk', 'icon' => 'checkroom', 'text' => 'Data Produk'],
                 ['route' => 'admin.stok', 'icon' => 'inventory_2', 'text' => 'Stok'],
@@ -33,11 +31,17 @@
         ],
         [
             'label' => 'Logistik',
-            'collapsible' => true,
             'items' => [
                 ['route' => 'admin.pengiriman', 'icon' => 'local_shipping', 'text' => 'Pengiriman'],
                 ['route' => 'admin.koordinasi-gudang', 'icon' => 'warehouse', 'text' => 'Koordinasi Gudang'],
                 ['route' => 'admin.permintaan-produksi', 'icon' => 'precision_manufacturing', 'text' => 'Permintaan Produksi'],
+            ],
+        ],
+        [
+            'label' => 'Monitoring',
+            'items' => [
+                ['route' => 'admin.laporan', 'icon' => 'bar_chart', 'text' => 'Laporan Operasional'],
+                ['route' => 'admin.riwayat-aktivitas', 'icon' => 'history', 'text' => 'Riwayat Aktivitas'],
             ],
         ],
     ];
@@ -45,7 +49,7 @@
 <div class="space-y-2">
     @foreach ($menuGroups as $group)
         @php
-            $collapsible = !empty($group['collapsible']);
+            $collapsible = count($group['items']) >= 3;
             $isActive = collect($group['items'])->contains(fn ($item) => request()->routeIs($item['route']));
         @endphp
         <div class="space-y-1 {{ $loop->first ? '' : 'pt-4' }}">
