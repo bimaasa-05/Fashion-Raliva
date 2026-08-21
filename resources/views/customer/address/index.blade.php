@@ -4,6 +4,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
 <title>RALIVA - My Addresses</title>
+<script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -188,14 +189,88 @@
       min-height: max(884px, 100dvh);
     }
   </style>
+<style>
+        :root {
+        --chrome-bg: #ffffff;
+        --chrome-bg-soft: rgba(255,255,255,.92);
+        --chrome-text: #1b1c1c;
+        --chrome-text-dim: rgba(0,0,0,.55);
+        --chrome-text-faint: rgba(0,0,0,.45);
+        --chrome-border: rgba(0,0,0,.1);
+        --chrome-hover: rgba(0,0,0,.06);
+        --chrome-accent: #795905;
+    }
+    html.theme-dark {
+        --chrome-bg: #1c1b1b;
+        --chrome-bg-soft: rgba(28,27,27,.9);
+        --chrome-text: #ffffff;
+        --chrome-text-dim: rgba(255,255,255,.6);
+        --chrome-text-faint: rgba(255,255,255,.5);
+        --chrome-border: rgba(255,255,255,.1);
+        --chrome-hover: rgba(255,255,255,.1);
+        --chrome-accent: #ebc168;
+    }
+</style>
+<style>
+    /* ============ FULL DARK MODE TOKEN REMAP ============ */
+    html.theme-dark .bg-background, html.theme-dark .bg-surface, html.theme-dark .bg-surface-bright { background-color: #161514 !important; }
+    html.theme-dark .bg-surface-container-lowest { background-color: #1e1d1c !important; }
+    html.theme-dark .bg-surface-container-low { background-color: #201f1e !important; }
+    html.theme-dark .bg-surface-container { background-color: #262524 !important; }
+    html.theme-dark .bg-surface-container-high { background-color: #2c2b2a !important; }
+    html.theme-dark .bg-surface-container-highest, html.theme-dark .bg-surface-variant { background-color: #323130 !important; }
+    html.theme-dark .bg-surface\/50 { background-color: rgba(38,37,36,.5) !important; }
+    html.theme-dark .bg-surface\/95 { background-color: rgba(22,21,20,.95) !important; }
+    html.theme-dark .bg-background\/90 { background-color: rgba(22,21,20,.9) !important; }
+    html.theme-dark .bg-surface-container-lowest\/50 { background-color: rgba(30,29,28,.5) !important; }
+    html.theme-dark .from-surface\/80 { --tw-gradient-from: rgba(22,21,20,.85) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via, transparent), var(--tw-gradient-to, transparent) !important; }
+    html.theme-dark .bg-primary { background-color: #f2efec !important; }
+    html.theme-dark .bg-primary\/5 { background-color: rgba(242,239,236,.08) !important; }
+    html.theme-dark .text-primary { color: #f2efec !important; }
+    html.theme-dark .text-on-primary { color: #1b1a19 !important; }
+    html.theme-dark .border-primary { border-color: #f2efec !important; }
+    html.theme-dark .text-on-surface, html.theme-dark .text-on-background { color: #e6e4e1 !important; }
+    html.theme-dark .text-on-surface-variant { color: #b9b6b1 !important; }
+    html.theme-dark .text-on-surface-variant\/70 { color: rgba(185,182,177,.7) !important; }
+    html.theme-dark .text-outline { color: #8a8781 !important; }
+    html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
+    html.theme-dark .text-error { color: #ffb4ab !important; }
+    html.theme-dark .text-secondary { color: #ebc168 !important; }
+    html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
+    html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
+    html.theme-dark .border-outline { border-color: #4a4844 !important; }
+    html.theme-dark .border-surface-variant { border-color: #2c2b2a !important; }
+    html.theme-dark .border-on-surface { border-color: #e6e4e1 !important; }
+    html.theme-dark .border-error { border-color: #ffb4ab !important; }
+    html.theme-dark .bg-outline-variant { background-color: #3a3937 !important; }
+    html.theme-dark .bg-on-surface { background-color: #e6e4e1 !important; }
+    html.theme-dark .hover\:bg-surface-container-low:hover { background-color: #201f1e !important; }
+    html.theme-dark .hover\:bg-surface-container-high:hover { background-color: #2c2b2a !important; }
+    html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
+    html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
+    html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #ebc168 !important; }
+    html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
+    html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
+    html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
+    html.theme-dark .hover\:border-primary:hover { border-color: #f2efec !important; }
+    html.theme-dark .hover\:border-on-surface:hover { border-color: #e6e4e1 !important; }
+    html.theme-dark .hover\:border-outline:hover { border-color: #4a4844 !important; }
+    html.theme-dark .focus\:border-primary:focus { border-color: #f2efec !important; }
+    html.theme-dark .focus\:border-on-surface:focus { border-color: #e6e4e1 !important; }
+    html.theme-dark .focus\:border-outline:focus { border-color: #4a4844 !important; }
+    html.theme-dark .group:hover .group-hover\:text-primary { color: #f2efec !important; }
+    html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
+    html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
+</style>
   </head>
 <body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased selection:bg-secondary-container selection:text-on-secondary-container pb-[calc(72px+env(safe-area-inset-bottom))]">
 <!-- Top App Bar -->
-<header class="bg-primary-container/90 backdrop-blur-md text-on-primary flex justify-between items-center w-full px-container-margin h-16 sticky z-40 border-b border-white/10">
+<header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky z-40 border-b border-[var(--chrome-border)]">
 <a aria-label="Go back" href="{{ route('customer.account') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-secondary-fixed-dim uppercase truncate max-w-[200px] text-center">MY ADDRESSES</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">MY ADDRESSES</h1>
 <div class="w-10"></div> <!-- Spacer for center alignment -->
 </header>
 <!-- Main Content -->
@@ -250,25 +325,25 @@
 </div>
 </main>
 <!-- Bottom Navigation Bar -->
-<nav class="md:hidden bg-primary-container text-on-primary font-label-sm text-label-sm fixed bottom-0 w-full z-50 border-t border-white/10 shadow-sm flex justify-around items-center h-[72px] px-xs pb-safe">
-<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors group w-16" href="{{ route('customer.home') }}">
+<nav class="md:hidden bg-[var(--chrome-bg)] text-[var(--chrome-text)] font-label-sm text-label-sm fixed bottom-0 w-full z-50 border-t border-[var(--chrome-border)] shadow-sm flex justify-around items-center h-[72px] px-xs pb-safe">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">home</span>
 <span class="truncate w-full text-center">Home</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors group w-16" href="{{ route('customer.shop') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">shopping_bag</span>
 <span class="truncate w-full text-center">Shop</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors group w-16" href="{{ route('customer.wishlist') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16" href="{{ route('customer.wishlist') }}">
 <span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">favorite</span>
 <span class="truncate w-full text-center">Wishlist</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors group w-16 relative" href="{{ route('customer.chart') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16 relative" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">shopping_cart</span>
 <span class="truncate w-full text-center">Cart</span>
 <span class="absolute top-0 right-2 w-2 h-2 bg-secondary-fixed-dim rounded-full"></span>
 </a>
-<a class="flex flex-col items-center justify-center text-secondary-fixed-dim hover:text-secondary transition-colors scale-95 transition-transform group w-16" href="{{ route('customer.account') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] hover:text-secondary transition-colors scale-95 transition-transform group w-16" href="{{ route('customer.account') }}">
 <span class="material-symbols-outlined mb-1 text-[24px]" style="font-variation-settings: 'FILL' 1;">person</span>
 <span class="truncate w-full text-center font-medium">Account</span>
 </a>

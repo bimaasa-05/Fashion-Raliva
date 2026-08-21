@@ -16,90 +16,95 @@
     }
 </style>
 <div id="drawer-overlay" class="fixed inset-0 bg-black/50 z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="closeDrawer()"></div>
-<aside id="drawer-panel" class="fixed top-0 left-0 h-full w-72 max-w-[85%] bg-primary-container text-on-primary z-[70] -translate-x-full transition-transform duration-300 flex flex-col shadow-xl">
-<div class="flex justify-between items-start px-md pt-md pb-sm border-b border-white/10 shrink-0">
+<aside id="drawer-panel" class="fixed top-0 left-0 h-full w-72 max-w-[85%] bg-[var(--chrome-bg)] text-[var(--chrome-text)] z-[70] -translate-x-full transition-transform duration-300 flex flex-col shadow-xl">
+<div class="flex justify-between items-start px-md pt-md pb-sm border-b border-[var(--chrome-border)] shrink-0">
 <div>
-<h2 class="font-display-lg text-headline-md tracking-widest text-secondary-fixed-dim">RALIVA</h2>
-<p class="font-label-sm text-label-sm text-on-primary/60 tracking-wide mt-1">The Art of Everyday Dressing</p>
+<h2 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h2>
+<p class="font-label-sm text-label-sm text-[var(--chrome-text-dim)] tracking-wide mt-1">The Art of Everyday Dressing</p>
 </div>
-<button aria-label="Close menu" class="w-9 h-9 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors shrink-0" onclick="closeDrawer()" type="button">
+<div class="flex items-center gap-xs shrink-0">
+<button aria-label="Toggle theme" class="w-9 h-9 rounded-full hover:bg-[var(--chrome-hover)] flex items-center justify-center transition-colors" onclick="toggleTheme()" type="button">
+<span class="material-symbols-outlined" data-icon="dark_mode" id="theme-icon">dark_mode</span>
+</button>
+<button aria-label="Close menu" class="w-9 h-9 rounded-full hover:bg-[var(--chrome-hover)] flex items-center justify-center transition-colors" onclick="closeDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="close">close</span>
 </button>
 </div>
+</div>
 <nav class="flex-grow overflow-y-auto py-sm">
 <div class="drawer-sec">
-<h3 class="font-label-caps text-label-caps text-on-primary/50 uppercase tracking-widest px-lg pt-sm pb-xs">Menu Utama</h3>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.home') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">home</span>
+<h3 class="font-label-caps text-label-caps text-[var(--chrome-text-faint)] uppercase tracking-widest px-lg pt-sm pb-xs">Menu Utama</h3>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.home') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">home</span>
             Home
         </a>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">shopping_bag</span>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">shopping_bag</span>
             Shop
         </a>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.wishlist') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">favorite</span>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.wishlist') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">favorite</span>
             Wishlist
         </a>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.search') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">search</span>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.search') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">search</span>
             Search
         </a>
 </div>
 <div class="drawer-sec">
-<h3 class="font-label-caps text-label-caps text-on-primary/50 uppercase tracking-widest px-lg pt-md pb-xs">Kategori</h3>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">checkroom</span>
+<h3 class="font-label-caps text-label-caps text-[var(--chrome-text-faint)] uppercase tracking-widest px-lg pt-md pb-xs">Kategori</h3>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">checkroom</span>
             Women
         </a>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">apparel</span>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">apparel</span>
             Men
         </a>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">watch</span>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">watch</span>
             Accessories
         </a>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">steps</span>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">steps</span>
             Shoes
         </a>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">work</span>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">work</span>
             Bags
         </a>
 </div>
 <div class="drawer-sec">
-<h3 class="font-label-caps text-label-caps text-on-primary/50 uppercase tracking-widest px-lg pt-md pb-xs">Akun</h3>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.account') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">person</span>
+<h3 class="font-label-caps text-label-caps text-[var(--chrome-text-faint)] uppercase tracking-widest px-lg pt-md pb-xs">Akun</h3>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.account') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">person</span>
             My Account
         </a>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.order-tracking') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">local_mall</span>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.order-tracking') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">local_mall</span>
             My Orders
         </a>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.reviews') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">star_border</span>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.reviews') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">star_border</span>
             My Reviews
         </a>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.address') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">location_on</span>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.address') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">location_on</span>
             Addresses
         </a>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.notifications') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">notifications_none</span>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.notifications') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">notifications_none</span>
             Notifications
         </a>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.settings') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">settings</span>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.settings') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">settings</span>
             Settings
         </a>
 </div>
 <div class="drawer-sec">
-<h3 class="font-label-caps text-label-caps text-on-primary/50 uppercase tracking-widest px-lg pt-md pb-xs">Bantuan</h3>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-on-primary/90 hover:bg-white/10 transition-colors flex items-center gap-sm" href="{{ route('customer.help') }}">
-<span class="material-symbols-outlined text-[20px] text-on-primary/60">help_outline</span>
+<h3 class="font-label-caps text-label-caps text-[var(--chrome-text-faint)] uppercase tracking-widest px-lg pt-md pb-xs">Bantuan</h3>
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.help') }}">
+<span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">help_outline</span>
             Help Center
         </a>
 </div>
@@ -112,8 +117,8 @@
 </div>
 </div>
 </nav>
-<div class="px-md py-sm border-t border-white/10 shrink-0">
-<p class="font-label-sm text-label-sm text-on-primary/50">© 2026 RALIVA. All rights reserved.</p>
+<div class="px-md py-sm border-t border-[var(--chrome-border)] shrink-0">
+<p class="font-label-sm text-label-sm text-[var(--chrome-text-faint)]">© 2026 RALIVA. All rights reserved.</p>
 </div>
 </aside>
 <script>
@@ -133,4 +138,17 @@
             overlay.classList.add('opacity-0');
             overlay.classList.remove('pointer-events-auto');
         }
+        function applyThemeIcon() {
+            var icon = document.getElementById('theme-icon');
+            if (!icon) return;
+            var dark = document.documentElement.classList.contains('theme-dark');
+            icon.textContent = dark ? 'light_mode' : 'dark_mode';
+            icon.setAttribute('data-icon', dark ? 'light_mode' : 'dark_mode');
+        }
+        function toggleTheme() {
+            var dark = document.documentElement.classList.toggle('theme-dark');
+            localStorage.setItem('raliva-theme', dark ? 'dark' : 'light');
+            applyThemeIcon();
+        }
+        applyThemeIcon();
     </script>

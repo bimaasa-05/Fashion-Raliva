@@ -4,6 +4,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>RALIVA - Oversized Linen Shirt</title>
+<script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -195,19 +196,93 @@
       min-height: max(884px, 100dvh);
     }
   </style>
+<style>
+        :root {
+        --chrome-bg: #ffffff;
+        --chrome-bg-soft: rgba(255,255,255,.92);
+        --chrome-text: #1b1c1c;
+        --chrome-text-dim: rgba(0,0,0,.55);
+        --chrome-text-faint: rgba(0,0,0,.45);
+        --chrome-border: rgba(0,0,0,.1);
+        --chrome-hover: rgba(0,0,0,.06);
+        --chrome-accent: #795905;
+    }
+    html.theme-dark {
+        --chrome-bg: #1c1b1b;
+        --chrome-bg-soft: rgba(28,27,27,.9);
+        --chrome-text: #ffffff;
+        --chrome-text-dim: rgba(255,255,255,.6);
+        --chrome-text-faint: rgba(255,255,255,.5);
+        --chrome-border: rgba(255,255,255,.1);
+        --chrome-hover: rgba(255,255,255,.1);
+        --chrome-accent: #ebc168;
+    }
+</style>
+<style>
+    /* ============ FULL DARK MODE TOKEN REMAP ============ */
+    html.theme-dark .bg-background, html.theme-dark .bg-surface, html.theme-dark .bg-surface-bright { background-color: #161514 !important; }
+    html.theme-dark .bg-surface-container-lowest { background-color: #1e1d1c !important; }
+    html.theme-dark .bg-surface-container-low { background-color: #201f1e !important; }
+    html.theme-dark .bg-surface-container { background-color: #262524 !important; }
+    html.theme-dark .bg-surface-container-high { background-color: #2c2b2a !important; }
+    html.theme-dark .bg-surface-container-highest, html.theme-dark .bg-surface-variant { background-color: #323130 !important; }
+    html.theme-dark .bg-surface\/50 { background-color: rgba(38,37,36,.5) !important; }
+    html.theme-dark .bg-surface\/95 { background-color: rgba(22,21,20,.95) !important; }
+    html.theme-dark .bg-background\/90 { background-color: rgba(22,21,20,.9) !important; }
+    html.theme-dark .bg-surface-container-lowest\/50 { background-color: rgba(30,29,28,.5) !important; }
+    html.theme-dark .from-surface\/80 { --tw-gradient-from: rgba(22,21,20,.85) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via, transparent), var(--tw-gradient-to, transparent) !important; }
+    html.theme-dark .bg-primary { background-color: #f2efec !important; }
+    html.theme-dark .bg-primary\/5 { background-color: rgba(242,239,236,.08) !important; }
+    html.theme-dark .text-primary { color: #f2efec !important; }
+    html.theme-dark .text-on-primary { color: #1b1a19 !important; }
+    html.theme-dark .border-primary { border-color: #f2efec !important; }
+    html.theme-dark .text-on-surface, html.theme-dark .text-on-background { color: #e6e4e1 !important; }
+    html.theme-dark .text-on-surface-variant { color: #b9b6b1 !important; }
+    html.theme-dark .text-on-surface-variant\/70 { color: rgba(185,182,177,.7) !important; }
+    html.theme-dark .text-outline { color: #8a8781 !important; }
+    html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
+    html.theme-dark .text-error { color: #ffb4ab !important; }
+    html.theme-dark .text-secondary { color: #ebc168 !important; }
+    html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
+    html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
+    html.theme-dark .border-outline { border-color: #4a4844 !important; }
+    html.theme-dark .border-surface-variant { border-color: #2c2b2a !important; }
+    html.theme-dark .border-on-surface { border-color: #e6e4e1 !important; }
+    html.theme-dark .border-error { border-color: #ffb4ab !important; }
+    html.theme-dark .bg-outline-variant { background-color: #3a3937 !important; }
+    html.theme-dark .bg-on-surface { background-color: #e6e4e1 !important; }
+    html.theme-dark .hover\:bg-surface-container-low:hover { background-color: #201f1e !important; }
+    html.theme-dark .hover\:bg-surface-container-high:hover { background-color: #2c2b2a !important; }
+    html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
+    html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
+    html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #ebc168 !important; }
+    html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
+    html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
+    html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
+    html.theme-dark .hover\:border-primary:hover { border-color: #f2efec !important; }
+    html.theme-dark .hover\:border-on-surface:hover { border-color: #e6e4e1 !important; }
+    html.theme-dark .hover\:border-outline:hover { border-color: #4a4844 !important; }
+    html.theme-dark .focus\:border-primary:focus { border-color: #f2efec !important; }
+    html.theme-dark .focus\:border-on-surface:focus { border-color: #e6e4e1 !important; }
+    html.theme-dark .focus\:border-outline:focus { border-color: #4a4844 !important; }
+    html.theme-dark .group:hover .group-hover\:text-primary { color: #f2efec !important; }
+    html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
+    html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
+</style>
   </head>
 <body class="bg-surface text-on-surface font-body-lg antialiased pb-32">
 <!-- Header (Custom TopAppBar for Product Details) -->
-<header class="fixed top-0 w-full z-50 bg-primary-container/90 backdrop-blur-md text-on-primary flex justify-between items-center px-container-margin h-16">
+<header class="fixed top-0 w-full z-50 bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16">
 <a aria-label="Go back" href="{{ url()->previous() }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
-<span class="material-symbols-outlined text-on-primary">arrow_back</span>
+<span class="material-symbols-outlined text-[var(--chrome-text)]">arrow_back</span>
 </a>
 <div class="flex gap-xs">
 <button aria-label="Wishlist" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
-<span class="material-symbols-outlined text-on-primary">favorite_border</span>
+<span class="material-symbols-outlined text-[var(--chrome-text)]">favorite_border</span>
 </a>
 <a aria-label="Cart" href="{{ route('customer.chart') }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
-<span class="material-symbols-outlined text-on-primary">shopping_cart</span>
+<span class="material-symbols-outlined text-[var(--chrome-text)]">shopping_cart</span>
 </a>
 </div>
 </header>

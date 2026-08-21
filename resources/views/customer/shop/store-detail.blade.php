@@ -4,6 +4,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Lunara Fashion - RALIVA</title>
+<script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
@@ -195,15 +196,89 @@
       min-height: max(884px, 100dvh);
     }
   </style>
+<style>
+        :root {
+        --chrome-bg: #ffffff;
+        --chrome-bg-soft: rgba(255,255,255,.92);
+        --chrome-text: #1b1c1c;
+        --chrome-text-dim: rgba(0,0,0,.55);
+        --chrome-text-faint: rgba(0,0,0,.45);
+        --chrome-border: rgba(0,0,0,.1);
+        --chrome-hover: rgba(0,0,0,.06);
+        --chrome-accent: #795905;
+    }
+    html.theme-dark {
+        --chrome-bg: #1c1b1b;
+        --chrome-bg-soft: rgba(28,27,27,.9);
+        --chrome-text: #ffffff;
+        --chrome-text-dim: rgba(255,255,255,.6);
+        --chrome-text-faint: rgba(255,255,255,.5);
+        --chrome-border: rgba(255,255,255,.1);
+        --chrome-hover: rgba(255,255,255,.1);
+        --chrome-accent: #ebc168;
+    }
+</style>
+<style>
+    /* ============ FULL DARK MODE TOKEN REMAP ============ */
+    html.theme-dark .bg-background, html.theme-dark .bg-surface, html.theme-dark .bg-surface-bright { background-color: #161514 !important; }
+    html.theme-dark .bg-surface-container-lowest { background-color: #1e1d1c !important; }
+    html.theme-dark .bg-surface-container-low { background-color: #201f1e !important; }
+    html.theme-dark .bg-surface-container { background-color: #262524 !important; }
+    html.theme-dark .bg-surface-container-high { background-color: #2c2b2a !important; }
+    html.theme-dark .bg-surface-container-highest, html.theme-dark .bg-surface-variant { background-color: #323130 !important; }
+    html.theme-dark .bg-surface\/50 { background-color: rgba(38,37,36,.5) !important; }
+    html.theme-dark .bg-surface\/95 { background-color: rgba(22,21,20,.95) !important; }
+    html.theme-dark .bg-background\/90 { background-color: rgba(22,21,20,.9) !important; }
+    html.theme-dark .bg-surface-container-lowest\/50 { background-color: rgba(30,29,28,.5) !important; }
+    html.theme-dark .from-surface\/80 { --tw-gradient-from: rgba(22,21,20,.85) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via, transparent), var(--tw-gradient-to, transparent) !important; }
+    html.theme-dark .bg-primary { background-color: #f2efec !important; }
+    html.theme-dark .bg-primary\/5 { background-color: rgba(242,239,236,.08) !important; }
+    html.theme-dark .text-primary { color: #f2efec !important; }
+    html.theme-dark .text-on-primary { color: #1b1a19 !important; }
+    html.theme-dark .border-primary { border-color: #f2efec !important; }
+    html.theme-dark .text-on-surface, html.theme-dark .text-on-background { color: #e6e4e1 !important; }
+    html.theme-dark .text-on-surface-variant { color: #b9b6b1 !important; }
+    html.theme-dark .text-on-surface-variant\/70 { color: rgba(185,182,177,.7) !important; }
+    html.theme-dark .text-outline { color: #8a8781 !important; }
+    html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
+    html.theme-dark .text-error { color: #ffb4ab !important; }
+    html.theme-dark .text-secondary { color: #ebc168 !important; }
+    html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
+    html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
+    html.theme-dark .border-outline { border-color: #4a4844 !important; }
+    html.theme-dark .border-surface-variant { border-color: #2c2b2a !important; }
+    html.theme-dark .border-on-surface { border-color: #e6e4e1 !important; }
+    html.theme-dark .border-error { border-color: #ffb4ab !important; }
+    html.theme-dark .bg-outline-variant { background-color: #3a3937 !important; }
+    html.theme-dark .bg-on-surface { background-color: #e6e4e1 !important; }
+    html.theme-dark .hover\:bg-surface-container-low:hover { background-color: #201f1e !important; }
+    html.theme-dark .hover\:bg-surface-container-high:hover { background-color: #2c2b2a !important; }
+    html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
+    html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
+    html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #ebc168 !important; }
+    html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
+    html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
+    html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
+    html.theme-dark .hover\:border-primary:hover { border-color: #f2efec !important; }
+    html.theme-dark .hover\:border-on-surface:hover { border-color: #e6e4e1 !important; }
+    html.theme-dark .hover\:border-outline:hover { border-color: #4a4844 !important; }
+    html.theme-dark .focus\:border-primary:focus { border-color: #f2efec !important; }
+    html.theme-dark .focus\:border-on-surface:focus { border-color: #e6e4e1 !important; }
+    html.theme-dark .focus\:border-outline:focus { border-color: #4a4844 !important; }
+    html.theme-dark .group:hover .group-hover\:text-primary { color: #f2efec !important; }
+    html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
+    html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
+</style>
   </head>
 <body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased">
 <!-- Top App Bar -->
-<header class="bg-primary-container text-on-primary flex justify-between items-center w-full px-container-margin h-16 border-b border-white/10 sticky top-0 z-40">
-<a aria-label="Back" href="{{ url()->previous() }}" class="text-on-primary hover:opacity-80 transition-opacity flex items-center justify-center p-2 -ml-2">
+<header class="bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 border-b border-[var(--chrome-border)] sticky top-0 z-40">
+<a aria-label="Back" href="{{ url()->previous() }}" class="text-[var(--chrome-text)] hover:opacity-80 transition-opacity flex items-center justify-center p-2 -ml-2">
 <span class="material-symbols-outlined" data-icon="arrow_back" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-secondary-fixed-dim">RALIVA</h1>
-<a aria-label="Search" href="{{ route('customer.search') }}" class="text-on-primary hover:opacity-80 transition-opacity flex items-center justify-center p-2 -mr-2">
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
+<a aria-label="Search" href="{{ route('customer.search') }}" class="text-[var(--chrome-text)] hover:opacity-80 transition-opacity flex items-center justify-center p-2 -mr-2">
 <span class="material-symbols-outlined" data-icon="search" style="font-variation-settings: 'FILL' 0;">search</span>
 </a>
 </header>
@@ -311,24 +386,24 @@
 </section>
 </main>
 <!-- Bottom Navigation Bar (Mobile Only) -->
-<nav class="flex justify-around items-center w-full h-[72px] bg-primary-container text-on-primary px-xs pb-safe border-t border-white/10 shadow-sm fixed bottom-0 z-50 md:hidden">
-<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16 h-full" href="{{ route('customer.home') }}">
+<nav class="flex justify-around items-center w-full h-[72px] bg-[var(--chrome-bg)] text-[var(--chrome-text)] px-xs pb-safe border-t border-[var(--chrome-border)] shadow-sm fixed bottom-0 z-50 md:hidden">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1" data-icon="home" style="font-variation-settings: 'FILL' 0;">home</span>
 <span class="font-label-sm text-[10px]">Home</span>
 </a>
-<a class="flex flex-col items-center justify-center text-secondary-fixed-dim scale-95 transition-transform w-16 h-full" href="{{ route('customer.shop') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] scale-95 transition-transform w-16 h-full" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_bag" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
 <span class="font-label-sm text-[10px] font-semibold">Shop</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16 h-full" href="{{ route('customer.wishlist') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.wishlist') }}">
 <span class="material-symbols-outlined mb-1" data-icon="favorite" style="font-variation-settings: 'FILL' 0;">favorite</span>
 <span class="font-label-sm text-[10px]">Wishlist</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16 h-full" href="{{ route('customer.chart') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_cart" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
 <span class="font-label-sm text-[10px]">Cart</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16 h-full" href="{{ route('customer.account') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.account') }}">
 <span class="material-symbols-outlined mb-1" data-icon="person" style="font-variation-settings: 'FILL' 0;">person</span>
 <span class="font-label-sm text-[10px]">Account</span>
 </a>
