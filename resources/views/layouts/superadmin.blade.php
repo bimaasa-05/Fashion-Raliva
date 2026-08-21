@@ -178,6 +178,21 @@
         .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         @keyframes drawLine { to { stroke-dashoffset: 0; } }
         .animate-line { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: drawLine 2s ease-out forwards; }
+
+        .card-premium { box-shadow: 0 1px 2px rgb(17 17 17 / 0.04), 0 12px 32px -16px rgb(17 17 17 / 0.16); transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; }
+        .card-premium:hover { transform: translateY(-3px); box-shadow: 0 2px 4px rgb(17 17 17 / 0.05), 0 20px 48px -20px rgb(17 17 17 / 0.22); border-color: rgb(201 162 77 / 0.45); }
+        .dark .card-premium { box-shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 12px 32px -16px rgb(0 0 0 / 0.55); }
+        .dark .card-premium:hover { box-shadow: 0 2px 4px rgb(0 0 0 / 0.4), 0 20px 48px -20px rgb(0 0 0 / 0.7); }
+
+        .premium-heading::before { content: ''; display: inline-block; width: 4px; height: 0.95em; margin-right: 0.65rem; background: #C9A24D; border-radius: 9999px; }
+
+        .premium-table tbody tr { transition: background-color 0.2s ease; }
+        .premium-table tbody tr td:first-child { position: relative; }
+        .premium-table tbody tr td:first-child::before { content: ''; position: absolute; left: 0; top: 22%; bottom: 22%; width: 3px; border-radius: 9999px; background: #C9A24D; opacity: 0; transition: opacity 0.2s ease; }
+        .premium-table tbody tr:hover td:first-child::before { opacity: 1; }
+
+        .btn-premium { transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease; box-shadow: 0 8px 20px -10px rgb(17 17 17 / 0.45); }
+        .btn-premium:hover { transform: translateY(-1px); box-shadow: 0 14px 30px -12px rgb(17 17 17 / 0.55); filter: brightness(1.06); }
         .sidebar-scroll { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.18) transparent; }
         .sidebar-scroll::-webkit-scrollbar { width: 4px; }
         .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }

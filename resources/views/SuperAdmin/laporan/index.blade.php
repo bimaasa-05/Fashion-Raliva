@@ -47,7 +47,7 @@
 
 <!-- Summary Cards Grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-section-gap">
-    <div class="border border-muted-border p-6 bg-surface flex flex-col gap-2">
+    <div class="border border-muted-border p-6 bg-surface flex flex-col gap-2 card-premium">
         <div class="flex justify-between items-start text-on-surface-variant">
             <span class="font-label-sm uppercase tracking-widest">Total Pendapatan</span>
             <span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
@@ -59,7 +59,7 @@
             <span class="text-on-surface-variant text-xs">vs 30 hari terakhir</span>
         </div>
     </div>
-    <div class="border border-muted-border p-6 bg-surface flex flex-col gap-2">
+    <div class="border border-muted-border p-6 bg-surface flex flex-col gap-2 card-premium">
         <div class="flex justify-between items-start text-on-surface-variant">
             <span class="font-label-sm uppercase tracking-widest">Total Pesanan</span>
             <span class="material-symbols-outlined text-[20px]">shopping_bag</span>
@@ -71,7 +71,7 @@
             <span class="text-on-surface-variant text-xs">vs 30 hari terakhir</span>
         </div>
     </div>
-    <div class="border border-muted-border p-6 bg-surface flex flex-col gap-2">
+    <div class="border border-muted-border p-6 bg-surface flex flex-col gap-2 card-premium">
         <div class="flex justify-between items-start text-on-surface-variant">
             <span class="font-label-sm uppercase tracking-widest">Komisi</span>
             <span class="material-symbols-outlined text-[20px]">payments</span>
@@ -83,7 +83,7 @@
             <span class="text-on-surface-variant text-xs">vs 30 hari terakhir</span>
         </div>
     </div>
-    <div class="border border-muted-border p-6 bg-surface flex flex-col gap-2">
+    <div class="border border-muted-border p-6 bg-surface flex flex-col gap-2 card-premium">
         <div class="flex justify-between items-start text-on-surface-variant">
             <span class="font-label-sm uppercase tracking-widest">Toko Aktif</span>
             <span class="material-symbols-outlined text-[20px]">storefront</span>
@@ -99,9 +99,9 @@
 
 <!-- Charts Section -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-section-gap">
-    <div class="lg:col-span-2 border border-muted-border p-6 bg-surface">
+    <div class="lg:col-span-2 border border-muted-border p-6 bg-surface card-premium">
         <div class="flex justify-between items-center mb-6">
-            <h3 class="font-title-md text-on-background uppercase tracking-wider">Tren Pendapatan</h3>
+            <h3 class="font-title-md text-on-background uppercase tracking-wider premium-heading">Tren Pendapatan</h3>
             <button class="text-on-surface-variant hover:text-on-surface transition-colors p-1">
                 <span class="material-symbols-outlined">more_horiz</span>
             </button>
@@ -110,9 +110,9 @@
             <canvas id="revenueChart"></canvas>
         </div>
     </div>
-    <div class="border border-muted-border p-6 bg-surface flex flex-col">
+    <div class="border border-muted-border p-6 bg-surface flex flex-col card-premium">
         <div class="flex justify-between items-center mb-6">
-            <h3 class="font-title-md text-on-background uppercase tracking-wider">Toko Teratas</h3>
+            <h3 class="font-title-md text-on-background uppercase tracking-wider premium-heading">Toko Teratas</h3>
             <a class="font-label-sm text-secondary hover:underline uppercase tracking-widest" href="#">Lihat Semua</a>
         </div>
         <div class="flex flex-col gap-4 flex-grow">
@@ -174,11 +174,11 @@
 <!-- Recent Transactions Table -->
 <div class="mb-section-gap">
     <div class="flex justify-between items-center mb-6">
-        <h3 class="font-title-md text-on-background uppercase tracking-wider">Transaksi Terbaru</h3>
+        <h3 class="font-title-md text-on-background uppercase tracking-wider premium-heading">Transaksi Terbaru</h3>
         <a class="font-label-sm text-secondary hover:underline uppercase tracking-widest" href="#">Lihat Semua</a>
     </div>
-    <div class="border border-muted-border bg-surface overflow-x-auto">
-        <table class="w-full text-left border-collapse">
+    <div class="border border-muted-border bg-surface overflow-x-auto card-premium">
+        <table class="w-full text-left border-collapse premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low/50">
                     <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">ID Transaksi</th>

@@ -9,8 +9,8 @@
 
 @section('content')
 <!-- Orders Management -->
-<section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6">
-    <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface">Data Pesanan</h2>
+<section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Data Pesanan</h2>
     
     <!-- Filters -->
     <div class="mb-6 flex flex-col md:flex-row gap-3">
@@ -22,7 +22,7 @@
     
     <!-- Orders Table -->
     <div class="overflow-x-auto">
-        <table class="w-full min-w-full bg-surface-container-lowest rounded-lg overflow-hidden">
+        <table class="w-full min-w-full bg-surface-container-lowest rounded-lg overflow-hidden premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
                     <th class="p-6">ID Pesanan</th>

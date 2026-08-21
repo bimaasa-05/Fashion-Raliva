@@ -9,25 +9,29 @@
 @section('content')
 <div class="space-y-section-gap">
     <section>
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface">Ringkasan Pembayaran</h2>
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Pembayaran</h2>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 hover:border-gold-accent transition-colors">
+            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Hari Ini</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">payments</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Rp 842,5JT</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">312 transaksi</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 hover:border-gold-accent transition-colors">
+            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Verifikasi</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary">18</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">perlu ditinjau</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 hover:border-gold-accent transition-colors">
+            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Berhasil</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">check_circle</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">1.204</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">30 hari terakhir</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 hover:border-gold-accent transition-colors">
+            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Gagal / Dibatalkan</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">cancel</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-error">27</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">30 hari terakhir</span>
             </div>
@@ -35,7 +39,7 @@
     </section>
 
     <section class="space-y-gutter">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface">Daftar Transaksi Pembayaran</h2>
+        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Transaksi Pembayaran</h2>
 
         <div class="flex flex-wrap gap-2">
             <button class="px-4 py-2 bg-primary text-on-primary font-label-sm text-label-sm uppercase rounded transition-colors">Semua</button>
@@ -44,8 +48,8 @@
             <button class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Gagal</button>
         </div>
 
-        <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg">
-            <table class="w-full min-w-[900px]">
+        <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
+            <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
                         <th class="p-4 text-left">ID Pembayaran</th>

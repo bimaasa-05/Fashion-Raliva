@@ -40,7 +40,7 @@
 
     <!-- Edit Form Section -->
     <section class="space-y-gutter" id="edit-form-section" style="display: none;">
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 animate-fade-in">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 animate-fade-in card-premium">
             <div class="flex justify-between items-center mb-gutter">
                 <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface">Update Biaya Layanan</h2>
                 <button class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" onclick="document.getElementById('edit-form-section').style.display='none'; document.querySelector('[onclick=\"showEditForm()\"]').style.display='flex'">
@@ -89,11 +89,11 @@
             <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Rincian Biaya (Simulasi)</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
                 <p class="text-on-surface-variant font-label-sm uppercase tracking-widest mb-1">Subtotal</p>
                 <p class="font-display-lg text-headline-lg text-on-surface">Rp 100.000</p>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
                 <p class="text-on-surface-variant font-label-sm uppercase tracking-widest mb-1">Biaya Layanan (5%)</p>
                 <p class="font-display-lg text-headline-lg text-gold-accent">Rp 5.000</p>
             </div>

@@ -19,7 +19,7 @@
 @section('content')
 <div class="w-full max-w-3xl mx-auto">
     <!-- Current Commission Display -->
-    <div class="w-full bg-surface-container-low border border-muted-border p-section-gap text-center mb-section-gap relative overflow-hidden group">
+    <div class="w-full bg-surface-container-low border border-muted-border p-section-gap text-center mb-section-gap relative overflow-hidden group card-premium">
         <div class="absolute inset-0 bg-gradient-to-br from-surface-container to-surface-container-lowest opacity-50 z-0"></div>
         <div class="relative z-10">
             <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest block mb-gutter">Tarif Saat Ini</span>

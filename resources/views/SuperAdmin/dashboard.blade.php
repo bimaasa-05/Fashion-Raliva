@@ -10,26 +10,29 @@
 @section('content')
 <!-- Platform Overview -->
 <section>
-    <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface">Ringkasan Platform</h2>
+    <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Platform</h2>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-gutter">
         <!-- Stat Card 1 -->
-        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 hover:border-gold-accent transition-colors">
+        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Pengguna</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">24.5K</span>
         </div>
         <!-- Stat Card 2 -->
-        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 hover:border-gold-accent transition-colors">
+        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Toko</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">storefront</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">1.2K</span>
         </div>
         <!-- Stat Card 3 -->
-        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 hover:border-gold-accent transition-colors">
+        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Pesanan</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">8.4K</span>
         </div>
         <!-- Stat Card 4 -->
-        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 hover:border-gold-accent transition-colors">
+        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Produk</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">checkroom</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">45.2K</span>
         </div>
         <!-- Stat Card 5 -->
@@ -46,8 +49,8 @@
 </section>
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
     <!-- Perlu Perhatian -->
-    <section class="lg:col-span-1 bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col">
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface">Perlu Perhatian</h2>
+    <section class="lg:col-span-1 bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Perlu Perhatian</h2>
         <ul class="flex flex-col gap-4">
             <li class="flex items-center justify-between group cursor-pointer pb-4 border-b border-muted-border last:border-0 last:pb-0">
                 <div class="flex items-center gap-4">
@@ -88,9 +91,9 @@
         </ul>
     </section>
     <!-- Platform Performance Chart -->
-    <section class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col">
+    <section class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface">Kinerja Platform</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Kinerja Platform</h2>
             <div class="flex gap-2">
                 <button class="px-3 py-1 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase rounded-full">7D</button>
                 <button class="px-3 py-1 border border-muted-border text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase rounded-full transition-colors">30D</button>
@@ -130,8 +133,8 @@
 </div>
 <!-- Recent Activity -->
 <section>
-    <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface">Aktivitas Terbaru</h2>
-    <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden">
+    <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Aktivitas Terbaru</h2>
+    <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium">
         <ul class="flex flex-col">
             <li class="p-4 border-b border-muted-border hover:bg-surface-container-low transition-colors flex items-center justify-between">
                 <div class="flex items-center gap-4">

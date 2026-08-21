@@ -17,9 +17,9 @@
     <!-- Add Category Form Card -->
     <section class="space-y-gutter">
         <div class="flex justify-between items-center">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Tambah Kategori Baru</h2>
+            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Tambah Kategori Baru</h2>
         </div>
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
             <form class="space-y-gutter" id="add-category-form">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="categoryName">Nama Kategori</label>
@@ -40,7 +40,7 @@
     <!-- Categories Grid -->
     <section class="space-y-gutter">
         <div class="flex justify-between items-center">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Daftar Kategori</h2>
+            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Daftar Kategori</h2>
             <span class="text-on-surface-variant font-body-md text-sm">7 kategori aktif</span>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">

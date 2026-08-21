@@ -45,7 +45,7 @@
 
     <!-- Daftar Pengguna -->
     <div class="grid gap-element-gap md:grid-cols-2 xl:grid-cols-3">
-        <div class="bg-surface-container-low p-4 rounded border border-muted-border relative cursor-pointer"
+        <div class="bg-surface-container-low p-4 rounded border border-muted-border relative cursor-pointer card-premium"
             onclick="openUserDetail()">
             <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-3">
@@ -72,7 +72,7 @@
             </div>
         </div>
 
-        <div class="bg-surface-container-low p-4 rounded border border-muted-border relative cursor-pointer"
+        <div class="bg-surface-container-low p-4 rounded border border-muted-border relative cursor-pointer card-premium"
             onclick="openUserDetail()">
             <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-3">
@@ -97,7 +97,7 @@
             </div>
         </div>
 
-        <div class="bg-surface-container-low p-4 rounded border border-muted-border relative cursor-pointer"
+        <div class="bg-surface-container-low p-4 rounded border border-muted-border relative cursor-pointer card-premium"
             onclick="openUserDetail()">
             <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-3">

@@ -7,7 +7,7 @@
 
 @section('content')
 <div class="space-y-section-gap max-w-4xl">
-    <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6">
+    <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
             <div class="w-24 h-24 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden shrink-0">
                 <img alt="Foto Profil Admin" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuUf094pPsvMlxNz9CEzztLZIPfB4q2FE_6HM73O8sFoIt42FkBx43D1cxFlylMdSolVSJZNCBDrc8ttYGcVUIYXcsS0AUGBhcZYBAFGqcAXzmuJyVyjyJY6CXvyxdr0Zwzlwi2Tw3Djm9F2wtwaOLZklTUYLsRg7NCbF9hgI1uCTcTdgGi-0zShSJMzVkR1HYp_C02xOHHVWnGLI4_rrhbWQnSlrZ2VpmUbZL0Gc18YDjNwDrrkAcPg" />
@@ -21,8 +21,8 @@
         </div>
     </section>
 
-    <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 space-y-gutter">
-        <h3 class="font-title-md text-title-md uppercase tracking-wider text-on-surface">Informasi Akun</h3>
+    <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 space-y-gutter card-premium">
+        <h3 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Informasi Akun</h3>
         <form class="space-y-gutter" id="profil-form">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
@@ -43,13 +43,13 @@
                 </div>
             </div>
             <div class="flex justify-end pt-gutter border-t border-muted-border">
-                <button type="submit" class="bg-deep-onyx text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors">Simpan Perubahan</button>
+                <button type="submit" class="bg-deep-onyx text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Simpan Perubahan</button>
             </div>
         </form>
     </section>
 
-    <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 space-y-gutter">
-        <h3 class="font-title-md text-title-md uppercase tracking-wider text-on-surface">Keamanan</h3>
+    <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 space-y-gutter card-premium">
+        <h3 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Keamanan</h3>
         <form class="space-y-gutter" id="password-form">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
                 <div>
