@@ -3,6 +3,7 @@
 @section('title', 'Kurir')
 
 @section('header-title', 'Manajemen Kurir')
+@section('header-badge', 'Kelola')
 @section('header-subtitle', 'Kelola kurir yang tersedia di platform untuk pengiriman')
 
 @push('styles')

@@ -2,7 +2,8 @@
 
 @section('title', 'Pajak & Biaya')
 
-@section('header-title', 'Pajak & Biaya')
+@section('header-title', 'Pajak & Biaya Layanan')
+@section('header-badge', 'Kelola')
 @section('header-subtitle', 'Kelola biaya global dan pajak yang ditampilkan saat checkout')
 
 @push('styles')
@@ -70,7 +71,7 @@
                         <span class="font-body-md text-body-md">Pada subtotal Rp 100.000</span>
                     </div>
                     <div class="text-right">
-                        <span class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Platform Revenue</span>
+                        <span class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Pendapatan Platform</span>
                         <span class="font-headline-lg text-headline-lg text-deep-onyx" id="fee-preview-amount">Rp 5.000</span>
                     </div>
                 </div>

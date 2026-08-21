@@ -3,6 +3,7 @@
 @section('title', 'Dashboard Admin Utama')
 
 @section('header-title', 'Selamat datang, Super Admin')
+@section('header-badge', 'Kelola & Lihat')
 
 @section('header-subtitle', 'Ini yang terjadi hari ini.')
 
@@ -28,7 +29,7 @@
         </div>
         <!-- Stat Card 4 -->
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 hover:border-gold-accent transition-colors">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Products</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Produk</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">45.2K</span>
         </div>
         <!-- Stat Card 5 -->
@@ -54,8 +55,8 @@
                         <span class="material-symbols-outlined">store_mall_directory</span>
                     </div>
                     <div>
-                        <span class="font-title-md text-title-md text-on-surface block">Store Verification</span>
-                        <span class="text-on-surface-variant font-body-md text-sm">12 pending requests</span>
+                        <span class="font-title-md text-title-md text-on-surface block">Verifikasi Toko</span>
+                        <span class="text-on-surface-variant font-body-md text-sm">12 permintaan menunggu</span>
                     </div>
                 </div>
                 <span class="material-symbols-outlined text-outline-variant group-hover:text-on-surface transition-colors">chevron_right</span>
@@ -66,7 +67,7 @@
                         <span class="material-symbols-outlined">inventory_2</span>
                     </div>
                     <div>
-                        <span class="font-title-md text-title-md text-on-surface block">Product Moderation</span>
+                        <span class="font-title-md text-title-md text-on-surface block">Moderasi Produk</span>
                         <span class="text-on-surface-variant font-body-md text-sm">45 item ditandai</span>
                     </div>
                 </div>
@@ -78,8 +79,8 @@
                         <span class="material-symbols-outlined">currency_exchange</span>
                     </div>
                     <div>
-                        <span class="font-title-md text-title-md text-on-surface block">Refund Requests</span>
-                        <span class="text-on-surface-variant font-body-md text-sm">8 awaiting review</span>
+                        <span class="font-title-md text-title-md text-on-surface block">Permintaan Refund</span>
+                        <span class="text-on-surface-variant font-body-md text-sm">8 menunggu tinjauan</span>
                     </div>
                 </div>
                 <span class="material-symbols-outlined text-outline-variant group-hover:text-on-surface transition-colors">chevron_right</span>
@@ -116,20 +117,20 @@
             </svg>
             <!-- X-axis labels -->
             <div class="flex justify-between mt-2 text-on-surface-variant font-label-sm text-[10px] uppercase">
-                <span>Mon</span>
-                <span>Tue</span>
-                <span>Wed</span>
-                <span>Thu</span>
-                <span>Fri</span>
-                <span>Sat</span>
-                <span>Sun</span>
+                <span>Senin</span>
+                <span>Selasa</span>
+                <span>Rabu</span>
+                <span>Kamis</span>
+                <span>Jumat</span>
+                <span>Sabtu</span>
+                <span>Minggu</span>
             </div>
         </div>
     </section>
 </div>
 <!-- Recent Activity -->
 <section>
-    <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface">Recent Activity</h2>
+    <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface">Aktivitas Terbaru</h2>
     <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden">
         <ul class="flex flex-col">
             <li class="p-4 border-b border-muted-border hover:bg-surface-container-low transition-colors flex items-center justify-between">
@@ -138,8 +139,8 @@
                         <span class="material-symbols-outlined text-sm text-on-surface">person_add</span>
                     </div>
                     <div>
-                        <p class="font-body-md text-on-surface"><span class="font-bold">Sarah Jenkins</span> registered as a new user.</p>
-                        <p class="text-on-surface-variant text-sm mt-0.5">2 minutes ago</p>
+                        <p class="font-body-md text-on-surface"><span class="font-bold">Sarah Jenkins</span> mendaftar sebagai pengguna baru.</p>
+                        <p class="text-on-surface-variant text-sm mt-0.5">2 menit lalu</p>
                     </div>
                 </div>
             </li>
@@ -149,8 +150,8 @@
                         <span class="material-symbols-outlined text-sm text-on-surface">store</span>
                     </div>
                     <div>
-                        <p class="font-body-md text-on-surface">Store <span class="font-bold">LUNARA Fashion</span> verified.</p>
-                        <p class="text-on-surface-variant text-sm mt-0.5">15 minutes ago</p>
+                        <p class="font-body-md text-on-surface">Toko <span class="font-bold">LUNARA Fashion</span> terverifikasi.</p>
+                        <p class="text-on-surface-variant text-sm mt-0.5">15 menit lalu</p>
                     </div>
                 </div>
             </li>
@@ -160,8 +161,8 @@
                         <span class="material-symbols-outlined text-sm text-on-surface">shopping_cart</span>
                     </div>
                     <div>
-                        <p class="font-body-md text-on-surface">Large order #RLV-2405 completed.</p>
-                        <p class="text-on-surface-variant text-sm mt-0.5">1 hour ago</p>
+                        <p class="font-body-md text-on-surface">Pesanan besar #RLV-2405 telah selesai.</p>
+                        <p class="text-on-surface-variant text-sm mt-0.5">1 jam lalu</p>
                     </div>
                 </div>
             </li>
@@ -171,8 +172,8 @@
                         <span class="material-symbols-outlined text-sm text-on-surface">warning</span>
                     </div>
                     <div>
-                        <p class="font-body-md text-on-surface">Product <span class="font-bold">Oversized Linen Shirt</span> flagged for review.</p>
-                        <p class="text-on-surface-variant text-sm mt-0.5">2 hours ago</p>
+                        <p class="font-body-md text-on-surface">Produk <span class="font-bold">Oversized Linen Shirt</span> ditandai untuk ditinjau.</p>
+                        <p class="text-on-surface-variant text-sm mt-0.5">2 jam lalu</p>
                     </div>
                 </div>
             </li>

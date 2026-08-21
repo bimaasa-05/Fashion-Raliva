@@ -2,9 +2,10 @@
 
 @section('title', 'Moderasi Produk')
 
-@section('header-title', 'Product Moderation')
+@section('header-title', 'Moderasi Produk')
+@section('header-badge', 'Kelola')
 
-@section('header-subtitle', 'Review and approve product listings from vendors.')
+@section('header-subtitle', 'Tinjau produk pending dan beri keputusan setujui atau tolak beserta alasan.')
 
 @push('styles')
 <style>
@@ -19,11 +20,11 @@
 
 @section('content')
 <div class="px-container-margin pt-gutter pb-element-gap">
-    <h1 class="font-title-md text-title-md text-on-surface text-center mb-element-gap">PRODUCT MODERATION</h1>
+    <h1 class="font-title-md text-title-md text-on-surface text-center mb-element-gap">MODERASI PRODUK</h1>
     <div class="flex items-center justify-center space-x-gutter mb-container-margin overflow-x-auto no-scrollbar py-2">
-        <button class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-primary text-primary transition-colors whitespace-nowrap">PENDING (12)</button>
-        <button class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">APPROVED</button>
-        <button class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">REJECTED</button>
+        <button class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-primary text-primary transition-colors whitespace-nowrap">MENUNGGU (12)</button>
+        <button class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">DISETUJUI</button>
+        <button class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">DITOLAK</button>
     </div>
 </div>
 <div class="px-container-margin flex-grow">
@@ -89,19 +90,19 @@
         <div class="w-full md:w-1/2 aspect-[3/4] md:aspect-auto bg-surface-container-low"><img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyCcrmTRfGfsxs_N3ci9i5HchBHGyO7-NS4KaH08rxg5KEVTQHbujUhwRjP9Cx_oAJKlFkLeJNg41S_nDTbkkzwgSEQfWZ9NXhtb_992MQQ44WF2XQZesWGCO4i0dPy_0JlpR_71A7X9_EyfbAghnliaoPC73GgYX51dz9qI45IIUycAoqM8RVEla78vBAU5SiPyPHbzn330s4nqHZ6svj6g_3f2NDhPd_5gqbC1NfSCUDBM-qSUzc-w" /></div>
         <div class="w-full md:w-1/2 p-container-margin flex flex-col">
             <div class="mb-auto">
-                <div class="flex items-center justify-between mb-2"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase">NOIRÉ STUDIO</span><span class="px-2 py-1 bg-surface-container-high text-on-surface font-label-sm text-[10px] uppercase">Pending</span></div>
+                <div class="flex items-center justify-between mb-2"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase">NOIRÉ STUDIO</span><span class="px-2 py-1 bg-surface-container-high text-on-surface font-label-sm text-[10px] uppercase">Menunggu</span></div>
                 <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">Oversized Linen Shirt</h2>
                 <div class="font-title-md text-title-md text-on-surface mb-container-margin">Rp 289.000</div>
                 <div class="space-y-4 mb-section-gap">
-                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Category</span><span class="font-body-md text-body-md text-on-surface">Women's Clothing > Tops</span></div>
-                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Colors</span><div class="flex space-x-2"><div class="w-6 h-6 rounded-full bg-white border border-outline-variant"></div><div class="w-6 h-6 rounded-full bg-black"></div><div class="w-6 h-6 rounded-full bg-[#d2b48c]"></div></div></div>
-                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Sizes</span><span class="font-body-md text-body-md text-on-surface">S, M, L, XL</span></div>
-                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Description</span><p class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-sm">A versatile oversized linen shirt featuring a crisp collar, button-down front, and dropped shoulders for a relaxed fit. Made from breathable 100% European linen.</p></div>
+                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Kategori</span><span class="font-body-md text-body-md text-on-surface">Pakaian Wanita > Atasan</span></div>
+                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Warna</span><div class="flex space-x-2"><div class="w-6 h-6 rounded-full bg-white border border-outline-variant"></div><div class="w-6 h-6 rounded-full bg-black"></div><div class="w-6 h-6 rounded-full bg-[#d2b48c]"></div></div></div>
+                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Ukuran</span><span class="font-body-md text-body-md text-on-surface">S, M, L, XL</span></div>
+                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Deskripsi</span><p class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-sm">Kemeja linen oversized serbaguna dengan kerah rapi, kancing depan, dan bahu jatuh untuk potongan santai. Terbuat dari linen Eropa 100% yang bernapas.</p></div>
                 </div>
             </div>
             <div class="flex flex-col space-y-3 mt-container-margin pt-container-margin border-t border-outline-variant">
-                <button class="w-full bg-deep-onyx text-on-primary font-label-sm text-label-sm py-4 uppercase tracking-widest hover:bg-black transition-colors" onclick="alert('Product Approved')">Approve Product</button>
-                <button class="w-full bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-4 uppercase tracking-widest hover:bg-surface-container-low transition-colors" onclick="openRejectModal()">Reject</button>
+                <button class="w-full bg-deep-onyx text-on-primary font-label-sm text-label-sm py-4 uppercase tracking-widest hover:bg-black transition-colors" onclick="alert('Produk disetujui')">Setujui Produk</button>
+                <button class="w-full bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-4 uppercase tracking-widest hover:bg-surface-container-low transition-colors" onclick="openRejectModal()">Tolak</button>
             </div>
         </div>
     </div>
@@ -109,11 +110,11 @@
 <!-- Reject Reason Modal -->
 <div class="fixed inset-0 z-[70] flex items-center justify-center p-4 modal-enter bg-on-background/50 backdrop-blur-sm hidden" id="rejectModal">
     <div class="bg-surface w-full max-w-md p-container-margin relative">
-        <h3 class="font-title-md text-title-md text-on-surface mb-4">Reason for Rejection</h3>
-        <textarea class="w-full border border-outline-variant bg-transparent p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary mb-4" placeholder="Enter reason here..." rows="4"></textarea>
+        <h3 class="font-title-md text-title-md text-on-surface mb-4">Alasan Penolakan</h3>
+        <textarea class="w-full border border-outline-variant bg-transparent p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary mb-4" placeholder="Tulis alasan di sini..." rows="4"></textarea>
         <div class="flex space-x-4">
-            <button class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors" onclick="closeRejectModal()">Cancel</button>
-            <button class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity" onclick="alert('Product Rejected'); closeRejectModal(); closeDetailModal();">Confirm Reject</button>
+            <button class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors" onclick="closeRejectModal()">Batal</button>
+            <button class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity" onclick="alert('Produk ditolak'); closeRejectModal(); closeDetailModal();">Konfirmasi Penolakan</button>
         </div>
     </div>
 </div>

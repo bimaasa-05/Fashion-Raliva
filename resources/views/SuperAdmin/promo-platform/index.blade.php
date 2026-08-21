@@ -3,6 +3,7 @@
 @section('title', 'Promo Platform')
 
 @section('header-title', 'Promo Platform')
+@section('header-badge', 'Kelola')
 @section('header-subtitle', 'Buat dan kelola promo lintas toko untuk meningkatkan penjualan')
 
 @push('styles')

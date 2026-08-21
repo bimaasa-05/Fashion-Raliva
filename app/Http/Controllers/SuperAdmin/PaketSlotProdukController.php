@@ -4,10 +4,10 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 
-class MenuController extends Controller
+class PaketSlotProdukController extends Controller
 {
     public function index()
     {
-        return view('SuperAdmin.menu.index');
+        return view('SuperAdmin.paket-slot-produk.index');
     }
 }

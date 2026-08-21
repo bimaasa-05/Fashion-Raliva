@@ -2,7 +2,8 @@
 
 @section('title', 'Data Pesanan')
 
-@section('header-title', 'Order Management')
+@section('header-title', 'Data Pesanan')
+@section('header-badge', 'Lihat')
 
 @section('header-subtitle', 'Monitor pesanan dari seluruh toko tanpa mengambil alih operasional')
 
@@ -13,10 +14,10 @@
     
     <!-- Filters -->
     <div class="mb-6 flex flex-col md:flex-row gap-3">
-        <button class="flex-1 px-4 py-2 border border-muted-border text-on-surface-variant text-sm uppercase rounded hover:bg-surface-container-high transition-colors">All Orders</button>
-        <button class="flex-1 px-4 py-2 border border-muted-border text-on-surface-variant text-sm uppercase rounded hover:bg-surface-container-high transition-colors">Pending</button>
-        <button class="flex-1 px-4 py-2 border border-primary text-primary text-sm uppercase rounded hover:bg-primary-fixed-dim transition-colors">Processing</button>
-        <button class="flex-1 px-4 py-2 border border-success text-success text-sm uppercase rounded hover:bg-success/20 transition-colors">Completed</button>
+        <button class="flex-1 px-4 py-2 border border-muted-border text-on-surface-variant text-sm uppercase rounded hover:bg-surface-container-high transition-colors">Semua Pesanan</button>
+        <button class="flex-1 px-4 py-2 border border-muted-border text-on-surface-variant text-sm uppercase rounded hover:bg-surface-container-high transition-colors">Menunggu</button>
+        <button class="flex-1 px-4 py-2 border border-primary text-primary text-sm uppercase rounded hover:bg-primary-fixed-dim transition-colors">Diproses</button>
+        <button class="flex-1 px-4 py-2 border border-success text-success text-sm uppercase rounded hover:bg-success/20 transition-colors">Selesai</button>
     </div>
     
     <!-- Orders Table -->
@@ -44,7 +45,7 @@
                             </div>
                             <div>
                                 <p class="font-body-md text-on-surface">LUNARA Fashion</p>
-                                <p class="text-on-surface-variant text-xs">5 items</p>
+                                <p class="text-on-surface-variant text-xs">5 produk</p>
                             </div>
                         </div>
                     </td>
@@ -54,13 +55,12 @@
                     </td>
                     <td class="p-6"><span class="font-bold text-gold-accent">Rp 2.550.000</span></td>
                     <td class="p-6">
-                        <span class="inline-flex items-center px-2 py-1 rounded bg-surface-container-high text-on-surface text-xs uppercase">Processing</span>
+                        <span class="inline-flex items-center px-2 py-1 rounded bg-surface-container-high text-on-surface text-xs uppercase">Diproses</span>
                     </td>
-                    <td class="p-6 text-right"><span class="text-on-surface-variant text-xs">2 hours ago</span></td>
+                    <td class="p-6 text-right"><span class="text-on-surface-variant text-xs">2 jam lalu</span></td>
                     <td class="p-6 text-right">
                         <div class="flex gap-2">
                             <button class="px-3 py-1 bg-white text-on-surface text-xs uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
-                            <button class="px-3 py-1 border border-outline text-on-surface text-xs uppercase hover:bg-surface-container-low transition-colors">Edit</button>
                         </div>
                     </td>
                 </tr>
@@ -75,7 +75,7 @@
                             </div>
                             <div>
                                 <p class="font-body-md text-on-surface">NOIRÉ Studio</p>
-                                <p class="text-on-surface-variant text-xs">3 items</p>
+                                <p class="text-on-surface-variant text-xs">3 produk</p>
                             </div>
                         </div>
                     </td>
@@ -85,9 +85,9 @@
                     </td>
                     <td class="p-6"><span class="font-bold text-gold-accent">Rp 1.820.000</span></td>
                     <td class="p-6">
-                        <span class="inline-flex items-center px-2 py-1 rounded bg-surface-container-high text-on-surface text-xs uppercase">Pending</span>
+                        <span class="inline-flex items-center px-2 py-1 rounded bg-surface-container-high text-on-surface text-xs uppercase">Menunggu</span>
                     </td>
-                    <td class="p-6 text-right"><span class="text-on-surface-variant text-xs">1 day ago</span></td>
+                    <td class="p-6 text-right"><span class="text-on-surface-variant text-xs">1 hari lalu</span></td>
                     <td class="p-6 text-right">
                         <div class="flex gap-2">
                             <button class="px-3 py-1 bg-white text-on-surface text-xs uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
@@ -105,7 +105,7 @@
                             </div>
                             <div>
                                 <p class="font-body-md text-on-surface">Teko & Sons</p>
-                                <p class="text-on-surface-variant text-xs">2 items</p>
+                                <p class="text-on-surface-variant text-xs">2 produk</p>
                             </div>
                         </div>
                     </td>
@@ -115,9 +115,9 @@
                     </td>
                     <td class="p-6"><span class="font-bold text-gold-accent">Rp 3.200.000</span></td>
                     <td class="p-6">
-                        <span class="inline-flex items-center px-2 py-1 rounded bg-surface-container-high text-on-surface text-xs uppercase">Shipped</span>
+                        <span class="inline-flex items-center px-2 py-1 rounded bg-surface-container-high text-on-surface text-xs uppercase">Dikirim</span>
                     </td>
-                    <td class="p-6 text-right"><span class="text-on-surface-variant text-xs">3 days ago</span></td>
+                    <td class="p-6 text-right"><span class="text-on-surface-variant text-xs">3 hari lalu</span></td>
                     <td class="p-6 text-right">
                         <div class="flex gap-2">
                             <button class="px-3 py-1 bg-white text-on-surface text-xs uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>

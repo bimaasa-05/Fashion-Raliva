@@ -3,6 +3,7 @@
 @section('title', 'Kategori Produk')
 
 @section('header-title', 'Kategori Produk')
+@section('header-badge', 'Kelola')
 @section('header-subtitle', 'Kelola kategori global yang digunakan oleh semua toko')
 
 @push('styles')

@@ -1,8 +1,8 @@
 @extends('layouts.superadmin')
 
 @section('title', 'Data Bank')
-
-@section('header-title', 'Manajemen Bank')
+@section('header-title', 'Data Bank')
+@section('header-badge', 'Kelola')
 @section('header-subtitle', 'Daftar bank yang didukung platform untuk pencairan dana')
 
 @push('styles')
