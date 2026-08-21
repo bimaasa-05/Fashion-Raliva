@@ -130,7 +130,7 @@
 <a aria-label="Search" href="{{ route('customer.search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2">
 <span class="material-symbols-outlined" data-icon="search">search</span>
 </a>
-<button aria-label="Filter" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 -mr-2">
+<button aria-label="Filter" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 -mr-2" onclick="openFilter()" type="button">
 <span class="material-symbols-outlined" data-icon="tune">tune</span>
 </button>
 </div>
@@ -179,10 +179,31 @@
 <div class="flex justify-between items-center px-container-margin py-sm border-b border-outline-variant">
 <div class="font-body-sm text-body-sm text-on-surface-variant">Showing 42 items</div>
 <div class="flex gap-4">
-<button class="flex items-center gap-1 font-label-sm text-label-sm text-on-surface hover:text-secondary transition-colors">
-                        Sort
-                        <span class="material-symbols-outlined text-[16px]" data-icon="expand_more">expand_more</span>
+<div class="relative" id="sort-menu-container">
+<button class="flex items-center gap-1 font-label-sm text-label-sm text-on-surface hover:text-secondary transition-colors" onclick="toggleSortMenu()" type="button">
+<span id="sort-label">Sort</span>
+<span class="material-symbols-outlined text-[16px] transition-transform duration-200" data-icon="expand_more" id="sort-chevron">expand_more</span>
 </button>
+<div id="sort-menu" class="absolute right-0 top-full mt-xs w-56 bg-surface rounded-lg border border-outline-variant shadow-xl z-20 py-xs origin-top-right transition-all duration-200 ease-out invisible opacity-0 scale-95 -translate-y-1">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest px-md pt-xs pb-sm">Sort By</p>
+<button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors font-semibold" data-sort="Newest" onclick="selectSort('Newest')" type="button">
+<span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">schedule</span>Newest</span>
+<span class="material-symbols-outlined text-[18px] text-secondary sort-check">check</span>
+</button>
+<button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Price: Low to High" onclick="selectSort('Price: Low to High')" type="button">
+<span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_upward</span>Price: Low to High</span>
+<span class="material-symbols-outlined text-[18px] text-secondary sort-check invisible">check</span>
+</button>
+<button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Price: High to Low" onclick="selectSort('Price: High to Low')" type="button">
+<span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_downward</span>Price: High to Low</span>
+<span class="material-symbols-outlined text-[18px] text-secondary sort-check invisible">check</span>
+</button>
+<button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Popular" onclick="selectSort('Popular')" type="button">
+<span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">local_fire_department</span>Popular</span>
+<span class="material-symbols-outlined text-[18px] text-secondary sort-check invisible">check</span>
+</button>
+</div>
+</div>
 </div>
 </div>
 <!-- Product Grid -->
@@ -276,4 +297,117 @@
 </a>
 </nav>
 @include('customer._partials.drawer')
+{{-- FILTER BOTTOM SHEET --}}
+<div id="filter-overlay" class="fixed inset-0 bg-black/50 z-[60] hidden" onclick="closeFilter()"></div>
+<div id="filter-sheet" class="fixed bottom-0 left-0 w-full z-[70] bg-surface rounded-t-2xl translate-y-full transition-transform duration-300 max-h-[85vh] flex flex-col">
+<div class="flex justify-center pt-sm shrink-0">
+<span class="w-10 h-1 rounded-full bg-outline-variant"></span>
+</div>
+<div class="flex justify-between items-center px-container-margin py-sm border-b border-outline-variant shrink-0">
+<h2 class="font-title-md text-title-md uppercase tracking-widest">Filters</h2>
+<button aria-label="Close filters" class="hover:opacity-80 transition-opacity flex" onclick="closeFilter()" type="button">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<div class="overflow-y-auto px-container-margin pb-md grow">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">Category</h3>
+<div class="grid grid-cols-2 gap-sm">
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4" type="checkbox"/><span class="font-body-sm text-body-sm">Women</span></label>
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4" type="checkbox"/><span class="font-body-sm text-body-sm">Men</span></label>
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4" type="checkbox"/><span class="font-body-sm text-body-sm">Accessories</span></label>
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4" type="checkbox"/><span class="font-body-sm text-body-sm">Shoes</span></label>
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4" type="checkbox"/><span class="font-body-sm text-body-sm">Bags</span></label>
+</div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">Size</h3>
+<div class="flex flex-wrap gap-sm">
+<button class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">XS</button>
+<button class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">S</button>
+<button class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">M</button>
+<button class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">L</button>
+<button class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">XL</button>
+</div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">Color</h3>
+<div class="flex flex-wrap gap-md">
+<button aria-label="Black" class="f-opt w-8 h-8 rounded-full bg-[#111111] transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button aria-label="White" class="f-opt w-8 h-8 rounded-full bg-[#FFFFFF] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button aria-label="Beige" class="f-opt w-8 h-8 rounded-full bg-[#E5DCC5] transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button aria-label="Brown" class="f-opt w-8 h-8 rounded-full bg-[#6B4F3A] transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button aria-label="Gold" class="f-opt w-8 h-8 rounded-full bg-[#D4AF37] transition-shadow" onclick="toggleSel(this)" type="button"></button>
+</div>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">Price Range</h3>
+<div class="flex items-end gap-gutter">
+<div class="flex-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs" for="price-min">Min</label>
+<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-sm text-body-sm focus:outline-none focus:border-primary transition-colors" id="price-min" inputmode="numeric" placeholder="Rp 0"/>
+</div>
+<span class="text-on-surface-variant pb-sm">—</span>
+<div class="flex-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs" for="price-max">Max</label>
+<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-sm text-body-sm focus:outline-none focus:border-primary transition-colors" id="price-max" inputmode="numeric" placeholder="Rp 1.000.000"/>
+</div>
+</div>
+</div>
+<div class="flex gap-gutter px-container-margin py-md border-t border-outline-variant shrink-0">
+<button class="flex-1 h-12 border border-primary text-primary font-label-caps text-label-caps tracking-widest hover:bg-surface-container-low transition-colors" onclick="resetFilters()" type="button">RESET</button>
+<button class="flex-1 h-12 bg-primary text-on-primary font-label-caps text-label-caps tracking-widest hover:opacity-90 transition-opacity" onclick="applyFilters()" type="button">APPLY</button>
+</div>
+</div>
+<script>
+        function openFilter() {
+            document.getElementById('filter-sheet').classList.remove('translate-y-full');
+            document.getElementById('filter-overlay').classList.remove('hidden');
+        }
+        function closeFilter() {
+            document.getElementById('filter-sheet').classList.add('translate-y-full');
+            document.getElementById('filter-overlay').classList.add('hidden');
+        }
+        function applyFilters() {
+            closeFilter();
+        }
+        function toggleSel(el) {
+            el.classList.toggle('ring-2');
+            el.classList.toggle('ring-on-surface');
+        }
+        function resetFilters() {
+            document.querySelectorAll('#filter-sheet input[type="checkbox"]').forEach(function (cb) { cb.checked = false; });
+            document.querySelectorAll('#filter-sheet .f-opt').forEach(function (el) {
+                el.classList.remove('ring-2', 'ring-on-surface');
+            });
+            document.getElementById('price-min').value = '';
+            document.getElementById('price-max').value = '';
+        }
+        function toggleSortMenu() {
+            var menu = document.getElementById('sort-menu');
+            if (menu.classList.contains('invisible')) {
+                menu.classList.remove('invisible', 'opacity-0', 'scale-95', '-translate-y-1');
+                document.getElementById('sort-chevron').classList.add('rotate-180');
+            } else {
+                closeSortMenu();
+            }
+        }
+        function closeSortMenu() {
+            document.getElementById('sort-menu').classList.add('invisible', 'opacity-0', 'scale-95', '-translate-y-1');
+            document.getElementById('sort-chevron').classList.remove('rotate-180');
+        }
+        function selectSort(label) {
+            document.getElementById('sort-label').textContent = label;
+            document.querySelectorAll('#sort-menu [data-sort]').forEach(function (btn) {
+                var check = btn.querySelector('.sort-check');
+                if (btn.dataset.sort === label) {
+                    check.classList.remove('invisible');
+                    btn.classList.add('font-semibold');
+                } else {
+                    check.classList.add('invisible');
+                    btn.classList.remove('font-semibold');
+                }
+            });
+            closeSortMenu();
+        }
+        document.addEventListener('click', function (e) {
+            var container = document.getElementById('sort-menu-container');
+            if (container && !container.contains(e.target)) {
+                closeSortMenu();
+            }
+        });
+    </script>
 </body></html>
