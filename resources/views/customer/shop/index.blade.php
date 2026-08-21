@@ -139,30 +139,46 @@
 <!-- Main Content -->
 <main class="flex-grow w-full max-w-screen-xl mx-auto flex flex-col md:flex-row">
 <!-- Desktop Sidebar Navigation -->
-<aside class="hidden md:flex flex-col w-64 flex-shrink-0 border-r border-outline-variant min-h-[calc(100vh-64px)] p-container-margin sticky top-16">
-<h2 class="font-title-md text-title-md text-on-surface mb-md">CATEGORIES</h2>
-<nav class="flex flex-col gap-sm">
-<a class="font-body-lg text-body-lg text-on-surface-variant hover:bg-surface-container-low px-3 py-2 rounded transition-colors flex items-center gap-3" href="#">
-<span class="material-symbols-outlined" data-icon="new_releases">new_releases</span>
+<aside class="hidden md:flex flex-col w-64 flex-shrink-0 border-r border-outline-variant min-h-[calc(100vh-64px)] sticky top-16 bg-surface-container-low">
+<div class="p-container-margin">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">Categories</h2>
+<nav class="flex flex-col gap-xs">
+<a class="font-body-sm text-body-sm px-md py-sm rounded-full transition-colors flex items-center gap-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="{{ route('customer.shop') }}">
+<span class="material-symbols-outlined text-[20px]">new_releases</span>
                     New Arrivals
                 </a>
-<a class="font-body-lg text-body-lg text-on-surface-variant hover:bg-surface-container-low px-3 py-2 rounded transition-colors flex items-center gap-3" href="#">
-<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+<a class="font-body-sm text-body-sm px-md py-sm rounded-full transition-colors flex items-center gap-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="{{ route('customer.shop') }}">
+<span class="material-symbols-outlined text-[20px]">auto_awesome</span>
                     Designers
                 </a>
-<a class="font-body-lg text-body-lg text-secondary font-semibold hover:bg-surface-container-low px-3 py-2 rounded transition-colors flex items-center gap-3 bg-surface-container-low" href="#">
-<span class="material-symbols-outlined" data-icon="apparel">apparel</span>
+<a class="font-body-sm text-body-sm px-md py-sm rounded-full transition-colors flex items-center gap-sm bg-primary text-on-primary font-semibold" href="{{ route('customer.shop') }}">
+<span class="material-symbols-outlined text-[20px]">apparel</span>
                     Clothing
                 </a>
-<a class="font-body-lg text-body-lg text-on-surface-variant hover:bg-surface-container-low px-3 py-2 rounded transition-colors flex items-center gap-3" href="#">
-<span class="material-symbols-outlined" data-icon="watch">watch</span>
+<a class="font-body-sm text-body-sm px-md py-sm rounded-full transition-colors flex items-center gap-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="{{ route('customer.shop') }}">
+<span class="material-symbols-outlined text-[20px]">watch</span>
                     Accessories
                 </a>
-<a class="font-body-lg text-body-lg text-on-surface-variant hover:bg-surface-container-low px-3 py-2 rounded transition-colors flex items-center gap-3" href="#">
-<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<a class="font-body-sm text-body-sm px-md py-sm rounded-full transition-colors flex items-center gap-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="{{ route('customer.shop') }}">
+<span class="material-symbols-outlined text-[20px]">menu_book</span>
                     Editorial
                 </a>
 </nav>
+</div>
+<div class="border-t border-outline-variant p-container-margin">
+<button class="w-full h-11 border border-primary text-primary font-label-caps text-label-caps uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-colors flex items-center justify-center gap-xs" onclick="openFilter()" type="button">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+            More Filters
+        </button>
+</div>
+<div class="mt-auto p-container-margin pt-0">
+<div class="relative overflow-hidden rounded-lg bg-secondary-container text-on-secondary-fixed p-md">
+<p class="font-label-caps text-label-caps uppercase tracking-widest mb-xs">Mid-Year Sale</p>
+<p class="font-body-sm text-body-sm mb-sm relative z-10">Up to 50% off selected styles.</p>
+<a class="font-label-caps text-label-caps underline underline-offset-4 uppercase tracking-widest hover:opacity-80 transition-opacity relative z-10 inline-block" href="{{ route('customer.shop') }}">Shop Now</a>
+<span class="material-symbols-outlined absolute -right-2 -bottom-2 text-[72px] opacity-20">sell</span>
+</div>
+</div>
 </aside>
 <!-- Canvas Area -->
 <div class="flex-grow flex flex-col w-full">
