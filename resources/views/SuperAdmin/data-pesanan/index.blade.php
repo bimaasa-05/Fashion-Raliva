@@ -60,7 +60,7 @@
                     <td class="p-6 text-right"><span class="text-on-surface-variant text-xs">2 jam lalu</span></td>
                     <td class="p-6 text-right">
                         <div class="flex gap-2">
-                            <button class="px-3 py-1 bg-white text-on-surface text-xs uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
+                            <button class="px-3 py-1 bg-surface-container-lowest text-on-surface text-xs uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
                         </div>
                     </td>
                 </tr>
@@ -90,7 +90,7 @@
                     <td class="p-6 text-right"><span class="text-on-surface-variant text-xs">1 hari lalu</span></td>
                     <td class="p-6 text-right">
                         <div class="flex gap-2">
-                            <button class="px-3 py-1 bg-white text-on-surface text-xs uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
+                            <button class="px-3 py-1 bg-surface-container-lowest text-on-surface text-xs uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
                         </div>
                     </td>
                 </tr>
@@ -120,7 +120,7 @@
                     <td class="p-6 text-right"><span class="text-on-surface-variant text-xs">3 hari lalu</span></td>
                     <td class="p-6 text-right">
                         <div class="flex gap-2">
-                            <button class="px-3 py-1 bg-white text-on-surface text-xs uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
+                            <button class="px-3 py-1 bg-surface-container-lowest text-on-surface text-xs uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
                         </div>
                     </td>
                 </tr>

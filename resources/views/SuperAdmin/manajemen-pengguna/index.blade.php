@@ -130,7 +130,7 @@
     </div>
 
     <!-- Overlay Detail Pengguna -->
-    <div class="fixed inset-0 bg-tertiary/40 z-[60] hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm"
+    <div class="fixed inset-0 bg-scrim/40 z-[60] hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm"
         id="userDetailOverlay" onclick="closeUserDetail()"></div>
 
     <!-- Bottom Sheet Detail Pengguna -->
