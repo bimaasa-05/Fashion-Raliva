@@ -56,6 +56,18 @@ Route::prefix('customer')->name('customer.')->group(function () {
         return view('customer.address.index');
     })->name('address');
 
+    Route::get('/reviews', function () {
+        return view('customer.reviews.index');
+    })->name('reviews');
+
+    Route::get('/reviews/create', function () {
+        return view('customer.reviews.create');
+    })->name('reviews.create');
+
+    Route::get('/reviews/edit', function () {
+        return view('customer.reviews.edit');
+    })->name('reviews.edit');
+
     Route::get('/wishlist', function () {
         return view('customer.wishlist.index');
     })->name('wishlist');
