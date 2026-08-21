@@ -20,10 +20,6 @@
 @endpush
 
 @section('content')
-<div class="mb-section-gap">
-    <h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-2 text-on-surface">Riwayat Aktivitas</h1>
-    <p class="text-on-surface-variant">Catatan audit tindakan penting pengguna dan admin sistem.</p>
-</div>
 
 <!-- Filters -->
 <div class="mb-8">
