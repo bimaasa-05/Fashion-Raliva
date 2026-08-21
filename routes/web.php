@@ -8,6 +8,22 @@ Route::get('/', function () {
 
 //customer
 Route::prefix('customer')->name('customer.')->group(function () {
+    Route::get('/login', function () {
+        return view('customer.auth.login');
+    })->name('login');
+
+    Route::get('/register', function () {
+        return view('customer.auth.register');
+    })->name('register');
+
+    Route::get('/forgot-password', function () {
+        return view('customer.auth.forgot-password');
+    })->name('forgot-password');
+
+    Route::get('/reset-password', function () {
+        return view('customer.auth.reset-password');
+    })->name('reset-password');
+
     Route::get('/', function () {
         return view('customer.home.index');
     })->name('home');
