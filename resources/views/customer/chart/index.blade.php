@@ -337,7 +337,7 @@
 <span>Rp 636.000</span>
 </div>
 </div>
-<a href="{{ route('customer.checkout') }}" class="w-full bg-primary text-on-primary font-label-caps text-label-caps h-14 flex items-center justify-center hover:opacity-90 transition-opacity uppercase tracking-widest">
+<a href="{{ route('customer.login', ['redirect' => route('customer.checkout')]) }}" class="w-full bg-primary text-on-primary font-label-caps text-label-caps h-14 flex items-center justify-center hover:opacity-90 transition-opacity uppercase tracking-widest">
                 Checkout
             </a>
 </section>
@@ -355,7 +355,7 @@
 <span class="font-label-sm text-label-sm">Shop</span>
 </a>
 <!-- Wishlist (Inactive) -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.wishlist') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined mb-1">favorite</span>
 <span class="font-label-sm text-label-sm">Wishlist</span>
 </a>
@@ -365,7 +365,7 @@
 <span class="font-label-sm text-label-sm">Cart</span>
 </a>
 <!-- Account (Inactive) -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.account') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined mb-1">person</span>
 <span class="font-label-sm text-label-sm">Account</span>
 </a>

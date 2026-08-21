@@ -324,9 +324,9 @@
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="group flex flex-col cursor-pointer">
 <div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
 <img alt="Pleated Silk Midi Dress" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A high-fashion editorial shot of a woman wearing a flowing, pleated silk midi dress in a soft ivory tone. The model is posed elegantly against a minimalist, textured beige studio backdrop. The lighting is soft and directional, creating gentle shadows that highlight the garment's fluid drape and premium fabric texture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwXTlTSVsiy5AZHhqQh1MgqLLVK4MB-SrxjlelWELFb6i8KGPNhED4FExnQ1On6jE827hjb842itYeDpn7S7tw2UI8OHLmcvzOIQjusnSbBsepHqK2R8YRQwY0nsQEWDGZdyEEUWXsSSotCfaGFX6QLGpSrhpA33f2FwnImbBAlato1v6p_5xZSRLw2ENMzoWBzF7IAHhf7z3M1e97Js-fu4ICWp1qjJCZVmeLnA9Jwy2JcFaeoTg"/>
-<button aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
+<a aria-label="Add to wishlist" href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</button>
+</a>
 </div>
 <div class="flex flex-col gap-1">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
@@ -338,9 +338,9 @@
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="group flex flex-col cursor-pointer">
 <div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
 <img alt="Structured Charcoal Blazer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A close-up editorial photograph focusing on a structured, tailored blazer in a muted charcoal grey. The garment is worn by a model, showing off the sharp shoulders and modern, minimalist lapel design. The background is a stark, bright white, emphasizing the clean lines and sophisticated tailoring of the piece." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVASjrbvqMDVMUE-4VSQoQPqHIiUufFkdiq_Y8L7NFX4aWn7u7rI8WvL5zpmpwiAIbEfwzPgzdwu1hA22bUnHDJxz5wYyYHWVcAV82899ylh1j1-6PqtxlbV4RBeDtXnfSrNUDLM2tyPuKfT-KF-BQl86qisNMHkxY-wF6tuEgNd0hrwuI0m-ui_3T5OQhhJInd1dX786_WX6sN9UotFNS32L3x8MEu-7n-xDiGDqvqBZN-NWLCMc"/>
-<button aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
+<a aria-label="Add to wishlist" href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</button>
+</a>
 </div>
 <div class="flex flex-col gap-1">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
@@ -352,9 +352,9 @@
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="group flex flex-col cursor-pointer">
 <div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
 <img alt="Wide-Leg Linen Trouser" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A stylized fashion image featuring a wide-leg linen trouser in a soft sage green. The model is standing in profile, illustrating the relaxed yet elegant fit of the pants. The setting is a minimalist interior with warm, natural sunlight casting long, artistic shadows across the floor, creating a serene, luxurious mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP2Eft0s3saJCK9YLiyH7YEPu7z2LxB1cc9QeyPbQVGwet9-CEp2QoXZmACnrpKKTy2kbye2RrZWgoOW6zx54cYhjCSaPFh8FZuMqiZwZaY6IRPhA6HbRzEMQ3yRCDoomRlqROX0biMNn7k5yzo6DCTNukoS8D98anIAWz6MgD18owlWpqrZJm0rape8bp9bLnq94DDAMeopNINJ9UYjMRANGMp8SiEBcm3OhzeZh0wcFUiR5OjxQ"/>
-<button aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
+<a aria-label="Add to wishlist" href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</button>
+</a>
 </div>
 <div class="flex flex-col gap-1">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
@@ -366,9 +366,9 @@
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="group flex flex-col cursor-pointer">
 <div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
 <img alt="Ribbed Knit Top" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A premium fashion shot of a minimalist, ribbed knit top in a warm terracotta hue. The texture of the fine knit is highly detailed, shown on a model with simple, modern styling. The lighting is moody and dramatic, reminiscent of a high-end fashion magazine editorial, highlighting the subtle contours of the garment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWRAobFrskCQKCoX4nsaGtOO--FROG9mOy30DGnRwPRLqK9_pXDrHUmr0Jt9czXcRe5zbwketdXsxccYrU9BnsvlhlRCa-nMKgNgUaEK1fNn3C_VngpO37I5tzeYTiYoX69gbO_ITL750vyHQ5WrTveFKLqD2rqh_YeWF1AjQQMsbZAXGT2XBtoMJJ4d3N9ma0fS41M5tLqEbfAgLclVKPM6f58c_KUxV5hutF8VGYcmi90_1EGD8"/>
-<button aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
+<a aria-label="Add to wishlist" href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</button>
+</a>
 </div>
 <div class="flex flex-col gap-1">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
@@ -395,7 +395,7 @@
 <span class="material-symbols-outlined mb-1" data-icon="shopping_bag" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
 <span class="font-label-sm text-[10px] font-semibold">Shop</span>
 </a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.wishlist') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="favorite" style="font-variation-settings: 'FILL' 0;">favorite</span>
 <span class="font-label-sm text-[10px]">Wishlist</span>
 </a>
@@ -403,7 +403,7 @@
 <span class="material-symbols-outlined mb-1" data-icon="shopping_cart" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
 <span class="font-label-sm text-[10px]">Cart</span>
 </a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.account') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="person" style="font-variation-settings: 'FILL' 0;">person</span>
 <span class="font-label-sm text-[10px]">Account</span>
 </a>

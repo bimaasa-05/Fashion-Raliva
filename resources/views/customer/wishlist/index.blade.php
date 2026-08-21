@@ -269,7 +269,7 @@ ADD TO CART
 <span class="font-label-sm text-[10px]">Shop</span>
 </a>
 <!-- Wishlist (Active) -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] scale-95 transition-transform w-16" href="{{ route('customer.wishlist') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] scale-95 transition-transform w-16" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="favorite" data-weight="fill">favorite</span>
 <span class="font-label-sm text-[10px] font-bold">Wishlist</span>
 </a>
@@ -280,7 +280,7 @@ ADD TO CART
 <span class="absolute top-0 right-2 bg-secondary-fixed-dim text-on-secondary-fixed text-[8px] w-3 h-3 rounded-full flex items-center justify-center font-bold">2</span>
 </a>
 <!-- Account -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.account') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="person">person</span>
 <span class="font-label-sm text-[10px]">Account</span>
 </a>

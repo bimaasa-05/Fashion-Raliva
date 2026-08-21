@@ -253,9 +253,9 @@
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
 <img alt="{{ $product['name'] }}" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" src="{{ $product['img'] }}"/>
-<button aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
+<a aria-label="Add to wishlist" href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</button>
+</a>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $product['brand'] }}</span>
 <h3 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">{{ $product['name'] }}</h3>
@@ -278,7 +278,7 @@
 <span class="font-label-sm text-[10px]">Shop</span>
 </a>
 <!-- Wishlist -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.wishlist') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="favorite">favorite</span>
 <span class="font-label-sm text-[10px]">Wishlist</span>
 </a>
@@ -289,7 +289,7 @@
 <span class="absolute top-0 right-2 bg-primary text-on-primary text-[8px] w-3 h-3 rounded-full flex items-center justify-center font-bold">2</span>
 </a>
 <!-- Account -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.account') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="person">person</span>
 <span class="font-label-sm text-[10px]">Account</span>
 </a>

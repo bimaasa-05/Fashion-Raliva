@@ -267,7 +267,7 @@
 <body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased selection:bg-secondary-container selection:text-on-secondary-container pb-[calc(72px+env(safe-area-inset-bottom))]">
 <!-- Top App Bar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky z-40 border-b border-[var(--chrome-border)]">
-<a aria-label="Go back" href="{{ route('customer.account') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+<a aria-label="Go back" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">MY ADDRESSES</h1>
@@ -334,7 +334,7 @@
 <span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">shopping_bag</span>
 <span class="truncate w-full text-center">Shop</span>
 </a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16" href="{{ route('customer.wishlist') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">favorite</span>
 <span class="truncate w-full text-center">Wishlist</span>
 </a>
@@ -343,7 +343,7 @@
 <span class="truncate w-full text-center">Cart</span>
 <span class="absolute top-0 right-2 w-2 h-2 bg-secondary-fixed-dim rounded-full"></span>
 </a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] hover:text-secondary transition-colors scale-95 transition-transform group w-16" href="{{ route('customer.account') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] hover:text-secondary transition-colors scale-95 transition-transform group w-16" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined mb-1 text-[24px]" style="font-variation-settings: 'FILL' 1;">person</span>
 <span class="truncate w-full text-center font-medium">Account</span>
 </a>

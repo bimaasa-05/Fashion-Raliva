@@ -373,7 +373,7 @@
 <span class="material-symbols-outlined text-[24px]" data-icon="shopping_bag" data-weight="fill" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
 <span class="font-label-sm text-label-sm text-[10px] font-bold">Shop</span>
 </a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full gap-1" href="{{ route('customer.wishlist') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full gap-1" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined text-[24px]" data-icon="favorite">favorite</span>
 <span class="font-label-sm text-label-sm text-[10px]">Wishlist</span>
 </a>
@@ -382,7 +382,7 @@
 <span class="font-label-sm text-label-sm text-[10px]">Cart</span>
 <span class="absolute top-2 right-4 w-2 h-2 bg-secondary-fixed-dim rounded-full"></span>
 </a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full gap-1" href="{{ route('customer.account') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full gap-1" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined text-[24px]" data-icon="person">person</span>
 <span class="font-label-sm text-label-sm text-[10px]">Account</span>
 </a>

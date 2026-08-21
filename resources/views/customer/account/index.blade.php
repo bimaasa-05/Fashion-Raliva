@@ -226,7 +226,7 @@
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
-<a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.wishlist') }}">
+<a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <div class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="favorite_border">favorite_border</span>
 <span class="font-body-lg text-body-lg text-on-surface">Wishlist</span>
@@ -293,7 +293,7 @@
 <span class="material-symbols-outlined mb-1" data-icon="shopping_bag">shopping_bag</span>
 <span class="font-label-sm text-label-sm">Shop</span>
 </a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.wishlist') }}">
+<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="favorite">favorite</span>
 <span class="font-label-sm text-label-sm">Wishlist</span>
 </a>
@@ -301,7 +301,7 @@
 <span class="material-symbols-outlined mb-1" data-icon="shopping_cart">shopping_cart</span>
 <span class="font-label-sm text-label-sm">Cart</span>
 </a>
-<a aria-current="page" class="flex flex-col items-center justify-center text-[var(--chrome-accent)] hover:text-secondary transition-colors w-16 h-full active:scale-95 transition-transform" href="{{ route('customer.account') }}">
+<a aria-current="page" class="flex flex-col items-center justify-center text-[var(--chrome-accent)] hover:text-secondary transition-colors w-16 h-full active:scale-95 transition-transform" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
 <span class="font-label-sm text-label-sm">Account</span>
 </a>
