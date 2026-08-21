@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>RALIVA - @yield('title', 'Super Admin')</title>
+    <title>RALIVA - @yield('title', 'Admin Toko')</title>
     @include('partials.theme-head')
 </head>
 <body class="text-on-background font-body-md antialiased min-h-screen flex flex-col md:flex-row">
@@ -19,7 +19,7 @@
                 <span class="material-symbols-outlined icon-sun hidden">light_mode</span>
             </button>
             @include('partials.notification-panel')
-            @include('partials.profile-menu', ['compact' => true])
+            @include('partials.profile-menu', ['compact' => true, 'name' => 'Sinta Maharani', 'role' => 'Admin Toko', 'profilRoute' => 'admin.profil', 'showPengaturan' => false])
         </div>
     </header>
 
@@ -29,11 +29,11 @@
             <img src="{{ asset('images/logo.svg') }}" alt="Logo Raliva" class="w-11 h-11 rounded-xl shrink-0" />
             <div>
                 <span class="font-display-lg text-title-md text-white tracking-widest block leading-tight">RALIVA</span>
-                <span class="text-gold-accent/80 font-label-sm text-[10px] uppercase tracking-wider">Super Admin</span>
+                <span class="text-gold-accent/80 font-label-sm text-[10px] uppercase tracking-wider">Admin Toko</span>
             </div>
         </div>
         <nav class="sidebar-scroll flex-1 overflow-y-auto">
-            @include('partials.sidebar-menu')
+            @include('partials.sidebar-menu-admin')
         </nav>
     </aside>
 
@@ -59,7 +59,7 @@
                     <span class="material-symbols-outlined icon-sun hidden">light_mode</span>
                 </button>
                 @include('partials.notification-panel')
-                @include('partials.profile-menu')
+                @include('partials.profile-menu', ['name' => 'Sinta Maharani', 'role' => 'Admin Toko', 'profilRoute' => 'admin.profil', 'showPengaturan' => false])
             </div>
         </header>
 
@@ -81,11 +81,11 @@
 
     <!-- Bottom Nav Bar (Mobile) -->
     @include('partials.bottom-nav', ['items' => [
-        ['route' => 'superadmin.dashboard', 'icon' => 'dashboard', 'label' => 'Beranda'],
-        ['route' => 'superadmin.data-pesanan', 'icon' => 'shopping_cart', 'label' => 'Pesanan'],
-        ['route' => 'superadmin.moderasi-produk', 'icon' => 'inventory_2', 'label' => 'Moderasi'],
-        ['route' => 'superadmin.laporan', 'icon' => 'bar_chart', 'label' => 'Laporan'],
-        ['route' => 'superadmin.profil', 'icon' => 'person', 'label' => 'Profil'],
+        ['route' => 'admin.dashboard', 'icon' => 'space_dashboard', 'label' => 'Beranda'],
+        ['route' => 'admin.pesanan', 'icon' => 'shopping_cart', 'label' => 'Pesanan'],
+        ['route' => 'admin.pengiriman', 'icon' => 'local_shipping', 'label' => 'Kirim'],
+        ['route' => 'admin.komplain', 'icon' => 'support_agent', 'label' => 'Komplain'],
+        ['route' => 'admin.profil', 'icon' => 'person', 'label' => 'Profil'],
     ]])
 
     @include('partials.layout-scripts')
