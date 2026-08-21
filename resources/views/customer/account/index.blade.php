@@ -137,9 +137,9 @@
 <div class="flex flex-col items-center md:items-start justify-center flex-grow">
 <h3 class="font-title-md text-title-md text-on-surface mb-1">Jane Doe</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mb-4">jane.doe@example.com</p>
-<button class="px-6 py-2 border border-primary text-primary font-label-caps text-label-caps uppercase hover:bg-surface-container-low transition-colors duration-200">
+<a class="px-6 py-2 border border-primary text-primary font-label-caps text-label-caps uppercase hover:bg-surface-container-low transition-colors duration-200 inline-block" href="{{ route('customer.account.edit') }}">
                     Edit Profile
-                </button>
+                </a>
 </div>
 </section>
 <!-- Menu List -->

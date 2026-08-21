@@ -44,6 +44,14 @@ Route::prefix('customer')->name('customer.')->group(function () {
         return view('customer.account.index');
     })->name('account');
 
+    Route::get('/account/edit', function () {
+        return view('customer.account.edit');
+    })->name('account.edit');
+
+    Route::get('/account/password', function () {
+        return view('customer.account.password');
+    })->name('account.password');
+
     Route::get('/address', function () {
         return view('customer.address.index');
     })->name('address');
