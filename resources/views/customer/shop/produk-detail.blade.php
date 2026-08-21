@@ -392,8 +392,8 @@
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="min-w-[160px] md:min-w-[200px] block">
 <div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant">
 <img class="w-full h-full object-cover" data-alt="A minimalist fashion editorial image of tailored wide-leg trousers in a soft beige tone, styled cleanly against a light, neutral background, reflecting premium quality and modern elegance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4IYXT8zx75qRHmyTLk9xkyFXQ2aqGro0exB1cwe11WPpyS4_FUyQA7qq8cxx_mFM3PPrNwyPQcZ-_wI0J8kAwOnv5OPd8VFDvqKFUJDKt9UwsYXTBwCIVxPjpYG2Tc4O-GOg6_Sx5cjoPIKUP4Xa4HwLQKlAk6lcw-xaN7sm1Ad78waPAEVlkv60tLR_o8Ap-HQ14icz3DI2UgdsVBjVQiozmTytcTh9-KT1npkU4xDEEJGQTJro"/>
-<button class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-surface-container-lowest/50">
-<span class="material-symbols-outlined text-on-surface text-[18px]">favorite_border</span>
+<button aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
+<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
 </div>
 <div class="space-y-1">
@@ -406,8 +406,8 @@
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="min-w-[160px] md:min-w-[200px] block">
 <div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant">
 <img class="w-full h-full object-cover" data-alt="A chic, minimalist editorial shot of a ribbed knit tank top in black, draped elegantly on a hanger against a pristine white background. The focus is on the texture and modern silhouette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBSCYHpJJ10PR1rv62xsiSUHcgECc8Yl7gxPOJqlAhXqjJGHnlXSe3G3OT0zZOpoO6zdOywN_zGJ312gSUWGyrERx3QJH1sib9jdTkpcPR1UGz6uHG3aBCzTk7nRRLeHq2PxVj1WHkGQGh3Vuk2k_lfNftY_XKOXombF0_TGRpWMQudl33iPubHVACr4ZiMJFHeHt5rU1xGcveNoDt2q3Et_j-G22OqOzW2MDW8EobpXOmXTWjw3M"/>
-<button class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-surface-container-lowest/50">
-<span class="material-symbols-outlined text-on-surface text-[18px]">favorite_border</span>
+<button aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
+<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
 </div>
 <div class="space-y-1">
@@ -420,8 +420,8 @@
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="min-w-[160px] md:min-w-[200px] block">
 <div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant">
 <img class="w-full h-full object-cover" data-alt="A sophisticated editorial photograph of a minimalist leather tote bag in deep brown, placed thoughtfully on a smooth stone surface with soft, diffused lighting typical of luxury fashion campaigns." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1cthY8K2JPKLNpkQV3JBRI6w4KRyg6mQeqgXctAcetZp_v6EdYIOJjePq8SWVSrQa2JsuHIHIjEMmjJ5PJF-s2QDQm4sbvggtYfBOhWZFYXxH9UkXED66ErqitL29o75HKKd40LGYNnkEMndKxfJ4L-7z-rbdPVecIV7fdOrMA_mrvmKu5Y8cgTTHi3JY3AyfNe_NyppH-jBZSnRZdg5g_HhxOs5QixseLjNAx7O8kEcjJiOq07Q"/>
-<button class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-surface-container-lowest/50">
-<span class="material-symbols-outlined text-on-surface text-[18px]">favorite_border</span>
+<button aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
+<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
 </div>
 <div class="space-y-1">

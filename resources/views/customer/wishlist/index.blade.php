@@ -238,8 +238,8 @@
 <div class="flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden block">
 <img alt="{{ $product['name'] }}" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" src="{{ $product['img'] }}"/>
-<span role="button" tabindex="0" aria-label="Remove from wishlist" class="absolute top-xs right-xs text-on-surface bg-surface/50 rounded-full p-1 backdrop-blur-sm hover:bg-surface transition-colors">
-<span class="material-symbols-outlined text-[20px] text-error" data-icon="favorite" data-weight="fill">favorite</span>
+<span role="button" tabindex="0" aria-label="Remove from wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors cursor-pointer">
+<span class="material-symbols-outlined" data-icon="favorite" data-weight="fill">favorite</span>
 </span>
 </a>
 <a href="{{ route('customer.shop.produk-detail', 1) }}">
