@@ -9,10 +9,10 @@
 @section('content')
 <div class="space-y-section-gap">
     <section class="space-y-gutter">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface">Daftar Paket</h2>
+        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Paket</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 hover:border-gold-accent transition-colors">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
                 <div class="flex items-center justify-between">
                     <span class="font-title-md text-title-md text-on-surface">Gratis Daftar</span>
                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aktif</span>
@@ -31,7 +31,7 @@
                 </div>
             </div>
 
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 hover:border-gold-accent transition-colors">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
                 <div class="flex items-center justify-between">
                     <span class="font-title-md text-title-md text-on-surface">Starter</span>
                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aktif</span>
@@ -71,7 +71,7 @@
                 </div>
             </div>
 
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 hover:border-gold-accent transition-colors">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
                 <div class="flex items-center justify-between">
                     <span class="font-title-md text-title-md text-on-surface">Pro</span>
                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Non-aktif</span>
@@ -93,8 +93,8 @@
     </section>
 
     <section class="space-y-gutter">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface">Tambah / Ubah Paket</h2>
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6">
+        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Tambah / Ubah Paket</h2>
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
             <form class="space-y-gutter" id="paket-form">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                     <div>

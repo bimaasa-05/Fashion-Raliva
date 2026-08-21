@@ -15,9 +15,9 @@
 @section('content')
 <div class="space-y-section-gap">
     <section>
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface">Ringkasan Pengajuan</h2>
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Pengajuan</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-container-margin">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-container-margin card-premium">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 bg-surface-container-high flex items-center justify-center rounded-full">
                         <span class="material-symbols-outlined text-on-surface">pending_actions</span>
@@ -27,7 +27,7 @@
                 <p class="font-headline-lg-mobile text-headline-lg-mobile text-primary">24</p>
                 <p class="font-body-md text-body-md text-on-surface-variant mt-2">Menunggu verifikasi dan persetujuan</p>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-container-margin">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-container-margin card-premium">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 bg-secondary-container flex items-center justify-center rounded-full">
                         <span class="material-symbols-outlined text-secondary">account_balance_wallet</span>
@@ -42,7 +42,7 @@
 
     <section class="space-y-gutter">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-element-gap">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface">Daftar Pengajuan Pencairan</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Pengajuan Pencairan</h2>
             <div class="flex gap-4">
                 <button class="border border-outline px-4 py-2 text-primary font-label-sm text-label-sm uppercase hover:bg-surface-container transition-colors flex items-center gap-2">
                     <span class="material-symbols-outlined text-sm">filter_list</span> Filter
@@ -53,9 +53,9 @@
             </div>
         </div>
 
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium">
             <div class="overflow-x-auto">
-                <table class="w-full min-w-[850px] text-left border-collapse">
+                <table class="w-full min-w-[850px] text-left border-collapse premium-table">
                     <thead>
                         <tr class="border-b border-muted-border bg-surface-container-low">
                             <th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase">Toko / Pemilik</th>

@@ -29,7 +29,7 @@
 <!-- Store Grid -->
 <section class="px-gutter md:px-container-margin py-8">
     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        <article class="border border-muted-border p-6 hover:bg-surface-container-low transition-colors group cursor-pointer" onclick="openStoreModal('store-1')">
+        <article class="border border-muted-border p-6 hover:bg-surface-container-low transition-colors group cursor-pointer card-premium" onclick="openStoreModal('store-1')">
             <div class="flex justify-between items-start mb-6">
                 <div class="flex items-center gap-4">
                     <div class="w-16 h-16 rounded-full bg-surface-variant overflow-hidden border border-muted-border flex items-center justify-center">
@@ -57,7 +57,7 @@
                 </div>
             </div>
         </article>
-        <article class="border border-muted-border p-6 hover:bg-surface-container-low transition-colors group cursor-pointer" onclick="openStoreModal('store-2')">
+        <article class="border border-muted-border p-6 hover:bg-surface-container-low transition-colors group cursor-pointer card-premium" onclick="openStoreModal('store-2')">
             <div class="flex justify-between items-start mb-6">
                 <div class="flex items-center gap-4">
                     <div class="w-16 h-16 rounded-full bg-surface-variant overflow-hidden border border-muted-border flex items-center justify-center">

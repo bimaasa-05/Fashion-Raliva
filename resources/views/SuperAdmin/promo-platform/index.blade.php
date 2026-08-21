@@ -79,7 +79,7 @@
         <div class="flex justify-between items-center">
             <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Buat Promo Baru</h2>
         </div>
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
             <form class="space-y-gutter" id="create-promo-form">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="promoName">Nama Promo</label>
