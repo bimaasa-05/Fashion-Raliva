@@ -68,6 +68,18 @@ Route::prefix('customer')->name('customer.')->group(function () {
         return view('customer.reviews.edit');
     })->name('reviews.edit');
 
+    Route::get('/notifications', function () {
+        return view('customer.notifications.index');
+    })->name('notifications');
+
+    Route::get('/help', function () {
+        return view('customer.help.index');
+    })->name('help');
+
+    Route::get('/settings', function () {
+        return view('customer.settings.index');
+    })->name('settings');
+
     Route::get('/wishlist', function () {
         return view('customer.wishlist.index');
     })->name('wishlist');
