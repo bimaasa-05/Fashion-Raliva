@@ -135,15 +135,15 @@
     <!-- Main Content -->
     <main class="flex-1 flex flex-col min-w-0 pb-[72px] md:pb-0">
         <!-- Desktop Header -->
-        <header class="hidden md:flex justify-between items-center px-container-margin py-8 bg-surface">
+        <header class="hidden md:flex sticky top-0 z-40 justify-between items-center px-container-margin h-20 bg-surface-container-lowest border-b border-outline-variant">
             <div>
                 <div class="flex items-center gap-3">
-                    <h1 class="font-headline-lg text-headline-lg text-on-surface">@yield('header-title', 'Dashboard')</h1>
+                    <h1 class="font-title-md text-title-md text-on-surface uppercase tracking-wider">@yield('header-title', 'Dashboard')</h1>
                     @hasSection('header-badge')
                         <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-label-sm uppercase tracking-wider">@yield('header-badge')</span>
                     @endif
                 </div>
-                <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Ini yang terjadi hari ini.')</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">@yield('header-subtitle', 'Ini yang terjadi hari ini.')</p>
             </div>
             <div class="flex items-center gap-6">
                 <button class="relative text-on-surface hover:text-secondary transition-colors">
@@ -167,7 +167,7 @@
             <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Ini yang terjadi hari ini.')</p>
         </div>
 
-        <div class="px-container-margin pb-section-gap flex flex-col gap-section-gap max-w-7xl mx-auto w-full">
+        <div class="px-container-margin pt-8 pb-section-gap flex flex-col gap-section-gap max-w-7xl mx-auto w-full">
             @yield('content')
         </div>
     </main>

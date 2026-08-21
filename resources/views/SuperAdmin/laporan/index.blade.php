@@ -17,18 +17,11 @@
 @endpush
 
 @section('content')
-<!-- Header Section -->
-<div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-    <div>
-        <h2 class="font-headline-lg-mobile md:font-headline-lg text-on-background mb-2">Laporan & Analitik</h2>
-        <p class="font-body-md text-on-surface-variant">Ringkasan kinerja dan metrik platform.</p>
-    </div>
-    <div class="flex items-center gap-3 self-start md:self-end">
-        <button class="bg-deep-onyx text-on-primary font-label-sm px-6 py-3 uppercase tracking-widest hover:bg-surface-tint transition-colors flex items-center gap-2">
-            <span class="material-symbols-outlined text-[16px]">download</span>
-            Ekspor Laporan
-        </button>
-    </div>
+<div class="flex justify-end">
+    <button class="bg-deep-onyx text-on-primary font-label-sm px-6 py-3 uppercase tracking-widest hover:bg-surface-tint transition-colors flex items-center gap-2">
+        <span class="material-symbols-outlined text-[16px]">download</span>
+        Ekspor Laporan
+    </button>
 </div>
 
 <!-- Filters -->

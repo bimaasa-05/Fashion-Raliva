@@ -19,8 +19,7 @@
 @endpush
 
 @section('content')
-<div class="px-container-margin pt-gutter pb-element-gap">
-    <h1 class="font-title-md text-title-md text-on-surface text-center mb-element-gap">MODERASI PRODUK</h1>
+<div class="px-container-margin pb-element-gap">
     <div class="flex items-center justify-center space-x-gutter mb-container-margin overflow-x-auto no-scrollbar py-2">
         <button class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-primary text-primary transition-colors whitespace-nowrap">MENUNGGU (12)</button>
         <button class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">DISETUJUI</button>
