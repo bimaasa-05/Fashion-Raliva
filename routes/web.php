@@ -15,6 +15,7 @@ use App\Http\Controllers\SuperAdmin\DataPembayaranController;
 use App\Http\Controllers\SuperAdmin\PengembalianDanaController;
 use App\Http\Controllers\SuperAdmin\PaketSlotProdukController;
 use App\Http\Controllers\SuperAdmin\PengaturanSistemController;
+use App\Http\Controllers\SuperAdmin\ProfilController;
 use App\Http\Controllers\SuperAdmin\KategoriProdukController;
 use App\Http\Controllers\SuperAdmin\KurirController;
 use App\Http\Controllers\SuperAdmin\PajakBiayaController;
@@ -43,4 +44,5 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
     Route::get('/riwayat-aktivitas', [RiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
     Route::get('/pengaturan-sistem', [PengaturanSistemController::class, 'index'])->name('pengaturan-sistem');
+    Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
 });
