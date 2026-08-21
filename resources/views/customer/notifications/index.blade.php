@@ -121,11 +121,11 @@
   </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg">
 <!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 bg-surface dark:bg-surface text-on-surface dark:text-on-surface flex justify-between items-center px-container-margin h-16 border-b border-outline-variant">
+<header class="fixed top-0 w-full z-50 bg-primary-container text-on-primary flex justify-between items-center px-container-margin h-16 border-b border-white/10">
 <a href="{{ route('customer.account') }}" aria-label="Back" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-on-surface dark:text-on-surface uppercase flex-1 text-center truncate max-w-[240px]">Notifications</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-secondary-fixed-dim uppercase flex-1 text-center truncate max-w-[240px]">Notifications</h1>
 <div class="w-10"></div> <!-- Spacer for centering -->
 </header>
 <!-- Main Content -->

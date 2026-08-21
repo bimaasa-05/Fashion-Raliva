@@ -114,13 +114,13 @@
   </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0">
 <!-- TopAppBar -->
-<header class="flex justify-between items-center w-full px-container-margin h-16 bg-surface dark:bg-surface border-b border-outline-variant flat no shadows docked full-width top-0 z-40 sticky">
+<header class="flex justify-between items-center w-full px-container-margin h-16 bg-primary-container text-on-primary border-b border-white/10 flat no shadows docked full-width top-0 z-40 sticky">
 <button aria-label="Menu" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 -ml-2">
-<span class="material-symbols-outlined text-on-surface dark:text-on-surface" data-icon="menu">menu</span>
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
-<h1 class="font-display-lg text-headline-md tracking-widest text-on-surface dark:text-on-surface">RALIVA</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-secondary-fixed-dim">RALIVA</h1>
 <button aria-label="Search" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 -mr-2">
-<span class="material-symbols-outlined text-on-surface dark:text-on-surface" data-icon="search">search</span>
+<span class="material-symbols-outlined" data-icon="search">search</span>
 </button>
 </header>
 <!-- Main Content Canvas -->
@@ -209,24 +209,24 @@
 </nav>
 </main>
 <!-- BottomNavBar (Mobile Only) -->
-<nav class="md:hidden flex justify-around items-center w-full h-[72px] bg-surface dark:bg-surface px-xs pb-safe fixed bottom-0 z-50 border-t border-outline-variant shadow-sm">
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16 h-full" href="{{ route('customer.home') }}">
+<nav class="md:hidden flex justify-around items-center w-full h-[72px] bg-primary-container text-on-primary px-xs pb-safe fixed bottom-0 z-50 border-t border-white/10 shadow-sm">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16 h-full" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1" data-icon="home">home</span>
 <span class="font-label-sm text-label-sm">Home</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16 h-full" href="{{ route('customer.shop') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16 h-full" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_bag">shopping_bag</span>
 <span class="font-label-sm text-label-sm">Shop</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16 h-full" href="{{ route('customer.wishlist') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16 h-full" href="{{ route('customer.wishlist') }}">
 <span class="material-symbols-outlined mb-1" data-icon="favorite">favorite</span>
 <span class="font-label-sm text-label-sm">Wishlist</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16 h-full" href="{{ route('customer.chart') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16 h-full" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_cart">shopping_cart</span>
 <span class="font-label-sm text-label-sm">Cart</span>
 </a>
-<a aria-current="page" class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:text-secondary transition-colors w-16 h-full active:scale-95 transition-transform" href="{{ route('customer.account') }}">
+<a aria-current="page" class="flex flex-col items-center justify-center text-secondary-fixed-dim hover:text-secondary transition-colors w-16 h-full active:scale-95 transition-transform" href="{{ route('customer.account') }}">
 <span class="material-symbols-outlined mb-1" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
 <span class="font-label-sm text-label-sm">Account</span>
 </a>

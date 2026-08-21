@@ -198,16 +198,16 @@
   </head>
 <body class="bg-surface text-on-surface font-body-lg antialiased pb-32">
 <!-- Header (Custom TopAppBar for Product Details) -->
-<header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md flex justify-between items-center px-container-margin h-16">
+<header class="fixed top-0 w-full z-50 bg-primary-container/90 backdrop-blur-md text-on-primary flex justify-between items-center px-container-margin h-16">
 <a aria-label="Go back" href="{{ url()->previous() }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
-<span class="material-symbols-outlined text-on-surface">arrow_back</span>
+<span class="material-symbols-outlined text-on-primary">arrow_back</span>
 </a>
 <div class="flex gap-xs">
 <button aria-label="Wishlist" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
-<span class="material-symbols-outlined text-on-surface">favorite_border</span>
-</button>
+<span class="material-symbols-outlined text-on-primary">favorite_border</span>
+</a>
 <a aria-label="Cart" href="{{ route('customer.chart') }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
-<span class="material-symbols-outlined text-on-surface">shopping_cart</span>
+<span class="material-symbols-outlined text-on-primary">shopping_cart</span>
 </a>
 </div>
 </header>

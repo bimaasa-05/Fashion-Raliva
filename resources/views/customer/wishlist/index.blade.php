@@ -129,11 +129,11 @@
   </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0">
 <!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 bg-surface dark:bg-surface text-on-surface dark:text-on-surface flex justify-between items-center px-container-margin h-16 border-b border-outline-variant">
+<header class="fixed top-0 w-full z-50 bg-primary-container text-on-primary flex justify-between items-center px-container-margin h-16 border-b border-white/10">
 <a href="{{ url()->previous() }}" aria-label="Back" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-on-surface dark:text-on-surface">RALIVA</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-secondary-fixed-dim">RALIVA</h1>
 <div class="flex items-center gap-sm">
 <a href="{{ route('customer.chart') }}" aria-label="Cart" class="relative hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
@@ -182,30 +182,30 @@ ADD TO CART
 </section>
 </main>
 <!-- BottomNavBar -->
-<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center h-[72px] bg-surface dark:bg-surface px-xs pb-safe border-t border-outline-variant shadow-sm">
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center h-[72px] bg-primary-container text-on-primary px-xs pb-safe border-t border-white/10 shadow-sm">
 <!-- Home -->
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16" href="{{ route('customer.home') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1" data-icon="home">home</span>
 <span class="font-label-sm text-[10px]">Home</span>
 </a>
 <!-- Shop -->
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16" href="{{ route('customer.shop') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_bag">shopping_bag</span>
 <span class="font-label-sm text-[10px]">Shop</span>
 </a>
 <!-- Wishlist (Active) -->
-<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim scale-95 transition-transform w-16" href="{{ route('customer.wishlist') }}">
+<a class="flex flex-col items-center justify-center text-secondary-fixed-dim scale-95 transition-transform w-16" href="{{ route('customer.wishlist') }}">
 <span class="material-symbols-outlined mb-1" data-icon="favorite" data-weight="fill">favorite</span>
 <span class="font-label-sm text-[10px] font-bold">Wishlist</span>
 </a>
 <!-- Cart -->
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16 relative" href="{{ route('customer.chart') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16 relative" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_cart">shopping_cart</span>
 <span class="font-label-sm text-[10px]">Cart</span>
-<span class="absolute top-0 right-2 bg-primary text-on-primary text-[8px] w-3 h-3 rounded-full flex items-center justify-center font-bold">2</span>
+<span class="absolute top-0 right-2 bg-secondary-fixed-dim text-on-secondary-fixed text-[8px] w-3 h-3 rounded-full flex items-center justify-center font-bold">2</span>
 </a>
 <!-- Account -->
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16" href="{{ route('customer.account') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16" href="{{ route('customer.account') }}">
 <span class="material-symbols-outlined mb-1" data-icon="person">person</span>
 <span class="font-label-sm text-[10px]">Account</span>
 </a>

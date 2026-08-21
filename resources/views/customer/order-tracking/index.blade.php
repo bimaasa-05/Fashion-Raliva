@@ -132,11 +132,11 @@
   </head>
 <body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen">
 <!-- TopAppBar (Transactional variation - Back button) -->
-<header class="flex justify-between items-center w-full px-container-margin h-16 bg-surface dark:bg-surface border-b border-outline-variant docked full-width top-0 sticky z-50">
-<a href="{{ route('customer.account') }}" class="w-10 h-10 flex items-center justify-start text-on-surface hover:opacity-80 transition-opacity">
+<header class="flex justify-between items-center w-full px-container-margin h-16 bg-primary-container text-on-primary border-b border-white/10 docked full-width top-0 sticky z-50">
+<a href="{{ route('customer.account') }}" class="w-10 h-10 flex items-center justify-start hover:opacity-80 transition-opacity">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-on-surface dark:text-on-surface uppercase text-center flex-1">ORDER TRACKING</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-secondary-fixed-dim uppercase text-center flex-1">ORDER TRACKING</h1>
 <div class="w-10"></div> <!-- Spacer for centering -->
 </header>
 <!-- Main Content Canvas -->
@@ -264,25 +264,25 @@
 </section>
 </main>
 <!-- BottomNavBar -->
-<nav class="flex justify-around items-center w-full h-[72px] bg-surface dark:bg-surface px-xs pb-safe fixed bottom-0 z-50 border-t border-outline-variant shadow-sm md:hidden">
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-1/5" href="{{ route('customer.home') }}">
+<nav class="flex justify-around items-center w-full h-[72px] bg-primary-container text-on-primary px-xs pb-safe fixed bottom-0 z-50 border-t border-white/10 shadow-sm md:hidden">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-1/5" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1 text-[24px]" data-icon="home">home</span>
 <span class="font-label-sm text-[10px]">Home</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-1/5" href="{{ route('customer.shop') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-1/5" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1 text-[24px]" data-icon="shopping_bag">shopping_bag</span>
 <span class="font-label-sm text-[10px]">Shop</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-1/5" href="{{ route('customer.wishlist') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-1/5" href="{{ route('customer.wishlist') }}">
 <span class="material-symbols-outlined mb-1 text-[24px]" data-icon="favorite">favorite</span>
 <span class="font-label-sm text-[10px]">Wishlist</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-1/5" href="{{ route('customer.chart') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-1/5" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1 text-[24px]" data-icon="shopping_cart">shopping_cart</span>
 <span class="font-label-sm text-[10px]">Cart</span>
 </a>
 <!-- Account is active conceptually, but usually for main tabs. Tracking is a sub-page, but we follow standard structure. -->
-<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim scale-95 transition-transform w-1/5" href="{{ route('customer.account') }}">
+<a class="flex flex-col items-center justify-center text-secondary-fixed-dim scale-95 transition-transform w-1/5" href="{{ route('customer.account') }}">
 <span class="material-symbols-outlined mb-1 text-[24px]" data-icon="person" data-weight="fill" style="font-variation-settings: 'FILL' 1;">person</span>
 <span class="font-label-sm text-[10px]">Account</span>
 </a>

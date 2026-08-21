@@ -117,11 +117,11 @@
   </head>
 <body class="text-on-background bg-background font-body-sm overflow-x-hidden pb-32">
 <!-- Top App Bar -->
-<header class="flex justify-between items-center w-full px-container-margin h-16 bg-surface border-b border-outline-variant fixed top-0 z-40">
-<a aria-label="Back" href="{{ route('customer.chart') }}" class="text-on-surface hover:opacity-80 transition-opacity flex">
+<header class="flex justify-between items-center w-full px-container-margin h-16 bg-primary-container text-on-primary border-b border-white/10 fixed top-0 z-40">
+<a aria-label="Back" href="{{ route('customer.chart') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-on-surface">CHECKOUT</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-secondary-fixed-dim">CHECKOUT</h1>
 <div class="w-6"></div> <!-- Spacer for centering -->
 </header>
 <main class="mt-16 px-container-margin pt-lg max-w-2xl mx-auto">

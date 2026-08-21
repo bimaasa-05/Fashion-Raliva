@@ -142,12 +142,12 @@
   </head>
 <body class="bg-background text-on-background min-h-screen flex flex-col font-body-lg">
 <!-- TopAppBar (Small Center Aligned) -->
-<header class="bg-surface dark:bg-surface text-on-surface dark:text-on-surface flex justify-between items-center w-full px-container-margin h-16 pt-safe border-b border-outline-variant sticky top-0 z-40">
-<a href="{{ url()->previous() }}" class="w-10 h-10 flex items-center justify-center -ml-2 text-on-surface hover:opacity-80 transition-opacity">
+<header class="bg-primary-container text-on-primary flex justify-between items-center w-full px-container-margin h-16 pt-safe border-b border-white/10 sticky top-0 z-40">
+<a href="{{ url()->previous() }}" class="w-10 h-10 flex items-center justify-center -ml-2 hover:opacity-80 transition-opacity">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back_ios_new</span>
 </a>
 <div class="flex-1 flex justify-center">
-<h1 class="font-title-md text-title-md uppercase">CART (2)</h1>
+<h1 class="font-title-md text-title-md uppercase text-secondary-fixed-dim">CART (2)</h1>
 </div>
 <button class="w-10 h-10 flex items-center justify-center -mr-2 text-on-surface hover:opacity-80 transition-opacity">
 <!-- Empty trailing icon space to balance header -->
@@ -265,29 +265,29 @@
 </section>
 </main>
 <!-- BottomNavBar (Label Icon) -->
-<nav class="md:hidden bg-surface dark:bg-surface text-secondary dark:text-secondary-fixed-dim fixed bottom-0 w-full z-50 border-t border-outline-variant shadow-sm flex justify-around items-center h-[72px] px-xs pb-safe">
+<nav class="md:hidden bg-primary-container text-on-primary fixed bottom-0 w-full z-50 border-t border-white/10 shadow-sm flex justify-around items-center h-[72px] px-xs pb-safe">
 <!-- Home (Inactive) -->
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16" href="{{ route('customer.home') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1">home</span>
 <span class="font-label-sm text-label-sm">Home</span>
 </a>
 <!-- Shop (Inactive) -->
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16" href="{{ route('customer.shop') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1">shopping_bag</span>
 <span class="font-label-sm text-label-sm">Shop</span>
 </a>
 <!-- Wishlist (Inactive) -->
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16" href="{{ route('customer.wishlist') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16" href="{{ route('customer.wishlist') }}">
 <span class="material-symbols-outlined mb-1">favorite</span>
 <span class="font-label-sm text-label-sm">Wishlist</span>
 </a>
 <!-- Cart (Active) -->
-<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:text-secondary transition-colors w-16 scale-95 transition-transform" href="{{ route('customer.chart') }}">
+<a class="flex flex-col items-center justify-center text-secondary-fixed-dim hover:text-secondary transition-colors w-16 scale-95 transition-transform" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
 <span class="font-label-sm text-label-sm">Cart</span>
 </a>
 <!-- Account (Inactive) -->
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16" href="{{ route('customer.account') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16" href="{{ route('customer.account') }}">
 <span class="material-symbols-outlined mb-1">person</span>
 <span class="font-label-sm text-label-sm">Account</span>
 </a>

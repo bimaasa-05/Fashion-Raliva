@@ -198,12 +198,12 @@
   </head>
 <body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased">
 <!-- Top App Bar -->
-<header class="bg-surface dark:bg-surface flex justify-between items-center w-full px-container-margin h-16 border-b border-outline-variant sticky top-0 z-40">
-<a aria-label="Back" href="{{ url()->previous() }}" class="text-on-surface dark:text-on-surface hover:opacity-80 transition-opacity flex items-center justify-center p-2 -ml-2">
+<header class="bg-primary-container text-on-primary flex justify-between items-center w-full px-container-margin h-16 border-b border-white/10 sticky top-0 z-40">
+<a aria-label="Back" href="{{ url()->previous() }}" class="text-on-primary hover:opacity-80 transition-opacity flex items-center justify-center p-2 -ml-2">
 <span class="material-symbols-outlined" data-icon="arrow_back" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-on-surface dark:text-on-surface">RALIVA</h1>
-<a aria-label="Search" href="{{ route('customer.search') }}" class="text-on-surface dark:text-on-surface hover:opacity-80 transition-opacity flex items-center justify-center p-2 -mr-2">
+<h1 class="font-display-lg text-headline-md tracking-widest text-secondary-fixed-dim">RALIVA</h1>
+<a aria-label="Search" href="{{ route('customer.search') }}" class="text-on-primary hover:opacity-80 transition-opacity flex items-center justify-center p-2 -mr-2">
 <span class="material-symbols-outlined" data-icon="search" style="font-variation-settings: 'FILL' 0;">search</span>
 </a>
 </header>
@@ -311,24 +311,24 @@
 </section>
 </main>
 <!-- Bottom Navigation Bar (Mobile Only) -->
-<nav class="flex justify-around items-center w-full h-[72px] bg-surface dark:bg-surface px-xs pb-safe border-t border-outline-variant shadow-sm fixed bottom-0 z-50 md:hidden">
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16 h-full" href="{{ route('customer.home') }}">
+<nav class="flex justify-around items-center w-full h-[72px] bg-primary-container text-on-primary px-xs pb-safe border-t border-white/10 shadow-sm fixed bottom-0 z-50 md:hidden">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16 h-full" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1" data-icon="home" style="font-variation-settings: 'FILL' 0;">home</span>
 <span class="font-label-sm text-[10px]">Home</span>
 </a>
-<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim scale-95 transition-transform w-16 h-full" href="{{ route('customer.shop') }}">
+<a class="flex flex-col items-center justify-center text-secondary-fixed-dim scale-95 transition-transform w-16 h-full" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_bag" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
 <span class="font-label-sm text-[10px] font-semibold">Shop</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16 h-full" href="{{ route('customer.wishlist') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16 h-full" href="{{ route('customer.wishlist') }}">
 <span class="material-symbols-outlined mb-1" data-icon="favorite" style="font-variation-settings: 'FILL' 0;">favorite</span>
 <span class="font-label-sm text-[10px]">Wishlist</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16 h-full" href="{{ route('customer.chart') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16 h-full" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_cart" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
 <span class="font-label-sm text-[10px]">Cart</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors w-16 h-full" href="{{ route('customer.account') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors w-16 h-full" href="{{ route('customer.account') }}">
 <span class="material-symbols-outlined mb-1" data-icon="person" style="font-variation-settings: 'FILL' 0;">person</span>
 <span class="font-label-sm text-[10px]">Account</span>
 </a>

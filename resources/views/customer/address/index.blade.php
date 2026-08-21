@@ -191,11 +191,11 @@
   </head>
 <body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased selection:bg-secondary-container selection:text-on-secondary-container pb-[calc(72px+env(safe-area-inset-bottom))]">
 <!-- Top App Bar -->
-<header class="bg-surface dark:bg-surface text-on-surface dark:text-on-surface font-display-lg text-display-lg-mobile font-label-sm text-label-sm docked full-width top-0 border-b border-outline-variant flat no shadows hover:opacity-80 transition-opacity flex justify-between items-center w-full px-container-margin h-16 sticky z-40 bg-surface/90 backdrop-blur-md">
-<a aria-label="Go back" href="{{ route('customer.account') }}" class="p-2 -ml-2 text-on-surface hover:opacity-70 transition-all duration-200 flex">
+<header class="bg-primary-container/90 backdrop-blur-md text-on-primary flex justify-between items-center w-full px-container-margin h-16 sticky z-40 border-b border-white/10">
+<a aria-label="Go back" href="{{ route('customer.account') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-on-surface dark:text-on-surface uppercase truncate max-w-[200px] text-center">MY ADDRESSES</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-secondary-fixed-dim uppercase truncate max-w-[200px] text-center">MY ADDRESSES</h1>
 <div class="w-10"></div> <!-- Spacer for center alignment -->
 </header>
 <!-- Main Content -->
@@ -250,25 +250,25 @@
 </div>
 </main>
 <!-- Bottom Navigation Bar -->
-<nav class="md:hidden bg-surface dark:bg-surface text-secondary dark:text-secondary-fixed-dim font-label-sm text-label-sm fixed bottom-0 w-full z-50 border-t border-outline-variant shadow-sm flex justify-around items-center h-[72px] px-xs pb-safe">
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors group w-16" href="{{ route('customer.home') }}">
+<nav class="md:hidden bg-primary-container text-on-primary font-label-sm text-label-sm fixed bottom-0 w-full z-50 border-t border-white/10 shadow-sm flex justify-around items-center h-[72px] px-xs pb-safe">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors group w-16" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">home</span>
 <span class="truncate w-full text-center">Home</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors group w-16" href="{{ route('customer.shop') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors group w-16" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">shopping_bag</span>
 <span class="truncate w-full text-center">Shop</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors group w-16" href="{{ route('customer.wishlist') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors group w-16" href="{{ route('customer.wishlist') }}">
 <span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">favorite</span>
 <span class="truncate w-full text-center">Wishlist</span>
 </a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors group w-16 relative" href="{{ route('customer.chart') }}">
+<a class="flex flex-col items-center justify-center text-on-primary/60 hover:text-secondary-fixed-dim transition-colors group w-16 relative" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">shopping_cart</span>
 <span class="truncate w-full text-center">Cart</span>
-<span class="absolute top-0 right-2 w-2 h-2 bg-secondary rounded-full"></span>
+<span class="absolute top-0 right-2 w-2 h-2 bg-secondary-fixed-dim rounded-full"></span>
 </a>
-<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:text-secondary transition-colors scale-95 transition-transform group w-16" href="{{ route('customer.account') }}">
+<a class="flex flex-col items-center justify-center text-secondary-fixed-dim hover:text-secondary transition-colors scale-95 transition-transform group w-16" href="{{ route('customer.account') }}">
 <span class="material-symbols-outlined mb-1 text-[24px]" style="font-variation-settings: 'FILL' 1;">person</span>
 <span class="truncate w-full text-center font-medium">Account</span>
 </a>
