@@ -7,7 +7,6 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -227,7 +226,7 @@
 <span class="material-symbols-outlined mb-1" data-icon="shopping_cart">shopping_cart</span>
 <span class="font-label-sm text-label-sm">Cart</span>
 </a>
-<a aria-current="page" class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:text-secondary transition-colors w-16 h-full Active: scale-95 transition-transform" href="{{ route('customer.account') }}">
+<a aria-current="page" class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:text-secondary transition-colors w-16 h-full active:scale-95 transition-transform" href="{{ route('customer.account') }}">
 <span class="material-symbols-outlined mb-1" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
 <span class="font-label-sm text-label-sm">Account</span>
 </a>
