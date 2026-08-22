@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>RALIVA - @yield('title', 'Gudang')</title>
+    @include('partials.theme-head')
+</head>
+<body class="text-on-background font-body-md antialiased min-h-screen flex flex-col md:flex-row">
+    <!-- Mobile Nav (TopAppBar) -->
+    <header class="md:hidden flex justify-between items-center w-full px-container-margin h-16 bg-surface border-b border-outline-variant sticky top-0 z-40">
+        <button id="sidebar-toggle" class="text-on-surface hover:opacity-80 transition-opacity">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+        <span class="font-display-lg text-headline-md tracking-widest text-on-surface">RALIVA</span>
+        <div class="flex items-center gap-2">
+            <button type="button" class="theme-toggle text-on-surface hover:opacity-80 transition-opacity" aria-label="Ganti tema">
+                <span class="material-symbols-outlined icon-moon">dark_mode</span>
+                <span class="material-symbols-outlined icon-sun hidden">light_mode</span>
+            </button>
+            @include('partials.notification-panel', ['items' => [
+                ['icon' => 'inventory_2', 'html' => 'Stok <span class="font-bold">Silk Scarf</span> tinggal 5 unit.', 'time' => '10 menit lalu'],
+                ['icon' => 'archive', 'html' => 'Barang masuk <span class="font-bold">BM-0012</span> menunggu pemeriksaan.', 'time' => '30 menit lalu'],
+                ['icon' => 'swap_horiz', 'html' => 'Pemindahan stok <span class="font-bold">PM-0004</span> telah diterima.', 'time' => '2 jam lalu'],
+            ], 'lihatSemuaRoute' => 'gudang.notifikasi'])
+            @include('partials.profile-menu', ['compact' => true, 'name' => 'Andi Pratama', 'role' => 'Staf Gudang', 'profilRoute' => 'gudang.profil', 'showPengaturan' => false])
+        </div>
+    </header>
+
+    <!-- Side Navigation Drawer -->
+    <aside id="sidebar" class="flex fixed md:sticky top-0 left-0 z-50 flex-col h-screen pt-section-gap pb-[88px] md:pb-section-gap px-container-margin w-64 border-r border-white/10 bg-sidebar -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+        <div class="mb-12 flex items-center gap-3">
+            <img src="{{ asset('images/logo.svg') }}" alt="Logo Raliva" class="w-11 h-11 rounded-xl shrink-0" />
+            <div>
+                <span class="font-display-lg text-title-md text-white tracking-widest block leading-tight">RALIVA</span>
+                <span class="text-gold-accent/80 font-label-sm text-[10px] uppercase tracking-wider">Gudang</span>
+            </div>
+        </div>
+        <nav class="sidebar-scroll flex-1 overflow-y-auto">
+            @include('partials.sidebar-menu-gudang')
+        </nav>
+    </aside>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 md:hidden hidden opacity-0 transition-opacity duration-300"></div>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col min-w-0 pb-[72px] md:pb-0">
+        <!-- Desktop Header -->
+        <header class="hidden md:flex sticky top-0 z-40 justify-between items-center px-container-margin h-20 bg-surface-container-lowest border-b border-outline-variant">
+            <div>
+                <div class="flex items-center gap-3">
+                    <h1 class="font-title-md text-title-md text-on-surface uppercase tracking-wider">@yield('header-title', 'Dashboard')</h1>
+                    @hasSection('header-badge')
+                        <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-label-sm uppercase tracking-wider">@yield('header-badge')</span>
+                    @endif
+                </div>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">@yield('header-subtitle', 'Pantau persediaan dan aktivitas gudang Anda.')</p>
+            </div>
+            <div class="flex items-center gap-6">
+                <button type="button" class="theme-toggle text-on-surface hover:text-secondary transition-colors" aria-label="Ganti tema">
+                    <span class="material-symbols-outlined icon-moon">dark_mode</span>
+                    <span class="material-symbols-outlined icon-sun hidden">light_mode</span>
+                </button>
+                @include('partials.notification-panel', ['items' => [
+                    ['icon' => 'inventory_2', 'html' => 'Stok <span class="font-bold">Silk Scarf</span> tinggal 5 unit.', 'time' => '10 menit lalu'],
+                    ['icon' => 'archive', 'html' => 'Barang masuk <span class="font-bold">BM-0012</span> menunggu pemeriksaan.', 'time' => '30 menit lalu'],
+                    ['icon' => 'swap_horiz', 'html' => 'Pemindahan stok <span class="font-bold">PM-0004</span> telah diterima.', 'time' => '2 jam lalu'],
+                ], 'lihatSemuaRoute' => 'gudang.notifikasi'])
+                @include('partials.profile-menu', ['name' => 'Andi Pratama', 'role' => 'Staf Gudang', 'profilRoute' => 'gudang.profil', 'showPengaturan' => false])
+            </div>
+        </header>
+
+        <!-- Mobile Greeting -->
+        <div class="md:hidden px-container-margin py-6">
+            <div class="flex items-center gap-3 flex-wrap">
+                <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">@yield('header-title', 'Dashboard')</h1>
+                @hasSection('header-badge')
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">@yield('header-badge')</span>
+                @endif
+            </div>
+            <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Pantau persediaan dan aktivitas gudang Anda.')</p>
+        </div>
+
+        <div class="px-container-margin pt-8 pb-section-gap flex flex-col gap-section-gap max-w-7xl mx-auto w-full">
+            @yield('content')
+        </div>
+    </main>
+
+    <!-- Bottom Nav Bar (Mobile) -->
+    @include('partials.bottom-nav', ['items' => [
+        ['route' => 'gudang.dashboard', 'icon' => 'space_dashboard', 'label' => 'Beranda'],
+        ['route' => 'gudang.stok', 'icon' => 'inventory_2', 'label' => 'Stok'],
+        ['route' => 'gudang.barang-masuk', 'icon' => 'archive', 'label' => 'Masuk'],
+        ['route' => 'gudang.riwayat-stok', 'icon' => 'history', 'label' => 'Riwayat'],
+        ['route' => 'gudang.profil', 'icon' => 'person', 'label' => 'Profil'],
+    ]])
+
+    @include('partials.layout-scripts')
+    @include('partials.ui-scripts')
+
+    @stack('scripts')
+</body>
+</html>
