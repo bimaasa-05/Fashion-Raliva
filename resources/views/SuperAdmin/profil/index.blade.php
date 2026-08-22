@@ -7,17 +7,29 @@
 
 @section('content')
 <div class="space-y-section-gap max-w-4xl">
-    <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
-        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-            <div class="w-24 h-24 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden shrink-0">
-                <img alt="Foto Profil Admin" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuUf094pPsvMlxNz9CEzztLZIPfB4q2FE_6HM73O8sFoIt42FkBx43D1cxFlylMdSolVSJZNCBDrc8ttYGcVUIYXcsS0AUGBhcZYBAFGqcAXzmuJyVyjyJY6CXvyxdr0Zwzlwi2Tw3Djm9F2wtwaOLZklTUYLsRg7NCbF9hgI1uCTcTdgGi-0zShSJMzVkR1HYp_C02xOHHVWnGLI4_rrhbWQnSlrZ2VpmUbZL0Gc18YDjNwDrrkAcPg" />
+    <section class="rise relative bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden card-premium">
+        <div class="relative h-28 md:h-32 bg-gradient-to-r from-gold-accent/25 via-gold-accent/10 to-transparent">
+            <span class="material-symbols-outlined absolute right-8 -bottom-6 text-[110px] text-gold-accent/15 pointer-events-none select-none" aria-hidden="true">shield_person</span>
+        </div>
+        <div class="px-6 md:px-8 pb-6">
+            <div class="flex flex-col sm:flex-row sm:items-end gap-4 -mt-12">
+                <div class="w-24 h-24 rounded-2xl ring-4 ring-surface-container-lowest overflow-hidden bg-surface-container-high shadow-xl shrink-0 mx-auto sm:mx-0">
+                    <img alt="Foto Profil Admin" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuUf094pPsvMlxNz9CEzztLZIPfB4q2FE_6HM73O8sFoIt42FkBx43D1cxFlylMdSolVSJZNCBDrc8ttYGcVUIYXcsS0AUGBhcZYBAFGqcAXzmuJyVyjyJY6CXvyxdr0Zwzlwi2Tw3Djm9F2wtwaOLZklTUYLsRg7NCbF9hgI1uCTcTdgGi-0zShSJMzVkR1HYp_C02xOHHVWnGLI4_rrhbWQnSlrZ2VpmUbZL0Gc18YDjNwDrrkAcPg" />
+                </div>
+                <div class="text-center sm:text-left flex-grow pb-1 min-w-0">
+                    <div class="flex items-center gap-3 justify-center sm:justify-start flex-wrap">
+                        <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Rizky Pratama</h2>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">Super Admin</span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-[10px] uppercase tracking-wider"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>Aktif</span>
+                    </div>
+                    <p class="text-on-surface-variant font-body-md text-sm mt-2 flex items-center justify-center sm:justify-start gap-4 flex-wrap">
+                        <span class="inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">mail</span>rizky.pratama@raliva.com</span>
+                        <span class="inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">call</span>+62 812-3456-7890</span>
+                    </p>
+                </div>
+                <button type="button" onclick="showRalivaToast('Fitur ganti foto demo belum tersedia.', 'photo_camera')" class="px-5 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest hover:border-gold-accent hover:text-gold-accent transition-colors shrink-0">Ganti Foto</button>
             </div>
-            <div class="text-center sm:text-left flex-grow">
-                <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Rizky Pratama</h2>
-                <span class="inline-flex items-center px-3 py-1 mt-2 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-label-sm uppercase tracking-wider">Super Admin</span>
-                <p class="font-body-md text-on-surface-variant mt-3">Pengelola platform Raliva secara keseluruhan. Mengawasi pengguna, toko, transaksi, aturan bisnis, moderasi, komisi, pencairan dana, dan konfigurasi global.</p>
-                <button type="button" onclick="showRalivaToast('Fitur ganti foto demo belum tersedia.', 'photo_camera')" class="mt-4 px-5 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest hover:bg-surface-container-low transition-colors">Ganti Foto</button>
-            </div>
+            <p class="font-body-md text-on-surface-variant text-sm mt-4 max-w-2xl">Pengelola platform Raliva secara keseluruhan — mengawasi pengguna, toko, transaksi, aturan bisnis, moderasi, komisi, pencairan dana, dan konfigurasi global.</p>
         </div>
     </section>
 

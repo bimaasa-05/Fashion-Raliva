@@ -9,8 +9,8 @@
 @section('content')
 <div class="space-y-section-gap max-w-4xl">
     <form class="space-y-section-gap" id="pengaturan-form" data-toast-message="Pengaturan sistem berhasil disimpan.">
-        <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 space-y-gutter card-premium">
-            <h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Umum</h2>
+        <section class="bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 space-y-gutter card-premium">
+            <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">tune</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Umum</h2></div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaPlatform">Nama Platform</label>
@@ -30,8 +30,8 @@
             </label>
         </section>
 
-        <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 space-y-gutter card-premium">
-            <h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Keuangan</h2>
+        <section class="bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 space-y-gutter card-premium">
+            <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">payments</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Keuangan</h2></div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="komisiDefault">Komisi Default (%)</label>
@@ -51,8 +51,8 @@
             </div>
         </section>
 
-        <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 space-y-gutter card-premium">
-            <h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Moderasi & Konten</h2>
+        <section class="bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 space-y-gutter card-premium">
+            <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">fact_check</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Moderasi & Konten</h2></div>
             <label class="flex items-center justify-between gap-4 p-4 border border-muted-border rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors">
                 <span>
                     <span class="block font-title-md text-on-surface">Moderasi Otomatis</span>
@@ -73,8 +73,8 @@
             </div>
         </section>
 
-        <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 space-y-gutter card-premium">
-            <h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Batas & Limit</h2>
+        <section class="bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 space-y-gutter card-premium">
+            <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">speed</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Batas & Limit</h2></div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="maksPengajuan">Maks Pengajuan Pencairan per Hari</label>

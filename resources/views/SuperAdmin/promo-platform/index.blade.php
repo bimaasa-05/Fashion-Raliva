@@ -17,7 +17,7 @@
     <!-- Active Promos -->
     <section class="space-y-gutter">
         <div class="flex justify-between items-center">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Promo Aktif</h2>
+            <div class="flex items-center gap-3"><div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">local_fire_department</span></div><h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Promo Aktif</h2></div>
             <span class="text-on-surface-variant font-body-md text-sm">3 promo berjalan</span>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
@@ -77,9 +77,9 @@
     <!-- Create New Promo Form -->
     <section class="space-y-gutter">
         <div class="flex justify-between items-center">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Buat Promo Baru</h2>
+            <div class="flex items-center gap-3"><div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">celebration</span></div><h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Buat Promo Baru</h2></div>
         </div>
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 card-premium">
             <form class="space-y-gutter" id="create-promo-form" data-toast-message="Promo platform berhasil dibuat.">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="promoName">Nama Promo</label>

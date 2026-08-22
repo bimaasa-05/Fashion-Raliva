@@ -20,9 +20,9 @@
     <!-- Add Bank Form Card -->
     <section class="space-y-gutter">
         <div class="flex justify-between items-center">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Tambah Bank Baru</h2>
+            <div class="flex items-center gap-3"><div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">account_balance</span></div><h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Tambah Bank Baru</h2></div>
         </div>
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 card-premium">
             <form class="space-y-gutter" id="add-bank-form" data-toast-message="Rekening bank berhasil disimpan.">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                     <div>
@@ -40,11 +40,11 @@
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="accountType">Jenis Rekening</label>
                         <div class="grid grid-cols-2 gap-3">
-                            <label class="flex items-center gap-3 p-3 border border-muted-border rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">
+                            <label class="flex items-center gap-3 p-3 border border-muted-border rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10">
                                 <input type="radio" class="w-4 h-4 border border-on-surface rounded accent-gold-accent" name="accountType" value="checking" checked />
                                 <span class="font-body-md text-on-surface">Rekening Cek</span>
                             </label>
-                            <label class="flex items-center gap-3 p-3 border border-muted-border rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors">
+                            <label class="flex items-center gap-3 p-3 border border-muted-border rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10">
                                 <input type="radio" class="w-4 h-4 border border-on-surface rounded accent-gold-accent" name="accountType" value="savings" />
                                 <span class="font-body-md text-on-surface">Rekening Tabungan</span>
                             </label>
@@ -54,15 +54,15 @@
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Status</label>
                     <div class="grid grid-cols-3 gap-3">
-                        <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all">
+                        <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                             <input type="radio" class="sr-only" name="status" value="active" checked />
                             Aktif
                         </label>
-                        <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all">
+                        <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                             <input type="radio" class="sr-only" name="status" value="inactive" />
                             Non-aktif
                         </label>
-                        <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all">
+                        <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                             <input type="radio" class="sr-only" name="status" value="verification" />
                             Verifikasi
                         </label>

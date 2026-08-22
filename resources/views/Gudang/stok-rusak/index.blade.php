@@ -109,7 +109,7 @@
     @foreach ($rows as $row)
         <div id="sr-detail-{{ $loop->iteration }}" data-modal class="fixed inset-0 z-[70] hidden">
             <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-            <div class="relative mx-auto mt-16 md:mt-24 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6 max-h-[80vh] overflow-y-auto">
+            <div class="relative mx-auto mt-16 md:mt-24 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl p-6 max-h-[80vh] overflow-y-auto">
                 <div class="flex items-start justify-between gap-4 mb-6">
                     <div>
                         <h3 class="font-title-md text-title-md text-on-surface">Detail {{ $row[0] }}</h3>
@@ -138,7 +138,7 @@
 
     <div id="modal-stok-rusak" data-modal class="fixed inset-0 z-[70] hidden">
         <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
+        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
             <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
                 <div>
                     <h3 class="font-title-md text-title-md text-on-surface premium-heading">Catat Stok Rusak</h3>

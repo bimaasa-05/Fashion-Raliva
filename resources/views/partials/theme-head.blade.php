@@ -192,5 +192,42 @@
     .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
     .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 9999px; }
     .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+    .text-gradient-gold {
+        background: linear-gradient(115deg, #a8823a 0%, #C9A24D 35%, #ecd398 55%, #C9A24D 80%, #a8823a 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .hero-glow { position: relative; }
+    .hero-glow::before {
+        content: '';
+        position: absolute;
+        inset: -30%;
+        background: radial-gradient(circle at 70% 30%, rgba(201, 162, 77, 0.14), transparent 45%),
+                    radial-gradient(circle at 15% 85%, rgba(201, 162, 77, 0.08), transparent 40%);
+        pointer-events: none;
+    }
+
+    .gauge-progress {
+        transition: stroke-dashoffset 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        filter: drop-shadow(0 0 6px rgba(201, 162, 77, 0.45));
+    }
+
+    @keyframes pageEnter {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes riseIn {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        .page-enter { animation: pageEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+        .rise { opacity: 0; animation: riseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    }
 </style>
 @stack('styles')

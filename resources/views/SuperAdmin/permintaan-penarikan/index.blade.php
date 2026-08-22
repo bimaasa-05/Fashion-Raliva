@@ -164,10 +164,13 @@
     </section>
 </div>
 
-<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-scrim/50 backdrop-blur-sm" id="approve-dialog">
-    <div class="bg-surface-container-lowest border border-muted-border p-section-gap max-w-md w-full shadow-2xl rounded-lg">
-        <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4">Konfirmasi Pencairan</h3>
-        <p class="font-body-md text-body-md text-on-surface-variant mb-8">Anda akan menyetujui pencairan sebesar <span class="font-title-md text-gold-accent">Rp 12.500.000</span> ke LUNARA Fashion. Tindakan ini akan menandai pengajuan sebagai diproses.</p>
+<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="approve-dialog">
+    <div class="bg-surface-container-lowest border border-gold-accent/25 p-section-gap max-w-md w-full shadow-2xl rounded-xl">
+        <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-gutter">
+            <span class="material-symbols-outlined text-gold-accent text-[28px]">task_alt</span>
+        </div>
+        <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4 text-center">Konfirmasi Pencairan</h3>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-8 text-center">Anda akan menyetujui pencairan sebesar <span class="font-title-md text-gold-accent">Rp 12.500.000</span> ke LUNARA Fashion. Tindakan ini akan menandai pengajuan sebagai diproses.</p>
         <div class="flex justify-end gap-4">
             <button class="border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase hover:bg-surface-container transition-colors"
                 onclick="document.getElementById('approve-dialog').classList.add('hidden')">Batal</button>
@@ -177,10 +180,13 @@
     </div>
 </div>
 
-<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-scrim/50 backdrop-blur-sm" id="reject-dialog">
-    <div class="bg-surface-container-lowest border border-error/20 p-section-gap max-w-md w-full shadow-2xl rounded-lg">
-        <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-error mb-4">Tolak Pencairan</h3>
-        <p class="font-body-md text-body-md text-on-surface-variant mb-4">Apakah Anda yakin ingin menolak pengajuan pencairan dari LUNARA Fashion?</p>
+<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="reject-dialog">
+    <div class="bg-surface-container-lowest border border-error/25 p-section-gap max-w-md w-full shadow-2xl rounded-xl">
+        <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-gutter">
+            <span class="material-symbols-outlined text-error text-[28px]">gpp_bad</span>
+        </div>
+        <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-error mb-4 text-center">Tolak Pencairan</h3>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-4 text-center">Apakah Anda yakin ingin menolak pengajuan pencairan dari LUNARA Fashion?</p>
         <div class="mb-8">
             <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Alasan Penolakan</label>
             <textarea class="w-full border border-muted-border bg-surface-container-low p-3 font-body-md text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary h-24" placeholder="Tulis alasan..."></textarea>

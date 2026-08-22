@@ -17,9 +17,9 @@
     <!-- Add Courier Form Card -->
     <section class="space-y-gutter">
         <div class="flex justify-between items-center">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Tambah Kurir Baru</h2>
+            <div class="flex items-center gap-3"><div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">local_shipping</span></div><h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Tambah Kurir Baru</h2></div>
         </div>
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 card-premium">
             <form class="space-y-gutter" id="add-courier-form" data-toast-message="Kurir baru berhasil ditambahkan.">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="courierName">Nama Kurir</label>
@@ -62,15 +62,15 @@
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Status</label>
                     <div class="grid grid-cols-3 gap-3">
-                        <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all">
+                        <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                             <input type="radio" class="sr-only" name="courierStatus" value="active" checked />
                             Aktif
                         </label>
-                        <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all">
+                        <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                             <input type="radio" class="sr-only" name="courierStatus" value="inactive" />
                             Non-aktif
                         </label>
-                        <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all">
+                        <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                             <input type="radio" class="sr-only" name="courierStatus" value="verification" />
                             Verifikasi
                         </label>
