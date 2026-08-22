@@ -192,6 +192,8 @@
     html.theme-dark .group:hover .group-hover\:text-primary { color: #f2efec !important; }
     html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
+    html.theme-dark .peer:checked ~ .after\:bg-surface::after { background-color: #161514 !important; }
+
 </style>
   </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg">
