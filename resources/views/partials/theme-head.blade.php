@@ -192,5 +192,18 @@
     .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
     .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 9999px; }
     .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+    /* ===== Raliva Form Components — satu style untuk semua role ===== */
+</style>
+<style type="text/tailwindcss">
+    .raliva-label { @apply block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant; }
+    .raliva-figure { @apply font-body-md font-bold tracking-tight leading-none; }
+    .raliva-input { @apply w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3.5 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200 disabled:bg-surface-container-low disabled:text-on-surface-variant disabled:cursor-not-allowed disabled:opacity-80; }
+    .raliva-textarea { @apply w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3.5 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200; }
+    .raliva-search { @apply w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-10 pr-3.5 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200; }
+    .raliva-select { @apply w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-3.5 pr-10 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200 appearance-none cursor-pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 16px; }
+    .raliva-toggle { @apply relative inline-flex items-center cursor-pointer shrink-0 align-middle; }
+    .raliva-toggle-track { @apply block w-11 h-6 bg-surface-container-high border border-outline-variant rounded-full peer-checked:bg-gold-accent peer-checked:border-gold-accent transition-colors duration-200; }
+    .raliva-toggle-knob { @apply absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow pointer-events-none transition-transform duration-200 peer-checked:translate-x-5; }
 </style>
 @stack('styles')
