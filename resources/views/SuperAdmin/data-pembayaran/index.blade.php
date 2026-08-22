@@ -38,14 +38,14 @@
         </div>
     </section>
 
-    <section class="space-y-gutter">
+    <section data-table-scope class="space-y-gutter">
         <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Transaksi Pembayaran</h2>
 
-        <div class="flex flex-wrap gap-2">
-            <button class="px-4 py-2 bg-primary text-on-primary font-label-sm text-label-sm uppercase rounded transition-colors">Semua</button>
-            <button class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Terverifikasi</button>
-            <button class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Menunggu</button>
-            <button class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Gagal</button>
+        <div data-chip-group data-chip-key="status" class="flex flex-wrap gap-2">
+            <button type="button" data-chip="semua" class="px-4 py-2 bg-deep-onyx text-on-primary border border-deep-onyx font-label-sm text-label-sm uppercase rounded transition-colors">Semua</button>
+            <button type="button" data-chip="terverifikasi" class="px-4 py-2 border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-label-sm uppercase rounded transition-colors">Terverifikasi</button>
+            <button type="button" data-chip="menunggu" class="px-4 py-2 border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-label-sm uppercase rounded transition-colors">Menunggu</button>
+            <button type="button" data-chip="gagal" class="px-4 py-2 border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-label-sm uppercase rounded transition-colors">Gagal</button>
         </div>
 
         <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
@@ -63,7 +63,7 @@
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
-                    <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                    <tr data-table-row data-status="terverifikasi" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-4 font-mono text-on-surface">PAY-2026082101</td>
                         <td class="p-4 text-on-surface">Transfer Bank BCA</td>
                         <td class="p-4">
@@ -76,9 +76,9 @@
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Terverifikasi</span>
                         </td>
                         <td class="p-4 text-on-surface-variant">21 Agu 2026 • 10.15</td>
-                        <td class="p-4 text-right"><button class="text-gold-accent hover:underline uppercase font-label-sm text-[10px]">Detail</button></td>
+                        <td class="p-4 text-right"><button type="button" data-detail-open="detail-pembayaran" data-d-nomor="PAY-2026082101" data-d-metode="Transfer Bank BCA" data-d-pelanggan="Sarah Jenkins (sarah@email.com)" data-d-toko="Lunara Fashion" data-d-jumlah="Rp 2.550.000" data-d-status="Terverifikasi" data-d-tanggal="21 Agu 2026 • 10.15" class="text-gold-accent hover:underline uppercase font-label-sm text-[10px]">Detail</button></td>
                     </tr>
-                    <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                    <tr data-table-row data-status="menunggu" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-4 font-mono text-on-surface">PAY-2026082102</td>
                         <td class="p-4 text-on-surface">E-Wallet</td>
                         <td class="p-4">
@@ -91,9 +91,9 @@
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Menunggu</span>
                         </td>
                         <td class="p-4 text-on-surface-variant">21 Agu 2026 • 09.42</td>
-                        <td class="p-4 text-right"><button class="text-gold-accent hover:underline uppercase font-label-sm text-[10px]">Verifikasi</button></td>
+                        <td class="p-4 text-right"><button type="button" onclick="showRalivaToast('Pembayaran PAY-2026082102 berhasil diverifikasi.', 'task_alt')" class="text-gold-accent hover:underline uppercase font-label-sm text-[10px]">Verifikasi</button></td>
                     </tr>
-                    <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                    <tr data-table-row data-status="gagal" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-4 font-mono text-on-surface">PAY-2026082103</td>
                         <td class="p-4 text-on-surface">Virtual Account Mandiri</td>
                         <td class="p-4">
@@ -106,9 +106,9 @@
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Gagal</span>
                         </td>
                         <td class="p-4 text-on-surface-variant">20 Agu 2026 • 22.08</td>
-                        <td class="p-4 text-right"><button class="text-gold-accent hover:underline uppercase font-label-sm text-[10px]">Detail</button></td>
+                        <td class="p-4 text-right"><button type="button" data-detail-open="detail-pembayaran" data-d-nomor="PAY-2026082103" data-d-metode="Virtual Account Mandiri" data-d-pelanggan="Dewi Lestari (dewi.l@email.com)" data-d-toko="Atelier Rina" data-d-jumlah="Rp 1.320.000" data-d-status="Gagal" data-d-tanggal="20 Agu 2026 • 22.08" class="text-gold-accent hover:underline uppercase font-label-sm text-[10px]">Detail</button></td>
                     </tr>
-                    <tr class="hover:bg-surface-container-low transition-colors">
+                    <tr data-table-row data-status="terverifikasi" class="hover:bg-surface-container-low transition-colors">
                         <td class="p-4 font-mono text-on-surface">PAY-2026082104</td>
                         <td class="p-4 text-on-surface">Kartu Kredit</td>
                         <td class="p-4">
@@ -121,11 +121,35 @@
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Terverifikasi</span>
                         </td>
                         <td class="p-4 text-on-surface-variant">20 Agu 2026 • 16.30</td>
-                        <td class="p-4 text-right"><button class="text-gold-accent hover:underline uppercase font-label-sm text-[10px]">Detail</button></td>
+                        <td class="p-4 text-right"><button type="button" data-detail-open="detail-pembayaran" data-d-nomor="PAY-2026082104" data-d-metode="Kartu Kredit" data-d-pelanggan="Budi Santoso (budi.s@email.com)" data-d-toko="Lunara Fashion" data-d-jumlah="Rp 455.000" data-d-status="Terverifikasi" data-d-tanggal="20 Agu 2026 • 16.30" class="text-gold-accent hover:underline uppercase font-label-sm text-[10px]">Detail</button></td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </section>
+</div>
+
+<div id="detail-pembayaran" data-modal class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto mt-16 md:mt-24 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6 max-h-[80vh] overflow-y-auto">
+        <div class="flex items-start justify-between gap-4 mb-6">
+            <div>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Detail Pembayaran</h3>
+                <p class="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mt-1"><span data-slot="nomor"></span></p>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <dl class="space-y-4 font-body-md text-sm">
+            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Metode</dt><dd class="text-on-surface text-right"><span data-slot="metode"></span></dd></div>
+            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Pelanggan</dt><dd class="text-on-surface text-right"><span data-slot="pelanggan"></span></dd></div>
+            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Toko</dt><dd class="text-on-surface text-right"><span data-slot="toko"></span></dd></div>
+            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Jumlah</dt><dd class="font-bold text-gold-accent text-right"><span data-slot="jumlah"></span></dd></div>
+            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Status Verifikasi</dt><dd class="text-on-surface text-right"><span data-slot="status"></span></dd></div>
+            <div class="flex justify-between gap-4"><dt class="text-on-surface-variant shrink-0">Tanggal</dt><dd class="text-on-surface text-right"><span data-slot="tanggal"></span></dd></div>
+        </dl>
+        <button type="button" data-modal-close class="w-full mt-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tutup</button>
+    </div>
 </div>
 @endsection

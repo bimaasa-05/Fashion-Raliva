@@ -21,13 +21,13 @@
 @section('content')
 <div class="px-container-margin pb-element-gap">
     <div class="flex items-center justify-center space-x-gutter mb-container-margin overflow-x-auto no-scrollbar py-2">
-        <button class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-primary text-primary transition-colors whitespace-nowrap">MENUNGGU (12)</button>
-        <button class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">DISETUJUI</button>
-        <button class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">DITOLAK</button>
+        <button type="button" data-moderasi-tab="menunggu" class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-primary text-primary transition-colors whitespace-nowrap">MENUNGGU (3)</button>
+        <button type="button" data-moderasi-tab="disetujui" class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">DISETUJUI</button>
+        <button type="button" data-moderasi-tab="ditolak" class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">DITOLAK</button>
     </div>
 </div>
 <div class="px-container-margin flex-grow">
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-gutter gap-y-container-margin">
+    <div id="moderasi-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-gutter gap-y-container-margin">
         <div class="group cursor-pointer flex flex-col transition-transform duration-300 hover:-translate-y-1" onclick="openDetailModal()">
             <div class="relative w-full aspect-[3/4] bg-surface-container-low mb-element-gap overflow-hidden rounded-lg">
                 <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAD17mbo2RMjQLUurWOk7oZNTqAPgUrUyNN2hXJFja0JUiv7N5fyAVB-RM_Gwf7YWS-zlWF4w8PVNCRoB-WIrtbXpRe0DACYYb9pkRwkRax9iKiMlmSc7DPKHzV98xsB4N4lhDoHWHn9hbwZtRVOutmfDKXPZe33TxnwiBp-2lCaek0XEV4Hh7Swi_FhekAiCYroSJd_0BhMpj4Q4LUBt4AlFR6P774tt5okifXIuW6dkaL9RD7XeNTKA" />
@@ -50,6 +50,7 @@
             <div class="flex flex-col flex-grow"><span class="font-label-sm text-label-sm text-on-surface-variant mb-1">LUNARA FASHION</span><h3 class="font-body-md text-body-md text-on-surface leading-tight mb-1 truncate">Relaxed Blazer</h3><div class="font-body-md text-body-md text-on-surface mt-auto">Rp 579.000</div></div>
         </div>
     </div>
+    <p id="moderasi-kosong" class="hidden text-center text-on-surface-variant font-body-md text-sm py-16">Belum ada produk pada status ini.</p>
 </div>
 @endsection
 
@@ -78,6 +79,27 @@
         modal.classList.add('modal-enter');
         setTimeout(() => { modal.classList.add('hidden'); }, 300);
     }
+
+    const moderasiTabs = document.querySelectorAll('[data-moderasi-tab]');
+    const moderasiGrid = document.getElementById('moderasi-grid');
+    const moderasiKosong = document.getElementById('moderasi-kosong');
+
+    moderasiTabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+            moderasiTabs.forEach((t) => {
+                t.classList.add('border-transparent', 'text-on-surface-variant', 'hover:text-on-surface');
+                t.classList.remove('border-primary', 'text-primary');
+            });
+            tab.classList.remove('border-transparent', 'text-on-surface-variant', 'hover:text-on-surface');
+            tab.classList.add('border-primary', 'text-primary');
+
+            const status = tab.getAttribute('data-moderasi-tab');
+            const hasContent = status === 'menunggu';
+            moderasiGrid?.classList.toggle('hidden', !hasContent);
+            moderasiKosong?.classList.toggle('hidden', hasContent);
+            moderasiKosong?.classList.toggle('flex', !hasContent);
+        });
+    });
 </script>
 @endpush
 
@@ -100,7 +122,7 @@
                 </div>
             </div>
             <div class="flex flex-col space-y-3 mt-container-margin pt-container-margin border-t border-outline-variant">
-                <button class="w-full bg-deep-onyx text-on-primary font-label-sm text-label-sm py-4 uppercase tracking-widest hover:bg-black transition-colors btn-premium" onclick="alert('Produk disetujui')">Setujui Produk</button>
+                <button class="w-full bg-deep-onyx text-on-primary font-label-sm text-label-sm py-4 uppercase tracking-widest hover:bg-black transition-colors btn-premium" onclick="closeDetailModal(); showRalivaToast('Produk disetujui dan tayang di marketplace.', 'task_alt')">Setujui Produk</button>
                 <button class="w-full bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-4 uppercase tracking-widest hover:bg-surface-container-low transition-colors" onclick="openRejectModal()">Tolak</button>
             </div>
         </div>
@@ -113,7 +135,7 @@
         <textarea class="w-full border border-outline-variant bg-transparent p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary mb-4" placeholder="Tulis alasan di sini..." rows="4"></textarea>
         <div class="flex space-x-4">
             <button class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors" onclick="closeRejectModal()">Batal</button>
-            <button class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity" onclick="alert('Produk ditolak'); closeRejectModal(); closeDetailModal();">Konfirmasi Penolakan</button>
+            <button class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity" onclick="closeRejectModal(); closeDetailModal(); showRalivaToast('Produk ditolak. Alasan dikirim ke toko.', 'block')">Konfirmasi Penolakan</button>
         </div>
     </div>
 </div>

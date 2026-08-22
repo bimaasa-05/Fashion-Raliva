@@ -44,12 +44,12 @@
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-element-gap">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Pengajuan Pencairan</h2>
             <div class="flex gap-4">
-                <button class="border border-outline px-4 py-2 text-primary font-label-sm text-label-sm uppercase hover:bg-surface-container transition-colors flex items-center gap-2">
-                    <span class="material-symbols-outlined text-sm">filter_list</span> Filter
-                </button>
-                <button class="bg-deep-onyx text-on-primary px-4 py-2 font-label-sm text-label-sm uppercase hover:opacity-90 transition-opacity flex items-center gap-2">
-                    <span class="material-symbols-outlined text-sm">download</span> Ekspor
-                </button>
+            <button type="button" onclick="showRalivaToast('Fitur filter demo belum tersedia.', 'info')" class="border border-outline px-4 py-2 text-primary font-label-sm text-label-sm uppercase hover:bg-surface-container transition-colors flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">filter_list</span> Filter
+            </button>
+            <button type="button" onclick="showRalivaToast('Data pengajuan berhasil diekspor (demo).', 'download')" class="bg-deep-onyx text-on-primary px-4 py-2 font-label-sm text-label-sm uppercase hover:opacity-90 transition-opacity flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">download</span> Ekspor
+            </button>
             </div>
         </div>
 
@@ -123,10 +123,12 @@
                             </td>
                             <td class="py-4 px-6 text-right">
                                 <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button class="w-8 h-8 flex items-center justify-center border border-outline text-on-surface hover:bg-error hover:text-on-error hover:border-error transition-colors" title="Tolak">
+                                    <button class="w-8 h-8 flex items-center justify-center border border-outline text-on-surface hover:bg-error hover:text-on-error hover:border-error transition-colors" title="Tolak"
+                                        onclick="document.getElementById('reject-dialog').classList.remove('hidden')">
                                         <span class="material-symbols-outlined text-sm">close</span>
                                     </button>
-                                    <button class="w-8 h-8 flex items-center justify-center bg-deep-onyx text-on-primary hover:opacity-80 transition-opacity" title="Setujui">
+                                    <button class="w-8 h-8 flex items-center justify-center bg-deep-onyx text-on-primary hover:opacity-80 transition-opacity" title="Setujui"
+                                        onclick="document.getElementById('approve-dialog').classList.remove('hidden')">
                                         <span class="material-symbols-outlined text-sm">check</span>
                                     </button>
                                 </div>
@@ -169,7 +171,8 @@
         <div class="flex justify-end gap-4">
             <button class="border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase hover:bg-surface-container transition-colors"
                 onclick="document.getElementById('approve-dialog').classList.add('hidden')">Batal</button>
-            <button class="bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase hover:opacity-90 transition-opacity">Konfirmasi Persetujuan</button>
+            <button class="bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase hover:opacity-90 transition-opacity"
+                onclick="document.getElementById('approve-dialog').classList.add('hidden'); showRalivaToast('Pencairan disetujui dan sedang diproses.', 'task_alt')">Konfirmasi Persetujuan</button>
         </div>
     </div>
 </div>
@@ -186,7 +189,7 @@
             <button class="border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase hover:bg-surface-container transition-colors"
                 onclick="document.getElementById('reject-dialog').classList.add('hidden')">Batal</button>
             <button class="bg-error text-on-error px-6 py-3 font-label-sm text-label-sm uppercase hover:opacity-90 transition-opacity"
-                onclick="document.getElementById('reject-dialog').classList.add('hidden')">Tolak Pengajuan</button>
+                onclick="document.getElementById('reject-dialog').classList.add('hidden'); showRalivaToast('Pengajuan pencairan ditolak.', 'block')">Tolak Pengajuan</button>
         </div>
     </div>
 </div>

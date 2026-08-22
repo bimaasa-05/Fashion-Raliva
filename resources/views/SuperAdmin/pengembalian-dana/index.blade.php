@@ -35,14 +35,14 @@
         </div>
     </section>
 
-    <section class="space-y-gutter">
+    <section data-table-scope class="space-y-gutter">
         <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Kasus Dieskalasikan</h2>
 
-        <div class="flex flex-wrap gap-2">
-            <button class="px-4 py-2 bg-primary text-on-primary font-label-sm text-label-sm uppercase rounded transition-colors">Semua</button>
-            <button class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Menunggu Keputusan</button>
-            <button class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Disetujui</button>
-            <button class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Ditolak</button>
+        <div data-chip-group data-chip-key="status" class="flex flex-wrap gap-2">
+            <button type="button" data-chip="semua" class="px-4 py-2 bg-deep-onyx text-on-primary border border-deep-onyx font-label-sm text-label-sm uppercase rounded transition-colors">Semua</button>
+            <button type="button" data-chip="menunggu-keputusan" class="px-4 py-2 border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-label-sm uppercase rounded transition-colors">Menunggu Keputusan</button>
+            <button type="button" data-chip="disetujui" class="px-4 py-2 border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-label-sm uppercase rounded transition-colors">Disetujui</button>
+            <button type="button" data-chip="ditolak" class="px-4 py-2 border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-label-sm uppercase rounded transition-colors">Ditolak</button>
         </div>
 
         <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
@@ -59,7 +59,7 @@
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
-                    <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                    <tr data-table-row data-status="menunggu-keputusan" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-4 font-mono text-on-surface">REF-2026082101</td>
                         <td class="p-4 font-mono text-on-surface-variant">RLV-20260812</td>
                         <td class="p-4">
@@ -72,11 +72,11 @@
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Menunggu Keputusan</span>
                         </td>
                         <td class="p-4 text-right whitespace-nowrap">
-                            <button class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors">Setujui</button>
-                            <button class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Tolak</button>
+                            <button type="button" onclick="showRalivaToast('Refund REF-2026082101 disetujui dan diproses.', 'task_alt')" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors">Setujui</button>
+                            <button type="button" onclick="showRalivaToast('Refund REF-2026082101 ditolak. Pelanggan akan dinotifikasi.', 'block')" class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Tolak</button>
                         </td>
                     </tr>
-                    <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                    <tr data-table-row data-status="menunggu-keputusan" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-4 font-mono text-on-surface">REF-2026082002</td>
                         <td class="p-4 font-mono text-on-surface-variant">RLV-20260809</td>
                         <td class="p-4">
@@ -89,11 +89,11 @@
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Menunggu Keputusan</span>
                         </td>
                         <td class="p-4 text-right whitespace-nowrap">
-                            <button class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors">Setujui</button>
-                            <button class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Tolak</button>
+                            <button type="button" onclick="showRalivaToast('Refund REF-2026082002 disetujui dan diproses.', 'task_alt')" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors">Setujui</button>
+                            <button type="button" onclick="showRalivaToast('Refund REF-2026082002 ditolak. Pelanggan akan dinotifikasi.', 'block')" class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Tolak</button>
                         </td>
                     </tr>
-                    <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                    <tr data-table-row data-status="disetujui" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-4 font-mono text-on-surface">REF-2026081903</td>
                         <td class="p-4 font-mono text-on-surface-variant">RLV-20260801</td>
                         <td class="p-4">
@@ -107,7 +107,7 @@
                         </td>
                         <td class="p-4 text-right"><span class="text-on-surface-variant text-xs uppercase">Selesai</span></td>
                     </tr>
-                    <tr class="hover:bg-surface-container-low transition-colors">
+                    <tr data-table-row data-status="ditolak" class="hover:bg-surface-container-low transition-colors">
                         <td class="p-4 font-mono text-on-surface">REF-2026081804</td>
                         <td class="p-4 font-mono text-on-surface-variant">RLV-20260728</td>
                         <td class="p-4">

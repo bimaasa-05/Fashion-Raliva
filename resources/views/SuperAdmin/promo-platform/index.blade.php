@@ -80,7 +80,7 @@
             <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Buat Promo Baru</h2>
         </div>
         <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
-            <form class="space-y-gutter" id="create-promo-form">
+            <form class="space-y-gutter" id="create-promo-form" data-toast-message="Promo platform berhasil dibuat.">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="promoName">Nama Promo</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="promoName" name="promoName" type="text" placeholder="Misal: Lebaran Sale" required />

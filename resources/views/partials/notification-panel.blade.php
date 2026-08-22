@@ -15,7 +15,7 @@
     <div data-notification-menu class="hidden absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-[60] overflow-hidden">
         <div class="flex items-center justify-between px-4 py-3 border-b border-muted-border">
             <p class="font-label-sm text-sm text-on-surface uppercase tracking-wider">Notifikasi</p>
-            <button type="button" class="font-label-sm text-[10px] text-gold-accent uppercase hover:underline" onclick="alert('Semua notifikasi ditandai sudah dibaca.')">Tandai Dibaca</button>
+            <button type="button" class="font-label-sm text-[10px] text-gold-accent uppercase hover:underline" onclick="showRalivaToast('Semua notifikasi ditandai sudah dibaca.', 'done_all')">Tandai Dibaca</button>
         </div>
         <ul class="max-h-80 overflow-y-auto">
             @foreach ($notificationItems as $item)

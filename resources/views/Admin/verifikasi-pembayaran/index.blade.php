@@ -24,11 +24,11 @@
                         <span class="material-symbols-outlined text-on-surface-variant">receipt_long</span>
                         <span class="font-body-md text-sm text-on-surface">bukti-transfer-bca-0821.jpg</span>
                     </div>
-                    <button class="text-gold-accent font-label-sm text-[10px] uppercase hover:underline">Lihat Bukti</button>
+                    <button type="button" onclick="showRalivaToast('Pratinjau bukti transfer demo tidak tersedia.', 'receipt_long')" class="text-gold-accent font-label-sm text-[10px] uppercase hover:underline">Lihat Bukti</button>
                 </div>
                 <div class="flex gap-3">
-                    <button class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Setujui</button>
-                    <button class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error/20 transition-colors">Tolak</button>
+                    <button type="button" onclick="showRalivaToast('Pembayaran #RLV-2081 disetujui.', 'task_alt')" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Setujui</button>
+                    <button type="button" onclick="showRalivaToast('Pembayaran #RLV-2081 ditolak.', 'block')" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error/20 transition-colors">Tolak</button>
                 </div>
             </div>
 
@@ -45,11 +45,11 @@
                         <span class="material-symbols-outlined text-on-surface-variant">receipt_long</span>
                         <span class="font-body-md text-sm text-on-surface">bukti-ewallet-2078.png</span>
                     </div>
-                    <button class="text-gold-accent font-label-sm text-[10px] uppercase hover:underline">Lihat Bukti</button>
+                    <button type="button" onclick="showRalivaToast('Pratinjau bukti pembayaran demo tidak tersedia.', 'receipt_long')" class="text-gold-accent font-label-sm text-[10px] uppercase hover:underline">Lihat Bukti</button>
                 </div>
                 <div class="flex gap-3">
-                    <button class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Setujui</button>
-                    <button class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error/20 transition-colors">Tolak</button>
+                    <button type="button" onclick="showRalivaToast('Pembayaran #RLV-2078 disetujui.', 'task_alt')" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Setujui</button>
+                    <button type="button" onclick="showRalivaToast('Pembayaran #RLV-2078 ditolak.', 'block')" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error/20 transition-colors">Tolak</button>
                 </div>
             </div>
         </div>

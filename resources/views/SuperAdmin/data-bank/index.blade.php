@@ -23,7 +23,7 @@
             <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Tambah Bank Baru</h2>
         </div>
         <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
-            <form class="space-y-gutter" id="add-bank-form">
+            <form class="space-y-gutter" id="add-bank-form" data-toast-message="Rekening bank berhasil disimpan.">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="bankName">Nama Bank</label>
@@ -100,7 +100,7 @@
                         <span class="material-symbols-outlined text-[10px]">check_circle</span>
                         Aktif
                     </span>
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah data rekening.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
                 </div>
@@ -123,7 +123,7 @@
                         <span class="material-symbols-outlined text-[10px]">check_circle</span>
                         Aktif
                     </span>
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah data rekening.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
                 </div>
@@ -146,7 +146,7 @@
                         <span class="material-symbols-outlined text-[10px]">hourglass_top</span>
                         Verifikasi
                     </span>
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah data rekening.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
                 </div>

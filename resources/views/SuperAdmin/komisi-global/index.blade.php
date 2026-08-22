@@ -23,7 +23,7 @@
         <div class="absolute inset-0 bg-gradient-to-br from-surface-container to-surface-container-lowest opacity-50 z-0"></div>
         <div class="relative z-10">
             <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest block mb-gutter">Tarif Saat Ini</span>
-            <div class="font-display-lg text-6xl md:text-8xl tracking-tighter text-deep-onyx mb-gutter">5%</div>
+            <div class="font-display-lg text-6xl md:text-8xl tracking-tighter text-deep-onyx mb-gutter" id="current-rate">5%</div>
             <p class="font-body-md text-body-md text-on-surface-variant max-w-md mx-auto mb-section-gap">Diterapkan otomatis ke semua penjualan toko. Terakhir diperbarui 12 Oktober 2023.</p>
             <button class="bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase px-8 py-4 tracking-widest hover:bg-tertiary-container transition-colors" onclick="document.getElementById('edit-form').classList.remove('hidden'); this.classList.add('hidden')">Ubah Komisi</button>
         </div>
@@ -81,7 +81,7 @@
         <h3 class="font-display-lg text-headline-lg-mobile md:text-headline-lg mb-gutter text-center">Konfirmasi Perubahan</h3>
         <p class="font-body-md text-body-md text-on-surface-variant mb-container-margin text-center">Anda akan mengubah tarif komisi global platform menjadi <strong class="text-deep-onyx" id="confirm-rate">5%</strong>. Perubahan ini berlaku untuk semua transaksi selanjutnya.</p>
         <div class="flex flex-col gap-gutter">
-            <button class="w-full bg-error text-on-error font-label-sm text-label-sm uppercase py-4 tracking-widest hover:opacity-90 transition-opacity" onclick="alert('Komisi berhasil diperbarui.'); document.getElementById('confirm-dialog').classList.add('hidden'); document.getElementById('edit-form').classList.add('hidden'); document.querySelector('.bg-deep-onyx.px-8.py-4').classList.remove('hidden');">Konfirmasi & Terapkan</button>
+            <button class="w-full bg-error text-on-error font-label-sm text-label-sm uppercase py-4 tracking-widest hover:opacity-90 transition-opacity" onclick="document.getElementById('current-rate').innerText = document.getElementById('confirm-rate').innerText; showRalivaToast('Tarif komisi global berhasil diperbarui.', 'task_alt'); document.getElementById('confirm-dialog').classList.add('hidden'); document.getElementById('edit-form').classList.add('hidden'); document.querySelector('.bg-deep-onyx.px-8.py-4').classList.remove('hidden');">Konfirmasi & Terapkan</button>
             <button class="w-full border border-muted-border text-deep-onyx font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-surface-container-lowest transition-colors" onclick="document.getElementById('confirm-dialog').classList.add('hidden')">Batal</button>
         </div>
     </div>

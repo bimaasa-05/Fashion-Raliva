@@ -13,19 +13,19 @@
         <div class="space-y-gutter">
             <div class="border border-muted-border rounded-lg p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <p class="font-mono text-sm text-on-surface-variant">#RLV-2079 • Dewi Lestari</p>
+                    <p class="font-mono text-sm text-on-surface-variant">#RLV-2079 â€¢ Dewi Lestari</p>
                     <p class="font-title-md text-title-md text-on-surface mt-1">Relaxed Blazer (M) + Straight Fit Pants (30)</p>
-                    <p class="font-body-md text-sm text-on-surface-variant mt-1">Rak: B-12 • Siap dipacking</p>
+                    <p class="font-body-md text-sm text-on-surface-variant mt-1">Rak: B-12 â€¢ Siap dipacking</p>
                 </div>
-                <button class="px-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium whitespace-nowrap">Kirim Permintaan</button>
+                <button type="button" onclick="showRalivaToast('Permintaan pengambilan barang dikirim ke Gudang.', 'send')" class="px-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium whitespace-nowrap">Kirim Permintaan</button>
             </div>
             <div class="border border-muted-border rounded-lg p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <p class="font-mono text-sm text-on-surface-variant">#RLV-2081 • Sarah Jenkins</p>
+                    <p class="font-mono text-sm text-on-surface-variant">#RLV-2081 â€¢ Sarah Jenkins</p>
                     <p class="font-title-md text-title-md text-on-surface mt-1">Oversized Linen Shirt (L) x3</p>
-                    <p class="font-body-md text-sm text-on-surface-variant mt-1">Rak: A-04 • Stok tersedia</p>
+                    <p class="font-body-md text-sm text-on-surface-variant mt-1">Rak: A-04 â€¢ Stok tersedia</p>
                 </div>
-                <button class="px-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium whitespace-nowrap">Kirim Permintaan</button>
+                <button type="button" onclick="showRalivaToast('Permintaan pengambilan barang dikirim ke Gudang.', 'send')" class="px-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium whitespace-nowrap">Kirim Permintaan</button>
             </div>
         </div>
     </section>
