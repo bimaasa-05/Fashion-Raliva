@@ -1,3 +1,12 @@
+@php
+    $notificationItems = $items ?? [
+        ['icon' => 'payments', 'html' => 'Bukti pembayaran pesanan <span class="font-bold">#RLV-2081</span> menunggu verifikasi.', 'time' => '5 menit lalu'],
+        ['icon' => 'shopping_bag', 'html' => 'Pesanan baru dari <span class="font-bold">Sarah Jenkins</span> perlu diproses.', 'time' => '20 menit lalu'],
+        ['icon' => 'support_agent', 'html' => 'Komplain baru: <span class="font-bold">Ukuran tidak sesuai</span> dari Andi Pratama.', 'time' => '1 jam lalu'],
+        ['icon' => 'local_shipping', 'html' => 'Tugas pengiriman: <span class="font-bold">3 paket</span> menunggu input resi.', 'time' => '2 jam lalu'],
+    ];
+    $lihatSemuaUrl = isset($lihatSemuaRoute) ? route($lihatSemuaRoute) : '#';
+@endphp
 <div class="relative" data-notification-container>
     <button type="button" data-notification-toggle class="relative text-on-surface hover:text-secondary transition-colors" aria-label="Notifikasi">
         <span class="material-symbols-outlined">notifications</span>
@@ -9,35 +18,16 @@
             <button type="button" class="font-label-sm text-[10px] text-gold-accent uppercase hover:underline" onclick="alert('Semua notifikasi ditandai sudah dibaca.')">Tandai Dibaca</button>
         </div>
         <ul class="max-h-80 overflow-y-auto">
-            <li class="flex gap-3 px-4 py-3 border-b border-muted-border hover:bg-surface-container-low transition-colors cursor-pointer">
-                <span class="material-symbols-outlined text-[20px] text-gold-accent mt-0.5">payments</span>
-                <div>
-                    <p class="font-body-md text-sm text-on-surface">Bukti pembayaran pesanan <span class="font-bold">#RLV-2081</span> menunggu verifikasi.</p>
-                    <p class="font-label-sm text-[10px] text-on-surface-variant uppercase mt-1">5 menit lalu</p>
-                </div>
-            </li>
-            <li class="flex gap-3 px-4 py-3 border-b border-muted-border hover:bg-surface-container-low transition-colors cursor-pointer">
-                <span class="material-symbols-outlined text-[20px] text-gold-accent mt-0.5">shopping_bag</span>
-                <div>
-                    <p class="font-body-md text-sm text-on-surface">Pesanan baru dari <span class="font-bold">Sarah Jenkins</span> perlu diproses.</p>
-                    <p class="font-label-sm text-[10px] text-on-surface-variant uppercase mt-1">20 menit lalu</p>
-                </div>
-            </li>
-            <li class="flex gap-3 px-4 py-3 border-b border-muted-border hover:bg-surface-container-low transition-colors cursor-pointer">
-                <span class="material-symbols-outlined text-[20px] text-gold-accent mt-0.5">support_agent</span>
-                <div>
-                    <p class="font-body-md text-sm text-on-surface">Komplain baru: <span class="font-bold">Ukuran tidak sesuai</span> dari Andi Pratama.</p>
-                    <p class="font-label-sm text-[10px] text-on-surface-variant uppercase mt-1">1 jam lalu</p>
-                </div>
-            </li>
-            <li class="flex gap-3 px-4 py-3 hover:bg-surface-container-low transition-colors cursor-pointer">
-                <span class="material-symbols-outlined text-[20px] text-gold-accent mt-0.5">local_shipping</span>
-                <div>
-                    <p class="font-body-md text-sm text-on-surface">Tugas pengiriman: <span class="font-bold">3 paket</span> menunggu input resi.</p>
-                    <p class="font-label-sm text-[10px] text-on-surface-variant uppercase mt-1">2 jam lalu</p>
-                </div>
-            </li>
+            @foreach ($notificationItems as $item)
+                <li class="flex gap-3 px-4 py-3 border-b border-muted-border last:border-0 hover:bg-surface-container-low transition-colors cursor-pointer">
+                    <span class="material-symbols-outlined text-[20px] text-gold-accent mt-0.5">{{ $item['icon'] }}</span>
+                    <div>
+                        <p class="font-body-md text-sm text-on-surface">{!! $item['html'] !!}</p>
+                        <p class="font-label-sm text-[10px] text-on-surface-variant uppercase mt-1">{{ $item['time'] }}</p>
+                    </div>
+                </li>
+            @endforeach
         </ul>
-        <a href="#" class="block text-center px-4 py-3 font-label-sm text-label-sm text-gold-accent uppercase tracking-widest hover:bg-surface-container-low transition-colors border-t border-muted-border">Lihat Semua Notifikasi</a>
+        <a href="{{ $lihatSemuaUrl }}" class="block text-center px-4 py-3 font-label-sm text-label-sm text-gold-accent uppercase tracking-widest hover:bg-surface-container-low transition-colors border-t border-muted-border">Lihat Semua Notifikasi</a>
     </div>
 </div>
