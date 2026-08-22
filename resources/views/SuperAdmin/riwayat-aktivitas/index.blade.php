@@ -14,7 +14,7 @@
     .filter-scroll::-webkit-scrollbar { height: 4px; }
     .filter-scroll::-webkit-scrollbar-track { background: transparent; }
     .filter-scroll::-webkit-scrollbar-thumb { background-color: #e3e2e2; border-radius: 4px; }
-    .timeline-line::before { content: ''; position: absolute; left: 20px; top: 48px; bottom: -24px; width: 1px; background-color: #E9E8E7; z-index: 0; }
+    .timeline-line::before { content: ''; position: absolute; left: 20px; top: 48px; bottom: -24px; width: 1px; background: linear-gradient(to bottom, rgba(201,162,77,0.55), rgba(201,162,77,0.06)); z-index: 0; }
     .timeline-item:last-child .timeline-line::before { display: none; }
 </style>
 @endpush
@@ -38,7 +38,7 @@
 <div class="space-y-6">
     <div data-kategori="toko" class="timeline-item relative timeline-line">
         <div class="flex items-start">
-            <div class="relative z-10 w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center shrink-0 border border-muted-border mt-1"><span class="material-symbols-outlined text-on-surface-variant text-sm">storefront</span></div>
+            <div class="relative z-10 w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center shrink-0 border border-gold-accent/40 shadow-[0_0_0_3px_rgba(201,162,77,0.08)] mt-1"><span class="material-symbols-outlined text-gold-accent text-sm">storefront</span></div>
             <div class="ml-element-gap flex-grow">
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-1"><span class="font-title-md text-title-md text-on-surface">Toko Disetujui</span><span class="text-xs text-on-surface-variant mt-1 sm:mt-0 font-label-sm uppercase tracking-wider">Hari ini, 10.45</span></div>
                 <div class="p-4 bg-surface-container-low border border-muted-border rounded-DEFAULT mt-2 card-premium">
@@ -50,7 +50,7 @@
     </div>
     <div data-kategori="keuangan" class="timeline-item relative timeline-line">
         <div class="flex items-start">
-            <div class="relative z-10 w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center shrink-0 border border-muted-border mt-1"><span class="material-symbols-outlined text-on-surface-variant text-sm">payments</span></div>
+            <div class="relative z-10 w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center shrink-0 border border-gold-accent/40 shadow-[0_0_0_3px_rgba(201,162,77,0.08)] mt-1"><span class="material-symbols-outlined text-gold-accent text-sm">payments</span></div>
             <div class="ml-element-gap flex-grow">
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-1"><span class="font-title-md text-title-md text-on-surface">Pencairan Diajukan</span><span class="text-xs text-on-surface-variant mt-1 sm:mt-0 font-label-sm uppercase tracking-wider">Kemarin, 16.20</span></div>
                 <div class="p-4 bg-surface-container-low border border-muted-border rounded-DEFAULT mt-2 card-premium">
@@ -62,7 +62,7 @@
     </div>
     <div data-kategori="produk" class="timeline-item relative timeline-line">
         <div class="flex items-start">
-            <div class="relative z-10 w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center shrink-0 border border-muted-border mt-1"><span class="material-symbols-outlined text-on-surface-variant text-sm">block</span></div>
+            <div class="relative z-10 w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center shrink-0 border border-gold-accent/40 shadow-[0_0_0_3px_rgba(201,162,77,0.08)] mt-1"><span class="material-symbols-outlined text-gold-accent text-sm">block</span></div>
             <div class="ml-element-gap flex-grow">
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-1"><span class="font-title-md text-title-md text-on-surface">Produk Ditolak</span><span class="text-xs text-on-surface-variant mt-1 sm:mt-0 font-label-sm uppercase tracking-wider">24 Okt, 14.15</span></div>
                 <div class="p-4 bg-surface-container-low border border-muted-border rounded-DEFAULT mt-2 card-premium">
@@ -75,7 +75,7 @@
     </div>
     <div data-kategori="sistem" class="timeline-item relative timeline-line">
         <div class="flex items-start">
-            <div class="relative z-10 w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center shrink-0 border border-muted-border mt-1"><span class="material-symbols-outlined text-on-surface-variant text-sm">percent</span></div>
+            <div class="relative z-10 w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center shrink-0 border border-gold-accent/40 shadow-[0_0_0_3px_rgba(201,162,77,0.08)] mt-1"><span class="material-symbols-outlined text-gold-accent text-sm">percent</span></div>
             <div class="ml-element-gap flex-grow">
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-1"><span class="font-title-md text-title-md text-on-surface">Tarif Komisi Diperbarui</span><span class="text-xs text-on-surface-variant mt-1 sm:mt-0 font-label-sm uppercase tracking-wider">20 Okt, 09.00</span></div>
                 <div class="p-4 bg-surface-container-low border border-muted-border rounded-DEFAULT mt-2 card-premium">

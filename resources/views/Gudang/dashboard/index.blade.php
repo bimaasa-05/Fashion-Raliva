@@ -21,7 +21,7 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
-    <section class="bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 card-premium">
+    <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 card-premium">
         <div class="flex items-center gap-3">
             <div class="w-11 h-11 rounded-xl bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
                 <span class="material-symbols-outlined text-gold-accent">warehouse</span>
@@ -59,41 +59,41 @@
     <section>
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Gudang</h2>
         <div class="grid grid-cols-2 xl:grid-cols-3 gap-gutter">
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <div class="rise bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Produk</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">248</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="248">248</span></span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">checkroom</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <div class="rise bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Stok</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">8.426</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="8426">8.426</span></span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">inventory_2</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <div class="rise bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Barang Masuk Hari Ini</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary">126</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary"><span data-count="126">126</span></span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">archive</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <div class="rise bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Barang Keluar Hari Ini</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary">84</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary"><span data-count="84">84</span></span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">unarchive</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <div class="rise bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Stok Menipis</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">12</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent"><span data-count="12">12</span></span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">warning</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <div class="rise bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Barang Rusak</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-error">7</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-error"><span data-count="7">7</span></span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">report</span>
             </div>
         </div>
     </section>
 
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-section-gap">
-        <section class="lg:col-span-3 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <section class="rise lg:col-span-3 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading whitespace-nowrap">Pergerakan Stok</h2>
                 <div class="inline-flex self-start sm:self-auto bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
@@ -117,7 +117,7 @@
             </div>
         </section>
 
-        <section class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <section class="rise lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Aktivitas Terbaru</h2>
             <ul class="flex flex-col gap-4">
                 <li class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
@@ -151,7 +151,7 @@
                         </div>
                         <div>
                             <span class="font-title-md text-base text-on-surface block">Pemindahan Stok</span>
-                            <span class="text-on-surface-variant font-body-md text-sm">Pleated Skirt • 30 unit ke Gudang Cabang</span>
+                            <span class="text-on-surface-variant font-body-md text-sm">Pleated Skirt â€¢ 30 unit ke Gudang Cabang</span>
                         </div>
                     </div>
                     <span class="font-label-sm text-xs text-on-surface-variant shrink-0">11:20</span>
@@ -163,7 +163,7 @@
                         </div>
                         <div>
                             <span class="font-title-md text-base text-on-surface block">Pemeriksaan Stok</span>
-                            <span class="text-on-surface-variant font-body-md text-sm">Silk Scarf • Selisih <span class="text-error font-bold">-2</span></span>
+                            <span class="text-on-surface-variant font-body-md text-sm">Silk Scarf â€¢ Selisih <span class="text-error font-bold">-2</span></span>
                         </div>
                     </div>
                     <span class="font-label-sm text-xs text-on-surface-variant shrink-0">13:40</span>

@@ -168,8 +168,67 @@
         });
     });
 
+    window.ralivaCountUp = (el, target, suffix = '', duration = 900) => {
+        if (!el) return;
+        const start = performance.now();
+        const hasDecimal = !Number.isInteger(target);
+        const step = (now) => {
+            const t = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - t, 3);
+            const val = target * eased;
+            el.innerText = (hasDecimal
+                ? (Math.round(val * 10) / 10).toFixed(1)
+                : Math.round(val).toLocaleString('id-ID')) + suffix;
+            if (t < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+    };
+
+    window.ralivaSetGauge = (circleEl, rate, max = 15, r = 84) => {
+        if (!circleEl) return;
+        const c = 2 * Math.PI * r;
+        circleEl.style.strokeDasharray = c.toFixed(2);
+        const clamped = Math.max(0, Math.min(rate, max));
+        circleEl.style.strokeDashoffset = (c * (1 - clamped / max)).toFixed(2);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.page-enter').forEach((el) => {
+            const release = () => el.classList.remove('page-enter');
+            if (el.getAnimations) {
+                const anims = el.getAnimations();
+                if (anims.length === 0) {
+                    release();
+                } else {
+                    Promise.all(anims.map((a) => a.finished.catch(() => {}))).then(release);
+                }
+            } else {
+                el.addEventListener('animationend', release, { once: true });
+            }
+        });
+
+        document.querySelectorAll('[data-count]').forEach((el) => {
+            const target = parseFloat(el.getAttribute('data-count'));
+            if (isNaN(target)) return;
+            ralivaCountUp(el, target, el.getAttribute('data-count-suffix') || '');
+        });
+
+        document.querySelectorAll('.rise').forEach((el, i) => {
+            if (!el.style.animationDelay && i > 0) {
+                el.style.animationDelay = Math.min(i * 0.06, 0.42).toFixed(2) + 's';
+            }
+        });
+    });
+
     setTimeout(() => {
         document.querySelectorAll('[data-skeleton]').forEach((el) => el.classList.add('hidden'));
-        document.querySelectorAll('[data-real]').forEach((el) => el.classList.remove('hidden'));
+        document.querySelectorAll('[data-real]').forEach((el) => {
+            el.classList.remove('hidden');
+            el.querySelectorAll('.rise').forEach((r) => {
+                r.style.animation = 'none';
+                void r.offsetWidth;
+                r.style.animation = '';
+            });
+        });
     }, 700);
 </script>

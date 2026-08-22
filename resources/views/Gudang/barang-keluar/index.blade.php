@@ -129,7 +129,8 @@
 
     @foreach ($rows as $row)
         <div id="bk-drawer-{{ $loop->iteration }}" data-drawer-panel class="fixed inset-y-0 right-0 z-[80] w-full max-w-md bg-surface-container-lowest border-l border-muted-border shadow-xl translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
-            <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border z-10">
+            <div class="h-1 bg-gradient-to-r from-gold-accent via-gold-accent/40 to-transparent"></div>
+<div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border z-10">
                 <div>
                     <h3 class="font-title-md text-title-md text-on-surface">Detail {{ $row[0] }}</h3>
                     <p class="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mt-1">{{ $row[6] }}</p>
@@ -198,7 +199,7 @@
 
     <div id="modal-barang-keluar" data-modal class="fixed inset-0 z-[70] hidden">
         <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-xl bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
+        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-xl bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
             <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
                 <div>
                     <h3 class="font-title-md text-title-md text-on-surface premium-heading">Catat Barang Keluar</h3>

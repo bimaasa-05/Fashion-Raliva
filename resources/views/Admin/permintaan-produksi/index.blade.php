@@ -8,8 +8,8 @@
 
 @section('content')
 <div class="space-y-section-gap">
-    <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ajukan Produksi</h2>
+    <section class="bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 card-premium">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">precision_manufacturing</span></div><h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Ajukan Produksi</h2></div>
         <form class="space-y-gutter" id="produksi-form" data-toast-message="Permintaan produksi berhasil dikirim.">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
                 <div>

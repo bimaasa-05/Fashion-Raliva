@@ -151,7 +151,7 @@
     @foreach ($products as $product)
         <div id="stok-detail-{{ $loop->iteration }}" data-modal class="fixed inset-0 z-[70] hidden">
             <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-            <div class="relative mx-auto mt-16 md:mt-24 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6 max-h-[80vh] overflow-y-auto">
+            <div class="relative mx-auto mt-16 md:mt-24 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl p-6 max-h-[80vh] overflow-y-auto">
                 <div class="flex items-start justify-between gap-4 mb-6">
                     <div>
                         <h3 class="font-title-md text-title-md text-on-surface">{{ $product[0] }}</h3>
