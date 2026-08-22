@@ -1,0 +1,220 @@
+@extends('layouts.owner')
+
+@section('title', 'Laporan Toko')
+
+@section('header-title', 'Laporan Toko')
+@section('header-subtitle', 'Analisis penjualan, produk, pesanan, refund, saldo, dan pencairan.')
+
+@section('content')
+<div data-skeleton class="space-y-section-gap">
+    <div class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+        @for ($i = 0; $i < 4; $i++)
+            <div class="h-28 bg-surface-container-high rounded-lg animate-pulse"></div>
+        @endfor
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-section-gap">
+        <div class="h-80 bg-surface-container-high rounded-lg animate-pulse"></div>
+        <div class="h-80 bg-surface-container-high rounded-lg animate-pulse"></div>
+    </div>
+    <div class="h-72 bg-surface-container-high rounded-lg animate-pulse"></div>
+</div>
+
+<div data-real class="hidden space-y-section-gap">
+    {{-- Ringkasan Periode --}}
+    <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+        @foreach ([['Pendapatan Bersih', 'Rp 41.250.000', 'trending_up', 'secondary', '+18,2% vs periode lalu'], ['Pesanan Selesai', '148', 'shopping_bag', 'on-surface', 'rata-rata 4,9/hari'], ['Nilai Refund', 'Rp 1.890.000', 'money_off', 'error', '1% dari transaksi'], ['Dana Dicairkan', 'Rp 25.000.000', 'payments', 'on-surface', '1 pengajuan bulan ini']] as $stat)
+            <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-1 relative overflow-hidden card-premium">
+                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">{{ $stat[0] }}</span>
+                <span class="raliva-figure text-2xl text-{{ $stat[3] }}">{{ $stat[1] }}</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">{{ $stat[2] }}</span>{{ $stat[4] }}</span>
+            </div>
+        @endforeach
+    </section>
+
+    {{-- Grafik --}}
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-section-gap">
+        <section data-reveal class="lg:col-span-3 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Pendapatan &amp; Refund</h2>
+                <div class="inline-flex self-start sm:self-auto bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
+                    <button type="button" data-lr-range="30" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">30 Hari</button>
+                    <button type="button" data-lr-range="90" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">3 Bulan</button>
+                    <button type="button" data-lr-range="365" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">12 Bulan</button>
+                </div>
+            </div>
+            <div id="chart-wrap" class="relative h-72 md:h-80"><canvas id="revenue-chart"></canvas></div>
+        </section>
+
+        <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Produk Terlaris</h2>
+            <div id="chart-top" class="relative h-72 md:h-80"><canvas id="top-products-chart"></canvas></div>
+        </section>
+    </div>
+
+    {{-- Tabel Laporan --}}
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Laporan Mingguan — Agustus</h2>
+            <button type="button" onclick="showRalivaToast('Laporan diekspor sebagai CSV (demo).', 'download')" class="flex items-center justify-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors w-full sm:w-auto shrink-0">
+                <span class="material-symbols-outlined text-[16px]">download</span>Ekspor CSV
+            </button>
+        </div>
+        <div data-table-wrap class="overflow-x-auto">
+            <table class="premium-table w-full min-w-[820px] font-body-md text-sm">
+                <thead>
+                    <tr class="border-b border-muted-border text-left">
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Periode</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Pesanan</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Pendapatan</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Refund</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Pencairan</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Saldo Akhir</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ([
+                        ['periode' => '17 — 23 Agu', 'pesanan' => 42, 'pendapatan' => 'Rp 12.480.000', 'refund' => 'Rp 789.000', 'pencairan' => '—', 'saldo' => 'Rp 32.500.000'],
+                        ['periode' => '10 — 16 Agu', 'pesanan' => 38, 'pendapatan' => 'Rp 10.920.000', 'refund' => 'Rp 259.000', 'pencairan' => '—', 'saldo' => 'Rp 21.809.000'],
+                        ['periode' => '03 — 09 Agu', 'pesanan' => 35, 'pendapatan' => 'Rp 9.860.000', 'refund' => 'Rp 320.000', 'pencairan' => 'Rp 15.500.000', 'saldo' => 'Rp 17.148.000'],
+                        ['periode' => '27 Agu — 02 Agu', 'pesanan' => 33, 'pendapatan' => 'Rp 8.990.000', 'refund' => 'Rp 522.000', 'pencairan' => '—', 'saldo' => 'Rp 22.808.000'],
+                    ] as $row)
+                        <tr class="border-b border-muted-border last:border-0">
+                            <td class="py-3.5 px-4 font-bold text-on-surface whitespace-nowrap">{{ $row['periode'] }}</td>
+                            <td class="py-3.5 px-4 text-right text-on-surface">{{ $row['pesanan'] }}</td>
+                            <td class="py-3.5 px-4 text-right font-bold text-gold-accent whitespace-nowrap">{{ $row['pendapatan'] }}</td>
+                            <td class="py-3.5 px-4 text-right text-error whitespace-nowrap">{{ $row['refund'] }}</td>
+                            <td class="py-3.5 px-4 text-right text-on-surface-variant whitespace-nowrap">{{ $row['pencairan'] }}</td>
+                            <td class="py-3.5 px-4 text-right text-on-surface font-bold whitespace-nowrap">{{ $row['saldo'] }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                    <tr class="border-t-2 border-outline-variant">
+                        <td class="py-3.5 px-4 font-bold text-on-surface">Total Agustus</td>
+                        <td class="py-3.5 px-4 text-right font-bold text-on-surface">148</td>
+                        <td class="py-3.5 px-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp 41.250.000</td>
+                        <td class="py-3.5 px-4 text-right font-bold text-error whitespace-nowrap">Rp 1.890.000</td>
+                        <td class="py-3.5 px-4 text-right font-bold text-on-surface-variant whitespace-nowrap">Rp 25.000.000</td>
+                        <td class="py-3.5 px-4 text-right font-bold text-on-surface whitespace-nowrap">—</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </section>
+</div>
+@endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let revenueChart = null;
+    const chartWrap = document.getElementById('chart-wrap');
+
+    const revenueData = {
+        '30': { labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'], pendapatan: [8990000, 9860000, 10920000, 12480000], refund: [522000, 320000, 259000, 789000] },
+        '90': { labels: ['Juni', 'Juli', 'Agustus'], pendapatan: [28400000, 31500000, 41250000], refund: [1240000, 980000, 1890000] },
+        '365': { labels: ['Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu'], pendapatan: [18600000, 24100000, 27800000, 28400000, 31500000, 41250000], refund: [420000, 780000, 640000, 1240000, 980000, 1890000] }
+    };
+
+    const themeColors = () => {
+        const isDark = document.documentElement.classList.contains('dark');
+        return {
+            grid: isDark ? '#333333' : '#E9E8E7',
+            tick: isDark ? '#BAB8B8' : '#747878',
+            tooltipBg: isDark ? '#F0EEEE' : '#1b1c1c',
+            tooltipText: isDark ? '#111111' : '#ffffff'
+        };
+    };
+
+    const renderRevenueChart = () => {
+        if (!window.Chart) return;
+        const c = themeColors();
+        const data = revenueData[window.currentLrRange || '30'];
+
+        if (!revenueChart) {
+            revenueChart = new Chart(document.getElementById('revenue-chart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        { label: 'Pendapatan', data: data.pendapatan, backgroundColor: 'rgba(201, 162, 77, 0.85)', borderRadius: 4, maxBarThickness: 34 },
+                        { type: 'line', label: 'Refund', data: data.refund, borderColor: '#BA1A1A', backgroundColor: 'transparent', tension: 0.35, borderWidth: 2, pointBackgroundColor: '#BA1A1A', pointRadius: 3 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 900, easing: 'easeOutQuart' },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, color: c.tick, font: { family: 'Manrope', size: 12 } } },
+                        tooltip: {
+                            backgroundColor: c.tooltipBg, titleColor: c.tooltipText, bodyColor: c.tooltipText,
+                            titleFont: { family: 'Manrope', size: 12, weight: '700' }, bodyFont: { family: 'Manrope', size: 14 },
+                            padding: 12, cornerRadius: 0,
+                            callbacks: { label: (ctx) => ' ' + ctx.dataset.label + ': Rp ' + new Intl.NumberFormat('id-ID').format(ctx.raw) }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: c.grid }, ticks: { color: c.tick, font: { family: 'Manrope', size: 11 }, callback: (v) => (v / 1000000) + ' jt' } },
+                        x: { grid: { display: false }, ticks: { color: c.tick, font: { family: 'Manrope', size: 11 } } }
+                    }
+                }
+            });
+            return;
+        }
+
+        /* Transisi mulus saat ganti periode: batang resize & garis meluncur */
+        revenueChart.data.labels = data.labels;
+        revenueChart.data.datasets[0].data = data.pendapatan;
+        revenueChart.data.datasets[1].data = data.refund;
+        revenueChart.options.scales.y.grid.color = c.grid;
+        revenueChart.options.scales.y.ticks.color = c.tick;
+        revenueChart.options.scales.x.ticks.color = c.tick;
+        revenueChart.options.plugins.legend.labels.color = c.tick;
+        revenueChart.update();
+    };
+
+    document.querySelectorAll('[data-lr-range]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            window.currentLrRange = btn.getAttribute('data-lr-range');
+            document.querySelectorAll('[data-lr-range]').forEach((b) => {
+                const active = b === btn;
+                b.classList.toggle('bg-deep-onyx', active);
+                b.classList.toggle('text-on-primary', active);
+                b.classList.toggle('text-on-surface-variant', !active);
+            });
+            renderRevenueChart();
+        });
+    });
+
+    window.ralivaOnReady(() => {
+        try {
+            if (window.Chart) {
+                const c = themeColors();
+                new Chart(document.getElementById('top-products-chart').getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Kemeja Linen', 'Silk Scarf', 'Trench Coat', 'Blazer Wool', 'Wide Leg'],
+                        datasets: [{ label: 'Terjual (pcs)', data: [212, 154, 128, 96, 87], backgroundColor: ['#C9A24D', 'rgba(201,162,77,.75)', 'rgba(201,162,77,.55)', 'rgba(201,162,77,.4)', 'rgba(201,162,77,.25)'], borderRadius: 4 }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: { duration: 800, easing: 'easeOutQuart', delay: (ctx) => ctx.dataIndex * 90 },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { backgroundColor: c.tooltipBg, titleColor: c.tooltipText, bodyColor: c.tooltipText, padding: 12, cornerRadius: 0, callbacks: { label: (ctx) => ' ' + ctx.raw + ' pcs terjual' } }
+                        },
+                        scales: {
+                            x: { beginAtZero: true, grid: { color: c.grid }, ticks: { color: c.tick, font: { family: 'Manrope', size: 11 } } },
+                            y: { grid: { display: false }, ticks: { color: c.tick, font: { family: 'Manrope', size: 11 } } }
+                        }
+                    }
+                });
+            }
+            renderRevenueChart();
+        } catch (e) {}
+    });
+</script>
+@endpush
