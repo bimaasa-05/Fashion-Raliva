@@ -215,6 +215,12 @@
         filter: drop-shadow(0 0 6px rgba(201, 162, 77, 0.45));
     }
 
+    .raliva-donut-seg { transition: stroke-dasharray 1.1s cubic-bezier(0.22, 1, 0.36, 1); }
+    .raliva-bar { transition: height 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+    .raliva-lb-fill { transition: width 1s cubic-bezier(0.22, 1, 0.36, 1); }
+
+    .card-static:hover { transform: none; }
+
     @keyframes pageEnter {
         from { opacity: 0; transform: translateY(14px); }
         to { opacity: 1; transform: translateY(0); }
