@@ -52,6 +52,27 @@ use App\Http\Controllers\Gudang\StokRusakController as GudangStokRusakController
 use App\Http\Controllers\Gudang\RiwayatStokController as GudangRiwayatStokController;
 use App\Http\Controllers\Gudang\NotifikasiController as GudangNotifikasiController;
 use App\Http\Controllers\Gudang\ProfilController as GudangProfilController;
+use App\Http\Controllers\Owner\DashboardController as OwnerDashboardController;
+use App\Http\Controllers\Owner\DataTokoController;
+use App\Http\Controllers\Owner\PengajuanTokoController;
+use App\Http\Controllers\Owner\PengaturanTokoController;
+use App\Http\Controllers\Owner\ProdukController as OwnerProdukController;
+use App\Http\Controllers\Owner\ModerasiProdukController as OwnerModerasiProdukController;
+use App\Http\Controllers\Owner\PaketSlotController;
+use App\Http\Controllers\Owner\PesananController as OwnerPesananController;
+use App\Http\Controllers\Owner\PromoController as OwnerPromoController;
+use App\Http\Controllers\Owner\UlasanController;
+use App\Http\Controllers\Owner\ProduksiController as OwnerProduksiController;
+use App\Http\Controllers\Owner\GudangController as OwnerGudangController;
+use App\Http\Controllers\Owner\PengirimanController as OwnerPengirimanController;
+use App\Http\Controllers\Owner\SaldoController;
+use App\Http\Controllers\Owner\PencairanDanaController;
+use App\Http\Controllers\Owner\PengembalianDanaController as OwnerPengembalianDanaController;
+use App\Http\Controllers\Owner\KomplainController as OwnerKomplainController;
+use App\Http\Controllers\Owner\KaryawanController;
+use App\Http\Controllers\Owner\LaporanController as OwnerLaporanController;
+use App\Http\Controllers\Owner\NotifikasiController as OwnerNotifikasiController;
+use App\Http\Controllers\Owner\ProfilController as OwnerProfilController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -115,4 +136,28 @@ Route::prefix('gudang')->name('gudang.')->group(function () {
     Route::get('/riwayat-stok', [GudangRiwayatStokController::class, 'index'])->name('riwayat-stok');
     Route::get('/notifikasi', [GudangNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [GudangProfilController::class, 'index'])->name('profil');
+});
+
+Route::prefix('owner')->name('owner.')->group(function () {
+    Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/data-toko', [DataTokoController::class, 'index'])->name('data-toko');
+    Route::get('/pengajuan-toko', [PengajuanTokoController::class, 'index'])->name('pengajuan-toko');
+    Route::get('/pengaturan-toko', [PengaturanTokoController::class, 'index'])->name('pengaturan-toko');
+    Route::get('/produk', [OwnerProdukController::class, 'index'])->name('produk');
+    Route::get('/moderasi-produk', [OwnerModerasiProdukController::class, 'index'])->name('moderasi-produk');
+    Route::get('/paket-slot', [PaketSlotController::class, 'index'])->name('paket-slot');
+    Route::get('/pesanan', [OwnerPesananController::class, 'index'])->name('pesanan');
+    Route::get('/promo', [OwnerPromoController::class, 'index'])->name('promo');
+    Route::get('/ulasan', [UlasanController::class, 'index'])->name('ulasan');
+    Route::get('/produksi', [OwnerProduksiController::class, 'index'])->name('produksi');
+    Route::get('/gudang', [OwnerGudangController::class, 'index'])->name('gudang');
+    Route::get('/pengiriman', [OwnerPengirimanController::class, 'index'])->name('pengiriman');
+    Route::get('/saldo', [SaldoController::class, 'index'])->name('saldo');
+    Route::get('/pencairan-dana', [PencairanDanaController::class, 'index'])->name('pencairan-dana');
+    Route::get('/pengembalian-dana', [OwnerPengembalianDanaController::class, 'index'])->name('pengembalian-dana');
+    Route::get('/komplain', [OwnerKomplainController::class, 'index'])->name('komplain');
+    Route::get('/karyawan', [KaryawanController::class, 'index'])->name('karyawan');
+    Route::get('/laporan', [OwnerLaporanController::class, 'index'])->name('laporan');
+    Route::get('/notifikasi', [OwnerNotifikasiController::class, 'index'])->name('notifikasi');
+    Route::get('/profil', [OwnerProfilController::class, 'index'])->name('profil');
 });
