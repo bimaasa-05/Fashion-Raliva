@@ -42,6 +42,16 @@ use App\Http\Controllers\Admin\KoordinasiGudangController;
 use App\Http\Controllers\Admin\ProfilController as AdminProfilController;
 use App\Http\Controllers\Admin\LaporanController as AdminLaporanController;
 use App\Http\Controllers\Admin\RiwayatAktivitasController as AdminRiwayatAktivitasController;
+use App\Http\Controllers\Gudang\DashboardController as GudangDashboardController;
+use App\Http\Controllers\Gudang\StokController as GudangStokController;
+use App\Http\Controllers\Gudang\BarangMasukController as GudangBarangMasukController;
+use App\Http\Controllers\Gudang\BarangKeluarController as GudangBarangKeluarController;
+use App\Http\Controllers\Gudang\PemindahanStokController as GudangPemindahanStokController;
+use App\Http\Controllers\Gudang\PemeriksaanStokController as GudangPemeriksaanStokController;
+use App\Http\Controllers\Gudang\StokRusakController as GudangStokRusakController;
+use App\Http\Controllers\Gudang\RiwayatStokController as GudangRiwayatStokController;
+use App\Http\Controllers\Gudang\NotifikasiController as GudangNotifikasiController;
+use App\Http\Controllers\Gudang\ProfilController as GudangProfilController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -92,4 +102,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/profil', [AdminProfilController::class, 'index'])->name('profil');
     Route::get('/laporan', [AdminLaporanController::class, 'index'])->name('laporan');
     Route::get('/riwayat-aktivitas', [AdminRiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
+});
+
+Route::prefix('gudang')->name('gudang.')->group(function () {
+    Route::get('/dashboard', [GudangDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/stok', [GudangStokController::class, 'index'])->name('stok');
+    Route::get('/barang-masuk', [GudangBarangMasukController::class, 'index'])->name('barang-masuk');
+    Route::get('/barang-keluar', [GudangBarangKeluarController::class, 'index'])->name('barang-keluar');
+    Route::get('/pemindahan', [GudangPemindahanStokController::class, 'index'])->name('pemindahan');
+    Route::get('/pemeriksaan', [GudangPemeriksaanStokController::class, 'index'])->name('pemeriksaan');
+    Route::get('/stok-rusak', [GudangStokRusakController::class, 'index'])->name('stok-rusak');
+    Route::get('/riwayat-stok', [GudangRiwayatStokController::class, 'index'])->name('riwayat-stok');
+    Route::get('/notifikasi', [GudangNotifikasiController::class, 'index'])->name('notifikasi');
+    Route::get('/profil', [GudangProfilController::class, 'index'])->name('profil');
 });
