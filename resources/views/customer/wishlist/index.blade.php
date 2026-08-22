@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - Wishlist</title>
+<title>RALIVA - {{ __('Wishlist') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -221,7 +221,7 @@
 <!-- Wishlist Header -->
 <section class="py-lg px-container-margin border-b border-outline-variant flex items-center justify-between">
 <div>
-<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">My Wishlist</h2>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">{{ __('My Wishlist') }}</h2>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">4 items saved</p>
 </div>
 <span class="material-symbols-outlined text-secondary text-[28px]" data-icon="favorite" data-weight="fill">favorite</span>
@@ -238,7 +238,7 @@
 <div class="flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden block">
 <img alt="{{ $product['name'] }}" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" src="{{ $product['img'] }}"/>
-<span role="button" tabindex="0" aria-label="Remove from wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors cursor-pointer">
+<span role="button" tabindex="0" aria-label="{{ __('Remove from wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors cursor-pointer">
 <span class="material-symbols-outlined" data-icon="favorite" data-weight="fill">favorite</span>
 </span>
 </a>
@@ -261,28 +261,28 @@ ADD TO CART
 <!-- Home -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1" data-icon="home">home</span>
-<span class="font-label-sm text-[10px]">Home</span>
+<span class="font-label-sm text-[10px]">{{ __('Home') }}</span>
 </a>
 <!-- Shop -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_bag">shopping_bag</span>
-<span class="font-label-sm text-[10px]">Shop</span>
+<span class="font-label-sm text-[10px]">{{ __('Shop') }}</span>
 </a>
 <!-- Wishlist (Active) -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] scale-95 transition-transform w-16" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="favorite" data-weight="fill">favorite</span>
-<span class="font-label-sm text-[10px] font-bold">Wishlist</span>
+<span class="font-label-sm text-[10px] font-bold">{{ __('Wishlist') }}</span>
 </a>
 <!-- Cart -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 relative" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_cart">shopping_cart</span>
-<span class="font-label-sm text-[10px]">Cart</span>
+<span class="font-label-sm text-[10px]">{{ __('Cart') }}</span>
 <span class="absolute top-0 right-2 bg-secondary-fixed-dim text-on-secondary-fixed text-[8px] w-3 h-3 rounded-full flex items-center justify-center font-bold">2</span>
 </a>
 <!-- Account -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="person">person</span>
-<span class="font-label-sm text-[10px]">Account</span>
+<span class="font-label-sm text-[10px]">{{ __('Account') }}</span>
 </a>
 </nav>
 </body></html>

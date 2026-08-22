@@ -3,7 +3,7 @@
 <html lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - Account</title>
+<title>RALIVA - {{ __('Account') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600&amp;display=swap" rel="stylesheet"/>
@@ -194,7 +194,7 @@
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
-<button aria-label="Search" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 -mr-2">
+<button aria-label="{{ __('Search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 -mr-2">
 <span class="material-symbols-outlined" data-icon="search">search</span>
 </button>
 </header>
@@ -202,7 +202,7 @@
 <main class="flex-grow w-full max-w-[600px] mx-auto px-container-margin py-md">
 <!-- Page Title -->
 <div class="mb-lg text-center md:text-left">
-<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">ACCOUNT</h2>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">{{ __('ACCOUNT') }}</h2>
 </div>
 <!-- Profile Header -->
 <section class="flex flex-col items-center md:flex-row md:items-start gap-md mb-xl">
@@ -213,7 +213,7 @@
 <h3 class="font-title-md text-title-md text-on-surface mb-1">Jane Doe</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mb-4">jane.doe@example.com</p>
 <a class="px-6 py-2 border border-primary text-primary font-label-caps text-label-caps uppercase hover:bg-surface-container-low transition-colors duration-200 inline-block" href="{{ route('customer.account.edit') }}">
-                    Edit Profile
+                    {{ __('Edit Profile') }}
                 </a>
 </div>
 </section>
@@ -222,49 +222,49 @@
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.order-tracking') }}">
 <div class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="local_mall">local_mall</span>
-<span class="font-body-lg text-body-lg text-on-surface">My Orders</span>
+<span class="font-body-lg text-body-lg text-on-surface">{{ __('My Orders') }}</span>
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <div class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="favorite_border">favorite_border</span>
-<span class="font-body-lg text-body-lg text-on-surface">Wishlist</span>
+<span class="font-body-lg text-body-lg text-on-surface">{{ __('Wishlist') }}</span>
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.address') }}">
 <div class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="location_on">location_on</span>
-<span class="font-body-lg text-body-lg text-on-surface">Addresses</span>
+<span class="font-body-lg text-body-lg text-on-surface">{{ __('Addresses') }}</span>
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="#">
 <div class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="credit_card">credit_card</span>
-<span class="font-body-lg text-body-lg text-on-surface">Payment Methods</span>
+<span class="font-body-lg text-body-lg text-on-surface">{{ __('Payment Methods') }}</span>
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.reviews') }}">
 <div class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="star_border">star_border</span>
-<span class="font-body-lg text-body-lg text-on-surface">My Reviews</span>
+<span class="font-body-lg text-body-lg text-on-surface">{{ __('My Reviews') }}</span>
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.notifications') }}">
 <div class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="notifications_none">notifications_none</span>
-<span class="font-body-lg text-body-lg text-on-surface">Notifications</span>
+<span class="font-body-lg text-body-lg text-on-surface">{{ __('Notifications') }}</span>
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.help') }}">
 <div class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="help_outline">help_outline</span>
-<span class="font-body-lg text-body-lg text-on-surface">Help Center</span>
+<span class="font-body-lg text-body-lg text-on-surface">{{ __('Help Center') }}</span>
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
@@ -278,7 +278,7 @@
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group mt-lg" href="#">
 <div class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-error" data-icon="logout">logout</span>
-<span class="font-body-lg text-body-lg text-error">Logout</span>
+<span class="font-body-lg text-body-lg text-error">{{ __('Logout') }}</span>
 </div>
 </a>
 </nav>
@@ -287,23 +287,23 @@
 <nav class="md:hidden flex justify-around items-center w-full h-[72px] bg-[var(--chrome-bg)] text-[var(--chrome-text)] px-xs pb-safe fixed bottom-0 z-50 border-t border-[var(--chrome-border)] shadow-sm">
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1" data-icon="home">home</span>
-<span class="font-label-sm text-label-sm">Home</span>
+<span class="font-label-sm text-label-sm">{{ __('Home') }}</span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_bag">shopping_bag</span>
-<span class="font-label-sm text-label-sm">Shop</span>
+<span class="font-label-sm text-label-sm">{{ __('Shop') }}</span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="favorite">favorite</span>
-<span class="font-label-sm text-label-sm">Wishlist</span>
+<span class="font-label-sm text-label-sm">{{ __('Wishlist') }}</span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_cart">shopping_cart</span>
-<span class="font-label-sm text-label-sm">Cart</span>
+<span class="font-label-sm text-label-sm">{{ __('Cart') }}</span>
 </a>
 <a aria-current="page" class="flex flex-col items-center justify-center text-[var(--chrome-accent)] hover:text-secondary transition-colors w-16 h-full active:scale-95 transition-transform" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
-<span class="font-label-sm text-label-sm">Account</span>
+<span class="font-label-sm text-label-sm">{{ __('Account') }}</span>
 </a>
 </nav>
 </body></html>

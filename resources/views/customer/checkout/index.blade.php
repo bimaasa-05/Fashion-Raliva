@@ -3,7 +3,7 @@
 <html lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - Checkout</title>
+<title>RALIVA - {{ __('Checkout') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600&amp;display=swap" rel="stylesheet"/>
@@ -193,18 +193,18 @@
 <body class="text-on-background bg-background font-body-sm overflow-x-hidden pb-32">
 <!-- Top App Bar -->
 <header class="flex justify-between items-center w-full px-container-margin h-16 bg-[var(--chrome-bg)] text-[var(--chrome-text)] border-b border-[var(--chrome-border)] fixed top-0 z-40">
-<a aria-label="Back" href="{{ route('customer.chart') }}" class="hover:opacity-80 transition-opacity flex">
+<a aria-label="{{ __('Back') }}" href="{{ route('customer.chart') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">CHECKOUT</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">{{ __('CHECKOUT') }}</h1>
 <div class="w-6"></div> <!-- Spacer for centering -->
 </header>
 <main class="mt-16 px-container-margin pt-lg max-w-2xl mx-auto">
 <!-- Delivery Address -->
 <section class="mb-lg">
 <div class="flex justify-between items-center mb-sm">
-<h2 class="font-title-md text-title-md">Delivery Address</h2>
-<a href="{{ route('customer.address') }}" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors underline">Edit</a>
+<h2 class="font-title-md text-title-md">{{ __('Delivery Address') }}</h2>
+<a href="{{ route('customer.address') }}" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors underline">{{ __('Edit') }}</a>
 </div>
 <div class="bg-surface-container-low p-md rounded-DEFAULT border border-outline-variant">
 <div class="flex items-start gap-sm">
@@ -222,7 +222,7 @@
 </section>
 <!-- Order Items Summary (Brief) -->
 <section class="mb-lg">
-<h2 class="font-title-md text-title-md mb-sm">Order Items (2)</h2>
+<h2 class="font-title-md text-title-md mb-sm">{{ __('Order Items (2)') }}</h2>
 <div class="flex gap-sm overflow-x-auto pb-sm no-scrollbar">
 <div class="flex-shrink-0 w-24 h-32 bg-surface-container border border-outline-variant rounded-DEFAULT overflow-hidden">
 <img class="w-full h-full object-cover" data-alt="A minimalist, high-end editorial product shot of a sleek black silk slip dress hanging on a slender metallic hanger against a soft ivory studio background. The lighting is bright and diffuse, casting very soft shadows to emphasize the fabric's fluid texture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4G81Gtat5BKzpijwKFnCEhnYyz8ZuXSv5z9_-yaV3L6pPWN-ZLMlKk9D8CfOxlwW2h6_XSvZwA7lQs70AN-q2tlMInMu3xk9wRY7JFzyBFLosxtY9SDjAPSFJ29WFtFv3L3jRAaaKHH53OR30tGk1y6zfjcPJGmZSls-Dzh_ZeiqfLEGhkyh5MobBab8pFvyHdKJ2z2pMdKjElHU1812vN10nL0Bqqb04HqRY_Xvz-PZ9w_qEJOg"/>
@@ -234,18 +234,18 @@
 </section>
 <!-- Shipping Method -->
 <section class="mb-lg">
-<h2 class="font-title-md text-title-md mb-sm">Shipping Method</h2>
+<h2 class="font-title-md text-title-md mb-sm">{{ __('Shipping Method') }}</h2>
 <div class="space-y-gutter">
 <!-- Option 1 -->
 <label class="flex items-center justify-between p-sm border border-outline-variant rounded-DEFAULT cursor-pointer hover:bg-surface-container-low transition-colors">
 <div class="flex items-center gap-sm">
 <div class="w-4 h-4 rounded-full border border-primary flex items-center justify-center"></div>
 <div>
-<p class="font-body-sm text-body-sm font-semibold">Regular Delivery</p>
+<p class="font-body-sm text-body-sm font-semibold">{{ __('Regular Delivery') }}</p>
 <p class="font-label-sm text-label-sm text-on-surface-variant">3-5 Business Days</p>
 </div>
 </div>
-<span class="font-body-sm text-body-sm">Free</span>
+<span class="font-body-sm text-body-sm">{{ __('Free') }}</span>
 </label>
 <!-- Option 2 -->
 <label class="flex items-center justify-between p-sm border-2 border-primary rounded-DEFAULT cursor-pointer bg-surface-container-low">
@@ -254,8 +254,8 @@
 <div class="w-2 h-2 rounded-full bg-primary"></div>
 </div>
 <div>
-<p class="font-body-sm text-body-sm font-semibold">Express Delivery</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant">1-2 Business Days</p>
+<p class="font-body-sm text-body-sm font-semibold">{{ __('Express Delivery') }}</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">{{ __('1-2 Business Days') }}</p>
 </div>
 </div>
 <span class="font-body-sm text-body-sm">Rp 35.000</span>
@@ -264,19 +264,19 @@
 </section>
 <!-- Payment Method -->
 <section class="mb-xl">
-<h2 class="font-title-md text-title-md mb-sm">Payment Method</h2>
+<h2 class="font-title-md text-title-md mb-sm">{{ __('Payment Method') }}</h2>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
 <button class="p-md border border-outline-variant rounded-DEFAULT flex flex-col items-center justify-center gap-xs hover:border-primary transition-colors bg-surface">
 <span class="material-symbols-outlined text-outline" data-icon="account_balance">account_balance</span>
-<span class="font-body-sm text-body-sm">Bank Transfer</span>
+<span class="font-body-sm text-body-sm">{{ __('Bank Transfer') }}</span>
 </button>
 <button class="p-md border-2 border-primary rounded-DEFAULT flex flex-col items-center justify-center gap-xs bg-surface-container-low">
 <span class="material-symbols-outlined text-primary" data-icon="credit_card">credit_card</span>
-<span class="font-body-sm text-body-sm font-semibold">Credit Card</span>
+<span class="font-body-sm text-body-sm font-semibold">{{ __('Credit Card') }}</span>
 </button>
 <button class="p-md border border-outline-variant rounded-DEFAULT flex flex-col items-center justify-center gap-xs hover:border-primary transition-colors bg-surface">
 <span class="material-symbols-outlined text-outline" data-icon="account_balance_wallet">account_balance_wallet</span>
-<span class="font-body-sm text-body-sm">E-Wallet</span>
+<span class="font-body-sm text-body-sm">{{ __('E-Wallet') }}</span>
 </button>
 </div>
 <!-- Card Details (Mock) -->
@@ -288,18 +288,18 @@
 </div>
 <span class="material-symbols-outlined text-outline text-[20px]" data-icon="check_circle">check_circle</span>
 </div>
-<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary underline">Change Card</button>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary underline">{{ __('Change Card') }}</button>
 </div>
 </section>
 </main>
 <!-- Fixed Bottom Action Area (Order Summary & CTA) -->
 <div class="fixed bottom-0 left-0 w-full bg-surface border-t border-outline-variant px-container-margin py-md pb-safe z-50 flex flex-col md:flex-row justify-between items-center gap-md shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
 <div class="w-full md:w-auto">
-<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Total Payment</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">{{ __('Total Payment') }}</p>
 <p class="font-title-md text-title-md">Rp 636.000</p>
 </div>
 <a href="{{ route('customer.order-tracking') }}" class="w-full md:w-auto px-xl py-sm bg-primary text-on-primary font-label-caps text-label-caps rounded-DEFAULT hover:opacity-90 transition-opacity flex justify-center items-center">
-            PLACE ORDER
+            {{ __('PLACE ORDER') }}
         </a>
 </div>
 </body></html>

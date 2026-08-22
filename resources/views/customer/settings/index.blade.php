@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 
-<html class="light" lang="en"><head>
+<html class="light" lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - Settings</title>
+<title>RALIVA - {{ __('Settings') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -202,34 +202,34 @@
 <a href="{{ route('customer.account') }}" aria-label="Back" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">Settings</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">{{ __('Settings') }}</h1>
 <div class="w-10"></div> <!-- Spacer for centering -->
 </header>
 <!-- Main Content -->
 <main class="pt-16 pb-xl max-w-2xl mx-auto w-full">
 <!-- Notifications Preferences -->
 <section class="px-container-margin py-lg border-b border-outline-variant">
-<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-sm">Notifications</h2>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-sm">{{ __('Notifications') }}</h2>
 <label class="flex items-center justify-between py-sm border-b border-outline-variant cursor-pointer">
 <span>
-<span class="font-body-lg text-body-lg text-on-surface block">Promo Emails</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant block">Sales, discounts and exclusive offers</span>
+<span class="font-body-lg text-body-lg text-on-surface block">{{ __('Promo Emails') }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant block">{{ __('Sales, discounts and exclusive offers') }}</span>
 </span>
 <input checked="" class="sr-only peer" type="checkbox"/>
 <span class="relative shrink-0 w-10 h-6 rounded-full bg-outline-variant peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:rounded-full after:bg-surface after:shadow-sm after:transition-transform peer-checked:after:translate-x-4"></span>
 </label>
 <label class="flex items-center justify-between py-sm border-b border-outline-variant cursor-pointer">
 <span>
-<span class="font-body-lg text-body-lg text-on-surface block">Push Notifications</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant block">Order updates and delivery status</span>
+<span class="font-body-lg text-body-lg text-on-surface block">{{ __('Push Notifications') }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant block">{{ __('Order updates and delivery status') }}</span>
 </span>
 <input checked="" class="sr-only peer" type="checkbox"/>
 <span class="relative shrink-0 w-10 h-6 rounded-full bg-outline-variant peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:rounded-full after:bg-surface after:shadow-sm after:transition-transform peer-checked:after:translate-x-4"></span>
 </label>
 <label class="flex items-center justify-between py-sm cursor-pointer">
 <span>
-<span class="font-body-lg text-body-lg text-on-surface block">Newsletter</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant block">Editorial insights, once a month</span>
+<span class="font-body-lg text-body-lg text-on-surface block">{{ __('Newsletter') }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant block">{{ __('Editorial insights, once a month') }}</span>
 </span>
 <input class="sr-only peer" type="checkbox"/>
 <span class="relative shrink-0 w-10 h-6 rounded-full bg-outline-variant peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:rounded-full after:bg-surface after:shadow-sm after:transition-transform peer-checked:after:translate-x-4"></span>
@@ -237,27 +237,30 @@
 </section>
 <!-- Language -->
 <section class="px-container-margin py-lg border-b border-outline-variant">
-<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">Language</h2>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Language') }}</h2>
+<form id="language-form" action="{{ route('customer.locale.switch') }}" method="POST">
+@csrf
 <div class="grid grid-cols-2 gap-gutter">
-<label class="flex items-center justify-center py-sm border-2 border-primary rounded-DEFAULT bg-surface-container-low cursor-pointer">
-<input checked="" class="sr-only" name="language" type="radio" value="en"/>
+<label class="flex items-center justify-center py-sm border-2 {{ app()->getLocale() === 'en' ? 'border-primary' : 'border-outline-variant' }} rounded-DEFAULT bg-surface-container-low cursor-pointer hover:border-primary transition-colors">
+<input {{ app()->getLocale() === 'en' ? 'checked' : '' }} class="sr-only" name="locale" type="radio" value="en" onchange="document.getElementById('language-form').submit()"/>
 <span class="material-symbols-outlined text-[20px] mr-xs">language</span>
-<span class="font-body-sm text-body-sm font-semibold">English</span>
+<span class="font-body-sm text-body-sm {{ app()->getLocale() === 'en' ? 'font-semibold' : '' }}">English</span>
 </label>
-<label class="flex items-center justify-center py-sm border border-outline-variant rounded-DEFAULT cursor-pointer hover:border-primary transition-colors">
-<input class="sr-only" name="language" type="radio" value="id"/>
+<label class="flex items-center justify-center py-sm border-2 {{ app()->getLocale() === 'id' ? 'border-primary' : 'border-outline-variant' }} rounded-DEFAULT bg-surface-container-low cursor-pointer hover:border-primary transition-colors">
+<input {{ app()->getLocale() === 'id' ? 'checked' : '' }} class="sr-only" name="locale" type="radio" value="id" onchange="document.getElementById('language-form').submit()"/>
 <span class="material-symbols-outlined text-[20px] mr-xs">translate</span>
-<span class="font-body-sm text-body-sm">Bahasa Indonesia</span>
+<span class="font-body-sm text-body-sm {{ app()->getLocale() === 'id' ? 'font-semibold' : '' }}">Bahasa Indonesia</span>
 </label>
 </div>
+</form>
 </section>
 <!-- Appearance -->
 <section class="px-container-margin py-lg border-b border-outline-variant">
-<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-sm">Appearance</h2>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-sm">{{ __('Appearance') }}</h2>
 <label class="flex items-center justify-between py-sm cursor-pointer">
 <span>
-<span class="font-body-lg text-body-lg text-on-surface block">Dark Mode</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant block">Header, menu dan navigasi berwarna gelap</span>
+<span class="font-body-lg text-body-lg text-on-surface block">{{ __('Dark Mode') }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant block">{{ __('Header, menu dan navigasi berwarna gelap') }}</span>
 </span>
 <input checked="" class="sr-only peer" id="dark-mode-toggle" onchange="onThemeToggle(this)" type="checkbox"/>
 <span class="relative shrink-0 w-10 h-6 rounded-full bg-outline-variant peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:rounded-full after:bg-surface after:shadow-sm after:transition-transform peer-checked:after:translate-x-4"></span>
@@ -265,12 +268,12 @@
 </section>
 <!-- Danger Zone -->
 <section class="px-container-margin py-lg">
-<h2 class="font-label-caps text-label-caps text-error uppercase tracking-widest mb-md">Danger Zone</h2>
+<h2 class="font-label-caps text-label-caps text-error uppercase tracking-widest mb-md">{{ __('Danger Zone') }}</h2>
 <button class="w-full flex items-center justify-center gap-sm py-sm border border-error text-error rounded-DEFAULT hover:bg-error-container transition-colors" type="button">
 <span class="material-symbols-outlined text-[20px]">delete_forever</span>
-<span class="font-label-caps text-label-caps uppercase tracking-widest">Delete Account</span>
+<span class="font-label-caps text-label-caps uppercase tracking-widest">{{ __('Delete Account') }}</span>
 </button>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-sm text-center">This action is permanent and cannot be undone.</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-sm text-center">{{ __('This action is permanent and cannot be undone.') }}</p>
 </section>
 </main>
 <script>

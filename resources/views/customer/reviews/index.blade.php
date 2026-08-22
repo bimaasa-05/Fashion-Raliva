@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - My Reviews</title>
+<title>RALIVA - {{ __('My Reviews') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -197,20 +197,19 @@
 <body class="bg-surface text-on-surface antialiased font-body-lg">
 <!-- TopAppBar -->
 <header class="fixed top-0 w-full z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
-<a href="{{ route('customer.account') }}" aria-label="Back" class="hover:opacity-80 transition-opacity flex">
+<a href="{{ route('customer.account') }}" aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">My Reviews</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">{{ __('My Reviews') }}</h1>
 <div class="w-10"></div> <!-- Spacer for centering -->
 </header>
 <!-- Tabs -->
 <div class="sticky top-16 z-30 bg-surface border-b border-outline-variant mt-16">
 <nav class="flex px-container-margin max-w-2xl mx-auto">
-<button id="tab-written" onclick="switchTab('written')" class="py-sm px-md border-b-2 border-primary text-primary font-label-caps text-label-caps whitespace-nowrap transition-colors">
-                    WRITTEN (3)
+<button id="tab-written" onclick="switchTab('written')" class="py-sm px-md border-b-2 border-primary text-primary font-label-caps text-label-caps whitespace-nowrap transition-colors">{{ __('WRITTEN (3)') }}
                 </button>
 <button id="tab-to-review" onclick="switchTab('to-review')" class="py-sm px-md border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-caps text-label-caps whitespace-nowrap">
-                    TO REVIEW (2)
+                    {{ __('TO REVIEW (2)') }}
                 </button>
 </nav>
 </div>
@@ -243,8 +242,8 @@
                 Beautifully tailored and the linen feels premium. The fit is exactly as described and it has become my go-to blazer for both work and weekends.
             </p>
 <div class="flex justify-end gap-md mt-sm pt-sm border-t border-outline-variant">
-<a href="{{ route('customer.reviews.edit') }}" class="font-label-caps text-label-caps text-on-surface hover:text-secondary transition-colors uppercase tracking-wider py-1 flex items-center">Edit</a>
-<button class="font-label-caps text-label-caps text-error hover:opacity-80 transition-opacity uppercase tracking-wider py-1">Delete</button>
+<a href="{{ route('customer.reviews.edit') }}" class="font-label-caps text-label-caps text-on-surface hover:text-secondary transition-colors uppercase tracking-wider py-1 flex items-center">{{ __('Edit') }}</a>
+<button class="font-label-caps text-label-caps text-error hover:opacity-80 transition-opacity uppercase tracking-wider py-1">{{ __('Delete') }}</button>
 </div>
 </article>
 <!-- Review 2 -->
@@ -272,8 +271,8 @@
                 Gorgeous bag with a very sturdy structure. It fits my laptop perfectly. One star off because the strap felt slightly stiff during the first week.
             </p>
 <div class="flex justify-end gap-md mt-sm pt-sm border-t border-outline-variant">
-<a href="{{ route('customer.reviews.edit') }}" class="font-label-caps text-label-caps text-on-surface hover:text-secondary transition-colors uppercase tracking-wider py-1 flex items-center">Edit</a>
-<button class="font-label-caps text-label-caps text-error hover:opacity-80 transition-opacity uppercase tracking-wider py-1">Delete</button>
+<a href="{{ route('customer.reviews.edit') }}" class="font-label-caps text-label-caps text-on-surface hover:text-secondary transition-colors uppercase tracking-wider py-1 flex items-center">{{ __('Edit') }}</a>
+<button class="font-label-caps text-label-caps text-error hover:opacity-80 transition-opacity uppercase tracking-wider py-1">{{ __('Delete') }}</button>
 </div>
 </article>
 <!-- Review 3 -->
@@ -301,8 +300,8 @@
                 The silk drapes beautifully, but the color is slightly lighter than the photos. Still an elegant piece for special occasions.
             </p>
 <div class="flex justify-end gap-md mt-sm pt-sm border-t border-outline-variant">
-<a href="{{ route('customer.reviews.edit') }}" class="font-label-caps text-label-caps text-on-surface hover:text-secondary transition-colors uppercase tracking-wider py-1 flex items-center">Edit</a>
-<button class="font-label-caps text-label-caps text-error hover:opacity-80 transition-opacity uppercase tracking-wider py-1">Delete</button>
+<a href="{{ route('customer.reviews.edit') }}" class="font-label-caps text-label-caps text-on-surface hover:text-secondary transition-colors uppercase tracking-wider py-1 flex items-center">{{ __('Edit') }}</a>
+<button class="font-label-caps text-label-caps text-error hover:opacity-80 transition-opacity uppercase tracking-wider py-1">{{ __('Delete') }}</button>
 </div>
 </article>
 </section>
@@ -319,7 +318,7 @@
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">Delivered May 20, 2026</p>
 </div>
 <a href="{{ route('customer.reviews.create') }}" class="shrink-0 px-md py-xs border border-primary text-primary font-label-caps text-label-caps uppercase tracking-widest hover:bg-surface-container-low transition-colors">
-                Write Review
+                {{ __('Write Review') }}
             </a>
 </article>
 <!-- Item 2 -->
@@ -333,7 +332,7 @@
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">Delivered May 15, 2026</p>
 </div>
 <a href="{{ route('customer.reviews.create') }}" class="shrink-0 px-md py-xs border border-primary text-primary font-label-caps text-label-caps uppercase tracking-widest hover:bg-surface-container-low transition-colors">
-                Write Review
+                {{ __('Write Review') }}
             </a>
 </article>
 </section>

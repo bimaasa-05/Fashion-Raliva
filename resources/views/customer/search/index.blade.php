@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - Search</title>
+<title>RALIVA - {{ __('Search') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -205,7 +205,7 @@
 <body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0">
 <!-- TopAppBar -->
 <header class="fixed top-0 w-full z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
-<a href="{{ url()->previous() }}" aria-label="Back" class="hover:opacity-80 transition-opacity flex">
+<a href="{{ url()->previous() }}" aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
@@ -223,14 +223,14 @@
 <form class="flex items-center gap-sm w-full max-w-2xl mx-auto">
 <div class="relative flex-grow">
 <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-<input autofocus class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-xl pr-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" placeholder="Search products, stores, categories..." type="search"/>
+<input autofocus class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-xl pr-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" placeholder="{{ __('Search products, stores, categories...') }}" type="search"/>
 </div>
-<button class="bg-primary text-on-primary font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:opacity-90 transition-opacity rounded-full" type="submit">SEARCH</button>
+<button class="bg-primary text-on-primary font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:opacity-90 transition-opacity rounded-full" type="submit">{{ __('SEARCH') }}</button>
 </form>
 </section>
 <!-- Popular Searches -->
 <section class="py-lg px-container-margin border-b border-outline-variant">
-<h2 class="font-title-md text-title-md text-on-surface mb-md">Popular Searches</h2>
+<h2 class="font-title-md text-title-md text-on-surface mb-md">{{ __('Popular Searches') }}</h2>
 <div class="flex flex-wrap gap-sm">
 @foreach (['Linen Shirt', 'Silk Dress', 'Blazer', 'Tote Bag', 'Trousers', 'Knit Top'] as $tag)
 <a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ $tag }}</a>
@@ -240,7 +240,7 @@
 <!-- Trending Now -->
 <section class="py-xl px-container-margin">
 <div class="flex justify-between items-center mb-md">
-<h2 class="font-title-md text-title-md text-on-surface">Trending Now</h2>
+<h2 class="font-title-md text-title-md text-on-surface">{{ __('Trending Now') }}</h2>
 <a href="{{ route('customer.shop') }}" class="font-label-caps text-label-caps text-secondary uppercase tracking-widest hover:opacity-80 transition-opacity">View All</a>
 </div>
 <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
@@ -270,28 +270,28 @@
 <!-- Home -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1" data-icon="home">home</span>
-<span class="font-label-sm text-[10px]">Home</span>
+<span class="font-label-sm text-[10px]">{{ __('Home') }}</span>
 </a>
 <!-- Shop -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_bag">shopping_bag</span>
-<span class="font-label-sm text-[10px]">Shop</span>
+<span class="font-label-sm text-[10px]">{{ __('Shop') }}</span>
 </a>
 <!-- Wishlist -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="favorite">favorite</span>
-<span class="font-label-sm text-[10px]">Wishlist</span>
+<span class="font-label-sm text-[10px]">{{ __('Wishlist') }}</span>
 </a>
 <!-- Cart -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 relative" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_cart">shopping_cart</span>
-<span class="font-label-sm text-[10px]">Cart</span>
+<span class="font-label-sm text-[10px]">{{ __('Cart') }}</span>
 <span class="absolute top-0 right-2 bg-primary text-on-primary text-[8px] w-3 h-3 rounded-full flex items-center justify-center font-bold">2</span>
 </a>
 <!-- Account -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="person">person</span>
-<span class="font-label-sm text-[10px]">Account</span>
+<span class="font-label-sm text-[10px]">{{ __('Account') }}</span>
 </a>
 </nav>
 </body></html>

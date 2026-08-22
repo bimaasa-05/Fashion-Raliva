@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 
-<html lang="en"><head>
+<html lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - Create Account</title>
+<title>RALIVA - {{ __('Create Account') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -190,12 +190,12 @@
 <div class="relative z-10 flex flex-col items-center justify-center text-center h-full w-full p-lg lg:items-start lg:justify-between lg:text-left lg:p-xl">
 <div>
 <span class="font-display-lg text-headline-lg tracking-widest text-white">RALIVA</span>
-<p class="font-label-sm text-label-sm text-white/80 tracking-wide mt-1 lg:hidden">The Art of Everyday Dressing</p>
+<p class="font-label-sm text-label-sm text-white/80 tracking-wide mt-1 lg:hidden">{{ __('The Art of Everyday Dressing') }}</p>
 <div class="w-10 h-px bg-secondary-fixed-dim mt-sm lg:hidden"></div>
 </div>
 <div class="hidden lg:block">
-<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary-fixed-dim mb-sm">Join Raliva</p>
-<p class="font-headline-lg-mobile text-headline-lg-mobile text-white max-w-sm">Discover your style, curated for you.</p>
+<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary-fixed-dim mb-sm">{{ __('Join Raliva') }}</p>
+<p class="font-headline-lg-mobile text-headline-lg-mobile text-white max-w-sm">{{ __('Discover your style, curated for you.') }}</p>
 <div class="w-10 h-px bg-secondary-fixed-dim mt-md"></div>
 </div>
 </div>
@@ -204,7 +204,7 @@
 <main class="auth-monogram flex-grow flex flex-col relative overflow-hidden bg-surface-container-low border-outline-variant lg:border-l">
 <!-- Floating Chips: Home + Theme -->
 <div class="fixed top-sm right-sm z-50 flex items-center gap-xs">
-<a aria-label="Back to home" title="Kembali ke Home" href="{{ route('customer.home') }}" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
+<a aria-label="{{ __('Back to home') }}" title="Kembali ke Home" href="{{ route('customer.home') }}" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
 <span class="material-symbols-outlined text-[20px]">home</span>
 </a>
 <button aria-label="Toggle theme" title="Ganti tema" type="button" onclick="toggleTheme()" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
@@ -215,69 +215,69 @@
 <div id="register-section" class="border-2 border-secondary rounded-lg p-lg lg:p-xl frame-gold">
 <!-- Heading -->
 <div class="mb-lg">
-<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">Raliva Account</p>
-<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">Create Your Account</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant">Join RALIVA and discover your style.</p>
+<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">{{ __('Raliva Account') }}</p>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Create Your Account') }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('Join RALIVA and discover your style.') }}</p>
 </div>
 <form id="register-form" novalidate>
 <!-- Full Name -->
 <div class="mb-md">
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="full-name">Full Name</label>
-<input autocomplete="name" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="full-name" placeholder="Your full name" type="text"/>
-<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="name-error">Full name is required.</p>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="full-name">{{ __('Full Name') }}</label>
+<input autocomplete="name" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="full-name" placeholder="{{ __('Your full name') }}" type="text"/>
+<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="name-error">{{ __('Full name is required.') }}</p>
 </div>
 <!-- Email -->
 <div class="mb-md">
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">Email</label>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">{{ __('Email') }}</label>
 <input autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="email" placeholder="you@example.com" type="email"/>
-<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-error">Invalid email address.</p>
-<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-taken-error">Email is already registered.</p>
+<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-error">{{ __('Invalid email address.') }}</p>
+<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-taken-error">{{ __('Email is already registered.') }}</p>
 </div>
 <!-- Password -->
 <div class="mb-md">
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password">Password</label>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password">{{ __('Password') }}</label>
 <div class="relative">
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password" placeholder="Minimum 8 characters" type="password"/>
-<button aria-label="Show password" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="password-toggle" type="button">
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password" placeholder="{{ __('Minimum 8 characters') }}" type="password"/>
+<button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="password-toggle" type="button">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </button>
 </div>
-<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="password-error">Password must be at least 8 characters.</p>
+<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="password-error">{{ __('Password must be at least 8 characters.') }}</p>
 </div>
 <!-- Confirm Password -->
 <div class="mb-md">
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="confirm-password">Confirm Password</label>
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="confirm-password" placeholder="Re-enter your password" type="password"/>
-<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="confirm-error">Password does not match.</p>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="confirm-password">{{ __('Confirm Password') }}</label>
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="confirm-password" placeholder="{{ __('Re-enter your password') }}" type="password"/>
+<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="confirm-error">{{ __('Password does not match.') }}</p>
 </div>
 <!-- Terms Checkbox -->
 <label class="flex items-start gap-sm cursor-pointer mb-md">
 <input class="mt-1 w-4 h-4 shrink-0" id="terms" type="checkbox"/>
 <span class="font-body-sm text-body-sm text-on-surface-variant">
-            I agree to the <span class="text-secondary underline underline-offset-4">Terms &amp; Privacy Policy</span>
+            {{ __("I agree to the") }} <span class="text-secondary underline underline-offset-4">{{ __('Terms &amp; Privacy Policy') }}</span>
         </span>
 </label>
-<p class="hidden font-label-sm text-label-sm text-error -mt-sm mb-md" id="terms-error">Please agree to the Terms &amp; Privacy Policy.</p>
+<p class="hidden font-label-sm text-label-sm text-error -mt-sm mb-md" id="terms-error">{{ __('Please agree to the Terms &amp; Privacy Policy.') }}</p>
 <!-- Submit -->
 <button class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="register-btn" type="submit">
-<span id="register-btn-text">REGISTER</span>
+<span id="register-btn-text">{{ __('REGISTER') }}</span>
 <span class="material-symbols-outlined text-[20px] animate-spin hidden" id="register-spinner">progress_activity</span>
 </button>
 </form>
 <!-- Login Link -->
 <p class="text-center font-body-sm text-body-sm text-on-surface-variant mt-lg">
-        Already have an account?
-<a class="text-secondary font-semibold hover:opacity-80 transition-opacity ml-1" href="{{ route('customer.login') }}{{ request('redirect') ? '?redirect=' . urlencode(request('redirect')) : '' }}">LOGIN</a>
+        {{ __('Already have an account?') }}
+<a class="text-secondary font-semibold hover:opacity-80 transition-opacity ml-1" href="{{ route('customer.login') }}{{ request('redirect') ? '?redirect=' . urlencode(request('redirect')) : '' }}">{{ __('LOGIN') }}</a>
 </p>
 </div>
 </div>
 <!-- Success State -->
 <div class="hidden text-center py-xl relative z-10 border-2 border-secondary rounded-lg p-lg lg:p-xl frame-gold" id="register-success">
 <span class="material-symbols-outlined text-secondary text-[64px]">check_circle</span>
-<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-md mb-sm">Account Created</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">Your RALIVA account has been created successfully. Please sign in to continue.</p>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-md mb-sm">{{ __('Account Created') }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">{{ __('Your RALIVA account has been created successfully. Please sign in to continue.') }}</p>
 <a class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('customer.login') }}" id="success-login-link">
-            CONTINUE TO LOGIN
+            {{ __('CONTINUE TO LOGIN') }}
         </a>
 </div>
 </main>

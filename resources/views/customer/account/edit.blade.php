@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - Edit Profile</title>
+<title>RALIVA - {{ __('Edit Profile') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -200,7 +200,7 @@
 <a href="{{ route('customer.account') }}" aria-label="Back" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">Edit Profile</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">{{ __('Edit Profile') }}</h1>
 <div class="w-10"></div> <!-- Spacer for centering -->
 </header>
 <!-- Main Content -->
@@ -212,68 +212,68 @@
 <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant">
 <img alt="Profile Picture" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2mFOUgXwyToT210lLVyaVSmF1VogUfk85zb-0hplBwDJrLXcscOUZ6HC-QneJkQeiXtusGTnccpRNL_Qfwg6Iv1eVkAyIGJww1Oeb_iYCbIyOeCVeUW2b1Sm0yZ1Ilyxant3LPd15_T_3d5wXZ6WuDg04U46PEh96KMwKZLe0bO4ULe1L4wvC1WuBzsmGdp1FVC5JBPcCooQlUdVdE7hMrw6wp72LxJBvu2PdD4yA1caYdtRO7ss"/>
 </div>
-<span role="button" tabindex="0" aria-label="Change profile photo" class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity">
+<span role="button" tabindex="0" aria-label="{{ __('Change profile photo') }}" class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity">
 <span class="material-symbols-outlined text-[18px]">photo_camera</span>
 </span>
 </div>
-<span role="button" tabindex="0" class="font-label-caps text-label-caps text-secondary uppercase tracking-widest underline underline-offset-4 cursor-pointer hover:opacity-80 transition-opacity">Change Photo</span>
+<span role="button" tabindex="0" class="font-label-caps text-label-caps text-secondary uppercase tracking-widest underline underline-offset-4 cursor-pointer hover:opacity-80 transition-opacity">{{ __('Change Photo') }}</span>
 </section>
 <!-- Personal Information -->
 <section class="py-lg">
-<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">Personal Information</h2>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Personal Information') }}</h2>
 <div class="flex flex-col gap-md">
 <!-- Full Name -->
 <div>
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="full-name">Full Name</label>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="full-name">{{ __('Full Name') }}</label>
 <input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="full-name" type="text" value="Jane Doe"/>
 </div>
 <!-- Email -->
 <div>
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">Email Address</label>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">{{ __('Email Address') }}</label>
 <input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="email" type="email" value="jane.doe@example.com"/>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">Used for order updates and receipts.</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Used for order updates and receipts.') }}</p>
 </div>
 <!-- Phone Number -->
 <div>
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="phone">Phone Number</label>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="phone">{{ __('Phone Number') }}</label>
 <input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="phone" type="tel" value="+62 812 3456 7890"/>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">The courier will contact this number upon delivery.</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('The courier will contact this number upon delivery.') }}</p>
 </div>
 </div>
 </section>
 <!-- Additional Information -->
 <section class="py-lg border-t border-outline-variant">
-<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">Additional Information</h2>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Additional Information') }}</h2>
 <!-- Gender -->
 <div class="mb-md">
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs">Gender</label>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs">{{ __('Gender') }}</label>
 <div class="grid grid-cols-2 gap-gutter">
 <label class="flex items-center justify-center gap-xs py-sm border-2 border-primary rounded-DEFAULT bg-surface-container-low cursor-pointer">
 <input checked="" class="sr-only" name="gender" type="radio" value="female"/>
 <span class="material-symbols-outlined text-[20px]" data-icon="female">female</span>
-<span class="font-body-sm text-body-sm font-semibold">Female</span>
+<span class="font-body-sm text-body-sm font-semibold">{{ __('Female') }}</span>
 </label>
 <label class="flex items-center justify-center gap-xs py-sm border border-outline-variant rounded-DEFAULT cursor-pointer hover:border-primary transition-colors">
 <input class="sr-only" name="gender" type="radio" value="male"/>
 <span class="material-symbols-outlined text-[20px]" data-icon="male">male</span>
-<span class="font-body-sm text-body-sm">Male</span>
+<span class="font-body-sm text-body-sm">{{ __('Male') }}</span>
 </label>
 </div>
 </div>
 <!-- Date of Birth -->
 <div>
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="dob">Date of Birth</label>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="dob">{{ __('Date of Birth') }}</label>
 <input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="dob" type="date" value="1998-05-17"/>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">Get a special surprise on your birthday.</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Get a special surprise on your birthday.') }}</p>
 </div>
 </section>
 <!-- Security -->
 <section class="py-lg border-t border-outline-variant">
-<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">Security</h2>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Security') }}</h2>
 <a class="flex items-center justify-between py-sm group" href="{{ route('customer.account.password') }}">
 <div class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="lock">lock</span>
-<span class="font-body-lg text-body-lg text-on-surface">Change Password</span>
+<span class="font-body-lg text-body-lg text-on-surface">{{ __('Change Password') }}</span>
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
@@ -283,7 +283,7 @@
 <!-- Fixed Bottom Action Bar -->
 <div class="fixed bottom-0 left-0 w-full bg-surface border-t border-outline-variant px-container-margin py-md z-50 max-w-2xl mx-auto">
 <a href="{{ route('customer.account') }}" class="w-full bg-primary text-on-primary font-label-caps text-label-caps h-14 flex items-center justify-center hover:opacity-90 transition-opacity uppercase tracking-widest">
-            Save Changes
+            {{ __('Save Changes') }}
         </a>
 </div>
 </body></html>

@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - Help Center</title>
+<title>RALIVA - {{ __('Help Center') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -214,10 +214,10 @@
 </section>
 <!-- FAQ -->
 <section class="border-b border-outline-variant">
-<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest px-container-margin pt-lg pb-sm">Frequently Asked Questions</h2>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest px-container-margin pt-lg pb-sm">{{ __('Frequently Asked Questions') }}</h2>
 <details class="group border-b border-outline-variant">
 <summary class="flex justify-between items-center px-container-margin py-sm cursor-pointer list-none">
-<span class="font-title-md text-title-md text-on-surface">How do I track my order?</span>
+<span class="font-title-md text-title-md text-on-surface">{{ __('How do I track my order?') }}</span>
 <span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
 <div class="px-container-margin pb-sm">
@@ -228,7 +228,7 @@
 </details>
 <details class="group border-b border-outline-variant">
 <summary class="flex justify-between items-center px-container-margin py-sm cursor-pointer list-none">
-<span class="font-title-md text-title-md text-on-surface">What is your return policy?</span>
+<span class="font-title-md text-title-md text-on-surface">{{ __('What is your return policy?') }}</span>
 <span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
 <div class="px-container-margin pb-sm">
@@ -239,7 +239,7 @@
 </details>
 <details class="group border-b border-outline-variant">
 <summary class="flex justify-between items-center px-container-margin py-sm cursor-pointer list-none">
-<span class="font-title-md text-title-md text-on-surface">Which payment methods do you accept?</span>
+<span class="font-title-md text-title-md text-on-surface">{{ __('Which payment methods do you accept?') }}</span>
 <span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
 <div class="px-container-margin pb-sm">
@@ -250,7 +250,7 @@
 </details>
 <details class="group border-b border-outline-variant">
 <summary class="flex justify-between items-center px-container-margin py-sm cursor-pointer list-none">
-<span class="font-title-md text-title-md text-on-surface">Can I change my delivery address?</span>
+<span class="font-title-md text-title-md text-on-surface">{{ __('Can I change my delivery address?') }}</span>
 <span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
 <div class="px-container-margin pb-sm">
@@ -261,7 +261,7 @@
 </details>
 <details class="group border-b border-outline-variant">
 <summary class="flex justify-between items-center px-container-margin py-sm cursor-pointer list-none">
-<span class="font-title-md text-title-md text-on-surface">How do I contact a store?</span>
+<span class="font-title-md text-title-md text-on-surface">{{ __('How do I contact a store?') }}</span>
 <span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
 <div class="px-container-margin pb-sm">
@@ -273,14 +273,14 @@
 </section>
 <!-- Contact Support -->
 <section class="py-lg px-container-margin">
-<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">Still Need Help?</h2>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Still Need Help?') }}</h2>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
 <button class="flex items-center gap-sm p-md border border-outline-variant rounded-DEFAULT bg-surface hover:border-primary transition-colors text-left" type="button">
 <span class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0">
 <span class="material-symbols-outlined text-[20px] text-on-surface-variant">chat</span>
 </span>
 <span>
-<span class="font-body-sm text-body-sm font-semibold block">WhatsApp</span>
+<span class="font-body-sm text-body-sm font-semibold block">{{ __('WhatsApp') }}</span>
 <span class="font-label-sm text-label-sm text-on-surface-variant block">Mon–Fri, 09.00–17.00 WIB</span>
 </span>
 </button>
@@ -289,7 +289,7 @@
 <span class="material-symbols-outlined text-[20px] text-on-surface-variant">mail</span>
 </span>
 <span>
-<span class="font-body-sm text-body-sm font-semibold block">Email Us</span>
+<span class="font-body-sm text-body-sm font-semibold block">{{ __('Email Us') }}</span>
 <span class="font-label-sm text-label-sm text-on-surface-variant block">support@raliva.com</span>
 </span>
 </button>

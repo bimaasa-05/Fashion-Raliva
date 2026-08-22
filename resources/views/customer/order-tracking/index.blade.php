@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-<title>RALIVA - Order Tracking</title>
+<title>RALIVA - {{ __('Order Tracking') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600&amp;display=swap" rel="stylesheet"/>
@@ -220,7 +220,7 @@
 <section class="px-container-margin py-lg border-b border-outline-variant">
 <div class="flex justify-between items-end">
 <div>
-<h2 class="font-body-sm text-body-sm text-on-surface-variant uppercase tracking-wider mb-base">Order ID</h2>
+<h2 class="font-body-sm text-body-sm text-on-surface-variant uppercase tracking-wider mb-base">{{ __('Order ID') }}</h2>
 <p class="font-title-md text-title-md text-on-surface">#RLV-240501-1234</p>
 </div>
 <div class="text-right">
@@ -240,37 +240,37 @@
 <div class="w-6 h-6 rounded-full flex items-center justify-center mb-sm bg-surface transition-colors" style="border: 2px solid #c9a24d;">
 <div class="w-2 h-2 rounded-full" style="background-color: #c9a24d;"></div>
 </div>
-<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface text-center whitespace-nowrap" style="color: #c9a24d;">Preparing</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface text-center whitespace-nowrap" style="color: #c9a24d;">{{ __('Preparing') }}</span>
 </div>
 <!-- Step 2: Packed -->
 <div class="flex flex-col items-center group cursor-pointer">
 <div class="w-6 h-6 rounded-full bg-surface border border-outline-variant flex items-center justify-center mb-sm transition-colors group-hover:border-outline">
 </div>
-<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant text-center whitespace-nowrap">Packed</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant text-center whitespace-nowrap">{{ __('Packed') }}</span>
 </div>
 <!-- Step 3: Shipped -->
 <div class="flex flex-col items-center group cursor-pointer">
 <div class="w-6 h-6 rounded-full bg-surface border border-outline-variant flex items-center justify-center mb-sm transition-colors group-hover:border-outline">
 </div>
-<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant text-center whitespace-nowrap">Shipped</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant text-center whitespace-nowrap">{{ __('Shipped') }}</span>
 </div>
 <!-- Step 4: Delivered -->
 <div class="flex flex-col items-center group cursor-pointer">
 <div class="w-6 h-6 rounded-full bg-surface border border-outline-variant flex items-center justify-center mb-sm transition-colors group-hover:border-outline">
 </div>
-<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant text-center whitespace-nowrap">Delivered</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant text-center whitespace-nowrap">{{ __('Delivered') }}</span>
 </div>
 </div>
 </div>
 <!-- Current Status Detail -->
 <div class="mt-lg text-center bg-surface p-md border border-outline-variant rounded-none">
-<h3 class="font-title-md text-title-md text-on-surface mb-xs">We're getting your order ready</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Your items are currently being processed in our warehouse and will be packed shortly.</p>
+<h3 class="font-title-md text-title-md text-on-surface mb-xs">{{ __("We're getting your order ready") }}</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Your items are currently being processed in our warehouse and will be packed shortly.') }}</p>
 </div>
 </section>
 <!-- Order Items List -->
 <section class="px-container-margin py-lg border-t border-outline-variant">
-<h2 class="font-title-md text-title-md text-on-surface mb-md">Items in Order</h2>
+<h2 class="font-title-md text-title-md text-on-surface mb-md">{{ __('Items in Order') }}</h2>
 <div class="flex flex-col gap-md">
 <!-- Item 1 -->
 <div class="flex gap-sm">
@@ -281,10 +281,10 @@
 <div>
 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-base">RALIVA</p>
 <h3 class="font-body-sm text-body-sm font-semibold text-on-surface">Oversized Linen Shirt</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-base">Color: White | Size: M</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-base">{{ __('Color: White | Size: M') }}</p>
 </div>
 <div class="flex justify-between items-center mt-sm">
-<p class="font-body-sm text-body-sm text-on-surface">Qty: 1</p>
+<p class="font-body-sm text-body-sm text-on-surface">{{ __('Qty: 1') }}</p>
 <p class="font-body-sm text-body-sm text-on-surface">$145.00</p>
 </div>
 </div>
@@ -298,10 +298,10 @@
 <div>
 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-base">RALIVA</p>
 <h3 class="font-body-sm text-body-sm font-semibold text-on-surface">Straight Fit Pants</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-base">Color: Black | Size: 32</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-base">{{ __('Color: Black | Size: 32') }}</p>
 </div>
 <div class="flex justify-between items-center mt-sm">
-<p class="font-body-sm text-body-sm text-on-surface">Qty: 1</p>
+<p class="font-body-sm text-body-sm text-on-surface">{{ __('Qty: 1') }}</p>
 <p class="font-body-sm text-body-sm text-on-surface">$210.00</p>
 </div>
 </div>
@@ -310,23 +310,23 @@
 </section>
 <!-- Order Summary (Tonal Background) -->
 <section class="bg-[#F8F7F4] px-container-margin py-lg mt-sm border-t border-b border-outline-variant">
-<h2 class="font-title-md text-title-md text-on-surface mb-md">Order Summary</h2>
+<h2 class="font-title-md text-title-md text-on-surface mb-md">{{ __('Order Summary') }}</h2>
 <div class="flex flex-col gap-sm">
 <div class="flex justify-between">
-<p class="font-body-sm text-body-sm text-on-surface-variant">Subtotal</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Subtotal') }}</p>
 <p class="font-body-sm text-body-sm text-on-surface">$355.00</p>
 </div>
 <div class="flex justify-between">
-<p class="font-body-sm text-body-sm text-on-surface-variant">Shipping</p>
-<p class="font-body-sm text-body-sm text-on-surface">Free</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Shipping') }}</p>
+<p class="font-body-sm text-body-sm text-on-surface">{{ __('Free') }}</p>
 </div>
 <div class="flex justify-between">
-<p class="font-body-sm text-body-sm text-on-surface-variant">Tax</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Tax') }}</p>
 <p class="font-body-sm text-body-sm text-on-surface">$31.95</p>
 </div>
 <div class="w-full h-px bg-outline-variant my-xs"></div>
 <div class="flex justify-between items-center">
-<p class="font-title-md text-title-md text-on-surface">Total</p>
+<p class="font-title-md text-title-md text-on-surface">{{ __('Total') }}</p>
 <p class="font-title-md text-title-md text-on-surface">$386.95</p>
 </div>
 </div>
@@ -334,7 +334,7 @@
 <!-- Need Help Action -->
 <section class="px-container-margin py-lg text-center">
 <button class="font-label-caps text-label-caps text-on-surface uppercase border-b border-on-surface pb-1 hover:opacity-70 transition-opacity">
-                Contact Customer Service
+                {{ __('Contact Customer Service') }}
             </button>
 </section>
 </main>
@@ -342,24 +342,24 @@
 <nav class="flex justify-around items-center w-full h-[72px] bg-[var(--chrome-bg)] text-[var(--chrome-text)] px-xs pb-safe fixed bottom-0 z-50 border-t border-[var(--chrome-border)] shadow-sm md:hidden">
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-1/5" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1 text-[24px]" data-icon="home">home</span>
-<span class="font-label-sm text-[10px]">Home</span>
+<span class="font-label-sm text-[10px]">{{ __('Home') }}</span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-1/5" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1 text-[24px]" data-icon="shopping_bag">shopping_bag</span>
-<span class="font-label-sm text-[10px]">Shop</span>
+<span class="font-label-sm text-[10px]">{{ __('Shop') }}</span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-1/5" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined mb-1 text-[24px]" data-icon="favorite">favorite</span>
-<span class="font-label-sm text-[10px]">Wishlist</span>
+<span class="font-label-sm text-[10px]">{{ __('Wishlist') }}</span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-1/5" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1 text-[24px]" data-icon="shopping_cart">shopping_cart</span>
-<span class="font-label-sm text-[10px]">Cart</span>
+<span class="font-label-sm text-[10px]">{{ __('Cart') }}</span>
 </a>
 <!-- Account is active conceptually, but usually for main tabs. Tracking is a sub-page, but we follow standard structure. -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] scale-95 transition-transform w-1/5" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined mb-1 text-[24px]" data-icon="person" data-weight="fill" style="font-variation-settings: 'FILL' 1;">person</span>
-<span class="font-label-sm text-[10px]">Account</span>
+<span class="font-label-sm text-[10px]">{{ __('Account') }}</span>
 </a>
 </nav>
 </body></html>

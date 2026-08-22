@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 
-<html lang="en"><head>
+<html lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - Forgot Password</title>
+<title>RALIVA - {{ __('Forgot Password') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -166,7 +166,7 @@
 <main class="flex-grow flex flex-col justify-center w-full max-w-md mx-auto px-container-margin py-xl">
 <!-- Floating Chips: Home + Theme -->
 <div class="fixed top-sm right-sm z-50 flex items-center gap-xs">
-<a aria-label="Back to home" title="Kembali ke Home" href="{{ route('customer.home') }}" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
+<a aria-label="{{ __('Back to home') }}" title="Kembali ke Home" href="{{ route('customer.home') }}" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
 <span class="material-symbols-outlined text-[20px]">home</span>
 </a>
 <button aria-label="Toggle theme" title="Ganti tema" type="button" onclick="toggleTheme()" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
@@ -176,24 +176,24 @@
 <!-- Logo -->
 <div class="text-center mb-xl">
 <h1 class="font-display-lg text-headline-lg tracking-widest text-on-surface">RALIVA</h1>
-<p class="font-label-sm text-label-sm text-on-surface-variant tracking-wide mt-1">The Art of Everyday Dressing</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant tracking-wide mt-1">{{ __('The Art of Everyday Dressing') }}</p>
 </div>
 <!-- Form Section -->
 <div id="forgot-section">
 <div class="mb-lg">
-<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">Forgot Password</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant">Enter your email address and we'll help you reset your password.</p>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Forgot Password') }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ __("Enter your email address and we'll help you reset your password.") }}</p>
 </div>
 <form id="forgot-form" novalidate>
 <!-- Email -->
 <div class="mb-md">
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">Email</label>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">{{ __('Email') }}</label>
 <input autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="email" placeholder="you@example.com" type="email"/>
-<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-error">Invalid email address.</p>
+<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-error">{{ __('Invalid email address.') }}</p>
 </div>
 <!-- Submit -->
 <button class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="forgot-btn" type="submit">
-<span id="forgot-btn-text">SEND RESET LINK</span>
+<span id="forgot-btn-text">{{ __('SEND RESET LINK') }}</span>
 <span class="material-symbols-outlined text-[20px] animate-spin hidden" id="forgot-spinner">progress_activity</span>
 </button>
 </form>
@@ -201,19 +201,19 @@
 <p class="text-center mt-lg">
 <a class="font-label-caps text-label-caps text-secondary uppercase tracking-widest hover:opacity-80 transition-opacity inline-flex items-center gap-xs" href="{{ route('customer.login') }}">
 <span class="material-symbols-outlined text-[16px]">arrow_back</span>
-            Back to Login
+            {{ __('Back to Login') }}
         </a>
 </p>
 </div>
 <!-- Success State -->
 <div class="hidden text-center py-xl" id="forgot-success">
 <span class="material-symbols-outlined text-secondary text-[64px]">mark_email_read</span>
-<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-md mb-sm">Check Your Email</h2>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-md mb-sm">{{ __('Check Your Email') }}</h2>
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">
-            We've sent a password reset link to your email.
+            {{ __("We've sent a password reset link to your email.") }}
         </p>
 <a class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('customer.login') }}">
-            BACK TO LOGIN
+            {{ __('BACK TO LOGIN') }}
         </a>
 </div>
 </main>

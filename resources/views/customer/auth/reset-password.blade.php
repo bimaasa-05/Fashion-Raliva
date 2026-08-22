@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 
-<html lang="en"><head>
+<html lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - Reset Password</title>
+<title>RALIVA - {{ __('Reset Password') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -166,7 +166,7 @@
 <main class="flex-grow flex flex-col justify-center w-full max-w-md mx-auto px-container-margin py-xl">
 <!-- Floating Chips: Home + Theme -->
 <div class="fixed top-sm right-sm z-50 flex items-center gap-xs">
-<a aria-label="Back to home" title="Kembali ke Home" href="{{ route('customer.home') }}" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
+<a aria-label="{{ __('Back to home') }}" title="Kembali ke Home" href="{{ route('customer.home') }}" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
 <span class="material-symbols-outlined text-[20px]">home</span>
 </a>
 <button aria-label="Toggle theme" title="Ganti tema" type="button" onclick="toggleTheme()" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
@@ -182,30 +182,30 @@
 </div>
 <!-- Heading -->
 <div class="mb-lg">
-<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">Reset Password</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant">Create a new password for your account.</p>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Reset Password') }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('Create a new password for your account.') }}</p>
 </div>
 <form id="reset-form" novalidate>
 <!-- New Password -->
 <div class="mb-md">
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password">New Password</label>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password">{{ __('New Password') }}</label>
 <div class="relative">
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password" placeholder="Minimum 8 characters" type="password"/>
-<button aria-label="Show password" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="password-toggle" type="button">
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password" placeholder="{{ __('Minimum 8 characters') }}" type="password"/>
+<button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="password-toggle" type="button">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </button>
 </div>
-<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="password-error">Password must be at least 8 characters.</p>
+<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="password-error">{{ __('Password must be at least 8 characters.') }}</p>
 </div>
 <!-- Confirm New Password -->
 <div class="mb-md">
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="confirm-password">Confirm New Password</label>
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="confirm-password" placeholder="Re-enter your new password" type="password"/>
-<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="confirm-error">Password does not match.</p>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="confirm-password">{{ __('Confirm New Password') }}</label>
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="confirm-password" placeholder="{{ __('Re-enter your new password') }}" type="password"/>
+<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="confirm-error">{{ __('Password does not match.') }}</p>
 </div>
 <!-- Submit -->
 <button class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="reset-btn" type="submit">
-<span id="reset-btn-text">RESET PASSWORD</span>
+<span id="reset-btn-text">{{ __('RESET PASSWORD') }}</span>
 <span class="material-symbols-outlined text-[20px] animate-spin hidden" id="reset-spinner">progress_activity</span>
 </button>
 </form>
@@ -213,10 +213,10 @@
 <!-- Success State -->
 <div class="hidden text-center py-xl" id="reset-success">
 <span class="material-symbols-outlined text-secondary text-[64px]">lock_reset</span>
-<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-md mb-sm">Password Updated</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">Your password has been updated successfully.</p>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-md mb-sm">{{ __('Password Updated') }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">{{ __('Your password has been updated successfully.') }}</p>
 <a class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('customer.login') }}">
-            GO TO LOGIN
+            {{ __('GO TO LOGIN') }}
         </a>
 </div>
 </main>

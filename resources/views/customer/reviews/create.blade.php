@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - Write Review</title>
+<title>RALIVA - {{ __('Write Review') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -197,10 +197,10 @@
 <body class="bg-surface text-on-surface antialiased font-body-lg">
 <!-- TopAppBar -->
 <header class="fixed top-0 w-full z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
-<a href="{{ route('customer.reviews') }}" aria-label="Back" class="hover:opacity-80 transition-opacity flex">
+<a href="{{ route('customer.reviews') }}" aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">Write Review</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">{{ __('Write Review') }}</h1>
 <div class="w-10"></div> <!-- Spacer for centering -->
 </header>
 <!-- Main Content -->
@@ -219,30 +219,30 @@
 </section>
 <!-- Rating -->
 <section class="py-lg border-b border-outline-variant">
-<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">Your Rating</h2>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Your Rating') }}</h2>
 <div class="flex items-center gap-xs" id="rating-stars">
 <button aria-label="Rate 1 star" class="star-btn p-1" data-value="1" type="button"><span class="material-symbols-outlined text-[32px] text-outline-variant" style="font-variation-settings: 'FILL' 0;">star_border</span></button>
 <button aria-label="Rate 2 stars" class="star-btn p-1" data-value="2" type="button"><span class="material-symbols-outlined text-[32px] text-outline-variant" style="font-variation-settings: 'FILL' 0;">star_border</span></button>
 <button aria-label="Rate 3 stars" class="star-btn p-1" data-value="3" type="button"><span class="material-symbols-outlined text-[32px] text-outline-variant" style="font-variation-settings: 'FILL' 0;">star_border</span></button>
 <button aria-label="Rate 4 stars" class="star-btn p-1" data-value="4" type="button"><span class="material-symbols-outlined text-[32px] text-outline-variant" style="font-variation-settings: 'FILL' 0;">star_border</span></button>
 <button aria-label="Rate 5 stars" class="star-btn p-1" data-value="5" type="button"><span class="material-symbols-outlined text-[32px] text-outline-variant" style="font-variation-settings: 'FILL' 0;">star_border</span></button>
-<span class="font-body-sm text-body-sm text-on-surface-variant ml-sm" id="rating-label">Select rating</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant ml-sm" id="rating-label">{{ __('Select rating') }}</span>
 <input id="rating-value" type="hidden" value="0"/>
 </div>
 </section>
 <!-- Review Text -->
 <section class="py-lg border-b border-outline-variant">
-<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">Your Review</h2>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Your Review') }}</h2>
 <textarea class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors resize-none" id="review-text" placeholder="Share your experience with this product..." rows="5"></textarea>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">Minimum 20 characters. Be honest and helpful for other shoppers.</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Minimum 20 characters. Be honest and helpful for other shoppers.') }}</p>
 </section>
 <!-- Photos -->
 <section class="py-lg">
-<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">Add Photos <span class="normal-case tracking-normal text-on-surface-variant/70">(optional)</span></h2>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Add Photos') }} <span class="normal-case tracking-normal text-on-surface-variant/70">{{ __('(optional)') }}</span></h2>
 <div class="flex gap-gutter">
 <span role="button" tabindex="0" class="w-20 h-20 border border-dashed border-outline rounded-DEFAULT flex flex-col items-center justify-center gap-xs cursor-pointer hover:border-primary hover:text-primary transition-colors text-on-surface-variant">
 <span class="material-symbols-outlined text-[24px]">add_a_photo</span>
-<span class="font-label-sm text-[10px]">Add Photo</span>
+<span class="font-label-sm text-[10px]">{{ __('Add Photo') }}</span>
 </span>
 </div>
 </section>
@@ -250,9 +250,7 @@
 </main>
 <!-- Fixed Bottom Action Bar -->
 <div class="fixed bottom-0 left-0 w-full bg-surface border-t border-outline-variant px-container-margin py-md z-50 max-w-2xl mx-auto">
-<a href="{{ route('customer.reviews') }}" class="w-full bg-primary text-on-primary font-label-caps text-label-caps h-14 flex items-center justify-center hover:opacity-90 transition-opacity uppercase tracking-widest">
-            Submit Review
-        </a>
+<a href="{{ route('customer.reviews') }}" class="w-full bg-primary text-on-primary font-label-caps text-label-caps h-14 flex items-center justify-center hover:opacity-90 transition-opacity uppercase tracking-widest">{{ __('Submit Review') }}        </a>
 </div>
 <script>
         function setRating(value) {

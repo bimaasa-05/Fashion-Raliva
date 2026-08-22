@@ -99,4 +99,13 @@ Route::prefix('customer')->name('customer.')->group(function () {
     Route::get('/wishlist', function () {
         return view('customer.wishlist.index');
     })->name('wishlist');
+
+    Route::post('/locale', function (\Illuminate\Http\Request $request) {
+        $validated = $request->validate([
+            'locale' => 'required|in:en,id',
+        ]);
+        session(['locale' => $validated['locale']]);
+
+        return back();
+    })->name('locale.switch');
 });

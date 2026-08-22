@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - The Art of Everyday Dressing</title>
+<title>RALIVA - {{ __('The Art of Everyday Dressing') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -227,9 +227,9 @@
 <div class="absolute inset-0 bg-cover bg-center w-full h-full" data-alt="A striking editorial fashion photograph of a model in a minimalist, light-filled studio. She wears a sophisticated, structured beige trench coat over a crisp white shirt, exuding luxury and high-end styling. The lighting is soft and natural, casting delicate shadows that emphasize the texture of the garments. The overall aesthetic is clean, timeless, and perfectly aligned with a premium, minimalist light-mode fashion brand identity." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCa_tLb2w-HbYA0FJXTWvi2fi1lP1XFac_SANUcdrAFd8IjyMz_faith_rIbXRnr1dyQMR5_gXgVVPxqBFzroKfkGz_YDcPs2cYBNaXcLY55MwzONcYSSyveSZlXlNs-DGhvmpt61mzXC3O0bkPiiGQ7Sg0LYjKOE7BZZuFPRLqdSBQvDkctF8UJvD8XgAX8ASSRyez4WoYiqzzdAJPtsF0BtCngo-sAh-5HSrwBznKVACNyk2BVG8')"></div>
 <div class="absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent"></div>
 <div class="absolute bottom-0 left-0 w-full p-container-margin flex flex-col items-center text-center pb-xl">
-<span class="font-label-caps text-label-caps text-on-surface mb-sm tracking-widest uppercase">NEW COLLECTION</span>
-<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-xs">The Art of Everyday Dressing</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-md max-w-md">Timeless looks, made for you.</p>
+<span class="font-label-caps text-label-caps text-on-surface mb-sm tracking-widest uppercase">{{ __('NEW COLLECTION') }}</span>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-xs">{{ __('The Art of Everyday Dressing') }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-md max-w-md">{{ __('Timeless looks, made for you.') }}</p>
 <a href="{{ route('customer.shop') }}" class="bg-primary text-on-primary font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:opacity-90 transition-opacity inline-block">SHOP COLLECTION</a>
 </div>
 </section>
@@ -245,7 +245,7 @@
 </section>
 <!-- New Arrivals -->
 <section class="py-xl px-container-margin">
-<h3 class="font-title-md text-title-md text-on-surface mb-md">New Arrivals</h3>
+<h3 class="font-title-md text-title-md text-on-surface mb-md">{{ __('New Arrivals') }}</h3>
 <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
 <!-- Product 1 -->
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
@@ -297,13 +297,13 @@
 </a>
 </div>
 <div class="mt-md flex justify-center">
-<a href="{{ route('customer.shop') }}" class="border border-primary text-primary bg-transparent font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:bg-surface-container-low transition-colors inline-block">VIEW ALL NEW ARRIVALS</a>
+<a href="{{ route('customer.shop') }}" class="border border-primary text-primary bg-transparent font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:bg-surface-container-low transition-colors inline-block">{{ __('VIEW ALL NEW ARRIVALS') }}</a>
 </div>
 </section>
 <!-- Featured Stores (Horizontal Scroll) -->
 <section class="py-xl bg-surface-container-low border-t border-b border-outline-variant">
 <div class="px-container-margin mb-md">
-<h3 class="font-title-md text-title-md text-on-surface">Featured Stores</h3>
+<h3 class="font-title-md text-title-md text-on-surface">{{ __('Featured Stores') }}</h3>
 </div>
 <div class="flex overflow-x-auto no-scrollbar pl-container-margin pr-container-margin gap-md pb-xs">
 <!-- Store 1 -->
@@ -312,7 +312,7 @@
 <img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A minimalist architectural photograph of a high-end fashion boutique exterior named Lunara Fashion. The storefront features expansive glass windows, stark white walls, and a beautifully curated display of single garments bathed in warm, soft sunlight. The composition is clean, airy, and extremely premium, perfectly fitting a light-mode luxury marketplace theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATiKrXBx3vVfoNsTu1_JuFvfVqHhF9A63yLIFGC0hF5MVVUZB6Nu-eyjEa5IxqGiEpPzawhFtGfTAatsc-_9Pwi9D9AsVEO7TOOEszevnRdatfxPYIK7ZAvB0-Aa3R8CSQPOhV3EN9w5_S8sCYYX8NCMlAs_gD3RYhAkt91QyBdC8bmQs-v4yGHXrAH2KKGIPWNoi7jJqivQtsOliueGluswaKxAgwLxl1rh_aTfA_gB_LTeqw8oU"/>
 </div>
 <h4 class="font-title-md text-title-md text-on-surface">Lunara Fashion</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Modern feminine silhouettes.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Modern feminine silhouettes.') }}</p>
 </a>
 <!-- Store 2 -->
 <a href="{{ route('customer.shop.store-detail', 2) }}" class="shrink-0 w-64 cursor-pointer group">
@@ -320,7 +320,7 @@
 <img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A sleek, monochromatic photograph of a minimalist fashion studio interior for Noiré Studio. The space features polished concrete floors, austere black metal clothing racks holding sharply tailored suits, and bright, diffuse natural light streaming from large skylights. The aesthetic is extremely sophisticated, stark, and appropriate for a high-end luxury editorial context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGwknduyLPGxjMRvTx7tN4JeGs-9IICVVEqumRS28Y9jTBxPfkTa9uV98aPjekXCG1uLxayAYmBwFZIIf73qfeWOcTQ6jI97GOQBVdIzBaAZhTlYEO8RKF_NsqCMXssspqoctKzP8RpOHtJI_bw-qZI1QF_fn1OH80mwa6ht1vSJY8vkFSZq_OBTROdz1TubDt_Y_Ax7quip7t8HNO7TkKNnLYOEFLbmjlpYvis2wIP6LJwYtpaNo"/>
 </div>
 <h4 class="font-title-md text-title-md text-on-surface">Noiré Studio</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Tailored, stark minimalism.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Tailored, stark minimalism.') }}</p>
 </a>
 <!-- Store 3 -->
 <a href="{{ route('customer.shop.store-detail', 3) }}" class="shrink-0 w-64 cursor-pointer group">
@@ -328,7 +328,7 @@
 <img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A bright, airy lifestyle shot representing Kayana Apparel. A minimalist wooden hanger displays a flowy, natural-fiber linen shirt against a plain, textured plaster wall. Sunbeams cut across the composition, creating harsh, dramatic shadows that add depth and a modern, organic, luxury feel to the light-mode UI design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSCazvaWZuccedNS2ILQbkHUJlNvuZ7i1_N2EHvjuBbo7CLD3CW8iHh-xOfNuHEsio3RxsEYKR2jEnuEUUOg9R7Xza1li0VetG6_yfhRrJs3dSULL6lG6fVDPX4qijbhNAokLUQ8tn673XhAZ-l8Vx3WZDIaxtdNLAHriglRfoPt6xRPff_qYINXAgslwYqW_xSQsAbEn2mjrBLNDh6NTT4t86gs2BbXDST-ewDyDYcbA5FZIEMUM"/>
 </div>
 <h4 class="font-title-md text-title-md text-on-surface">Kayana Apparel</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Organic textures and flow.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Organic textures and flow.') }}</p>
 </a>
 <!-- Store 4 -->
 <a href="{{ route('customer.shop.store-detail', 4) }}" class="shrink-0 w-64 cursor-pointer group">
@@ -336,19 +336,19 @@
 <img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A highly curated, still-life editorial photograph of accessories for Maëva House. A selection of minimalist silver jewelry and small leather goods rests on varying levels of pristine white ceramic blocks. The lighting is incredibly soft and high-key, ensuring the focus remains on the high quality and craftsmanship of the items in a luxury, light-mode setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBces6Xx741Ae5cYEDlbS_pgcHXZ9vEiOAGb5jvlBttKDyIRgUl6PUSDzKjI9nXu8X8Zb-RxuuplZY4dbVXDDBRqOVusLCAlczBCFDMM9qeGCl18jyL9AKeYbo_KYUolJQ-tUyLZ6kLqZFaQ2yKWY0Gs6ucQPlMm57RTWXBipH9At2Nbp1nWNEZDCqkafxCVNpFOE3MSCOi3nOPMbtk9_6tU4iBkCexkl7qGGFlVexn74kqDcVgzRc"/>
 </div>
 <h4 class="font-title-md text-title-md text-on-surface">Maëva House</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Essential daily luxury.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Essential daily luxury.') }}</p>
 </a>
 </div>
 </section>
 <!-- Newsletter -->
 <section class="py-xl px-container-margin flex flex-col items-center text-center border-b border-outline-variant">
-<h3 class="font-headline-md text-headline-md text-on-surface mb-xs">Be the first to know</h3>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-md max-w-md">Subscribe to our newsletter for exclusive collections and editorial insights.</p>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Be the first to know') }}</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-md max-w-md">{{ __('Subscribe to our newsletter for exclusive collections and editorial insights.') }}</p>
 <form class="w-full max-w-sm flex flex-col gap-sm">
 <div class="relative w-full border-b border-on-surface pb-1">
-<input class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant" placeholder="Email Address" type="email"/>
+<input class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant" placeholder="{{ __('Email Address') }}" type="email"/>
 </div>
-<button class="w-full bg-primary text-on-primary font-label-caps text-label-caps py-sm uppercase tracking-widest hover:opacity-90 transition-opacity mt-sm" type="button">SUBSCRIBE</button>
+<button class="w-full bg-primary text-on-primary font-label-caps text-label-caps py-sm uppercase tracking-widest hover:opacity-90 transition-opacity mt-sm" type="button">{{ __('SUBSCRIBE') }}</button>
 </form>
 </section>
 </main>
@@ -357,29 +357,29 @@
 <div class="flex flex-col md:flex-row justify-between gap-lg mb-xl">
 <div>
 <h4 class="font-display-lg text-title-md tracking-widest text-on-surface mb-md">RALIVA</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">Curated fashion for the modern minimalist. Discover the art of everyday dressing.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">{{ __('Curated fashion for the modern minimalist. Discover the art of everyday dressing.') }}</p>
 </div>
 <div class="grid grid-cols-2 md:flex gap-xl">
 <div class="flex flex-col gap-sm">
-<h5 class="font-label-caps text-label-caps text-on-surface uppercase">Shop</h5>
+<h5 class="font-label-caps text-label-caps text-on-surface uppercase">{{ __('Shop') }}</h5>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">Women</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">Men</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">New Arrivals</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">Designers</a>
 </div>
 <div class="flex flex-col gap-sm">
-<h5 class="font-label-caps text-label-caps text-on-surface uppercase">Support</h5>
-<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">FAQ</a>
-<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Shipping &amp; Returns</a>
-<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Contact Us</a>
+<h5 class="font-label-caps text-label-caps text-on-surface uppercase">{{ __('Support') }}</h5>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('FAQ') }}</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Shipping &amp; Returns') }}</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Contact Us') }}</a>
 </div>
 </div>
 </div>
 <div class="border-t border-outline-variant pt-md flex flex-col md:flex-row justify-between items-center gap-sm">
 <span class="font-body-sm text-body-sm text-on-surface-variant">© 2024 RALIVA. All rights reserved.</span>
 <div class="flex gap-md">
-<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Privacy Policy</a>
-<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Privacy Policy') }}</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Terms of Service') }}</a>
 </div>
 </div>
 </footer>
@@ -388,28 +388,28 @@
 <!-- Home (Active) -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] scale-95 transition-transform w-16" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1" data-icon="home" data-weight="fill">home</span>
-<span class="font-label-sm text-[10px]">Home</span>
+<span class="font-label-sm text-[10px]">{{ __('Home') }}</span>
 </a>
 <!-- Shop -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_bag">shopping_bag</span>
-<span class="font-label-sm text-[10px]">Shop</span>
+<span class="font-label-sm text-[10px]">{{ __('Shop') }}</span>
 </a>
 <!-- Wishlist -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="favorite">favorite</span>
-<span class="font-label-sm text-[10px]">Wishlist</span>
+<span class="font-label-sm text-[10px]">{{ __('Wishlist') }}</span>
 </a>
 <!-- Cart -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 relative" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_cart">shopping_cart</span>
-<span class="font-label-sm text-[10px]">Cart</span>
+<span class="font-label-sm text-[10px]">{{ __('Cart') }}</span>
 <span class="absolute top-0 right-2 bg-secondary-fixed-dim text-on-secondary-fixed text-[8px] w-3 h-3 rounded-full flex items-center justify-center font-bold">2</span>
 </a>
 <!-- Account -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="person">person</span>
-<span class="font-label-sm text-[10px]">Account</span>
+<span class="font-label-sm text-[10px]">{{ __('Account') }}</span>
 </a>
 </nav>
 @include('customer._partials.drawer')

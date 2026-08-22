@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
-<title>RALIVA - Cart</title>
+<title>RALIVA - {{ __('Cart') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600&amp;display=swap" rel="stylesheet"/>
@@ -225,7 +225,7 @@
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back_ios_new</span>
 </a>
 <div class="flex-1 flex justify-center">
-<h1 class="font-title-md text-title-md uppercase text-[var(--chrome-accent)]">CART (2)</h1>
+<h1 class="font-title-md text-title-md uppercase text-[var(--chrome-accent)]">{{ __('CART (2)') }}</h1>
 </div>
 <button class="w-10 h-10 flex items-center justify-center -mr-2 text-on-surface hover:opacity-80 transition-opacity">
 <!-- Empty trailing icon space to balance header -->
@@ -321,14 +321,14 @@
 </section>
 <!-- Order Summary & Checkout Section -->
 <section class="bg-surface-container-low px-container-margin py-lg mt-xl">
-<h2 class="font-label-caps text-label-caps text-primary tracking-widest uppercase mb-md">Order Summary</h2>
+<h2 class="font-label-caps text-label-caps text-primary tracking-widest uppercase mb-md">{{ __('Order Summary') }}</h2>
 <div class="space-y-sm mb-lg">
 <div class="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
-<span>Subtotal (2 items)</span>
+<span>{{ __('Subtotal (2 items)') }}</span>
 <span class="text-primary">Rp 618.000</span>
 </div>
 <div class="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
-<span>Estimated Shipping</span>
+<span>{{ __('Estimated Shipping') }}</span>
 <span class="text-primary">Rp 18.000</span>
 </div>
 <div class="w-full h-px bg-outline-variant my-sm"></div>
@@ -338,7 +338,7 @@
 </div>
 </div>
 <a href="{{ route('customer.login', ['redirect' => route('customer.checkout')]) }}" class="w-full bg-primary text-on-primary font-label-caps text-label-caps h-14 flex items-center justify-center hover:opacity-90 transition-opacity uppercase tracking-widest">
-                Checkout
+                {{ __('Checkout') }}
             </a>
 </section>
 </main>
@@ -347,27 +347,27 @@
 <!-- Home (Inactive) -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1">home</span>
-<span class="font-label-sm text-label-sm">Home</span>
+<span class="font-label-sm text-label-sm">{{ __('Home') }}</span>
 </a>
 <!-- Shop (Inactive) -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1">shopping_bag</span>
-<span class="font-label-sm text-label-sm">Shop</span>
+<span class="font-label-sm text-label-sm">{{ __('Shop') }}</span>
 </a>
 <!-- Wishlist (Inactive) -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined mb-1">favorite</span>
-<span class="font-label-sm text-label-sm">Wishlist</span>
+<span class="font-label-sm text-label-sm">{{ __('Wishlist') }}</span>
 </a>
 <!-- Cart (Active) -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] hover:text-secondary transition-colors w-16 scale-95 transition-transform" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
-<span class="font-label-sm text-label-sm">Cart</span>
+<span class="font-label-sm text-label-sm">{{ __('Cart') }}</span>
 </a>
 <!-- Account (Inactive) -->
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined mb-1">person</span>
-<span class="font-label-sm text-label-sm">Account</span>
+<span class="font-label-sm text-label-sm">{{ __('Account') }}</span>
 </a>
 </nav>
 </body></html>

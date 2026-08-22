@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
-<title>RALIVA - My Addresses</title>
+<title>RALIVA - {{ __('My Addresses') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600&amp;display=swap" rel="stylesheet"/>
@@ -267,10 +267,10 @@
 <body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased selection:bg-secondary-container selection:text-on-secondary-container pb-[calc(72px+env(safe-area-inset-bottom))]">
 <!-- Top App Bar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky z-40 border-b border-[var(--chrome-border)]">
-<a aria-label="Go back" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+<a aria-label="{{ __('Go back') }}" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">MY ADDRESSES</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('MY ADDRESSES') }}</h1>
 <div class="w-10"></div> <!-- Spacer for center alignment -->
 </header>
 <!-- Main Content -->
@@ -280,8 +280,8 @@
 <div class="flex justify-between items-start mb-base">
 <div class="flex items-center gap-xs">
 <span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">home</span>
-<h2 class="font-title-md text-title-md text-on-surface">Home</h2>
-<span class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded-sm ml-2">Default</span>
+<h2 class="font-title-md text-title-md text-on-surface">{{ __('Home') }}</h2>
+<span class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded-sm ml-2">{{ __('Default') }}</span>
 </div>
 </div>
 <div class="font-body-sm text-body-sm text-on-surface-variant space-y-1 mb-md">
@@ -290,9 +290,9 @@
 <p>123 Fashion Avenue, Suite 4B<br/>New York, NY 10001<br/>United States</p>
 </div>
 <div class="flex gap-sm border-t border-outline-variant pt-sm mt-auto">
-<button class="font-label-caps text-label-caps text-on-surface hover:text-secondary transition-colors uppercase tracking-wider flex-1 text-center py-2">Edit</button>
+<button class="font-label-caps text-label-caps text-on-surface hover:text-secondary transition-colors uppercase tracking-wider flex-1 text-center py-2">{{ __('Edit') }}</button>
 <div class="w-px bg-outline-variant"></div>
-<button class="font-label-caps text-label-caps text-error hover:opacity-80 transition-opacity uppercase tracking-wider flex-1 text-center py-2">Delete</button>
+<button class="font-label-caps text-label-caps text-error hover:opacity-80 transition-opacity uppercase tracking-wider flex-1 text-center py-2">{{ __('Delete') }}</button>
 </div>
 </article>
 <!-- Address Card (Office) -->
@@ -300,7 +300,7 @@
 <div class="flex justify-between items-start mb-base">
 <div class="flex items-center gap-xs">
 <span class="material-symbols-outlined text-on-surface-variant text-[20px]">business</span>
-<h2 class="font-title-md text-title-md text-on-surface">Office</h2>
+<h2 class="font-title-md text-title-md text-on-surface">{{ __('Office') }}</h2>
 </div>
 </div>
 <div class="font-body-sm text-body-sm text-on-surface-variant space-y-1 mb-md">
@@ -309,18 +309,18 @@
 <p>456 Corporate Blvd, Floor 12<br/>Los Angeles, CA 90001<br/>United States</p>
 </div>
 <div class="flex gap-sm border-t border-outline-variant pt-sm mt-auto">
-<button class="font-label-caps text-label-caps text-on-surface hover:text-secondary transition-colors uppercase tracking-wider flex-1 text-center py-2">Edit</button>
+<button class="font-label-caps text-label-caps text-on-surface hover:text-secondary transition-colors uppercase tracking-wider flex-1 text-center py-2">{{ __('Edit') }}</button>
 <div class="w-px bg-outline-variant"></div>
-<button class="font-label-caps text-label-caps text-error hover:opacity-80 transition-opacity uppercase tracking-wider flex-1 text-center py-2">Delete</button>
+<button class="font-label-caps text-label-caps text-error hover:opacity-80 transition-opacity uppercase tracking-wider flex-1 text-center py-2">{{ __('Delete') }}</button>
 </div>
 <!-- Set as default action -->
-<button class="absolute top-sm right-sm font-label-sm text-label-sm text-on-surface-variant hover:text-secondary underline underline-offset-4 opacity-0 group-hover:opacity-100 transition-opacity">Set Default</button>
+<button class="absolute top-sm right-sm font-label-sm text-label-sm text-on-surface-variant hover:text-secondary underline underline-offset-4 opacity-0 group-hover:opacity-100 transition-opacity">{{ __('Set Default') }}</button>
 </article>
 <!-- Add New Address Button (Stickyish context within main) -->
 <div class="mt-lg sticky bottom-[env(safe-area-inset-bottom)] pb-md bg-background/90 backdrop-blur-sm pt-4 z-10">
 <button class="w-full bg-primary text-on-primary font-label-caps text-label-caps py-4 rounded-DEFAULT hover:opacity-90 transition-opacity flex items-center justify-center gap-2 uppercase tracking-wider">
 <span class="material-symbols-outlined text-[20px]">add</span>
-                Add New Address
+                {{ __('Add New Address') }}
             </button>
 </div>
 </main>
@@ -328,24 +328,24 @@
 <nav class="md:hidden bg-[var(--chrome-bg)] text-[var(--chrome-text)] font-label-sm text-label-sm fixed bottom-0 w-full z-50 border-t border-[var(--chrome-border)] shadow-sm flex justify-around items-center h-[72px] px-xs pb-safe">
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">home</span>
-<span class="truncate w-full text-center">Home</span>
+<span class="truncate w-full text-center">{{ __('Home') }}</span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">shopping_bag</span>
-<span class="truncate w-full text-center">Shop</span>
+<span class="truncate w-full text-center">{{ __('Shop') }}</span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">favorite</span>
-<span class="truncate w-full text-center">Wishlist</span>
+<span class="truncate w-full text-center">{{ __('Wishlist') }}</span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16 relative" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">shopping_cart</span>
-<span class="truncate w-full text-center">Cart</span>
+<span class="truncate w-full text-center">{{ __('Cart') }}</span>
 <span class="absolute top-0 right-2 w-2 h-2 bg-secondary-fixed-dim rounded-full"></span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] hover:text-secondary transition-colors scale-95 transition-transform group w-16" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined mb-1 text-[24px]" style="font-variation-settings: 'FILL' 1;">person</span>
-<span class="truncate w-full text-center font-medium">Account</span>
+<span class="truncate w-full text-center font-medium">{{ __('Account') }}</span>
 </a>
 </nav>
 </body></html>

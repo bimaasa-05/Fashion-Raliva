@@ -292,7 +292,7 @@
 <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-xs">Lunara Fashion</h2>
 <div class="flex items-center gap-xs text-on-surface-variant font-label-sm text-label-sm mb-md">
 <span class="material-symbols-outlined text-secondary text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span>4.9 Rating</span>
+<span>{{ __('4.9 Rating') }}</span>
 <span class="px-2">•</span>
 <span>Jakarta</span>
 </div>
@@ -300,20 +300,20 @@
                 Modern feminine silhouettes designed for the contemporary woman. Curated elegance and effortless style.
             </p>
 <button class="bg-secondary text-on-secondary font-label-caps text-label-caps px-xl py-sm rounded-none tracking-widest hover:bg-opacity-90 transition-colors w-full md:w-auto min-w-[200px]">
-                FOLLOW STORE
+                {{ __('FOLLOW STORE') }}
             </button>
 </section>
 <!-- Navigation Tabs -->
 <div class="sticky top-16 z-30 bg-surface/95 backdrop-blur-md border-b border-outline-variant">
 <nav class="flex px-container-margin w-full overflow-x-auto hide-scrollbar">
 <button class="py-sm px-md border-b-2 border-primary text-primary font-label-caps text-label-caps whitespace-nowrap">
-                    PRODUCTS
+                    {{ __('PRODUCTS') }}
                 </button>
 <button class="py-sm px-md border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-caps text-label-caps whitespace-nowrap">
-                    REVIEWS
+                    {{ __('REVIEWS') }}
                 </button>
 <button class="py-sm px-md border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-caps text-label-caps whitespace-nowrap">
-                    ABOUT
+                    {{ __('ABOUT') }}
                 </button>
 </nav>
 </div>
@@ -380,7 +380,7 @@
 <!-- Load More -->
 <div class="mt-xl flex justify-center">
 <button class="border border-primary text-primary bg-transparent font-label-caps text-label-caps px-xl py-sm hover:bg-surface-container-low transition-colors w-full md:w-auto">
-                    LOAD MORE
+                    {{ __('LOAD MORE') }}
                 </button>
 </div>
 </section>
@@ -389,23 +389,23 @@
 <nav class="flex justify-around items-center w-full h-[72px] bg-[var(--chrome-bg)] text-[var(--chrome-text)] px-xs pb-safe border-t border-[var(--chrome-border)] shadow-sm fixed bottom-0 z-50 md:hidden">
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined mb-1" data-icon="home" style="font-variation-settings: 'FILL' 0;">home</span>
-<span class="font-label-sm text-[10px]">Home</span>
+<span class="font-label-sm text-[10px]">{{ __('Home') }}</span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] scale-95 transition-transform w-16 h-full" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_bag" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
-<span class="font-label-sm text-[10px] font-semibold">Shop</span>
+<span class="font-label-sm text-[10px] font-semibold">{{ __('Shop') }}</span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="favorite" style="font-variation-settings: 'FILL' 0;">favorite</span>
-<span class="font-label-sm text-[10px]">Wishlist</span>
+<span class="font-label-sm text-[10px]">{{ __('Wishlist') }}</span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.chart') }}">
 <span class="material-symbols-outlined mb-1" data-icon="shopping_cart" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
-<span class="font-label-sm text-[10px]">Cart</span>
+<span class="font-label-sm text-[10px]">{{ __('Cart') }}</span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined mb-1" data-icon="person" style="font-variation-settings: 'FILL' 0;">person</span>
-<span class="font-label-sm text-[10px]">Account</span>
+<span class="font-label-sm text-[10px]">{{ __('Account') }}</span>
 </a>
 </nav>
 </body></html>

@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - Notifications</title>
+<title>RALIVA - {{ __('Notifications') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -197,19 +197,17 @@
 <body class="bg-surface text-on-surface antialiased font-body-lg">
 <!-- TopAppBar -->
 <header class="fixed top-0 w-full z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
-<a href="{{ route('customer.account') }}" aria-label="Back" class="hover:opacity-80 transition-opacity flex">
+<a href="{{ route('customer.account') }}" aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">Notifications</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">{{ __('Notifications') }}</h1>
 <div class="w-10"></div> <!-- Spacer for centering -->
 </header>
 <!-- Main Content -->
 <main class="pt-16 pb-xl max-w-2xl mx-auto w-full">
 <!-- Mark All As Read Bar -->
 <div class="flex justify-end items-center px-container-margin py-sm border-b border-outline-variant">
-<button class="font-label-caps text-label-caps text-secondary uppercase tracking-widest hover:opacity-80 transition-opacity" onclick="markAllRead()" type="button">
-            Mark all as read
-        </button>
+<button class="font-label-caps text-label-caps text-secondary uppercase tracking-widest hover:opacity-80 transition-opacity" onclick="markAllRead()" type="button">{{ __('Mark all as read') }}        </button>
 </div>
 <!-- Notification List -->
 <section>
@@ -220,7 +218,7 @@
 </div>
 <div class="flex-grow min-w-0">
 <div class="flex justify-between items-start gap-sm">
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">Order Shipped</h3>
+<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __('Order Shipped') }}</h3>
 <span class="font-label-sm text-[10px] text-on-surface-variant whitespace-nowrap mt-1">2h ago</span>
 </div>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Your order #RLV-240520-5678 has been shipped and is on its way.</p>
@@ -234,7 +232,7 @@
 </div>
 <div class="flex-grow min-w-0">
 <div class="flex justify-between items-start gap-sm">
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">Mid-Year Sale</h3>
+<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __('Mid-Year Sale') }}</h3>
 <span class="font-label-sm text-[10px] text-on-surface-variant whitespace-nowrap mt-1">5h ago</span>
 </div>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Enjoy up to 50% off on selected items. Use code RALIVA50 at checkout.</p>
@@ -248,7 +246,7 @@
 </div>
 <div class="flex-grow min-w-0">
 <div class="flex justify-between items-start gap-sm">
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">Wishlist Price Drop</h3>
+<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __('Wishlist Price Drop') }}</h3>
 <span class="font-label-sm text-[10px] text-on-surface-variant whitespace-nowrap mt-1">1d ago</span>
 </div>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Silk Slip Dress from your wishlist is now $175.00 — down from $195.00.</p>
@@ -261,7 +259,7 @@
 </div>
 <div class="flex-grow min-w-0">
 <div class="flex justify-between items-start gap-sm">
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">Order Delivered</h3>
+<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __('Order Delivered') }}</h3>
 <span class="font-label-sm text-[10px] text-on-surface-variant whitespace-nowrap mt-1">3d ago</span>
 </div>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Order #RLV-240501-1234 was delivered. We hope you love it!</p>
@@ -274,7 +272,7 @@
 </div>
 <div class="flex-grow min-w-0">
 <div class="flex justify-between items-start gap-sm">
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">Review Reminder</h3>
+<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __('Review Reminder') }}</h3>
 <span class="font-label-sm text-[10px] text-on-surface-variant whitespace-nowrap mt-1">4d ago</span>
 </div>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">How were your Geometric Gold Hoops? Share a review to help other shoppers.</p>

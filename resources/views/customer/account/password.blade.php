@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - Change Password</title>
+<title>RALIVA - {{ __('Change Password') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -197,10 +197,10 @@
 <body class="bg-surface text-on-surface antialiased font-body-lg">
 <!-- TopAppBar -->
 <header class="fixed top-0 w-full z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
-<a href="{{ route('customer.account.edit') }}" aria-label="Back" class="hover:opacity-80 transition-opacity flex">
+<a href="{{ route('customer.account.edit') }}" aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">Change Password</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">{{ __('Change Password') }}</h1>
 <div class="w-10"></div> <!-- Spacer for centering -->
 </header>
 <!-- Main Content -->
@@ -210,31 +210,31 @@
 <div class="flex flex-col gap-md">
 <!-- Current Password -->
 <div>
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="current-password">Current Password</label>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="current-password">{{ __('Current Password') }}</label>
 <div class="relative">
-<input autocomplete="current-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="current-password" placeholder="Enter your current password" type="password"/>
-<span aria-label="Show password" class="absolute right-md top-1/2 -translate-y-1/2 cursor-pointer text-on-surface-variant hover:text-on-surface transition-colors flex" role="button" tabindex="0">
+<input autocomplete="current-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="current-password" placeholder="{{ __('Enter your current password') }}" type="password"/>
+<span aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 cursor-pointer text-on-surface-variant hover:text-on-surface transition-colors flex" role="button" tabindex="0">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </span>
 </div>
 </div>
 <!-- New Password -->
 <div>
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="new-password">New Password</label>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="new-password">{{ __('New Password') }}</label>
 <div class="relative">
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="new-password" placeholder="Enter a new password" type="password"/>
-<span aria-label="Show password" class="absolute right-md top-1/2 -translate-y-1/2 cursor-pointer text-on-surface-variant hover:text-on-surface transition-colors flex" role="button" tabindex="0">
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="new-password" placeholder="{{ __('Enter a new password') }}" type="password"/>
+<span aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 cursor-pointer text-on-surface-variant hover:text-on-surface transition-colors flex" role="button" tabindex="0">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </span>
 </div>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">Choose a strong password you don't use elsewhere.</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __("Choose a strong password you don't use elsewhere.") }}</p>
 </div>
 <!-- Confirm New Password -->
 <div>
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="confirm-password">Confirm New Password</label>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="confirm-password">{{ __('Confirm New Password') }}</label>
 <div class="relative">
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="confirm-password" placeholder="Re-enter your new password" type="password"/>
-<span aria-label="Show password" class="absolute right-md top-1/2 -translate-y-1/2 cursor-pointer text-on-surface-variant hover:text-on-surface transition-colors flex" role="button" tabindex="0">
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="confirm-password" placeholder="{{ __('Re-enter your new password') }}" type="password"/>
+<span aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 cursor-pointer text-on-surface-variant hover:text-on-surface transition-colors flex" role="button" tabindex="0">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </span>
 </div>
@@ -244,23 +244,23 @@
 <!-- Password Requirements -->
 <section class="pb-lg">
 <div class="bg-surface-container-low border border-outline-variant rounded-DEFAULT p-md">
-<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-sm">Password Requirements</h2>
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-sm">{{ __('Password Requirements') }}</h2>
 <ul class="flex flex-col gap-xs">
 <li class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-[18px]" data-icon="check_circle" style="color: #795905;">check_circle</span>
-<span class="font-body-sm text-body-sm text-on-surface">At least 8 characters long</span>
+<span class="font-body-sm text-body-sm text-on-surface">{{ __('At least 8 characters long') }}</span>
 </li>
 <li class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-[18px]" data-icon="check_circle" style="color: #795905;">check_circle</span>
-<span class="font-body-sm text-body-sm text-on-surface">Contains at least 1 uppercase letter</span>
+<span class="font-body-sm text-body-sm text-on-surface">{{ __('Contains at least 1 uppercase letter') }}</span>
 </li>
 <li class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-[18px]" data-icon="check_circle" style="color: #795905;">check_circle</span>
-<span class="font-body-sm text-body-sm text-on-surface">Contains at least 1 number</span>
+<span class="font-body-sm text-body-sm text-on-surface">{{ __('Contains at least 1 number') }}</span>
 </li>
 <li class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-[18px] text-outline-variant" data-icon="radio_button_unchecked">radio_button_unchecked</span>
-<span class="font-body-sm text-body-sm text-on-surface-variant">Recommended: include 1 special character (!@#$%)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Recommended: include 1 special character (!@#$%)') }}</span>
 </li>
 </ul>
 </div>
@@ -270,7 +270,7 @@
 <div class="flex items-start gap-sm">
 <span class="material-symbols-outlined text-secondary text-[20px] mt-1" data-icon="shield">shield</span>
 <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-After changing your password, you will stay signed in on this device but will need to sign in again on other devices.
+            {{ __('After changing your password, you will stay signed in on this device but will need to sign in again on other devices.') }}
             </p>
 </div>
 </section>
@@ -279,7 +279,7 @@ After changing your password, you will stay signed in on this device but will ne
 <!-- Fixed Bottom Action Bar -->
 <div class="fixed bottom-0 left-0 w-full bg-surface border-t border-outline-variant px-container-margin py-md z-50 max-w-2xl mx-auto">
 <a href="{{ route('customer.account') }}" class="w-full bg-primary text-on-primary font-label-caps text-label-caps h-14 flex items-center justify-center hover:opacity-90 transition-opacity uppercase tracking-widest">
-            Update Password
+            {{ __('Update Password') }}
         </a>
 </div>
 </body></html>

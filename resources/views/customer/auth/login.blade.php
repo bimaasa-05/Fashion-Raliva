@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 
-<html lang="en"><head>
+<html lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - Sign In</title>
+<title>RALIVA - {{ __('Sign In') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -190,12 +190,12 @@
 <div class="relative z-10 flex flex-col items-center justify-center text-center h-full w-full p-lg lg:items-start lg:justify-between lg:text-left lg:p-xl">
 <div>
 <span class="font-display-lg text-headline-lg tracking-widest text-white">RALIVA</span>
-<p class="font-label-sm text-label-sm text-white/80 tracking-wide mt-1 lg:hidden">The Art of Everyday Dressing</p>
+<p class="font-label-sm text-label-sm text-white/80 tracking-wide mt-1 lg:hidden">{{ __('The Art of Everyday Dressing') }}</p>
 <div class="w-10 h-px bg-secondary-fixed-dim mt-sm lg:hidden"></div>
 </div>
 <div class="hidden lg:block">
-<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary-fixed-dim mb-sm">New Collection 2026</p>
-<p class="font-headline-lg-mobile text-headline-lg-mobile text-white max-w-sm">The Art of Everyday Dressing.</p>
+<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary-fixed-dim mb-sm">{{ __('New Collection 2026') }}</p>
+<p class="font-headline-lg-mobile text-headline-lg-mobile text-white max-w-sm">{{ __('The Art of Everyday Dressing.') }}</p>
 <div class="w-10 h-px bg-secondary-fixed-dim mt-md"></div>
 </div>
 </div>
@@ -204,7 +204,7 @@
 <main class="auth-monogram flex-grow flex flex-col relative overflow-hidden bg-surface-container-low border-outline-variant lg:border-l">
 <!-- Floating Chips: Home + Theme -->
 <div class="fixed top-sm right-sm z-50 flex items-center gap-xs">
-<a aria-label="Back to home" title="Kembali ke Home" href="{{ route('customer.home') }}" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
+<a aria-label="{{ __('Back to home') }}" title="Kembali ke Home" href="{{ route('customer.home') }}" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
 <span class="material-symbols-outlined text-[20px]">home</span>
 </a>
 <button aria-label="Toggle theme" title="Ganti tema" type="button" onclick="toggleTheme()" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
@@ -215,42 +215,42 @@
 <div class="border-2 border-secondary rounded-lg p-lg lg:p-xl frame-gold">
 <!-- Heading -->
 <div class="mb-lg">
-<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">Raliva Account</p>
-<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">Welcome Back</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant">Sign in to continue your RALIVA experience.</p>
+<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">{{ __('Raliva Account') }}</p>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Welcome Back') }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('Sign in to continue your RALIVA experience.') }}</p>
 </div>
 <form id="login-form" novalidate>
 <!-- Email -->
 <div class="mb-md">
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">Email</label>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">{{ __('Email') }}</label>
 <input autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="email" placeholder="you@example.com" type="email"/>
-<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-error">Invalid email address.</p>
+<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-error">{{ __('Invalid email address.') }}</p>
 </div>
 <!-- Password -->
 <div class="mb-sm">
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password">Password</label>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password">{{ __('Password') }}</label>
 <div class="relative">
-<input autocomplete="current-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password" placeholder="Enter your password" type="password"/>
-<button aria-label="Show password" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="password-toggle" type="button">
+<input autocomplete="current-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password" placeholder="{{ __('Enter your password') }}" type="password"/>
+<button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="password-toggle" type="button">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </button>
 </div>
-<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="password-error">Password is required.</p>
+<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="password-error">{{ __('Password is required.') }}</p>
 </div>
 <!-- Forgot Password -->
 <div class="flex justify-end">
-<a class="font-label-sm text-label-sm text-secondary hover:opacity-80 transition-opacity" href="{{ route('customer.forgot-password') }}">Forgot Password?</a>
+<a class="font-label-sm text-label-sm text-secondary hover:opacity-80 transition-opacity" href="{{ route('customer.forgot-password') }}">{{ __('Forgot Password?') }}</a>
 </div>
 <!-- Submit -->
 <button class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm mt-lg disabled:opacity-60 disabled:pointer-events-none" id="login-btn" type="submit">
-<span id="login-btn-text">LOGIN</span>
+<span id="login-btn-text">{{ __('LOGIN') }}</span>
 <span class="material-symbols-outlined text-[20px] animate-spin hidden" id="login-spinner">progress_activity</span>
 </button>
 </form>
 <!-- Register Link -->
 <p class="text-center font-body-sm text-body-sm text-on-surface-variant mt-lg">
-        Don't have an account?
-<a class="text-secondary font-semibold hover:opacity-80 transition-opacity ml-1" id="register-link" href="{{ route('customer.register') }}{{ request('redirect') ? '?redirect=' . urlencode(request('redirect')) : '' }}">REGISTER</a>
+        {{ __("Don't have an account?") }}
+<a class="text-secondary font-semibold hover:opacity-80 transition-opacity ml-1" id="register-link" href="{{ route('customer.register') }}{{ request('redirect') ? '?redirect=' . urlencode(request('redirect')) : '' }}">{{ __('REGISTER') }}</a>
 </p>
 </div>
 </div>

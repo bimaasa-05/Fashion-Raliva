@@ -35,7 +35,7 @@
 <div class="flex justify-between items-start px-md pt-md pb-sm border-b border-[var(--chrome-border)] shrink-0">
 <div>
 <h2 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h2>
-<p class="font-label-sm text-label-sm text-[var(--chrome-text-dim)] tracking-wide mt-1">The Art of Everyday Dressing</p>
+<p class="font-label-sm text-label-sm text-[var(--chrome-text-dim)] tracking-wide mt-1">{{ __('The Art of Everyday Dressing') }}</p>
 </div>
 <div class="flex items-center gap-xs shrink-0">
 <button aria-label="Toggle theme" class="w-9 h-9 rounded-full hover:bg-[var(--chrome-hover)] flex items-center justify-center transition-colors" onclick="toggleTheme()" type="button">
@@ -51,89 +51,89 @@
 <h3 class="font-label-caps text-label-caps text-[var(--chrome-text-faint)] uppercase tracking-widest px-lg pt-sm pb-xs">Menu Utama</h3>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.home') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">home</span>
-            Home
+            {{ __('Home') }}
         </a>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.shop') || request()->routeIs('customer.shop.produk-detail') || request()->routeIs('customer.shop.store-detail') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">shopping_bag</span>
-            Shop
+            {{ __('Shop') }}
         </a>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.wishlist') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">favorite</span>
-            Wishlist
+            {{ __('Wishlist') }}
         </a>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.search') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.search') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">search</span>
-            Search
+            {{ __('Search') }}
         </a>
 </div>
 <div class="drawer-sec">
 <h3 class="font-label-caps text-label-caps text-[var(--chrome-text-faint)] uppercase tracking-widest px-lg pt-md pb-xs">Kategori</h3>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">checkroom</span>
-            Women
+            {{ __('Women') }}
         </a>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">apparel</span>
-            Men
+            {{ __('Men') }}
         </a>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">watch</span>
-            Accessories
+            {{ __('Accessories') }}
         </a>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">steps</span>
-            Shoes
+            {{ __('Shoes') }}
         </a>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-colors flex items-center gap-sm" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">work</span>
-            Bags
+            {{ __('Bags') }}
         </a>
 </div>
 <div class="drawer-sec">
 <h3 class="font-label-caps text-label-caps text-[var(--chrome-text-faint)] uppercase tracking-widest px-lg pt-md pb-xs">Akun</h3>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.account') || request()->routeIs('customer.account.edit') || request()->routeIs('customer.account.password') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">person</span>
-            My Account
+            {{ __('My Account') }}
         </a>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.order-tracking') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.order-tracking') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">local_mall</span>
-            My Orders
+            {{ __('My Orders') }}
         </a>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.reviews') || request()->routeIs('customer.reviews.create') || request()->routeIs('customer.reviews.edit') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.reviews') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">star_border</span>
-            My Reviews
+            {{ __('My Reviews') }}
         </a>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.address') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.address') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">location_on</span>
-            Addresses
+            {{ __('Addresses') }}
         </a>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.notifications') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.notifications') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">notifications_none</span>
-            Notifications
+            {{ __('Notifications') }}
         </a>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.settings') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.settings') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">settings</span>
-            Settings
+            {{ __('Settings') }}
         </a>
 </div>
 <div class="drawer-sec">
 <h3 class="font-label-caps text-label-caps text-[var(--chrome-text-faint)] uppercase tracking-widest px-lg pt-md pb-xs">Bantuan</h3>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.help') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.help') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">help_outline</span>
-            Help Center
+            {{ __('Help Center') }}
         </a>
 </div>
 <div class="drawer-promo px-sm pt-md pb-md">
 <div class="relative overflow-hidden rounded-lg bg-secondary-container text-on-secondary-fixed p-md">
-<p class="font-label-caps text-label-caps uppercase tracking-widest mb-xs">Mid-Year Sale</p>
-<p class="font-body-sm text-body-sm mb-sm relative z-10">Up to 50% off selected styles.</p>
-<a class="font-label-caps text-label-caps underline underline-offset-4 uppercase tracking-widest hover:opacity-80 transition-opacity relative z-10 inline-block" href="{{ route('customer.shop') }}">Shop Now</a>
+<p class="font-label-caps text-label-caps uppercase tracking-widest mb-xs">{{ __('Mid-Year Sale') }}</p>
+<p class="font-body-sm text-body-sm mb-sm relative z-10">{{ __('Up to 50% off selected styles.') }}</p>
+<a class="font-label-caps text-label-caps underline underline-offset-4 uppercase tracking-widest hover:opacity-80 transition-opacity relative z-10 inline-block" href="{{ route('customer.shop') }}">{{ __('Shop Now') }}</a>
 <span class="material-symbols-outlined absolute -right-2 -bottom-2 text-[72px] opacity-20">sell</span>
 </div>
 </div>
 </nav>
 <div class="px-md py-sm border-t border-[var(--chrome-border)] shrink-0">
-<p class="font-label-sm text-label-sm text-[var(--chrome-text-faint)]">© 2026 RALIVA. All rights reserved.</p>
+<p class="font-label-sm text-label-sm text-[var(--chrome-text-faint)]">© 2026 RALIVA. {{ __('All rights reserved.') }}</p>
 </div>
 </aside>
 <script>
