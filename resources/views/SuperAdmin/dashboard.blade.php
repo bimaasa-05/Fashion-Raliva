@@ -95,8 +95,8 @@
         <div class="flex justify-between items-center mb-6">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Kinerja Platform</h2>
             <div class="flex gap-2">
-                <button class="px-3 py-1 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase rounded-full">7D</button>
-                <button class="px-3 py-1 border border-muted-border text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase rounded-full transition-colors">30D</button>
+                <button type="button" data-periode="7d" class="periode-btn px-3 py-1 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase rounded-full">7D</button>
+                <button type="button" data-periode="30d" class="periode-btn px-3 py-1 border border-muted-border text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase rounded-full transition-colors">30D</button>
             </div>
         </div>
         <div class="flex-1 relative min-h-[250px] w-full mt-4">
@@ -108,9 +108,9 @@
                 <line stroke="#E9E8E7" stroke-width="1" x1="0" x2="500" y1="150" y2="150"></line>
                 <line stroke="#E9E8E7" stroke-width="1" x1="0" x2="500" y1="200" y2="200"></line>
                 <!-- Line Chart -->
-                <path class="animate-line" d="M 0,180 C 50,150 100,160 150,100 C 200,40 250,80 300,60 C 350,40 400,90 450,30 C 480,10 500,20 500,20" fill="none" stroke="#C9A24D" stroke-width="3"></path>
+                <path id="perf-line" class="animate-line" d="M 0,180 C 50,150 100,160 150,100 C 200,40 250,80 300,60 C 350,40 400,90 450,30 C 480,10 500,20 500,20" fill="none" stroke="#C9A24D" stroke-width="3"></path>
                 <!-- Gradient Area under line (optional, simplified) -->
-                <path d="M 0,180 C 50,150 100,160 150,100 C 200,40 250,80 300,60 C 350,40 400,90 450,30 C 480,10 500,20 500,20 L 500,200 L 0,200 Z" fill="url(#fade)" opacity="0.2"></path>
+                <path id="perf-area" d="M 0,180 C 50,150 100,160 150,100 C 200,40 250,80 300,60 C 350,40 400,90 450,30 C 480,10 500,20 500,20 L 500,200 L 0,200 Z" fill="url(#fade)" opacity="0.2"></path>
                 <defs>
                     <lineargradient id="fade" x1="0" x2="0" y1="0" y2="1">
                         <stop offset="0%" stop-color="#C9A24D" stop-opacity="1"></stop>
@@ -119,7 +119,7 @@
                 </defs>
             </svg>
             <!-- X-axis labels -->
-            <div class="flex justify-between mt-2 text-on-surface-variant font-label-sm text-[10px] uppercase">
+            <div id="perf-labels" class="flex justify-between mt-2 text-on-surface-variant font-label-sm text-[10px] uppercase">
                 <span>Senin</span>
                 <span>Selasa</span>
                 <span>Rabu</span>
@@ -131,6 +131,45 @@
         </div>
     </section>
 </div>
+
+@push('scripts')
+<script>
+    const periodeBtns = document.querySelectorAll('.periode-btn');
+    const perfLine = document.getElementById('perf-line');
+    const perfArea = document.getElementById('perf-area');
+    const perfLabels = document.getElementById('perf-labels');
+
+    const periodeData = {
+        '7d': {
+            d: 'M 0,180 C 50,150 100,160 150,100 C 200,40 250,80 300,60 C 350,40 400,90 450,30 C 480,10 500,20 500,20',
+            labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']
+        },
+        '30d': {
+            d: 'M 0,160 C 60,170 120,120 180,130 C 240,140 300,80 360,95 C 420,110 470,50 500,45',
+            labels: ['Pekan 1', 'Pekan 2', 'Pekan 3', 'Pekan 4']
+        }
+    };
+
+    periodeBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            periodeBtns.forEach((b) => {
+                b.classList.remove('bg-deep-onyx', 'text-on-primary');
+                b.classList.add('border', 'border-muted-border', 'text-on-surface-variant', 'hover:text-on-surface');
+            });
+            btn.classList.remove('border', 'border-muted-border', 'text-on-surface-variant', 'hover:text-on-surface');
+            btn.classList.add('bg-deep-onyx', 'text-on-primary');
+
+            const data = periodeData[btn.getAttribute('data-periode')];
+            if (!data) return;
+            perfLine?.setAttribute('d', data.d);
+            perfArea?.setAttribute('d', data.d + ' L 500,200 L 0,200 Z');
+            if (perfLabels) {
+                perfLabels.innerHTML = data.labels.map((l) => '<span>' + l + '</span>').join('');
+            }
+        });
+    });
+</script>
+@endpush
 <!-- Recent Activity -->
 <section>
     <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Aktivitas Terbaru</h2>

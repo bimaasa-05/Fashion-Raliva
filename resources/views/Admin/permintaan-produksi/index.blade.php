@@ -10,7 +10,7 @@
 <div class="space-y-section-gap">
     <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ajukan Produksi</h2>
-        <form class="space-y-gutter" id="produksi-form">
+        <form class="space-y-gutter" id="produksi-form" data-toast-message="Permintaan produksi berhasil dikirim.">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="produk">Produk</label>
@@ -31,7 +31,7 @@
             </div>
             <div>
                 <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="catatan">Catatan untuk Produksi</label>
-                <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none" id="catatan" rows="3" placeholder="Contoh: prioritas warna hitam, ukuran 28–34..."></textarea>
+                <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none" id="catatan" rows="3" placeholder="Contoh: prioritas warna hitam, ukuran 28â€“34..."></textarea>
             </div>
             <div class="flex justify-end pt-gutter border-t border-muted-border">
                 <button type="submit" class="bg-deep-onyx text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Kirim Pengajuan</button>

@@ -26,6 +26,7 @@
         <div class="relative">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
             <input
+                id="user-search"
                 class="w-full bg-surface-container-low border border-muted-border rounded pl-12 pr-4 py-3 font-body-md text-on-surface focus:outline-none focus:border-primary transition-colors"
                 placeholder="Cari pengguna berdasarkan nama atau email..." type="text" />
         </div>
@@ -34,18 +35,18 @@
     <!-- Filter -->
     <div class="mb-8 overflow-x-auto hide-scrollbar">
         <div class="flex gap-2 whitespace-nowrap pb-2">
-            <button class="px-4 py-2 bg-primary text-on-primary font-label-sm text-label-sm uppercase rounded transition-colors">Semua</button>
-            <button class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Pelanggan</button>
-            <button class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Pemilik</button>
-            <button class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Admin</button>
-            <button class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Aktif</button>
-            <button class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Non-aktif</button>
+            <button type="button" data-user-filter="semua" data-filter-key="role" class="px-4 py-2 bg-primary text-on-primary font-label-sm text-label-sm uppercase rounded transition-colors">Semua</button>
+            <button type="button" data-user-filter="pelanggan" data-filter-key="role" class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Pelanggan</button>
+            <button type="button" data-user-filter="pemilik" data-filter-key="role" class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Pemilik</button>
+            <button type="button" data-user-filter="admin" data-filter-key="role" class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Admin</button>
+            <button type="button" data-user-filter="aktif" data-filter-key="status" class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Aktif</button>
+            <button type="button" data-user-filter="non-aktif" data-filter-key="status" class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Non-aktif</button>
         </div>
     </div>
 
     <!-- Daftar Pengguna -->
     <div class="grid gap-element-gap md:grid-cols-2 xl:grid-cols-3">
-        <div class="bg-surface-container-low p-4 rounded border border-muted-border relative cursor-pointer card-premium"
+        <div data-user-card data-role="pemilik" data-status="aktif" class="bg-surface-container-low p-4 rounded border border-muted-border relative cursor-pointer card-premium"
             onclick="openUserDetail()">
             <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-3">
@@ -72,7 +73,7 @@
             </div>
         </div>
 
-        <div class="bg-surface-container-low p-4 rounded border border-muted-border relative cursor-pointer card-premium"
+        <div data-user-card data-role="pelanggan" data-status="non-aktif" class="bg-surface-container-low p-4 rounded border border-muted-border relative cursor-pointer card-premium"
             onclick="openUserDetail()">
             <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-3">
@@ -97,7 +98,7 @@
             </div>
         </div>
 
-        <div class="bg-surface-container-low p-4 rounded border border-muted-border relative cursor-pointer card-premium"
+        <div data-user-card data-role="admin" data-status="aktif" class="bg-surface-container-low p-4 rounded border border-muted-border relative cursor-pointer card-premium"
             onclick="openUserDetail()">
             <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-3">
@@ -125,8 +126,10 @@
         </div>
     </div>
 
+    <p id="user-kosong" class="hidden text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada pengguna yang sesuai dengan pencarian atau filter.</p>
+
     <div class="flex justify-center mt-section-gap mb-8">
-        <button class="px-8 py-3 border border-deep-onyx text-deep-onyx font-label-sm text-label-sm uppercase tracking-widest hover:bg-surface-container-low transition-colors">Muat Lebih Banyak</button>
+        <button type="button" onclick="showRalivaToast('Halaman demo: tidak ada pengguna lain untuk dimuat.', 'info')" class="px-8 py-3 border border-deep-onyx text-deep-onyx font-label-sm text-label-sm uppercase tracking-widest hover:bg-surface-container-low transition-colors">Muat Lebih Banyak</button>
     </div>
 
     <!-- Overlay Detail Pengguna -->
@@ -207,8 +210,8 @@
                 </ul>
             </div>
             <div class="flex flex-col gap-3 pb-8">
-                <button class="w-full py-3 bg-surface border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest hover:bg-surface-container-low transition-colors text-center">Ubah Peran</button>
-                <button class="w-full py-3 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest hover:bg-error/20 transition-colors text-center">Nonaktifkan Akun</button>
+                <button type="button" onclick="showRalivaToast('Formulir ubah peran hanya dapat diakses Super Admin.', 'manage_accounts')" class="w-full py-3 bg-surface border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest hover:bg-surface-container-low transition-colors text-center">Ubah Peran</button>
+                <button type="button" onclick="showRalivaToast('Akun Eleanor Vance dinonaktifkan.', 'block')" class="w-full py-3 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest hover:bg-error/20 transition-colors text-center">Nonaktifkan Akun</button>
             </div>
         </div>
     </div>
@@ -238,5 +241,45 @@
             overlay.classList.add('hidden');
         }, 300);
     }
+
+    const userFilters = { role: 'semua', status: 'semua' };
+    const userCards = document.querySelectorAll('[data-user-card]');
+    const userSearch = document.getElementById('user-search');
+
+    const applyUserFilter = () => {
+        let visible = 0;
+        userCards.forEach((card) => {
+            const matchRole = userFilters.role === 'semua' || card.getAttribute('data-role') === userFilters.role;
+            const matchStatus = userFilters.status === 'semua' || card.getAttribute('data-status') === userFilters.status;
+            const matchSearch = !userSearch || userSearch.value.trim() === '' ||
+                card.textContent.toLowerCase().includes(userSearch.value.trim().toLowerCase());
+            const show = matchRole && matchStatus && matchSearch;
+            card.classList.toggle('hidden', !show);
+            if (show) visible++;
+        });
+        document.getElementById('user-kosong')?.classList.toggle('hidden', visible > 0);
+    };
+
+    document.querySelectorAll('[data-user-filter]').forEach((chip) => {
+        chip.addEventListener('click', () => {
+            const key = chip.getAttribute('data-filter-key');
+            const value = chip.getAttribute('data-user-filter');
+            const alreadyActive = chip.classList.contains('bg-primary');
+            document.querySelectorAll('[data-user-filter][data-filter-key="' + key + '"]').forEach((c) => {
+                c.classList.remove('bg-primary', 'text-on-primary');
+                c.classList.add('bg-surface-container-low', 'text-on-surface', 'border-muted-border', 'hover:bg-surface-container');
+            });
+            if (alreadyActive && key === 'status') {
+                userFilters[key] = 'semua';
+            } else {
+                chip.classList.remove('bg-surface-container-low', 'text-on-surface', 'hover:bg-surface-container');
+                chip.classList.add('bg-primary', 'text-on-primary');
+                userFilters[key] = value;
+            }
+            applyUserFilter();
+        });
+    });
+
+    userSearch?.addEventListener('input', applyUserFilter);
 </script>
 @endpush

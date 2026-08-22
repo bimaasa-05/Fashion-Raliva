@@ -88,7 +88,9 @@
         ['route' => 'superadmin.profil', 'icon' => 'person', 'label' => 'Profil'],
     ]])
 
+    @stack('modals')
     @include('partials.layout-scripts')
+    @include('partials.ui-scripts')
     @stack('scripts')
 </body>
 </html>

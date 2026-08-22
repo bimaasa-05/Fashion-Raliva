@@ -24,19 +24,19 @@
 <!-- Filters -->
 <div class="mb-8">
     <div class="flex overflow-x-auto filter-scroll pb-2 -mx-gutter px-gutter md:mx-0 md:px-0 space-x-4">
-        <button class="whitespace-nowrap px-4 py-2 border-b-2 border-primary text-on-surface font-label-sm text-label-sm uppercase transition-colors">Semua Aktivitas</button>
-        <button class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Pengguna</button>
-        <button class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Toko</button>
-        <button class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Produk</button>
-        <button class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Keuangan</button>
-        <button class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Sistem</button>
+        <button type="button" data-aktifitas-tab="semua" class="whitespace-nowrap px-4 py-2 border-b-2 border-primary text-on-surface font-label-sm text-label-sm uppercase transition-colors">Semua Aktivitas</button>
+        <button type="button" data-aktifitas-tab="pengguna" class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Pengguna</button>
+        <button type="button" data-aktifitas-tab="toko" class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Toko</button>
+        <button type="button" data-aktifitas-tab="produk" class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Produk</button>
+        <button type="button" data-aktifitas-tab="keuangan" class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Keuangan</button>
+        <button type="button" data-aktifitas-tab="sistem" class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Sistem</button>
     </div>
     <div class="h-[1px] w-full bg-muted-border -mt-[1px]"></div>
 </div>
 
 <!-- Timeline -->
 <div class="space-y-6">
-    <div class="timeline-item relative timeline-line">
+    <div data-kategori="toko" class="timeline-item relative timeline-line">
         <div class="flex items-start">
             <div class="relative z-10 w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center shrink-0 border border-muted-border mt-1"><span class="material-symbols-outlined text-on-surface-variant text-sm">storefront</span></div>
             <div class="ml-element-gap flex-grow">
@@ -48,7 +48,7 @@
             </div>
         </div>
     </div>
-    <div class="timeline-item relative timeline-line">
+    <div data-kategori="keuangan" class="timeline-item relative timeline-line">
         <div class="flex items-start">
             <div class="relative z-10 w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center shrink-0 border border-muted-border mt-1"><span class="material-symbols-outlined text-on-surface-variant text-sm">payments</span></div>
             <div class="ml-element-gap flex-grow">
@@ -60,7 +60,7 @@
             </div>
         </div>
     </div>
-    <div class="timeline-item relative timeline-line">
+    <div data-kategori="produk" class="timeline-item relative timeline-line">
         <div class="flex items-start">
             <div class="relative z-10 w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center shrink-0 border border-muted-border mt-1"><span class="material-symbols-outlined text-on-surface-variant text-sm">block</span></div>
             <div class="ml-element-gap flex-grow">
@@ -73,7 +73,7 @@
             </div>
         </div>
     </div>
-    <div class="timeline-item relative timeline-line">
+    <div data-kategori="sistem" class="timeline-item relative timeline-line">
         <div class="flex items-start">
             <div class="relative z-10 w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center shrink-0 border border-muted-border mt-1"><span class="material-symbols-outlined text-on-surface-variant text-sm">percent</span></div>
             <div class="ml-element-gap flex-grow">
@@ -86,8 +86,37 @@
             </div>
         </div>
     </div>
+    <p id="aktivitas-kosong" class="hidden text-center text-on-surface-variant font-body-md text-sm py-8">Tidak ada aktivitas pada kategori ini.</p>
     <div class="pt-8 text-center">
-        <button class="px-6 py-3 border border-on-surface text-on-surface font-label-sm text-label-sm uppercase tracking-widest hover:bg-surface-container-high transition-colors">Muat Aktivitas Lebih Lama</button>
+        <button type="button" onclick="showRalivaToast('Halaman demo: aktivitas lebih lama belum tersedia.', 'info')" class="px-6 py-3 border border-on-surface text-on-surface font-label-sm text-label-sm uppercase tracking-widest hover:bg-surface-container-high transition-colors">Muat Aktivitas Lebih Lama</button>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    const aktivitasTabs = document.querySelectorAll('[data-aktifitas-tab]');
+    const aktivitasItems = document.querySelectorAll('[data-kategori]');
+    const aktivitasKosong = document.getElementById('aktivitas-kosong');
+
+    aktivitasTabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+            aktivitasTabs.forEach((t) => {
+                t.classList.add('border-transparent', 'text-on-surface-variant', 'hover:text-on-surface');
+                t.classList.remove('border-primary', 'text-on-surface');
+            });
+            tab.classList.remove('border-transparent', 'text-on-surface-variant', 'hover:text-on-surface');
+            tab.classList.add('border-primary', 'text-on-surface');
+
+            const kategori = tab.getAttribute('data-aktifitas-tab');
+            let visible = 0;
+            aktivitasItems.forEach((item) => {
+                const show = kategori === 'semua' || item.getAttribute('data-kategori') === kategori;
+                item.classList.toggle('hidden', !show);
+                if (show) visible++;
+            });
+            aktivitasKosong?.classList.toggle('hidden', visible > 0);
+        });
+    });
+</script>
+@endpush

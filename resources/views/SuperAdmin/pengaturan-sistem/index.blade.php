@@ -8,7 +8,7 @@
 
 @section('content')
 <div class="space-y-section-gap max-w-4xl">
-    <form class="space-y-section-gap" id="pengaturan-form">
+    <form class="space-y-section-gap" id="pengaturan-form" data-toast-message="Pengaturan sistem berhasil disimpan.">
         <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 space-y-gutter card-premium">
             <h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Umum</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">

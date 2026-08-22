@@ -147,7 +147,7 @@
         <h3 class="font-display-lg text-headline-lg-mobile md:text-headline-lg mb-gutter text-center">Konfirmasi Perubahan</h3>
         <p class="font-body-md text-body-md text-on-surface-variant mb-container-margin text-center">Anda akan mengubah biaya layanan platform menjadi <strong class="text-deep-onyx" id="confirm-fee-rate">5%</strong>. Perubahan ini akan berlaku untuk semua transaksi baru.</p>
         <div class="flex flex-col gap-gutter">
-            <button class="w-full bg-gold-accent text-on-secondary font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-secondary-container transition-colors" onclick="alert('Biaya berhasil diperbarui.'); document.getElementById('confirm-dialog').classList.add('hidden'); cancelEdit();">Konfirmasi & Terapkan</button>
+            <button class="w-full bg-gold-accent text-on-secondary font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-secondary-container transition-colors" onclick="showRalivaToast('Biaya layanan berhasil diperbarui.', 'task_alt'); document.getElementById('confirm-dialog').classList.add('hidden'); cancelEdit();">Konfirmasi & Terapkan</button>
             <button class="w-full border border-muted-border text-deep-onyx font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-surface-container-lowest transition-colors" onclick="document.getElementById('confirm-dialog').classList.add('hidden')">Batal</button>
         </div>
     </div>

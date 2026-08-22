@@ -54,7 +54,7 @@
         </div>
 
         <div class="pt-8 text-center">
-            <button class="px-6 py-3 border border-on-surface text-on-surface font-label-sm text-label-sm uppercase tracking-widest hover:bg-surface-container-high transition-colors">Muat Aktivitas Lebih Lama</button>
+            <button type="button" onclick="showRalivaToast('Halaman demo: aktivitas lebih lama belum tersedia.', 'info')" class="px-6 py-3 border border-on-surface text-on-surface font-label-sm text-label-sm uppercase tracking-widest hover:bg-surface-container-high transition-colors">Muat Aktivitas Lebih Lama</button>
         </div>
     </section>
 </div>

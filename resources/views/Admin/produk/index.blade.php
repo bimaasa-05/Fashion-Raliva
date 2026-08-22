@@ -16,7 +16,7 @@
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Katalog Produk Toko</h2>
-            <button class="px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Tambah Produk</button>
+            <button type="button" onclick="showRalivaToast('Tambah produk baru memerlukan persetujuan Owner (demo).', 'add')" class="px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Tambah Produk</button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter">
@@ -32,7 +32,7 @@
                     <p class="font-body-md text-body-md text-gold-accent mt-2">Rp 289.000</p>
                     <div class="flex items-center justify-between mt-3 pt-3 border-t border-muted-border">
                         <span class="text-on-surface-variant text-xs">Stok: 24</span>
-                        <button class="text-gold-accent font-label-sm text-[10px] uppercase hover:underline">Kelola</button>
+                        <button type="button" onclick="showRalivaToast('Editor produk demo belum tersedia.', 'edit')" class="text-gold-accent font-label-sm text-[10px] uppercase hover:underline">Kelola</button>
                     </div>
                 </div>
             </div>
@@ -49,7 +49,7 @@
                     <p class="font-body-md text-body-md text-gold-accent mt-2">Rp 329.000</p>
                     <div class="flex items-center justify-between mt-3 pt-3 border-t border-muted-border">
                         <span class="text-on-surface-variant text-xs">Stok: 12</span>
-                        <button class="text-gold-accent font-label-sm text-[10px] uppercase hover:underline">Detail</button>
+                        <button type="button" onclick="showRalivaToast('Detail produk Straight Fit Pants (demo).', 'visibility')" class="text-gold-accent font-label-sm text-[10px] uppercase hover:underline">Detail</button>
                     </div>
                 </div>
             </div>
@@ -66,7 +66,7 @@
                     <p class="font-body-md text-body-md text-gold-accent mt-2">Rp 579.000</p>
                     <div class="flex items-center justify-between mt-3 pt-3 border-t border-muted-border">
                         <span class="text-on-surface-variant text-xs">Stok: 8</span>
-                        <button class="text-gold-accent font-label-sm text-[10px] uppercase hover:underline">Kelola</button>
+                        <button type="button" onclick="showRalivaToast('Editor produk demo belum tersedia.', 'edit')" class="text-gold-accent font-label-sm text-[10px] uppercase hover:underline">Kelola</button>
                     </div>
                 </div>
             </div>

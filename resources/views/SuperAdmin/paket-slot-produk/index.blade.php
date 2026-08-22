@@ -95,7 +95,7 @@
     <section class="space-y-gutter">
         <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Tambah / Ubah Paket</h2>
         <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
-            <form class="space-y-gutter" id="paket-form">
+            <form class="space-y-gutter" id="paket-form" data-toast-message="Paket slot produk berhasil disimpan.">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaPaket">Nama Paket</label>

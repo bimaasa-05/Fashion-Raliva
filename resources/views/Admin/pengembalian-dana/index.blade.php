@@ -21,9 +21,9 @@
                 </div>
                 <p class="font-body-md text-sm text-on-surface-variant mb-4"><span class="text-on-surface font-bold">Sarah Jenkins:</span> "Ukuran tidak sesuai dengan deskripsi, minta refund ya."</p>
                 <div class="flex gap-3">
-                    <button class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Setujui</button>
-                    <button class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error/20 transition-colors">Tolak</button>
-                    <button class="px-4 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Eskalasi</button>
+                    <button type="button" onclick="showRalivaToast('Refund REF-2601 disetujui.', 'task_alt')" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Setujui</button>
+                    <button type="button" onclick="showRalivaToast('Refund REF-2601 ditolak.', 'block')" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error/20 transition-colors">Tolak</button>
+                    <button type="button" onclick="showRalivaToast('Refund REF-2601 dieskalasi ke Super Admin.', 'move_up')" class="px-4 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Eskalasi</button>
                 </div>
             </div>
 
@@ -37,9 +37,9 @@
                 </div>
                 <p class="font-body-md text-sm text-on-surface-variant mb-4"><span class="text-on-surface font-bold">Budi Santoso:</span> "Barang diterima dalam kondisi kusut berat, tidak layak pakai."</p>
                 <div class="flex gap-3">
-                    <button class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Setujui</button>
-                    <button class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error/20 transition-colors">Tolak</button>
-                    <button class="px-4 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Eskalasi</button>
+                    <button type="button" onclick="showRalivaToast('Refund REF-2598 disetujui.', 'task_alt')" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Setujui</button>
+                    <button type="button" onclick="showRalivaToast('Refund REF-2598 ditolak.', 'block')" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error/20 transition-colors">Tolak</button>
+                    <button type="button" onclick="showRalivaToast('Refund REF-2598 dieskalasi ke Super Admin.', 'move_up')" class="px-4 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Eskalasi</button>
                 </div>
             </div>
         </div>
