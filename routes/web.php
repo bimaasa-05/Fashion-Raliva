@@ -73,6 +73,16 @@ use App\Http\Controllers\Owner\KaryawanController;
 use App\Http\Controllers\Owner\LaporanController as OwnerLaporanController;
 use App\Http\Controllers\Owner\NotifikasiController as OwnerNotifikasiController;
 use App\Http\Controllers\Owner\ProfilController as OwnerProfilController;
+use App\Http\Controllers\Produksi\DashboardController as ProduksiDashboardController;
+use App\Http\Controllers\Produksi\PermintaanProduksiController as ProduksiPermintaanController;
+use App\Http\Controllers\Produksi\DataProduksiController as ProduksiDataController;
+use App\Http\Controllers\Produksi\PemeriksaanKualitasController as ProduksiPemeriksaanController;
+use App\Http\Controllers\Produksi\ProdukSelesaiController as ProduksiProdukSelesaiController;
+use App\Http\Controllers\Produksi\BarangRusakController as ProduksiBarangRusakController;
+use App\Http\Controllers\Produksi\BahanProduksiController as ProduksiBahanController;
+use App\Http\Controllers\Produksi\RiwayatProduksiController as ProduksiRiwayatController;
+use App\Http\Controllers\Produksi\NotifikasiController as ProduksiNotifikasiController;
+use App\Http\Controllers\Produksi\ProfilController as ProduksiProfilController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -160,4 +170,17 @@ Route::prefix('owner')->name('owner.')->group(function () {
     Route::get('/laporan', [OwnerLaporanController::class, 'index'])->name('laporan');
     Route::get('/notifikasi', [OwnerNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [OwnerProfilController::class, 'index'])->name('profil');
+});
+
+Route::prefix('produksi')->name('produksi.')->group(function () {
+    Route::get('/dashboard', [ProduksiDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/permintaan-produksi', [ProduksiPermintaanController::class, 'index'])->name('permintaan-produksi');
+    Route::get('/data-produksi', [ProduksiDataController::class, 'index'])->name('data-produksi');
+    Route::get('/pemeriksaan-kualitas', [ProduksiPemeriksaanController::class, 'index'])->name('pemeriksaan-kualitas');
+    Route::get('/produk-selesai', [ProduksiProdukSelesaiController::class, 'index'])->name('produk-selesai');
+    Route::get('/barang-rusak', [ProduksiBarangRusakController::class, 'index'])->name('barang-rusak');
+    Route::get('/bahan-produksi', [ProduksiBahanController::class, 'index'])->name('bahan-produksi');
+    Route::get('/riwayat-produksi', [ProduksiRiwayatController::class, 'index'])->name('riwayat-produksi');
+    Route::get('/notifikasi', [ProduksiNotifikasiController::class, 'index'])->name('notifikasi');
+    Route::get('/profil', [ProduksiProfilController::class, 'index'])->name('profil');
 });
