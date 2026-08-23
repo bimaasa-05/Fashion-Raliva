@@ -34,7 +34,7 @@
             <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
             <p class="text-xs font-medium text-on-surface-variant relative">Saldo Tertunda</p>
             <p class="raliva-figure text-[26px] mt-4 text-on-surface relative">Rp 7.100.000</p>
-            <p class="text-on-surface-variant font-body-md text-xs mt-auto pt-6 relative">Aman otomatis 2 hari setelah pesanan selesai (H+2).</p>
+            <p class="text-on-surface-variant font-body-md text-xs mt-auto pt-6 relative">Dana dilepas otomatis menjadi saldo tersedia H+2 setelah pesanan selesai.</p>
         </div>
 
         {{-- Total Dicairkan --}}
