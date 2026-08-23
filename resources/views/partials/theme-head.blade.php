@@ -230,5 +230,48 @@
     .raliva-toggle { @apply relative inline-flex items-center cursor-pointer shrink-0 align-middle; }
     .raliva-toggle-track { @apply block w-11 h-6 bg-surface-container-high border border-outline-variant rounded-full peer-checked:bg-gold-accent peer-checked:border-gold-accent transition-colors duration-200; }
     .raliva-toggle-knob { @apply absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow pointer-events-none transition-transform duration-200 peer-checked:translate-x-5; }
+
+    .text-gradient-gold {
+        background: linear-gradient(115deg, #a8823a 0%, #C9A24D 35%, #ecd398 55%, #C9A24D 80%, #a8823a 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .hero-glow { position: relative; }
+    .hero-glow::before {
+        content: '';
+        position: absolute;
+        inset: -30%;
+        background: radial-gradient(circle at 70% 30%, rgba(201, 162, 77, 0.14), transparent 45%),
+                    radial-gradient(circle at 15% 85%, rgba(201, 162, 77, 0.08), transparent 40%);
+        pointer-events: none;
+    }
+
+    .gauge-progress {
+        transition: stroke-dashoffset 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        filter: drop-shadow(0 0 6px rgba(201, 162, 77, 0.45));
+    }
+
+    .raliva-donut-seg { transition: stroke-dasharray 1.1s cubic-bezier(0.22, 1, 0.36, 1); }
+    .raliva-bar { transition: height 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+    .raliva-lb-fill { transition: width 1s cubic-bezier(0.22, 1, 0.36, 1); }
+
+    .card-static:hover { transform: none; }
+
+    @keyframes pageEnter {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes riseIn {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        .page-enter { animation: pageEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+        .rise { opacity: 0; animation: riseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    }
 </style>
 @stack('styles')

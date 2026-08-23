@@ -17,10 +17,10 @@
     <!-- Add Category Form Card -->
     <section class="space-y-gutter">
         <div class="flex justify-between items-center">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Tambah Kategori Baru</h2>
+            <div class="flex items-center gap-3"><div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">category</span></div><h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Tambah Kategori Baru</h2></div>
         </div>
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
-            <form class="space-y-gutter" id="add-category-form">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 card-premium">
+            <form class="space-y-gutter" id="add-category-form" data-toast-message="Kategori baru berhasil ditambahkan.">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="categoryName">Nama Kategori</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="categoryName" name="categoryName" type="text" placeholder="Misal: Pakaian, Aksesoris" required />
@@ -57,10 +57,10 @@
                     </div>
                 </div>
                 <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah kategori.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
+                    <button type="button" onclick="showRalivaToast('Hapus kategori dinonaktifkan pada demo — kategori masih memiliki produk.', 'delete')" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
                     </button>
                 </div>
@@ -79,10 +79,10 @@
                     </div>
                 </div>
                 <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah kategori.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
+                    <button type="button" onclick="showRalivaToast('Hapus kategori dinonaktifkan pada demo — kategori masih memiliki produk.', 'delete')" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
                     </button>
                 </div>
@@ -101,10 +101,10 @@
                     </div>
                 </div>
                 <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah kategori.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
+                    <button type="button" onclick="showRalivaToast('Hapus kategori dinonaktifkan pada demo — kategori masih memiliki produk.', 'delete')" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
                     </button>
                 </div>
@@ -123,10 +123,10 @@
                     </div>
                 </div>
                 <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah kategori.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
+                    <button type="button" onclick="showRalivaToast('Hapus kategori dinonaktifkan pada demo — kategori masih memiliki produk.', 'delete')" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
                     </button>
                 </div>
@@ -145,10 +145,10 @@
                     </div>
                 </div>
                 <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah kategori.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
+                    <button type="button" onclick="showRalivaToast('Hapus kategori dinonaktifkan pada demo — kategori masih memiliki produk.', 'delete')" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
                     </button>
                 </div>
@@ -167,10 +167,10 @@
                     </div>
                 </div>
                 <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah kategori.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
+                    <button type="button" onclick="showRalivaToast('Hapus kategori dinonaktifkan pada demo — kategori masih memiliki produk.', 'delete')" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
                     </button>
                 </div>
@@ -189,10 +189,10 @@
                     </div>
                 </div>
                 <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah kategori.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
-                    <button class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
+                    <button type="button" onclick="showRalivaToast('Hapus kategori dinonaktifkan pada demo — kategori masih memiliki produk.', 'delete')" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
                     </button>
                 </div>

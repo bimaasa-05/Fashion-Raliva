@@ -9,7 +9,7 @@
 @section('content')
 <div class="space-y-section-gap">
     <section class="space-y-gutter">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Paket</h2>
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">workspace_premium</span></div><h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Paket</h2></div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
             <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
@@ -93,9 +93,9 @@
     </section>
 
     <section class="space-y-gutter">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Tambah / Ubah Paket</h2>
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
-            <form class="space-y-gutter" id="paket-form">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">inventory_2</span></div><h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Tambah / Ubah Paket</h2></div>
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 card-premium">
+            <form class="space-y-gutter" id="paket-form" data-toast-message="Paket slot produk berhasil disimpan.">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaPaket">Nama Paket</label>
@@ -112,11 +112,11 @@
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Status Paket</label>
                         <div class="grid grid-cols-2 gap-3">
-                            <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all">
+                            <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                                 <input type="radio" class="sr-only" name="statusPaket" value="aktif" checked />
                                 Aktif
                             </label>
-                            <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all">
+                            <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                                 <input type="radio" class="sr-only" name="statusPaket" value="nonaktif" />
                                 Non-aktif
                             </label>

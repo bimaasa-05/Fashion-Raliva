@@ -24,7 +24,7 @@
                 <p class="font-body-md text-sm text-on-surface-variant flex-1">Diskon 20% semua atasan, min. belanja Rp 300.000. Berlaku sampai 31 Agu 2026.</p>
                 <div class="pt-4 border-t border-muted-border flex justify-between items-center">
                     <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">Dibuat oleh Owner</span>
-                    <button class="px-4 py-2 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/10 transition-colors">Nonaktifkan</button>
+                    <button type="button" onclick="showRalivaToast('Promo dinonaktifkan.', 'block')" class="px-4 py-2 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/10 transition-colors">Nonaktifkan</button>
                 </div>
             </div>
 
@@ -36,7 +36,7 @@
                 <p class="font-body-md text-sm text-on-surface-variant flex-1">Potongan Rp 50.000 untuk outerwear, weekend saja. Kuota 50 pembelian.</p>
                 <div class="pt-4 border-t border-muted-border flex justify-between items-center">
                     <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">Dibuat oleh Owner</span>
-                    <button class="px-4 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors btn-premium">Aktifkan</button>
+                    <button type="button" onclick="showRalivaToast('Promo diaktifkan kembali.', 'task_alt')" class="px-4 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors btn-premium">Aktifkan</button>
                 </div>
             </div>
 
@@ -48,7 +48,7 @@
                 <p class="font-body-md text-sm text-on-surface-variant flex-1">Bebas ongkir tanpa minimum belanja melalui kurir mitra platform.</p>
                 <div class="pt-4 border-t border-muted-border flex justify-between items-center">
                     <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">Dibuat oleh Owner</span>
-                    <button class="px-4 py-2 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/10 transition-colors">Nonaktifkan</button>
+                    <button type="button" onclick="showRalivaToast('Promo dinonaktifkan.', 'block')" class="px-4 py-2 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/10 transition-colors">Nonaktifkan</button>
                 </div>
             </div>
         </div>

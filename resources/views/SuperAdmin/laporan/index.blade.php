@@ -18,29 +18,29 @@
 
 @section('content')
 <div class="flex justify-end">
-    <button class="bg-deep-onyx text-on-primary font-label-sm px-6 py-3 uppercase tracking-widest hover:bg-surface-tint transition-colors flex items-center gap-2">
+    <button type="button" onclick="showRalivaToast('Laporan berhasil diekspor (demo).', 'download')" class="bg-deep-onyx text-on-primary font-label-sm px-6 py-3 uppercase tracking-widest hover:bg-surface-tint transition-colors flex items-center gap-2">
         <span class="material-symbols-outlined text-[16px]">download</span>
         Ekspor Laporan
     </button>
 </div>
 
 <!-- Filters -->
-<div class="flex overflow-x-auto no-scrollbar gap-2 mb-10 pb-2 border-b border-muted-border">
-    <button class="px-4 py-2 font-label-sm text-secondary border-b-2 border-secondary whitespace-nowrap uppercase tracking-widest">Ringkasan</button>
-    <button class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Transaksi</button>
-    <button class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Komisi</button>
-    <button class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Toko</button>
-    <button class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Pengguna</button>
-    <button class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Refund</button>
-    <button class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Pencairan</button>
+<div id="laporan-tabs" class="flex overflow-x-auto no-scrollbar gap-2 mb-10 pb-2 border-b border-muted-border">
+    <button type="button" data-laporan-tab="ringkasan" class="px-4 py-2 font-label-sm text-secondary border-b-2 border-secondary whitespace-nowrap uppercase tracking-widest">Ringkasan</button>
+    <button type="button" data-laporan-tab="transaksi" class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Transaksi</button>
+    <button type="button" data-laporan-tab="komisi" class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Komisi</button>
+    <button type="button" data-laporan-tab="toko" class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Toko</button>
+    <button type="button" data-laporan-tab="pengguna" class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Pengguna</button>
+    <button type="button" data-laporan-tab="refund" class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Refund</button>
+    <button type="button" data-laporan-tab="pencairan" class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Pencairan</button>
 </div>
 
 <!-- Date Range Filter -->
-<div class="flex items-center gap-2 mb-8 overflow-x-auto no-scrollbar">
-    <button class="px-4 py-1.5 border border-muted-border bg-surface text-on-surface font-label-sm rounded-none hover:bg-surface-container-low transition-colors whitespace-nowrap">HARI INI</button>
-    <button class="px-4 py-1.5 border border-muted-border bg-surface text-on-surface font-label-sm rounded-none hover:bg-surface-container-low transition-colors whitespace-nowrap">7D</button>
-    <button class="px-4 py-1.5 border border-secondary bg-secondary-container/10 text-secondary font-label-sm rounded-none whitespace-nowrap">30D</button>
-    <button class="px-4 py-1.5 border border-muted-border bg-surface text-on-surface font-label-sm rounded-none hover:bg-surface-container-low transition-colors flex items-center gap-1 whitespace-nowrap">
+<div id="laporan-range" class="flex items-center gap-2 mb-8 overflow-x-auto no-scrollbar">
+    <button type="button" data-range="hari-ini" class="range-btn px-4 py-1.5 border border-muted-border bg-surface text-on-surface font-label-sm rounded-none hover:bg-surface-container-low transition-colors whitespace-nowrap">HARI INI</button>
+    <button type="button" data-range="7d" class="range-btn px-4 py-1.5 border border-muted-border bg-surface text-on-surface font-label-sm rounded-none hover:bg-surface-container-low transition-colors whitespace-nowrap">7D</button>
+    <button type="button" data-range="30d" class="range-btn px-4 py-1.5 border border-secondary bg-secondary-container/10 text-secondary font-label-sm rounded-none whitespace-nowrap">30D</button>
+    <button type="button" onclick="showRalivaToast('Pemilih tanggal kustom demo belum tersedia.', 'calendar_today')" class="px-4 py-1.5 border border-muted-border bg-surface text-on-surface font-label-sm rounded-none hover:bg-surface-container-low transition-colors flex items-center gap-1 whitespace-nowrap">
         KUSTOM <span class="material-symbols-outlined text-[16px]">calendar_today</span>
     </button>
 </div>
@@ -102,7 +102,7 @@
     <div class="lg:col-span-2 border border-muted-border p-6 bg-surface card-premium">
         <div class="flex justify-between items-center mb-6">
             <h3 class="font-title-md text-on-background uppercase tracking-wider premium-heading">Tren Pendapatan</h3>
-            <button class="text-on-surface-variant hover:text-on-surface transition-colors p-1">
+            <button type="button" onclick="showRalivaToast('Opsi tampilan grafik demo belum tersedia.', 'more_horiz')" class="text-on-surface-variant hover:text-on-surface transition-colors p-1">
                 <span class="material-symbols-outlined">more_horiz</span>
             </button>
         </div>
@@ -262,6 +262,30 @@
                 scales: { x: { grid: { display: false, drawBorder: false }, ticks: { font: { size: 11 } } }, y: { grid: { drawBorder: false, borderDash: [4, 4] }, ticks: { callback: function (value) { return value + 'M'; }, font: { size: 11 }, maxTicksLimit: 6 }, beginAtZero: true } },
                 interaction: { intersect: false, mode: 'index' }
             }
+        });
+    });
+
+    const laporanTabs = document.querySelectorAll('[data-laporan-tab]');
+    laporanTabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+            laporanTabs.forEach((t) => {
+                t.classList.remove('text-secondary', 'border-secondary');
+                t.classList.add('text-on-surface-variant', 'hover:text-on-surface');
+            });
+            tab.classList.remove('text-on-surface-variant', 'hover:text-on-surface');
+            tab.classList.add('text-secondary', 'border-secondary');
+        });
+    });
+
+    const rangeBtns = document.querySelectorAll('.range-btn');
+    rangeBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            rangeBtns.forEach((b) => {
+                b.classList.remove('border-secondary', 'bg-secondary-container/10', 'text-secondary');
+                b.classList.add('border-muted-border', 'bg-surface', 'text-on-surface');
+            });
+            btn.classList.remove('border-muted-border', 'bg-surface', 'text-on-surface');
+            btn.classList.add('border-secondary', 'bg-secondary-container/10', 'text-secondary');
         });
     });
 </script>

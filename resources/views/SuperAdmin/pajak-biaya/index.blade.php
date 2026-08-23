@@ -17,7 +17,7 @@
     <!-- Current Fee Display -->
     <section class="space-y-gutter">
         <div class="flex justify-between items-center">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Biaya Layanan Platform</h2>
+            <div class="flex items-center gap-3"><div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">percent</span></div><h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Biaya Layanan Platform</h2></div>
         </div>
         <div class="group relative overflow-hidden bg-gradient-to-br from-gold-accent/5 to-gold-accent/10 border border-gold-accent/20 rounded-xl p-8 transition-all duration-300 hover:border-gold-accent hover:shadow-xl">
             <div class="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-gold-accent/10 to-transparent rounded-full -translate-y-16 translate-x-16" style="filter: blur(30px); opacity: 0.5;"></div>
@@ -86,7 +86,7 @@
     <!-- Fee Impact Preview -->
     <section class="space-y-gutter">
         <div class="flex justify-between items-center">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Rincian Biaya (Simulasi)</h2>
+            <div class="flex items-center gap-3"><div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">calculate</span></div><h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Rincian Biaya (Simulasi)</h2></div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
             <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
@@ -142,12 +142,15 @@
 @push('modals')
 <!-- Confirmation Dialog Overlay -->
 <div class="fixed inset-0 z-50 hidden bg-surface-container/80 backdrop-blur-sm flex items-center justify-center p-gutter" id="confirm-dialog">
-    <div class="bg-surface border border-muted-border p-section-gap max-w-md w-full shadow-2xl relative animate-slide-up">
+    <div class="bg-surface border border-muted-border p-section-gap max-w-md w-full shadow-2xl relative rounded-xl">
         <button class="absolute top-4 right-4 text-on-surface-variant hover:text-deep-onyx transition-colors" onclick="document.getElementById('confirm-dialog').classList.add('hidden')"><span class="material-symbols-outlined">close</span></button>
+        <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-gutter">
+            <span class="material-symbols-outlined text-gold-accent text-[28px]">published_with_changes</span>
+        </div>
         <h3 class="font-display-lg text-headline-lg-mobile md:text-headline-lg mb-gutter text-center">Konfirmasi Perubahan</h3>
         <p class="font-body-md text-body-md text-on-surface-variant mb-container-margin text-center">Anda akan mengubah biaya layanan platform menjadi <strong class="text-deep-onyx" id="confirm-fee-rate">5%</strong>. Perubahan ini akan berlaku untuk semua transaksi baru.</p>
         <div class="flex flex-col gap-gutter">
-            <button class="w-full bg-gold-accent text-on-secondary font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-secondary-container transition-colors" onclick="alert('Biaya berhasil diperbarui.'); document.getElementById('confirm-dialog').classList.add('hidden'); cancelEdit();">Konfirmasi & Terapkan</button>
+            <button class="w-full bg-gold-accent text-on-secondary font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-secondary-container transition-colors" onclick="showRalivaToast('Biaya layanan berhasil diperbarui.', 'task_alt'); document.getElementById('confirm-dialog').classList.add('hidden'); cancelEdit();">Konfirmasi & Terapkan</button>
             <button class="w-full border border-muted-border text-deep-onyx font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-surface-container-lowest transition-colors" onclick="document.getElementById('confirm-dialog').classList.add('hidden')">Batal</button>
         </div>
     </div>

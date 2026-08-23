@@ -37,7 +37,7 @@
                         <td class="p-4">
                             <div class="flex items-center justify-center gap-2">
                                 <input class="w-20 bg-transparent border border-muted-border rounded p-2 text-center font-body-md text-sm focus:outline-none focus:border-gold-accent" type="number" value="24" />
-                                <button class="px-3 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors">Simpan</button>
+                                <button type="button" onclick="showRalivaToast('Stok produk berhasil diperbarui.', 'save')" class="px-3 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors">Simpan</button>
                             </div>
                         </td>
                     </tr>
@@ -51,7 +51,7 @@
                         <td class="p-4">
                             <div class="flex items-center justify-center gap-2">
                                 <input class="w-20 bg-transparent border border-muted-border rounded p-2 text-center font-body-md text-sm focus:outline-none focus:border-gold-accent" type="number" value="3" />
-                                <button class="px-3 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors">Simpan</button>
+                                <button type="button" onclick="showRalivaToast('Stok produk berhasil diperbarui.', 'save')" class="px-3 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors">Simpan</button>
                             </div>
                         </td>
                     </tr>
@@ -65,7 +65,7 @@
                         <td class="p-4">
                             <div class="flex items-center justify-center gap-2">
                                 <input class="w-20 bg-transparent border border-muted-border rounded p-2 text-center font-body-md text-sm focus:outline-none focus:border-gold-accent" type="number" value="8" />
-                                <button class="px-3 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors">Simpan</button>
+                                <button type="button" onclick="showRalivaToast('Stok produk berhasil diperbarui.', 'save')" class="px-3 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors">Simpan</button>
                             </div>
                         </td>
                     </tr>

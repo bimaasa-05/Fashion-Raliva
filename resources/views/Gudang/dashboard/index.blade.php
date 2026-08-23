@@ -6,22 +6,27 @@
 @section('header-subtitle', 'Pantau persediaan dan aktivitas gudang Anda.')
 
 @section('content')
-<div data-skeleton class="space-y-section-gap">
+<div data-skeleton class="space-y-6">
     <div class="h-[76px] bg-surface-container-high rounded-lg animate-pulse"></div>
     <div class="grid grid-cols-2 xl:grid-cols-3 gap-gutter">
         @for ($i = 0; $i < 6; $i++)
-            <div class="h-28 bg-surface-container-high rounded-lg animate-pulse"></div>
+            <div class="h-32 bg-surface-container-high rounded-lg animate-pulse"></div>
         @endfor
     </div>
-    <div class="grid grid-cols-1 lg:grid-cols-5 gap-section-gap">
-        <div class="lg:col-span-3 h-96 bg-surface-container-high rounded-lg animate-pulse"></div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
+        @for ($i = 0; $i < 3; $i++)
+            <div class="h-52 bg-surface-container-high rounded-lg animate-pulse"></div>
+        @endfor
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 h-96 bg-surface-container-high rounded-lg animate-pulse"></div>
+        <div class="h-96 bg-surface-container-high rounded-lg animate-pulse"></div>
     </div>
     <div class="h-72 bg-surface-container-high rounded-lg animate-pulse"></div>
 </div>
 
-<div data-real class="hidden space-y-section-gap">
-    <section class="bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 card-premium">
+<div data-real class="hidden space-y-6">
+    <section class="rise card-static bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 card-premium">
         <div class="flex items-center gap-3">
             <div class="w-11 h-11 rounded-xl bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
                 <span class="material-symbols-outlined text-gold-accent">warehouse</span>
@@ -56,47 +61,91 @@
         </div>
     </section>
 
-    <section>
+    <section class="rise">
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Gudang</h2>
         <div class="grid grid-cols-2 xl:grid-cols-3 gap-gutter">
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Produk</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">248</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="248">248</span></span>
+                <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>+4,2% bulan ini</span>
+                <div class="flex items-end gap-[3px] h-6 mt-auto">
+                    <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:30%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:38%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:34%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:44%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:48%"></i>
+                </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">checkroom</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Stok</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">8.426</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="8426">8.426</span></span>
+                <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>+6,8% bulan ini</span>
+                <div class="flex items-end gap-[3px] h-6 mt-auto">
+                    <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:35%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:38%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:44%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:54%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:50%"></i>
+                </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">inventory_2</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Barang Masuk Hari Ini</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary">126</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary"><span data-count="126">126</span></span>
+                <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>+18 dari kemarin</span>
+                <div class="flex items-end gap-[3px] h-6 mt-auto">
+                    <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:72%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:66%"></i>
+                </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">archive</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Barang Keluar Hari Ini</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary">84</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary"><span data-count="84">84</span></span>
+                <span class="inline-flex items-center gap-1 text-xs text-error"><span class="material-symbols-outlined text-[14px]">trending_down</span>-5 dari kemarin</span>
+                <div class="flex items-end gap-[3px] h-6 mt-auto">
+                    <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:44%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:58%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:50%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:62%"></i>
+                </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">unarchive</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Stok Menipis</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">12</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent"><span data-count="12">12</span></span>
+                <span class="inline-flex items-center gap-1 text-xs text-error"><span class="material-symbols-outlined text-[14px]">north</span>+2 minggu ini</span>
+                <div class="flex items-end gap-[3px] h-6 mt-auto">
+                    <i class="w-1.5 rounded-sm bg-error/40" style="height:25%"></i><i class="w-1.5 rounded-sm bg-error/40" style="height:32%"></i><i class="w-1.5 rounded-sm bg-error/60" style="height:28%"></i><i class="w-1.5 rounded-sm bg-error/60" style="height:40%"></i><i class="w-1.5 rounded-sm bg-error/80" style="height:36%"></i><i class="w-1.5 rounded-sm bg-error" style="height:48%"></i><i class="w-1.5 rounded-sm bg-error" style="height:55%"></i>
+                </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">warning</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <div class="bg-surface-container-lowest p-4 border border-error/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Barang Rusak</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-error">7</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-error"><span data-count="7">7</span></span>
+                <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">south</span>-1 dari minggu lalu</span>
+                <div class="flex items-end gap-[3px] h-6 mt-auto">
+                    <i class="w-1.5 rounded-sm bg-error/30" style="height:30%"></i><i class="w-1.5 rounded-sm bg-error/30" style="height:26%"></i><i class="w-1.5 rounded-sm bg-error/50" style="height:34%"></i><i class="w-1.5 rounded-sm bg-error/50" style="height:28%"></i><i class="w-1.5 rounded-sm bg-error/70" style="height:38%"></i><i class="w-1.5 rounded-sm bg-error" style="height:30%"></i><i class="w-1.5 rounded-sm bg-error" style="height:42%"></i>
+                </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">report</span>
             </div>
         </div>
     </section>
 
-    <div class="grid grid-cols-1 lg:grid-cols-5 gap-section-gap">
-        <section class="lg:col-span-3 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading whitespace-nowrap">Pergerakan Stok</h2>
-                <div class="inline-flex self-start sm:self-auto bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
+    <section class="rise">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Target Penerimaan Hari Ini</p>
+                <div data-donut='[{"value":84,"color":"#C9A24D","label":"Tercapai"},{"value":16,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Target" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <p class="text-[11px] text-on-surface-variant mt-1">126 dari 150 unit hari ini</p>
+            </div>
+            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Akurasi Stok</p>
+                <div data-donut='[{"value":96,"color":"#795905","label":"Akurat"},{"value":4,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Akurasi" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <p class="text-[11px] text-on-surface-variant mt-1">Berdasarkan 6 pemeriksaan terakhir</p>
+            </div>
+            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">SLA Pemenuhan Pesanan</p>
+                <div data-donut='[{"value":91,"color":"#E9CE8A","label":"Tepat SLA"},{"value":9,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Target 4 Jam" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <p class="text-[11px] text-on-surface-variant mt-1">Rata-rata proses pesanan 3 jam</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section class="rise lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
+            <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Pergerakan Stok</h2>
+                <div class="inline-flex bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
                     <button type="button" data-chart-range="7" class="chart-range-btn px-3 py-1.5 rounded-md font-label-sm text-[11px] uppercase tracking-wide transition-colors bg-deep-onyx text-on-primary">7 Hari</button>
                     <button type="button" data-chart-range="30" class="chart-range-btn px-3 py-1.5 rounded-md font-label-sm text-[11px] uppercase tracking-wide transition-colors text-on-surface-variant hover:text-on-surface">30 Hari</button>
                     <button type="button" data-chart-range="90" class="chart-range-btn px-3 py-1.5 rounded-md font-label-sm text-[11px] uppercase tracking-wide transition-colors text-on-surface-variant hover:text-on-surface">3 Bulan</button>
@@ -117,53 +166,129 @@
             </div>
         </section>
 
-        <section class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Status Stok</h2>
+                <span class="material-symbols-outlined text-gold-accent text-[20px]">donut_small</span>
+            </div>
+            <p class="text-on-surface-variant font-body-md text-xs mb-4">Sebaran kondisi 248 produk.</p>
+            <div data-donut='[{"value":196,"color":"#C9A24D","label":"Aman"},{"value":32,"color":"#E9CE8A","label":"Menipis"},{"value":14,"color":"#BA1A26","label":"Kritis"},{"value":6,"color":"#7f1010","label":"Habis"}]' data-donut-label="Produk"></div>
+            <a href="{{ route('gudang.stok') }}" class="block text-center mt-5 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Data Stok</a>
+        </section>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section class="rise lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+            <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Unit Masuk per Hari</h2>
+                <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">7 Hari Terakhir</span>
+            </div>
+            <div class="h-48" data-bars='[{"label":"Sen","value":96},{"label":"Sel","value":118},{"label":"Rab","value":104},{"label":"Kam","value":132},{"label":"Jum","value":110},{"label":"Sab","value":148},{"label":"Min","value":126}]'></div>
+            <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[14px] text-gold-accent">insights</span>
+                Kamis tertinggi dengan 132 unit — kedatangan ganda dari supplier utama.
+            </p>
+        </section>
+
+        <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Kategori Stok Terbesar</h2>
+                <span class="material-symbols-outlined text-gold-accent text-[20px]">emoji_events</span>
+            </div>
+            <div data-leaderboard='[{"name":"Kemeja","meta":"312 SKU • Rak A–B","display":"1.240 pcs","pct":100},{"name":"Celana","meta":"286 SKU • Rak B–C","display":"980 pcs","pct":79},{"name":"Dress","meta":"198 SKU • Rak C–D","display":"760 pcs","pct":61},{"name":"Outerwear","meta":"142 SKU • Rak D","display":"540 pcs","pct":44}]'></div>
+            <a href="{{ route('gudang.stok') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Semua Kategori</a>
+        </section>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section class="rise lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Stok Menipis</h2>
+                <a href="{{ route('gudang.stok') }}" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline self-start sm:self-auto">Lihat Semua Stok</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[750px] premium-table">
+                    <thead>
+                        <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                            <th class="p-4 text-left">Produk</th>
+                            <th class="p-4 text-center">SKU</th>
+                            <th class="p-4 text-center">Stok</th>
+                            <th class="p-4 text-center">Minimum Stok</th>
+                            <th class="p-4 text-center">Status</th>
+                            <th class="p-4 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-body-md text-sm">
+                        @foreach ([['Oversized Linen Shirt', 'KEM-001', 8, 20, 'Menipis'], ['Silk Scarf', 'SYL-004', 5, 15, 'Kritis'], ['Straight Fit Pants', 'CEL-014', 12, 25, 'Menipis'], ['Long Sleeve Polo', 'KSL-017', 9, 20, 'Menipis']] as $item)
+                            <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                                <td class="p-4 text-on-surface">{{ $item[0] }}</td>
+                                <td class="p-4 text-center text-on-surface-variant">{{ $item[1] }}</td>
+                                <td class="p-4 text-center font-bold {{ $item[4] === 'Kritis' ? 'text-error' : 'text-on-surface' }}">{{ $item[2] }}</td>
+                                <td class="p-4 text-center text-on-surface-variant">{{ $item[3] }}</td>
+                                <td class="p-4 text-center">
+                                    @if ($item[4] === 'Kritis')
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Kritis</span>
+                                    @else
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Menipis</span>
+                                    @endif
+                                </td>
+                                <td class="p-4 text-center">
+                                    <button type="button" onclick="showRalivaToast('Permintaan restock untuk {{ $item[0] }} dikirim ke Admin Toko.', 'local_shipping')" class="px-3 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors btn-premium">Ajukan Restock</button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
             <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Aktivitas Terbaru</h2>
-            <ul class="flex flex-col gap-4">
+            <ul class="flex flex-col gap-4 flex-grow">
                 <li class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3 min-w-0">
                         <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shrink-0">
                             <span class="material-symbols-outlined">archive</span>
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <span class="font-title-md text-base text-on-surface block">Barang Masuk</span>
-                            <span class="text-on-surface-variant font-body-md text-sm">Oversized Linen Shirt <span class="text-secondary font-bold">+50</span></span>
+                            <span class="text-on-surface-variant font-body-md text-xs truncate block">Linen Shirt <span class="text-secondary font-bold">+50</span></span>
                         </div>
                     </div>
                     <span class="font-label-sm text-xs text-on-surface-variant shrink-0">09:32</span>
                 </li>
                 <li class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3 min-w-0">
                         <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface shrink-0">
                             <span class="material-symbols-outlined">unarchive</span>
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <span class="font-title-md text-base text-on-surface block">Barang Keluar</span>
-                            <span class="text-on-surface-variant font-body-md text-sm">Knit Cardigan Rajut <span class="text-error font-bold">-20</span></span>
+                            <span class="text-on-surface-variant font-body-md text-xs truncate block">Cardigan <span class="text-error font-bold">-20</span></span>
                         </div>
                     </div>
                     <span class="font-label-sm text-xs text-on-surface-variant shrink-0">10:15</span>
                 </li>
                 <li class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3 min-w-0">
                         <div class="w-10 h-10 rounded-full bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center text-gold-accent shrink-0">
                             <span class="material-symbols-outlined">swap_horiz</span>
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <span class="font-title-md text-base text-on-surface block">Pemindahan Stok</span>
-                            <span class="text-on-surface-variant font-body-md text-sm">Pleated Skirt • 30 unit ke Gudang Cabang</span>
+                            <span class="text-on-surface-variant font-body-md text-xs truncate block">Skirt • 30 unit ke Cabang</span>
                         </div>
                     </div>
                     <span class="font-label-sm text-xs text-on-surface-variant shrink-0">11:20</span>
                 </li>
                 <li class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3 min-w-0">
                         <div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-on-error-container shrink-0">
                             <span class="material-symbols-outlined">fact_check</span>
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <span class="font-title-md text-base text-on-surface block">Pemeriksaan Stok</span>
-                            <span class="text-on-surface-variant font-body-md text-sm">Silk Scarf • Selisih <span class="text-error font-bold">-2</span></span>
+                            <span class="text-on-surface-variant font-body-md text-xs truncate block">Silk Scarf • Selisih <span class="text-error font-bold">-2</span></span>
                         </div>
                     </div>
                     <span class="font-label-sm text-xs text-on-surface-variant shrink-0">13:40</span>
@@ -172,47 +297,6 @@
             <a href="{{ route('gudang.riwayat-stok') }}" class="block text-center mt-6 w-full py-3 border border-muted-border rounded-lg font-label-sm text-label-sm text-gold-accent uppercase tracking-widest hover:bg-gold-accent/10 hover:border-gold-accent/40 transition-colors">Lihat Riwayat Lengkap</a>
         </section>
     </div>
-
-    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Stok Menipis</h2>
-            <a href="{{ route('gudang.stok') }}" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline self-start sm:self-auto">Lihat Semua Stok</a>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full min-w-[750px] premium-table">
-                <thead>
-                    <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-4 text-left">Produk</th>
-                        <th class="p-4 text-center">SKU</th>
-                        <th class="p-4 text-center">Stok</th>
-                        <th class="p-4 text-center">Minimum Stok</th>
-                        <th class="p-4 text-center">Status</th>
-                        <th class="p-4 text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody class="font-body-md text-sm">
-                    @foreach ([['Oversized Linen Shirt', 'KEM-001', 8, 20, 'Menipis'], ['Silk Scarf', 'SYL-004', 5, 15, 'Kritis'], ['Straight Fit Pants', 'CEL-014', 12, 25, 'Menipis'], ['Long Sleeve Polo', 'KSL-017', 9, 20, 'Menipis']] as $item)
-                        <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                            <td class="p-4 text-on-surface">{{ $item[0] }}</td>
-                            <td class="p-4 text-center text-on-surface-variant">{{ $item[1] }}</td>
-                            <td class="p-4 text-center font-bold {{ $item[4] === 'Kritis' ? 'text-error' : 'text-on-surface' }}">{{ $item[2] }}</td>
-                            <td class="p-4 text-center text-on-surface-variant">{{ $item[3] }}</td>
-                            <td class="p-4 text-center">
-                                @if ($item[4] === 'Kritis')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Kritis</span>
-                                @else
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Menipis</span>
-                                @endif
-                            </td>
-                            <td class="p-4 text-center">
-                                <button type="button" onclick="showRalivaToast('Permintaan restock untuk {{ $item[0] }} dikirim ke Admin Toko.', 'local_shipping')" class="px-3 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors btn-premium">Ajukan Restock</button>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </section>
 </div>
 @endsection
 
@@ -258,7 +342,7 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, color: tickColor, font: { family: 'Manrope', size: 12 } } },
-                    tooltip: { backgroundColor: tooltipBg, titleColor: tooltipText, bodyColor: tooltipText, titleFont: { family: 'Manrope', size: 12, weight: '700' }, bodyFont: { family: 'Manrope', size: 14 }, padding: 12, cornerRadius: 0, displayColors: true }
+                    tooltip: { backgroundColor: tooltipBg, titleColor: tooltipText, bodyColor: tooltipText, titleFont: { family: 'Manrope', size: 12, weight: '700' }, bodyFont: { family: 'Manrope', size: 14 }, padding: 12, cornerRadius: 0 }
                 },
                 scales: {
                     y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: tickColor, font: { family: 'Manrope', size: 11 } } },

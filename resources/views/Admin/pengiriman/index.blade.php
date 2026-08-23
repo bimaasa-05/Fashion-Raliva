@@ -18,16 +18,16 @@
                         <p class="font-title-md text-title-md text-on-surface mt-1">Relaxed Blazer + Straight Fit Pants</p>
                         <p class="font-body-md text-sm text-on-surface-variant mt-1">Tujuan: Bandung • Berat: 1,2 kg</p>
                     </div>
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <select class="bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
-                            <option>Pilih Kurir</option>
+                    <form class="flex flex-col sm:flex-row gap-3" data-toast-message="Pesanan #RLV-2079 berhasil dikirim.">
+                        <select required class="bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
+                            <option value="">Pilih Kurir</option>
                             <option>JNE Reguler</option>
                             <option>SiCepat YES</option>
                             <option>AntareAja</option>
                         </select>
-                        <input class="bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent" type="text" placeholder="Masukkan No. Resi" />
-                        <button class="px-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium whitespace-nowrap">Kirim</button>
-                    </div>
+                        <input required class="bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent" type="text" placeholder="Masukkan No. Resi" />
+                        <button type="submit" class="px-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium whitespace-nowrap">Kirim</button>
+                    </form>
                 </div>
             </div>
 
@@ -38,16 +38,16 @@
                         <p class="font-title-md text-title-md text-on-surface mt-1">Oversized Linen Shirt</p>
                         <p class="font-body-md text-sm text-on-surface-variant mt-1">Tujuan: Surabaya • Berat: 0,6 kg</p>
                     </div>
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <select class="bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
-                            <option>Pilih Kurir</option>
+                    <form class="flex flex-col sm:flex-row gap-3" data-toast-message="Pesanan #RLV-2077 berhasil dikirim.">
+                        <select required class="bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
+                            <option value="">Pilih Kurir</option>
                             <option>JNE Reguler</option>
                             <option>SiCepat YES</option>
                             <option>AntareAja</option>
                         </select>
-                        <input class="bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent" type="text" placeholder="Masukkan No. Resi" />
-                        <button class="px-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium whitespace-nowrap">Kirim</button>
-                    </div>
+                        <input required class="bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent" type="text" placeholder="Masukkan No. Resi" />
+                        <button type="submit" class="px-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium whitespace-nowrap">Kirim</button>
+                    </form>
                 </div>
             </div>
         </div>
