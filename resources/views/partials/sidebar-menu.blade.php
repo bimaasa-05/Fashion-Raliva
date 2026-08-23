@@ -76,21 +76,25 @@
             @else
                 <div class="px-2 py-2 text-[10px] font-label-sm uppercase tracking-widest text-gold-accent/70">{{ $group['label'] }}</div>
             @endif
-            <div class="space-y-1 {{ $collapsible && !$isActive ? 'hidden' : '' }}" @if ($collapsible) data-sidebar-group @endif>
+            <div class="{{ $collapsible ? 'grid transition-[grid-template-rows] duration-300 ease-out ' . ($isActive ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]') : 'space-y-1' }}" @if ($collapsible) data-sidebar-group @endif>
+                <div class="{{ $collapsible ? 'min-h-0 overflow-hidden' : '' }}">
+                    <div class="{{ $collapsible ? 'space-y-1' : '' }}">
                 @foreach ($group['items'] as $item)
-                    <a class="group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200
+                    <a class="group flex items-center gap-2.5 py-2.5 transition-all duration-200
                         @if(request()->routeIs($item['route']))
-                            bg-gold-accent/10 text-gold-accent border-l-[3px] border-gold-accent
+                            pl-3 pr-[28px] mr-[-16px] rounded-l-lg bg-gold-accent/10 text-gold-accent border-l-[3px] border-gold-accent
                         @else
-                            text-white/80 hover:bg-white/5 hover:text-white
+                            px-3 rounded-lg text-on-sidebar/80 hover:bg-sidebar-hover hover:text-on-sidebar border-l-[3px] border-transparent
                         @endif"
                         href="{{ route($item['route']) }}">
-                        <span class="material-symbols-outlined text-[20px] @if(request()->routeIs($item['route'])) fill text-gold-accent @else text-white/70 @endif transition-colors">
+                        <span class="material-symbols-outlined text-[20px] @if(request()->routeIs($item['route'])) fill text-gold-accent @else text-on-sidebar/60 @endif transition-colors">
                             {{ $item['icon'] }}
                         </span>
-                        <span class="font-body-md text-sm">{{ $item['text'] }}</span>
+                        <span class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate" title="{{ $item['text'] }}">{{ $item['text'] }}</span>
                     </a>
                 @endforeach
+                    </div>
+                </div>
             </div>
         </div>
     @endforeach
