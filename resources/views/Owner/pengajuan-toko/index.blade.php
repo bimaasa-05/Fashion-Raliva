@@ -100,7 +100,7 @@
                     <tr class="border-b border-muted-border align-top">
                         <td class="py-4 px-4 font-bold text-on-surface whitespace-nowrap">v1.0</td>
                         <td class="py-4 px-4 text-on-surface-variant whitespace-nowrap">02 Mar 2026</td>
-                        <td class="py-4 px-4 text-error max-w-md">Foto depan toko tidak sesuai dengan alamat KTP. Mohon unggah ulang foto terbaru yang menampilkan nama toko.</td>
+                        <td class="py-4 px-4 text-error max-w-md">Foto depan toko tidak sesuai dengan alamat yang terdaftar pada dokumen usaha. Mohon unggah foto terbaru yang jelas menampilkan nama dan alamat toko.</td>
                         <td class="py-4 px-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Ditolak</span></td>
                         <td class="py-4 px-4 text-right">
                             <button type="button" data-modal-open="modal-kirim-ulang" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Perbaiki &amp; Kirim Ulang</button>
@@ -132,7 +132,7 @@
         <form data-toast-message="Pengajuan revisi berhasil dikirim untuk diverifikasi ulang." class="p-6 space-y-5">
             <div class="border border-error/20 bg-error/5 rounded-lg px-4 py-3 flex items-start gap-3">
                 <span class="material-symbols-outlined text-[20px] text-error mt-0.5">error</span>
-                <p class="text-error font-body-md text-sm">Alasan penolakan: Foto depan toko tidak sesuai dengan alamat KTP.</p>
+                <p class="text-error font-body-md text-sm">Alasan penolakan: Foto depan toko tidak sesuai dengan alamat yang terdaftar.</p>
             </div>
             <div>
                 <label for="dokumen-revisi" class="block raliva-label mb-2">Unggah Ulang Foto Depan Toko</label>
