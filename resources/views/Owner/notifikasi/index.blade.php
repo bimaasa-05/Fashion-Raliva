@@ -33,7 +33,7 @@
                 ['verified', 'Produk Blazer Wool Premium telah disetujui moderator dan tayang.', '13:05', true],
                 ['payments', 'Pencairan dana WD-0092 sedang diproses ke BCA ****8821.', '11:40', false],
                 ['star', 'Ulasan baru 5 bintang dari Sarah Jenkins untuk Trench Coat Signature.', '09:15', false],
-                ['warning', 'Stok Silk Scarf Monogram habis — segera ajukan restock.', '08:02', false],
+                ['warning', 'Stok Silk Scarf Monogram habis — segera ajukan produksi ulang.', '08:02', false],
                 ['support_agent', 'Komplain CMP-0041 berprioritas Tinggi memerlukan respons Anda.', '07:48', true],
             ] as $n)
                 <article data-reveal class="bg-surface-container-lowest border {{ $n[3] ? 'border-l-[3px] border-l-gold-accent border-muted-border' : 'border-muted-border' }} rounded-lg px-5 py-4 flex items-start gap-4 card-premium hover:border-gold-accent/40 transition-colors">
