@@ -48,7 +48,7 @@
     {{-- Info Prioritas --}}
     <section data-reveal class="bg-error/5 border border-error/25 rounded-lg px-6 py-4 flex items-start gap-3">
         <span class="material-symbols-outlined text-[22px] text-error mt-0.5 shrink-0">priority_high</span>
-        <p class="font-body-md text-sm text-on-surface"><span class="font-bold">Respons wajib &le; 24 jam.</span> Komplain berprioritas Tinggi yang tidak direspons dapat memengaruhi skor kualitas layanan toko.</p>
+        <p class="font-body-md text-sm text-on-surface"><span class="font-bold">Respons wajib &le; 24 jam.</span> Komplain dengan prioritas tinggi yang tidak segera direspons dapat memengaruhi skor kualitas layanan toko.</p>
     </section>
 
     {{-- Daftar Komplain --}}
