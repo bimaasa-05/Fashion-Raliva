@@ -127,7 +127,7 @@
 
         <p class="text-xs text-on-surface-variant mt-6 pt-5 border-t border-muted-border flex items-start gap-2">
             <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 shrink-0">info</span>
-            Satu staf dapat ditugaskan ke beberapa toko milik Anda. Penambahan akun baru dikirim melalui undangan email.
+            Satu staf dapat ditugaskan ke beberapa toko milik Anda. Akun baru akan menerima undangan aktivasi melalui email.
         </p>
     </section>
 </div>
