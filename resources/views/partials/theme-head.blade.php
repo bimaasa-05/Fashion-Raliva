@@ -66,6 +66,9 @@
                     "inverse-surface": "rgb(var(--c-inverse-surface) / <alpha-value>)",
                     "on-secondary-container": "#775804",
                     "sidebar": "rgb(var(--c-sidebar) / <alpha-value>)",
+                    "on-sidebar": "rgb(var(--c-on-sidebar) / <alpha-value>)",
+                    "sidebar-border": "rgb(var(--c-sidebar-border) / <alpha-value>)",
+                    "sidebar-hover": "rgb(var(--c-sidebar-hover) / <alpha-value>)",
                     "scrim": "rgb(var(--c-scrim) / <alpha-value>)"
                 },
                 borderRadius: {
@@ -131,7 +134,10 @@
         --c-on-error-container: 147 0 10;
         --c-tertiary-container: 26 28 26;
         --c-surface-tint: 95 94 94;
-        --c-sidebar: 17 17 17;
+        --c-sidebar: 255 255 255;
+        --c-on-sidebar: 27 28 28;
+        --c-sidebar-border: 233 232 231;
+        --c-sidebar-hover: 239 237 237;
         --c-scrim: 0 0 0;
     }
 
@@ -165,6 +171,9 @@
         --c-tertiary-container: 74 74 74;
         --c-surface-tint: 170 168 168;
         --c-sidebar: 28 28 28;
+        --c-on-sidebar: 255 255 255;
+        --c-sidebar-border: 46 46 46;
+        --c-sidebar-hover: 41 41 41;
     }
 
     body { background-color: rgb(var(--c-background)); }
@@ -187,11 +196,27 @@
 
     .btn-premium { transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease; box-shadow: 0 8px 20px -10px rgb(17 17 17 / 0.45); }
     .btn-premium:hover { transform: translateY(-1px); box-shadow: 0 14px 30px -12px rgb(17 17 17 / 0.55); filter: brightness(1.06); }
-    .sidebar-scroll { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.18) transparent; }
-    .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+    /* Scrollbar nav sidebar: rapi, beri jarak dari item menu + stabil gutter + muncul halus saat hover */
+    .sidebar-scroll { scrollbar-width: thin; scrollbar-color: transparent transparent; scrollbar-gutter: stable; padding-right: 12px; }
+    .sidebar-scroll:hover { scrollbar-color: rgb(var(--c-on-sidebar) / 0.18) transparent; }
+    .sidebar-scroll::-webkit-scrollbar { width: 6px; }
     .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
-    .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 9999px; }
+    .sidebar-scroll::-webkit-scrollbar-thumb { background: transparent; border: 2px solid transparent; background-clip: padding-box; border-radius: 9999px; }
+    .sidebar-scroll:hover::-webkit-scrollbar-thumb { background: rgb(var(--c-on-sidebar) / 0.18); background-clip: padding-box; border: 2px solid transparent; }
+    .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgb(var(--c-on-sidebar) / 0.28); background-clip: padding-box; }
+    /* ===== Raliva Motion Polish — pop-in menu, modal & toast (berlaku semua role) ===== */
+    @keyframes ralivaPopIn { from { opacity: 0; transform: scale(0.96) translateY(-4px); } to { opacity: 1; transform: none; } }
+    @keyframes ralivaToastIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    [data-profile-menu], [data-notification-menu], [data-dropdown-menu] { transform-origin: top right; animation: ralivaPopIn 0.18s cubic-bezier(0.22, 1, 0.36, 1); }
+    [data-modal] > .relative { animation: ralivaPopIn 0.2s cubic-bezier(0.22, 1, 0.36, 1); }
+    #raliva-toast { animation: ralivaToastIn 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+    [data-profile-chevron] { transition: transform 0.3s ease; }
+    [data-profile-container].menu-open [data-profile-chevron] { transform: rotate(180deg); }
     .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+    @media (prefers-reduced-motion: reduce) {
+        [data-profile-menu], [data-notification-menu], [data-dropdown-menu],
+        [data-modal] > .relative, #raliva-toast { animation: none; }
+    }
 
     /* ===== Raliva Form Components — satu style untuk semua role ===== */
 </style>
