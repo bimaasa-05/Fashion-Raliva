@@ -38,11 +38,11 @@
     </header>
 
     <!-- Side Navigation Drawer -->
-    <aside id="sidebar" class="flex fixed md:sticky top-0 left-0 z-50 flex-col h-screen pt-section-gap pb-[88px] md:pb-section-gap px-container-margin w-64 border-r border-white/10 bg-sidebar -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+    <aside id="sidebar" class="flex fixed md:sticky top-0 left-0 z-50 flex-col h-screen pt-section-gap pb-[88px] md:pb-section-gap px-container-margin w-64 border-r border-sidebar-border bg-sidebar -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
         <div class="mb-12 flex items-center gap-3">
             <img src="{{ asset('images/logo.svg') }}" alt="Logo Raliva" class="w-11 h-11 rounded-xl shrink-0" />
             <div>
-                <span class="font-display-lg text-title-md text-white tracking-widest block leading-tight">RALIVA</span>
+                <span class="font-display-lg text-title-md text-on-sidebar tracking-widest block leading-tight">RALIVA</span>
                 <span class="text-gold-accent/80 font-label-sm text-[10px] uppercase tracking-wider">Owner</span>
             </div>
         </div>
@@ -65,7 +65,7 @@
                         <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-label-sm uppercase tracking-wider">@yield('header-badge')</span>
                     @endif
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">@yield('header-subtitle', 'Ringkasan performa dan kendali penuh atas toko Anda.')</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">@yield('header-subtitle', 'Ringkasan performa dan aktivitas toko Anda.')</p>
             </div>
             <div class="flex items-center gap-6">
                 <button type="button" class="theme-toggle text-on-surface hover:text-secondary transition-colors" aria-label="Ganti tema">
@@ -90,7 +90,7 @@
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">@yield('header-badge')</span>
                 @endif
             </div>
-            <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Ringkasan performa dan kendali penuh atas toko Anda.')</p>
+            <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Ringkasan performa dan aktivitas toko Anda.')</p>
         </div>
 
         <div class="px-container-margin pt-8 pb-section-gap flex flex-col gap-section-gap max-w-7xl mx-auto w-full">
