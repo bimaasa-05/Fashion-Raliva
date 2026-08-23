@@ -75,7 +75,7 @@
 
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
-                            <span class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Okupansi Rak</span>
+                            <span class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Kapasitas Terpakai</span>
                             <span class="font-label-sm text-[11px] font-bold text-on-surface">{{ $g['kapasitas'] }}%</span>
                         </div>
                         <div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
