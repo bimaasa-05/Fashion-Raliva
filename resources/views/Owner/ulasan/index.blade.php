@@ -4,7 +4,7 @@
 
 @section('header-title', 'Ulasan & Penilaian')
 @section('header-badge', '4,9 / 5,0')
-@section('header-subtitle', 'Dengarkan masukan customer untuk kualitas produk dan layanan.')
+@section('header-subtitle', 'Rating dan ulasan customer sebagai bahan evaluasi produk dan layanan.')
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
