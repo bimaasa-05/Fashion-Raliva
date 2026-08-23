@@ -122,7 +122,7 @@
 
         {{-- Zona Berbahaya --}}
         <section data-reveal class="border border-error/30 bg-error/5 rounded-lg p-6 mt-section-gap">
-            <h2 class="font-title-md text-title-md mb-4 text-error premium-heading">Zona Sensitif</h2>
+            <h2 class="font-title-md text-title-md mb-4 text-error premium-heading">Area Sensitif</h2>
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <p class="font-title-md text-sm text-on-surface">Nonaktifkan Toko Sementara</p>
