@@ -3,7 +3,7 @@
 @section('title', 'Profil')
 
 @section('header-title', 'Profil')
-@section('header-subtitle', 'Informasi akun pemilik toko Anda.')
+@section('header-subtitle', 'Kelola informasi akun Owner Anda.')
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
