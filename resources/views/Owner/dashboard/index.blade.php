@@ -4,7 +4,7 @@
 
 @section('header-title', 'Dashboard Toko')
 @section('header-badge', 'Terverifikasi')
-@section('header-subtitle', 'Ringkasan performa penjualan dan pekerjaan toko Anda.')
+@section('header-subtitle', 'Ringkasan performa penjualan dan aktivitas toko Anda.')
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
@@ -79,7 +79,7 @@
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Stok Menipis</span>
                 <span class="raliva-figure text-[26px] text-gold-accent">9</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">produk perlu restock</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">produk perlu di-restock</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">warning</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
@@ -118,7 +118,7 @@
         </section>
 
         <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Pekerjaan Toko</h2>
+            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Aktivitas Berjalan</h2>
             <ul class="space-y-5">
                 <li>
                     <div class="flex items-start justify-between gap-3 mb-2">
