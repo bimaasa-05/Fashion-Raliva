@@ -9,6 +9,7 @@
         <div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden shrink-0">
             <img alt="Foto Profil" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuUf094pPsvMlxNz9CEzztLZIPfB4q2FE_6HM73O8sFoIt42FkBx43D1cxFlylMdSolVSJZNCBDrc8ttYGcVUIYXcsS0AUGBhcZYBAFGqcAXzmuJyVyjyJY6CXvyxdr0Zwzlwi2Tw3Djm9F2wtwaOLZklTUYLsRg7NCbF9hgI1uCTcTdgGi-0zShSJMzVkR1HYp_C02xOHHVWnGLI4_rrhbWQnSlrZ2VpmUbZL0Gc18YDjNwDrrkAcPg" />
         </div>
+        <span class="material-symbols-outlined text-[20px] text-on-surface-variant transition-transform duration-300" data-profile-chevron>expand_more</span>
     </button>
     <div data-profile-menu class="hidden absolute right-0 top-full mt-2 w-60 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-[60] overflow-hidden">
         <div class="px-4 py-3 border-b border-muted-border">
