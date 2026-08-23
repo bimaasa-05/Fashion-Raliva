@@ -36,6 +36,18 @@
     const allProfileMenus = document.querySelectorAll('[data-profile-menu]');
     const allNotificationMenus = document.querySelectorAll('[data-notification-menu]');
 
+    /* Chevron indikator menu profil — mengikuti state menu dari jalur mana pun */
+    const syncProfileChevrons = () => {
+        document.querySelectorAll('[data-profile-container]').forEach((c) => {
+            const menu = c.querySelector('[data-profile-menu]');
+            c.classList.toggle('menu-open', !!menu && !menu.classList.contains('hidden'));
+        });
+    };
+    if ('MutationObserver' in window) {
+        const profileMenuObserver = new MutationObserver(syncProfileChevrons);
+        allProfileMenus.forEach((m) => profileMenuObserver.observe(m, { attributes: true, attributeFilter: ['class'] }));
+    }
+
     document.querySelectorAll('[data-profile-toggle]').forEach((btn) => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -92,11 +104,19 @@
 
     updateThemeIcons();
 
+    /* Buka-tutup grup sidebar dengan animasi halus (teknik grid-rows) */
     document.querySelectorAll('[data-sidebar-group-button]').forEach((btn) => {
+        const group = btn.parentElement.querySelector('[data-sidebar-group]');
+        if (!group) return;
+        btn.setAttribute('aria-expanded', group.classList.contains('grid-rows-[1fr]') ? 'true' : 'false');
         btn.addEventListener('click', () => {
-            const group = btn.parentElement.querySelector('[data-sidebar-group]');
-            group?.classList.toggle('hidden');
-            btn.querySelector('.material-symbols-outlined')?.classList.toggle('rotate-180');
+            const isOpen = group.classList.contains('grid-rows-[1fr]');
+            group.classList.toggle('grid-rows-[1fr]', !isOpen);
+            group.classList.toggle('grid-rows-[0fr]', isOpen);
+            btn.setAttribute('aria-expanded', String(!isOpen));
+            btn.querySelector('.material-symbols-outlined')?.classList.toggle('rotate-180', !isOpen);
+            /* Jaga label tetap terpandang setelah tinggi grup berubah (anti tabrakan scroll) */
+            setTimeout(() => btn.scrollIntoView({ block: 'nearest', behavior: 'smooth' }), 330);
         });
     });
 </script>
