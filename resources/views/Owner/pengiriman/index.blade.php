@@ -82,7 +82,7 @@
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">where_to_vote</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Pickup</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Kurir</span>
             <span class="raliva-figure text-[26px] text-gold-accent">7</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">schedule_send</span>
         </div>
@@ -100,7 +100,7 @@
             <div class="flex items-center gap-gutter w-full sm:w-auto">
                 <select data-table-filter="status-kirim" class="raliva-select">
                     <option value="">Semua Status</option>
-                    <option value="pickup">Menunggu Pickup</option>
+                    <option value="pickup">Menunggu Kurir</option>
                     <option value="jalan">Dalam Pengiriman</option>
                     <option value="sampai">Terkirim</option>
                 </select>
@@ -123,8 +123,8 @@
                         ['kode' => '#RLV-2090', 'tgl' => '21 Agu', 'tujuan' => 'Bandung Kota', 'kurir' => 'JNE YES', 'resi' => 'JNE-Y77120', 'status' => 'Dalam Pengiriman', 'key' => 'jalan'],
                         ['kode' => '#RLV-2087', 'tgl' => '20 Agu', 'tujuan' => 'Surabaya Barat', 'kurir' => 'SiCepat BEST', 'resi' => 'SCP-90211', 'status' => 'Terkirim', 'key' => 'sampai'],
                         ['kode' => '#RLV-2086', 'tgl' => '20 Agu', 'tujuan' => 'Depok', 'kurir' => 'GoSend Instant', 'resi' => 'GO-55102', 'status' => 'Terkirim', 'key' => 'sampai'],
-                        ['kode' => '#RLV-2085', 'tgl' => '22 Agu', 'tujuan' => 'Tangerang Selatan', 'kurir' => 'Raliva Express', 'resi' => '—', 'status' => 'Menunggu Pickup', 'key' => 'pickup'],
-                        ['kode' => '#RLV-2084', 'tgl' => '22 Agu', 'tujuan' => 'Bekasi Timur', 'kurir' => 'JNE Reguler', 'resi' => '—', 'status' => 'Menunggu Pickup', 'key' => 'pickup'],
+                        ['kode' => '#RLV-2085', 'tgl' => '22 Agu', 'tujuan' => 'Tangerang Selatan', 'kurir' => 'Raliva Express', 'resi' => '—', 'status' => 'Menunggu Kurir', 'key' => 'pickup'],
+                        ['kode' => '#RLV-2084', 'tgl' => '22 Agu', 'tujuan' => 'Bekasi Timur', 'kurir' => 'JNE Reguler', 'resi' => '—', 'status' => 'Menunggu Kurir', 'key' => 'pickup'],
                     ] as $ship)
                         <tr data-table-row data-status-kirim="{{ $ship['key'] }}" class="border-b border-muted-border last:border-0">
                             <td class="py-3.5 px-4">
@@ -142,7 +142,7 @@
                                 @elseif ($ship['key'] === 'jalan')
                                     <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30"><span class="material-symbols-outlined fill text-[12px]">local_shipping</span>Dalam Perjalanan</span>
                                 @else
-                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant"><span class="material-symbols-outlined fill text-[12px]">schedule</span>Menunggu Pickup</span>
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant"><span class="material-symbols-outlined fill text-[12px]">schedule</span>Menunggu Kurir</span>
                                 @endif
                             </td>
                             <td class="py-3.5 px-4 text-right">
