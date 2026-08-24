@@ -196,55 +196,34 @@
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
 <header class="bg-[var(--chrome-bg)] text-[var(--chrome-text)] sticky full-width top-0 border-b border-[var(--chrome-border)] flat no shadows z-40">
-<div class="flex justify-between items-center w-full px-container-margin h-16">
+<div class="flex justify-between items-center w-full px-container-margin h-16 lg:h-24">
 <button aria-label="{{ __('Menu') }}" class="hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center p-2 -ml-2" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
+<div>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
+<p class="hidden lg:block font-label-sm text-label-sm text-[var(--chrome-text-dim)] tracking-wide mt-0.5">{{ __('The Art of Everyday Dressing') }}</p>
+</div>
 <div class="flex items-center gap-2">
 <a aria-label="Search" href="{{ route('customer.search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2">
 <span class="material-symbols-outlined" data-icon="search">search</span>
 </a>
-<button aria-label="{{ __('Filter') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 -mr-2" onclick="openFilter()" type="button">
-<span class="material-symbols-outlined" data-icon="tune">tune</span>
-</button>
 </div>
 </div>
 </header>
 <!-- Main Content -->
-<main class="flex-grow w-full max-w-screen-xl mx-auto flex flex-col md:flex-row">
-<!-- Desktop Sidebar Navigation -->
-<aside class="hidden md:flex flex-col w-64 flex-shrink-0 border-r border-outline-variant min-h-[calc(100vh-64px)] sticky top-16 bg-surface-container-low">
-<div class="p-container-margin">
-<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Categories') }}</h2>
-<nav class="flex flex-col gap-xs">
-<a class="font-body-sm text-body-sm px-md py-sm rounded-full transition-colors flex items-center gap-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined text-[20px]">new_releases</span>{{ __('New Arrivals') }}</a>
-<a class="font-body-sm text-body-sm px-md py-sm rounded-full transition-colors flex items-center gap-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined text-[20px]">auto_awesome</span>{{ __('Designers') }}</a>
-<a class="font-body-sm text-body-sm px-md py-sm rounded-full transition-colors flex items-center gap-sm bg-primary text-on-primary font-semibold" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined text-[20px]">apparel</span>{{ __('Clothing') }}</a>
-<a class="font-body-sm text-body-sm px-md py-sm rounded-full transition-colors flex items-center gap-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined text-[20px]">watch</span>{{ __('Accessories') }}</a>
-<a class="font-body-sm text-body-sm px-md py-sm rounded-full transition-colors flex items-center gap-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined text-[20px]">menu_book</span>{{ __('Editorial') }}</a>
-</nav>
-</div>
-<div class="border-t border-outline-variant p-container-margin">
-<button class="w-full h-11 border border-primary text-primary font-label-caps text-label-caps uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-colors flex items-center justify-center gap-xs" onclick="openFilter()" type="button">
-<span class="material-symbols-outlined text-[18px]">tune</span>{{ __('More Filters') }}</button>
-</div>
-<div class="mt-auto p-container-margin pt-0">
-<div class="relative overflow-hidden rounded-lg bg-secondary-container text-on-secondary-fixed p-md">
-<p class="font-label-caps text-label-caps uppercase tracking-widest mb-xs">{{ __('Mid-Year Sale') }}</p>
-<p class="font-body-sm text-body-sm mb-sm relative z-10">{{ __('Up to 50% off selected styles.') }}</p>
-<a class="font-label-caps text-label-caps underline underline-offset-4 uppercase tracking-widest hover:opacity-80 transition-opacity relative z-10 inline-block" href="{{ route('customer.shop') }}">{{ __('Shop Now') }}</a>
-<span class="material-symbols-outlined absolute -right-2 -bottom-2 text-[72px] opacity-20">sell</span>
-</div>
-</div>
-</aside>
+<main class="flex-grow w-full flex flex-col">
 <!-- Canvas Area -->
 <div class="flex-grow flex flex-col w-full">
+<!-- Category Bar (Desktop/Tablet) -->
+<div class="hidden md:flex w-full border-b border-outline-variant sticky top-16 lg:top-24 bg-surface z-30 px-container-margin py-sm gap-sm overflow-x-auto hide-scrollbar">
+<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-primary text-primary font-label-sm text-label-sm rounded-full bg-primary/5">{{ __('All') }}</a>
+<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Women') }}</a>
+<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Men') }}</a>
+<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Accessories') }}</a>
+<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Shoes') }}</a>
+<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Bags') }}</a>
+</div>
 <!-- Category Tabs (Mobile/Tablet) -->
 <div class="w-full border-b border-outline-variant overflow-x-auto hide-scrollbar sticky top-16 bg-surface z-30 md:hidden">
 <div class="flex px-container-margin gap-lg min-w-max h-12 items-center">
@@ -257,7 +236,7 @@
 <!-- Sort & Filter Bar -->
 <div class="flex justify-between items-center px-container-margin py-sm border-b border-outline-variant">
 <div class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Showing 42 items') }}</div>
-<div class="flex gap-4">
+<div class="flex gap-sm items-center">
 <div class="relative" id="sort-menu-container">
 <button class="flex items-center gap-1 font-label-sm text-label-sm text-on-surface hover:text-secondary transition-colors" onclick="toggleSortMenu()" type="button">
 <span id="sort-label">{{ __('Sort') }}</span>
@@ -283,10 +262,17 @@
 </button>
 </div>
 </div>
+<a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart') }}" class="relative hover:text-secondary transition-colors flex items-center">
+<span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
+<span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+</a>
+<button aria-label="{{ __('Filter') }}" class="hover:text-secondary transition-colors flex items-center" onclick="openFilter()" type="button">
+<span class="material-symbols-outlined text-[22px]" data-icon="tune">tune</span>
+</button>
 </div>
 </div>
 <!-- Product Grid -->
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-gutter p-container-margin">
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-gutter p-container-margin">
 <!-- Product 1 -->
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
@@ -352,33 +338,32 @@
 </div>
 </main>
 <!-- BottomNavBar -->
-<nav class="md:hidden fixed bottom-0 w-full z-50 border-t border-[var(--chrome-border)] shadow-sm flex justify-around items-center h-[72px] bg-[var(--chrome-bg)] text-[var(--chrome-text)] px-xs pb-safe">
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-[var(--chrome-border)] shadow-sm flex justify-around items-center h-[72px] bg-[var(--chrome-bg)] text-[var(--chrome-text)] px-xs pb-safe">
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full gap-1" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined text-[24px]" data-icon="home">home</span>
-<span class="font-label-sm text-label-sm text-[10px]">{{ __('Home') }}</span>
+<span class="font-label-sm text-[10px]">{{ __('Home') }}</span>
 </a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] scale-95 transition-transform w-16 h-full gap-1" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined text-[24px]" data-icon="shopping_bag" data-weight="fill" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
-<span class="font-label-sm text-label-sm text-[10px] font-bold">{{ __('Shop') }}</span>
+<a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] w-16 h-full gap-1" href="{{ route('customer.shop') }}">
+<span class="material-symbols-outlined text-[24px]" data-icon="shopping_bag" data-weight="fill">shopping_bag</span>
+<span class="font-label-sm text-[10px] font-bold">{{ __('Shop') }}</span>
+</a>
+<a aria-label="{{ __('Pesanan') }}" class="relative -mt-7 w-14 h-14 rounded-full bg-primary text-on-primary border-4 border-[var(--chrome-bg)] shadow-lg flex items-center justify-center transition-transform active:scale-95" href="{{ route('customer.login', ['redirect' => '/customer/order-tracking']) }}">
+<span class="material-symbols-outlined text-[24px] text-secondary-fixed-dim" data-weight="fill">receipt_long</span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full gap-1" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
 <span class="material-symbols-outlined text-[24px]" data-icon="favorite">favorite</span>
-<span class="font-label-sm text-label-sm text-[10px]">{{ __('Wishlist') }}</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full gap-1 relative" href="{{ route('customer.chart') }}">
-<span class="material-symbols-outlined text-[24px]" data-icon="shopping_cart">shopping_cart</span>
-<span class="font-label-sm text-label-sm text-[10px]">{{ __('Cart') }}</span>
-<span class="absolute top-2 right-4 w-2 h-2 bg-secondary-fixed-dim rounded-full"></span>
+<span class="font-label-sm text-[10px]">{{ __('Wishlist') }}</span>
 </a>
 <a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full gap-1" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
 <span class="material-symbols-outlined text-[24px]" data-icon="person">person</span>
-<span class="font-label-sm text-label-sm text-[10px]">{{ __('Account') }}</span>
+<span class="font-label-sm text-[10px]">{{ __('Account') }}</span>
 </a>
 </nav>
 @include('customer._partials.drawer')
 {{-- FILTER BOTTOM SHEET --}}
-<div id="filter-overlay" class="fixed inset-0 bg-black/50 z-[60] hidden" onclick="closeFilter()"></div>
-<div id="filter-sheet" class="fixed bottom-0 left-0 w-full z-[70] bg-surface rounded-t-2xl translate-y-full transition-transform duration-300 max-h-[85vh] flex flex-col">
+<div id="filter-overlay" class="fixed inset-0 lg:left-72 bg-black/50 z-[60] hidden" onclick="closeFilter()"></div>
+<div id="filter-sheet" class="fixed bottom-0 inset-x-0 lg:left-72 z-[70] bg-surface rounded-t-2xl translate-y-full transition-transform duration-300 max-h-[85vh] flex flex-col">
 <div class="flex justify-center pt-sm shrink-0">
 <span class="w-10 h-1 rounded-full bg-outline-variant"></span>
 </div>

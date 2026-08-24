@@ -386,25 +386,24 @@
 </section>
 </main>
 <!-- Bottom Navigation Bar (Mobile Only) -->
-<nav class="flex justify-around items-center w-full h-[72px] bg-[var(--chrome-bg)] text-[var(--chrome-text)] px-xs pb-safe border-t border-[var(--chrome-border)] shadow-sm fixed bottom-0 z-50 md:hidden">
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.home') }}">
-<span class="material-symbols-outlined mb-1" data-icon="home" style="font-variation-settings: 'FILL' 0;">home</span>
+<nav class="flex justify-around items-center w-full h-[72px] bg-[var(--chrome-bg)] text-[var(--chrome-text)] px-xs pb-safe border-t border-[var(--chrome-border)] shadow-sm fixed bottom-0 inset-x-0 z-50 md:hidden">
+<a class="flex flex-col items-center justify-center gap-1 w-16 h-full text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors" href="{{ route('customer.home') }}">
+<span class="material-symbols-outlined text-[24px]" data-icon="home">home</span>
 <span class="font-label-sm text-[10px]">{{ __('Home') }}</span>
 </a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] scale-95 transition-transform w-16 h-full" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined mb-1" data-icon="shopping_bag" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
-<span class="font-label-sm text-[10px] font-semibold">{{ __('Shop') }}</span>
+<a class="flex flex-col items-center justify-center gap-1 w-16 h-full text-[var(--chrome-accent)]" href="{{ route('customer.shop') }}">
+<span class="material-symbols-outlined text-[24px]" data-icon="shopping_bag" data-weight="fill">shopping_bag</span>
+<span class="font-label-sm text-[10px] font-bold">{{ __('Shop') }}</span>
 </a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
-<span class="material-symbols-outlined mb-1" data-icon="favorite" style="font-variation-settings: 'FILL' 0;">favorite</span>
+<a aria-label="{{ __('Pesanan') }}" class="relative -mt-7 w-14 h-14 rounded-full bg-primary text-on-primary border-4 border-[var(--chrome-bg)] shadow-lg flex items-center justify-center transition-transform active:scale-95" href="{{ route('customer.login', ['redirect' => '/customer/order-tracking']) }}">
+<span class="material-symbols-outlined text-[24px] text-secondary-fixed-dim" data-weight="fill">receipt_long</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 w-16 h-full text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
+<span class="material-symbols-outlined text-[24px]" data-icon="favorite">favorite</span>
 <span class="font-label-sm text-[10px]">{{ __('Wishlist') }}</span>
 </a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.chart') }}">
-<span class="material-symbols-outlined mb-1" data-icon="shopping_cart" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
-<span class="font-label-sm text-[10px]">{{ __('Cart') }}</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 h-full" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
-<span class="material-symbols-outlined mb-1" data-icon="person" style="font-variation-settings: 'FILL' 0;">person</span>
+<a class="flex flex-col items-center justify-center gap-1 w-16 h-full text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
+<span class="material-symbols-outlined text-[24px]" data-icon="person">person</span>
 <span class="font-label-sm text-[10px]">{{ __('Account') }}</span>
 </a>
 </nav>
