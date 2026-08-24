@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en"><head>
+<html lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>RALIVA - {{ __('Account') }}</title>
@@ -182,9 +182,30 @@
     html.theme-dark .focus\:border-primary:focus { border-color: #f2efec !important; }
     html.theme-dark .focus\:border-on-surface:focus { border-color: #e6e4e1 !important; }
     html.theme-dark .focus\:border-outline:focus { border-color: #4a4844 !important; }
-    html.theme-dark .group:hover .group-hover\:text-primary { color: #f2efec !important; }
-    html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
-    html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
+</style>
+<style>
+    .btn-gold {
+        position: relative;
+        overflow: hidden;
+        background-color: var(--btn-gold-bg) !important;
+        color: var(--btn-gold-text) !important;
+    }
+    .btn-gold::after {
+        content: '';
+        position: absolute;
+        top: -10%;
+        bottom: -10%;
+        left: -80%;
+        width: 45%;
+        background: rgba(255,255,255,.55);
+        transform: skewX(-24deg);
+        pointer-events: none;
+    }
+    .btn-gold:hover::after { animation: authFlash 1.4s linear infinite; }
+    .btn-gold.flashing::after { animation: authFlash 1.4s cubic-bezier(.4,0,.2,1) 1; }
+    @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
+    :root           { --btn-gold-bg: #e8c25a; --btn-gold-text: #261a00; }
+    html.theme-dark { --btn-gold-bg: #d9ab4f; --btn-gold-text: #261a00; }
 </style>
   </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0">
@@ -205,6 +226,7 @@
 <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">{{ __('ACCOUNT') }}</h2>
 </div>
 <!-- Profile Header -->
+@if(session('mock_customer'))
 <section class="flex flex-col items-center md:flex-row md:items-start gap-md mb-xl">
 <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant flex-shrink-0">
 <img alt="Profile Picture" class="w-full h-full object-cover" data-alt="A sophisticated close-up portrait of a stylish woman. She is well-lit in a modern, airy space, embodying high-end fashion editorial minimalism. The background is a soft, out-of-focus light ivory. The overall mood is confident and elegant, matching a luxury retail brand aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2mFOUgXwyToT210lLVyaVSmF1VogUfk85zb-0hplBwDJrLXcscOUZ6HC-QneJkQeiXtusGTnccpRNL_Qfwg6Iv1eVkAyIGJww1Oeb_iYCbIyOeCVeUW2b1Sm0yZ1Ilyxant3LPd15_T_3d5wXZ6WuDg04U46PEh96KMwKZLe0bO4ULe1L4wvC1WuBzsmGdp1FVC5JBPcCooQlUdVdE7hMrw6wp72LxJBvu2PdD4yA1caYdtRO7ss"/>
@@ -217,6 +239,24 @@
                 </a>
 </div>
 </section>
+@else
+<section class="flex flex-col items-center md:flex-row md:items-start gap-md mb-xl">
+<div class="w-24 h-24 rounded-full border border-outline-variant flex-shrink-0 bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-[44px] text-on-surface-variant">person</span>
+</div>
+<div class="flex flex-col items-center md:items-start justify-center flex-grow text-center md:text-left">
+<h3 class="font-title-md text-title-md text-on-surface mb-1">{{ __('Welcome') }}</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-md max-w-xs">{{ __('Register to track your orders and save your wishlist.') }}</p>
+<a class="btn-gold w-full md:w-auto h-14 px-xl font-label-caps text-label-caps uppercase tracking-widest inline-flex items-center justify-center" href="{{ route('customer.register') }}">
+<span>{{ __('Register Now') }}</span>
+</a>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-md">
+                    {{ __('Already have an account?') }}
+<a class="text-secondary font-semibold hover:opacity-80 transition-opacity ml-1" href="{{ route('customer.login', ['redirect' => '/customer/account']) }}">{{ __('LOGIN') }}</a>
+</p>
+</div>
+</section>
+@endif
 <!-- Menu List -->
 <nav class="flex flex-col border-t border-outline-variant">
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.order-tracking') }}">
@@ -306,4 +346,14 @@
 <span class="font-label-sm text-label-sm">{{ __('Account') }}</span>
 </a>
 </nav>
+<script>
+        document.querySelectorAll('.btn-gold').forEach(function (b) {
+            b.addEventListener('click', function () {
+                b.classList.remove('flashing');
+                void b.offsetWidth;
+                b.classList.add('flashing');
+                setTimeout(function () { b.classList.remove('flashing'); }, 600);
+            });
+        });
+    </script>
 </body></html>
