@@ -20,10 +20,16 @@
 
 @section('content')
 <div class="px-container-margin pb-element-gap">
-    <div class="flex items-center justify-center space-x-gutter mb-container-margin overflow-x-auto no-scrollbar py-2">
-        <button type="button" data-moderasi-tab="menunggu" class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-primary text-primary transition-colors whitespace-nowrap">MENUNGGU (3)</button>
-        <button type="button" data-moderasi-tab="disetujui" class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">DISETUJUI</button>
-        <button type="button" data-moderasi-tab="ditolak" class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">DITOLAK</button>
+    <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+            <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Moderasi</span>
+        </div>
+        <div class="flex items-center justify-center space-x-gutter overflow-x-auto no-scrollbar py-2">
+            <button type="button" data-moderasi-tab="menunggu" class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-primary text-primary transition-colors whitespace-nowrap">MENUNGGU (3)</button>
+            <button type="button" data-moderasi-tab="disetujui" class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">DISETUJUI</button>
+            <button type="button" data-moderasi-tab="ditolak" class="font-label-sm text-label-sm px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap">DITOLAK</button>
+        </div>
     </div>
 </div>
 <div class="px-container-margin flex-grow">

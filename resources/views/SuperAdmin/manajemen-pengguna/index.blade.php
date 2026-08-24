@@ -21,26 +21,32 @@
 @endpush
 
 @section('content')
-    <!-- Pencarian -->
-    <div class="mb-6">
+    <!-- Pencarian & Filter -->
+    <div class="mb-6 bg-surface-container-lowest border border-muted-border rounded-lg p-4 md:p-5 card-premium flex flex-col gap-4" data-reveal>
+        <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Pengguna</span>
+            </div>
+            <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant/70 hidden sm:inline">Role & Status</span>
+        </div>
+        <div class="h-px bg-muted-border"></div>
         <div class="relative">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
             <input
                 id="user-search"
-                class="w-full bg-surface-container-low border border-muted-border rounded pl-12 pr-4 py-3 font-body-md text-on-surface focus:outline-none focus:border-primary transition-colors"
+                class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-12 pr-4 py-3 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-gold-accent transition-colors"
                 placeholder="Cari pengguna berdasarkan nama atau email..." type="text" />
         </div>
-    </div>
-
-    <!-- Filter -->
-    <div class="mb-8 overflow-x-auto hide-scrollbar">
-        <div class="flex gap-2 whitespace-nowrap pb-2">
-            <button type="button" data-user-filter="semua" data-filter-key="role" class="px-4 py-2 bg-primary text-on-primary font-label-sm text-label-sm uppercase rounded transition-colors">Semua</button>
-            <button type="button" data-user-filter="pelanggan" data-filter-key="role" class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Pelanggan</button>
-            <button type="button" data-user-filter="pemilik" data-filter-key="role" class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Pemilik</button>
-            <button type="button" data-user-filter="admin" data-filter-key="role" class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Admin</button>
-            <button type="button" data-user-filter="aktif" data-filter-key="status" class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Aktif</button>
-            <button type="button" data-user-filter="non-aktif" data-filter-key="status" class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container transition-colors">Non-aktif</button>
+        <div class="overflow-x-auto hide-scrollbar -mx-1 px-1">
+            <div class="flex gap-2 whitespace-nowrap pb-1">
+                <button type="button" data-user-filter="semua" data-filter-key="role" class="px-4 py-2 rounded-lg bg-deep-onyx text-on-primary border border-deep-onyx font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200 shrink-0 shadow-[0_4px_14px_rgba(0,0,0,0.18)]">Semua</button>
+                <button type="button" data-user-filter="pelanggan" data-filter-key="role" class="px-4 py-2 rounded-lg bg-surface-container-low text-on-surface-variant border border-muted-border hover:text-on-surface hover:border-gold-accent/50 font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200 shrink-0">Pelanggan</button>
+                <button type="button" data-user-filter="pemilik" data-filter-key="role" class="px-4 py-2 rounded-lg bg-surface-container-low text-on-surface-variant border border-muted-border hover:text-on-surface hover:border-gold-accent/50 font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200 shrink-0">Pemilik</button>
+                <button type="button" data-user-filter="admin" data-filter-key="role" class="px-4 py-2 rounded-lg bg-surface-container-low text-on-surface-variant border border-muted-border hover:text-on-surface hover:border-gold-accent/50 font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200 shrink-0">Admin</button>
+                <button type="button" data-user-filter="aktif" data-filter-key="status" class="px-4 py-2 rounded-lg bg-surface-container-low text-on-surface-variant border border-muted-border hover:text-on-surface hover:border-gold-accent/50 font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200 shrink-0">Aktif</button>
+                <button type="button" data-user-filter="non-aktif" data-filter-key="status" class="px-4 py-2 rounded-lg bg-surface-container-low text-on-surface-variant border border-muted-border hover:text-on-surface hover:border-gold-accent/50 font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200 shrink-0">Non-aktif</button>
+            </div>
         </div>
     </div>
 
@@ -275,16 +281,18 @@
         chip.addEventListener('click', () => {
             const key = chip.getAttribute('data-filter-key');
             const value = chip.getAttribute('data-user-filter');
-            const alreadyActive = chip.classList.contains('bg-primary');
+            const alreadyActive = chip.classList.contains('bg-deep-onyx');
+            const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx', 'shadow-[0_4px_14px_rgba(0,0,0,0.18)]'];
+            const idleClasses = ['bg-surface-container-low', 'text-on-surface-variant', 'border-muted-border', 'hover:text-on-surface', 'hover:border-gold-accent/50'];
             document.querySelectorAll('[data-user-filter][data-filter-key="' + key + '"]').forEach((c) => {
-                c.classList.remove('bg-primary', 'text-on-primary');
-                c.classList.add('bg-surface-container-low', 'text-on-surface', 'border-muted-border', 'hover:bg-surface-container');
+                c.classList.remove(...activeClasses);
+                c.classList.add(...idleClasses);
             });
             if (alreadyActive && key === 'status') {
                 userFilters[key] = 'semua';
             } else {
-                chip.classList.remove('bg-surface-container-low', 'text-on-surface', 'hover:bg-surface-container');
-                chip.classList.add('bg-primary', 'text-on-primary');
+                chip.classList.remove(...idleClasses);
+                chip.classList.add(...activeClasses);
                 userFilters[key] = value;
             }
             applyUserFilter();

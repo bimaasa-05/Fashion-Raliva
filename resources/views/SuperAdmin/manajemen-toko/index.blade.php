@@ -19,11 +19,17 @@
 @endpush
 
 @section('content')
-<div id="toko-tabs" class="flex flex-wrap gap-3 border-b border-muted-border pb-4">
-    <button type="button" data-toko-tab="semua" class="px-4 py-2 border-b-2 border-primary text-primary font-label-sm uppercase tracking-wider transition-colors">Semua</button>
-    <button type="button" data-toko-tab="menunggu" class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Menunggu</button>
-    <button type="button" data-toko-tab="aktif" class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Aktif</button>
-    <button type="button" data-toko-tab="ditangguhkan" class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Ditangguhkan</button>
+<div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium mb-6">
+    <div class="flex items-center gap-2 mb-3">
+        <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+        <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status Toko</span>
+    </div>
+    <div id="toko-tabs" class="flex flex-wrap gap-3 border-b border-muted-border pb-4">
+        <button type="button" data-toko-tab="semua" class="px-4 py-2 border-b-2 border-primary text-primary font-label-sm uppercase tracking-wider transition-colors">Semua</button>
+        <button type="button" data-toko-tab="menunggu" class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Menunggu</button>
+        <button type="button" data-toko-tab="aktif" class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Aktif</button>
+        <button type="button" data-toko-tab="ditangguhkan" class="px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-sm uppercase tracking-wider">Ditangguhkan</button>
+    </div>
 </div>
 
 <section class="px-gutter md:px-container-margin py-8">

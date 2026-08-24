@@ -14,10 +14,24 @@
 
 @section('content')
 <div class="space-y-section-gap">
+    <!-- Toolbar -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">local_fire_department</span></div>
+            <div>
+                <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Promo Platform</h2>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Buat dan kelola promo lintas toko.</p>
+            </div>
+        </div>
+        <button type="button" data-modal-open="modal-buat-promo" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
+            <span class="material-symbols-outlined text-[18px]">add</span> Buat Promo
+        </button>
+    </section>
+
     <!-- Active Promos -->
     <section class="space-y-gutter">
         <div class="flex justify-between items-center">
-            <div class="flex items-center gap-3"><div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">local_fire_department</span></div><h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Promo Aktif</h2></div>
+            <div class="flex items-center gap-3"><h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Promo Aktif</h2></div>
             <span class="text-on-surface-variant font-body-md text-sm">3 promo berjalan</span>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
@@ -74,45 +88,47 @@
         </div>
     </section>
 
-    <!-- Create New Promo Form -->
-    <section class="space-y-gutter">
-        <div class="flex justify-between items-center">
-            <div class="flex items-center gap-3"><div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">celebration</span></div><h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Buat Promo Baru</h2></div>
-        </div>
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 card-premium">
-            <form class="space-y-gutter" id="create-promo-form" data-toast-message="Promo platform berhasil dibuat.">
+    <!-- Modal Buat Promo -->
+    <div id="modal-buat-promo" data-modal class="fixed inset-0 z-[70] hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close></div>
+        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
+            <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+                <div>
+                    <h3 class="font-title-md text-title-md text-on-surface premium-heading">Buat Promo Baru</h3>
+                    <p class="text-on-surface-variant font-body-md text-sm mt-1">Promo berlaku lintas toko di seluruh platform.</p>
+                </div>
+                <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form id="create-promo-form" data-toast-message="Promo platform berhasil dibuat." class="p-6 space-y-5">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="promoName">Nama Promo</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="promoName" name="promoName" type="text" placeholder="Misal: Lebaran Sale" required />
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Jenis Promo</label>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <label class="flex items-center gap-3 p-3 border border-muted-border rounded-lg hover:bg-surface-container-low hover:border-gold-accent cursor-pointer transition-all">
-                            <input type="radio" class="w-4 h-4 border border-on-surface rounded accent-gold-accent" name="promoType" value="discount" checked />
-                            <span class="font-body-md text-on-surface">Diskon (%)</span>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex items-center gap-3 p-3 border border-muted-border rounded-lg hover:bg-surface-container-low hover:border-gold-accent cursor-pointer transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10">
+                            <input type="radio" class="w-4 h-4 accent-gold-accent" name="promoType" value="discount" checked />
+                            <span class="font-body-md text-sm text-on-surface">Diskon (%)</span>
                         </label>
-                        <label class="flex items-center gap-3 p-3 border border-muted-border rounded-lg hover:bg-surface-container-low hover:border-gold-accent cursor-pointer transition-all">
-                            <input type="radio" class="w-4 h-4 border border-on-surface rounded accent-gold-accent" name="promoType" value="free-shipping" />
-                            <span class="font-body-md text-on-surface">Pengiriman Gratis</span>
+                        <label class="flex items-center gap-3 p-3 border border-muted-border rounded-lg hover:bg-surface-container-low hover:border-gold-accent cursor-pointer transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10">
+                            <input type="radio" class="w-4 h-4 accent-gold-accent" name="promoType" value="free-shipping" />
+                            <span class="font-body-md text-sm text-on-surface">Ongkir Gratis</span>
                         </label>
-                        <label class="flex items-center gap-3 p-3 border border-muted-border rounded-lg hover:bg-surface-container-low hover:border-gold-accent cursor-pointer transition-all">
-                            <input type="radio" class="w-4 h-4 border border-on-surface rounded accent-gold-accent" name="promoType" value="buy-one-get-one" />
-                            <span class="font-body-md text-on-surface">Beli 1 Gratis 1</span>
+                        <label class="flex items-center gap-3 p-3 border border-muted-border rounded-lg hover:bg-surface-container-low hover:border-gold-accent cursor-pointer transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10">
+                            <input type="radio" class="w-4 h-4 accent-gold-accent" name="promoType" value="buy-one-get-one" />
+                            <span class="font-body-md text-sm text-on-surface">Beli 1 Gratis 1</span>
                         </label>
-                        <label class="flex items-center gap-3 p-3 border border-muted-border rounded-lg hover:bg-surface-container-low hover:border-gold-accent cursor-pointer transition-all">
-                            <input type="radio" class="w-4 h-4 border border-on-surface rounded accent-gold-accent" name="promoType" value="percentage-off" />
-                            <span class="font-body-md text-on-surface">Potongan Harga</span>
+                        <label class="flex items-center gap-3 p-3 border border-muted-border rounded-lg hover:bg-surface-container-low hover:border-gold-accent cursor-pointer transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10">
+                            <input type="radio" class="w-4 h-4 accent-gold-accent" name="promoType" value="percentage-off" />
+                            <span class="font-body-md text-sm text-on-surface">Potongan Harga</span>
                         </label>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="discountValue">Persentase/Besar Diskon</label>
-                        <div class="relative">
-                            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="discountValue" name="discountValue" type="number" min="0" max="100" step="0.5" value="15" required />
-                            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">%</div>
-                        </div>
+                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="discountValue" name="discountValue" type="number" min="0" max="100" step="0.5" value="15" required />
                     </div>
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="promoCode">Kode Promo</label>
@@ -131,14 +147,14 @@
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="promoRules">Aturan & Syarat</label>
-                    <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="promoRules" name="promoRules" rows="3" placeholder="Misal: Berlaku untuk toko aktif, minimum order Rp 50.000, maksimal 1 kali penggunaan per user"></textarea>
+                    <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="promoRules" name="promoRules" rows="3" placeholder="Misal: Berlaku untuk toko aktif, minimum order Rp 50.000"></textarea>
                 </div>
-                <div class="flex gap-gutter pt-gutter border-t border-muted-border">
-                    <button type="button" class="flex-1 border border-muted-border text-deep-onyx font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-surface-container-lowest transition-colors" onclick="document.getElementById('create-promo-form').reset()">Batal</button>
-                    <button type="submit" class="flex-1 bg-gold-accent text-on-secondary font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-secondary-container transition-colors">Buat Promo</button>
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+                    <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                    <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Buat Promo</button>
                 </div>
             </form>
         </div>
-    </section>
+    </div>
 </div>
 @endsection

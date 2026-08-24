@@ -67,7 +67,7 @@
                 </div>
                 <p class="font-body-md text-body-md text-on-surface-variant max-w-md">Diterapkan otomatis ke penjualan toko di seluruh platform. Perubahan tarif akan tercatat dalam riwayat audit.</p>
                 <div class="flex flex-wrap gap-gutter mt-8">
-                    <button id="btn-ubah-komisi" type="button" class="bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase px-8 py-4 tracking-widest rounded-lg hover:bg-tertiary-container transition-colors btn-premium inline-flex items-center gap-2" onclick="document.getElementById('edit-form').classList.remove('hidden'); document.getElementById('edit-form').scrollIntoView({ behavior: 'smooth', block: 'center' }); this.classList.add('hidden'); setTimeout(() => document.getElementById('commissionRate').focus(), 350);">
+                    <button id="btn-ubah-komisi" type="button" class="bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase px-8 py-4 tracking-widest rounded-lg hover:bg-tertiary-container transition-colors btn-premium inline-flex items-center gap-2" data-modal-open="modal-edit-komisi">
                         <span class="material-symbols-outlined text-[18px]">edit</span>
                         Ubah Komisi
                     </button>
@@ -95,26 +95,26 @@
 
     <section>
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Dampak Komisi Bulan Ini</h2>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
-            <div class="rise bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" style="animation-delay: 0.05s;">
+        <div data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+            <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Estimasi Komisi</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp 612,8JT</span>
                 <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-secondary">trending_up</span>+12,5% vs bulan lalu</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">payments</span>
             </div>
-            <div class="rise bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" style="animation-delay: 0.15s;">
+            <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Transaksi Berkomisi</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">1.248</span>
                 <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-secondary">trending_up</span>+8,2% vs bulan lalu</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
             </div>
-            <div class="rise bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" style="animation-delay: 0.25s;">
+            <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Toko Terdampak</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">42</span>
                 <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-on-surface-variant">trending_flat</span>stabil</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">storefront</span>
             </div>
-            <div class="rise bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" style="animation-delay: 0.35s;">
+            <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Perubahan Tarif</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">2×</span>
                 <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant">tahun 2023</span>
@@ -220,12 +220,19 @@
         </ol>
     </section>
 
-    <section class="w-full hidden" id="edit-form">
-        <div class="border-t border-gold-accent/30 pt-section-gap">
-            <h2 class="font-title-md text-title-md mb-2 uppercase tracking-wider text-on-surface premium-heading">Perbarui Tarif Komisi</h2>
-            <p class="text-on-surface-variant font-body-md text-sm mb-container-margin">Perubahan berlaku untuk seluruh transaksi baru di semua toko.</p>
-            <form class="space-y-container-margin" onsubmit="event.preventDefault(); document.getElementById('confirm-dialog').classList.remove('hidden');">
-                <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 md:p-8 card-premium space-y-container-margin">
+    <!-- Modal Perbarui Tarif Komisi -->
+    <div id="modal-edit-komisi" data-modal class="fixed inset-0 z-[80] hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close></div>
+        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
+            <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+                <div>
+                    <h2 class="font-title-md text-title-md text-on-surface premium-heading">Perbarui Tarif Komisi</h2>
+                    <p class="text-on-surface-variant font-body-md text-sm mt-1">Berlaku untuk seluruh transaksi baru di semua toko.</p>
+                </div>
+                <button type="button" data-modal-close onclick="closeEditForm();" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form class="p-6 space-y-container-margin" onsubmit="event.preventDefault(); document.getElementById('confirm-dialog').classList.remove('hidden');">
+                <div class="space-y-container-margin">
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="commissionRate">Tarif Baru (%)</label>
                         <div class="relative max-w-xs">
@@ -249,7 +256,7 @@
                 </div>
             </form>
         </div>
-    </section>
+    </div>
 </div>
 @endsection
 
@@ -265,11 +272,12 @@
     }
 
     function closeEditForm() {
-        document.getElementById('edit-form').classList.add('hidden');
-        document.getElementById('btn-ubah-komisi').classList.remove('hidden');
-        document.getElementById('edit-form').querySelector('form').reset();
+        document.getElementById('modal-edit-komisi').classList.add('hidden');
+        document.getElementById('edit-form')?.classList.add('hidden');
+        document.getElementById('modal-edit-komisi').querySelector('form').reset();
         document.getElementById('commissionRate').value = parseFloat(document.getElementById('current-rate').innerText);
         updatePreview(document.getElementById('commissionRate').value);
+        document.body.style.overflow = '';
     }
 
     function getActiveRate() {
@@ -311,8 +319,7 @@
         const newRateRaw = document.getElementById('confirm-rate').innerText.replace('%', '');
         const newRate = parseFloat(newRateRaw);
         document.getElementById('confirm-dialog').classList.add('hidden');
-        document.getElementById('edit-form').classList.add('hidden');
-        document.getElementById('btn-ubah-komisi').classList.remove('hidden');
+        closeEditForm();
 
         countUp(document.getElementById('current-rate'), newRate, '%');
         setGauge(newRate);
@@ -337,7 +344,7 @@
 @endpush
 
 @push('modals')
-<div class="fixed inset-0 z-50 hidden bg-surface-container/80 backdrop-blur-sm flex items-center justify-center p-gutter" id="confirm-dialog">
+<div class="fixed inset-0 z-[95] hidden bg-surface-container/80 backdrop-blur-sm flex items-center justify-center p-gutter" id="confirm-dialog">
     <div class="bg-surface border border-muted-border p-section-gap max-w-md w-full shadow-2xl relative rounded-xl">
         <button type="button" class="absolute top-4 right-4 text-on-surface-variant hover:text-deep-onyx transition-colors" onclick="document.getElementById('confirm-dialog').classList.add('hidden')"><span class="material-symbols-outlined">close</span></button>
         <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center mx-auto mb-gutter">
