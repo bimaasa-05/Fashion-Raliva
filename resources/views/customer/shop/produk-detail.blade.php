@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en"><head>
+<html lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>{{ __('Oversized Linen Shirt') }} - RALIVA</title>
@@ -556,7 +556,7 @@
 <a href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="flex-1 h-12 border border-on-surface bg-transparent text-on-surface font-label-caps text-label-caps tracking-widest hover:bg-surface-variant transition-colors flex items-center justify-center">
             {{ __('ADD TO CART') }}
         </a>
-<a href="{{ route('customer.login', ['redirect' => route('customer.checkout')]) }}" class="flex-1 h-12 bg-primary text-on-primary font-label-caps text-label-caps tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center">
+<a href="{{ route('customer.checkout') }}" class="flex-1 h-12 bg-primary text-on-primary font-label-caps text-label-caps tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center">
             {{ __('BUY NOW') }}
         </a>
 </div>

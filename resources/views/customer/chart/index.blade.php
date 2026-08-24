@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html class="light" lang="en"><head>
+<html class="light" lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
 <title>RALIVA - {{ __('Cart') }}</title>
@@ -337,7 +337,7 @@
 <span>Rp 636.000</span>
 </div>
 </div>
-<a href="{{ route('customer.login', ['redirect' => route('customer.checkout')]) }}" class="w-full bg-primary text-on-primary font-label-caps text-label-caps h-14 flex items-center justify-center hover:opacity-90 transition-opacity uppercase tracking-widest">
+<a href="{{ route('customer.checkout') }}" class="w-full bg-primary text-on-primary font-label-caps text-label-caps h-14 flex items-center justify-center hover:opacity-90 transition-opacity uppercase tracking-widest">
                 {{ __('Checkout') }}
             </a>
 </section>
