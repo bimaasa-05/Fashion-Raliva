@@ -325,26 +325,6 @@
 </div>
 </main>
 <!-- Bottom Navigation Bar -->
-<nav class="md:hidden bg-[var(--chrome-bg)] text-[var(--chrome-text)] font-label-sm text-label-sm fixed bottom-0 inset-x-0 z-50 border-t border-[var(--chrome-border)] shadow-sm flex justify-around items-center h-[72px] px-xs pb-safe">
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16 h-full" href="{{ route('customer.home') }}">
-<span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">home</span>
-<span class="truncate w-full text-center">{{ __('Home') }}</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16 h-full" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">shopping_bag</span>
-<span class="truncate w-full text-center">{{ __('Shop') }}</span>
-</a>
-<a aria-label="{{ __('Pesanan') }}" class="relative -mt-7 w-14 h-14 rounded-full bg-primary text-on-primary border-4 border-[var(--chrome-bg)] shadow-lg flex items-center justify-center transition-transform active:scale-95" href="{{ route('customer.login', ['redirect' => '/customer/order-tracking']) }}">
-<span class="material-symbols-outlined text-[24px] text-secondary-fixed-dim" data-weight="fill">receipt_long</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16 h-full" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
-<span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">favorite</span>
-<span class="truncate w-full text-center">{{ __('Wishlist') }}</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] group w-16 h-full" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
-<span class="material-symbols-outlined mb-1 text-[24px]" style="font-variation-settings: 'FILL' 1;">person</span>
-<span class="truncate w-full text-center font-medium">{{ __('Account') }}</span>
-</a>
-</nav>
+@include('customer._partials.bottom-nav')
 @include('customer._partials.drawer')
 </body></html>
