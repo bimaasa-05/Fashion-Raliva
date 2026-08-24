@@ -10,7 +10,9 @@
            Elemen fixed/sticky (drawer, overlay, modal) TIDAK boleh diganggu:
            transform reveal akan merusak posisi & interaksi mereka. */
         [data-reveal]:not(.fixed):not(.sticky) { opacity: 0; transform: translateY(12px); transition: opacity 0.45s ease-out, transform 0.45s ease-out; transition-delay: var(--reveal-delay, 0ms); }
-        [data-reveal].revealed:not(.fixed):not(.sticky) { opacity: 1; transform: translateY(0); }
+        /* transform:none (bukan translateY(0)) — agar elemen fixed di dalamnya
+           (modal/drawer) kembali relatif ke viewport setelah reveal selesai */
+        [data-reveal].revealed:not(.fixed):not(.sticky) { opacity: 1; transform: none; }
 
         /* Isi widget (progress/bar/donut) tetap kosong sampai card-nya ter-reveal */
         [data-reveal]:not(.revealed) .raliva-lb-fill { width: 0% !important; }
@@ -42,12 +44,17 @@
 
     <!-- Side Navigation Drawer -->
     <aside id="sidebar" class="flex fixed md:sticky top-0 left-0 z-50 flex-col h-screen pt-section-gap pb-[88px] md:pb-section-gap px-container-margin w-64 border-r border-sidebar-border bg-sidebar -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
-        <div class="mb-12 flex items-center gap-3">
-            <img src="{{ asset('images/logo.svg') }}" alt="Logo Raliva" class="w-11 h-11 rounded-xl shrink-0" />
-            <div>
-                <span class="font-display-lg text-title-md text-on-sidebar tracking-widest block leading-tight">RALIVA</span>
-                <span class="text-gold-accent/80 font-label-sm text-[10px] uppercase tracking-wider">Super Admin</span>
+        <div class="sidebar-head mb-12 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <img src="{{ asset('images/logo.svg') }}" alt="Logo Raliva" class="w-11 h-11 rounded-xl shrink-0" />
+                <div data-sidebar-text>
+                    <span class="font-display-lg text-title-md text-on-sidebar tracking-widest block leading-tight">RALIVA</span>
+                    <span class="text-gold-accent/80 font-label-sm text-[10px] uppercase tracking-wider">Super Admin</span>
+                </div>
             </div>
+            <button type="button" id="sidebar-collapse" aria-expanded="true" aria-label="Perkecil menu sidebar" class="sidebar-collapse-btn hidden md:inline-flex w-8 h-8 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-gold-accent/70 hover:text-gold-accent items-center justify-center transition-colors shrink-0">
+                <span class="material-symbols-outlined icon-chevron text-[18px] transition-transform duration-300">chevron_left</span>
+            </button>
         </div>
         <nav class="sidebar-scroll flex-1 overflow-y-auto">
             @include('partials.sidebar-menu')
