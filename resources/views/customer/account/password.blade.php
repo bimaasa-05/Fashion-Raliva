@@ -194,9 +194,9 @@
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
   </head>
-<body class="bg-surface text-on-surface antialiased font-body-lg">
+<body class="bg-surface text-on-surface antialiased font-body-lg lg:pl-72">
 <!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
+<header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
 <a href="{{ route('customer.account.edit') }}" aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
@@ -277,9 +277,10 @@
 </form>
 </main>
 <!-- Fixed Bottom Action Bar -->
-<div class="fixed bottom-0 left-0 w-full bg-surface border-t border-outline-variant px-container-margin py-md z-50 max-w-2xl mx-auto">
+<div class="fixed bottom-0 inset-x-0 lg:left-72 bg-surface border-t border-outline-variant px-container-margin py-md z-50 max-w-2xl mx-auto">
 <a href="{{ route('customer.account') }}" class="w-full bg-primary text-on-primary font-label-caps text-label-caps h-14 flex items-center justify-center hover:opacity-90 transition-opacity uppercase tracking-widest">
             {{ __('Update Password') }}
         </a>
 </div>
+@include('customer._partials.drawer')
 </body></html>

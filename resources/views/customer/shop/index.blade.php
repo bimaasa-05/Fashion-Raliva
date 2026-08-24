@@ -193,11 +193,11 @@
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
   </head>
-<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0">
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
 <header class="bg-[var(--chrome-bg)] text-[var(--chrome-text)] sticky full-width top-0 border-b border-[var(--chrome-border)] flat no shadows z-40">
 <div class="flex justify-between items-center w-full px-container-margin h-16">
-<button aria-label="{{ __('Menu') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 -ml-2" onclick="openDrawer()" type="button">
+<button aria-label="{{ __('Menu') }}" class="hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center p-2 -ml-2" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>

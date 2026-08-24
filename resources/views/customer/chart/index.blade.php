@@ -218,7 +218,7 @@
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
   </head>
-<body class="bg-background text-on-background min-h-screen flex flex-col font-body-lg">
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-lg lg:pl-72">
 <!-- TopAppBar (Small Center Aligned) -->
 <header class="bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 pt-safe border-b border-[var(--chrome-border)] sticky top-0 z-40">
 <a href="{{ url()->previous() }}" class="w-10 h-10 flex items-center justify-center -ml-2 hover:opacity-80 transition-opacity">
@@ -232,9 +232,10 @@
 </button>
 </header>
 <!-- Main Content Canvas -->
-<main class="flex-1 overflow-y-auto pb-32">
+<main class="flex-1 overflow-y-auto pb-32 lg:pb-lg w-full">
+<div class="lg:max-w-screen-xl lg:mx-auto lg:px-md lg:flex lg:items-start lg:gap-xl">
 <!-- Multi-store grouping -->
-<section class="mt-md mb-lg">
+<section class="mt-md mb-lg lg:flex-1 lg:min-w-0 lg:mb-0">
 <!-- Store Header -->
 <div class="px-container-margin py-sm border-b border-surface-variant flex items-center gap-sm bg-surface-bright">
 <input checked="" class="checkbox-custom" type="checkbox"/>
@@ -320,7 +321,7 @@
 </div>
 </section>
 <!-- Order Summary & Checkout Section -->
-<section class="bg-surface-container-low px-container-margin py-lg mt-xl">
+<section class="bg-surface-container-low px-container-margin py-lg mt-xl lg:mt-md lg:w-[360px] lg:shrink-0 lg:sticky lg:top-20 lg:self-start lg:border lg:border-outline-variant lg:rounded-lg">
 <h2 class="font-label-caps text-label-caps text-primary tracking-widest uppercase mb-md">{{ __('Order Summary') }}</h2>
 <div class="space-y-sm mb-lg">
 <div class="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
@@ -341,6 +342,7 @@
                 {{ __('Checkout') }}
             </a>
 </section>
+</div>
 </main>
 <!-- BottomNavBar (Label Icon) -->
 <nav class="md:hidden bg-[var(--chrome-bg)] text-[var(--chrome-text)] fixed bottom-0 w-full z-50 border-t border-[var(--chrome-border)] shadow-sm flex justify-around items-center h-[72px] px-xs pb-safe">
@@ -370,4 +372,5 @@
 <span class="font-label-sm text-label-sm">{{ __('Account') }}</span>
 </a>
 </nav>
+@include('customer._partials.drawer')
 </body></html>

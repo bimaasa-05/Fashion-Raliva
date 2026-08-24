@@ -205,7 +205,7 @@
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
   </head>
-<body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen">
+<body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen lg:pl-72">
 <!-- TopAppBar (Transactional variation - Back button) -->
 <header class="flex justify-between items-center w-full px-container-margin h-16 bg-[var(--chrome-bg)] text-[var(--chrome-text)] border-b border-[var(--chrome-border)] docked full-width top-0 sticky z-50">
 <a href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}" class="w-10 h-10 flex items-center justify-start hover:opacity-80 transition-opacity">
@@ -362,4 +362,5 @@
 <span class="font-label-sm text-[10px]">{{ __('Account') }}</span>
 </a>
 </nav>
+@include('customer._partials.drawer')
 </body></html>

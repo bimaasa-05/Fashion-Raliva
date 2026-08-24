@@ -208,7 +208,7 @@
     html.theme-dark { --btn-gold-bg: #d9ab4f; --btn-gold-text: #261a00; }
 </style>
   </head>
-<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0">
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
 <header class="flex justify-between items-center w-full px-container-margin h-16 bg-[var(--chrome-bg)] text-[var(--chrome-text)] border-b border-[var(--chrome-border)] flat no shadows docked full-width top-0 z-40 sticky">
 <button aria-label="Menu" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 -ml-2">
@@ -356,4 +356,5 @@
             });
         });
     </script>
+@include('customer._partials.drawer')
 </body></html>

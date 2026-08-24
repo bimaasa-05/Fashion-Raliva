@@ -202,9 +202,9 @@
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
   </head>
-<body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0">
+<body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
+<header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
 <a href="{{ url()->previous() }}" aria-label="Back" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
@@ -217,7 +217,7 @@
 </div>
 </header>
 <!-- Main Content -->
-<main class="pt-16">
+<main class="pt-16 lg:max-w-screen-xl lg:mx-auto lg:w-full">
 <!-- Wishlist Header -->
 <section class="py-lg px-container-margin border-b border-outline-variant flex items-center justify-between">
 <div>
@@ -285,4 +285,5 @@ ADD TO CART
 <span class="font-label-sm text-[10px]">{{ __('Account') }}</span>
 </a>
 </nav>
+@include('customer._partials.drawer')
 </body></html>

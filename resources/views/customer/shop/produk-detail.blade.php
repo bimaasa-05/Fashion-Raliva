@@ -271,9 +271,9 @@
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
   </head>
-<body class="bg-surface text-on-surface font-body-lg antialiased pb-32">
+<body class="bg-surface text-on-surface font-body-lg antialiased pb-32 lg:pl-72 lg:pb-0">
 <!-- Header (Custom TopAppBar for Product Details) -->
-<header class="fixed top-0 w-full z-50 bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16">
+<header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16">
 <a aria-label="Go back" href="{{ url()->previous() }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
 <span class="material-symbols-outlined text-[var(--chrome-text)]">arrow_back</span>
 </a>
@@ -286,9 +286,10 @@
 </a>
 </div>
 </header>
-<main class="pt-0">
+<main class="pt-0 lg:pt-16">
+<div class="lg:flex lg:items-start lg:gap-xl">
 <!-- Product Gallery -->
-<section class="relative w-full aspect-[3/4] md:aspect-[4/5] lg:h-[707px] bg-surface-variant overflow-hidden snap-x snap-mandatory flex overflow-x-auto hide-scrollbar">
+<section class="relative w-full aspect-[3/4] md:aspect-[4/5] lg:w-[44%] lg:shrink-0 lg:aspect-auto lg:h-[calc(100vh-9rem)] bg-surface-variant overflow-hidden snap-x snap-mandatory flex overflow-x-auto hide-scrollbar lg:sticky lg:top-24 lg:self-start">
 <div class="min-w-full snap-start relative">
 <img class="w-full h-full object-cover" data-alt="A high-fashion editorial shot of a crisp white oversized linen shirt worn by a model in a minimalist, sunlit studio. The lighting is soft and natural, casting delicate shadows that emphasize the texture and drape of the breathable linen fabric. The aesthetic is clean, luxurious, and modern, with a neutral soft ivory background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB60zlPtMN4DNcfKmNtNvMLaGtiKfbUV1jwb0QK8OA5iaHO4UH7XENx8hMwhaE5yT5LrfK8UMcwLCPExcTdn6andqBGPBlLUnx50TloBkou9GTUxw3G_AUUXNsW0tW-nac6qgCMlCN5DNx-MS9SaBZyxtqnHsrZoA5wWOTWt35qMllqNd3QRmPFzPPUS0OYj9jK2fpGsyo_-h8LA0wGcj5Ox9jJzKViCJecEiEYn63RRtnGwLNRA44"/>
 </div>
@@ -300,6 +301,7 @@
 <div class="w-2 h-2 rounded-full bg-outline-variant"></div>
 </div>
 </section>
+<div class="lg:flex-1 lg:min-w-0">
 <!-- Product Info -->
 <section class="px-container-margin py-md">
 <div class="flex justify-between items-start mb-2">
@@ -339,6 +341,15 @@
 <button class="h-12 border border-outline-variant flex items-center justify-center font-body-sm text-body-sm text-on-surface hover:border-on-surface transition-colors">L</button>
 <button class="h-12 border border-outline-variant flex items-center justify-center font-body-sm text-body-sm text-on-surface hover:border-on-surface transition-colors">XL</button>
 </div>
+</div>
+<!-- Desktop Actions -->
+<div class="hidden lg:flex gap-sm mt-xl">
+<a href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="flex-1 h-12 border border-on-surface bg-transparent text-on-surface font-label-caps text-label-caps tracking-widest hover:bg-surface-variant transition-colors flex items-center justify-center">
+            {{ __('ADD TO CART') }}
+        </a>
+<a href="{{ route('customer.checkout') }}" class="flex-1 h-12 bg-primary text-on-primary font-label-caps text-label-caps tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center">
+            {{ __('BUY NOW') }}
+        </a>
 </div>
 </section>
 <!-- Accordions -->
@@ -502,12 +513,14 @@
                 </p>
 </article>
 </section>
+</div>
+</div>
 <!-- You May Also Like -->
 <section class="py-xl">
 <h2 class="font-headline-md text-headline-md text-center text-on-surface mb-lg">{{ __('You May Also Like') }}</h2>
-<div class="flex overflow-x-auto gap-gutter px-container-margin hide-scrollbar pb-sm">
+<div class="flex overflow-x-auto lg:grid lg:grid-cols-3 lg:overflow-visible gap-gutter px-container-margin hide-scrollbar pb-sm">
 <!-- Card 1 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="min-w-[160px] md:min-w-[200px] block">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="min-w-[160px] md:min-w-[200px] lg:min-w-0 block">
 <div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant">
 <img class="w-full h-full object-cover" data-alt="A minimalist fashion editorial image of tailored wide-leg trousers in a soft beige tone, styled cleanly against a light, neutral background, reflecting premium quality and modern elegance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4IYXT8zx75qRHmyTLk9xkyFXQ2aqGro0exB1cwe11WPpyS4_FUyQA7qq8cxx_mFM3PPrNwyPQcZ-_wI0J8kAwOnv5OPd8VFDvqKFUJDKt9UwsYXTBwCIVxPjpYG2Tc4O-GOg6_Sx5cjoPIKUP4Xa4HwLQKlAk6lcw-xaN7sm1Ad78waPAEVlkv60tLR_o8Ap-HQ14icz3DI2UgdsVBjVQiozmTytcTh9-KT1npkU4xDEEJGQTJro"/>
 <a aria-label="{{ __('Add to wishlist') }}" href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
@@ -521,7 +534,7 @@
 </div>
 </a>
 <!-- Card 2 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="min-w-[160px] md:min-w-[200px] block">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="min-w-[160px] md:min-w-[200px] lg:min-w-0 block">
 <div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant">
 <img class="w-full h-full object-cover" data-alt="A chic, minimalist editorial shot of a ribbed knit tank top in black, draped elegantly on a hanger against a pristine white background. The focus is on the texture and modern silhouette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBSCYHpJJ10PR1rv62xsiSUHcgECc8Yl7gxPOJqlAhXqjJGHnlXSe3G3OT0zZOpoO6zdOywN_zGJ312gSUWGyrERx3QJH1sib9jdTkpcPR1UGz6uHG3aBCzTk7nRRLeHq2PxVj1WHkGQGh3Vuk2k_lfNftY_XKOXombF0_TGRpWMQudl33iPubHVACr4ZiMJFHeHt5rU1xGcveNoDt2q3Et_j-G22OqOzW2MDW8EobpXOmXTWjw3M"/>
 <a aria-label="{{ __('Add to wishlist') }}" href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
@@ -535,7 +548,7 @@
 </div>
 </a>
 <!-- Card 3 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="min-w-[160px] md:min-w-[200px] block">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="min-w-[160px] md:min-w-[200px] lg:min-w-0 block">
 <div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant">
 <img class="w-full h-full object-cover" data-alt="A sophisticated editorial photograph of a minimalist leather tote bag in deep brown, placed thoughtfully on a smooth stone surface with soft, diffused lighting typical of luxury fashion campaigns." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1cthY8K2JPKLNpkQV3JBRI6w4KRyg6mQeqgXctAcetZp_v6EdYIOJjePq8SWVSrQa2JsuHIHIjEMmjJ5PJF-s2QDQm4sbvggtYfBOhWZFYXxH9UkXED66ErqitL29o75HKKd40LGYNnkEMndKxfJ4L-7z-rbdPVecIV7fdOrMA_mrvmKu5Y8cgTTHi3JY3AyfNe_NyppH-jBZSnRZdg5g_HhxOs5QixseLjNAx7O8kEcjJiOq07Q"/>
 <a aria-label="{{ __('Add to wishlist') }}" href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
@@ -552,7 +565,7 @@
 </section>
 </main>
 <!-- Sticky Bottom Action Bar -->
-<div class="fixed bottom-0 left-0 w-full bg-surface/95 backdrop-blur-sm px-container-margin py-md flex gap-sm z-40" style="padding-bottom: max(16px, env(safe-area-inset-bottom));">
+<div class="fixed bottom-0 left-0 w-full lg:hidden bg-surface/95 backdrop-blur-sm px-container-margin py-md flex gap-sm z-40" style="padding-bottom: max(16px, env(safe-area-inset-bottom));">
 <a href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="flex-1 h-12 border border-on-surface bg-transparent text-on-surface font-label-caps text-label-caps tracking-widest hover:bg-surface-variant transition-colors flex items-center justify-center">
             {{ __('ADD TO CART') }}
         </a>
@@ -637,4 +650,5 @@
             document.getElementById('report-success').classList.remove('hidden');
         });
     </script>
+@include('customer._partials.drawer')
 </body></html>
