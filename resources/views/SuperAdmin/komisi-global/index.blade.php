@@ -221,9 +221,9 @@
     </section>
 
     <!-- Modal Perbarui Tarif Komisi -->
-    <div id="modal-edit-komisi" data-modal class="fixed inset-0 z-[80] hidden">
+    <div id="modal-edit-komisi" data-modal class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close></div>
-        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
+        <div class="relative w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
             <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
                 <div>
                     <h2 class="font-title-md text-title-md text-on-surface premium-heading">Perbarui Tarif Komisi</h2>
