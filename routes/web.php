@@ -94,6 +94,23 @@ Route::prefix('customer')->name('customer.')->group(function () {
         return view('customer.auth.login');
     })->name('login');
 
+    Route::post('/login', function (\Illuminate\Http\Request $request) {
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:1',
+            'redirect' => 'nullable|string',
+        ]);
+
+        session(['mock_customer' => ['email' => $validated['email']]]);
+
+        $redirect = $validated['redirect'] ?? '';
+        if ($redirect !== '' && str_starts_with($redirect, '/customer')) {
+            return redirect($redirect);
+        }
+
+        return redirect()->route('customer.home');
+    })->name('login.store');
+
     Route::get('/register', function () {
         return view('customer.auth.register');
     })->name('register');
@@ -136,7 +153,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
 
     Route::get('/order-tracking', function () {
         return view('customer.order-tracking.index');
-    })->name('order-tracking');
+    })->name('order-tracking')->middleware('mock.customer');
 
     Route::get('/account', function () {
         return view('customer.account.index');

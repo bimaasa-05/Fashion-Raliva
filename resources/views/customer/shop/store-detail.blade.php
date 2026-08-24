@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en"><head>
+<html lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Lunara Fashion - RALIVA</title>
@@ -271,7 +271,7 @@
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
   </head>
-<body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased">
+<body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased lg:pl-72">
 <!-- Top App Bar -->
 <header class="bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 border-b border-[var(--chrome-border)] sticky top-0 z-40">
 <a aria-label="Back" href="{{ url()->previous() }}" class="text-[var(--chrome-text)] hover:opacity-80 transition-opacity flex items-center justify-center p-2 -ml-2">
@@ -408,4 +408,5 @@
 <span class="font-label-sm text-[10px]">{{ __('Account') }}</span>
 </a>
 </nav>
+@include('customer._partials.drawer')
 </body></html>
