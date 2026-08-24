@@ -68,7 +68,7 @@
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">payments</span>
         </div>
         <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium col-span-2 md:col-span-1 hover:border-gold-accent transition-colors hero-glow">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Komisi</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Komisi Raliva</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold">Rp <span data-count="1.2" data-count-suffix="B">1.2B</span></span>
             <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>+15,3%</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">

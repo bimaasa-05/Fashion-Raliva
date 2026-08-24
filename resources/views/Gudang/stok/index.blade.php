@@ -9,21 +9,21 @@
 @section('content')
 @php
     $products = [
-        ['Oversized Linen Shirt', 'KEM-001', 'Kemeja', 'S, M, L, XL', 8, 20, 'Menipis', '21 Agu 2026'],
-        ['Straight Fit Pants', 'CEL-014', 'Celana', '28–34', 12, 25, 'Menipis', '21 Agu 2026'],
-        ['Relaxed Blazer', 'BLZ-021', 'Blazer', 'M, L', 46, 15, 'Aman', '20 Agu 2026'],
-        ['Knit Cardigan Rajut', 'RDG-003', 'Cardigan', 'S, M, L', 34, 12, 'Aman', '20 Agu 2026'],
-        ['Midi Dress Linen', 'DRS-008', 'Dress', 'S, M, L', 58, 18, 'Aman', '19 Agu 2026'],
-        ['Basic T-Shirt Cotton', 'KSL-002', 'Kaos', 'S, M, L, XL, XXL', 142, 40, 'Aman', '22 Agu 2026'],
-        ['Denim Jacket Classic', 'JKT-009', 'Jaket', 'M, L, XL', 0, 10, 'Habis', '18 Agu 2026'],
-        ['Pleated Skirt', 'RKT-005', 'Rok', 'S, M, L', 27, 12, 'Aman', '19 Agu 2026'],
-        ['Wide Leg Trousers', 'CEL-022', 'Celana', '28–36', 4, 15, 'Kritis', '21 Agu 2026'],
-        ['Hoodie Fleece Premium', 'HDD-011', 'Hoodie', 'M, L, XL', 63, 20, 'Aman', '17 Agu 2026'],
-        ['Silk Scarf', 'SYL-004', 'Aksesori', 'One Size', 5, 15, 'Kritis', '22 Agu 2026'],
-        ['Leather Belt', 'IKT-006', 'Aksesori', '85–105 cm', 88, 25, 'Aman', '16 Agu 2026'],
-        ['Cargo Shorts', 'CEL-031', 'Celana', '30–34', 41, 12, 'Aman', '18 Agu 2026'],
-        ['Long Sleeve Polo', 'KSL-017', 'Polo', 'M, L, XL', 9, 20, 'Menipis', '21 Agu 2026'],
-        ['Maxi Dress Floral', 'DRS-015', 'Dress', 'S, M, L', 72, 20, 'Aman', '20 Agu 2026'],
+        ['Oversized Linen Shirt', 'KEM-001', 'Kemeja', 'S, M, L, XL', 8, 20, 'Menipis', '21 Agu 2026', 289000],
+        ['Straight Fit Pants', 'CEL-014', 'Celana', '28–34', 12, 25, 'Menipis', '21 Agu 2026', 259000],
+        ['Relaxed Blazer', 'BLZ-021', 'Blazer', 'M, L', 46, 15, 'Aman', '20 Agu 2026', 549000],
+        ['Knit Cardigan Rajut', 'RDG-003', 'Cardigan', 'S, M, L', 34, 12, 'Aman', '20 Agu 2026', 379000],
+        ['Midi Dress Linen', 'DRS-008', 'Dress', 'S, M, L', 58, 18, 'Aman', '19 Agu 2026', 329000],
+        ['Basic T-Shirt Cotton', 'KSL-002', 'Kaos', 'S, M, L, XL, XXL', 142, 40, 'Aman', '22 Agu 2026', 99000],
+        ['Denim Jacket Classic', 'JKT-009', 'Jaket', 'M, L, XL', 0, 10, 'Habis', '18 Agu 2026', 459000],
+        ['Pleated Skirt', 'RKT-005', 'Rok', 'S, M, L', 27, 12, 'Aman', '19 Agu 2026', 279000],
+        ['Wide Leg Trousers', 'CEL-022', 'Celana', '28–36', 4, 15, 'Kritis', '21 Agu 2026', 299000],
+        ['Hoodie Fleece Premium', 'HDD-011', 'Hoodie', 'M, L, XL', 63, 20, 'Aman', '17 Agu 2026', 399000],
+        ['Silk Scarf', 'SYL-004', 'Aksesori', 'One Size', 5, 15, 'Kritis', '22 Agu 2026', 159000],
+        ['Leather Belt', 'IKT-006', 'Aksesori', '85–105 cm', 88, 25, 'Aman', '16 Agu 2026', 189000],
+        ['Cargo Shorts', 'CEL-031', 'Celana', '30–34', 41, 12, 'Aman', '18 Agu 2026', 219000],
+        ['Long Sleeve Polo', 'KSL-017', 'Polo', 'M, L, XL', 9, 20, 'Menipis', '21 Agu 2026', 149000],
+        ['Maxi Dress Floral', 'DRS-015', 'Dress', 'S, M, L', 72, 20, 'Aman', '20 Agu 2026', 359000],
     ];
 @endphp
 
@@ -81,6 +81,7 @@
                         <th class="p-4 text-center">Variasi</th>
                         <th class="p-4 text-center">Stok Tersedia</th>
                         <th class="p-4 text-center">Minimum Stok</th>
+                        <th class="p-4 text-right">Harga Satuan</th>
                         <th class="p-4 text-center">Status</th>
                         <th class="p-4 text-center">Updated</th>
                         <th class="p-4 text-center">Action</th>
@@ -112,6 +113,7 @@
                             <td class="p-4 text-center text-on-surface-variant">{{ $product[3] }}</td>
                             <td class="p-4 text-center font-bold {{ $stockClass }}">{{ $product[4] }}</td>
                             <td class="p-4 text-center text-on-surface-variant">{{ $product[5] }}</td>
+                            <td class="p-4 text-right font-title-md text-sm text-on-surface whitespace-nowrap">Rp {{ number_format($product[8], 0, ',', '.') }}</td>
                             <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass }} text-[10px] font-bold uppercase border">{{ $product[6] }}</span></td>
                             <td class="p-4 text-center text-on-surface-variant whitespace-nowrap">{{ $product[7] }}</td>
                             <td class="p-4">
@@ -175,6 +177,16 @@
                     <div class="bg-surface-container-low border border-muted-border rounded-lg p-4">
                         <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Minimum Stok</p>
                         <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $product[5] }}</p>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-r from-gold-accent/10 to-transparent border border-gold-accent/25 rounded-lg p-4 mb-6 flex items-center justify-between gap-3">
+                    <div>
+                        <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Harga Satuan</p>
+                        <p class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent leading-tight">Rp {{ number_format($product[8], 0, ',', '.') }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Nilai Persediaan</p>
+                        <p class="font-title-md text-title-md text-on-surface">Rp {{ number_format($product[8] * $product[4], 0, ',', '.') }}</p>
                     </div>
                 </div>
                 <dl class="space-y-4 font-body-md text-sm">

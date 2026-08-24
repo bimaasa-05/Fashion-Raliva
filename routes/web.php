@@ -222,6 +222,7 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/komisi-global', [KomisiGlobalController::class, 'index'])->name('komisi-global');
     Route::get('/pajak-biaya', [PajakBiayaController::class, 'index'])->name('pajak-biaya');
     Route::get('/promo-platform', [PromoPlatformController::class, 'index'])->name('promo-platform');
+    Route::get('/peringkat-iklan', fn () => view('SuperAdmin.peringkat-iklan'))->name('peringkat-iklan');
     Route::get('/data-bank', [DataBankController::class, 'index'])->name('data-bank');
     Route::get('/kurir', [KurirController::class, 'index'])->name('kurir');
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
@@ -243,6 +244,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/verifikasi-pembayaran', [VerifikasiPembayaranController::class, 'index'])->name('verifikasi-pembayaran');
     Route::get('/customer', [DataCustomerController::class, 'index'])->name('customer');
     Route::get('/produk', [DataProdukController::class, 'index'])->name('produk');
+    Route::get('/supplier', fn () => view('Admin.supplier'))->name('supplier');
     Route::get('/stok', [StokController::class, 'index'])->name('stok');
     Route::get('/pengiriman', [PengirimanController::class, 'index'])->name('pengiriman');
     Route::get('/pengembalian-dana', [AdminPengembalianDanaController::class, 'index'])->name('pengembalian-dana');
@@ -262,6 +264,7 @@ Route::prefix('gudang')->name('gudang.')->group(function () {
     Route::get('/barang-keluar', [GudangBarangKeluarController::class, 'index'])->name('barang-keluar');
     Route::get('/pemindahan', [GudangPemindahanStokController::class, 'index'])->name('pemindahan');
     Route::get('/pemeriksaan', [GudangPemeriksaanStokController::class, 'index'])->name('pemeriksaan');
+    Route::get('/pelanggan-request', fn () => view('Gudang.pelanggan-request'))->name('pelanggan-request');
     Route::get('/stok-rusak', [GudangStokRusakController::class, 'index'])->name('stok-rusak');
     Route::get('/riwayat-stok', [GudangRiwayatStokController::class, 'index'])->name('riwayat-stok');
     Route::get('/notifikasi', [GudangNotifikasiController::class, 'index'])->name('notifikasi');

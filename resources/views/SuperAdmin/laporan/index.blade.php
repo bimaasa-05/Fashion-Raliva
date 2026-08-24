@@ -90,7 +90,7 @@
                 <span class="material-symbols-outlined text-[12px]">trending_up</span>+15,3%
             </span>
         </div>
-        <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Komisi Platform</span>
+        <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Komisi Raliva</span>
         <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold leading-tight">Rp 12,3JT</span>
         <span class="text-on-surface-variant text-xs">vs 30 hari terakhir</span>
     </div>

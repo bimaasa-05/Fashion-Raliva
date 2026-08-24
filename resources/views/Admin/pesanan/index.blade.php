@@ -8,7 +8,12 @@
 
 @section('content')
 <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-    <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Daftar Pesanan Toko</h2>
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Pesanan Toko</h2>
+        <button type="button" data-modal-open="modal-buat-pesanan" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0 self-start sm:self-auto">
+            <span class="material-symbols-outlined text-[18px]">add_shopping_cart</span> Buat Pesanan
+        </button>
+    </div>
 
     <div class="mb-6 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
         <div class="flex items-center gap-2 shrink-0">
@@ -125,6 +130,78 @@
             <div class="flex justify-between gap-4"><dt class="text-on-surface-variant shrink-0">Status</dt><dd class="text-on-surface text-right"><span data-slot="status"></span></dd></div>
         </dl>
         <button type="button" data-modal-close class="w-full mt-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tutup</button>
+    </div>
+</div>
+
+<!-- Modal Buat Pesanan -->
+<div id="modal-buat-pesanan" data-modal class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close></div>
+    <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
+        <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Buat Pesanan Manual</h3>
+                <p class="text-on-surface-variant font-body-md text-sm mt-1">Untuk pesanan offline / walk-in di toko.</p>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <form data-toast-message="Pesanan manual berhasil dibuat." class="p-6 space-y-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="pesananPelanggan">Pelanggan</label>
+                    <select id="pesananPelanggan" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
+                        <option>Maya Rossi (maya.r@email.com)</option>
+                        <option>Dewi Lestari (dewi.l@email.com)</option>
+                        <option>Andi Pratama (andi.p@email.com)</option>
+                        <option>Tamu / Walk-in</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="pesananProduk">Produk</label>
+                    <select id="pesananProduk" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
+                        <option>Kemeja Linen Premium — Rp 289.000</option>
+                        <option>Dress Midi Linen — Rp 329.000</option>
+                        <option>Blazer Wool Relaxed — Rp 549.000</option>
+                        <option>Silk Scarf — Rp 159.000</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="pesananQty">Jumlah</label>
+                    <input type="number" min="1" value="1" id="pesananQty" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="pesananKurir">Kurir</label>
+                    <select id="pesananKurir" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
+                        <option>JNE Reguler</option>
+                        <option>SiCepat YES</option>
+                        <option>POS Indonesia</option>
+                        <option>Ambil Sendiri di Toko</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Metode Pembayaran</label>
+                <div class="grid grid-cols-3 gap-3">
+                    @foreach(['transfer' => 'Transfer', 'qris' => 'QRIS', 'cod' => 'COD'] as $val => $label)
+                        <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
+                            <input type="radio" class="sr-only" name="pesananBayar" value="{{ $val }}" {{ $val === 'qris' ? 'checked' : '' }} />
+                            {{ $label }}
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="pesananAlamat">Alamat Pengiriman</label>
+                <textarea id="pesananAlamat" rows="2" placeholder="Nama penerima, alamat lengkap, no. HP..." class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50"></textarea>
+            </div>
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="pesananCatatan">Catatan</label>
+                <textarea id="pesananCatatan" rows="2" placeholder="Opsional — misal permintaan khusus pelanggan" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50"></textarea>
+            </div>
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Buat Pesanan</button>
+            </div>
+        </form>
     </div>
 </div>
 @endsection
