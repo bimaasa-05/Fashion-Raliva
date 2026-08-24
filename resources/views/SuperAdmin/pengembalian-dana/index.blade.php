@@ -38,11 +38,18 @@
     <section data-table-scope class="space-y-gutter">
         <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Kasus Dieskalasikan</h2>
 
-        <div data-chip-group data-chip-key="status" class="flex flex-wrap gap-2">
-            <button type="button" data-chip="semua" class="px-4 py-2 bg-deep-onyx text-on-primary border border-deep-onyx font-label-sm text-label-sm uppercase rounded transition-colors">Semua</button>
-            <button type="button" data-chip="menunggu-keputusan" class="px-4 py-2 border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-label-sm uppercase rounded transition-colors">Menunggu Keputusan</button>
-            <button type="button" data-chip="disetujui" class="px-4 py-2 border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-label-sm uppercase rounded transition-colors">Disetujui</button>
-            <button type="button" data-chip="ditolak" class="px-4 py-2 border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-label-sm uppercase rounded transition-colors">Ditolak</button>
+        <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col lg:flex-row lg:items-center gap-3">
+            <div class="flex items-center gap-2 shrink-0">
+                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+            </div>
+            <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
+            <div data-chip-group data-chip-key="status" class="flex flex-wrap gap-2">
+                <button type="button" data-chip="semua" class="px-4 py-2 rounded-lg bg-deep-onyx text-on-primary border border-deep-onyx font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua</button>
+                <button type="button" data-chip="menunggu-keputusan" class="px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu Keputusan</button>
+                <button type="button" data-chip="disetujui" class="px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Disetujui</button>
+                <button type="button" data-chip="ditolak" class="px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditolak</button>
+            </div>
         </div>
 
         <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">

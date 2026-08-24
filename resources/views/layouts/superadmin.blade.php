@@ -5,6 +5,23 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>RALIVA - @yield('title', 'Super Admin')</title>
     @include('partials.theme-head')
+    <style>
+        /* Raliva Motion — reveal on scroll (sama dengan dashboard owner).
+           Elemen fixed/sticky (drawer, overlay, modal) TIDAK boleh diganggu:
+           transform reveal akan merusak posisi & interaksi mereka. */
+        [data-reveal]:not(.fixed):not(.sticky) { opacity: 0; transform: translateY(12px); transition: opacity 0.45s ease-out, transform 0.45s ease-out; transition-delay: var(--reveal-delay, 0ms); }
+        [data-reveal].revealed:not(.fixed):not(.sticky) { opacity: 1; transform: translateY(0); }
+
+        /* Isi widget (progress/bar/donut) tetap kosong sampai card-nya ter-reveal */
+        [data-reveal]:not(.revealed) .raliva-lb-fill { width: 0% !important; }
+        [data-reveal]:not(.revealed) .raliva-bar { height: 0% !important; }
+        [data-reveal]:not(.revealed) .raliva-donut-seg { stroke-dasharray: 0 10000 !important; }
+
+        @media (prefers-reduced-motion: reduce) {
+            [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+            [data-reveal] .raliva-lb-fill, [data-reveal] .raliva-bar, [data-reveal] .raliva-donut-seg { transition: none !important; }
+        }
+    </style>
 </head>
 <body class="text-on-background font-body-md antialiased min-h-screen flex flex-col md:flex-row">
     <!-- Mobile Nav (TopAppBar) -->
@@ -91,6 +108,123 @@
     @stack('modals')
     @include('partials.layout-scripts')
     @include('partials.ui-scripts')
+    <script>
+        /* ===== Raliva Motion — reveal on scroll seragam untuk semua halaman Super Admin ===== */
+        if (!window.matchReducedMotion) {
+            window.matchReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        }
+
+        window.ralivaReadyQueue = [];
+        window.__ralivaContentReady = false;
+        window.ralivaOnReady = (fn) => {
+            if (window.__ralivaContentReady) setTimeout(fn, 120);
+            else window.ralivaReadyQueue.push(fn);
+        };
+        const flushReadyQueue = () => {
+            window.__ralivaContentReady = true;
+            while (window.ralivaReadyQueue.length) {
+                const fn = window.ralivaReadyQueue.shift();
+                setTimeout(fn, 120);
+            }
+        };
+
+        /* Elemen konten yang layak di-stagger di dalam sebuah card/section */
+        const REVEAL_CONTENT_SELECTOR = ':scope > div, :scope > section, :scope > article, :scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > ul, :scope > ol, :scope > table, :scope > form, :scope > a';
+
+        /* Drawer/overlay/modal (fixed) dan action bar (sticky) tidak di-reveal:
+           transform & opacity reveal akan merusak perilaku mereka */
+        const isRevealExempt = (el) => {
+            const pos = getComputedStyle(el).position;
+            return pos === 'fixed' || pos === 'sticky';
+        };
+
+        /* Count-up ditahan sampai card-nya terlihat di viewport */
+        const pendingCounts = [];
+        if (window.ralivaCountUp) {
+            const origCountUp = window.ralivaCountUp;
+            window.ralivaCountUp = (el, target, suffix, duration) => {
+                const host = el ? el.closest('[data-reveal]') : null;
+                if (!host || host.classList.contains('revealed')) return origCountUp(el, target, suffix, duration);
+                pendingCounts.push({ el, target, suffix, duration });
+            };
+        }
+        const flushPendingCounts = (scope) => {
+            for (let i = pendingCounts.length - 1; i >= 0; i--) {
+                if (scope.contains(pendingCounts[i].el)) {
+                    const c = pendingCounts.splice(i, 1)[0];
+                    window.ralivaCountUp(c.el, c.target, c.suffix, c.duration);
+                }
+            }
+        };
+
+        window.initRalivaReveal = () => {
+            /* Wrapper konten utama: semua section top-level halaman ikut reveal */
+            const master = document.querySelector('main > div.page-enter');
+            if (master && !master.hasAttribute('data-reveal-group')) master.setAttribute('data-reveal-group', '');
+
+            /* Grup eksplisit: anak-anaknya dapat delay berurutan */
+            document.querySelectorAll('[data-reveal-group]').forEach((group) => {
+                Array.from(group.children).forEach((child, index) => {
+                    if (isRevealExempt(child)) return;
+                    if (!child.hasAttribute('data-reveal')) child.setAttribute('data-reveal', '');
+                    if (!child.style.getPropertyValue('--reveal-delay')) {
+                        child.style.setProperty('--reveal-delay', Math.min(index * 40, 200) + 'ms');
+                    }
+                });
+            });
+
+            /* Konten di dalam card juga ter-reveal berurutan, berlapis sampai 3 tingkat */
+            let pending = Array.from(document.querySelectorAll('[data-reveal]:not([data-reveal-done])')).map((el) => ({ el, depth: 0 }));
+            while (pending.length) {
+                const next = [];
+                pending.forEach(({ el, depth }) => {
+                    el.setAttribute('data-reveal-done', '');
+                    if (depth >= 3 || el.hasAttribute('data-reveal-skip-children')) return;
+                    Array.from(el.querySelectorAll(REVEAL_CONTENT_SELECTOR)).forEach((child, index) => {
+                        if (isRevealExempt(child)) {
+                            /* Jangan ditandai & jangan turuni subtree-nya */
+                            child.setAttribute('data-reveal-done', '');
+                            return;
+                        }
+                        const isNew = !child.hasAttribute('data-reveal');
+                        if (isNew) child.setAttribute('data-reveal', '');
+                        if (!child.style.getPropertyValue('--reveal-delay')) {
+                            child.style.setProperty('--reveal-delay', Math.min(index * 45 + 50, 320) + 'ms');
+                        }
+                        if (isNew) next.push({ el: child, depth: depth + 1 });
+                    });
+                });
+                pending = next;
+            }
+
+            const targets = new Set();
+            document.querySelectorAll('[data-reveal]').forEach((el) => targets.add(el));
+            if (!targets.size) return;
+
+            if (!('IntersectionObserver' in window) || window.matchReducedMotion()) {
+                targets.forEach((el) => el.classList.add('revealed'));
+                flushPendingCounts(document);
+                return;
+            }
+
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('revealed');
+                    /* Card terlihat: jalankan count-up & lepaskan gate bar/progress/donut */
+                    flushPendingCounts(entry.target);
+                    io.unobserve(entry.target);
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -32px 0px' });
+
+            targets.forEach((el) => {
+                if (!el.classList.contains('revealed')) io.observe(el);
+            });
+        };
+
+        window.initRalivaReveal();
+        flushReadyQueue();
+    </script>
     @stack('scripts')
 </body>
 </html>

@@ -10,13 +10,20 @@
 <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
     <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Daftar Pesanan Toko</h2>
 
-    <div data-chip-group data-chip-key="status" class="mb-6 flex flex-wrap gap-2">
-        <button type="button" data-chip="semua" class="px-4 py-2 bg-primary text-on-primary font-label-sm text-label-sm uppercase rounded transition-colors">Semua</button>
-        <button type="button" data-chip="baru" class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container-high transition-colors">Baru</button>
-        <button type="button" data-chip="diproses" class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container-high transition-colors">Diproses</button>
-        <button type="button" data-chip="dikirim" class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container-high transition-colors">Dikirim</button>
-        <button type="button" data-chip="selesai" class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container-high transition-colors">Selesai</button>
-        <button type="button" data-chip="dibatalkan" class="px-4 py-2 bg-surface-container-low text-on-surface border border-muted-border font-label-sm text-label-sm uppercase rounded hover:bg-surface-container-high transition-colors">Dibatalkan</button>
+    <div class="mb-6 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
+        <div class="flex items-center gap-2 shrink-0">
+            <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+            <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+        </div>
+        <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
+        <div data-chip-group data-chip-key="status" class="flex flex-wrap gap-2">
+            <button type="button" data-chip="semua" class="px-4 py-2 rounded-lg bg-deep-onyx text-on-primary border border-deep-onyx font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua</button>
+            <button type="button" data-chip="baru" class="px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Baru</button>
+            <button type="button" data-chip="diproses" class="px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Diproses</button>
+            <button type="button" data-chip="dikirim" class="px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Dikirim</button>
+            <button type="button" data-chip="selesai" class="px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Selesai</button>
+            <button type="button" data-chip="dibatalkan" class="px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Dibatalkan</button>
+        </div>
     </div>
 
     <div class="overflow-x-auto">
