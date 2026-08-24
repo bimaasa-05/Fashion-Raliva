@@ -35,6 +35,7 @@
                 ['route' => 'admin.pengiriman', 'icon' => 'local_shipping', 'text' => 'Pengiriman'],
                 ['route' => 'admin.koordinasi-gudang', 'icon' => 'warehouse', 'text' => 'Koordinasi Gudang'],
                 ['route' => 'admin.permintaan-produksi', 'icon' => 'precision_manufacturing', 'text' => 'Permintaan Produksi'],
+                ['route' => 'admin.supplier', 'icon' => 'fact_check', 'text' => 'Data Supplier'],
             ],
         ],
         [

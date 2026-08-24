@@ -48,6 +48,7 @@
             'label' => 'Platform',
             'items' => [
                 ['route' => 'superadmin.promo-platform', 'icon' => 'local_offer', 'text' => 'Promo Platform'],
+                ['route' => 'superadmin.peringkat-iklan', 'icon' => 'campaign', 'text' => 'Peringkat Produk Iklan'],
                 ['route' => 'superadmin.data-bank', 'icon' => 'account_balance', 'text' => 'Data Bank'],
                 ['route' => 'superadmin.kurir', 'icon' => 'moped', 'text' => 'Kurir'],
             ],
