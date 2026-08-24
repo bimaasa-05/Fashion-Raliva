@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
         ]);
+        $middleware->alias([
+            'mock.customer' => \App\Http\Middleware\EnsureMockCustomer::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
