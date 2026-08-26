@@ -74,7 +74,7 @@
                             <td class="p-4 text-on-surface">{{ $row[1] }}</td>
                             <td class="p-4 text-center text-on-surface-variant">{{ $row[2] }}</td>
                             <td class="p-4 text-center font-bold text-error">{{ $row[3] }}</td>
-                            <td class="p-4 text-on-surface">{{ $row[4] }}</td>
+                            <td class="p-4 text-on-surface">{{ $row[4] }}@if(in_array($row[0], ['SR-0008', 'SR-0006']))<span class="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 text-[10px] font-bold uppercase text-gold-accent"><span class="material-symbols-outlined text-[12px]">fact_check</span>Dari {{ ['SR-0008' => 'QC-0009', 'SR-0006' => 'QC-0007'][$row[0]] }}</span>@endif</td>
                             <td class="p-4 text-center text-on-surface-variant whitespace-nowrap">{{ $row[5] }}</td>
                             <td class="p-4 text-center text-on-surface whitespace-nowrap">{{ $row[6] }}</td>
                             <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass[$row[7]] }} text-[10px] font-bold uppercase border">{{ $row[7] }}</span></td>
