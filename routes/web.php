@@ -1,100 +1,102 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SuperAdmin\DashboardController;
-use App\Http\Controllers\SuperAdmin\LaporanController;
-use App\Http\Controllers\SuperAdmin\ManajemenTokoController;
-use App\Http\Controllers\SuperAdmin\RiwayatAktivitasController;
-use App\Http\Controllers\SuperAdmin\KomisiGlobalController;
-use App\Http\Controllers\SuperAdmin\ModerasiProdukController;
-use App\Http\Controllers\SuperAdmin\ManajemenPenggunaController;
-use App\Http\Controllers\SuperAdmin\PermintaanPenarikanController;
-use App\Http\Controllers\SuperAdmin\DataBankController;
-use App\Http\Controllers\SuperAdmin\DataPesananController;
-use App\Http\Controllers\SuperAdmin\DataPembayaranController;
-use App\Http\Controllers\SuperAdmin\PengembalianDanaController;
-use App\Http\Controllers\SuperAdmin\PaketSlotProdukController;
-use App\Http\Controllers\SuperAdmin\PengaturanSistemController;
-use App\Http\Controllers\SuperAdmin\ProfilController;
-use App\Http\Controllers\SuperAdmin\KategoriProdukController;
-use App\Http\Controllers\SuperAdmin\KurirController;
-use App\Http\Controllers\SuperAdmin\PajakBiayaController;
-use App\Http\Controllers\SuperAdmin\PromoPlatformController;
-use App\Http\Controllers\SuperAdmin\KomplainController as SaKomplainController;
-use App\Http\Controllers\SuperAdmin\PengirimanController as SaPengirimanController;
-use App\Http\Controllers\SuperAdmin\StokController as SaStokController;
-use App\Http\Controllers\SuperAdmin\ProduksiController;
-use App\Http\Controllers\SuperAdmin\GudangController;
-use App\Http\Controllers\SuperAdmin\SaldoTokoController;
-use App\Http\Controllers\SuperAdmin\ProdukController;
 use App\Http\Controllers\Admin\DashboardOperasionalController;
-use App\Http\Controllers\Admin\DataPesananController as AdminDataPesananController;
-use App\Http\Controllers\Admin\VerifikasiPembayaranController;
 use App\Http\Controllers\Admin\DataCustomerController;
+use App\Http\Controllers\Admin\DataPesananController as AdminDataPesananController;
 use App\Http\Controllers\Admin\DataProdukController;
-use App\Http\Controllers\Admin\StokController;
-use App\Http\Controllers\Admin\PengirimanController;
-use App\Http\Controllers\Admin\PengembalianDanaController as AdminPengembalianDanaController;
 use App\Http\Controllers\Admin\KomplainController;
-use App\Http\Controllers\Admin\PromoController;
-use App\Http\Controllers\Admin\PermintaanProduksiController;
 use App\Http\Controllers\Admin\KoordinasiGudangController;
-use App\Http\Controllers\Admin\ProfilController as AdminProfilController;
 use App\Http\Controllers\Admin\LaporanController as AdminLaporanController;
+use App\Http\Controllers\Admin\PengembalianDanaController as AdminPengembalianDanaController;
+use App\Http\Controllers\Admin\PengirimanController;
+use App\Http\Controllers\Admin\PermintaanProduksiController;
+use App\Http\Controllers\Admin\ProfilController as AdminProfilController;
+use App\Http\Controllers\Admin\PromoController;
 use App\Http\Controllers\Admin\RiwayatAktivitasController as AdminRiwayatAktivitasController;
-use App\Http\Controllers\Gudang\DashboardController as GudangDashboardController;
-use App\Http\Controllers\Gudang\StokController as GudangStokController;
-use App\Http\Controllers\Gudang\BarangMasukController as GudangBarangMasukController;
+use App\Http\Controllers\Admin\StokController;
+use App\Http\Controllers\Admin\VerifikasiPembayaranController;
 use App\Http\Controllers\Gudang\BarangKeluarController as GudangBarangKeluarController;
-use App\Http\Controllers\Gudang\PemindahanStokController as GudangPemindahanStokController;
-use App\Http\Controllers\Gudang\PemeriksaanStokController as GudangPemeriksaanStokController;
-use App\Http\Controllers\Gudang\StokRusakController as GudangStokRusakController;
-use App\Http\Controllers\Gudang\RiwayatStokController as GudangRiwayatStokController;
+use App\Http\Controllers\Gudang\BarangMasukController as GudangBarangMasukController;
+use App\Http\Controllers\Gudang\DashboardController as GudangDashboardController;
 use App\Http\Controllers\Gudang\NotifikasiController as GudangNotifikasiController;
+use App\Http\Controllers\Gudang\PemeriksaanStokController as GudangPemeriksaanStokController;
+use App\Http\Controllers\Gudang\PemindahanStokController as GudangPemindahanStokController;
 use App\Http\Controllers\Gudang\ProfilController as GudangProfilController;
+use App\Http\Controllers\Gudang\RiwayatStokController as GudangRiwayatStokController;
+use App\Http\Controllers\Gudang\StokController as GudangStokController;
+use App\Http\Controllers\Gudang\StokRusakController as GudangStokRusakController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboardController;
 use App\Http\Controllers\Owner\DataTokoController;
+use App\Http\Controllers\Owner\GudangController as OwnerGudangController;
+use App\Http\Controllers\Owner\KaryawanController;
+use App\Http\Controllers\Owner\KomplainController as OwnerKomplainController;
+use App\Http\Controllers\Owner\LaporanController as OwnerLaporanController;
+use App\Http\Controllers\Owner\ModerasiProdukController as OwnerModerasiProdukController;
+use App\Http\Controllers\Owner\NotifikasiController as OwnerNotifikasiController;
+use App\Http\Controllers\Owner\PaketSlotController;
+use App\Http\Controllers\Owner\PencairanDanaController;
 use App\Http\Controllers\Owner\PengajuanTokoController;
 use App\Http\Controllers\Owner\PengaturanTokoController;
-use App\Http\Controllers\Owner\ProdukController as OwnerProdukController;
-use App\Http\Controllers\Owner\ModerasiProdukController as OwnerModerasiProdukController;
-use App\Http\Controllers\Owner\PaketSlotController;
-use App\Http\Controllers\Owner\PesananController as OwnerPesananController;
-use App\Http\Controllers\Owner\PromoController as OwnerPromoController;
-use App\Http\Controllers\Owner\UlasanController;
-use App\Http\Controllers\Owner\ProduksiController as OwnerProduksiController;
-use App\Http\Controllers\Owner\GudangController as OwnerGudangController;
-use App\Http\Controllers\Owner\PengirimanController as OwnerPengirimanController;
-use App\Http\Controllers\Owner\SaldoController;
-use App\Http\Controllers\Owner\PencairanDanaController;
 use App\Http\Controllers\Owner\PengembalianDanaController as OwnerPengembalianDanaController;
-use App\Http\Controllers\Owner\KomplainController as OwnerKomplainController;
-use App\Http\Controllers\Owner\KaryawanController;
-use App\Http\Controllers\Owner\LaporanController as OwnerLaporanController;
-use App\Http\Controllers\Owner\NotifikasiController as OwnerNotifikasiController;
+use App\Http\Controllers\Owner\PengirimanController as OwnerPengirimanController;
+use App\Http\Controllers\Owner\PesananController as OwnerPesananController;
+use App\Http\Controllers\Owner\ProdukController as OwnerProdukController;
+use App\Http\Controllers\Owner\ProduksiController as OwnerProduksiController;
 use App\Http\Controllers\Owner\ProfilController as OwnerProfilController;
-use App\Http\Controllers\Produksi\DashboardController as ProduksiDashboardController;
-use App\Http\Controllers\Produksi\PermintaanProduksiController as ProduksiPermintaanController;
-use App\Http\Controllers\Produksi\DataProduksiController as ProduksiDataController;
-use App\Http\Controllers\Produksi\PemeriksaanKualitasController as ProduksiPemeriksaanController;
-use App\Http\Controllers\Produksi\ProdukSelesaiController as ProduksiProdukSelesaiController;
-use App\Http\Controllers\Produksi\BarangRusakController as ProduksiBarangRusakController;
+use App\Http\Controllers\Owner\PromoController as OwnerPromoController;
+use App\Http\Controllers\Owner\SaldoController;
+use App\Http\Controllers\Owner\UlasanController;
 use App\Http\Controllers\Produksi\BahanProduksiController as ProduksiBahanController;
-use App\Http\Controllers\Produksi\RiwayatProduksiController as ProduksiRiwayatController;
+use App\Http\Controllers\Produksi\BarangRusakController as ProduksiBarangRusakController;
+use App\Http\Controllers\Produksi\DashboardController as ProduksiDashboardController;
+use App\Http\Controllers\Produksi\DataProduksiController as ProduksiDataController;
 use App\Http\Controllers\Produksi\NotifikasiController as ProduksiNotifikasiController;
+use App\Http\Controllers\Produksi\PemeriksaanKualitasController as ProduksiPemeriksaanController;
+use App\Http\Controllers\Produksi\PermintaanProduksiController as ProduksiPermintaanController;
+use App\Http\Controllers\Produksi\ProdukSelesaiController as ProduksiProdukSelesaiController;
 use App\Http\Controllers\Produksi\ProfilController as ProduksiProfilController;
+use App\Http\Controllers\Produksi\RiwayatProduksiController as ProduksiRiwayatController;
+use App\Http\Controllers\SuperAdmin\DashboardController;
+use App\Http\Controllers\SuperAdmin\DataBankController;
+use App\Http\Controllers\SuperAdmin\DataPembayaranController;
+use App\Http\Controllers\SuperAdmin\DataPesananController;
+use App\Http\Controllers\SuperAdmin\GudangController;
+use App\Http\Controllers\SuperAdmin\KategoriProdukController;
+use App\Http\Controllers\SuperAdmin\KomisiGlobalController;
+use App\Http\Controllers\SuperAdmin\KomplainController as SaKomplainController;
+use App\Http\Controllers\SuperAdmin\KurirController;
+use App\Http\Controllers\SuperAdmin\LaporanController;
+use App\Http\Controllers\SuperAdmin\ManajemenPenggunaController;
+use App\Http\Controllers\SuperAdmin\ManajemenTokoController;
+use App\Http\Controllers\SuperAdmin\ModerasiProdukController;
+use App\Http\Controllers\SuperAdmin\PajakBiayaController;
+use App\Http\Controllers\SuperAdmin\PaketSlotProdukController;
+use App\Http\Controllers\SuperAdmin\PengaturanSistemController;
+use App\Http\Controllers\SuperAdmin\PengembalianDanaController;
+use App\Http\Controllers\SuperAdmin\PengirimanController as SaPengirimanController;
+use App\Http\Controllers\SuperAdmin\PeringkatController;
+use App\Http\Controllers\SuperAdmin\PermintaanPenarikanController;
+use App\Http\Controllers\SuperAdmin\ProdukController;
+use App\Http\Controllers\SuperAdmin\ProduksiController;
+use App\Http\Controllers\SuperAdmin\ProfilController;
+use App\Http\Controllers\SuperAdmin\PromoPlatformController;
+use App\Http\Controllers\SuperAdmin\RiwayatAktivitasController;
+use App\Http\Controllers\SuperAdmin\SaldoTokoController;
+use App\Http\Controllers\SuperAdmin\StokController as SaStokController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-//customer
+// customer
 Route::prefix('customer')->name('customer.')->group(function () {
     Route::get('/login', function () {
         return view('customer.auth.login');
     })->name('login');
 
-    Route::post('/login', function (\Illuminate\Http\Request $request) {
+    Route::post('/login', function (Request $request) {
         $validated = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string|min:1',
@@ -199,7 +201,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
         return view('customer.wishlist.index');
     })->name('wishlist');
 
-    Route::post('/locale', function (\Illuminate\Http\Request $request) {
+    Route::post('/locale', function (Request $request) {
         $validated = $request->validate([
             'locale' => 'required|in:en,id',
         ]);
@@ -226,6 +228,7 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/data-bank', [DataBankController::class, 'index'])->name('data-bank');
     Route::get('/kurir', [KurirController::class, 'index'])->name('kurir');
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
+    Route::get('/peringkat', [PeringkatController::class, 'index'])->name('peringkat');
     Route::get('/riwayat-aktivitas', [RiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
     Route::get('/pengaturan-sistem', [PengaturanSistemController::class, 'index'])->name('pengaturan-sistem');
     Route::get('/profil', [ProfilController::class, 'index'])->name('profil');

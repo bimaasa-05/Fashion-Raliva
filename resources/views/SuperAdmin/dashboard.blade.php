@@ -117,7 +117,11 @@
             <span class="material-symbols-outlined text-gold-accent text-[20px]">emoji_events</span>
         </div>
         <div data-leaderboard='[{"name":"LUNARA Fashion","meta":"892 pesanan • Rating 4.9","display":"Rp 245JT","pct":100},{"name":"NOIRÉ Studio","meta":"412 pesanan • Rating 4.8","display":"Rp 158JT","pct":64},{"name":"KAYANA Apparel","meta":"318 pesanan • Rating 3.2","display":"Rp 121JT","pct":49},{"name":"Velvet Closet","meta":"264 pesanan • Rating 4.6","display":"Rp 98JT","pct":40}]'></div>
-        <a href="{{ route('superadmin.manajemen-toko') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Kelola Semua Toko</a>
+        <div class="flex items-center justify-center gap-6 mt-4 pt-4 border-t border-muted-border">
+            <a href="{{ route('superadmin.peringkat') }}#toko" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
+            <span class="w-px h-4 bg-muted-border"></span>
+            <a href="{{ route('superadmin.manajemen-toko') }}" class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest hover:underline">Kelola Semua Toko</a>
+        </div>
     </section>
 </div>
 
@@ -260,6 +264,7 @@
             <span class="material-symbols-outlined text-gold-accent text-[20px]">category</span>
         </div>
         <div data-leaderboard='[{"name":"Pakaian","meta":"18.420 terjual • 240 toko aktif","display":"Rp 4,2M","pct":100},{"name":"Dress","meta":"9.310 terjual • 186 toko aktif","display":"Rp 2,8M","pct":67},{"name":"Celana","meta":"8.140 terjual • 202 toko aktif","display":"Rp 2,1M","pct":50},{"name":"Aksesori","meta":"6.020 terjual • 154 toko aktif","display":"Rp 1,4M","pct":33}]'></div>
+        <a href="{{ route('superadmin.peringkat') }}#kategori" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
     </section>
 
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
@@ -268,6 +273,7 @@
             <span class="material-symbols-outlined text-gold-accent text-[20px]">military_tech</span>
         </div>
         <div data-leaderboard='[{"name":"Sarah Jenkins","meta":"14 pesanan • Loyal sejak Mar 2025","display":"Rp 12,4JT","pct":100},{"name":"Dewi Lestari","meta":"9 pesanan • Loyal sejak Jan 2026","display":"Rp 8,7JT","pct":70},{"name":"Andi Pratama","meta":"6 pesanan • Loyal sejak Jul 2025","display":"Rp 3,9JT","pct":31},{"name":"Maya Rossi","meta":"5 pesanan • Loyal sejak Des 2025","display":"Rp 3,2JT","pct":26}]'></div>
+        <a href="{{ route('superadmin.peringkat') }}#pelanggan" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
     </section>
 </div>
 

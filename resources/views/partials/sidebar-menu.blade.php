@@ -57,6 +57,7 @@
             'label' => 'Monitoring',
             'items' => [
                 ['route' => 'superadmin.laporan', 'icon' => 'bar_chart', 'text' => 'Laporan'],
+                ['route' => 'superadmin.peringkat', 'icon' => 'leaderboard', 'text' => 'Peringkat'],
                 ['route' => 'superadmin.riwayat-aktivitas', 'icon' => 'history', 'text' => 'Riwayat Aktivitas'],
             ],
         ],
