@@ -19,9 +19,13 @@ class Product extends Model
 
     public const STATUS_DRAFT = 'draft';
 
+    public const STATUS_PENDING = 'pending';
+
     public const STATUS_AKTIF = 'aktif';
 
     public const STATUS_NONAKTIF = 'nonaktif';
+
+    public const STATUS_DITOLAK = 'ditolak';
 
     public const STATUS_ARSIP = 'arsip';
 
@@ -33,6 +37,7 @@ class Product extends Model
         'harga_dasar',
         'tipe_produk',
         'status',
+        'alasan_penolakan',
     ];
 
     public function store(): BelongsTo
