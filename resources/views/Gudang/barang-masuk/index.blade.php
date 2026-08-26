@@ -9,7 +9,7 @@
 @section('content')
 @php
     $rows = [
-        ['BM-0012', 'Produksi', 'PRD-0412', 'Oversized Linen Shirt', 50, '22 Agu 2026 • 08:15', 'Andi Pratama', 'Menunggu Pemeriksaan'],
+        ['BM-0012', 'Produksi', 'FIN-0012', 'Oversized Linen Shirt', 50, '22 Agu 2026 • 08:15', 'Andi Pratama', 'Menunggu Pemeriksaan'],
         ['BM-0011', 'Supplier', 'SUP-2201', 'Silk Scarf', 30, '22 Agu 2026 • 09:02', 'Budi Santoso', 'Selesai'],
         ['BM-0010', 'Produksi', 'PRD-0409', 'Midi Dress Linen', 40, '21 Agu 2026 • 10:44', 'Andi Pratama', 'Diterima'],
         ['BM-0009', 'Gudang Lain', 'PM-0004', 'Hoodie Fleece Premium', 25, '21 Agu 2026 • 13:20', 'Citra Dewi', 'Diterima'],
@@ -83,7 +83,7 @@
                             $sumberKey = str_replace(' ', '-', strtolower($row[1]));
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors" data-table-row data-sumber="{{ $sumberKey }}" data-status="{{ $statusKey }}">
-                            <td class="p-4"><span class="font-bold text-on-surface">{{ $row[0] }}</span><span class="block text-xs text-on-surface-variant mt-0.5">Ref: {{ $row[2] }}</span></td>
+                            <td class="p-4"><span class="font-bold text-on-surface">{{ $row[0] }}</span><span class="block text-xs text-on-surface-variant mt-0.5">Ref: {{ $row[2] }}</span>@if(str_starts_with($row[2], 'FIN'))<span class="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 text-[10px] font-bold uppercase text-gold-accent"><span class="material-symbols-outlined text-[12px]">auto_awesome</span>Otomatis dari Produksi</span>@endif</td>
                             <td class="p-4 text-center">
                                 <span class="inline-flex items-center gap-1.5 text-on-surface">
                                     <span class="material-symbols-outlined text-[16px] text-on-surface-variant">{{ ['Produksi' => 'precision_manufacturing', 'Supplier' => 'local_shipping', 'Gudang Lain' => 'warehouse'][$row[1]] }}</span>
