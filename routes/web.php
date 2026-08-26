@@ -214,7 +214,13 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/manajemen-pengguna', [ManajemenPenggunaController::class, 'index'])->name('manajemen-pengguna');
     Route::get('/manajemen-toko', [ManajemenTokoController::class, 'index'])->name('manajemen-toko');
+    Route::post('/manajemen-toko/{toko}/setujui', [ManajemenTokoController::class, 'setujui'])->name('manajemen-toko.setujui');
+    Route::post('/manajemen-toko/{toko}/tolak', [ManajemenTokoController::class, 'tolak'])->name('manajemen-toko.tolak');
+    Route::post('/manajemen-toko/{toko}/tangguhkan', [ManajemenTokoController::class, 'tangguhkan'])->name('manajemen-toko.tangguhkan');
+    Route::post('/manajemen-toko/{toko}/aktifkan', [ManajemenTokoController::class, 'aktifkan'])->name('manajemen-toko.aktifkan');
     Route::get('/moderasi-produk', [ModerasiProdukController::class, 'index'])->name('moderasi-produk');
+    Route::post('/moderasi-produk/{produk}/setujui', [ModerasiProdukController::class, 'setujui'])->name('moderasi-produk.setujui');
+    Route::post('/moderasi-produk/{produk}/tolak', [ModerasiProdukController::class, 'tolak'])->name('moderasi-produk.tolak');
     Route::get('/kategori-produk', [KategoriProdukController::class, 'index'])->name('kategori-produk');
     Route::get('/paket-slot-produk', [PaketSlotProdukController::class, 'index'])->name('paket-slot-produk');
     Route::get('/data-pesanan', [DataPesananController::class, 'index'])->name('data-pesanan');
