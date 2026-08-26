@@ -255,12 +255,18 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardOperasionalController::class, 'index'])->name('dashboard');
     Route::get('/pesanan', [AdminDataPesananController::class, 'index'])->name('pesanan');
+    Route::post('/pesanan/{pesanan}/proses', [AdminDataPesananController::class, 'proses'])->name('pesanan.proses');
+    Route::post('/pesanan/{pesanan}/batalkan', [AdminDataPesananController::class, 'batalkan'])->name('pesanan.batalkan');
     Route::get('/verifikasi-pembayaran', [VerifikasiPembayaranController::class, 'index'])->name('verifikasi-pembayaran');
+    Route::post('/verifikasi-pembayaran/{pembayaran}/setujui', [VerifikasiPembayaranController::class, 'setujui'])->name('verifikasi-pembayaran.setujui');
+    Route::post('/verifikasi-pembayaran/{pembayaran}/tolak', [VerifikasiPembayaranController::class, 'tolak'])->name('verifikasi-pembayaran.tolak');
     Route::get('/customer', [DataCustomerController::class, 'index'])->name('customer');
     Route::get('/produk', [DataProdukController::class, 'index'])->name('produk');
     Route::get('/supplier', fn () => view('Admin.supplier.supplier'))->name('supplier');
     Route::get('/stok', [StokController::class, 'index'])->name('stok');
     Route::get('/pengiriman', [PengirimanController::class, 'index'])->name('pengiriman');
+    Route::post('/pengiriman/{pesanan}/resi', [PengirimanController::class, 'simpanResi'])->name('pengiriman.resi');
+    Route::post('/pengiriman/{pengiriman}/kirim', [PengirimanController::class, 'kirim'])->name('pengiriman.kirim');
     Route::get('/pengembalian-dana', [AdminPengembalianDanaController::class, 'index'])->name('pengembalian-dana');
     Route::get('/komplain', [KomplainController::class, 'index'])->name('komplain');
     Route::get('/promo', [PromoController::class, 'index'])->name('promo');
