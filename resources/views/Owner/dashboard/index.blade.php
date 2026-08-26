@@ -189,8 +189,8 @@
                     </div>
                 </li>
             </ul>
-            <a href="{{ route('owner.paket-slot') }}" class="mt-6 w-full flex items-center justify-center gap-2 py-3 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
-                Kelola Slot Produk<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+            <a href="{{ route('owner.kelola-slot') }}" class="mt-6 w-full flex items-center justify-center gap-2 py-3 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
+                Kelola Slot<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
             </a>
         </section>
     </div>
