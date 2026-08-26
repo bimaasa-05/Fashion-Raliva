@@ -87,7 +87,7 @@
 
             <p class="raliva-label mt-7 mb-4">Hak Akses Owner</p>
             <div class="flex flex-wrap gap-2">
-                @foreach ([['storefront', 'Kelola Data Toko'], ['fact_check', 'Pengajuan & Verifikasi'], ['checkroom', 'Kelola Produk'], ['shopping_bag', 'Pantau Pesanan'], ['groups', 'Kelola Karyawan'], ['local_offer', 'Promo Toko'], ['warehouse', 'Gudang'], ['account_balance_wallet', 'Saldo & Pencairan'], ['monitoring', 'Laporan Toko'], ['tune', 'Pengaturan Toko']] as $perm)
+                @foreach ([['storefront', 'Kelola Data Toko'], ['fact_check', 'Pengajuan & Verifikasi'], ['storage', 'Kelola Slot'], ['shopping_bag', 'Pantau Pesanan'], ['groups', 'Data Pelanggan'], ['local_offer', 'Promo Toko'], ['account_balance_wallet', 'Saldo & Pencairan'], ['monitoring', 'Laporan Toko'], ['tune', 'Pengaturan Toko']] as $perm)
                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low border border-muted-border text-on-surface-variant font-label-sm text-[11px]">
                         <span class="material-symbols-outlined text-[14px] text-secondary">{{ $perm[0] }}</span>
                         {{ $perm[1] }}
