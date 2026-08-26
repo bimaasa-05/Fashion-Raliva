@@ -24,6 +24,10 @@ class Setting extends Model
 
     public const MODE_MAINTENANCE = 'mode_maintenance';
 
+    public const SYARAT_KETENTUAN = 'syarat_ketentuan';
+
+    public const KEBIJAKAN_PRIVASI = 'kebijakan_privasi';
+
     protected $fillable = [
         'kunci',
         'nilai',

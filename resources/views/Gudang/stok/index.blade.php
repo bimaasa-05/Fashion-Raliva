@@ -119,6 +119,7 @@
                             <td class="p-4 text-center text-on-surface-variant">{{ $product[3] }}</td>
                             <td class="p-4 text-center font-bold {{ $stockClass }}">{{ $product[4] }}</td>
                             <td class="p-4 text-center text-on-surface-variant">{{ $product[5] }}</td>
+                            <td class="p-4 text-right font-title-md text-sm text-on-surface whitespace-nowrap">Rp {{ number_format($product[10], 0, ',', '.') }}</td>
                             <td class="p-4 text-right font-bold text-on-surface-variant whitespace-nowrap">{{ $product[6] }}</td>
                             <td class="p-4 text-right font-bold text-gold-accent whitespace-nowrap">{{ $product[7] }}</td>
                             <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass }} text-[10px] font-bold uppercase border">{{ $product[8] }}</span></td>
@@ -199,6 +200,16 @@
                     <div class="bg-secondary-container/10 border border-secondary/20 rounded-lg p-4">
                         <p class="raliva-label">Harga Jual</p>
                         <p class="font-title-md text-lg text-gold-accent mt-1">{{ $product[7] }}</p>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-r from-gold-accent/10 to-transparent border border-gold-accent/25 rounded-lg p-4 mb-6 flex items-center justify-between gap-3">
+                    <div>
+                        <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Harga Satuan</p>
+                        <p class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent leading-tight">Rp {{ number_format($product[10], 0, ',', '.') }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Nilai Persediaan</p>
+                        <p class="font-title-md text-title-md text-on-surface">Rp {{ number_format($product[10] * $product[4], 0, ',', '.') }}</p>
                     </div>
                 </div>
                 <dl class="space-y-4 font-body-md text-sm">

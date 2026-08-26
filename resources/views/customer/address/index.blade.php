@@ -325,28 +325,6 @@
 </div>
 </main>
 <!-- Bottom Navigation Bar -->
-<nav class="md:hidden bg-[var(--chrome-bg)] text-[var(--chrome-text)] font-label-sm text-label-sm fixed bottom-0 w-full z-50 border-t border-[var(--chrome-border)] shadow-sm flex justify-around items-center h-[72px] px-xs pb-safe">
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16" href="{{ route('customer.home') }}">
-<span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">home</span>
-<span class="truncate w-full text-center">{{ __('Home') }}</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">shopping_bag</span>
-<span class="truncate w-full text-center">{{ __('Shop') }}</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
-<span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">favorite</span>
-<span class="truncate w-full text-center">{{ __('Wishlist') }}</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors group w-16 relative" href="{{ route('customer.chart') }}">
-<span class="material-symbols-outlined mb-1 group-hover:scale-110 transition-transform text-[24px]">shopping_cart</span>
-<span class="truncate w-full text-center">{{ __('Cart') }}</span>
-<span class="absolute top-0 right-2 w-2 h-2 bg-secondary-fixed-dim rounded-full"></span>
-</a>
-<a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] hover:text-secondary transition-colors scale-95 transition-transform group w-16" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
-<span class="material-symbols-outlined mb-1 text-[24px]" style="font-variation-settings: 'FILL' 1;">person</span>
-<span class="truncate w-full text-center font-medium">{{ __('Account') }}</span>
-</a>
-</nav>
+@include('customer._partials.bottom-nav')
 @include('customer._partials.drawer')
 </body></html>

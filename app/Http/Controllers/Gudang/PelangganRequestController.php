@@ -8,6 +8,6 @@ class PelangganRequestController extends Controller
 {
     public function index()
     {
-        return view('Gudang.pelanggan-request.index');
+        return view('Gudang.request-pelanggan.pelanggan-request');
     }
 }
