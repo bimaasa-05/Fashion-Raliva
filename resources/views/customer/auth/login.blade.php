@@ -253,6 +253,21 @@
     html.theme-dark .atl-eye { stroke: #ffffff; stroke-opacity: .14; }
     html.theme-dark .atl-thread { stroke: #ffffff; stroke-opacity: .14; }
     html.theme-dark .atl-threadflow { stroke: #A32626; stroke-opacity: .45; }
+    /* ============ REMEMBER ME CHECKBOX ============ */
+    #remember {
+        border-radius: 4px;
+        transition: border-color .2s ease, background-color .2s ease;
+    }
+    #remember:hover:not(:checked) { border-color: #8B1E1E; }
+    #remember:checked {
+        background-color: #8B1E1E !important;
+        border-color: #8B1E1E !important;
+    }
+    #remember:focus-visible { box-shadow: 0 0 0 3px rgba(139,30,30,.3); }
+    html.theme-dark #remember {
+        border-color: #3a3937;
+        background-color: #201f1e;
+    }
 </style>
 <style>
     /* ============ GOLD BUTTON + LIGHT FLASH ============ */
@@ -357,8 +372,12 @@
 </div>
 <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="password-error">{{ __('Password is required.') }}</p>
 </div>
-<!-- Forgot Password -->
-<div class="flex justify-end">
+<!-- Remember Me + Forgot Password -->
+<div class="flex items-center justify-between">
+<label class="flex items-center gap-sm cursor-pointer">
+<input class="w-4 h-4 shrink-0 cursor-pointer" id="remember" name="remember" type="checkbox"/>
+<span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Remember Me') }}</span>
+</label>
 <a class="font-label-sm text-label-sm text-secondary hover:opacity-80 transition-opacity" href="{{ route('customer.forgot-password') }}">{{ __('Forgot Password?') }}</a>
 </div>
 <!-- Submit -->
