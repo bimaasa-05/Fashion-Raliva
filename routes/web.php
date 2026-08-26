@@ -218,6 +218,9 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::post('/moderasi-produk/{produk}/setujui', [ModerasiProdukController::class, 'setujui'])->name('moderasi-produk.setujui');
     Route::post('/moderasi-produk/{produk}/tolak', [ModerasiProdukController::class, 'tolak'])->name('moderasi-produk.tolak');
     Route::get('/kategori-produk', [KategoriProdukController::class, 'index'])->name('kategori-produk');
+    Route::post('/kategori-produk', [KategoriProdukController::class, 'store'])->name('kategori-produk.store');
+    Route::post('/kategori-produk/{kategori}/update', [KategoriProdukController::class, 'update'])->name('kategori-produk.update');
+    Route::post('/kategori-produk/{kategori}/hapus', [KategoriProdukController::class, 'hapus'])->name('kategori-produk.hapus');
     Route::get('/paket-slot-produk', [PaketSlotProdukController::class, 'index'])->name('paket-slot-produk');
     Route::get('/data-pesanan', [DataPesananController::class, 'index'])->name('data-pesanan');
     Route::get('/data-pembayaran', [DataPembayaranController::class, 'index'])->name('data-pembayaran');
