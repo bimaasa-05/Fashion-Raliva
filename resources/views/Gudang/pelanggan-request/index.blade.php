@@ -81,6 +81,8 @@
                     <option value="cek">Menunggu Cek</option>
                     <option value="tersedia">Tersedia</option>
                     <option value="produksi">Diteruskan Produksi</option>
+                    <option value="siap">Siap Ambil/Kirim</option>
+                    <option value="selesai">Selesai</option>
                     <option value="kosong">Tidak Tersedia</option>
                 </select>
             </div>
@@ -109,6 +111,8 @@
                         ['kode' => 'REQ-0078', 'tgl' => '20 Agu 2026', 'cust' => 'Rina Wulandari', 'jenis' => 'Produk Tetap', 'jkey' => 'tetap', 'produk' => 'Silk Scarf Monogram', 'bahan' => '—', 'hpp' => 'Rp 95.000', 'total' => 'Rp 259.000', 'status' => 'Tidak Tersedia', 'skey' => 'kosong'],
                         ['kode' => 'REQ-0077', 'tgl' => '20 Agu 2026', 'cust' => 'Andi Gunawan', 'jenis' => 'Custom', 'jkey' => 'custom', 'produk' => 'Celana Custom Slim', 'bahan' => 'Katun Drill + Kancing Tanduk', 'hpp' => 'Rp 210.000', 'total' => 'Rp 385.000', 'status' => 'Menunggu Cek', 'skey' => 'cek'],
                         ['kode' => 'REQ-0076', 'tgl' => '19 Agu 2026', 'cust' => 'Maya Sari', 'jenis' => 'Produk Tetap', 'jkey' => 'tetap', 'produk' => 'Wide Leg Trousers', 'bahan' => '—', 'hpp' => 'Rp 185.000', 'total' => 'Rp 320.000', 'status' => 'Tersedia', 'skey' => 'tersedia'],
+                        ['kode' => 'REQ-0075', 'tgl' => '14 Agu 2026', 'cust' => 'Dian Pratiwi', 'jenis' => 'Custom', 'jkey' => 'custom', 'produk' => 'Dress Pesta Custom', 'bahan' => 'Sutra Grade A + Payet', 'hpp' => 'Rp 680.000', 'total' => 'Rp 1.200.000', 'status' => 'Siap Ambil', 'skey' => 'siap'],
+                        ['kode' => 'REQ-0074', 'tgl' => '10 Agu 2026', 'cust' => 'Budi Santoso', 'jenis' => 'Produk Tetap', 'jkey' => 'tetap', 'produk' => 'Kemeja Linen Oversized', 'bahan' => '—', 'hpp' => 'Rp 180.000', 'total' => 'Rp 289.000', 'status' => 'Selesai', 'skey' => 'selesai'],
                     ] as $row)
                         <tr data-table-row data-jenis="{{ $row['jkey'] }}" data-status-request="{{ $row['skey'] }}" class="border-b border-muted-border last:border-0 align-top">
                             <td class="py-3.5 px-4">
@@ -128,6 +132,10 @@
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Tersedia</span>
                                 @elseif ($row['skey'] === 'produksi')
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Ke Produksi</span>
+                                @elseif ($row['skey'] === 'siap')
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-deep-onyx text-on-primary text-[10px] font-bold uppercase"><span class="material-symbols-outlined fill text-[12px]">local_shipping</span>Siap Ambil</span>
+                                @elseif ($row['skey'] === 'selesai')
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20"><span class="material-symbols-outlined fill text-[12px]">task_alt</span>Selesai</span>
                                 @elseif ($row['skey'] === 'kosong')
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Kosong</span>
                                 @else
