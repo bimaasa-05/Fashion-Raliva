@@ -42,7 +42,7 @@
             <a href="{{ route('owner.laporan') }}" class="flex items-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">
                 <span class="material-symbols-outlined text-[16px]">monitoring</span>Laporan
             </a>
-            <a href="{{ route('owner.pencairan-dana') }}" class="flex items-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">
+            <a href="{{ route('owner.saldo') }}#pencairan" class="flex items-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">
                 <span class="material-symbols-outlined text-[16px]">payments</span>Cairkan Dana
             </a>
         </div>
