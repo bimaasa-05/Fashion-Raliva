@@ -14,7 +14,6 @@
                 ['route' => 'gudang.barang-keluar', 'icon' => 'unarchive', 'text' => 'Barang Keluar'],
                 ['route' => 'gudang.pemindahan', 'icon' => 'swap_horiz', 'text' => 'Pemindahan Stok'],
                 ['route' => 'gudang.pemeriksaan', 'icon' => 'fact_check', 'text' => 'Pemeriksaan Stok'],
-                ['route' => 'gudang.pelanggan-request', 'icon' => 'stylus_note', 'text' => 'Permintaan Kustom'],
                 ['route' => 'gudang.stok-rusak', 'icon' => 'report', 'text' => 'Stok Rusak'],
                 ['route' => 'gudang.riwayat-stok', 'icon' => 'history', 'text' => 'Riwayat Stok'],
             ],
@@ -47,7 +46,7 @@
         @endphp
         <div class="space-y-1 {{ $loop->first ? '' : 'pt-4' }}">
             @if ($collapsible)
-                <button type="button" data-sidebar-group-button class="w-full flex items-center justify-between px-2 py-2 text-[10px] font-label-sm uppercase tracking-widest text-gold-accent/70 hover:text-gold-accent transition-colors">
+                <button type="button" data-sidebar-group-button aria-expanded="{{ $isActive ? 'true' : 'false' }}" class="w-full flex items-center justify-between px-2 py-2 text-[10px] font-label-sm uppercase tracking-widest text-gold-accent/70 hover:text-gold-accent transition-colors">
                     <span data-group-label>{{ $group['label'] }}</span>
                     <span class="material-symbols-outlined text-[18px] transition-transform duration-200 {{ $isActive ? 'rotate-180' : '' }}">keyboard_arrow_down</span>
                 </button>
