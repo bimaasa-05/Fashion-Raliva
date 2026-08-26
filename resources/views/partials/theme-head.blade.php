@@ -273,5 +273,49 @@
         .page-enter { animation: pageEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
         .rise { opacity: 0; animation: riseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
     }
+
+    /* ===== Sidebar mini (collapse) — semua role ===== */
+    #sidebar .sidebar-scroll { overflow-x: hidden; touch-action: pan-y; overscroll-behavior-x: none; }
+    #sidebar [data-menu-label], #sidebar [data-group-label] { -webkit-user-select: none; user-select: none; }
+    #sidebar a, #sidebar .material-symbols-outlined { -webkit-user-drag: none; }
+
+    /* Tooltip di-render global via JS (bebas terpotong overflow nav) */
+    #sidebar .sidebar-tip { display: none !important; }
+    #sidebar-tip-global {
+        position: fixed;
+        transform: translateY(-50%) translateX(-4px);
+        white-space: nowrap;
+        padding: 6px 10px;
+        border-radius: 8px;
+        background: #1b1c1c;
+        color: #ffffff;
+        font-family: 'Manrope', sans-serif;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        border: 1px solid rgba(201, 162, 77, .45);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, .28);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .18s ease-out, transform .18s ease-out;
+        z-index: 70;
+    }
+    #sidebar-tip-global.visible { opacity: 1; transform: translateY(-50%) translateX(0); }
+    .dark #sidebar-tip-global { background: #F0EEEE; color: #111111; }
+
+    #sidebar.sidebar-collapsed { width: 4.75rem; padding-left: .5rem; padding-right: .5rem; }
+    #sidebar.sidebar-collapsed [data-sidebar-text],
+    #sidebar.sidebar-collapsed [data-menu-label],
+    #sidebar.sidebar-collapsed [data-group-label] { display: none !important; }
+    #sidebar.sidebar-collapsed [data-sidebar-group-button] { display: none !important; }
+    #sidebar.sidebar-collapsed .sidebar-head { flex-direction: column; gap: .75rem; }
+    #sidebar.sidebar-collapsed nav a { justify-content: center; gap: 0; padding-left: 0; padding-right: 0; margin-right: 0; }
+    #sidebar.sidebar-collapsed nav a > .material-symbols-outlined:first-child { margin-right: 0; }
+    #sidebar.sidebar-collapsed .sidebar-collapse-btn { justify-content: center; }
+    #sidebar.sidebar-collapsed .sidebar-collapse-btn .icon-chevron { transform: rotate(180deg); }
+
+    /* Overlay modal tidak boleh terbawa margin flow (mis. dari parent space-y-*) */
+    [data-modal] { margin: 0 !important; }
 </style>
 @stack('styles')

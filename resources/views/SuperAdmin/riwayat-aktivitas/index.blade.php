@@ -23,15 +23,21 @@
 
 <!-- Filters -->
 <div class="mb-8">
-    <div class="flex overflow-x-auto filter-scroll pb-2 -mx-gutter px-gutter md:mx-0 md:px-0 space-x-4">
-        <button type="button" data-aktifitas-tab="semua" class="whitespace-nowrap px-4 py-2 border-b-2 border-primary text-on-surface font-label-sm text-label-sm uppercase transition-colors">Semua Aktivitas</button>
-        <button type="button" data-aktifitas-tab="pengguna" class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Pengguna</button>
-        <button type="button" data-aktifitas-tab="toko" class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Toko</button>
-        <button type="button" data-aktifitas-tab="produk" class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Produk</button>
-        <button type="button" data-aktifitas-tab="keuangan" class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Keuangan</button>
-        <button type="button" data-aktifitas-tab="sistem" class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Sistem</button>
+    <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+            <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Kategori</span>
+        </div>
+        <div class="flex overflow-x-auto filter-scroll pb-2 -mx-gutter px-gutter md:mx-0 md:px-0 space-x-4">
+            <button type="button" data-aktifitas-tab="semua" class="whitespace-nowrap px-4 py-2 border-b-2 border-primary text-on-surface font-label-sm text-label-sm uppercase transition-colors">Semua Aktivitas</button>
+            <button type="button" data-aktifitas-tab="pengguna" class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Pengguna</button>
+            <button type="button" data-aktifitas-tab="toko" class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Toko</button>
+            <button type="button" data-aktifitas-tab="produk" class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Produk</button>
+            <button type="button" data-aktifitas-tab="keuangan" class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Keuangan</button>
+            <button type="button" data-aktifitas-tab="sistem" class="whitespace-nowrap px-4 py-2 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase transition-colors">Sistem</button>
+        </div>
+        <div class="h-[1px] w-full bg-muted-border -mt-[1px]"></div>
     </div>
-    <div class="h-[1px] w-full bg-muted-border -mt-[1px]"></div>
 </div>
 
 <!-- Timeline -->

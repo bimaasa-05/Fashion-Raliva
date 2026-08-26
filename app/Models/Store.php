@@ -28,6 +28,7 @@ class Store extends Model
         'alamat',
         'nomor_telepon',
         'status',
+        'alasan_penolakan',
     ];
 
     public function owner(): BelongsTo

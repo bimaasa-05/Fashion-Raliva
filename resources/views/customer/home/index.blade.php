@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html class="light" lang="en"><head>
+<html class="light" lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>RALIVA - {{ __('The Art of Everyday Dressing') }}</title>
@@ -203,10 +203,10 @@
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
   </head>
-<body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0">
+<body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)] flat no shadows">
-<button class="hover:opacity-80 transition-opacity" onclick="openDrawer()" type="button">
+<header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)] flat no shadows">
+<button class="hover:opacity-80 transition-opacity lg:hidden" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
@@ -305,9 +305,9 @@
 <div class="px-container-margin mb-md">
 <h3 class="font-title-md text-title-md text-on-surface">{{ __('Featured Stores') }}</h3>
 </div>
-<div class="flex overflow-x-auto no-scrollbar pl-container-margin pr-container-margin gap-md pb-xs">
+<div class="flex overflow-x-auto no-scrollbar lg:grid lg:grid-cols-4 lg:overflow-visible pl-container-margin pr-container-margin gap-md pb-xs">
 <!-- Store 1 -->
-<a href="{{ route('customer.shop.store-detail', 1) }}" class="shrink-0 w-64 cursor-pointer group">
+<a href="{{ route('customer.shop.store-detail', 1) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
 <img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A minimalist architectural photograph of a high-end fashion boutique exterior named Lunara Fashion. The storefront features expansive glass windows, stark white walls, and a beautifully curated display of single garments bathed in warm, soft sunlight. The composition is clean, airy, and extremely premium, perfectly fitting a light-mode luxury marketplace theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATiKrXBx3vVfoNsTu1_JuFvfVqHhF9A63yLIFGC0hF5MVVUZB6Nu-eyjEa5IxqGiEpPzawhFtGfTAatsc-_9Pwi9D9AsVEO7TOOEszevnRdatfxPYIK7ZAvB0-Aa3R8CSQPOhV3EN9w5_S8sCYYX8NCMlAs_gD3RYhAkt91QyBdC8bmQs-v4yGHXrAH2KKGIPWNoi7jJqivQtsOliueGluswaKxAgwLxl1rh_aTfA_gB_LTeqw8oU"/>
 </div>
@@ -315,7 +315,7 @@
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Modern feminine silhouettes.') }}</p>
 </a>
 <!-- Store 2 -->
-<a href="{{ route('customer.shop.store-detail', 2) }}" class="shrink-0 w-64 cursor-pointer group">
+<a href="{{ route('customer.shop.store-detail', 2) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
 <img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A sleek, monochromatic photograph of a minimalist fashion studio interior for Noiré Studio. The space features polished concrete floors, austere black metal clothing racks holding sharply tailored suits, and bright, diffuse natural light streaming from large skylights. The aesthetic is extremely sophisticated, stark, and appropriate for a high-end luxury editorial context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGwknduyLPGxjMRvTx7tN4JeGs-9IICVVEqumRS28Y9jTBxPfkTa9uV98aPjekXCG1uLxayAYmBwFZIIf73qfeWOcTQ6jI97GOQBVdIzBaAZhTlYEO8RKF_NsqCMXssspqoctKzP8RpOHtJI_bw-qZI1QF_fn1OH80mwa6ht1vSJY8vkFSZq_OBTROdz1TubDt_Y_Ax7quip7t8HNO7TkKNnLYOEFLbmjlpYvis2wIP6LJwYtpaNo"/>
 </div>
@@ -323,7 +323,7 @@
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Tailored, stark minimalism.') }}</p>
 </a>
 <!-- Store 3 -->
-<a href="{{ route('customer.shop.store-detail', 3) }}" class="shrink-0 w-64 cursor-pointer group">
+<a href="{{ route('customer.shop.store-detail', 3) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
 <img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A bright, airy lifestyle shot representing Kayana Apparel. A minimalist wooden hanger displays a flowy, natural-fiber linen shirt against a plain, textured plaster wall. Sunbeams cut across the composition, creating harsh, dramatic shadows that add depth and a modern, organic, luxury feel to the light-mode UI design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSCazvaWZuccedNS2ILQbkHUJlNvuZ7i1_N2EHvjuBbo7CLD3CW8iHh-xOfNuHEsio3RxsEYKR2jEnuEUUOg9R7Xza1li0VetG6_yfhRrJs3dSULL6lG6fVDPX4qijbhNAokLUQ8tn673XhAZ-l8Vx3WZDIaxtdNLAHriglRfoPt6xRPff_qYINXAgslwYqW_xSQsAbEn2mjrBLNDh6NTT4t86gs2BbXDST-ewDyDYcbA5FZIEMUM"/>
 </div>
@@ -331,7 +331,7 @@
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Organic textures and flow.') }}</p>
 </a>
 <!-- Store 4 -->
-<a href="{{ route('customer.shop.store-detail', 4) }}" class="shrink-0 w-64 cursor-pointer group">
+<a href="{{ route('customer.shop.store-detail', 4) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
 <img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A highly curated, still-life editorial photograph of accessories for Maëva House. A selection of minimalist silver jewelry and small leather goods rests on varying levels of pristine white ceramic blocks. The lighting is incredibly soft and high-key, ensuring the focus remains on the high quality and craftsmanship of the items in a luxury, light-mode setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBces6Xx741Ae5cYEDlbS_pgcHXZ9vEiOAGb5jvlBttKDyIRgUl6PUSDzKjI9nXu8X8Zb-RxuuplZY4dbVXDDBRqOVusLCAlczBCFDMM9qeGCl18jyL9AKeYbo_KYUolJQ-tUyLZ6kLqZFaQ2yKWY0Gs6ucQPlMm57RTWXBipH9At2Nbp1nWNEZDCqkafxCVNpFOE3MSCOi3nOPMbtk9_6tU4iBkCexkl7qGGFlVexn74kqDcVgzRc"/>
 </div>
@@ -344,11 +344,11 @@
 <section class="py-xl px-container-margin flex flex-col items-center text-center border-b border-outline-variant">
 <h3 class="font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Be the first to know') }}</h3>
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-md max-w-md">{{ __('Subscribe to our newsletter for exclusive collections and editorial insights.') }}</p>
-<form class="w-full max-w-sm flex flex-col gap-sm">
-<div class="relative w-full border-b border-on-surface pb-1">
+<form class="w-full max-w-sm lg:max-w-lg flex flex-col lg:flex-row gap-sm">
+<div class="relative w-full border-b border-on-surface pb-1 lg:flex-1">
 <input class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant" placeholder="{{ __('Email Address') }}" type="email"/>
 </div>
-<button class="w-full bg-primary text-on-primary font-label-caps text-label-caps py-sm uppercase tracking-widest hover:opacity-90 transition-opacity mt-sm" type="button">{{ __('SUBSCRIBE') }}</button>
+<button class="w-full lg:w-auto bg-primary text-on-primary font-label-caps text-label-caps py-sm lg:px-xl uppercase tracking-widest hover:opacity-90 transition-opacity mt-sm lg:mt-0" type="button">{{ __('SUBSCRIBE') }}</button>
 </form>
 </section>
 </main>

@@ -39,7 +39,12 @@
     </section>
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 md:p-6 card-premium">
-        <div class="flex flex-col lg:flex-row lg:items-center gap-gutter mb-6">
+        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 mb-6">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter & Pencarian</span>
+            </div>
+            <div class="flex flex-col lg:flex-row lg:items-center gap-gutter">
             <div class="relative flex-1 min-w-0">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                 <input type="text" data-table-search placeholder="Cari nomor atau produk..." class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-10 pr-4 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent transition-colors" />
@@ -54,6 +59,7 @@
                 <span class="material-symbols-outlined text-[16px]">add</span>
                 Pemeriksaan Baru
             </button>
+        </div>
         </div>
 
         <div data-table-wrap class="overflow-x-auto">

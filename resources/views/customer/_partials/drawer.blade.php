@@ -30,8 +30,8 @@
         font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
 </style>
-<div id="drawer-overlay" class="fixed inset-0 bg-black/50 z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="closeDrawer()"></div>
-<aside id="drawer-panel" class="fixed top-0 left-0 h-full w-72 max-w-[85%] bg-[var(--chrome-bg)] text-[var(--chrome-text)] z-[70] -translate-x-full transition-transform duration-300 flex flex-col shadow-xl">
+<div id="drawer-overlay" class="fixed inset-0 bg-black/50 z-[60] opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden" onclick="closeDrawer()"></div>
+<aside id="drawer-panel" class="fixed top-0 left-0 h-full w-72 max-w-[85%] bg-[var(--chrome-bg)] text-[var(--chrome-text)] z-[70] -translate-x-full transition-transform duration-300 flex flex-col shadow-xl lg:translate-x-0 lg:max-w-full lg:shadow-none lg:border-r lg:border-[var(--chrome-border)]">
 <div class="flex justify-between items-start px-md pt-md pb-sm border-b border-[var(--chrome-border)] shrink-0">
 <div>
 <h2 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h2>
@@ -41,7 +41,7 @@
 <button aria-label="Toggle theme" class="w-9 h-9 rounded-full hover:bg-[var(--chrome-hover)] flex items-center justify-center transition-colors" onclick="toggleTheme()" type="button">
 <span class="material-symbols-outlined" data-icon="dark_mode" id="theme-icon">dark_mode</span>
 </button>
-<button aria-label="Close menu" class="w-9 h-9 rounded-full hover:bg-[var(--chrome-hover)] flex items-center justify-center transition-colors" onclick="closeDrawer()" type="button">
+<button aria-label="Close menu" class="w-9 h-9 rounded-full hover:bg-[var(--chrome-hover)] flex items-center justify-center transition-colors lg:hidden" onclick="closeDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="close">close</span>
 </button>
 </div>

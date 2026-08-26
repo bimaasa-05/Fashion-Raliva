@@ -39,10 +39,16 @@
 
 <div data-real class="hidden space-y-section-gap">
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 md:p-6 card-premium">
-        <div class="flex flex-wrap gap-2 mb-6" id="notif-chips">
-            @foreach ($chips as $chip)
-                <button type="button" data-chip="{{ $chip[0] }}" class="{{ $loop->first ? 'bg-deep-onyx text-on-primary border-deep-onyx' : 'border-muted-border text-on-surface-variant hover:text-on-surface hover:border-gold-accent' }} px-4 py-2 rounded-full border font-label-sm text-[11px] uppercase tracking-wide transition-colors">{{ $chip[1] }}</button>
-            @endforeach
+        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 mb-6" id="notif-chips">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Notifikasi</span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                @foreach ($chips as $chip)
+                    <button type="button" data-chip="{{ $chip[0] }}" class="{{ $loop->first ? 'bg-deep-onyx text-on-primary border-deep-onyx' : 'border-muted-border text-on-surface-variant hover:text-on-surface hover:border-gold-accent' }} px-4 py-2 rounded-full border font-label-sm text-[11px] uppercase tracking-wide transition-colors">{{ $chip[1] }}</button>
+                @endforeach
+            </div>
         </div>
 
         <div class="flex items-center justify-between gap-4 pb-4 mb-2 border-b border-muted-border">

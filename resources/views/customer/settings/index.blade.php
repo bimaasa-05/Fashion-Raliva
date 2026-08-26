@@ -196,9 +196,9 @@
 
 </style>
   </head>
-<body class="bg-surface text-on-surface antialiased font-body-lg">
+<body class="bg-surface text-on-surface antialiased font-body-lg lg:pl-72">
 <!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
+<header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
 <a href="{{ route('customer.account') }}" aria-label="Back" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
@@ -286,4 +286,5 @@
             if (cb) cb.checked = document.documentElement.classList.contains('theme-dark');
         })();
     </script>
+@include('customer._partials.drawer')
 </body></html>

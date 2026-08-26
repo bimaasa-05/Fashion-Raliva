@@ -219,7 +219,9 @@
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Welcome Back') }}</h2>
 <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('Sign in to continue your RALIVA experience.') }}</p>
 </div>
-<form id="login-form" novalidate>
+<form id="login-form" novalidate method="POST" action="{{ route('customer.login.store') }}">
+@csrf
+<input name="redirect" type="hidden" value="{{ request('redirect') }}"/>
 <!-- Email -->
 <div class="mb-md">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">{{ __('Email') }}</label>
@@ -276,7 +278,6 @@
         }
 
         document.getElementById('login-form').addEventListener('submit', function (e) {
-            e.preventDefault();
             var email = document.getElementById('email').value.trim();
             var password = document.getElementById('password').value;
             var valid = true;
@@ -292,19 +293,14 @@
                 setError('password-error', true);
                 valid = false;
             }
-            if (!valid) return;
+            if (!valid) {
+                e.preventDefault();
+                return;
+            }
 
             var btn = document.getElementById('login-btn');
             btn.disabled = true;
             document.getElementById('login-spinner').classList.remove('hidden');
-
-            setTimeout(function () {
-                if (redirectParam && redirectParam.indexOf('/customer') !== -1) {
-                    window.location.href = redirectParam;
-                } else {
-                    window.location.href = '{{ route('customer.home') }}';
-                }
-            }, 800);
         });
     </script>
 <script>

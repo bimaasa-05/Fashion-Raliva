@@ -14,29 +14,19 @@
 
 @section('content')
 <div class="space-y-section-gap">
-    <!-- Add Category Form Card -->
-    <section class="space-y-gutter">
-        <div class="flex justify-between items-center">
-            <div class="flex items-center gap-3"><div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">category</span></div><h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Tambah Kategori Baru</h2></div>
+    <!-- Toolbar -->
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">category</span></div>
+            <div>
+                <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Kategori Produk</h2>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Kelola kategori global yang digunakan semua toko.</p>
+            </div>
         </div>
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 card-premium">
-            <form class="space-y-gutter" id="add-category-form" data-toast-message="Kategori baru berhasil ditambahkan.">
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="categoryName">Nama Kategori</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="categoryName" name="categoryName" type="text" placeholder="Misal: Pakaian, Aksesoris" required />
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="categoryDesc">Deskripsi</label>
-                    <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="categoryDesc" name="categoryDesc" rows="3" placeholder="Deskripsi kategori..."></textarea>
-                </div>
-                <div class="flex gap-gutter pt-gutter border-t border-muted-border">
-                    <button type="button" class="flex-1 border border-muted-border text-deep-onyx font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-surface-container-lowest transition-colors" onclick="document.getElementById('add-category-form').reset()">Batal</button>
-                    <button type="submit" class="flex-1 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-tertiary-container transition-colors">Tambah Kategori</button>
-                </div>
-            </form>
-        </div>
+        <button type="button" data-modal-open="modal-form-kategori" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
+            <span class="material-symbols-outlined text-[18px]">add</span> Tambah Kategori
+        </button>
     </section>
-
     <!-- Categories Grid -->
     <section class="space-y-gutter">
         <div class="flex justify-between items-center">
@@ -56,8 +46,8 @@
                         <p class="text-on-surface-variant text-sm mt-1">24 produk</p>
                     </div>
                 </div>
-                <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah kategori.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <div class="flex items-center justify-between pt-4 border-t border-muted-border">
+                    <button type="button" onclick="editCategory(this)" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
                     <button type="button" onclick="showRalivaToast('Hapus kategori dinonaktifkan pada demo — kategori masih memiliki produk.', 'delete')" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
@@ -78,8 +68,8 @@
                         <p class="text-on-surface-variant text-sm mt-1">12 produk</p>
                     </div>
                 </div>
-                <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah kategori.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <div class="flex items-center justify-between pt-4 border-t border-muted-border">
+                    <button type="button" onclick="editCategory(this)" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
                     <button type="button" onclick="showRalivaToast('Hapus kategori dinonaktifkan pada demo — kategori masih memiliki produk.', 'delete')" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
@@ -100,8 +90,8 @@
                         <p class="text-on-surface-variant text-sm mt-1">18 produk</p>
                     </div>
                 </div>
-                <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah kategori.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <div class="flex items-center justify-between pt-4 border-t border-muted-border">
+                    <button type="button" onclick="editCategory(this)" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
                     <button type="button" onclick="showRalivaToast('Hapus kategori dinonaktifkan pada demo — kategori masih memiliki produk.', 'delete')" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
@@ -122,8 +112,8 @@
                         <p class="text-on-surface-variant text-sm mt-1">8 produk</p>
                     </div>
                 </div>
-                <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah kategori.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <div class="flex items-center justify-between pt-4 border-t border-muted-border">
+                    <button type="button" onclick="editCategory(this)" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
                     <button type="button" onclick="showRalivaToast('Hapus kategori dinonaktifkan pada demo — kategori masih memiliki produk.', 'delete')" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
@@ -144,8 +134,8 @@
                         <p class="text-on-surface-variant text-sm mt-1">6 produk</p>
                     </div>
                 </div>
-                <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah kategori.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <div class="flex items-center justify-between pt-4 border-t border-muted-border">
+                    <button type="button" onclick="editCategory(this)" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
                     <button type="button" onclick="showRalivaToast('Hapus kategori dinonaktifkan pada demo — kategori masih memiliki produk.', 'delete')" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
@@ -166,8 +156,8 @@
                         <p class="text-on-surface-variant text-sm mt-1">15 produk</p>
                     </div>
                 </div>
-                <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah kategori.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <div class="flex items-center justify-between pt-4 border-t border-muted-border">
+                    <button type="button" onclick="editCategory(this)" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
                     <button type="button" onclick="showRalivaToast('Hapus kategori dinonaktifkan pada demo — kategori masih memiliki produk.', 'delete')" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
@@ -188,8 +178,8 @@
                         <p class="text-on-surface-variant text-sm mt-1">11 produk</p>
                     </div>
                 </div>
-                <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                    <button type="button" onclick="showRalivaToast('Gunakan formulir di atas untuk mengubah kategori.', 'edit')" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                    <div class="flex items-center justify-between pt-4 border-t border-muted-border">
+                    <button type="button" onclick="editCategory(this)" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                         <span class="material-symbols-outlined text-[20px]">edit</span>
                     </button>
                     <button type="button" onclick="showRalivaToast('Hapus kategori dinonaktifkan pada demo — kategori masih memiliki produk.', 'delete')" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
@@ -200,4 +190,56 @@
         </div>
     </section>
 </div>
+
+<!-- Modal Form Kategori -->
+<div id="modal-form-kategori" data-modal class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close></div>
+    <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
+        <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <h3 id="kategori-modal-title" class="font-title-md text-title-md text-on-surface premium-heading">Tambah Kategori Baru</h3>
+                <p id="kategori-modal-sub" class="text-on-surface-variant font-body-md text-sm mt-1">Kategori berlaku untuk seluruh toko di platform.</p>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <form id="add-category-form" data-toast-message="Kategori baru berhasil ditambahkan." class="p-6 space-y-5">
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="categoryName">Nama Kategori</label>
+                <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="categoryName" name="categoryName" type="text" placeholder="Misal: Pakaian, Aksesoris" required />
+            </div>
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="categoryDesc">Deskripsi</label>
+                <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="categoryDesc" name="categoryDesc" rows="3" placeholder="Deskripsi kategori..."></textarea>
+            </div>
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="submit" id="kategori-submit-btn" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tambah Kategori</button>
+            </div>
+        </form>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+    const openCategoryForm = (mode, name = '') => {
+        const isEdit = mode === 'edit';
+        document.getElementById('kategori-modal-title').textContent = isEdit ? 'Ubah Kategori' : 'Tambah Kategori Baru';
+        document.getElementById('kategori-modal-sub').textContent = isEdit
+            ? 'Perubahan berlaku pada seluruh produk dalam kategori ini.'
+            : 'Kategori berlaku untuk seluruh toko di platform.';
+        document.getElementById('categoryName').value = isEdit ? name : '';
+        document.getElementById('categoryDesc').value = '';
+        document.getElementById('kategori-submit-btn').textContent = isEdit ? 'Simpan Perubahan' : 'Tambah Kategori';
+        document.getElementById('add-category-form').setAttribute('data-toast-message', isEdit ? 'Perubahan kategori berhasil disimpan.' : 'Kategori baru berhasil ditambahkan.');
+        document.getElementById('modal-form-kategori')?.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    };
+
+    const editCategory = (btn) => {
+        const card = btn.closest('.group');
+        const name = card?.querySelector('h3')?.textContent.trim() || '';
+        openCategoryForm('edit', name);
+    };
+</script>
+@endpush

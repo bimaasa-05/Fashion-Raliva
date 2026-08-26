@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html class="light" lang="en"><head>
+<html class="light" lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
 <title>RALIVA - {{ __('My Addresses') }}</title>
@@ -264,7 +264,7 @@
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
   </head>
-<body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased selection:bg-secondary-container selection:text-on-secondary-container pb-[calc(72px+env(safe-area-inset-bottom))]">
+<body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased selection:bg-secondary-container selection:text-on-secondary-container pb-[calc(72px+env(safe-area-inset-bottom))] lg:pl-72">
 <!-- Top App Bar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky z-40 border-b border-[var(--chrome-border)]">
 <a aria-label="{{ __('Go back') }}" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
@@ -348,4 +348,5 @@
 <span class="truncate w-full text-center font-medium">{{ __('Account') }}</span>
 </a>
 </nav>
+@include('customer._partials.drawer')
 </body></html>
