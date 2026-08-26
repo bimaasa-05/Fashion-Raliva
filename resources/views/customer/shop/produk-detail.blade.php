@@ -273,16 +273,18 @@
   </head>
 <body class="bg-surface text-on-surface font-body-lg antialiased pb-32 lg:pl-72 lg:pb-0">
 <!-- Header (Custom TopAppBar for Product Details) -->
-<header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16">
-<a aria-label="Go back" href="{{ url()->previous() }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
+<header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] grid grid-cols-3 items-center px-container-margin h-16">
+<a aria-label="Go back" href="{{ url()->previous() }}" class="w-10 h-10 justify-self-start flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
 <span class="material-symbols-outlined text-[var(--chrome-text)]">arrow_back</span>
 </a>
-<div class="flex gap-xs">
-<button aria-label="Wishlist" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
+<h1 class="font-display-lg text-title-md md:text-headline-md tracking-widest text-[var(--chrome-accent)] text-center truncate">RALIVA</h1>
+<div class="flex gap-xs justify-self-end">
+<a aria-label="Wishlist" href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
 <span class="material-symbols-outlined text-[var(--chrome-text)]">favorite_border</span>
 </a>
-<a aria-label="Cart" href="{{ route('customer.chart') }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
+<a aria-label="Cart" href="{{ route('customer.chart') }}" class="relative w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
 <span class="material-symbols-outlined text-[var(--chrome-text)]">shopping_cart</span>
+<span class="absolute top-0 right-0 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
 </a>
 </div>
 </header>

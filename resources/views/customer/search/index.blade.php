@@ -266,33 +266,7 @@
 </section>
 </main>
 <!-- BottomNavBar -->
-<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center h-[72px] bg-[var(--chrome-bg)] text-[var(--chrome-text)] px-xs pb-safe border-t border-[var(--chrome-border)] shadow-sm">
-<!-- Home -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.home') }}">
-<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
-<span class="font-label-sm text-[10px]">{{ __('Home') }}</span>
-</a>
-<!-- Shop -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined mb-1" data-icon="shopping_bag">shopping_bag</span>
-<span class="font-label-sm text-[10px]">{{ __('Shop') }}</span>
-</a>
-<!-- Wishlist -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
-<span class="material-symbols-outlined mb-1" data-icon="favorite">favorite</span>
-<span class="font-label-sm text-[10px]">{{ __('Wishlist') }}</span>
-</a>
-<!-- Cart -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16 relative" href="{{ route('customer.chart') }}">
-<span class="material-symbols-outlined mb-1" data-icon="shopping_cart">shopping_cart</span>
-<span class="font-label-sm text-[10px]">{{ __('Cart') }}</span>
-<span class="absolute top-0 right-2 bg-primary text-on-primary text-[8px] w-3 h-3 rounded-full flex items-center justify-center font-bold">2</span>
-</a>
-<!-- Account -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
-<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
-<span class="font-label-sm text-[10px]">{{ __('Account') }}</span>
-</a>
-</nav>
+<!-- BottomNavBar -->
+@include('customer._partials.bottom-nav')
 @include('customer._partials.drawer')
 </body></html>

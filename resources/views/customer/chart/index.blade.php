@@ -345,32 +345,6 @@
 </div>
 </main>
 <!-- BottomNavBar (Label Icon) -->
-<nav class="md:hidden bg-[var(--chrome-bg)] text-[var(--chrome-text)] fixed bottom-0 w-full z-50 border-t border-[var(--chrome-border)] shadow-sm flex justify-around items-center h-[72px] px-xs pb-safe">
-<!-- Home (Inactive) -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.home') }}">
-<span class="material-symbols-outlined mb-1">home</span>
-<span class="font-label-sm text-label-sm">{{ __('Home') }}</span>
-</a>
-<!-- Shop (Inactive) -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.shop') }}">
-<span class="material-symbols-outlined mb-1">shopping_bag</span>
-<span class="font-label-sm text-label-sm">{{ __('Shop') }}</span>
-</a>
-<!-- Wishlist (Inactive) -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
-<span class="material-symbols-outlined mb-1">favorite</span>
-<span class="font-label-sm text-label-sm">{{ __('Wishlist') }}</span>
-</a>
-<!-- Cart (Active) -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-accent)] hover:text-secondary transition-colors w-16 scale-95 transition-transform" href="{{ route('customer.chart') }}">
-<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
-<span class="font-label-sm text-label-sm">{{ __('Cart') }}</span>
-</a>
-<!-- Account (Inactive) -->
-<a class="flex flex-col items-center justify-center text-[var(--chrome-text-dim)] hover:text-[var(--chrome-accent)] transition-colors w-16" href="{{ route('customer.login', ['redirect' => route('customer.account')]) }}">
-<span class="material-symbols-outlined mb-1">person</span>
-<span class="font-label-sm text-label-sm">{{ __('Account') }}</span>
-</a>
-</nav>
+@include('customer._partials.bottom-nav')
 @include('customer._partials.drawer')
 </body></html>
