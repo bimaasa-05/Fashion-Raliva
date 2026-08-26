@@ -222,7 +222,13 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/data-pesanan', [DataPesananController::class, 'index'])->name('data-pesanan');
     Route::get('/data-pembayaran', [DataPembayaranController::class, 'index'])->name('data-pembayaran');
     Route::get('/pengembalian-dana', [PengembalianDanaController::class, 'index'])->name('pengembalian-dana');
+    Route::post('/pengembalian-dana/{refund}/setujui', [PengembalianDanaController::class, 'setujui'])->name('pengembalian-dana.setujui');
+    Route::post('/pengembalian-dana/{refund}/tolak', [PengembalianDanaController::class, 'tolak'])->name('pengembalian-dana.tolak');
+    Route::post('/pengembalian-dana/{refund}/selesaikan', [PengembalianDanaController::class, 'selesaikan'])->name('pengembalian-dana.selesaikan');
     Route::get('/permintaan-penarikan', [PermintaanPenarikanController::class, 'index'])->name('permintaan-penarikan');
+    Route::post('/permintaan-penarikan/{penarikan}/setujui', [PermintaanPenarikanController::class, 'setujui'])->name('permintaan-penarikan.setujui');
+    Route::post('/permintaan-penarikan/{penarikan}/tolak', [PermintaanPenarikanController::class, 'tolak'])->name('permintaan-penarikan.tolak');
+    Route::post('/permintaan-penarikan/{penarikan}/tandai-dibayar', [PermintaanPenarikanController::class, 'tandaiDibayar'])->name('permintaan-penarikan.tandai-dibayar');
     Route::get('/komisi-global', [KomisiGlobalController::class, 'index'])->name('komisi-global');
     Route::get('/pajak-biaya', [PajakBiayaController::class, 'index'])->name('pajak-biaya');
     Route::get('/promo-platform', [PromoPlatformController::class, 'index'])->name('promo-platform');
@@ -236,6 +242,8 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::post('/pengaturan-sistem/legal', [PengaturanSistemController::class, 'updateLegal'])->name('pengaturan-sistem.legal');
     Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
     Route::get('/komplain', [SaKomplainController::class, 'index'])->name('komplain');
+    Route::post('/komplain/{komplain}/eskalasi', [SaKomplainController::class, 'eskalasi'])->name('komplain.eskalasi');
+    Route::post('/komplain/{komplain}/tutup', [SaKomplainController::class, 'tutup'])->name('komplain.tutup');
     Route::get('/pengiriman', [SaPengirimanController::class, 'index'])->name('pengiriman');
     Route::get('/stok', [SaStokController::class, 'index'])->name('stok');
     Route::get('/produksi', [ProduksiController::class, 'index'])->name('produksi');
