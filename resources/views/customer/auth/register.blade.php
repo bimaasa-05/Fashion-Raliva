@@ -143,17 +143,217 @@
     }
     :root { --gold-inner: rgba(121, 89, 5, .30); }
     html.theme-dark { --gold-inner: rgba(235, 193, 104, .25); }
-    /* ============ QUILTED DIAMOND PATTERN ============ */
+    /* ============ RALIVA FASHION ATELIER BACKGROUND ============ */
     .auth-monogram {
-        background-image: var(--monogram);
-        background-size: 80px 80px;
-        background-repeat: repeat;
+        background-image:
+            var(--atl-gold-a),
+            var(--atl-gold-b),
+            var(--atl-scissors),
+            var(--atl-ruler),
+            var(--atl-needle),
+            var(--atl-button),
+            var(--atl-stitch-h),
+            var(--atl-stitch-v),
+            var(--atl-corner-tl),
+            var(--atl-corner-br),
+            var(--atl-frame-h),
+            var(--atl-frame-v);
+        background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, repeat-y;
+        background-position:
+            288px 74px,
+            right 150px bottom 150px,
+            left 304px bottom 78px,
+            right 36px top 330px,
+            right 88px top 306px,
+            left 84px bottom 170px,
+            left 56px bottom 88px,
+            right 72px top 96px,
+            0 0,
+            100% 100%,
+            20px 20px,
+            20px 0;
+        background-size: 16px 16px, 16px 16px, 32px 20px, 8px 150px, 44px 44px, 20px 20px, 240px 3px, 3px 200px, 480px 480px, 480px 480px, 34% 1px, 1px 100%;
+        animation:
+            atl-place 1.1s cubic-bezier(.22,.61,.36,1) .15s both,
+            atl-crawl 9s linear 1.4s infinite;
+    }
+    @media (max-width: 640px) {
+        .auth-monogram {
+            background-position:
+                216px 56px,
+                right 96px bottom 112px,
+                left 220px bottom 44px,
+                right 14px top 320px,
+                right 96px top 330px,
+                left 48px bottom 130px,
+                left 32px bottom 48px,
+                right 40px top 128px,
+                0 0,
+                100% 100%,
+                14px 14px,
+                14px 0;
+            background-size: 14px 14px, 14px 14px, 26px 16px, 6px 120px, 34px 34px, 16px 16px, 180px 3px, 3px 150px, 300px 300px, 300px 300px, 30% 1px, 1px 100%;
+            animation-name: atl-place-m, atl-crawl-m;
+        }
     }
     :root {
-        --monogram: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M0 0L80 80M80 0L0 80' stroke='rgba(121,89,5,0.14)' stroke-width='1' fill='none'/%3E%3Ccircle cx='40' cy='40' r='2' fill='rgba(121,89,5,0.20)'/%3E%3C/svg%3E");
+        --atl-corner-tl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='480' viewBox='0 0 480 480'%3E%3Cg fill='none' stroke='%23111111' stroke-width='1'%3E%3Cpath stroke-opacity='.21' stroke-dasharray='1 7' stroke-linecap='round' d='M36 444V96'/%3E%3Cpath stroke-opacity='.26' d='M36 444C36 250 140 96 452 84'/%3E%3Cpath stroke-opacity='.15' d='M36 180H452'/%3E%3Cpath stroke-opacity='.18' d='M36 96H132V180'/%3E%3Cpath stroke-opacity='.23' d='M148 164l16 16m0-16l-16 16'/%3E%3Cg stroke-opacity='.08'%3E%3Cpath d='M60 420l40-40M78 430l40-40M96 440l40-40'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        --atl-corner-br: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='480' viewBox='0 0 480 480'%3E%3Cg transform='rotate(180 240 240)'%3E%3Cg fill='none' stroke='%23111111' stroke-width='1'%3E%3Cpath stroke-opacity='.21' stroke-dasharray='1 7' stroke-linecap='round' d='M36 444V96'/%3E%3Cpath stroke-opacity='.26' d='M36 444C36 250 140 96 452 84'/%3E%3Cpath stroke-opacity='.15' d='M36 180H452'/%3E%3Cpath stroke-opacity='.18' d='M36 96H132V180'/%3E%3Cpath stroke-opacity='.23' d='M148 164l16 16m0-16l-16 16'/%3E%3Cg stroke-opacity='.08'%3E%3Cpath d='M60 420l40-40M78 430l40-40M96 440l40-40'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        --atl-stitch-h: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='3'%3E%3Cpath d='M1 1.5h238' stroke='%23111111' stroke-opacity='.26' stroke-width='1.5' stroke-dasharray='7 6' stroke-linecap='round'/%3E%3C/svg%3E");
+        --atl-stitch-v: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='200'%3E%3Cpath d='M1.5 1v198' stroke='%23111111' stroke-opacity='.26' stroke-width='1.5' stroke-dasharray='7 6' stroke-linecap='round'/%3E%3C/svg%3E");
+        --atl-gold-a: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M8 2v12M2 8h12' stroke='%23795905' stroke-width='1.4' stroke-linecap='round' stroke-opacity='.7'/%3E%3C/svg%3E");
+        --atl-gold-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Ccircle cx='8' cy='8' r='3' fill='%23795905' fill-opacity='.65'/%3E%3C/svg%3E");
+        --atl-frame-h: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='1'%3E%3Crect width='4' height='1' fill='%23111111' fill-opacity='.13'/%3E%3C/svg%3E");
+        --atl-frame-v: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='4'%3E%3Crect width='1' height='4' fill='%23111111' fill-opacity='.13'/%3E%3C/svg%3E");
+        --atl-scissors: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='20' viewBox='0 0 32 20'%3E%3Cg fill='none' stroke='%23111111' stroke-width='1.2' stroke-linecap='round' stroke-opacity='.26'%3E%3Ccircle cx='6' cy='4' r='3'/%3E%3Ccircle cx='6' cy='16' r='3'/%3E%3Cpath d='M8.6 5.2 29 13.4'/%3E%3Cpath d='M8.6 14.8 29 6.6'/%3E%3C/g%3E%3Ccircle cx='18.8' cy='10' r='1.2' fill='%23111111' fill-opacity='.26'/%3E%3C/svg%3E");
+        --atl-ruler: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='150'%3E%3Cg fill='none' stroke='%23111111' stroke-width='1' stroke-opacity='.23'%3E%3Cpath d='M1 0v150'/%3E%3Cpath d='M1 50h5M1 100h5'/%3E%3Cpath d='M1 10h2.5M1 20h2.5M1 30h2.5M1 40h2.5M1 60h2.5M1 70h2.5M1 80h2.5M1 90h2.5M1 110h2.5M1 120h2.5M1 130h2.5M1 140h2.5'/%3E%3C/g%3E%3Cpath d='M1 0h5' stroke='%23795905' stroke-width='1.2' stroke-opacity='.7'/%3E%3C/svg%3E");
+        --atl-needle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cg fill='none' stroke='%23111111' stroke-linecap='round'%3E%3Cpath d='M31 7L14 26' stroke-width='1.6' stroke-opacity='.26'/%3E%3Cellipse cx='12' cy='28.2' rx='3.2' ry='1.9' transform='rotate(42 12 28.2)' stroke-opacity='.24'/%3E%3Cpath d='M12 30c3 7 10 6 14 9s8-1 12 2' stroke-width='.9' stroke-opacity='.24'/%3E%3C/g%3E%3C/svg%3E");
+        --atl-button: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23111111' stroke-width='1.2' stroke-opacity='.26'/%3E%3Ccircle cx='10' cy='10' r='6' fill='none' stroke='%23111111' stroke-width='.8' stroke-dasharray='2 2' stroke-opacity='.18'/%3E%3Cg fill='%23111111' fill-opacity='.3'%3E%3Ccircle cx='7.2' cy='7.2' r='1.1'/%3E%3Ccircle cx='12.8' cy='7.2' r='1.1'/%3E%3Ccircle cx='7.2' cy='12.8' r='1.1'/%3E%3Ccircle cx='12.8' cy='12.8' r='1.1'/%3E%3C/g%3E%3C/svg%3E");
     }
     html.theme-dark {
-        --monogram: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M0 0L80 80M80 0L0 80' stroke='rgba(235,193,104,0.10)' stroke-width='1' fill='none'/%3E%3Ccircle cx='40' cy='40' r='2' fill='rgba(235,193,104,0.16)'/%3E%3C/svg%3E");
+        --atl-corner-tl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='480' viewBox='0 0 480 480'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1'%3E%3Cpath stroke-opacity='.12' stroke-dasharray='1 7' stroke-linecap='round' d='M36 444V96'/%3E%3Cpath stroke-opacity='.15' d='M36 444C36 250 140 96 452 84'/%3E%3Cpath stroke-opacity='.08' d='M36 180H452'/%3E%3Cpath stroke-opacity='.10' d='M36 96H132V180'/%3E%3Cpath stroke-opacity='.13' d='M148 164l16 16m0-16l-16 16'/%3E%3Cg stroke-opacity='.05'%3E%3Cpath d='M60 420l40-40M78 430l40-40M96 440l40-40'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        --atl-corner-br: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='480' viewBox='0 0 480 480'%3E%3Cg transform='rotate(180 240 240)'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1'%3E%3Cpath stroke-opacity='.12' stroke-dasharray='1 7' stroke-linecap='round' d='M36 444V96'/%3E%3Cpath stroke-opacity='.15' d='M36 444C36 250 140 96 452 84'/%3E%3Cpath stroke-opacity='.08' d='M36 180H452'/%3E%3Cpath stroke-opacity='.10' d='M36 96H132V180'/%3E%3Cpath stroke-opacity='.13' d='M148 164l16 16m0-16l-16 16'/%3E%3Cg stroke-opacity='.05'%3E%3Cpath d='M60 420l40-40M78 430l40-40M96 440l40-40'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        --atl-stitch-h: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='3'%3E%3Cpath d='M1 1.5h238' stroke='%23ffffff' stroke-opacity='.14' stroke-width='1.5' stroke-dasharray='7 6' stroke-linecap='round'/%3E%3C/svg%3E");
+        --atl-stitch-v: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='200'%3E%3Cpath d='M1.5 1v198' stroke='%23ffffff' stroke-opacity='.14' stroke-width='1.5' stroke-dasharray='7 6' stroke-linecap='round'/%3E%3C/svg%3E");
+        --atl-gold-a: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M8 2v12M2 8h12' stroke='%23ebc168' stroke-width='1.4' stroke-linecap='round' stroke-opacity='.6'/%3E%3C/svg%3E");
+        --atl-gold-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Ccircle cx='8' cy='8' r='3' fill='%23ebc168' fill-opacity='.55'/%3E%3C/svg%3E");
+        --atl-frame-h: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='1'%3E%3Crect width='4' height='1' fill='%23ffffff' fill-opacity='.07'/%3E%3C/svg%3E");
+        --atl-frame-v: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='4'%3E%3Crect width='1' height='4' fill='%23ffffff' fill-opacity='.07'/%3E%3C/svg%3E");
+        --atl-scissors: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='20' viewBox='0 0 32 20'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1.2' stroke-linecap='round' stroke-opacity='.15'%3E%3Ccircle cx='6' cy='4' r='3'/%3E%3Ccircle cx='6' cy='16' r='3'/%3E%3Cpath d='M8.6 5.2 29 13.4'/%3E%3Cpath d='M8.6 14.8 29 6.6'/%3E%3C/g%3E%3Ccircle cx='18.8' cy='10' r='1.2' fill='%23ffffff' fill-opacity='.15'/%3E%3C/svg%3E");
+        --atl-ruler: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='150'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1' stroke-opacity='.13'%3E%3Cpath d='M1 0v150'/%3E%3Cpath d='M1 50h5M1 100h5'/%3E%3Cpath d='M1 10h2.5M1 20h2.5M1 30h2.5M1 40h2.5M1 60h2.5M1 70h2.5M1 80h2.5M1 90h2.5M1 110h2.5M1 120h2.5M1 130h2.5M1 140h2.5'/%3E%3C/g%3E%3Cpath d='M1 0h5' stroke='%23ebc168' stroke-width='1.2' stroke-opacity='.6'/%3E%3C/svg%3E");
+        --atl-needle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cg fill='none' stroke='%23ffffff' stroke-linecap='round'%3E%3Cpath d='M31 7L14 26' stroke-width='1.6' stroke-opacity='.15'/%3E%3Cellipse cx='12' cy='28.2' rx='3.2' ry='1.9' transform='rotate(42 12 28.2)' stroke-opacity='.14'/%3E%3Cpath d='M12 30c3 7 10 6 14 9s8-1 12 2' stroke-width='.9' stroke-opacity='.14'/%3E%3C/g%3E%3C/svg%3E");
+        --atl-button: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23ffffff' stroke-width='1.2' stroke-opacity='.15'/%3E%3Ccircle cx='10' cy='10' r='6' fill='none' stroke='%23ffffff' stroke-width='.8' stroke-dasharray='2 2' stroke-opacity='.12'/%3E%3Cg fill='%23ffffff' fill-opacity='.18'%3E%3Ccircle cx='7.2' cy='7.2' r='1.1'/%3E%3Ccircle cx='12.8' cy='7.2' r='1.1'/%3E%3Ccircle cx='7.2' cy='12.8' r='1.1'/%3E%3Ccircle cx='12.8' cy='12.8' r='1.1'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    @keyframes atl-place {
+        from {
+            background-position:
+                288px 58px,
+                right 150px bottom 134px,
+                left 304px bottom 78px,
+                right 36px top 330px,
+                right 88px top 306px,
+                left 84px bottom 170px,
+                left 56px bottom 88px,
+                right 72px top 96px,
+                0 0,
+                100% 100%,
+                20px 20px,
+                20px 0;
+        }
+        to {
+            background-position:
+                288px 74px,
+                right 150px bottom 150px,
+                left 304px bottom 78px,
+                right 36px top 330px,
+                right 88px top 306px,
+                left 84px bottom 170px,
+                left 56px bottom 88px,
+                right 72px top 96px,
+                0 0,
+                100% 100%,
+                20px 20px,
+                20px 0;
+        }
+    }
+    @keyframes atl-crawl {
+        from {
+            background-position:
+                288px 74px,
+                right 150px bottom 150px,
+                left 304px bottom 78px,
+                right 36px top 330px,
+                right 88px top 306px,
+                left 84px bottom 170px,
+                left 56px bottom 88px,
+                right 72px top 96px,
+                0 0,
+                100% 100%,
+                20px 20px,
+                20px 0;
+        }
+        to {
+            background-position:
+                288px 74px,
+                right 150px bottom 150px,
+                left 304px bottom 78px,
+                right 36px top 330px,
+                right 88px top 306px,
+                left 84px bottom 170px,
+                left 43px bottom 88px,
+                right 72px top 96px,
+                0 0,
+                100% 100%,
+                20px 20px,
+                20px 0;
+        }
+    }
+    @keyframes atl-place-m {
+        from {
+            background-position:
+                216px 40px,
+                right 96px bottom 98px,
+                left 220px bottom 44px,
+                right 14px top 320px,
+                right 96px top 330px,
+                left 48px bottom 130px,
+                left 32px bottom 48px,
+                right 40px top 128px,
+                0 0,
+                100% 100%,
+                14px 14px,
+                14px 0;
+        }
+        to {
+            background-position:
+                216px 56px,
+                right 96px bottom 112px,
+                left 220px bottom 44px,
+                right 14px top 320px,
+                right 96px top 330px,
+                left 48px bottom 130px,
+                left 32px bottom 48px,
+                right 40px top 128px,
+                0 0,
+                100% 100%,
+                14px 14px,
+                14px 0;
+        }
+    }
+    @keyframes atl-crawl-m {
+        from {
+            background-position:
+                216px 56px,
+                right 96px bottom 112px,
+                left 220px bottom 44px,
+                right 14px top 320px,
+                right 96px top 330px,
+                left 48px bottom 130px,
+                left 32px bottom 48px,
+                right 40px top 128px,
+                0 0,
+                100% 100%,
+                14px 14px,
+                14px 0;
+        }
+        to {
+            background-position:
+                216px 56px,
+                right 96px bottom 112px,
+                left 220px bottom 44px,
+                right 14px top 320px,
+                right 96px top 330px,
+                left 48px bottom 130px,
+                left 19px bottom 48px,
+                right 40px top 128px,
+                0 0,
+                100% 100%,
+                14px 14px,
+                14px 0;
+        }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .auth-monogram { animation: none !important; }
     }
 </style>
 <style>
