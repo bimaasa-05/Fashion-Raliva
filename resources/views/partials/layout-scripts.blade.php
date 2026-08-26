@@ -115,8 +115,23 @@
             group.classList.toggle('grid-rows-[0fr]', isOpen);
             btn.setAttribute('aria-expanded', String(!isOpen));
             btn.querySelector('.material-symbols-outlined')?.classList.toggle('rotate-180', !isOpen);
-            /* Jaga label tetap terpandang setelah tinggi grup berubah (anti tabrakan scroll) */
-            setTimeout(() => btn.scrollIntoView({ block: 'nearest', behavior: 'smooth' }), 330);
+            /* Jaga label tetap terpandang setelah tinggi grup berubah (anti tabrakan scroll).
+               Scroll dilakukan pada kontainer nav sidebar saja, BUKAN halaman,
+               dan selalu menyisakan ruang (offset) agar item tidak menempel ke tepi. */
+            setTimeout(() => {
+                const nav = group.closest('.sidebar-scroll');
+                if (!nav) return;
+                const navRect = nav.getBoundingClientRect();
+                const btnRect = btn.getBoundingClientRect();
+                /* Jika tombol keluar dari area pandang nav, geser nav secukupnya
+                   dengan margin 24px supaya tidak dempet dengan tepi bawah */
+                if (btnRect.bottom > navRect.bottom - 24) {
+                    nav.scrollTo({
+                        top: nav.scrollTop + (btnRect.bottom - navRect.bottom) + 24,
+                        behavior: 'smooth',
+                    });
+                }
+            }, 330);
         });
     });
 
