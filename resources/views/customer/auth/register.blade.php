@@ -283,7 +283,9 @@
 <body class="bg-surface text-on-surface antialiased font-body-lg min-h-screen flex flex-col lg:flex-row">
 <!-- Editorial Panel -->
 <aside class="relative overflow-hidden shrink-0 h-44 lg:h-auto lg:w-[44%] flex">
-<img alt="RALIVA Editorial" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDotrquQ9ru5aXlWl5XbgLhEMJq3WBfo5DDEAS3Z-F5LnAIv27Q3259la3QLZghjnF5R8udNJqY0Toq6SHw5JvN3PqANThsUOvwujXixkrq5zZBH5OW_D3QTRD3qObufW5Uz2-ahDe36xdtDHuA8SK2Ldhp4wpMReozYAnqkNj5ZG3A37LwDOS6aXDnCEg_MNh_j2C1VKegB7PNMCwMV-jwzYAwrhuqG1UCGjQoSl3A0QRKO-gFHlQ"/>
+<img alt="RALIVA Editorial 1" src="{{ asset('register-pictures/editorial-1.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"/>
+<img alt="RALIVA Editorial 2" src="{{ asset('register-pictures/editorial-2.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000"/>
+<img alt="RALIVA Editorial 3" src="{{ asset('register-pictures/editorial-3.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000"/>
 <div class="absolute inset-0 bg-black/50"></div>
 <div class="relative z-10 flex flex-col items-center justify-center text-center h-full w-full p-lg lg:items-start lg:justify-between lg:text-left lg:p-xl">
 <div>
@@ -292,8 +294,7 @@
 <div class="w-10 h-px bg-secondary-fixed-dim mt-sm lg:hidden"></div>
 </div>
 <div class="hidden lg:block">
-<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary-fixed-dim mb-sm">{{ __('Join Raliva') }}</p>
-<p class="font-headline-lg-mobile text-headline-lg-mobile text-white max-w-sm">{{ __('Discover your style, curated for you.') }}</p>
+<p class="font-headline-lg-mobile text-headline-lg-mobile max-w-sm"><span class="text-white">Discover your style,</span> <span style="color:#A32626">curated for you.</span></p>
 <div class="w-10 h-px bg-secondary-fixed-dim mt-md"></div>
 </div>
 </div>
@@ -332,27 +333,26 @@
 <div class="flex-grow flex flex-col justify-center w-full max-w-md mx-auto py-xl relative z-10">
 <div id="register-section" class="border-2 border-secondary rounded-lg p-lg lg:p-xl frame-gold">
 <!-- Heading -->
-<div class="mb-lg">
+<div class="mb-sm">
 <p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">{{ __('Raliva Account') }}</p>
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Create Your Account') }}</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('Join RALIVA and discover your style.') }}</p>
 </div>
 <form id="register-form" novalidate>
 <!-- Full Name -->
-<div class="mb-md">
+<div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="full-name">{{ __('Full Name') }}</label>
 <input autocomplete="name" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="full-name" placeholder="{{ __('Your full name') }}" type="text"/>
 <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="name-error">{{ __('Full name is required.') }}</p>
 </div>
 <!-- Email -->
-<div class="mb-md">
+<div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">{{ __('Email') }}</label>
 <input autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="email" placeholder="you@example.com" type="email"/>
 <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-error">{{ __('Invalid email address.') }}</p>
 <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-taken-error">{{ __('Email is already registered.') }}</p>
 </div>
 <!-- Password -->
-<div class="mb-md">
+<div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password">{{ __('Password') }}</label>
 <div class="relative">
 <input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password" placeholder="{{ __('Minimum 8 characters') }}" type="password"/>
@@ -360,28 +360,59 @@
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </button>
 </div>
+<!-- Password Strength -->
+<div class="hidden mt-xs" id="pw-strength">
+<div class="flex gap-xs">
+<span class="h-1 flex-grow rounded-full bg-outline-variant transition-colors duration-300" id="pw-seg-1"></span>
+<span class="h-1 flex-grow rounded-full bg-outline-variant transition-colors duration-300" id="pw-seg-2"></span>
+<span class="h-1 flex-grow rounded-full bg-outline-variant transition-colors duration-300" id="pw-seg-3"></span>
+<span class="h-1 flex-grow rounded-full bg-outline-variant transition-colors duration-300" id="pw-seg-4"></span>
+</div>
+<p class="font-label-sm text-label-sm mt-xs" id="pw-strength-label">&nbsp;</p>
+</div>
 <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="password-error">{{ __('Password must be at least 8 characters.') }}</p>
 </div>
 <!-- Confirm Password -->
-<div class="mb-md">
+<div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="confirm-password">{{ __('Confirm Password') }}</label>
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="confirm-password" placeholder="{{ __('Re-enter your password') }}" type="password"/>
+<div class="relative">
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="confirm-password" placeholder="{{ __('Re-enter your password') }}" type="password"/>
+<button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="confirm-toggle" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
 <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="confirm-error">{{ __('Password does not match.') }}</p>
 </div>
 <!-- Terms Checkbox -->
-<label class="flex items-start gap-sm cursor-pointer mb-md">
+<label class="flex items-start gap-sm cursor-pointer mb-sm">
 <input class="mt-1 w-4 h-4 shrink-0" id="terms" type="checkbox"/>
 <span class="font-body-sm text-body-sm text-on-surface-variant">
             {{ __("I agree to the") }} <span class="text-secondary underline underline-offset-4">{{ __('Terms &amp; Privacy Policy') }}</span>
         </span>
 </label>
-<p class="hidden font-label-sm text-label-sm text-error -mt-sm mb-md" id="terms-error">{{ __('Please agree to the Terms &amp; Privacy Policy.') }}</p>
+<p class="hidden font-label-sm text-label-sm text-error -mt-sm mb-sm" id="terms-error">{{ __('Please agree to the Terms &amp; Privacy Policy.') }}</p>
 <!-- Submit -->
 <button class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="register-btn" type="submit">
 <span id="register-btn-text">{{ __('REGISTER') }}</span>
 <span class="material-symbols-outlined text-[20px] animate-spin hidden" id="register-spinner">progress_activity</span>
 </button>
 </form>
+<!-- Google Divider -->
+<div class="flex items-center gap-sm my-sm">
+<span class="h-px flex-grow bg-outline-variant"></span>
+<span class="font-label-caps text-label-caps uppercase tracking-widest text-outline">{{ __('or') }}</span>
+<span class="h-px flex-grow bg-outline-variant"></span>
+</div>
+<!-- Sign Up with Google -->
+<a href="#" aria-label="{{ __('Sign up with Google') }}" class="w-full h-14 border border-outline-variant bg-surface-container-lowest shadow-sm hover:border-secondary font-label-caps text-label-caps uppercase tracking-widest text-on-surface transition-colors flex items-center justify-center gap-sm">
+<svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+<path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/>
+<path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/>
+<path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/>
+<path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/>
+</svg>
+        {{ __('SIGN UP WITH GOOGLE') }}
+    </a>
 <!-- Login Link -->
 <p class="text-center font-body-sm text-body-sm text-on-surface-variant mt-lg">
         {{ __('Already have an account?') }}
@@ -414,6 +445,50 @@
             input.type = show ? 'text' : 'password';
             icon.textContent = show ? 'visibility_off' : 'visibility';
         });
+
+        document.getElementById('confirm-toggle').addEventListener('click', function () {
+            var input = document.getElementById('confirm-password');
+            var icon = this.querySelector('.material-symbols-outlined');
+            var show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            icon.textContent = show ? 'visibility_off' : 'visibility';
+        });
+
+        var pwInput = document.getElementById('password');
+        var pwStrengthWrap = document.getElementById('pw-strength');
+        var pwSegs = [document.getElementById('pw-seg-1'), document.getElementById('pw-seg-2'), document.getElementById('pw-seg-3'), document.getElementById('pw-seg-4')];
+        var pwLabel = document.getElementById('pw-strength-label');
+
+        function pwUpdate() {
+            var v = pwInput.value;
+            if (!v) {
+                pwStrengthWrap.classList.add('hidden');
+                return;
+            }
+            pwStrengthWrap.classList.remove('hidden');
+            var s = 0;
+            if (v.length >= 8) s++;
+            if (/[a-z]/.test(v) && /[A-Z]/.test(v)) s++;
+            if (/\d/.test(v)) s++;
+            if (/[^a-zA-Z0-9]/.test(v)) s++;
+            if (v.length >= 12) s++;
+            var filled, text, color;
+            if (v.length < 8 || s <= 1) {
+                filled = 1; text = 'Lemah'; color = '#ba1a1a';
+            } else if (s <= 3) {
+                filled = Math.min(s, 3); text = 'Bagus';
+                color = document.documentElement.classList.contains('theme-dark') ? '#f59e0b' : '#d97706';
+            } else {
+                filled = 4; text = 'Aman'; color = '#2e7d32';
+            }
+            pwSegs.forEach(function (seg, i) {
+                seg.style.background = i < filled ? color : '';
+            });
+            pwLabel.textContent = 'Password: ' + text;
+            pwLabel.style.color = color;
+        }
+
+        pwInput.addEventListener('input', pwUpdate);
 
         function setError(id, show) {
             document.getElementById(id).classList.toggle('hidden', !show);
@@ -470,5 +545,17 @@
             b.title = document.documentElement.classList.contains('theme-dark') ? 'Mode terang' : 'Mode gelap';
         }
         updateThemeChipTitle();
+    </script>
+<script>
+        (function () {
+            var slides = document.querySelectorAll('.atl-slide');
+            if (slides.length < 2) return;
+            var idx = 0;
+            setInterval(function () {
+                slides[idx].style.opacity = '0';
+                idx = (idx + 1) % slides.length;
+                slides[idx].style.opacity = '1';
+            }, 4000);
+        })();
     </script>
 </body></html>
