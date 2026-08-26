@@ -68,10 +68,8 @@
                     <option>Stok Terbanyak</option>
                 </select>
                 <button type="button" data-filter-reset class="px-3 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface-variant hover:text-on-surface hover:border-gold-accent transition-colors">Reset</button>
+                </div>
             </div>
-                <button type="button" data-filter-reset class="px-3 py-2.5 border border-muted-border rounded-lg font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hover:text-on-surface hover:border-gold-accent transition-colors">Reset</button>
-            </div>
-        </div>
         </div>
 
         <div class="border border-gold-accent/20 bg-gold-accent/5 rounded-lg px-4 py-3 flex items-start gap-3 mb-6">
@@ -90,7 +88,6 @@
                         <th class="p-4 text-center">Minimum Stok</th>
                         <th class="p-4 text-right">HPP</th>
                         <th class="p-4 text-right">Harga Jual</th>
-                        <th class="p-4 text-right">Harga Satuan</th>
                         <th class="p-4 text-center">Status</th>
                         <th class="p-4 text-center">Updated</th>
                         <th class="p-4 text-center">Action</th>
@@ -122,13 +119,17 @@
                             <td class="p-4 text-center text-on-surface-variant">{{ $product[3] }}</td>
                             <td class="p-4 text-center font-bold {{ $stockClass }}">{{ $product[4] }}</td>
                             <td class="p-4 text-center text-on-surface-variant">{{ $product[5] }}</td>
-                            <td class="p-4 text-right font-title-md text-sm text-on-surface whitespace-nowrap">Rp {{ number_format($product[8], 0, ',', '.') }}</td>
                             <td class="p-4 text-right font-bold text-on-surface-variant whitespace-nowrap">{{ $product[6] }}</td>
                             <td class="p-4 text-right font-bold text-gold-accent whitespace-nowrap">{{ $product[7] }}</td>
                             <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass }} text-[10px] font-bold uppercase border">{{ $product[8] }}</span></td>
                             <td class="p-4 text-center text-on-surface-variant whitespace-nowrap">{{ $product[9] }}</td>
                             <td class="p-4">
                                 <div class="flex items-center justify-center gap-2">
+                                    @if(in_array($statusKey, ['kritis', 'menipis']))
+                                    <button type="button" data-modal-open="modal-ajukan-produksi" title="Ajukan Produksi" class="w-9 h-9 rounded-lg border border-gold-accent/40 flex items-center justify-center text-gold-accent hover:bg-gold-accent/10 transition-colors">
+                                        <span class="material-symbols-outlined text-[18px]">precision_manufacturing</span>
+                                    </button>
+                                    @endif
                                     <button type="button" data-modal-open="stok-detail-{{ $loop->iteration }}" title="Lihat Detail" class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface-variant hover:text-gold-accent hover:border-gold-accent transition-colors">
                                         <span class="material-symbols-outlined text-[18px]">visibility</span>
                                     </button>
@@ -200,16 +201,6 @@
                         <p class="font-title-md text-lg text-gold-accent mt-1">{{ $product[7] }}</p>
                     </div>
                 </div>
-                <div class="bg-gradient-to-r from-gold-accent/10 to-transparent border border-gold-accent/25 rounded-lg p-4 mb-6 flex items-center justify-between gap-3">
-                    <div>
-                        <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Harga Satuan</p>
-                        <p class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent leading-tight">Rp {{ number_format($product[8], 0, ',', '.') }}</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Nilai Persediaan</p>
-                        <p class="font-title-md text-title-md text-on-surface">Rp {{ number_format($product[8] * $product[4], 0, ',', '.') }}</p>
-                    </div>
-                </div>
                 <dl class="space-y-4 font-body-md text-sm">
                     <div class="flex justify-between gap-4 pb-4 border-b border-muted-border">
                         <dt class="text-on-surface-variant">Status</dt>
@@ -235,5 +226,26 @@
             </div>
         </div>
     @endforeach
+
+    {{-- Modal Ajukan Produksi (shared untuk baris kritis/menipis) --}}
+    <div id="modal-ajukan-produksi" data-modal class="fixed inset-0 z-[70] hidden">
+        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+        <div class="relative mx-auto mt-24 md:mt-40 w-[calc(100%-2rem)] max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl">
+            <div class="p-6 text-center space-y-4">
+                <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center mx-auto">
+                    <span class="material-symbols-outlined text-[28px] text-gold-accent">precision_manufacturing</span>
+                </div>
+                <h3 class="font-title-md text-title-md text-on-surface">Ajukan Produksi</h3>
+                <p class="text-on-surface-variant font-body-md text-sm leading-relaxed">Permintaan restock akan diteruskan ke Owner/Admin untuk disetujui dan diproses tim Produksi.</p>
+                <form data-toast-message="Permintaan produksi berhasil diajukan." class="space-y-gutter pt-1 text-left">
+                    <div>
+                        <label class="block raliva-label mb-2">Jumlah Unit</label>
+                        <input type="number" value="50" min="1" class="raliva-input" />
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Kirim Permintaan</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
