@@ -233,6 +233,7 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/peringkat', [PeringkatController::class, 'index'])->name('peringkat');
     Route::get('/riwayat-aktivitas', [RiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
     Route::get('/pengaturan-sistem', [PengaturanSistemController::class, 'index'])->name('pengaturan-sistem');
+    Route::post('/pengaturan-sistem/legal', [PengaturanSistemController::class, 'updateLegal'])->name('pengaturan-sistem.legal');
     Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
     Route::get('/komplain', [SaKomplainController::class, 'index'])->name('komplain');
     Route::get('/pengiriman', [SaPengirimanController::class, 'index'])->name('pengiriman');
