@@ -244,7 +244,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/verifikasi-pembayaran', [VerifikasiPembayaranController::class, 'index'])->name('verifikasi-pembayaran');
     Route::get('/customer', [DataCustomerController::class, 'index'])->name('customer');
     Route::get('/produk', [DataProdukController::class, 'index'])->name('produk');
-    Route::get('/supplier', fn () => view('Admin.supplier'))->name('supplier');
+    Route::get('/supplier', fn () => view('Admin.supplier.supplier'))->name('supplier');
     Route::get('/stok', [StokController::class, 'index'])->name('stok');
     Route::get('/pengiriman', [PengirimanController::class, 'index'])->name('pengiriman');
     Route::get('/pengembalian-dana', [AdminPengembalianDanaController::class, 'index'])->name('pengembalian-dana');
@@ -264,7 +264,7 @@ Route::prefix('gudang')->name('gudang.')->group(function () {
     Route::get('/barang-keluar', [GudangBarangKeluarController::class, 'index'])->name('barang-keluar');
     Route::get('/pemindahan', [GudangPemindahanStokController::class, 'index'])->name('pemindahan');
     Route::get('/pemeriksaan', [GudangPemeriksaanStokController::class, 'index'])->name('pemeriksaan');
-    Route::get('/pelanggan-request', fn () => view('Gudang.pelanggan-request'))->name('pelanggan-request');
+    Route::get('/pelanggan-request', fn () => view('Gudang.request-pelanggan.pelanggan-request'))->name('pelanggan-request');
     Route::get('/stok-rusak', [GudangStokRusakController::class, 'index'])->name('stok-rusak');
     Route::get('/riwayat-stok', [GudangRiwayatStokController::class, 'index'])->name('riwayat-stok');
     Route::get('/notifikasi', [GudangNotifikasiController::class, 'index'])->name('notifikasi');
