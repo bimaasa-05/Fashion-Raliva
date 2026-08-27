@@ -381,9 +381,10 @@
 <label class="flex items-center gap-sm cursor-pointer">
 <input class="w-4 h-4 shrink-0 cursor-pointer" id="remember" name="remember" type="checkbox"/>
 <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Remember Me') }}</span>
-<!-- Forgot Password -->
+</label>
 <div class="flex justify-end">
 <a class="font-label-sm text-label-sm text-secondary hover:opacity-80 transition-opacity" href="{{ route('password.request') }}">{{ __('Forgot Password?') }}</a>
+</div>
 </div>
 <!-- Submit -->
 <button class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm mt-lg disabled:opacity-60 disabled:pointer-events-none" id="login-btn" type="submit">
@@ -414,8 +415,7 @@
 </p>
 </div>
 </div>
-</main>
-<script>
+</main><script>
         var redirectParam = new URLSearchParams(window.location.search).get('redirect');
 
         var registerLink = document.getElementById('register-link');
