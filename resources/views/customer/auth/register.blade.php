@@ -337,25 +337,46 @@
 <p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">{{ __('Raliva Account') }}</p>
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Create Your Account') }}</h2>
 </div>
-<form id="register-form" novalidate>
+@if($errors->any())
+<div class="mb-md rounded-DEFAULT border border-error bg-error-container px-md py-sm font-body-sm text-body-sm text-error">
+{{ $errors->first() }}
+</div>
+@endif
+<form id="register-form" novalidate method="POST" action="{{ route('register') }}">
+@csrf
 <!-- Full Name -->
 <div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="full-name">{{ __('Full Name') }}</label>
-<input autocomplete="name" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="full-name" placeholder="{{ __('Your full name') }}" type="text"/>
+<input name="nama_lengkap" value="{{ old('nama_lengkap') }}" autocomplete="name" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="full-name" placeholder="{{ __('Your full name') }}" type="text"/>
 <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="name-error">{{ __('Full name is required.') }}</p>
 </div>
 <!-- Email -->
 <div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">{{ __('Email') }}</label>
-<input autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="email" placeholder="you@example.com" type="email"/>
+<input name="email" value="{{ old('email') }}" autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="email" placeholder="you@example.com" type="email"/>
 <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-error">{{ __('Invalid email address.') }}</p>
 <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-taken-error">{{ __('Email is already registered.') }}</p>
+</div>
+<!-- Account Type -->
+<div class="mb-sm">
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs">{{ __('Account Type') }}</label>
+<div class="grid grid-cols-2 gap-sm">
+<label class="flex items-center gap-xs cursor-pointer rounded-DEFAULT border border-outline-variant px-md py-sm">
+<input class="w-4 h-4" type="radio" name="role" value="customer" {{ old('role', 'customer') === 'customer' ? 'checked' : '' }}/>
+<span class="font-body-sm text-body-sm text-on-surface">{{ __('Pelanggan') }}</span>
+</label>
+<label class="flex items-center gap-xs cursor-pointer rounded-DEFAULT border border-outline-variant px-md py-sm">
+<input class="w-4 h-4" type="radio" name="role" value="owner" {{ old('role') === 'owner' ? 'checked' : '' }}/>
+<span class="font-body-sm text-body-sm text-on-surface">{{ __('Pemilik Brand') }}</span>
+</label>
+</div>
+<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="role-error">{{ __('Please choose an account type.') }}</p>
 </div>
 <!-- Password -->
 <div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password">{{ __('Password') }}</label>
 <div class="relative">
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password" placeholder="{{ __('Minimum 8 characters') }}" type="password"/>
+<input name="password" autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password" placeholder="{{ __('Minimum 8 characters') }}" type="password"/>
 <button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="password-toggle" type="button">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </button>
@@ -376,7 +397,7 @@
 <div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="confirm-password">{{ __('Confirm Password') }}</label>
 <div class="relative">
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="confirm-password" placeholder="{{ __('Re-enter your password') }}" type="password"/>
+<input name="password_confirmation" autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="confirm-password" placeholder="{{ __('Re-enter your password') }}" type="password"/>
 <button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="confirm-toggle" type="button">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </button>
@@ -385,7 +406,7 @@
 </div>
 <!-- Terms Checkbox -->
 <label class="flex items-start gap-sm cursor-pointer mb-sm">
-<input class="mt-1 w-4 h-4 shrink-0" id="terms" type="checkbox"/>
+<input class="mt-1 w-4 h-4 shrink-0" id="terms" name="terms" type="checkbox"/>
 <span class="font-body-sm text-body-sm text-on-surface-variant">
             {{ __("I agree to the") }} <span class="text-secondary underline underline-offset-4">{{ __('Terms &amp; Privacy Policy') }}</span>
         </span>
@@ -416,7 +437,7 @@
 <!-- Login Link -->
 <p class="text-center font-body-sm text-body-sm text-on-surface-variant mt-lg">
         {{ __('Already have an account?') }}
-<a class="text-secondary font-semibold hover:opacity-80 transition-opacity ml-1" href="{{ route('customer.login') }}{{ request('redirect') ? '?redirect=' . urlencode(request('redirect')) : '' }}">{{ __('LOGIN') }}</a>
+<a class="text-secondary font-semibold hover:opacity-80 transition-opacity ml-1" href="{{ route('login') }}">{{ __('LOGIN') }}</a>
 </p>
 </div>
 </div>
@@ -425,7 +446,7 @@
 <span class="material-symbols-outlined text-secondary text-[64px]">check_circle</span>
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-md mb-sm">{{ __('Account Created') }}</h2>
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">{{ __('Your RALIVA account has been created successfully. Please sign in to continue.') }}</p>
-<a class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('customer.login') }}" id="success-login-link">
+<a class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('login') }}" id="success-login-link">
             {{ __('CONTINUE TO LOGIN') }}
         </a>
 </div>
@@ -495,32 +516,28 @@
         }
 
         document.getElementById('register-form').addEventListener('submit', function (e) {
-            e.preventDefault();
             var name = document.getElementById('full-name').value.trim();
             var email = document.getElementById('email').value.trim();
             var password = document.getElementById('password').value;
             var confirm = document.getElementById('confirm-password').value;
             var terms = document.getElementById('terms').checked;
+            var roleEl = document.querySelector('input[name="role"]:checked');
             var valid = true;
 
-            ['name-error', 'email-error', 'email-taken-error', 'password-error', 'confirm-error', 'terms-error'].forEach(function (id) { setError(id, false); });
+            ['name-error', 'email-error', 'email-taken-error', 'password-error', 'confirm-error', 'terms-error', 'role-error'].forEach(function (id) { setError(id, false); });
 
             if (!name) { setError('name-error', true); valid = false; }
             if (!email || !/^\S+@\S+\.\S+$/.test(email)) { setError('email-error', true); valid = false; }
             if (password.length < 8) { setError('password-error', true); valid = false; }
             if (password !== confirm) { setError('confirm-error', true); valid = false; }
             if (!terms) { setError('terms-error', true); valid = false; }
-            if (!valid) return;
+            if (!roleEl) { setError('role-error', true); valid = false; }
+
+            if (!valid) { e.preventDefault(); return; }
 
             var btn = document.getElementById('register-btn');
             btn.disabled = true;
             document.getElementById('register-spinner').classList.remove('hidden');
-
-            setTimeout(function () {
-                document.getElementById('register-section').classList.add('hidden');
-                document.getElementById('register-success').classList.remove('hidden');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 800);
         });
     </script>
 <script>
