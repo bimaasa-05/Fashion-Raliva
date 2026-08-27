@@ -78,6 +78,8 @@ use App\Http\Controllers\SuperAdmin\ProfilController;
 use App\Http\Controllers\SuperAdmin\PromoPlatformController;
 use App\Http\Controllers\SuperAdmin\RiwayatAktivitasController;
 use App\Http\Controllers\SuperAdmin\SaldoTokoController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\SuperAdmin\StokController as SaStokController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -86,41 +88,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+/* ===== Unified Authentication (semua role) ===== */
+Route::get('/login', [LoginController::class, 'create'])->name('login');
+Route::post('/login', [LoginController::class, 'store']);
+Route::get('/register', [RegisterController::class, 'create'])->name('register');
+Route::post('/register', [RegisterController::class, 'store']);
+Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->middleware('auth');
+Route::get('/forgot-password', fn () => view('customer.auth.forgot-password'))->name('password.request');
+Route::get('/reset-password', fn () => view('customer.auth.reset-password'))->name('password.reset');
+
 // customer
 Route::prefix('customer')->name('customer.')->group(function () {
-    Route::get('/login', function () {
-        return view('customer.auth.login');
-    })->name('login');
-
-    Route::post('/login', function (Request $request) {
-        $validated = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string|min:1',
-            'redirect' => 'nullable|string',
-        ]);
-
-        session(['mock_customer' => ['email' => $validated['email']]]);
-
-        $redirect = $validated['redirect'] ?? '';
-        if ($redirect !== '' && str_starts_with($redirect, '/customer')) {
-            return redirect($redirect);
-        }
-
-        return redirect()->route('customer.home');
-    })->name('login.store');
-
-    Route::get('/register', function () {
-        return view('customer.auth.register');
-    })->name('register');
-
-    Route::get('/forgot-password', function () {
-        return view('customer.auth.forgot-password');
-    })->name('forgot-password');
-
-    Route::get('/reset-password', function () {
-        return view('customer.auth.reset-password');
-    })->name('reset-password');
-
     Route::get('/', function () {
         return view('customer.home.index');
     })->name('home');
@@ -141,61 +119,63 @@ Route::prefix('customer')->name('customer.')->group(function () {
         return view('customer.search.index');
     })->name('search');
 
-    Route::get('/chart', function () {
-        return view('customer.chart.index');
-    })->name('chart');
+    Route::middleware('role:Customer')->group(function () {
+        Route::get('/chart', function () {
+            return view('customer.chart.index');
+        })->name('chart');
 
-    Route::get('/checkout', function () {
-        return view('customer.checkout.index');
-    })->name('checkout');
+        Route::get('/checkout', function () {
+            return view('customer.checkout.index');
+        })->name('checkout');
 
     Route::get('/order-tracking', function () {
         return view('customer.order-tracking.index');
-    })->name('order-tracking')->middleware('mock.customer');
+    })->name('order-tracking');
 
-    Route::get('/account', function () {
-        return view('customer.account.index');
-    })->name('account');
+        Route::get('/account', function () {
+            return view('customer.account.index');
+        })->name('account');
 
-    Route::get('/account/edit', function () {
-        return view('customer.account.edit');
-    })->name('account.edit');
+        Route::get('/account/edit', function () {
+            return view('customer.account.edit');
+        })->name('account.edit');
 
-    Route::get('/account/password', function () {
-        return view('customer.account.password');
-    })->name('account.password');
+        Route::get('/account/password', function () {
+            return view('customer.account.password');
+        })->name('account.password');
 
-    Route::get('/address', function () {
-        return view('customer.address.index');
-    })->name('address');
+        Route::get('/address', function () {
+            return view('customer.address.index');
+        })->name('address');
 
-    Route::get('/reviews', function () {
-        return view('customer.reviews.index');
-    })->name('reviews');
+        Route::get('/reviews', function () {
+            return view('customer.reviews.index');
+        })->name('reviews');
 
-    Route::get('/reviews/create', function () {
-        return view('customer.reviews.create');
-    })->name('reviews.create');
+        Route::get('/reviews/create', function () {
+            return view('customer.reviews.create');
+        })->name('reviews.create');
 
-    Route::get('/reviews/edit', function () {
-        return view('customer.reviews.edit');
-    })->name('reviews.edit');
+        Route::get('/reviews/edit', function () {
+            return view('customer.reviews.edit');
+        })->name('reviews.edit');
 
-    Route::get('/notifications', function () {
-        return view('customer.notifications.index');
-    })->name('notifications');
+        Route::get('/notifications', function () {
+            return view('customer.notifications.index');
+        })->name('notifications');
+
+        Route::get('/settings', function () {
+            return view('customer.settings.index');
+        })->name('settings');
+
+        Route::get('/wishlist', function () {
+            return view('customer.wishlist.index');
+        })->name('wishlist');
+    });
 
     Route::get('/help', function () {
         return view('customer.help.index');
     })->name('help');
-
-    Route::get('/settings', function () {
-        return view('customer.settings.index');
-    })->name('settings');
-
-    Route::get('/wishlist', function () {
-        return view('customer.wishlist.index');
-    })->name('wishlist');
 
     Route::post('/locale', function (Request $request) {
         $validated = $request->validate([
@@ -206,7 +186,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
         return back();
     })->name('locale.switch');
 });
-Route::prefix('superadmin')->name('superadmin.')->group(function () {
+Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Super Admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/manajemen-pengguna', [ManajemenPenggunaController::class, 'index'])->name('manajemen-pengguna');
     Route::get('/manajemen-toko', [ManajemenTokoController::class, 'index'])->name('manajemen-toko');
@@ -255,7 +235,7 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/produk', [ProdukController::class, 'index'])->name('produk');
 });
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/dashboard', [DashboardOperasionalController::class, 'index'])->name('dashboard');
     Route::get('/pesanan', [AdminDataPesananController::class, 'index'])->name('pesanan');
     Route::post('/pesanan/{pesanan}/proses', [AdminDataPesananController::class, 'proses'])->name('pesanan.proses');
@@ -280,7 +260,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/riwayat-aktivitas', [AdminRiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
 });
 
-Route::prefix('gudang')->name('gudang.')->group(function () {
+Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang'])->group(function () {
     Route::get('/dashboard', [GudangDashboardController::class, 'index'])->name('dashboard');
     Route::get('/stok', [GudangStokController::class, 'index'])->name('stok');
     Route::get('/barang-masuk', [GudangBarangMasukController::class, 'index'])->name('barang-masuk');
@@ -294,7 +274,7 @@ Route::prefix('gudang')->name('gudang.')->group(function () {
     Route::get('/profil', [GudangProfilController::class, 'index'])->name('profil');
 });
 
-Route::prefix('owner')->name('owner.')->group(function () {
+Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->group(function () {
     Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/data-toko', [DataTokoController::class, 'index'])->name('data-toko');
     Route::get('/pengajuan-toko', [PengajuanTokoController::class, 'index'])->name('pengajuan-toko');
@@ -312,7 +292,7 @@ Route::prefix('owner')->name('owner.')->group(function () {
     Route::get('/profil', [OwnerProfilController::class, 'index'])->name('profil');
 });
 
-Route::prefix('produksi')->name('produksi.')->group(function () {
+Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi'])->group(function () {
     Route::get('/dashboard', [ProduksiDashboardController::class, 'index'])->name('dashboard');
     Route::get('/permintaan-produksi', [ProduksiPermintaanController::class, 'index'])->name('permintaan-produksi');
     Route::get('/data-produksi', [ProduksiDataController::class, 'index'])->name('data-produksi');
@@ -324,3 +304,4 @@ Route::prefix('produksi')->name('produksi.')->group(function () {
     Route::get('/notifikasi', [ProduksiNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [ProduksiProfilController::class, 'index'])->name('profil');
 });
+
