@@ -13,9 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
+            \Illuminate\Session\Middleware\AuthenticateSession::class,
         ]);
         $middleware->alias([
-            'mock.customer' => \App\Http\Middleware\EnsureMockCustomer::class,
+            'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
+            'role' => \App\Http\Middleware\EnsureRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
