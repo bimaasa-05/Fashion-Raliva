@@ -403,6 +403,7 @@
 </div>
     <script>
         var activeFilters = { category: [], size: [], color: [], price: { min: null, max: null } };
+        var currentSort = 'Newest';
 
         function openFilter() {
             document.getElementById('filter-sheet').classList.remove('translate-y-full');
@@ -576,6 +577,19 @@
             var countEl = document.getElementById('result-count');
             if (countEl) countEl.textContent = shown;
         }
+        function applySort() {
+            var grid = document.getElementById('product-grid');
+            if (!grid) return;
+            var cards = Array.prototype.slice.call(grid.children);
+            cards.sort(function (a, b) {
+                if (currentSort === 'Price: Low to High') return (parseInt(a.dataset.price, 10) || 0) - (parseInt(b.dataset.price, 10) || 0);
+                if (currentSort === 'Price: High to Low') return (parseInt(b.dataset.price, 10) || 0) - (parseInt(a.dataset.price, 10) || 0);
+                if (currentSort === 'Popular') return (parseInt(b.dataset.popular, 10) || 0) - (parseInt(a.dataset.popular, 10) || 0);
+                return (parseInt(b.dataset.created, 10) || 0) - (parseInt(a.dataset.created, 10) || 0);
+            });
+            cards.forEach(function (c) { grid.appendChild(c); });
+            applyGridFilter();
+        }
         function toggleSel(el) {
             if (el.dataset.type === 'size') {
                 el.classList.toggle('bg-primary');
@@ -603,6 +617,7 @@
             document.getElementById('sort-chevron').classList.remove('rotate-180');
         }
         function selectSort(label) {
+            currentSort = label;
             document.getElementById('sort-label').textContent = label;
             document.querySelectorAll('#sort-menu [data-sort]').forEach(function (btn) {
                 var check = btn.querySelector('.sort-check');
@@ -614,6 +629,7 @@
                     btn.classList.remove('font-semibold');
                 }
             });
+            applySort();
             closeSortMenu();
         }
         document.addEventListener('click', function (e) {
@@ -624,10 +640,10 @@
         });
         (function initShop() {
             var productData = [
-                { category: 'Women', size: 'S M L', color: 'Beige Brown', price: 329000 },
-                { category: 'Women', size: 'S M', color: 'Brown', price: 579000 },
-                { category: 'Women', size: 'XS S M', color: 'Beige', price: 380000 },
-                { category: 'Men', size: 'M L XL', color: 'White', price: 299000 }
+                { category: 'Women', size: 'S M L', color: 'Beige Brown', price: 329000, created: 4, popular: 2 },
+                { category: 'Women', size: 'S M', color: 'Brown', price: 579000, created: 3, popular: 4 },
+                { category: 'Women', size: 'XS S M', color: 'Beige', price: 380000, created: 2, popular: 3 },
+                { category: 'Men', size: 'M L XL', color: 'White', price: 299000, created: 1, popular: 1 }
             ];
             var cards = document.querySelectorAll('#product-grid > a');
             cards.forEach(function (card, i) {
@@ -637,8 +653,10 @@
                 card.setAttribute('data-size', d.size);
                 card.setAttribute('data-color', d.color);
                 card.setAttribute('data-price', d.price);
+                card.setAttribute('data-created', d.created);
+                card.setAttribute('data-popular', d.popular);
             });
-            applyGridFilter();
+            applySort();
             renderChips();
             updateBadge();
             updateAppliedLabel();
