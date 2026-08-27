@@ -32,6 +32,36 @@
     .filter-chip:hover { border-color: rgba(201, 162, 77, 0.5); color: #C9A24D; transform: translateY(-1px); }
     .filter-chip.active { background-color: rgba(201, 162, 77, 0.15); border-color: rgba(201, 162, 77, 0.5); color: #C9A24D; }
 
+    /* ── Premium user cards ── */
+    .user-card { position: relative; }
+    .user-card::before {
+        content: '';
+        position: absolute; inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(140deg, rgba(201,162,77,0) 0%, rgba(201,162,77,0.45) 50%, rgba(201,162,77,0) 100%);
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor; mask-composite: exclude;
+        opacity: 0; transition: opacity .3s ease; pointer-events: none;
+    }
+    .user-card:hover::before { opacity: 1; }
+    .user-avatar-ring {
+        background: linear-gradient(135deg, rgba(201,162,77,0.25), rgba(120,89,5,0.10));
+        box-shadow: 0 6px 18px -6px rgba(201,162,77,0.5);
+    }
+    .role-badge {
+        background: linear-gradient(135deg, rgba(201,162,77,0.16), rgba(201,162,77,0.05));
+        border: 1px solid rgba(201,162,77,0.30);
+        color: #C9A24D;
+    }
+    @keyframes pulseDot {
+        0%   { box-shadow: 0 0 0 0 rgba(20,160,90,0.55); }
+        70%  { box-shadow: 0 0 0 7px rgba(20,160,90,0); }
+        100% { box-shadow: 0 0 0 0 rgba(20,160,90,0); }
+    }
+    .status-dot-pulse { animation: pulseDot 2s infinite; }
+    .filter-chip { transition: all 0.2s ease; }
+
     .drawer-overlay { transition: opacity 0.3s ease; }
     .drawer-panel { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
     .drawer-panel.open { transform: translateX(0); }
@@ -92,32 +122,46 @@
     </section>
 
     <!-- Filters -->
-    <section class="space-y-gutter rise rise-d1">
-        <div class="flex flex-col sm:flex-row gap-4">
-            <div class="flex-1 relative">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                <form method="GET" action="{{ route('superadmin.manajemen-pengguna') }}" id="search-form">
-                    <input type="hidden" name="role" value="{{ request('role') }}" />
-                    <input type="hidden" name="status" value="{{ request('status') }}" />
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg pl-11 pr-4 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors placeholder-on-surface-variant/50" id="user-search" name="search" type="text" placeholder="Cari nama, email, atau nomor telepon..." value="{{ request('search') }}" />
-                </form>
+    <section class="rise rise-d1">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium space-y-5">
+            <div class="flex flex-col sm:flex-row gap-4">
+                <div class="flex-1 relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="user-search" type="text" placeholder="Cari nama, email, atau nomor telepon..." value="{{ request('search') }}" />
+                    <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+                        <span class="material-symbols-outlined text-[18px]">close</span>
+                    </button>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest">Urutkan:</span>
+                    <select id="sort-select" class="bg-surface-container-low border border-muted-border rounded-lg px-3 py-3 font-label-sm text-[11px] uppercase tracking-wide text-on-surface focus:outline-none focus:border-gold-accent transition-colors">
+                        <option value="nama_asc">Nama A-Z</option>
+                        <option value="nama_desc">Nama Z-A</option>
+                        <option value="role">Peran</option>
+                        <option value="status">Status</option>
+                    </select>
+                </div>
             </div>
-        </div>
 
-        <div class="flex flex-wrap gap-2">
-            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest self-center mr-2">Peran:</span>
-            <a href="{{ route('superadmin.manajemen-pengguna', array_filter(['status' => request('status'), 'search' => request('search')])) }}" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide {{ !request('role') ? 'active' : 'text-on-surface-variant' }}">Semua</a>
-            @foreach ($roles as $role)
-                <a href="{{ route('superadmin.manajemen-pengguna', array_filter(['role' => $role->nama_role, 'status' => request('status'), 'search' => request('search')])) }}" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide {{ request('role') === $role->nama_role ? 'active' : 'text-on-surface-variant' }}">{{ $role->nama_role }}</a>
-            @endforeach
-        </div>
+            <div class="border-t border-muted-border/60 pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex flex-wrap gap-2 items-center" data-filter-group="role">
+                    <span class="text-gold-accent material-symbols-outlined text-[16px]">badge</span>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest self-center mr-1">Peran:</span>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide active" data-filter="role" data-value="">Semua</button>
+                    @foreach ($roles as $role)
+                        <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="role" data-value="{{ $role->nama_role }}">{{ $role->nama_role }}</button>
+                    @endforeach
+                </div>
 
-        <div class="flex flex-wrap gap-2">
-            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest self-center mr-2">Status:</span>
-            <a href="{{ route('superadmin.manajemen-pengguna', array_filter(['role' => request('role'), 'search' => request('search')])) }}" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide {{ !request('status') ? 'active' : 'text-on-surface-variant' }}">Semua</a>
-            <a href="{{ route('superadmin.manajemen-pengguna', array_filter(['status' => 'aktif', 'role' => request('role'), 'search' => request('search')])) }}" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide {{ request('status') === 'aktif' ? 'active' : 'text-on-surface-variant' }}">Aktif</a>
-            <a href="{{ route('superadmin.manajemen-pengguna', array_filter(['status' => 'nonaktif', 'role' => request('role'), 'search' => request('search')])) }}" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide {{ request('status') === 'nonaktif' ? 'active' : 'text-on-surface-variant' }}">Non-aktif</a>
-            <a href="{{ route('superadmin.manajemen-pengguna', array_filter(['status' => 'suspend', 'role' => request('role'), 'search' => request('search')])) }}" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide {{ request('status') === 'suspend' ? 'active' : 'text-on-surface-variant' }}">Suspend</a>
+                <div class="flex flex-wrap gap-2 items-center" data-filter-group="status">
+                    <span class="text-gold-accent material-symbols-outlined text-[16px]">toggle_on</span>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest self-center mr-1">Status:</span>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide active" data-filter="status" data-value="">Semua</button>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="status" data-value="aktif">Aktif</button>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="status" data-value="nonaktif">Non-aktif</button>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="status" data-value="suspend">Suspend</button>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -125,7 +169,7 @@
     <section class="rise rise-d2">
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter" id="user-grid">
             @forelse ($users as $u)
-                <div class="group relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl p-6 transition-all duration-300 hover:border-gold-accent hover:shadow-lg hover:-translate-y-0.5 cursor-pointer card-premium"
+                <div class="user-card group relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl p-6 transition-all duration-300 hover:border-gold-accent hover:shadow-lg hover:-translate-y-0.5 cursor-pointer card-premium"
                     data-id="{{ $u->user_id }}"
                     data-role="{{ $u->role->nama_role ?? '' }}"
                     data-status="{{ $u->status }}"
@@ -138,24 +182,26 @@
                     onclick="openUserDetail(this)">
                     <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-secondary-container/15 to-transparent rounded-full -translate-y-8 translate-x-8" style="filter: blur(20px); opacity: 0.5;"></div>
                     <div class="relative flex items-start gap-4">
-                        <div class="w-14 h-14 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform border-2 border-surface-container-lowest shadow-sm">
+                        <div class="user-avatar-ring w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform border-2 border-surface-container-lowest shadow-sm">
                             @if ($u->foto_profil_url)
                                 <img src="{{ $u->foto_profil_url }}" class="w-14 h-14 rounded-full object-cover" alt="{{ $u->nama_lengkap }}" />
                             @else
-                                <span class="font-title-md text-title-md text-secondary">{{ strtoupper(mb_substr($u->nama_lengkap, 0, 2)) }}</span>
+                                <span class="font-title-md text-title-md text-gold-accent">{{ strtoupper(mb_substr($u->nama_lengkap, 0, 2)) }}</span>
                             @endif
                         </div>
                         <div class="flex-1 min-w-0">
                             <h3 class="font-title-md text-title-md text-on-surface group-hover:text-gold-accent transition-colors truncate">{{ $u->nama_lengkap }}</h3>
                             <p class="text-on-surface-variant text-sm truncate">{{ $u->email }}</p>
-                            <div class="flex items-center gap-2 mt-2 flex-wrap">
-                                <span class="inline-flex px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase">{{ $u->role->nama_role ?? '-' }}</span>
+                            <div class="flex items-center gap-2 mt-3 flex-wrap">
+                                <span class="role-badge inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide">{{ $u->role->nama_role ?? '-' }}</span>
                                 @if ($u->status === \App\Models\User::STATUS_AKTIF)
-                                    <span class="inline-flex px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 text-[9px] font-bold uppercase">Aktif</span>
+                                    <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 text-[9px] font-bold uppercase">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-success status-dot-pulse"></span>Aktif
+                                    </span>
                                 @elseif ($u->status === \App\Models\User::STATUS_SUSPEND)
-                                    <span class="inline-flex px-1.5 py-0.5 rounded bg-tertiary-container/30 text-on-tertiary-container border border-tertiary-container/50 text-[9px] font-bold uppercase">Suspend</span>
+                                    <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-tertiary-container/30 text-on-tertiary-container border border-tertiary-container/50 text-[9px] font-bold uppercase">Suspend</span>
                                 @else
-                                    <span class="inline-flex px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">{{ $u->status }}</span>
+                                    <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Non-aktif</span>
                                 @endif
                             </div>
                         </div>
@@ -163,15 +209,32 @@
                             <span class="material-symbols-outlined text-[18px]">edit</span>
                         </button>
                     </div>
+                    <div class="relative mt-4 pt-4 border-t border-muted-border/60 flex items-center justify-between">
+                        <span class="inline-flex items-center gap-1.5 text-on-surface-variant text-xs truncate">
+                            <span class="material-symbols-outlined text-[14px]">call</span>
+                            {{ $u->nomor_telepon ?? 'No. telepon -' }}
+                        </span>
+                        <button type="button" onclick="event.stopPropagation(); openHapusModal(this.closest('[data-id]'))" class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-lg hover:bg-error/10 text-on-surface-variant hover:text-error" title="Hapus">
+                            <span class="material-symbols-outlined text-[18px]">delete_outline</span>
+                        </button>
+                    </div>
                 </div>
             @empty
-                <div class="col-span-full text-center py-16">
+                <div class="col-span-full text-center py-16" id="empty-state-static">
                     <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mx-auto mb-4">
                         <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">group_off</span>
                     </div>
                     <p class="text-on-surface-variant font-body-md text-sm">Tidak ada pengguna ditemukan.</p>
                 </div>
             @endforelse
+            {{-- Empty state saat filter tidak cocok (disembunyikan bila ada hasil) --}}
+            <div class="col-span-full text-center py-16 hidden" id="empty-state-filter">
+                <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mx-auto mb-4">
+                    <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
+                </div>
+                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada pengguna yang cocok dengan filter.</p>
+                <button type="button" onclick="resetUserFilters()" class="mt-3 px-5 py-2 rounded-lg border border-gold-accent/40 text-gold-accent font-label-sm text-[11px] uppercase tracking-widest hover:bg-gold-accent/10 transition-colors">Reset Filter</button>
+            </div>
         </div>
     </section>
 </div>
@@ -185,7 +248,7 @@
     </div>
     <div class="p-6 space-y-6">
         <div class="flex items-center gap-4">
-            <div id="drawer-avatar" class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0 border-2 border-surface-container-lowest shadow-sm">
+            <div id="drawer-avatar" class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0 border-2 border-surface-container-lowest shadow-sm overflow-hidden">
                 <span id="drawer-initial" class="font-title-lg text-title-lg text-secondary"></span>
             </div>
             <div class="flex-1 min-w-0">
@@ -334,11 +397,28 @@
     let isEditMode = false;
 
     /* ── Detail Drawer ── */
+    function renderDrawerAvatar(data) {
+        const avatar = document.getElementById('drawer-avatar');
+        avatar.innerHTML = '';
+        if (data.foto_profil_url) {
+            const img = document.createElement('img');
+            img.src = data.foto_profil_url;
+            img.alt = data.nama;
+            img.className = 'w-16 h-16 rounded-full object-cover';
+            avatar.appendChild(img);
+        } else {
+            const span = document.createElement('span');
+            span.id = 'drawer-initial';
+            span.className = 'font-title-lg text-title-lg text-secondary';
+            span.textContent = data.initial;
+            avatar.appendChild(span);
+        }
+    }
+
     function openUserDetail(card) {
         const d = card.dataset;
         const userId = d.id;
 
-        document.getElementById('drawer-initial').textContent = d.initial;
         document.getElementById('drawer-name').textContent = d.name;
         document.getElementById('drawer-email').textContent = d.email;
         document.getElementById('drawer-phone').textContent = d.phone || '';
@@ -361,6 +441,7 @@
         fetch(urls.detail(userId))
             .then(r => r.json())
             .then(data => {
+                renderDrawerAvatar(data);
                 const roleId = Object.entries(rolesJson).find(([k, v]) => v && k === data.role);
                 if (roleId) document.getElementById('drawer-role-select').value = roleId[1];
 
@@ -496,6 +577,90 @@
         modal.classList.remove('flex');
         document.body.style.overflow = '';
     }
+
+    /* ── Live filter & search (no reload) ── */
+    const userState = { role: '', status: '', search: '', sort: 'nama_asc' };
+
+    function applyUserFilters() {
+        const grid = document.getElementById('user-grid');
+        if (!grid) return;
+        const cards = Array.from(grid.querySelectorAll('.user-card'));
+        const q = userState.search.trim().toLowerCase();
+        let visible = 0;
+
+        cards.forEach(card => {
+            const matchRole = !userState.role || card.dataset.role === userState.role;
+            const matchStatus = !userState.status || card.dataset.status === userState.status;
+            const hay = (card.dataset.name + ' ' + card.dataset.email + ' ' + card.dataset.phone).toLowerCase();
+            const matchSearch = !q || hay.includes(q);
+            const show = matchRole && matchStatus && matchSearch;
+            card.classList.toggle('hidden', !show);
+            if (show) visible++;
+        });
+
+        // Sort
+        const sorted = cards.slice().sort((a, b) => {
+            switch (userState.sort) {
+                case 'nama_desc': return b.dataset.name.localeCompare(a.dataset.name);
+                case 'role': return a.dataset.role.localeCompare(b.dataset.role);
+                case 'status': return a.dataset.status.localeCompare(b.dataset.status);
+                default: return a.dataset.name.localeCompare(b.dataset.name);
+            }
+        });
+        sorted.forEach(c => grid.appendChild(c));
+
+        document.getElementById('empty-state-filter').classList.toggle('hidden', visible > 0);
+        const staticEmpty = document.getElementById('empty-state-static');
+        if (staticEmpty) staticEmpty.classList.toggle('hidden', visible > 0);
+    }
+
+    function setChips(group, value) {
+        document.querySelectorAll('[data-filter-group="' + group + '"] [data-filter]').forEach(btn => {
+            const active = btn.getAttribute('data-value') === value;
+            btn.classList.toggle('active', active);
+            btn.classList.toggle('text-on-surface-variant', !active);
+        });
+    }
+
+    function resetUserFilters() {
+        userState.role = ''; userState.status = ''; userState.search = '';
+        document.getElementById('user-search').value = '';
+        document.getElementById('clear-search').classList.add('opacity-0');
+        setChips('role', '');
+        setChips('status', '');
+        applyUserFilters();
+    }
+
+    // Wire search input (debounced)
+    const searchInput = document.getElementById('user-search');
+    if (searchInput) {
+        let t;
+        searchInput.addEventListener('input', () => {
+            userState.search = searchInput.value;
+            document.getElementById('clear-search').classList.toggle('opacity-0', !searchInput.value);
+            clearTimeout(t);
+            t = setTimeout(applyUserFilters, 180);
+        });
+    }
+    document.getElementById('clear-search')?.addEventListener('click', () => {
+        searchInput.value = '';
+        userState.search = '';
+        document.getElementById('clear-search').classList.add('opacity-0');
+        applyUserFilters();
+    });
+    document.getElementById('sort-select')?.addEventListener('change', (e) => {
+        userState.sort = e.target.value;
+        applyUserFilters();
+    });
+    document.querySelectorAll('[data-filter]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const f = btn.getAttribute('data-filter');
+            const v = btn.getAttribute('data-value');
+            userState[f] = v;
+            setChips(f, v);
+            applyUserFilters();
+        });
+    });
 
     /* ── Keyboard ── */
     document.addEventListener('keydown', (e) => {

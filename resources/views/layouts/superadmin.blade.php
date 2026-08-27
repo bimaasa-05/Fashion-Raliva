@@ -139,10 +139,17 @@
         const REVEAL_CONTENT_SELECTOR = ':scope > div, :scope > section, :scope > article, :scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > ul, :scope > ol, :scope > table, :scope > form, :scope > a';
 
         /* Drawer/overlay/modal (fixed) dan action bar (sticky) tidak di-reveal:
-           transform & opacity reveal akan merusak perilaku mereka */
+           transform & opacity reveal akan merusak perilaku mereka.
+           Elemen interaktif (button/a/input/select + yang punya handler onclick)
+           JUGA dikecualikan: mereka harus SELALU bisa diklik, tidak boleh
+           terkunci di opacity:0 oleh reveal sebelum observer memicu. */
         const isRevealExempt = (el) => {
             const pos = getComputedStyle(el).position;
-            return pos === 'fixed' || pos === 'sticky';
+            if (pos === 'fixed' || pos === 'sticky') return true;
+            const tag = el.tagName;
+            if (tag === 'BUTTON' || tag === 'A' || tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || tag === 'LABEL') return true;
+            if (el.hasAttribute('onclick') || el.getAttribute('role') === 'button') return true;
+            return false;
         };
 
         /* Count-up ditahan sampai card-nya terlihat di viewport */
