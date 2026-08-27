@@ -72,6 +72,30 @@ class UserSeeder extends Seeder
             ]
         );
 
+        // Tambahan user Gudang
+        User::updateOrCreate(
+            ['email' => 'gudang2@raliva.test'],
+            [
+                'nama_lengkap' => 'Doni Santoso',
+                'password' => Hash::make('password'),
+                'role_id' => $roles[Role::GUDANG],
+                'nomor_telepon' => '081234567895',
+                'email_verified_at' => now(),
+                'status' => User::STATUS_AKTIF,
+            ]
+        );
+        User::updateOrCreate(
+            ['email' => 'gudang3@raliva.test'],
+            [
+                'nama_lengkap' => 'Eka Prasetyo',
+                'password' => Hash::make('password'),
+                'role_id' => $roles[Role::GUDANG],
+                'nomor_telepon' => '081234567896',
+                'email_verified_at' => now(),
+                'status' => User::STATUS_AKTIF,
+            ]
+        );
+
         $warehouse = Warehouse::updateOrCreate(
             ['nama_gudang' => 'Gudang Utama Bandung'],
             [
@@ -102,6 +126,19 @@ class UserSeeder extends Seeder
             ]
         );
 
+        // Tambahan user Produksi
+        User::updateOrCreate(
+            ['email' => 'produksi2@raliva.test'],
+            [
+                'nama_lengkap' => 'Siti Rahayu',
+                'password' => Hash::make('password'),
+                'role_id' => $roles[Role::PRODUKSI],
+                'nomor_telepon' => '081234567897',
+                'email_verified_at' => now(),
+                'status' => User::STATUS_AKTIF,
+            ]
+        );
+
         User::updateOrCreate(
             ['email' => 'customer@raliva.test'],
             [
@@ -109,6 +146,56 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role_id' => $roles[Role::CUSTOMER],
                 'nomor_telepon' => '081234567894',
+                'email_verified_at' => now(),
+                'status' => User::STATUS_AKTIF,
+            ]
+        );
+
+        // Tambahan user Customer
+        User::updateOrCreate(
+            ['email' => 'customer2@raliva.test'],
+            [
+                'nama_lengkap' => 'Budi Santoso',
+                'password' => Hash::make('password'),
+                'role_id' => $roles[Role::CUSTOMER],
+                'nomor_telepon' => '081234567898',
+                'email_verified_at' => now(),
+                'status' => User::STATUS_AKTIF,
+            ]
+        );
+        User::updateOrCreate(
+            ['email' => 'customer3@raliva.test'],
+            [
+                'nama_lengkap' => 'Dewi Lestari',
+                'password' => Hash::make('password'),
+                'role_id' => $roles[Role::CUSTOMER],
+                'nomor_telepon' => '081234567899',
+                'email_verified_at' => now(),
+                'status' => User::STATUS_AKTIF,
+            ]
+        );
+
+        // Tambahan Owner
+        User::updateOrCreate(
+            ['email' => 'owner2@raliva.test'],
+            [
+                'nama_lengkap' => 'Rina Wijaya',
+                'password' => Hash::make('password'),
+                'role_id' => $roles[Role::OWNER],
+                'nomor_telepon' => '081234567900',
+                'email_verified_at' => now(),
+                'status' => User::STATUS_AKTIF,
+            ]
+        );
+
+        // Tambahan Admin
+        User::updateOrCreate(
+            ['email' => 'admin2@raliva.test'],
+            [
+                'nama_lengkap' => 'Agus Setiawan',
+                'password' => Hash::make('password'),
+                'role_id' => $roles[Role::ADMIN],
+                'nomor_telepon' => '081234567901',
                 'email_verified_at' => now(),
                 'status' => User::STATUS_AKTIF,
             ]
