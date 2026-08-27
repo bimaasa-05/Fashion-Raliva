@@ -20,6 +20,39 @@
 @endphp
 
 @section('content')
+@php
+    /* ===== DUMMY DATA (sementara) — ganti sumber DB hingga backend siap ===== */
+    $statuses = [
+        'pending_payment' => 'Menunggu Bayar',
+        'dibayar' => 'Baru',
+        'diproses' => 'Diproses',
+        'dikirim' => 'Dikirim',
+        'selesai' => 'Selesai',
+        'dibatalkan' => 'Dibatalkan',
+        'refund' => 'Refund',
+    ];
+    $activeStatus = 'semua';
+    $dummyOrders = [
+        ['nomor_order' => '#RLV-2093', 'status' => 'dibayar', 'grand_total' => 1250000, 'customer' => 'Maya Rossi', 'toko' => 'Raliva Atelier Jakarta', 'items' => ['Trench Coat Signature', 'Silk Scarf Monogram']],
+        ['nomor_order' => '#RLV-2088', 'status' => 'diproses', 'grand_total' => 870000, 'customer' => 'Dewi Lestari', 'toko' => 'Raliva Atelier Jakarta', 'items' => ['Knit Sweater']],
+        ['nomor_order' => '#RLV-2081', 'status' => 'dikirim', 'grand_total' => 2150000, 'customer' => 'Sarah Jenkins', 'toko' => 'Raliva Outlet Senayan', 'items' => ['Evening Gown Custom', 'Clutch Bag']],
+        ['nomor_order' => '#RLV-2079', 'status' => 'selesai', 'grand_total' => 540000, 'customer' => 'Andi Pratama', 'toko' => 'Raliva Outlet Senayan', 'items' => ['Linen Shirt']],
+        ['nomor_order' => '#RLV-2075', 'status' => 'pending_payment', 'grand_total' => 1500000, 'customer' => 'Rina Maharani', 'toko' => 'Raliva Atelier Jakarta', 'items' => ['Blazer Wool Premium']],
+        ['nomor_order' => '#RLV-2070', 'status' => 'refund', 'grand_total' => 980000, 'customer' => 'Putra Wijaya', 'toko' => 'Raliva Outlet Senayan', 'items' => ['Satin Dress']],
+        ['nomor_order' => '#RLV-2068', 'status' => 'dibatalkan', 'grand_total' => 430000, 'customer' => 'Sarah Jenkins', 'toko' => 'Raliva Atelier Jakarta', 'items' => ['Cotton Tee']],
+    ];
+    $orders = collect(array_map(function ($d) {
+        return (object) [
+            'order_id' => rand(1000, 9999),
+            'nomor_order' => $d['nomor_order'],
+            'status' => $d['status'],
+            'grand_total' => $d['grand_total'],
+            'checkout' => (object) ['user' => (object) ['nama_lengkap' => $d['customer']]],
+            'store' => (object) ['nama_toko' => $d['toko']],
+            'items' => collect(array_map(fn ($n) => (object) ['nama_produk_snapshot' => $n], $d['items'])),
+        ];
+    }, $dummyOrders));
+@endphp
 @include('partials.flash-toast')
 
 <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
