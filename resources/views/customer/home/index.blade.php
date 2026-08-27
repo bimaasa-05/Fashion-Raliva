@@ -251,7 +251,7 @@
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
 <img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A high-quality minimalist editorial product shot of a tailored linen blazer in a soft ivory shade. The garment is photographed flat or on an invisible mannequin against a pristine white background. Lighting is sharp and professional, highlighting the woven texture and precise stitching. The aesthetic is clean, luxury, and perfectly suited for a light-mode premium fashion marketplace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ"/>
-<a aria-label="Add to wishlist" href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<a aria-label="Add to wishlist" href="{{ route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </a>
 </div>
@@ -263,7 +263,7 @@
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
 <img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A sleek, minimalist editorial photograph of a black leather structured tote bag. Photographed under bright, soft studio lighting against an off-white background, emphasizing the smooth, high-grade leather texture and fine silver hardware details. The presentation is premium, austere, and perfectly matches a high-end luxury fashion boutique's light-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDotrquQ9ru5aXlWl5XbgLhEMJq3WBfo5DDEAS3Z-F5LnAIv27Q3259la3QLZghjnF5R8udNJqY0Toq6SHw5JvN3PqANThsUOvwujXixkrq5zZBH5OW_D3QTRD3qObufW5Uz2-ahDe36xdtDHuA8SK2Ldhp4wpMReozYAnqkNj5ZG3A37LwDOS6aXDnCEg_MNh_j2C1VKegB7PNMCwMV-jwzYAwrhuqG1UCGjQoSl3A0QRKO-gFHlQ"/>
-<a aria-label="Add to wishlist" href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<a aria-label="Add to wishlist" href="{{ route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </a>
 </div>
@@ -275,7 +275,7 @@
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
 <img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A beautiful, clean editorial product shot of a minimalist silk slip dress in a muted olive tone. The dress is draped elegantly on a subtle light-gray stone pedestal against a bright white backdrop. The soft, high-key lighting creates gentle folds and shadows, highlighting the garment's luxurious silk drape. Ideal for a premium light-mode fashion platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrQWexD2Xms4d7-qplQNqqTI4EebkIxaCqpOssP3jfxkcDDAjBvE4kuCEgO-j-Yd-Vfxm6sW-zOaQShx89-kFo0JwvaQ9DnVYjw0ZeHlwNYQaWtigNJNUb1P2E3VS7jVbvb2gfkn5AgK0_pHzGjUiSO2kjiDWXbTKy2tRqRQq5I2md_UYdyHQR_axy07aFn3BeoVctJgri9jLNSSEizCJoXGSF5I0rX6QAaqkzanalXeH6sTmuLnA"/>
-<a aria-label="Add to wishlist" href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<a aria-label="Add to wishlist" href="{{ route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </a>
 </div>
@@ -287,7 +287,7 @@
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
 <img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A pristine editorial shot of minimal, modern geometric gold hoop earrings resting on a white marble surface. The lighting is incredibly crisp and bright, creating subtle reflections and deep, sharp shadows that elevate the luxury feel. The overall visual tone is sophisticated, austere, and perfectly tailored for a high-end minimalist jewelry collection in a light-mode UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXqNhNFWMr-Gm8_uwAVgBbqtzcNdb5MAfQUsG_3GJbmE0gm167f27WLQY44QclgDSw7N_b2k0qpe9HdTKZlExYsZl6FJUCnKft0foIHP3pp3uFUAxnwrYM3o7ap46wCmmnSGAbNN-gDM_Kptg0bVNG6ghZhp7r3PeQ66ZD2yhgIMKhB9sSycHTa8yXBJ3fTbNvx2tH5SUu76da_WcZ3bJW7JeJmVuEnVOdIHENcwQB0a1sOCp-u_s"/>
-<a aria-label="Add to wishlist" href="{{ route('customer.login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<a aria-label="Add to wishlist" href="{{ route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </a>
 </div>
