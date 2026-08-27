@@ -263,7 +263,13 @@
         if (!el || el.dataset.barsDone) return;
         let segs = [];
         try { segs = JSON.parse(el.getAttribute('data-bars') || '[]'); } catch (e) { return; }
-        if (!segs.length) return;
+        if (!segs.length) {
+            el.classList.add('flex', 'items-center', 'justify-center');
+            el.innerHTML = '<div class="w-full flex flex-col items-center justify-center py-6 text-center gap-2 text-on-surface-variant">'
+                + '<span class="material-symbols-outlined text-[28px] opacity-50">bar_chart</span>'
+                + '<p class="font-body-md text-sm">Belum ada data pesanan.</p></div>';
+            return;
+        }
         el.dataset.barsDone = '1';
         const suffix = el.getAttribute('data-bars-suffix') || '';
         const max = Math.max.apply(null, segs.map((s) => s.value || 0)) || 1;
@@ -300,7 +306,13 @@
         if (!el || el.dataset.lbDone) return;
         let rows = [];
         try { rows = JSON.parse(el.getAttribute('data-leaderboard') || '[]'); } catch (e) { return; }
-        if (!rows.length) return;
+        if (!rows.length) {
+            el.classList.add('flex', 'items-center', 'justify-center');
+            el.innerHTML = '<div class="w-full flex flex-col items-center justify-center py-6 text-center gap-2 text-on-surface-variant">'
+                + '<span class="material-symbols-outlined text-[28px] opacity-50">emoji_events</span>'
+                + '<p class="font-body-md text-sm">Belum ada toko dengan transaksi.</p></div>';
+            return;
+        }
         el.dataset.lbDone = '1';
 
         const list = document.createElement('ul');
