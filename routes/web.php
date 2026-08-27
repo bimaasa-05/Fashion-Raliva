@@ -27,6 +27,7 @@ use App\Http\Controllers\Gudang\RiwayatStokController as GudangRiwayatStokContro
 use App\Http\Controllers\Gudang\StokController as GudangStokController;
 use App\Http\Controllers\Gudang\StokRusakController as GudangStokRusakController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboardController;
+use App\Http\Controllers\Owner\ProdukController as OwnerProdukController;
 use App\Http\Controllers\Owner\DataPelangganController;
 use App\Http\Controllers\Owner\DataTokoController;
 use App\Http\Controllers\Owner\KaryawanController;
