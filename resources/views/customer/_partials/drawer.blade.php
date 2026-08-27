@@ -58,7 +58,7 @@
             </span>
         </a>
     @else
-        <a href="{{ route('customer.login') }}" class="flex items-center gap-sm group">
+        <a href="{{ route('login') }}" class="flex items-center gap-sm group">
             <span class="w-12 h-12 rounded-full bg-[var(--chrome-hover)] flex items-center justify-center ring-2 ring-[var(--gold-wash)] shrink-0">
                 <span class="material-symbols-outlined text-[24px] text-[var(--chrome-text-dim)]">person_outline</span>
             </span>
