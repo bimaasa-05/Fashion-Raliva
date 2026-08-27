@@ -58,11 +58,11 @@
                         <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
                         Aktif • Berlaku Global
                     </span>
-                    <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant">Diperbarui 12 Okt 2023</span>
+                    <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant">Diperbarui {{ now()->translatedFormat('d M Y') }}</span>
                 </div>
                 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2">Tarif Komisi Saat Ini</p>
                 <div class="flex items-end gap-4 mb-4">
-                    <span id="current-rate" class="font-display-lg text-gradient-gold text-7xl md:text-8xl leading-none tracking-tight">5%</span>
+                    <span id="current-rate" class="font-display-lg text-gradient-gold text-7xl md:text-8xl leading-none tracking-tight">{{ number_format($komisi, 0, ',', '.') }}%</span>
                     <span class="material-symbols-outlined text-gold-accent text-[28px] mb-2 fill">trending_up</span>
                 </div>
                 <p class="font-body-md text-body-md text-on-surface-variant max-w-md">Diterapkan otomatis ke penjualan toko di seluruh platform. Perubahan tarif akan tercatat dalam riwayat audit.</p>
@@ -85,7 +85,7 @@
                         <circle id="gauge-ring" cx="100" cy="100" r="84" fill="none" stroke="#C9A24D" stroke-width="12" stroke-linecap="round" stroke-dasharray="527.79" stroke-dashoffset="527.79" class="gauge-progress" />
                     </svg>
                     <div class="absolute inset-0 flex flex-col items-center justify-center text-center rotate-0">
-                        <span class="font-title-md text-title-md text-on-surface leading-none" id="gauge-value">5%</span>
+                        <span class="font-title-md text-title-md text-on-surface leading-none" id="gauge-value">{{ number_format($komisi, 0, ',', '.') }}%</span>
                         <span class="font-label-sm text-[9px] text-on-surface-variant uppercase tracking-widest mt-1">dari skala<br />maks. 15%</span>
                     </div>
                 </div>
@@ -98,26 +98,26 @@
         <div data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Estimasi Komisi</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp 612,8JT</span>
-                <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-secondary">trending_up</span>+12,5% vs bulan lalu</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp {{ number_format($stats['estimasi_komisi'] / 1000, 0, ',', '.') }}JT</span>
+                <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-secondary">trending_{{ $stats['persen_komisi'] >= 0 ? 'up' : 'down' }}"></span>{{ $stats['persen_komisi'] >= 0 ? '+' : '' }}{{ $stats['persen_komisi'] }}% vs bulan lalu</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">payments</span>
             </div>
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Transaksi Berkomisi</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">1.248</span>
-                <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-secondary">trending_up</span>+8,2% vs bulan lalu</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ number_format($stats['transaksi'], 0, ',', '.') }}</span>
+                <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-secondary">trending_{{ $stats['persen_transaksi'] >= 0 ? 'up' : 'down' }}"></span>{{ $stats['persen_transaksi'] >= 0 ? '+' : '' }}{{ $stats['persen_transaksi'] }}% vs bulan lalu</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
             </div>
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Toko Terdampak</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">42</span>
-                <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-on-surface-variant">trending_flat</span>stabil</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['toko'] }}</span>
+                <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-on-surface-variant">storefront</span>aktif bulan ini</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">storefront</span>
             </div>
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Perubahan Tarif</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">2×</span>
-                <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant">tahun 2023</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['perubahan'] }}×</span>
+                <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant">sepanjang masa</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">history</span>
             </div>
         </div>
@@ -177,50 +177,41 @@
     <section id="riwayat-komisi" class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 md:p-8 card-premium scroll-mt-24">
         <h2 class="font-title-md text-title-md mb-8 uppercase tracking-wider text-on-surface premium-heading">Riwayat Perubahan Tarif</h2>
         <ol class="relative border-l border-muted-border ml-3 space-y-10">
-            <li class="pl-8 relative">
-                <span class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-gold-accent border-4 border-surface-container-lowest shadow-[0_0_0_3px_rgba(201,162,77,0.25)]"></span>
-                <div class="flex flex-wrap items-center gap-3 mb-2">
-                    <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant">12 Oktober 2023</span>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20">Naik</span>
-                </div>
-                <div class="flex flex-wrap items-center gap-2 mb-1">
-                    <span class="font-body-md text-on-surface-variant line-through">4%</span>
-                    <span class="material-symbols-outlined text-[16px] text-gold-accent">east</span>
-                    <span class="font-title-md text-title-md text-gradient-gold font-bold">5%</span>
-                    <span class="text-on-surface-variant font-body-md text-sm">• oleh <span class="text-on-surface font-bold">Super Admin</span></span>
-                </div>
-                <p class="text-on-surface-variant font-body-md text-sm">Penyesuaian mengikuti pertumbuhan volume transaksi kuartal III.</p>
-            </li>
-            <li class="pl-8 relative">
-                <span class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-secondary border-4 border-surface-container-lowest"></span>
-                <div class="flex flex-wrap items-center gap-3 mb-2">
-                    <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant">3 Juni 2023</span>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[9px] font-bold uppercase border border-secondary/20">Turun</span>
-                </div>
-                <div class="flex flex-wrap items-center gap-2 mb-1">
-                    <span class="font-body-md text-on-surface-variant line-through">5%</span>
-                    <span class="material-symbols-outlined text-[16px] text-gold-accent">east</span>
-                    <span class="font-title-md text-title-md text-on-surface font-bold">4%</span>
-                    <span class="text-on-surface-variant font-body-md text-sm">• oleh <span class="text-on-surface font-bold">Super Admin</span></span>
-                </div>
-                <p class="text-on-surface-variant font-body-md text-sm">Insentif program "Toko Baru 6 Bulan" untuk menarik seller baru.</p>
-            </li>
-            <li class="pl-8 relative">
-                <span class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-outline-variant border-4 border-surface-container-lowest"></span>
-                <div class="flex flex-wrap items-center gap-3 mb-2">
-                    <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant">15 Januari 2023</span>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">Inisial</span>
-                </div>
-                <div class="flex flex-wrap items-center gap-2 mb-1">
-                    <span class="font-title-md text-title-md text-on-surface font-bold">5%</span>
-                    <span class="text-on-surface-variant font-body-md text-sm">• oleh <span class="text-on-surface font-bold">Sistem</span></span>
-                </div>
-                <p class="text-on-surface-variant font-body-md text-sm">Tarif awal ditetapkan saat peluncuran marketplace Raliva.</p>
-            </li>
+            @forelse ($riwayat as $item)
+                <li class="pl-8 relative">
+                    <span class="absolute -left-[9px] top-1 w-4 h-4 rounded-full {{ $loop->first ? 'bg-gold-accent border-4 border-surface-container-lowest shadow-[0_0_0_3px_rgba(201,162,77,0.25)]' : 'bg-secondary border-4 border-surface-container-lowest' }}"></span>
+                    <div class="flex flex-wrap items-center gap-3 mb-2">
+                        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant">{{ $item['tanggal']->translatedFormat('d M Y') }}</span>
+                        @if ($item['nilai_lama'] && $item['nilai_baru'])
+                            @if ((float) $item['nilai_baru'] > (float) $item['nilai_lama'])
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20">Naik</span>
+                            @elseif ((float) $item['nilai_baru'] < (float) $item['nilai_lama'])
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[9px] font-bold uppercase border border-secondary/20">Turun</span>
+                            @endif
+                        @else
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">Inisial</span>
+                        @endif
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                        @if ($item['nilai_lama'])
+                            <span class="font-body-md text-on-surface-variant line-through">{{ $item['nilai_lama'] }}%</span>
+                            <span class="material-symbols-outlined text-[16px] text-gold-accent">east</span>
+                        @endif
+                        <span class="font-title-md text-title-md {{ $loop->first ? 'text-gradient-gold' : 'text-on-surface' }} font-bold">{{ ($item['nilai_baru'] ?? $item['nilai_lama'] ?? '—') }}%</span>
+                        <span class="text-on-surface-variant font-body-md text-sm">• oleh <span class="text-on-surface font-bold">{{ $item['oleh'] }}</span></span>
+                    </div>
+                    <p class="text-on-surface-variant font-body-md text-sm">{{ $item['deskripsi'] }}</p>
+                </li>
+            @empty
+                <li class="pl-8 relative text-on-surface-variant text-sm italic">Belum ada riwayat perubahan tarif komisi.</li>
+            @endforelse
         </ol>
     </section>
 
     <!-- Modal Perbarui Tarif Komisi -->
+    <form method="POST" action="{{ route('superadmin.komisi-global.update') }}" id="komisi-form" onsubmit="event.preventDefault(); document.getElementById('confirm-dialog').classList.remove('hidden');">
+        @csrf
+        @method('PUT')
     <div id="modal-edit-komisi" data-modal class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close></div>
         <div class="relative w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
@@ -231,32 +222,33 @@
                 </div>
                 <button type="button" data-modal-close onclick="closeEditForm();" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
             </div>
-            <form class="p-6 space-y-container-margin" onsubmit="event.preventDefault(); document.getElementById('confirm-dialog').classList.remove('hidden');">
+            <div class="p-6 space-y-container-margin">
                 <div class="space-y-container-margin">
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="commissionRate">Tarif Baru (%)</label>
                         <div class="relative max-w-xs">
-                            <input class="w-full bg-transparent border border-muted-border p-4 font-headline-lg-mobile text-headline-lg-mobile focus:outline-none focus:border-gold-accent transition-colors placeholder-on-surface-variant/50" id="commissionRate" max="15" min="0" name="commissionRate" oninput="updatePreview(this.value)" placeholder="misal 5.5" step="0.1" type="number" value="5" required />
+                            <input class="w-full bg-transparent border border-muted-border p-4 font-headline-lg-mobile text-headline-lg-mobile focus:outline-none focus:border-gold-accent transition-colors placeholder-on-surface-variant/50" id="commissionRate" name="komisi_persen" max="15" min="0" oninput="updatePreview(this.value)" placeholder="misal 5.5" step="0.1" type="number" value="{{ $komisi }}" required />
                             <div class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none font-title-md">%</div>
                         </div>
                         <p class="text-xs text-on-surface-variant mt-2">Batas aman internal: 0–15%.</p>
                     </div>
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="updateNotes">Catatan Perubahan (Internal)</label>
-                        <textarea class="w-full bg-transparent border border-muted-border p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="updateNotes" name="updateNotes" placeholder="Alasan perubahan ini..." rows="3"></textarea>
+                        <textarea class="w-full bg-transparent border border-muted-border p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="updateNotes" name="catatan" placeholder="Alasan perubahan ini..." rows="3"></textarea>
                     </div>
                     <div class="bg-surface-container border border-gold-accent/20 p-container-margin flex flex-col sm:flex-row justify-between items-start sm:items-center gap-gutter rounded-lg">
                         <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Pratinjau</span><span class="font-body-md text-body-md">Dari penjualan Rp 1.000.000</span></div>
-                        <div class="text-right"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Pendapatan Platform</span><span class="font-title-md text-title-md text-gold-accent" id="preview-amount">Rp 50.000</span></div>
+                        <div class="text-right"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Pendapatan Platform</span><span class="font-title-md text-title-md text-gold-accent" id="preview-amount">Rp {{ number_format($komisi * 10000, 0, ',', '.') }}</span></div>
                     </div>
                     <div class="flex gap-gutter pt-container-margin">
                         <button class="flex-1 border border-muted-border text-deep-onyx font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-surface-container-lowest transition-colors rounded-lg" onclick="closeEditForm();" type="button">Batal</button>
                         <button class="flex-1 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-tertiary-container transition-colors rounded-lg btn-premium" type="submit">Tinjau Perubahan</button>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
+    </form>
 </div>
 @endsection
 
@@ -268,20 +260,18 @@
         const sale = 1000000;
         const rev = sale * (num / 100);
         document.getElementById('preview-amount').innerText = 'Rp ' + rev.toLocaleString('id-ID');
-        document.getElementById('confirm-rate').innerText = num + '%';
     }
 
     function closeEditForm() {
         document.getElementById('modal-edit-komisi').classList.add('hidden');
-        document.getElementById('edit-form')?.classList.add('hidden');
-        document.getElementById('modal-edit-komisi').querySelector('form').reset();
-        document.getElementById('commissionRate').value = parseFloat(document.getElementById('current-rate').innerText);
-        updatePreview(document.getElementById('commissionRate').value);
+        document.getElementById('komisi-form').reset();
+        document.getElementById('commissionRate').value = {{ $komisi }};
+        updatePreview({{ $komisi }});
         document.body.style.overflow = '';
     }
 
     function getActiveRate() {
-        return parseFloat(document.getElementById('current-rate').innerText) || 5;
+        return parseFloat(document.getElementById('current-rate').innerText) || {{ $komisi }};
     }
 
     function updateSimulator() {
@@ -303,33 +293,8 @@
         document.getElementById('gauge-value').innerText = (rate % 1 === 0 ? rate : rate.toLocaleString('id-ID')) + '%';
     }
 
-    function countUp(el, target, suffix, duration = 900) {
-        const start = performance.now();
-        const step = (now) => {
-            const t = Math.min((now - start) / duration, 1);
-            const eased = 1 - Math.pow(1 - t, 3);
-            const val = target * eased;
-            el.innerText = (target % 1 === 0 ? Math.round(val) : val.toFixed(1).replace('.', ',')) + suffix;
-            if (t < 1) requestAnimationFrame(step);
-        };
-        requestAnimationFrame(step);
-    }
-
-    function applyKomisi() {
-        const newRateRaw = document.getElementById('confirm-rate').innerText.replace('%', '');
-        const newRate = parseFloat(newRateRaw);
-        document.getElementById('confirm-dialog').classList.add('hidden');
-        closeEditForm();
-
-        countUp(document.getElementById('current-rate'), newRate, '%');
-        setGauge(newRate);
-        updateSimulator();
-        showRalivaToast('Tarif komisi global diperbarui menjadi ' + newRate.toLocaleString('id-ID') + '%.', 'task_alt');
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
         setGauge(getActiveRate());
-        countUp(document.getElementById('current-rate'), getActiveRate(), '%');
         updateSimulator();
 
         document.querySelectorAll('[data-sim-preset]').forEach((chip) => {
@@ -351,9 +316,9 @@
             <span class="material-symbols-outlined text-gold-accent text-[28px]">published_with_changes</span>
         </div>
         <h3 class="font-display-lg text-headline-lg-mobile md:text-headline-lg mb-gutter text-center">Konfirmasi Perubahan</h3>
-        <p class="font-body-md text-body-md text-on-surface-variant mb-container-margin text-center">Anda akan mengubah tarif komisi global platform menjadi <strong class="text-deep-onyx" id="confirm-rate">5%</strong>. Perubahan ini berlaku untuk semua transaksi selanjutnya.</p>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-container-margin text-center">Anda akan mengubah tarif komisi global platform. Perubahan ini berlaku untuk semua transaksi selanjutnya dan akan tercatat dalam audit trail.</p>
         <div class="flex flex-col gap-gutter">
-            <button type="button" class="w-full bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-tertiary-container transition-colors rounded-lg btn-premium" onclick="applyKomisi();">Konfirmasi & Terapkan</button>
+            <button type="button" class="w-full bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-tertiary-container transition-colors rounded-lg btn-premium" onclick="document.getElementById('confirm-dialog').classList.add('hidden'); document.getElementById('komisi-form').submit();">Konfirmasi & Terapkan</button>
             <button type="button" class="w-full border border-muted-border text-deep-onyx font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-surface-container-lowest transition-colors rounded-lg" onclick="document.getElementById('confirm-dialog').classList.add('hidden')">Batal</button>
         </div>
     </div>
