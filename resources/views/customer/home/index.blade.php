@@ -253,20 +253,13 @@
 <div data-category="Women" class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
-<<<<<<< HEAD
 <img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" alt="A high-quality minimalist editorial product shot of a tailored linen blazer in a soft ivory shade. The garment is photographed flat or on an invisible mannequin against a pristine white background. Lighting is sharp and professional, highlighting the woven texture and precise stitching. The aesthetic is clean, luxury, and perfectly suited for a light-mode premium fashion marketplace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ"/>
-=======
-<img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A high-quality minimalist editorial product shot of a tailored linen blazer in a soft ivory shade. The garment is photographed flat or on an invisible mannequin against a pristine white background. Lighting is sharp and professional, highlighting the woven texture and precise stitching. The aesthetic is clean, luxury, and perfectly suited for a light-mode premium fashion marketplace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ"/>
-<a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</a>
->>>>>>> 543697fbbf3d5f1ff48656457634831019ae2d87
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Noiré Studio</span>
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Tailored Linen Blazer</h4>
 <span class="font-body-sm text-body-sm text-on-surface mt-1">$245.00</span>
 </a>
-<button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('customer.login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
 </div>
@@ -284,7 +277,7 @@
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Structured Leather Tote</h4>
 <span class="font-body-sm text-body-sm text-on-surface mt-1">$380.00</span>
 </a>
-<button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('customer.login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
 </div>
@@ -298,7 +291,7 @@
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Silk Slip Dress</h4>
 <span class="font-body-sm text-body-sm text-on-surface mt-1">$195.00</span>
 </a>
-<button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('customer.login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
 </div>
@@ -316,7 +309,7 @@
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Geometric Gold Hoops</h4>
 <span class="font-body-sm text-body-sm text-on-surface mt-1">$85.00</span>
 </a>
-<button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('customer.login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
 </div>

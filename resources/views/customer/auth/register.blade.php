@@ -374,18 +374,18 @@
 </div>
 <!-- Account Type -->
 <div class="mb-sm">
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs">{{ __('Account Type') }}</label>
-<div class="grid grid-cols-2 gap-sm">
-<label class="flex items-center gap-xs cursor-pointer rounded-DEFAULT border border-outline-variant px-md py-sm">
-<input class="w-4 h-4" type="radio" name="role" value="customer" {{ old('role', 'customer') === 'customer' ? 'checked' : '' }}/>
-<span class="font-body-sm text-body-sm text-on-surface">{{ __('Pelanggan') }}</span>
-</label>
-<label class="flex items-center gap-xs cursor-pointer rounded-DEFAULT border border-outline-variant px-md py-sm">
-<input class="w-4 h-4" type="radio" name="role" value="owner" {{ old('role') === 'owner' ? 'checked' : '' }}/>
-<span class="font-body-sm text-body-sm text-on-surface">{{ __('Pemilik Brand') }}</span>
-</label>
-</div>
-<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="role-error">{{ __('Please choose an account type.') }}</p>
+    <label class="font-label-sm text-label-sm text-on-surface block mb-xs">{{ __('Account Type') }}</label>
+    <div class="grid grid-cols-2 gap-xs">
+        <label class="flex items-center justify-center gap-xs cursor-pointer rounded-DEFAULT border border-outline-variant px-sm py-xs font-body-sm text-body-sm text-on-surface transition-colors hover:border-secondary has-[:checked]:border-secondary has-[:checked]:bg-[#8B1E1E]/10 has-[:checked]:text-secondary">
+            <input class="w-4 h-4 accent-[#8B1E1E]" type="radio" name="role" value="customer" {{ old('role', 'customer') === 'customer' ? 'checked' : '' }}/>
+            <span>{{ __('Pelanggan') }}</span>
+        </label>
+        <label class="flex items-center justify-center gap-xs cursor-pointer rounded-DEFAULT border border-outline-variant px-sm py-xs font-body-sm text-body-sm text-on-surface transition-colors hover:border-secondary has-[:checked]:border-secondary has-[:checked]:bg-[#8B1E1E]/10 has-[:checked]:text-secondary">
+            <input class="w-4 h-4 accent-[#8B1E1E]" type="radio" name="role" value="owner" {{ old('role') === 'owner' ? 'checked' : '' }}/>
+            <span>{{ __('Pemilik Brand') }}</span>
+        </label>
+    </div>
+    <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="role-error">{{ __('Please choose an account type.') }}</p>
 </div>
 <!-- Password -->
 <div class="mb-sm">
