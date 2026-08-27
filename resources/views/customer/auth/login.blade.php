@@ -337,20 +337,24 @@
 <p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">{{ __('Raliva Account') }}</p>
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Welcome Back') }}</h2>
 </div>
-<form id="login-form" novalidate method="POST" action="{{ route('customer.login.store') }}">
+@if($errors->any())
+<div class="mb-md rounded-DEFAULT border border-error bg-error-container px-md py-sm font-body-sm text-body-sm text-error">
+{{ $errors->first() }}
+</div>
+@endif
+<form id="login-form" novalidate method="POST" action="{{ route('login') }}">
 @csrf
-<input name="redirect" type="hidden" value="{{ request('redirect') }}"/>
 <!-- Email -->
 <div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">{{ __('Email') }}</label>
-<input autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="email" placeholder="you@example.com" type="email"/>
+<input name="email" autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="email" placeholder="you@example.com" type="email"/>
 <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-error">{{ __('Invalid email address.') }}</p>
 </div>
 <!-- Password -->
 <div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password">{{ __('Password') }}</label>
 <div class="relative">
-<input autocomplete="current-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password" placeholder="{{ __('Enter your password') }}" type="password"/>
+<input name="password" autocomplete="current-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password" placeholder="{{ __('Enter your password') }}" type="password"/>
 <button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="password-toggle" type="button">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </button>
@@ -359,7 +363,7 @@
 </div>
 <!-- Forgot Password -->
 <div class="flex justify-end">
-<a class="font-label-sm text-label-sm text-secondary hover:opacity-80 transition-opacity" href="{{ route('customer.forgot-password') }}">{{ __('Forgot Password?') }}</a>
+<a class="font-label-sm text-label-sm text-secondary hover:opacity-80 transition-opacity" href="{{ route('password.request') }}">{{ __('Forgot Password?') }}</a>
 </div>
 <!-- Submit -->
 <button class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm mt-lg disabled:opacity-60 disabled:pointer-events-none" id="login-btn" type="submit">
@@ -386,7 +390,7 @@
 <!-- Register Link -->
 <p class="text-center font-body-sm text-body-sm text-on-surface-variant mt-lg">
         {{ __("Don't have an account?") }}
-<a class="text-secondary font-semibold hover:opacity-80 transition-opacity ml-1" id="register-link" href="{{ route('customer.register') }}{{ request('redirect') ? '?redirect=' . urlencode(request('redirect')) : '' }}">{{ __('REGISTER') }}</a>
+<a class="text-secondary font-semibold hover:opacity-80 transition-opacity ml-1" id="register-link" href="{{ route('register') }}">{{ __('REGISTER') }}</a>
 </p>
 </div>
 </div>
