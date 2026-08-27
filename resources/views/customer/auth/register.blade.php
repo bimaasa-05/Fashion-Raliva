@@ -257,17 +257,17 @@
     html.theme-dark .atl-thread { stroke: #ffffff; stroke-opacity: .14; }
     html.theme-dark .atl-threadflow { stroke: #A32626; stroke-opacity: .45; }
     /* ============ TERMS CHECKBOX ============ */
-    #terms {
+    .terms-checkbox {
         border-radius: 4px;
         transition: border-color .2s ease, background-color .2s ease;
     }
-    #terms:hover:not(:checked) { border-color: #8B1E1E; }
-    #terms:checked {
+    .terms-checkbox:hover:not(:checked) { border-color: #8B1E1E; }
+    .terms-checkbox:checked {
         background-color: #8B1E1E !important;
         border-color: #8B1E1E !important;
     }
-    #terms:focus-visible { box-shadow: 0 0 0 3px rgba(139,30,30,.3); }
-    html.theme-dark #terms {
+    .terms-checkbox:focus-visible { box-shadow: 0 0 0 3px rgba(139,30,30,.3); }
+    html.theme-dark .terms-checkbox {
         border-color: #3a3937;
         background-color: #201f1e;
     }
@@ -360,7 +360,7 @@
 <div class="mb-sm">
 <p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">{{ __('Raliva Account') }}</p>
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Create Your Account') }}</h2>
-<p class="font-body-sm text-body-sm text-on-surface-variant" id="role-subtitle">{{ __('Daftar sebagai pelanggan untuk mulai menjelajahi koleksi RALIVA.') }}</p>
+
 </div>
 @if($errors->any())
 <div class="mb-md rounded-DEFAULT border border-error bg-error-container px-md py-sm font-body-sm text-body-sm text-error">
@@ -419,7 +419,7 @@
 </div>
 <!-- Terms Checkbox -->
 <label class="flex items-start gap-sm cursor-pointer mb-sm">
-<input class="mt-1 w-4 h-4 shrink-0" id="terms" name="terms" type="checkbox"/>
+<input class="terms-checkbox mt-1 w-4 h-4 shrink-0" id="terms" name="terms" type="checkbox"/>
 <span class="font-body-sm text-body-sm text-on-surface-variant">
             {{ __("I agree to the") }} <span class="text-secondary underline underline-offset-4">{{ __('Terms &amp; Privacy Policy') }}</span>
         </span>
@@ -435,12 +435,7 @@
 <form id="owner-form" novalidate method="POST" action="{{ route('register') }}" class="hidden">
     @csrf
     <input type="hidden" name="role" id="owner-role" value="owner">
-    <!-- Brand Name -->
-    <div class="mb-sm">
-        <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="brand-name">{{ __('Nama Brand') }}</label>
-        <input name="brand_name" value="{{ old('brand_name') }}" autocomplete="organization" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="brand-name" placeholder="{{ __('Nama fashion brand Anda') }}" type="text"/>
-        <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="brand-name-error">{{ __('Nama brand wajib diisi.') }}</p>
-    </div>
+
     <!-- Owner Full Name -->
     <div class="mb-sm">
         <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="owner-name">{{ __('Nama Lengkap Pemilik') }}</label>
@@ -453,25 +448,6 @@
         <input name="email" value="{{ old('email') }}" autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="owner-email" placeholder="you@example.com" type="email"/>
         <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="owner-email-error">{{ __('Invalid email address.') }}</p>
         <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="owner-email-taken-error">{{ __('Email is already registered.') }}</p>
-    </div>
-    <!-- Phone -->
-    <div class="mb-sm">
-        <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="owner-phone">{{ __('Nomor Telepon') }}</label>
-        <input name="phone" value="{{ old('phone') }}" autocomplete="tel" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="owner-phone" placeholder="{{ __('08xxxxxxxxxx') }}" type="tel"/>
-        <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="owner-phone-error">{{ __('Nomor telepon wajib diisi.') }}</p>
-    </div>
-    <!-- Brand Category -->
-    <div class="mb-sm">
-        <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="owner-category">{{ __('Kategori Brand') }}</label>
-        <select name="brand_category" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="owner-category">
-            <option value="">{{ __('Pilih kategori') }}</option>
-            <option value="fashion" {{ old('brand_category') == 'fashion' ? 'selected' : '' }}>{{ __('Fashion / Pakaian') }}</option>
-            <option value="accessories" {{ old('brand_category') == 'accessories' ? 'selected' : '' }}>{{ __('Aksesoris') }}</option>
-            <option value="footwear" {{ old('brand_category') == 'footwear' ? 'selected' : '' }}>{{ __('Alas Kaki') }}</option>
-            <option value="bags" {{ old('brand_category') == 'bags' ? 'selected' : '' }}>{{ __('Tas') }}</option>
-            <option value="other" {{ old('brand_category') == 'other' ? 'selected' : '' }}>{{ __('Lainnya') }}</option>
-        </select>
-        <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="owner-category-error">{{ __('Kategori brand wajib dipilih.') }}</p>
     </div>
     <!-- Password -->
     <div class="mb-sm">
@@ -497,7 +473,7 @@
     </div>
     <!-- Terms Checkbox -->
     <label class="flex items-start gap-sm cursor-pointer mb-sm">
-        <input class="mt-1 w-4 h-4 shrink-0" id="owner-terms" name="terms" type="checkbox"/>
+        <input class="terms-checkbox mt-1 w-4 h-4 shrink-0" id="owner-terms" name="terms" type="checkbox"/>
         <span class="font-body-sm text-body-sm text-on-surface-variant">
             {{ __("I agree to the") }} <span class="text-secondary underline underline-offset-4">{{ __('Terms &amp; Privacy Policy') }}</span>
         </span>
@@ -625,11 +601,10 @@
                 if (password !== confirm) { setError('confirm-error', true); valid = false; }
                 if (!terms) { setError('terms-error', true); valid = false; }
             } else {
-                ['brand-name-error', 'owner-name-error', 'owner-email-error', 'owner-email-taken-error', 'owner-phone-error', 'owner-category-error', 'owner-password-error', 'owner-confirm-error', 'owner-terms-error'].forEach(function (id) { setError(id, false); });
+                ['brand-name-error', 'owner-name-error', 'owner-email-error', 'owner-email-taken-error', 'owner-category-error', 'owner-password-error', 'owner-confirm-error', 'owner-terms-error'].forEach(function (id) { setError(id, false); });
                 var brand = val('brand-name');
                 var oname = val('owner-name');
                 var oemail = val('owner-email');
-                var phone = val('owner-phone');
                 var category = val('owner-category');
                 var opw = document.getElementById('owner-password').value;
                 var oconfirm = document.getElementById('owner-confirm').value;
@@ -637,7 +612,6 @@
                 if (!brand) { setError('brand-name-error', true); valid = false; }
                 if (!oname) { setError('owner-name-error', true); valid = false; }
                 if (!oemail || !/^\S+@\S+\.\S+$/.test(oemail)) { setError('owner-email-error', true); valid = false; }
-                if (!phone) { setError('owner-phone-error', true); valid = false; }
                 if (!category) { setError('owner-category-error', true); valid = false; }
                 if (opw.length < 8) { setError('owner-password-error', true); valid = false; }
                 if (opw !== oconfirm) { setError('owner-confirm-error', true); valid = false; }
