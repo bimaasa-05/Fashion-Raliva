@@ -8,6 +8,44 @@
 @section('header-subtitle', 'Prioritaskan pekerjaan harian tokomu hari ini.')
 
 @php
+    /* ===== DUMMY DATA (sementara) — ganti sumber DB hingga backend siap ===== */
+    $stores = collect([
+        (object) ['nama_toko' => 'Toko Modis'],
+        (object) ['nama_toko' => 'Atelier Raliva'],
+    ]);
+    $stats = [
+        'pesanan_baru' => 5,
+        'menunggu_verifikasi' => 3,
+        'siap_dikirim' => 4,
+        'sedang_dikirim' => 2,
+        'komplain_terbuka' => 2,
+    ];
+    $omzetMingguan = [
+        'total' => 18500000,
+        'bars' => [2.1, 1.8, 2.4, 1.5, 2.9, 2.2, 3.1],
+    ];
+    $produkTerlaris = [
+        ['label' => 'Trench Coat Signature', 'value' => 42],
+        ['label' => 'Knit Sweater', 'value' => 38],
+        ['label' => 'Silk Scarf', 'value' => 29],
+        ['label' => 'Linen Shirt', 'value' => 21],
+    ];
+    $distribusiStatus = [
+        ['label' => 'Baru', 'value' => 5],
+        ['label' => 'Diproses', 'value' => 4],
+        ['label' => 'Dikirim', 'value' => 3],
+        ['label' => 'Selesai', 'value' => 12],
+        ['label' => 'Dibatalkan', 'value' => 2],
+    ];
+    $komplainTerbaru = collect([
+        (object) ['subjek' => 'Cek bans kancing copot', 'status' => \App\Models\Complaint::STATUS_OPEN, 'user' => (object) ['nama_lengkap' => 'Rina Maharani'], 'store' => (object) ['nama_toko' => 'Raliva Atelier Jakarta'], 'dibuat_pada' => now()->subDays(1)],
+        (object) ['subjek' => 'Warna tidak sesuai foto', 'status' => \App\Models\Complaint::STATUS_OPEN, 'user' => (object) ['nama_lengkap' => 'Putra Wijaya'], 'store' => (object) ['nama_toko' => 'Raliva Outlet Senayan'], 'dibuat_pada' => now()->subHours(6)],
+    ]);
+    $pesananTerbaru = collect([
+        (object) ['status' => \App\Models\Order::STATUS_DIBAYAR, 'nomor_order' => '#RLV-3102', 'checkout' => (object) ['user' => (object) ['nama_lengkap' => 'Sarah Jenkins']], 'items' => collect([(object) ['id' => 1], (object) ['id' => 2]]), 'grand_total' => 1240000, 'created_at' => now()->subHours(2)],
+        (object) ['status' => \App\Models\Order::STATUS_DIPROSES, 'nomor_order' => '#RLV-3101', 'checkout' => (object) ['user' => (object) ['nama_lengkap' => 'Dewi Lestari']], 'items' => collect([(object) ['id' => 3]]), 'grand_total' => 689000, 'created_at' => now()->subHours(5)],
+        (object) ['status' => \App\Models\Order::STATUS_DIKIRIM, 'nomor_order' => '#RLV-3098', 'checkout' => (object) ['user' => (object) ['nama_lengkap' => 'Andi Pratama']], 'items' => collect([(object) ['id' => 4], (object) ['id' => 5]]), 'grand_total' => 459000, 'created_at' => now()->subDay()],
+    ]);
     $omzetJuta = number_format($omzetMingguan['total'] / 1000000, 1, ',', '.');
 @endphp
 
