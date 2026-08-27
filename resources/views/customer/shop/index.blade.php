@@ -217,25 +217,25 @@
 <div class="flex-grow flex flex-col w-full">
 <!-- Category Bar (Desktop/Tablet) -->
 <div class="hidden md:flex w-full border-b border-outline-variant sticky top-16 lg:top-24 bg-surface z-30 px-container-margin py-sm gap-sm overflow-x-auto hide-scrollbar">
-<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-primary text-primary font-label-sm text-label-sm rounded-full bg-primary/5">{{ __('All') }}</a>
-<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Women') }}</a>
-<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Men') }}</a>
-<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Accessories') }}</a>
-<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Shoes') }}</a>
-<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Bags') }}</a>
+<button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-pill shrink-0 px-md py-xs border border-primary text-primary font-label-sm text-label-sm rounded-full bg-primary/5">{{ __('All') }}</button>
+<button type="button" data-cat="Women" onclick="selectCategory('Women')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Women') }}</button>
+<button type="button" data-cat="Men" onclick="selectCategory('Men')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Men') }}</button>
+<button type="button" data-cat="Accessories" onclick="selectCategory('Accessories')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Accessories') }}</button>
+<button type="button" data-cat="Shoes" onclick="selectCategory('Shoes')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Shoes') }}</button>
+<button type="button" data-cat="Bags" onclick="selectCategory('Bags')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Bags') }}</button>
 </div>
 <!-- Category Tabs (Mobile/Tablet) -->
 <div class="w-full border-b border-outline-variant overflow-x-auto hide-scrollbar sticky top-16 bg-surface z-30 md:hidden">
 <div class="flex px-container-margin gap-lg min-w-max h-12 items-center">
-<button class="font-label-sm text-label-sm text-secondary border-b-2 border-secondary h-full flex items-center px-1">{{ __('All') }}</button>
-<button class="font-label-sm text-label-sm text-on-surface-variant h-full flex items-center px-1 hover:text-on-surface transition-colors">Women</button>
-<button class="font-label-sm text-label-sm text-on-surface-variant h-full flex items-center px-1 hover:text-on-surface transition-colors">Men</button>
-<button class="font-label-sm text-label-sm text-on-surface-variant h-full flex items-center px-1 hover:text-on-surface transition-colors">Accessories</button>
+<button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-tab font-label-sm text-label-sm text-secondary border-b-2 border-secondary h-full flex items-center px-1">{{ __('All') }}</button>
+<button type="button" data-cat="Women" onclick="selectCategory('Women')" class="cat-tab font-label-sm text-label-sm text-on-surface-variant h-full flex items-center px-1 hover:text-on-surface transition-colors">Women</button>
+<button type="button" data-cat="Men" onclick="selectCategory('Men')" class="cat-tab font-label-sm text-label-sm text-on-surface-variant h-full flex items-center px-1 hover:text-on-surface transition-colors">Men</button>
+<button type="button" data-cat="Accessories" onclick="selectCategory('Accessories')" class="cat-tab font-label-sm text-label-sm text-on-surface-variant h-full flex items-center px-1 hover:text-on-surface transition-colors">Accessories</button>
 </div>
 </div>
 <!-- Sort & Filter Bar -->
 <div class="flex justify-between items-center px-container-margin py-sm border-b border-outline-variant">
-<div class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Showing 42 items') }}</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Showing') }} <span id="result-count">0</span> {{ __('items') }}</div>
 <div class="flex gap-sm items-center">
 <div class="relative" id="sort-menu-container">
 <button class="flex items-center gap-1 font-label-sm text-label-sm text-on-surface hover:text-secondary transition-colors" onclick="toggleSortMenu()" type="button">
@@ -266,13 +266,19 @@
 <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
 <span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
 </a>
-<button aria-label="{{ __('Filter') }}" class="hover:text-secondary transition-colors flex items-center" onclick="openFilter()" type="button">
+<button aria-label="{{ __('Filter') }}" class="hover:text-secondary transition-colors flex items-center relative" onclick="openFilter()" type="button">
 <span class="material-symbols-outlined text-[22px]" data-icon="tune">tune</span>
+<span id="filter-badge" class="absolute -top-1 -right-1.5 bg-secondary text-on-secondary text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold hidden">0</span>
 </button>
 </div>
 </div>
+<!-- Active Filter Chips -->
+<div id="active-chips" class="hidden px-container-margin py-sm border-b border-outline-variant flex flex-wrap gap-sm items-center">
+<div id="chips-list" class="flex flex-wrap gap-sm items-center grow"></div>
+<button id="clear-all" class="font-label-sm text-label-sm text-secondary underline hover:opacity-80 transition-opacity shrink-0" onclick="clearAll()" type="button">{{ __('Clear all') }}</button>
+</div>
 <!-- Product Grid -->
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-gutter p-container-margin">
+<div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-gutter p-container-margin">
 <!-- Product 1 -->
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
@@ -347,7 +353,7 @@
 <span class="w-10 h-1 rounded-full bg-outline-variant"></span>
 </div>
 <div class="flex justify-between items-center px-container-margin py-sm border-b border-outline-variant shrink-0">
-<h2 class="font-title-md text-title-md uppercase tracking-widest">{{ __('Filters') }}</h2>
+<h2 class="font-title-md text-title-md uppercase tracking-widest">{{ __('Filters') }} <span id="applied-count" class="normal-case tracking-normal text-body-sm font-body-sm text-on-surface-variant"></span></h2>
 <button aria-label="{{ __('Close filters') }}" class="hover:opacity-80 transition-opacity flex" onclick="closeFilter()" type="button">
 <span class="material-symbols-outlined" data-icon="close">close</span>
 </button>
@@ -363,19 +369,19 @@
 </div>
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Size') }}</h3>
 <div class="flex flex-wrap gap-sm">
-<button class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">XS</button>
-<button class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">S</button>
-<button class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">M</button>
-<button class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">L</button>
-<button class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">XL</button>
+<button data-type="size" class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">XS</button>
+<button data-type="size" class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">S</button>
+<button data-type="size" class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">M</button>
+<button data-type="size" class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">L</button>
+<button data-type="size" class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">XL</button>
 </div>
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Color') }}</h3>
 <div class="flex flex-wrap gap-md">
-<button aria-label="Black" class="f-opt w-8 h-8 rounded-full bg-[#111111] transition-shadow" onclick="toggleSel(this)" type="button"></button>
-<button aria-label="White" class="f-opt w-8 h-8 rounded-full bg-[#FFFFFF] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
-<button aria-label="Beige" class="f-opt w-8 h-8 rounded-full bg-[#E5DCC5] transition-shadow" onclick="toggleSel(this)" type="button"></button>
-<button aria-label="Brown" class="f-opt w-8 h-8 rounded-full bg-[#6B4F3A] transition-shadow" onclick="toggleSel(this)" type="button"></button>
-<button aria-label="Gold" class="f-opt w-8 h-8 rounded-full bg-[#D4AF37] transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button data-type="color" aria-label="Black" class="f-opt w-8 h-8 rounded-full bg-[#111111] transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button data-type="color" aria-label="White" class="f-opt w-8 h-8 rounded-full bg-[#FFFFFF] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button data-type="color" aria-label="Beige" class="f-opt w-8 h-8 rounded-full bg-[#E5DCC5] transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button data-type="color" aria-label="Brown" class="f-opt w-8 h-8 rounded-full bg-[#6B4F3A] transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button data-type="color" aria-label="Gold" class="f-opt w-8 h-8 rounded-full bg-[#D4AF37] transition-shadow" onclick="toggleSel(this)" type="button"></button>
 </div>
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Price Range') }}</h3>
 <div class="flex items-end gap-gutter">
@@ -395,7 +401,10 @@
 <button class="flex-1 h-12 bg-primary text-on-primary font-label-caps text-label-caps tracking-widest hover:opacity-90 transition-opacity" onclick="applyFilters()" type="button">{{ __('APPLY') }}</button>
 </div>
 </div>
-<script>
+    <script>
+        var activeFilters = { category: [], size: [], color: [], price: { min: null, max: null } };
+        var currentSort = 'Newest';
+
         function openFilter() {
             document.getElementById('filter-sheet').classList.remove('translate-y-full');
             document.getElementById('filter-overlay').classList.remove('hidden');
@@ -404,20 +413,195 @@
             document.getElementById('filter-sheet').classList.add('translate-y-full');
             document.getElementById('filter-overlay').classList.add('hidden');
         }
+        function gatherFilters() {
+            activeFilters.category = [];
+            document.querySelectorAll('#filter-sheet input[type="checkbox"]').forEach(function (cb) {
+                if (cb.checked) activeFilters.category.push(cb.parentElement.textContent.trim());
+            });
+            activeFilters.size = [];
+            document.querySelectorAll('#filter-sheet .f-opt[data-type="size"]').forEach(function (b) {
+                if (b.classList.contains('bg-primary')) activeFilters.size.push(b.textContent.trim());
+            });
+            activeFilters.color = [];
+            document.querySelectorAll('#filter-sheet .f-opt[data-type="color"]').forEach(function (b) {
+                if (b.classList.contains('ring-2')) activeFilters.color.push(b.getAttribute('aria-label'));
+            });
+            var pmin = document.getElementById('price-min').value.replace(/\D/g, '');
+            var pmax = document.getElementById('price-max').value.replace(/\D/g, '');
+            activeFilters.price.min = pmin ? parseInt(pmin, 10) : null;
+            activeFilters.price.max = pmax ? parseInt(pmax, 10) : null;
+        }
+        function countActive() {
+            var n = activeFilters.category.length + activeFilters.size.length + activeFilters.color.length;
+            if (activeFilters.price.min !== null || activeFilters.price.max !== null) n++;
+            return n;
+        }
         function applyFilters() {
+            gatherFilters();
+            renderChips();
+            updateBadge();
+            updateAppliedLabel();
+            applyGridFilter();
+            syncCategoryBar();
             closeFilter();
         }
-        function toggleSel(el) {
-            el.classList.toggle('ring-2');
-            el.classList.toggle('ring-on-surface');
+        function selectCategory(cat) {
+            if (cat === null) {
+                activeFilters.category = [];
+            } else {
+                activeFilters.category = [cat];
+            }
+            document.querySelectorAll('#filter-sheet input[type="checkbox"]').forEach(function (cb) {
+                cb.checked = cb.parentElement.textContent.trim() === cat;
+            });
+            syncCategoryBar();
+            renderChips();
+            updateBadge();
+            updateAppliedLabel();
+            applyGridFilter();
+        }
+        function syncCategoryBar() {
+            var selected = activeFilters.category.length === 1 ? activeFilters.category[0] : null;
+            document.querySelectorAll('.cat-pill').forEach(function (b) {
+                var on = b.dataset.cat === selected || (selected === null && b.dataset.cat === 'All');
+                b.classList.toggle('border-primary', on);
+                b.classList.toggle('text-primary', on);
+                b.classList.toggle('bg-primary/5', on);
+                b.classList.toggle('border-outline-variant', !on);
+                b.classList.toggle('text-on-surface-variant', !on);
+            });
+            document.querySelectorAll('.cat-tab').forEach(function (b) {
+                var on = b.dataset.cat === selected || (selected === null && b.dataset.cat === 'All');
+                b.classList.toggle('text-secondary', on);
+                b.classList.toggle('border-secondary', on);
+                b.classList.toggle('border-b-2', on);
+                b.classList.toggle('text-on-surface-variant', !on);
+            });
         }
         function resetFilters() {
             document.querySelectorAll('#filter-sheet input[type="checkbox"]').forEach(function (cb) { cb.checked = false; });
             document.querySelectorAll('#filter-sheet .f-opt').forEach(function (el) {
-                el.classList.remove('ring-2', 'ring-on-surface');
+                el.classList.remove('ring-2', 'ring-on-surface', 'ring-offset-2', 'bg-primary', 'text-on-primary', 'border-primary');
             });
             document.getElementById('price-min').value = '';
             document.getElementById('price-max').value = '';
+        }
+        function renderChips() {
+            var list = document.getElementById('chips-list');
+            list.innerHTML = '';
+            function addChip(label, type, val) {
+                var chip = document.createElement('span');
+                chip.className = 'inline-flex items-center gap-1 pl-md pr-2 py-1 bg-surface-container-low border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface';
+                var txt = document.createElement('span');
+                txt.textContent = label;
+                chip.appendChild(txt);
+                var x = document.createElement('button');
+                x.type = 'button';
+                x.setAttribute('aria-label', 'Remove ' + label);
+                x.className = 'hover:text-secondary transition-colors flex items-center';
+                x.innerHTML = '<span class="material-symbols-outlined text-[16px]">close</span>';
+                x.onclick = function () { removeFilter(type, val); };
+                chip.appendChild(x);
+                list.appendChild(chip);
+            }
+            activeFilters.category.forEach(function (v) { addChip(v, 'category', v); });
+            activeFilters.size.forEach(function (v) { addChip(v, 'size', v); });
+            activeFilters.color.forEach(function (v) { addChip(v, 'color', v); });
+            if (activeFilters.price.min !== null || activeFilters.price.max !== null) {
+                var pmin = activeFilters.price.min !== null ? 'Rp ' + activeFilters.price.min.toLocaleString('id-ID') : 'Rp 0';
+                var pmax = activeFilters.price.max !== null ? 'Rp ' + activeFilters.price.max.toLocaleString('id-ID') : '∞';
+                addChip(pmin + ' – ' + pmax, 'price', 'price');
+            }
+            document.getElementById('active-chips').classList.toggle('hidden', countActive() === 0);
+        }
+        function removeFilter(type, val) {
+            if (type === 'category') {
+                document.querySelectorAll('#filter-sheet input[type="checkbox"]').forEach(function (cb) {
+                    if (cb.parentElement.textContent.trim() === val) cb.checked = false;
+                });
+            } else if (type === 'size') {
+                document.querySelectorAll('#filter-sheet .f-opt[data-type="size"]').forEach(function (b) {
+                    if (b.textContent.trim() === val) b.classList.remove('bg-primary', 'text-on-primary', 'border-primary', 'ring-2', 'ring-on-surface');
+                });
+            } else if (type === 'color') {
+                document.querySelectorAll('#filter-sheet .f-opt[data-type="color"]').forEach(function (b) {
+                    if (b.getAttribute('aria-label') === val) b.classList.remove('ring-2', 'ring-on-surface', 'ring-offset-2');
+                });
+            } else if (type === 'price') {
+                document.getElementById('price-min').value = '';
+                document.getElementById('price-max').value = '';
+            }
+            gatherFilters();
+            renderChips();
+            updateBadge();
+            updateAppliedLabel();
+            applyGridFilter();
+            syncCategoryBar();
+        }
+        function clearAll() {
+            resetFilters();
+            gatherFilters();
+            renderChips();
+            updateBadge();
+            updateAppliedLabel();
+            applyGridFilter();
+            syncCategoryBar();
+        }
+        function updateBadge() {
+            var n = countActive();
+            var badge = document.getElementById('filter-badge');
+            badge.textContent = n;
+            badge.classList.toggle('hidden', n === 0);
+        }
+        function updateAppliedLabel() {
+            var n = countActive();
+            document.getElementById('applied-count').textContent = n > 0 ? '· ' + n + ' Applied' : '';
+        }
+        function applyGridFilter() {
+            var cards = document.querySelectorAll('#product-grid > a');
+            var shown = 0;
+            cards.forEach(function (card) {
+                var cat = (card.getAttribute('data-category') || '').split(' ');
+                var sizes = (card.getAttribute('data-size') || '').split(' ');
+                var colors = (card.getAttribute('data-color') || '').split(' ');
+                var price = parseInt(card.getAttribute('data-price'), 10) || 0;
+                var ok = true;
+                if (activeFilters.category.length && !activeFilters.category.some(function (c) { return cat.indexOf(c) >= 0; })) ok = false;
+                if (activeFilters.size.length && !activeFilters.size.some(function (s) { return sizes.indexOf(s) >= 0; })) ok = false;
+                if (activeFilters.color.length && !activeFilters.color.some(function (c) { return colors.indexOf(c) >= 0; })) ok = false;
+                if (activeFilters.price.min !== null && price < activeFilters.price.min) ok = false;
+                if (activeFilters.price.max !== null && price > activeFilters.price.max) ok = false;
+                card.style.display = ok ? '' : 'none';
+                if (ok) shown++;
+            });
+            var countEl = document.getElementById('result-count');
+            if (countEl) countEl.textContent = shown;
+        }
+        function applySort() {
+            var grid = document.getElementById('product-grid');
+            if (!grid) return;
+            var cards = Array.prototype.slice.call(grid.children);
+            cards.sort(function (a, b) {
+                if (currentSort === 'Price: Low to High') return (parseInt(a.dataset.price, 10) || 0) - (parseInt(b.dataset.price, 10) || 0);
+                if (currentSort === 'Price: High to Low') return (parseInt(b.dataset.price, 10) || 0) - (parseInt(a.dataset.price, 10) || 0);
+                if (currentSort === 'Popular') return (parseInt(b.dataset.popular, 10) || 0) - (parseInt(a.dataset.popular, 10) || 0);
+                return (parseInt(b.dataset.created, 10) || 0) - (parseInt(a.dataset.created, 10) || 0);
+            });
+            cards.forEach(function (c) { grid.appendChild(c); });
+            applyGridFilter();
+        }
+        function toggleSel(el) {
+            if (el.dataset.type === 'size') {
+                el.classList.toggle('bg-primary');
+                el.classList.toggle('text-on-primary');
+                el.classList.toggle('border-primary');
+                el.classList.toggle('ring-2');
+                el.classList.toggle('ring-on-surface');
+            } else if (el.dataset.type === 'color') {
+                el.classList.toggle('ring-2');
+                el.classList.toggle('ring-on-surface');
+                el.classList.toggle('ring-offset-2');
+            }
         }
         function toggleSortMenu() {
             var menu = document.getElementById('sort-menu');
@@ -433,6 +617,7 @@
             document.getElementById('sort-chevron').classList.remove('rotate-180');
         }
         function selectSort(label) {
+            currentSort = label;
             document.getElementById('sort-label').textContent = label;
             document.querySelectorAll('#sort-menu [data-sort]').forEach(function (btn) {
                 var check = btn.querySelector('.sort-check');
@@ -444,6 +629,7 @@
                     btn.classList.remove('font-semibold');
                 }
             });
+            applySort();
             closeSortMenu();
         }
         document.addEventListener('click', function (e) {
@@ -452,5 +638,29 @@
                 closeSortMenu();
             }
         });
+        (function initShop() {
+            var productData = [
+                { category: 'Women', size: 'S M L', color: 'Beige Brown', price: 329000, created: 4, popular: 2 },
+                { category: 'Women', size: 'S M', color: 'Brown', price: 579000, created: 3, popular: 4 },
+                { category: 'Women', size: 'XS S M', color: 'Beige', price: 380000, created: 2, popular: 3 },
+                { category: 'Men', size: 'M L XL', color: 'White', price: 299000, created: 1, popular: 1 }
+            ];
+            var cards = document.querySelectorAll('#product-grid > a');
+            cards.forEach(function (card, i) {
+                var d = productData[i];
+                if (!d) return;
+                card.setAttribute('data-category', d.category);
+                card.setAttribute('data-size', d.size);
+                card.setAttribute('data-color', d.color);
+                card.setAttribute('data-price', d.price);
+                card.setAttribute('data-created', d.created);
+                card.setAttribute('data-popular', d.popular);
+            });
+            applySort();
+            renderChips();
+            updateBadge();
+            updateAppliedLabel();
+            syncCategoryBar();
+        })();
     </script>
 </body></html>

@@ -253,6 +253,21 @@
     html.theme-dark .atl-eye { stroke: #ffffff; stroke-opacity: .14; }
     html.theme-dark .atl-thread { stroke: #ffffff; stroke-opacity: .14; }
     html.theme-dark .atl-threadflow { stroke: #A32626; stroke-opacity: .45; }
+    /* ============ TERMS CHECKBOX ============ */
+    #terms {
+        border-radius: 4px;
+        transition: border-color .2s ease, background-color .2s ease;
+    }
+    #terms:hover:not(:checked) { border-color: #8B1E1E; }
+    #terms:checked {
+        background-color: #8B1E1E !important;
+        border-color: #8B1E1E !important;
+    }
+    #terms:focus-visible { box-shadow: 0 0 0 3px rgba(139,30,30,.3); }
+    html.theme-dark #terms {
+        border-color: #3a3937;
+        background-color: #201f1e;
+    }
 </style>
 <style>
     /* ============ GOLD BUTTON + LIGHT FLASH ============ */

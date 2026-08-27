@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 
-<html class="light" lang="{{ app()->getLocale() }}"><head>
+<html lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta name="color-scheme" content="light dark"/>
 <title>RALIVA - {{ __('The Art of Everyday Dressing') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -236,32 +237,44 @@
 <!-- Categories -->
 <section class="py-lg border-b border-outline-variant">
 <div class="flex overflow-x-auto no-scrollbar px-container-margin gap-sm pb-xs">
-<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-primary text-primary font-label-sm text-label-sm rounded-full bg-primary/5">Women</a>
-<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">Men</a>
-<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">Accessories</a>
-<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">Shoes</a>
-<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">Bags</a>
+<button type="button" data-cat="All" onclick="selectHomeCategory(null)" class="home-cat-pill shrink-0 px-md py-xs border border-primary text-primary font-label-sm text-label-sm rounded-full bg-primary/5">Semua</button>
+<button type="button" data-cat="Women" onclick="selectHomeCategory('Women')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">Women</button>
+<button type="button" data-cat="Men" onclick="selectHomeCategory('Men')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">Men</button>
+<button type="button" data-cat="Accessories" onclick="selectHomeCategory('Accessories')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">Accessories</button>
+<button type="button" data-cat="Shoes" onclick="selectHomeCategory('Shoes')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">Shoes</button>
+<button type="button" data-cat="Bags" onclick="selectHomeCategory('Bags')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">Bags</button>
 </div>
 </section>
 <!-- New Arrivals -->
 <section class="py-xl px-container-margin">
 <h3 class="font-title-md text-title-md text-on-surface mb-md">{{ __('New Arrivals') }}</h3>
-<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+<div id="new-arrivals-grid" class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
 <!-- Product 1 -->
+<div data-category="Women" class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
+<<<<<<< HEAD
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" alt="A high-quality minimalist editorial product shot of a tailored linen blazer in a soft ivory shade. The garment is photographed flat or on an invisible mannequin against a pristine white background. Lighting is sharp and professional, highlighting the woven texture and precise stitching. The aesthetic is clean, luxury, and perfectly suited for a light-mode premium fashion marketplace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ"/>
+=======
 <img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A high-quality minimalist editorial product shot of a tailored linen blazer in a soft ivory shade. The garment is photographed flat or on an invisible mannequin against a pristine white background. Lighting is sharp and professional, highlighting the woven texture and precise stitching. The aesthetic is clean, luxury, and perfectly suited for a light-mode premium fashion marketplace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ"/>
 <a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </a>
+>>>>>>> 543697fbbf3d5f1ff48656457634831019ae2d87
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Noiré Studio</span>
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Tailored Linen Blazer</h4>
 <span class="font-body-sm text-body-sm text-on-surface mt-1">$245.00</span>
 </a>
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('customer.login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
+</button>
+</div>
 <!-- Product 2 -->
+<div data-category="Bags" class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" alt="A sleek, minimalist editorial photograph of a black leather structured tote bag. Photographed under bright, soft studio lighting against an off-white background, emphasizing the smooth, high-grade leather texture and fine silver hardware details. The presentation is premium, austere, and perfectly matches a high-end luxury fashion boutique's light-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDotrquQ9ru5aXlWl5XbgLhEMJq3WBfo5DDEAS3Z-F5LnAIv27Q3259la3QLZghjnF5R8udNJqY0Toq6SHw5JvN3PqANThsUOvwujXixkrq5zZBH5OW_D3QTRD3qObufW5Uz2-ahDe36xdtDHuA8SK2Ldhp4wpMReozYAnqkNj5ZG3A37LwDOS6aXDnCEg_MNh_j2C1VKegB7PNMCwMV-jwzYAwrhuqG1UCGjQoSl3A0QRKO-gFHlQ"/>
 <img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A sleek, minimalist editorial photograph of a black leather structured tote bag. Photographed under bright, soft studio lighting against an off-white background, emphasizing the smooth, high-grade leather texture and fine silver hardware details. The presentation is premium, austere, and perfectly matches a high-end luxury fashion boutique's light-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDotrquQ9ru5aXlWl5XbgLhEMJq3WBfo5DDEAS3Z-F5LnAIv27Q3259la3QLZghjnF5R8udNJqY0Toq6SHw5JvN3PqANThsUOvwujXixkrq5zZBH5OW_D3QTRD3qObufW5Uz2-ahDe36xdtDHuA8SK2Ldhp4wpMReozYAnqkNj5ZG3A37LwDOS6aXDnCEg_MNh_j2C1VKegB7PNMCwMV-jwzYAwrhuqG1UCGjQoSl3A0QRKO-gFHlQ"/>
 <a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
@@ -271,21 +284,29 @@
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Structured Leather Tote</h4>
 <span class="font-body-sm text-body-sm text-on-surface mt-1">$380.00</span>
 </a>
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('customer.login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
+</button>
+</div>
 <!-- Product 3 -->
+<div data-category="Women" class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
-<img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A beautiful, clean editorial product shot of a minimalist silk slip dress in a muted olive tone. The dress is draped elegantly on a subtle light-gray stone pedestal against a bright white backdrop. The soft, high-key lighting creates gentle folds and shadows, highlighting the garment's luxurious silk drape. Ideal for a premium light-mode fashion platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrQWexD2Xms4d7-qplQNqqTI4EebkIxaCqpOssP3jfxkcDDAjBvE4kuCEgO-j-Yd-Vfxm6sW-zOaQShx89-kFo0JwvaQ9DnVYjw0ZeHlwNYQaWtigNJNUb1P2E3VS7jVbvb2gfkn5AgK0_pHzGjUiSO2kjiDWXbTKy2tRqRQq5I2md_UYdyHQR_axy07aFn3BeoVctJgri9jLNSSEizCJoXGSF5I0rX6QAaqkzanalXeH6sTmuLnA"/>
-<a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</a>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" alt="A beautiful, clean editorial product shot of a minimalist silk slip dress in a muted olive tone. The dress is draped elegantly on a subtle light-gray stone pedestal against a bright white backdrop. The soft, high-key lighting creates gentle folds and shadows, highlighting the garment's luxurious silk drape. Ideal for a premium light-mode fashion platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrQWexD2Xms4d7-qplQNqqTI4EebkIxaCqpOssP3jfxkcDDAjBvE4kuCEgO-j-Yd-Vfxm6sW-zOaQShx89-kFo0JwvaQ9DnVYjw0ZeHlwNYQaWtigNJNUb1P2E3VS7jVbvb2gfkn5AgK0_pHzGjUiSO2kjiDWXbTKy2tRqRQq5I2md_UYdyHQR_axy07aFn3BeoVctJgri9jLNSSEizCJoXGSF5I0rX6QAaqkzanalXeH6sTmuLnA"/>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Maëva House</span>
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Silk Slip Dress</h4>
 <span class="font-body-sm text-body-sm text-on-surface mt-1">$195.00</span>
 </a>
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('customer.login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
+</button>
+</div>
 <!-- Product 4 -->
+<div data-category="Accessories" class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" alt="A pristine editorial shot of minimal, modern geometric gold hoop earrings resting on a white marble surface. The lighting is incredibly crisp and bright, creating subtle reflections and deep, sharp shadows that elevate the luxury feel. The overall visual tone is sophisticated, austere, and perfectly tailored for a high-end minimalist jewelry collection in a light-mode UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXqNhNFWMr-Gm8_uwAVgBbqtzcNdb5MAfQUsG_3GJbmE0gm167f27WLQY44QclgDSw7N_b2k0qpe9HdTKZlExYsZl6FJUCnKft0foIHP3pp3uFUAxnwrYM3o7ap46wCmmnSGAbNN-gDM_Kptg0bVNG6ghZhp7r3PeQ66ZD2yhgIMKhB9sSycHTa8yXBJ3fTbNvx2tH5SUu76da_WcZ3bJW7JeJmVuEnVOdIHENcwQB0a1sOCp-u_s"/>
 <img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A pristine editorial shot of minimal, modern geometric gold hoop earrings resting on a white marble surface. The lighting is incredibly crisp and bright, creating subtle reflections and deep, sharp shadows that elevate the luxury feel. The overall visual tone is sophisticated, austere, and perfectly tailored for a high-end minimalist jewelry collection in a light-mode UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXqNhNFWMr-Gm8_uwAVgBbqtzcNdb5MAfQUsG_3GJbmE0gm167f27WLQY44QclgDSw7N_b2k0qpe9HdTKZlExYsZl6FJUCnKft0foIHP3pp3uFUAxnwrYM3o7ap46wCmmnSGAbNN-gDM_Kptg0bVNG6ghZhp7r3PeQ66ZD2yhgIMKhB9sSycHTa8yXBJ3fTbNvx2tH5SUu76da_WcZ3bJW7JeJmVuEnVOdIHENcwQB0a1sOCp-u_s"/>
 <a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
@@ -295,7 +316,12 @@
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Geometric Gold Hoops</h4>
 <span class="font-body-sm text-body-sm text-on-surface mt-1">$85.00</span>
 </a>
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('customer.login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
+</button>
 </div>
+</div>
+<p id="new-arrivals-empty" class="hidden text-center text-on-surface-variant font-body-lg py-md">{{ __('No products in this category.') }}</p>
 <div class="mt-md flex justify-center">
 <a href="{{ route('customer.shop') }}" class="border border-primary text-primary bg-transparent font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:bg-surface-container-low transition-colors inline-block">{{ __('VIEW ALL NEW ARRIVALS') }}</a>
 </div>
@@ -305,35 +331,35 @@
 <div class="px-container-margin mb-md">
 <h3 class="font-title-md text-title-md text-on-surface">{{ __('Featured Stores') }}</h3>
 </div>
-<div class="flex overflow-x-auto no-scrollbar lg:grid lg:grid-cols-4 lg:overflow-visible pl-container-margin pr-container-margin gap-md pb-xs">
+<div class="flex overflow-x-auto no-scrollbar lg:grid lg:grid-cols-4 lg:overflow-visible pl-container-margin pr-container-margin gap-md pb-xs snap-x snap-mandatory">
 <!-- Store 1 -->
-<a href="{{ route('customer.shop.store-detail', 1) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group">
+<a href="{{ route('customer.shop.store-detail', 1) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
-<img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A minimalist architectural photograph of a high-end fashion boutique exterior named Lunara Fashion. The storefront features expansive glass windows, stark white walls, and a beautifully curated display of single garments bathed in warm, soft sunlight. The composition is clean, airy, and extremely premium, perfectly fitting a light-mode luxury marketplace theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATiKrXBx3vVfoNsTu1_JuFvfVqHhF9A63yLIFGC0hF5MVVUZB6Nu-eyjEa5IxqGiEpPzawhFtGfTAatsc-_9Pwi9D9AsVEO7TOOEszevnRdatfxPYIK7ZAvB0-Aa3R8CSQPOhV3EN9w5_S8sCYYX8NCMlAs_gD3RYhAkt91QyBdC8bmQs-v4yGHXrAH2KKGIPWNoi7jJqivQtsOliueGluswaKxAgwLxl1rh_aTfA_gB_LTeqw8oU"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" alt="A minimalist architectural photograph of a high-end fashion boutique exterior named Lunara Fashion. The storefront features expansive glass windows, stark white walls, and a beautifully curated display of single garments bathed in warm, soft sunlight. The composition is clean, airy, and extremely premium, perfectly fitting a light-mode luxury marketplace theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATiKrXBx3vVfoNsTu1_JuFvfVqHhF9A63yLIFGC0hF5MVVUZB6Nu-eyjEa5IxqGiEpPzawhFtGfTAatsc-_9Pwi9D9AsVEO7TOOEszevnRdatfxPYIK7ZAvB0-Aa3R8CSQPOhV3EN9w5_S8sCYYX8NCMlAs_gD3RYhAkt91QyBdC8bmQs-v4yGHXrAH2KKGIPWNoi7jJqivQtsOliueGluswaKxAgwLxl1rh_aTfA_gB_LTeqw8oU"/>
 </div>
 <h4 class="font-title-md text-title-md text-on-surface">Lunara Fashion</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Modern feminine silhouettes.') }}</p>
 </a>
 <!-- Store 2 -->
-<a href="{{ route('customer.shop.store-detail', 2) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group">
+<a href="{{ route('customer.shop.store-detail', 2) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
-<img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A sleek, monochromatic photograph of a minimalist fashion studio interior for Noiré Studio. The space features polished concrete floors, austere black metal clothing racks holding sharply tailored suits, and bright, diffuse natural light streaming from large skylights. The aesthetic is extremely sophisticated, stark, and appropriate for a high-end luxury editorial context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGwknduyLPGxjMRvTx7tN4JeGs-9IICVVEqumRS28Y9jTBxPfkTa9uV98aPjekXCG1uLxayAYmBwFZIIf73qfeWOcTQ6jI97GOQBVdIzBaAZhTlYEO8RKF_NsqCMXssspqoctKzP8RpOHtJI_bw-qZI1QF_fn1OH80mwa6ht1vSJY8vkFSZq_OBTROdz1TubDt_Y_Ax7quip7t8HNO7TkKNnLYOEFLbmjlpYvis2wIP6LJwYtpaNo"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" alt="A sleek, monochromatic photograph of a minimalist fashion studio interior for Noiré Studio. The space features polished concrete floors, austere black metal clothing racks holding sharply tailored suits, and bright, diffuse natural light streaming from large skylights. The aesthetic is extremely sophisticated, stark, and appropriate for a high-end luxury editorial context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGwknduyLPGxjMRvTx7tN4JeGs-9IICVVEqumRS28Y9jTBxPfkTa9uV98aPjekXCG1uLxayAYmBwFZIIf73qfeWOcTQ6jI97GOQBVdIzBaAZhTlYEO8RKF_NsqCMXssspqoctKzP8RpOHtJI_bw-qZI1QF_fn1OH80mwa6ht1vSJY8vkFSZq_OBTROdz1TubDt_Y_Ax7quip7t8HNO7TkKNnLYOEFLbmjlpYvis2wIP6LJwYtpaNo"/>
 </div>
 <h4 class="font-title-md text-title-md text-on-surface">Noiré Studio</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Tailored, stark minimalism.') }}</p>
 </a>
 <!-- Store 3 -->
-<a href="{{ route('customer.shop.store-detail', 3) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group">
+<a href="{{ route('customer.shop.store-detail', 3) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
-<img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A bright, airy lifestyle shot representing Kayana Apparel. A minimalist wooden hanger displays a flowy, natural-fiber linen shirt against a plain, textured plaster wall. Sunbeams cut across the composition, creating harsh, dramatic shadows that add depth and a modern, organic, luxury feel to the light-mode UI design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSCazvaWZuccedNS2ILQbkHUJlNvuZ7i1_N2EHvjuBbo7CLD3CW8iHh-xOfNuHEsio3RxsEYKR2jEnuEUUOg9R7Xza1li0VetG6_yfhRrJs3dSULL6lG6fVDPX4qijbhNAokLUQ8tn673XhAZ-l8Vx3WZDIaxtdNLAHriglRfoPt6xRPff_qYINXAgslwYqW_xSQsAbEn2mjrBLNDh6NTT4t86gs2BbXDST-ewDyDYcbA5FZIEMUM"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" alt="A bright, airy lifestyle shot representing Kayana Apparel. A minimalist wooden hanger displays a flowy, natural-fiber linen shirt against a plain, textured plaster wall. Sunbeams cut across the composition, creating harsh, dramatic shadows that add depth and a modern, organic, luxury feel to the light-mode UI design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSCazvaWZuccedNS2ILQbkHUJlNvuZ7i1_N2EHvjuBbo7CLD3CW8iHh-xOfNuHEsio3RxsEYKR2jEnuEUUOg9R7Xza1li0VetG6_yfhRrJs3dSULL6lG6fVDPX4qijbhNAokLUQ8tn673XhAZ-l8Vx3WZDIaxtdNLAHriglRfoPt6xRPff_qYINXAgslwYqW_xSQsAbEn2mjrBLNDh6NTT4t86gs2BbXDST-ewDyDYcbA5FZIEMUM"/>
 </div>
 <h4 class="font-title-md text-title-md text-on-surface">Kayana Apparel</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Organic textures and flow.') }}</p>
 </a>
 <!-- Store 4 -->
-<a href="{{ route('customer.shop.store-detail', 4) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group">
+<a href="{{ route('customer.shop.store-detail', 4) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
-<img class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" data-alt="A highly curated, still-life editorial photograph of accessories for Maëva House. A selection of minimalist silver jewelry and small leather goods rests on varying levels of pristine white ceramic blocks. The lighting is incredibly soft and high-key, ensuring the focus remains on the high quality and craftsmanship of the items in a luxury, light-mode setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBces6Xx741Ae5cYEDlbS_pgcHXZ9vEiOAGb5jvlBttKDyIRgUl6PUSDzKjI9nXu8X8Zb-RxuuplZY4dbVXDDBRqOVusLCAlczBCFDMM9qeGCl18jyL9AKeYbo_KYUolJQ-tUyLZ6kLqZFaQ2yKWY0Gs6ucQPlMm57RTWXBipH9At2Nbp1nWNEZDCqkafxCVNpFOE3MSCOi3nOPMbtk9_6tU4iBkCexkl7qGGFlVexn74kqDcVgzRc"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" alt="A highly curated, still-life editorial photograph of accessories for Maëva House. A selection of minimalist silver jewelry and small leather goods rests on varying levels of pristine white ceramic blocks. The lighting is incredibly soft and high-key, ensuring the focus remains on the high quality and craftsmanship of the items in a luxury, light-mode setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBces6Xx741Ae5cYEDlbS_pgcHXZ9vEiOAGb5jvlBttKDyIRgUl6PUSDzKjI9nXu8X8Zb-RxuuplZY4dbVXDDBRqOVusLCAlczBCFDMM9qeGCl18jyL9AKeYbo_KYUolJQ-tUyLZ6kLqZFaQ2yKWY0Gs6ucQPlMm57RTWXBipH9At2Nbp1nWNEZDCqkafxCVNpFOE3MSCOi3nOPMbtk9_6tU4iBkCexkl7qGGFlVexn74kqDcVgzRc"/>
 </div>
 <h4 class="font-title-md text-title-md text-on-surface">Maëva House</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Essential daily luxury.') }}</p>
@@ -341,38 +367,37 @@
 </div>
 </section>
 <!-- Newsletter -->
-<section class="py-xl px-container-margin flex flex-col items-center text-center border-b border-outline-variant">
+<section class="py-xl px-container-margin border-b border-outline-variant">
+<div class="mx-auto max-w-[1200px] flex flex-col items-center text-center">
 <h3 class="font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Be the first to know') }}</h3>
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-md max-w-md">{{ __('Subscribe to our newsletter for exclusive collections and editorial insights.') }}</p>
 <form class="w-full max-w-sm lg:max-w-lg flex flex-col lg:flex-row gap-sm">
-<div class="relative w-full border-b border-on-surface pb-1 lg:flex-1">
-<input class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant" placeholder="{{ __('Email Address') }}" type="email"/>
-</div>
-<button class="w-full lg:w-auto bg-primary text-on-primary font-label-caps text-label-caps py-sm lg:px-xl uppercase tracking-widest hover:opacity-90 transition-opacity mt-sm lg:mt-0" type="button">{{ __('SUBSCRIBE') }}</button>
+<input class="w-full lg:flex-1 rounded-full border border-outline-variant bg-surface px-5 py-3 font-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" placeholder="{{ __('Email Address') }}" type="email"/>
+<button class="w-full lg:w-auto bg-primary text-on-primary font-label-caps text-label-caps py-3 lg:px-xl rounded-full uppercase tracking-widest hover:opacity-90 transition-opacity" type="button">{{ __('SUBSCRIBE') }}</button>
 </form>
+</div>
 </section>
 </main>
 <!-- Footer -->
 <footer class="bg-surface-bright py-xl px-container-margin md:pb-xl pb-32">
-<div class="flex flex-col md:flex-row justify-between gap-lg mb-xl">
-<div>
+<div class="mx-auto max-w-[1200px]">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-xl mb-xl">
+<div class="md:col-span-6">
 <h4 class="font-display-lg text-title-md tracking-widest text-on-surface mb-md">RALIVA</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">{{ __('Curated fashion for the modern minimalist. Discover the art of everyday dressing.') }}</p>
 </div>
-<div class="grid grid-cols-2 md:flex gap-xl">
-<div class="flex flex-col gap-sm">
+<div class="md:col-span-3 flex flex-col gap-sm">
 <h5 class="font-label-caps text-label-caps text-on-surface uppercase">{{ __('Shop') }}</h5>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">Women</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">Men</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">New Arrivals</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">Designers</a>
 </div>
-<div class="flex flex-col gap-sm">
+<div class="md:col-span-3 flex flex-col gap-sm">
 <h5 class="font-label-caps text-label-caps text-on-surface uppercase">{{ __('Support') }}</h5>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('FAQ') }}</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Shipping &amp; Returns') }}</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Contact Us') }}</a>
-</div>
 </div>
 </div>
 <div class="border-t border-outline-variant pt-md flex flex-col md:flex-row justify-between items-center gap-sm">
@@ -382,7 +407,40 @@
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Terms of Service') }}</a>
 </div>
 </div>
+</div>
 </footer>
+<script>
+    var homeCategory = null;
+    function selectHomeCategory(cat) {
+        homeCategory = cat;
+        applyHomeFilter();
+        syncHomePills();
+    }
+    function applyHomeFilter() {
+        var grid = document.getElementById('new-arrivals-grid');
+        if (!grid) return;
+        var cards = Array.prototype.slice.call(grid.children);
+        var shown = 0;
+        cards.forEach(function (c) {
+            var show = !homeCategory || c.getAttribute('data-category') === homeCategory;
+            c.style.display = show ? '' : 'none';
+            if (show) shown++;
+        });
+        var empty = document.getElementById('new-arrivals-empty');
+        if (empty) empty.classList.toggle('hidden', shown > 0);
+    }
+    function syncHomePills() {
+        document.querySelectorAll('.home-cat-pill').forEach(function (b) {
+            var on = (b.dataset.cat === homeCategory) || (homeCategory === null && b.dataset.cat === 'All');
+            b.classList.toggle('border-primary', on);
+            b.classList.toggle('text-primary', on);
+            b.classList.toggle('bg-primary/5', on);
+            b.classList.toggle('border-outline-variant', !on);
+            b.classList.toggle('text-on-surface-variant', !on);
+        });
+    }
+    syncHomePills();
+</script>
 @include('customer._partials.bottom-nav')
 @include('customer._partials.drawer')
 </body></html>
