@@ -300,9 +300,9 @@
 </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg min-h-screen flex flex-col lg:flex-row">
     <!-- Account Type (straddles photo/form edge, top corner) -->
-<div class="fixed top-sm left-sm lg:left-[52%] lg:-translate-x-1/2 z-50 flex items-center rounded-full border-2 border-secondary p-1 gap-1 frame-gold shadow-md">
-    <label for="role-customer" id="pill-customer" class="role-pill cursor-pointer rounded-full px-4 py-1.5 font-label-caps text-label-caps uppercase tracking-wider text-on-surface transition-all">Pelanggan</label>
-    <label for="role-owner" id="pill-owner" class="role-pill cursor-pointer rounded-full px-4 py-1.5 font-label-caps text-label-caps uppercase tracking-wider text-on-surface transition-all">Pemilik Brand</label>
+<div id="role-switch" class="fixed top-sm left-sm lg:left-[52%] lg:-translate-x-1/2 z-50 flex items-center rounded-full border-2 border-secondary p-1 gap-1 frame-gold shadow-md" data-initial-role="{{ old('role', 'customer') }}">
+    <button type="button" id="pill-customer" data-role="customer" class="role-pill cursor-pointer rounded-full px-4 py-1.5 font-label-caps text-label-caps uppercase tracking-wider text-on-surface transition-all">Pelanggan</button>
+    <button type="button" id="pill-owner" data-role="owner" class="role-pill cursor-pointer rounded-full px-4 py-1.5 font-label-caps text-label-caps uppercase tracking-wider text-on-surface transition-all">Pemilik Brand</button>
 </div>
 <!-- Editorial Panel -->
 <aside class="relative overflow-hidden shrink-0 h-44 lg:h-auto lg:w-[44%] flex">
@@ -360,16 +360,16 @@
 <div class="mb-sm">
 <p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">{{ __('Raliva Account') }}</p>
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Create Your Account') }}</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant" id="role-subtitle">{{ __('Daftar sebagai pelanggan untuk mulai menjelajahi koleksi RALIVA.') }}</p>
 </div>
 @if($errors->any())
 <div class="mb-md rounded-DEFAULT border border-error bg-error-container px-md py-sm font-body-sm text-body-sm text-error">
 {{ $errors->first() }}
 </div>
 @endif
-<form id="register-form" novalidate method="POST" action="{{ route('register') }}">
+<form id="customer-form" novalidate method="POST" action="{{ route('register') }}">
         @csrf
-        <input type="radio" name="role" id="role-customer" value="customer" {{ old('role', 'customer') === 'customer' ? 'checked' : '' }} class="hidden">
-        <input type="radio" name="role" id="role-owner" value="owner" {{ old('role') === 'owner' ? 'checked' : '' }} class="hidden">
+        <input type="hidden" name="role" id="customer-role" value="customer">
         <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="role-error">{{ __('Please choose an account type.') }}</p>
 <!-- Full Name -->
 <div class="mb-sm">
@@ -431,6 +431,84 @@
 <span class="material-symbols-outlined text-[20px] animate-spin hidden" id="register-spinner">progress_activity</span>
 </button>
 </form>
+<!-- ============ OWNER (PEMILIK BRAND) VIEW ============ -->
+<form id="owner-form" novalidate method="POST" action="{{ route('register') }}" class="hidden">
+    @csrf
+    <input type="hidden" name="role" id="owner-role" value="owner">
+    <!-- Brand Name -->
+    <div class="mb-sm">
+        <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="brand-name">{{ __('Nama Brand') }}</label>
+        <input name="brand_name" value="{{ old('brand_name') }}" autocomplete="organization" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="brand-name" placeholder="{{ __('Nama fashion brand Anda') }}" type="text"/>
+        <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="brand-name-error">{{ __('Nama brand wajib diisi.') }}</p>
+    </div>
+    <!-- Owner Full Name -->
+    <div class="mb-sm">
+        <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="owner-name">{{ __('Nama Lengkap Pemilik') }}</label>
+        <input name="nama_lengkap" value="{{ old('nama_lengkap') }}" autocomplete="name" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="owner-name" placeholder="{{ __('Your full name') }}" type="text"/>
+        <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="owner-name-error">{{ __('Nama lengkap wajib diisi.') }}</p>
+    </div>
+    <!-- Email -->
+    <div class="mb-sm">
+        <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="owner-email">{{ __('Email') }}</label>
+        <input name="email" value="{{ old('email') }}" autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="owner-email" placeholder="you@example.com" type="email"/>
+        <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="owner-email-error">{{ __('Invalid email address.') }}</p>
+        <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="owner-email-taken-error">{{ __('Email is already registered.') }}</p>
+    </div>
+    <!-- Phone -->
+    <div class="mb-sm">
+        <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="owner-phone">{{ __('Nomor Telepon') }}</label>
+        <input name="phone" value="{{ old('phone') }}" autocomplete="tel" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="owner-phone" placeholder="{{ __('08xxxxxxxxxx') }}" type="tel"/>
+        <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="owner-phone-error">{{ __('Nomor telepon wajib diisi.') }}</p>
+    </div>
+    <!-- Brand Category -->
+    <div class="mb-sm">
+        <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="owner-category">{{ __('Kategori Brand') }}</label>
+        <select name="brand_category" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="owner-category">
+            <option value="">{{ __('Pilih kategori') }}</option>
+            <option value="fashion" {{ old('brand_category') == 'fashion' ? 'selected' : '' }}>{{ __('Fashion / Pakaian') }}</option>
+            <option value="accessories" {{ old('brand_category') == 'accessories' ? 'selected' : '' }}>{{ __('Aksesoris') }}</option>
+            <option value="footwear" {{ old('brand_category') == 'footwear' ? 'selected' : '' }}>{{ __('Alas Kaki') }}</option>
+            <option value="bags" {{ old('brand_category') == 'bags' ? 'selected' : '' }}>{{ __('Tas') }}</option>
+            <option value="other" {{ old('brand_category') == 'other' ? 'selected' : '' }}>{{ __('Lainnya') }}</option>
+        </select>
+        <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="owner-category-error">{{ __('Kategori brand wajib dipilih.') }}</p>
+    </div>
+    <!-- Password -->
+    <div class="mb-sm">
+        <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="owner-password">{{ __('Password') }}</label>
+        <div class="relative">
+            <input name="password" autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="owner-password" placeholder="{{ __('Minimum 8 characters') }}" type="password"/>
+            <button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="owner-password-toggle" type="button">
+                <span class="material-symbols-outlined text-[20px]">visibility</span>
+            </button>
+        </div>
+        <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="owner-password-error">{{ __('Password must be at least 8 characters.') }}</p>
+    </div>
+    <!-- Confirm Password -->
+    <div class="mb-sm">
+        <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="owner-confirm">{{ __('Confirm Password') }}</label>
+        <div class="relative">
+            <input name="password_confirmation" autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="owner-confirm" placeholder="{{ __('Re-enter your password') }}" type="password"/>
+            <button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="owner-confirm-toggle" type="button">
+                <span class="material-symbols-outlined text-[20px]">visibility</span>
+            </button>
+        </div>
+        <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="owner-confirm-error">{{ __('Password does not match.') }}</p>
+    </div>
+    <!-- Terms Checkbox -->
+    <label class="flex items-start gap-sm cursor-pointer mb-sm">
+        <input class="mt-1 w-4 h-4 shrink-0" id="owner-terms" name="terms" type="checkbox"/>
+        <span class="font-body-sm text-body-sm text-on-surface-variant">
+            {{ __("I agree to the") }} <span class="text-secondary underline underline-offset-4">{{ __('Terms &amp; Privacy Policy') }}</span>
+        </span>
+    </label>
+    <p class="hidden font-label-sm text-label-sm text-error -mt-sm mb-sm" id="owner-terms-error">{{ __('Please agree to the Terms &amp; Privacy Policy.') }}</p>
+    <!-- Submit -->
+    <button class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="owner-register-btn" type="submit">
+        <span id="owner-register-btn-text">{{ __('REGISTER') }}</span>
+        <span class="material-symbols-outlined text-[20px] animate-spin hidden" id="owner-register-spinner">progress_activity</span>
+    </button>
+</form>
 <!-- Google Divider -->
 <div class="flex items-center gap-sm my-sm">
 <span class="h-px flex-grow bg-outline-variant"></span>
@@ -472,21 +550,21 @@
             successLink.href = successLink.href + '?redirect=' + encodeURIComponent(redirectParam);
         }
 
-        document.getElementById('password-toggle').addEventListener('click', function () {
-            var input = document.getElementById('password');
-            var icon = this.querySelector('.material-symbols-outlined');
-            var show = input.type === 'password';
-            input.type = show ? 'text' : 'password';
-            icon.textContent = show ? 'visibility_off' : 'visibility';
-        });
-
-        document.getElementById('confirm-toggle').addEventListener('click', function () {
-            var input = document.getElementById('confirm-password');
-            var icon = this.querySelector('.material-symbols-outlined');
-            var show = input.type === 'password';
-            input.type = show ? 'text' : 'password';
-            icon.textContent = show ? 'visibility_off' : 'visibility';
-        });
+        function bindPwToggle(toggleId, inputId) {
+            var toggle = document.getElementById(toggleId);
+            if (!toggle) return;
+            toggle.addEventListener('click', function () {
+                var input = document.getElementById(inputId);
+                var icon = this.querySelector('.material-symbols-outlined');
+                var show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                icon.textContent = show ? 'visibility_off' : 'visibility';
+            });
+        }
+        bindPwToggle('password-toggle', 'password');
+        bindPwToggle('confirm-toggle', 'confirm-password');
+        bindPwToggle('owner-password-toggle', 'owner-password');
+        bindPwToggle('owner-confirm-toggle', 'owner-confirm');
 
         var pwInput = document.getElementById('password');
         var pwStrengthWrap = document.getElementById('pw-strength');
@@ -525,32 +603,59 @@
         pwInput.addEventListener('input', pwUpdate);
 
         function setError(id, show) {
-            document.getElementById(id).classList.toggle('hidden', !show);
+            var el = document.getElementById(id);
+            if (el) el.classList.toggle('hidden', !show);
         }
 
-        document.getElementById('register-form').addEventListener('submit', function (e) {
-            var name = document.getElementById('full-name').value.trim();
-            var email = document.getElementById('email').value.trim();
-            var password = document.getElementById('password').value;
-            var confirm = document.getElementById('confirm-password').value;
-            var terms = document.getElementById('terms').checked;
-            var roleEl = document.querySelector('input[name="role"]:checked');
+        function validateForm(form) {
             var valid = true;
+            function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+            function chk(id) { var el = document.getElementById(id); return el ? el.checked : false; }
 
-            ['name-error', 'email-error', 'email-taken-error', 'password-error', 'confirm-error', 'terms-error', 'role-error'].forEach(function (id) { setError(id, false); });
+            if (form.id === 'customer-form') {
+                ['name-error', 'email-error', 'email-taken-error', 'password-error', 'confirm-error', 'terms-error'].forEach(function (id) { setError(id, false); });
+                var name = val('full-name');
+                var email = val('email');
+                var password = document.getElementById('password').value;
+                var confirm = document.getElementById('confirm-password').value;
+                var terms = chk('terms');
+                if (!name) { setError('name-error', true); valid = false; }
+                if (!email || !/^\S+@\S+\.\S+$/.test(email)) { setError('email-error', true); valid = false; }
+                if (password.length < 8) { setError('password-error', true); valid = false; }
+                if (password !== confirm) { setError('confirm-error', true); valid = false; }
+                if (!terms) { setError('terms-error', true); valid = false; }
+            } else {
+                ['brand-name-error', 'owner-name-error', 'owner-email-error', 'owner-email-taken-error', 'owner-phone-error', 'owner-category-error', 'owner-password-error', 'owner-confirm-error', 'owner-terms-error'].forEach(function (id) { setError(id, false); });
+                var brand = val('brand-name');
+                var oname = val('owner-name');
+                var oemail = val('owner-email');
+                var phone = val('owner-phone');
+                var category = val('owner-category');
+                var opw = document.getElementById('owner-password').value;
+                var oconfirm = document.getElementById('owner-confirm').value;
+                var oterms = chk('owner-terms');
+                if (!brand) { setError('brand-name-error', true); valid = false; }
+                if (!oname) { setError('owner-name-error', true); valid = false; }
+                if (!oemail || !/^\S+@\S+\.\S+$/.test(oemail)) { setError('owner-email-error', true); valid = false; }
+                if (!phone) { setError('owner-phone-error', true); valid = false; }
+                if (!category) { setError('owner-category-error', true); valid = false; }
+                if (opw.length < 8) { setError('owner-password-error', true); valid = false; }
+                if (opw !== oconfirm) { setError('owner-confirm-error', true); valid = false; }
+                if (!oterms) { setError('owner-terms-error', true); valid = false; }
+            }
+            return valid;
+        }
 
-            if (!name) { setError('name-error', true); valid = false; }
-            if (!email || !/^\S+@\S+\.\S+$/.test(email)) { setError('email-error', true); valid = false; }
-            if (password.length < 8) { setError('password-error', true); valid = false; }
-            if (password !== confirm) { setError('confirm-error', true); valid = false; }
-            if (!terms) { setError('terms-error', true); valid = false; }
-            if (!roleEl) { setError('role-error', true); valid = false; }
-
-            if (!valid) { e.preventDefault(); return; }
-
-            var btn = document.getElementById('register-btn');
-            btn.disabled = true;
-            document.getElementById('register-spinner').classList.remove('hidden');
+        ['customer-form', 'owner-form'].forEach(function (id) {
+            var f = document.getElementById(id);
+            if (!f) return;
+            f.addEventListener('submit', function (e) {
+                if (!validateForm(f)) { e.preventDefault(); return; }
+                var btn = f.querySelector('button[type="submit"]');
+                var spinner = f.querySelector('.animate-spin');
+                if (btn) btn.disabled = true;
+                if (spinner) spinner.classList.remove('hidden');
+            });
         });
     </script>
 <script>
@@ -594,16 +699,33 @@
                 customer: document.getElementById('pill-customer'),
                 owner: document.getElementById('pill-owner')
             };
-            function syncRole() {
-                var checked = document.querySelector('input[name="role"]:checked');
-                var val = checked ? checked.value : null;
-                pills.customer.classList.toggle('active', val === 'customer');
-                pills.owner.classList.toggle('active', val === 'owner');
+            var views = {
+                customer: document.getElementById('customer-form'),
+                owner: document.getElementById('owner-form')
+            };
+            var subtitle = document.getElementById('role-subtitle');
+            var roles = ['customer', 'owner'];
+
+            function selectRole(role) {
+                roles.forEach(function (r) {
+                    if (pills[r]) pills[r].classList.toggle('active', r === role);
+                    if (views[r]) views[r].classList.toggle('hidden', r !== role);
+                });
+                if (subtitle) {
+                    subtitle.textContent = role === 'owner'
+                        ? '{{ __("Daftar sebagai pemilik brand untuk memulai bisnis fashion Anda bersama RALIVA.") }}'
+                        : '{{ __("Daftar sebagai pelanggan untuk mulai menjelajahi koleksi RALIVA.") }}';
+                }
             }
-            document.querySelectorAll('input[name="role"]').forEach(function (r) {
-                r.addEventListener('change', syncRole);
+
+            Object.keys(pills).forEach(function (role) {
+                pills[role].addEventListener('click', function () { selectRole(role); });
             });
-            syncRole();
+
+            var pillWrap = document.getElementById('role-switch');
+            var initial = (pillWrap && pillWrap.getAttribute('data-initial-role')) || 'customer';
+            if (initial !== 'customer' && initial !== 'owner') initial = 'customer';
+            selectRole(initial);
         })();
     </script>
 </body></html>
