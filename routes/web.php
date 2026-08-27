@@ -234,7 +234,9 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::post('/permintaan-penarikan/{penarikan}/tolak', [PermintaanPenarikanController::class, 'tolak'])->name('permintaan-penarikan.tolak');
     Route::post('/permintaan-penarikan/{penarikan}/tandai-dibayar', [PermintaanPenarikanController::class, 'tandaiDibayar'])->name('permintaan-penarikan.tandai-dibayar');
     Route::get('/komisi-global', [KomisiGlobalController::class, 'index'])->name('komisi-global');
+    Route::put('/komisi-global', [KomisiGlobalController::class, 'update'])->name('komisi-global.update');
     Route::get('/pajak-biaya', [PajakBiayaController::class, 'index'])->name('pajak-biaya');
+    Route::put('/pajak-biaya', [PajakBiayaController::class, 'updatePajak'])->name('pajak-biaya.update-pajak');
     Route::get('/promo-platform', [PromoPlatformController::class, 'index'])->name('promo-platform');
     Route::get('/peringkat-iklan', fn () => view('SuperAdmin.peringkat-iklan'))->name('peringkat-iklan');
     Route::get('/data-bank', [DataBankController::class, 'index'])->name('data-bank');
