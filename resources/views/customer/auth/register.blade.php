@@ -143,6 +143,9 @@
     }
     :root { --gold-inner: rgba(139, 30, 30, .30); }
     html.theme-dark { --gold-inner: rgba(139, 30, 30, .25); }
+    /* ============ ACCOUNT TYPE PILL ============ */
+    .role-pill.active { background-color: #8B1E1E; color: #ffffff; }
+    html.theme-dark .role-pill.active { background-color: #5E0F0F; color: #ffffff; }
     /* ============ RALIVA FASHION ATELIER BACKGROUND ============ */
     .auth-monogram {
         background-image:
@@ -270,7 +273,7 @@
     }
 </style>
 <style>
-    /* ============ GOLD BUTTON + LIGHT FLASH ============ */
+    /* ============  BUTTON + LIGHT FLASH ============ */
     .btn-gold {
         position: relative;
         overflow: hidden;
@@ -296,6 +299,11 @@
 </style>
 </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg min-h-screen flex flex-col lg:flex-row">
+    <!-- Account Type (straddles photo/form edge, top corner) -->
+<div class="fixed top-sm left-sm lg:left-[52%] lg:-translate-x-1/2 z-50 flex items-center rounded-full border-2 border-secondary p-1 gap-1 frame-gold shadow-md">
+    <label for="role-customer" id="pill-customer" class="role-pill cursor-pointer rounded-full px-4 py-1.5 font-label-caps text-label-caps uppercase tracking-wider text-on-surface transition-all">Pelanggan</label>
+    <label for="role-owner" id="pill-owner" class="role-pill cursor-pointer rounded-full px-4 py-1.5 font-label-caps text-label-caps uppercase tracking-wider text-on-surface transition-all">Pemilik Brand</label>
+</div>
 <!-- Editorial Panel -->
 <aside class="relative overflow-hidden shrink-0 h-44 lg:h-auto lg:w-[44%] flex">
 <img alt="RALIVA Editorial 1" src="{{ asset('storage/register-pictures/editorial-1.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"/>
@@ -334,7 +342,8 @@
 <path class="atl-threadflow" d="M12 30c3 7 10 6 14 9s8-1 12 2"/>
 </svg>
 <!-- Floating Chips: Home + Theme -->
-<div class="fixed top-sm right-sm z-50 flex items-center gap-xs">
+    <div class="fixed top-sm right-sm z-50 flex items-center gap-xs">
+
 <a aria-label="{{ __('Back to home') }}" title="Kembali ke Home" href="{{ route('customer.home') }}" class="atl-chip w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-secondary hover:text-secondary flex items-center justify-center">
 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4.5l8 7"/><path d="M6.5 10.2V19h11v-8.8"/><path d="M10.7 19v-4.4h2.6V19"/></svg>
 </a>
@@ -358,7 +367,10 @@
 </div>
 @endif
 <form id="register-form" novalidate method="POST" action="{{ route('register') }}">
-@csrf
+        @csrf
+        <input type="radio" name="role" id="role-customer" value="customer" {{ old('role', 'customer') === 'customer' ? 'checked' : '' }} class="hidden">
+        <input type="radio" name="role" id="role-owner" value="owner" {{ old('role') === 'owner' ? 'checked' : '' }} class="hidden">
+        <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="role-error">{{ __('Please choose an account type.') }}</p>
 <!-- Full Name -->
 <div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="full-name">{{ __('Full Name') }}</label>
@@ -372,21 +384,7 @@
 <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-error">{{ __('Invalid email address.') }}</p>
 <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-taken-error">{{ __('Email is already registered.') }}</p>
 </div>
-<!-- Account Type -->
-<div class="mb-sm">
-    <label class="font-label-sm text-label-sm text-on-surface block mb-xs">{{ __('Account Type') }}</label>
-    <div class="grid grid-cols-2 gap-xs">
-        <label class="flex items-center justify-center gap-xs cursor-pointer rounded-DEFAULT border border-outline-variant px-sm py-xs font-body-sm text-body-sm text-on-surface transition-colors hover:border-secondary has-[:checked]:border-secondary has-[:checked]:bg-[#8B1E1E]/10 has-[:checked]:text-secondary">
-            <input class="w-4 h-4 accent-[#8B1E1E]" type="radio" name="role" value="customer" {{ old('role', 'customer') === 'customer' ? 'checked' : '' }}/>
-            <span>{{ __('Pelanggan') }}</span>
-        </label>
-        <label class="flex items-center justify-center gap-xs cursor-pointer rounded-DEFAULT border border-outline-variant px-sm py-xs font-body-sm text-body-sm text-on-surface transition-colors hover:border-secondary has-[:checked]:border-secondary has-[:checked]:bg-[#8B1E1E]/10 has-[:checked]:text-secondary">
-            <input class="w-4 h-4 accent-[#8B1E1E]" type="radio" name="role" value="owner" {{ old('role') === 'owner' ? 'checked' : '' }}/>
-            <span>{{ __('Pemilik Brand') }}</span>
-        </label>
-    </div>
-    <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="role-error">{{ __('Please choose an account type.') }}</p>
-</div>
+
 <!-- Password -->
 <div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password">{{ __('Password') }}</label>
@@ -588,6 +586,24 @@
                 idx = (idx + 1) % slides.length;
                 slides[idx].style.opacity = '1';
             }, 4000);
+        })();
+    </script>
+    <script>
+        (function () {
+            var pills = {
+                customer: document.getElementById('pill-customer'),
+                owner: document.getElementById('pill-owner')
+            };
+            function syncRole() {
+                var checked = document.querySelector('input[name="role"]:checked');
+                var val = checked ? checked.value : null;
+                pills.customer.classList.toggle('active', val === 'customer');
+                pills.owner.classList.toggle('active', val === 'owner');
+            }
+            document.querySelectorAll('input[name="role"]').forEach(function (r) {
+                r.addEventListener('change', syncRole);
+            });
+            syncRole();
         })();
     </script>
 </body></html>
