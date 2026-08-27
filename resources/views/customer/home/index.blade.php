@@ -352,38 +352,37 @@
 </div>
 </section>
 <!-- Newsletter -->
-<section class="py-xl px-container-margin flex flex-col items-center text-center border-b border-outline-variant">
+<section class="py-xl px-container-margin border-b border-outline-variant">
+<div class="mx-auto max-w-[1200px] flex flex-col items-center text-center">
 <h3 class="font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Be the first to know') }}</h3>
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-md max-w-md">{{ __('Subscribe to our newsletter for exclusive collections and editorial insights.') }}</p>
 <form class="w-full max-w-sm lg:max-w-lg flex flex-col lg:flex-row gap-sm">
-<div class="relative w-full border-b border-on-surface pb-1 lg:flex-1">
-<input class="w-full bg-transparent border-none p-0 focus:ring-0 font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant" placeholder="{{ __('Email Address') }}" type="email"/>
-</div>
-<button class="w-full lg:w-auto bg-primary text-on-primary font-label-caps text-label-caps py-sm lg:px-xl uppercase tracking-widest hover:opacity-90 transition-opacity mt-sm lg:mt-0" type="button">{{ __('SUBSCRIBE') }}</button>
+<input class="w-full lg:flex-1 rounded-full border border-outline-variant bg-surface px-5 py-3 font-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" placeholder="{{ __('Email Address') }}" type="email"/>
+<button class="w-full lg:w-auto bg-primary text-on-primary font-label-caps text-label-caps py-3 lg:px-xl rounded-full uppercase tracking-widest hover:opacity-90 transition-opacity" type="button">{{ __('SUBSCRIBE') }}</button>
 </form>
+</div>
 </section>
 </main>
 <!-- Footer -->
 <footer class="bg-surface-bright py-xl px-container-margin md:pb-xl pb-32">
-<div class="flex flex-col md:flex-row justify-between gap-lg mb-xl">
-<div>
+<div class="mx-auto max-w-[1200px]">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-xl mb-xl">
+<div class="md:col-span-6">
 <h4 class="font-display-lg text-title-md tracking-widest text-on-surface mb-md">RALIVA</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">{{ __('Curated fashion for the modern minimalist. Discover the art of everyday dressing.') }}</p>
 </div>
-<div class="grid grid-cols-2 md:flex gap-xl">
-<div class="flex flex-col gap-sm">
+<div class="md:col-span-3 flex flex-col gap-sm">
 <h5 class="font-label-caps text-label-caps text-on-surface uppercase">{{ __('Shop') }}</h5>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">Women</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">Men</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">New Arrivals</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">Designers</a>
 </div>
-<div class="flex flex-col gap-sm">
+<div class="md:col-span-3 flex flex-col gap-sm">
 <h5 class="font-label-caps text-label-caps text-on-surface uppercase">{{ __('Support') }}</h5>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('FAQ') }}</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Shipping &amp; Returns') }}</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Contact Us') }}</a>
-</div>
 </div>
 </div>
 <div class="border-t border-outline-variant pt-md flex flex-col md:flex-row justify-between items-center gap-sm">
@@ -391,6 +390,7 @@
 <div class="flex gap-md">
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Privacy Policy') }}</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Terms of Service') }}</a>
+</div>
 </div>
 </div>
 </footer>
