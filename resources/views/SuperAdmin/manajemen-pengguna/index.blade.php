@@ -139,8 +139,8 @@
                     <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-secondary-container/15 to-transparent rounded-full -translate-y-8 translate-x-8" style="filter: blur(20px); opacity: 0.5;"></div>
                     <div class="relative flex items-start gap-4">
                         <div class="w-14 h-14 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform border-2 border-surface-container-lowest shadow-sm">
-                            @if ($u->foto_profil)
-                                <img src="{{ asset('storage/' . $u->foto_profil) }}" class="w-14 h-14 rounded-full object-cover" alt="{{ $u->nama_lengkap }}" />
+                            @if ($u->foto_profil_url)
+                                <img src="{{ $u->foto_profil_url }}" class="w-14 h-14 rounded-full object-cover" alt="{{ $u->nama_lengkap }}" />
                             @else
                                 <span class="font-title-md text-title-md text-secondary">{{ strtoupper(mb_substr($u->nama_lengkap, 0, 2)) }}</span>
                             @endif
