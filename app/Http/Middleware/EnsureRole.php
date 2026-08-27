@@ -18,7 +18,10 @@ class EnsureRole
         $userRole = Auth::user()->role?->nama_role;
 
         if ($userRole !== $role) {
-            return redirect()->route($this->homeRouteFor($userRole));
+            return response()->view('errors.access-denied', [
+                'message' => 'Akses Anda ditolak. Anda tidak memiliki izin untuk membuka halaman ini.',
+                'homeRoute' => $this->homeRouteFor($userRole),
+            ], 404);
         }
 
         return $next($request);
