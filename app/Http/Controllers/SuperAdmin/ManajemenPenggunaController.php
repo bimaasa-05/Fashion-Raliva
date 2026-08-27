@@ -199,6 +199,7 @@ class ManajemenPenggunaController extends Controller
             'role_id' => $user->role_id,
             'status' => $user->status,
             'is_super_admin' => $isSuperAdmin,
+            'foto_profil_url' => $user->foto_profil_url,
             'initial' => strtoupper(mb_substr($user->nama_lengkap, 0, 2)),
             'toko' => $toko,
             'aktivitas' => $aktivitas,
