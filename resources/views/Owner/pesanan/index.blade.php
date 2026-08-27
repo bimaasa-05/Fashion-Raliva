@@ -182,7 +182,7 @@
         <button type="button" onclick="showRalivaToast('Invoice sedang disiapkan (demo).', 'download')" class="flex-1 py-3 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors flex items-center justify-center gap-2">
             <span class="material-symbols-outlined text-[16px]">download</span>Unduh Invoice
         </button>
-        <button type="button" onclick="showRalivaToast('Status pesanan diperbarui (demo).')" class="flex-1 py-3 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium">Proses Pesanan</button>
+        <button type="button" onclick="showRalivaToast('Pesanan diteruskan ke Admin untuk diproses (demo).', 'forward_to_inbox')" class="flex-1 py-3 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium">Teruskan ke Admin</button>
     </div>
 </div>
 @endsection

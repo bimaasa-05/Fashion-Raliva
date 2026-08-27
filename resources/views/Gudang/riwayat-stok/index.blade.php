@@ -37,7 +37,12 @@
 
 <div data-real class="hidden space-y-section-gap" data-table-scope>
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 md:p-6 card-premium">
-        <div class="flex flex-wrap items-end gap-gutter mb-6">
+        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 mb-6">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Riwayat</span>
+            </div>
+            <div class="flex flex-wrap items-end gap-gutter">
             <div class="flex flex-col gap-2">
                 <label class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Dari Tanggal</label>
                 <input type="date" class="bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
@@ -79,6 +84,7 @@
                 </select>
             </div>
             <button type="button" data-filter-reset class="px-4 py-2 border border-muted-border rounded-lg font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hover:text-on-surface hover:border-gold-accent transition-colors">Reset</button>
+            </div>
         </div>
 
         <div data-table-wrap class="overflow-x-auto">

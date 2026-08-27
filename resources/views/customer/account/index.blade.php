@@ -226,17 +226,23 @@
 <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">{{ __('ACCOUNT') }}</h2>
 </div>
 <!-- Profile Header -->
-@if(session('mock_customer'))
+@auth
 <section class="flex flex-col items-center md:flex-row md:items-start gap-md mb-xl">
-<div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant flex-shrink-0">
-<img alt="Profile Picture" class="w-full h-full object-cover" data-alt="A sophisticated close-up portrait of a stylish woman. She is well-lit in a modern, airy space, embodying high-end fashion editorial minimalism. The background is a soft, out-of-focus light ivory. The overall mood is confident and elegant, matching a luxury retail brand aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2mFOUgXwyToT210lLVyaVSmF1VogUfk85zb-0hplBwDJrLXcscOUZ6HC-QneJkQeiXtusGTnccpRNL_Qfwg6Iv1eVkAyIGJww1Oeb_iYCbIyOeCVeUW2b1Sm0yZ1Ilyxant3LPd15_T_3d5wXZ6WuDg04U46PEh96KMwKZLe0bO4ULe1L4wvC1WuBzsmGdp1FVC5JBPcCooQlUdVdE7hMrw6wp72LxJBvu2PdD4yA1caYdtRO7ss"/>
+<div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant flex-shrink-0 bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-[44px] text-on-surface-variant">person</span>
 </div>
 <div class="flex flex-col items-center md:items-start justify-center flex-grow">
-<h3 class="font-title-md text-title-md text-on-surface mb-1">Jane Doe</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">jane.doe@example.com</p>
+<h3 class="font-title-md text-title-md text-on-surface mb-1">{{ Auth::user()->nama_lengkap }}</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">{{ Auth::user()->email }}</p>
+<div class="flex flex-wrap items-center gap-3">
 <a class="px-6 py-2 border border-primary text-primary font-label-caps text-label-caps uppercase hover:bg-surface-container-low transition-colors duration-200 inline-block" href="{{ route('customer.account.edit') }}">
                     {{ __('Edit Profile') }}
                 </a>
+<form method="POST" action="{{ route('logout') }}">
+    @csrf
+    <button type="submit" class="px-6 py-2 border border-error text-error font-label-caps text-label-caps uppercase hover:bg-error/10 transition-colors duration-200 inline-block">{{ __('Keluar') }}</button>
+</form>
+</div>
 </div>
 </section>
 @else
@@ -247,12 +253,12 @@
 <div class="flex flex-col items-center md:items-start justify-center flex-grow text-center md:text-left">
 <h3 class="font-title-md text-title-md text-on-surface mb-1">{{ __('Welcome') }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mb-md max-w-xs">{{ __('Register to track your orders and save your wishlist.') }}</p>
-<a class="btn-gold w-full md:w-auto h-14 px-xl font-label-caps text-label-caps uppercase tracking-widest inline-flex items-center justify-center" href="{{ route('customer.register') }}">
+<a class="btn-gold w-full md:w-auto h-14 px-xl font-label-caps text-label-caps uppercase tracking-widest inline-flex items-center justify-center" href="{{ route('register') }}">
 <span>{{ __('Register Now') }}</span>
 </a>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-md">
                     {{ __('Already have an account?') }}
-<a class="text-secondary font-semibold hover:opacity-80 transition-opacity ml-1" href="{{ route('customer.login', ['redirect' => '/customer/account']) }}">{{ __('LOGIN') }}</a>
+<a class="text-secondary font-semibold hover:opacity-80 transition-opacity ml-1" href="{{ route('login', ['redirect' => '/customer/account']) }}">{{ __('LOGIN') }}</a>
 </p>
 </div>
 </section>
@@ -266,10 +272,10 @@
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
-<a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.login', ['redirect' => route('customer.wishlist')]) }}">
-<div class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="favorite_border">favorite_border</span>
-<span class="font-body-lg text-body-lg text-on-surface">{{ __('Wishlist') }}</span>
+        <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.wishlist') }}">
+            <div class="flex items-center gap-sm">
+                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="favorite_border">favorite_border</span>
+                <span class="font-body-lg text-body-lg text-on-surface">{{ __('Wishlist') }}</span>
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>

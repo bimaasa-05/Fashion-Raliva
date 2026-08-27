@@ -118,6 +118,12 @@
                 </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">report</span>
             </div>
+            <a href="{{ route('gudang.pelanggan-request') }}" class="bg-deep-onyx text-on-primary rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+                <span class="text-inverse-on-surface/60 font-label-sm text-label-sm uppercase">Pelanggan Request</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent"><span data-count="5">5</span></span>
+                <span class="inline-flex items-center gap-1 text-xs text-gold-accent"><span class="material-symbols-outlined text-[14px]">schedule</span>menunggu cek stok/bahan</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">assignment_ind</span>
+            </a>
         </div>
     </section>
 

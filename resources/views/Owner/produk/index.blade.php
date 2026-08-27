@@ -27,8 +27,8 @@
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-3 relative overflow-hidden card-premium col-span-2">
             <div class="flex items-center justify-between gap-3">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Slot Paket Growth</span>
-                <a href="{{ route('owner.paket-slot') }}" class="text-xs font-semibold text-gold-accent hover:underline">Upgrade Paket</a>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Kuota Slot Produk</span>
+                <a href="{{ route('owner.kelola-slot') }}" class="text-xs font-semibold text-gold-accent hover:underline">Kelola Slot</a>
             </div>
             <span class="raliva-figure text-[26px] text-secondary"><span>142</span> / 200</span>
             <div class="h-2 bg-surface-container-high rounded-full overflow-hidden">

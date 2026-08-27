@@ -354,7 +354,7 @@
 </form>
 <!-- Back to Login -->
 <p class="text-center mt-lg">
-<a class="font-label-caps text-label-caps text-secondary uppercase tracking-widest hover:opacity-80 transition-opacity inline-flex items-center gap-xs" href="{{ route('customer.login') }}">
+<a class="font-label-caps text-label-caps text-secondary uppercase tracking-widest hover:opacity-80 transition-opacity inline-flex items-center gap-xs" href="{{ route('login') }}">
 <span class="material-symbols-outlined text-[16px]">arrow_back</span>
             {{ __('Back to Login') }}
         </a>
@@ -367,7 +367,7 @@
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">
             {{ __("We've sent a password reset link to your email.") }}
         </p>
-<a class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('customer.login') }}">
+<a class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('login') }}">
             {{ __('BACK TO LOGIN') }}
         </a>
 </div>

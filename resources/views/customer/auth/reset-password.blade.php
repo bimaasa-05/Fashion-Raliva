@@ -215,7 +215,7 @@
 <span class="material-symbols-outlined text-secondary text-[64px]">lock_reset</span>
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-md mb-sm">{{ __('Password Updated') }}</h2>
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">{{ __('Your password has been updated successfully.') }}</p>
-<a class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('customer.login') }}">
+<a class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('login') }}">
             {{ __('GO TO LOGIN') }}
         </a>
 </div>

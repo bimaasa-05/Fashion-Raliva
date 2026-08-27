@@ -6,8 +6,8 @@
 @section('header-subtitle', 'Kelola informasi akun Super Admin Anda.')
 
 @section('content')
-<div class="space-y-section-gap max-w-4xl">
-    <section class="rise relative bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden card-premium">
+<div class="space-y-section-gap w-full">
+    <section data-reveal class="relative bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden card-premium">
         <div class="relative h-28 md:h-32 bg-gradient-to-r from-gold-accent/25 via-gold-accent/10 to-transparent">
             <span class="material-symbols-outlined absolute right-8 -bottom-6 text-[110px] text-gold-accent/15 pointer-events-none select-none" aria-hidden="true">shield_person</span>
         </div>

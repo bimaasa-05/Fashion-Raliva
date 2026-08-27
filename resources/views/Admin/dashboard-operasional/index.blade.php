@@ -4,217 +4,207 @@
 
 @section('header-title', 'Dashboard Operasional')
 @section('header-badge', 'Lihat')
+
 @section('header-subtitle', 'Prioritaskan pekerjaan harian tokomu hari ini.')
 
+@php
+    /* ===== DUMMY DATA (sementara) — ganti sumber DB hingga backend siap ===== */
+    $stores = collect([
+        (object) ['nama_toko' => 'Toko Modis'],
+        (object) ['nama_toko' => 'Atelier Raliva'],
+    ]);
+    $stats = [
+        'pesanan_baru' => 5,
+        'menunggu_verifikasi' => 3,
+        'siap_dikirim' => 4,
+        'sedang_dikirim' => 2,
+        'komplain_terbuka' => 2,
+    ];
+    $omzetMingguan = [
+        'total' => 18500000,
+        'bars' => [2.1, 1.8, 2.4, 1.5, 2.9, 2.2, 3.1],
+    ];
+    $produkTerlaris = [
+        ['label' => 'Trench Coat Signature', 'value' => 42],
+        ['label' => 'Knit Sweater', 'value' => 38],
+        ['label' => 'Silk Scarf', 'value' => 29],
+        ['label' => 'Linen Shirt', 'value' => 21],
+    ];
+    $distribusiStatus = [
+        ['label' => 'Baru', 'value' => 5],
+        ['label' => 'Diproses', 'value' => 4],
+        ['label' => 'Dikirim', 'value' => 3],
+        ['label' => 'Selesai', 'value' => 12],
+        ['label' => 'Dibatalkan', 'value' => 2],
+    ];
+    $komplainTerbaru = collect([
+        (object) ['subjek' => 'Cek bans kancing copot', 'status' => \App\Models\Complaint::STATUS_OPEN, 'user' => (object) ['nama_lengkap' => 'Rina Maharani'], 'store' => (object) ['nama_toko' => 'Raliva Atelier Jakarta'], 'dibuat_pada' => now()->subDays(1)],
+        (object) ['subjek' => 'Warna tidak sesuai foto', 'status' => \App\Models\Complaint::STATUS_OPEN, 'user' => (object) ['nama_lengkap' => 'Putra Wijaya'], 'store' => (object) ['nama_toko' => 'Raliva Outlet Senayan'], 'dibuat_pada' => now()->subHours(6)],
+    ]);
+    $pesananTerbaru = collect([
+        (object) ['status' => \App\Models\Order::STATUS_DIBAYAR, 'nomor_order' => '#RLV-3102', 'checkout' => (object) ['user' => (object) ['nama_lengkap' => 'Sarah Jenkins']], 'items' => collect([(object) ['id' => 1], (object) ['id' => 2]]), 'grand_total' => 1240000, 'created_at' => now()->subHours(2)],
+        (object) ['status' => \App\Models\Order::STATUS_DIPROSES, 'nomor_order' => '#RLV-3101', 'checkout' => (object) ['user' => (object) ['nama_lengkap' => 'Dewi Lestari']], 'items' => collect([(object) ['id' => 3]]), 'grand_total' => 689000, 'created_at' => now()->subHours(5)],
+        (object) ['status' => \App\Models\Order::STATUS_DIKIRIM, 'nomor_order' => '#RLV-3098', 'checkout' => (object) ['user' => (object) ['nama_lengkap' => 'Andi Pratama']], 'items' => collect([(object) ['id' => 4], (object) ['id' => 5]]), 'grand_total' => 459000, 'created_at' => now()->subDay()],
+    ]);
+    $omzetJuta = number_format($omzetMingguan['total'] / 1000000, 1, ',', '.');
+@endphp
+
 @section('content')
-<div class="rise flex flex-wrap items-center gap-3 -mt-2 mb-2">
+@include('partials.flash-toast')
+
+<div class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
         <span class="material-symbols-outlined text-[14px]">calendar_today</span>
-        Sabtu, 22 Agustus 2026
+        {{ now()->translatedFormat('l, d F Y') }}
     </span>
     <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
         <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-        Operasional toko berjalan normal
+        Scope: {{ \Illuminate\Support\Str::limit($stores->pluck('nama_toko')->implode(', '), 50) }}
     </span>
 </div>
 
-<section class="rise">
+<section>
     <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Hari Ini</h2>
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pesanan Baru</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="12">12</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>+3 dari kemarin</span>
-            <div class="flex items-end gap-[3px] h-6 mt-auto">
-                <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:66%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:58%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:82%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:74%"></i>
-            </div>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['pesanan_baru'] }}</span>
+            <a href="{{ route('admin.pesanan', ['status' => \App\Models\Order::STATUS_DIBAYAR]) }}" class="inline-flex items-center gap-1 text-xs text-secondary hover:underline"><span class="material-symbols-outlined text-[14px]">arrow_forward</span>proses sekarang</a>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
         </div>
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Verifikasi</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent"><span data-count="5">5</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant">perlu ditinjau hari ini</span>
-            <div class="flex items-end gap-[3px] h-6 mt-auto">
-                <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:35%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:42%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:38%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:64%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:60%"></i>
-            </div>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">{{ $stats['menunggu_verifikasi'] }}</span>
+            <a href="{{ route('admin.verifikasi-pembayaran') }}" class="inline-flex items-center gap-1 text-xs text-on-surface-variant hover:text-gold-accent hover:underline">perlu ditinjau hari ini<span class="material-symbols-outlined text-[14px]">arrow_forward</span></a>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">fact_check</span>
         </div>
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Siap Kirim</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="8">8</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant">paket menunggu resi</span>
-            <div class="flex items-end gap-[3px] h-6 mt-auto">
-                <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:30%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:44%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:56%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:50%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:68%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:62%"></i>
-            </div>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['siap_dikirim'] }}</span>
+            <a href="{{ route('admin.pengiriman') }}" class="inline-flex items-center gap-1 text-xs text-on-surface-variant hover:text-gold-accent hover:underline">paket menunggu resi<span class="material-symbols-outlined text-[14px]">arrow_forward</span></a>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">local_shipping</span>
         </div>
         <div class="bg-surface-container-lowest p-4 border border-error/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Komplain Terbuka</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-error"><span data-count="3">3</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant">respons maks 24 jam</span>
-            <div class="flex items-end gap-[3px] h-6 mt-auto">
-                <i class="w-1.5 rounded-sm bg-error/40" style="height:25%"></i><i class="w-1.5 rounded-sm bg-error/40" style="height:30%"></i><i class="w-1.5 rounded-sm bg-error/60" style="height:28%"></i><i class="w-1.5 rounded-sm bg-error/60" style="height:38%"></i><i class="w-1.5 rounded-sm bg-error/80" style="height:34%"></i><i class="w-1.5 rounded-sm bg-error" style="height:46%"></i><i class="w-1.5 rounded-sm bg-error" style="height:42%"></i>
-            </div>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Komplain Aktif</span>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-error">{{ $stats['komplain_terbuka'] }}</span>
+            <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px]">schedule</span>respons maks 24 jam</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-error/10 pointer-events-none select-none" aria-hidden="true">support_agent</span>
         </div>
     </div>
 </section>
 
-<section class="rise">
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
-            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Target Omzet Mingguan</p>
-            <div data-donut='[{"value":75,"color":"#C9A24D","label":"Tercapai"},{"value":25,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Target" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-            <p class="text-[11px] text-on-surface-variant mt-1">Rp 113,2JT dari target Rp 150JT</p>
-        </div>
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
-            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Kepuasan Customer</p>
-            <div data-donut='[{"value":88,"color":"#795905","label":"Puas"},{"value":12,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Rating 4,7 / 5" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-            <p class="text-[11px] text-on-surface-variant mt-1">Dari 186 ulasan minggu ini</p>
-        </div>
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
-            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Ketepatan Pengiriman</p>
-            <div data-donut='[{"value":94,"color":"#E9CE8A","label":"Tepat Waktu"},{"value":6,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="On-Time Delivery" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-            <p class="text-[11px] text-on-surface-variant mt-1">38 dari 40 paket tepat waktu</p>
-        </div>
+<section>
+    <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Pekerjaan Tertunda</h2>
+    <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium space-y-6">
+        @php
+            $pekerjaan = [
+                ['icon' => 'fact_check', 'label' => 'Verifikasi Pembayaran', 'sub' => $stats['menunggu_verifikasi'] . ' bukti menunggu tinjauan', 'pct' => min(100, $stats['menunggu_verifikasi'] * 20), 'href' => route('admin.verifikasi-pembayaran'), 'error' => false],
+                ['icon' => 'local_shipping', 'label' => 'Input Resi Pengiriman', 'sub' => $stats['siap_dikirim'] . ' paket belum beresi • ' . $stats['sedang_dikirim'] . ' sedang dikirim', 'pct' => min(100, $stats['siap_dikirim'] * 15), 'href' => route('admin.pengiriman'), 'error' => false],
+                ['icon' => 'support_agent', 'label' => 'Tangani Komplain', 'sub' => $stats['komplain_terbuka'] . ' komplain aktif', 'pct' => min(100, $stats['komplain_terbuka'] * 25), 'href' => route('admin.komplain'), 'error' => true],
+            ];
+        @endphp
+        @foreach ($pekerjaan as $tugas)
+            <a href="{{ $tugas['href'] }}" class="group block">
+                <div class="flex items-center justify-between pb-2">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-full {{ $tugas['error'] ? 'bg-error-container text-on-error-container' : 'bg-gold-accent/10 border border-gold-accent/25 text-gold-accent' }} flex items-center justify-center shrink-0 shadow-sm">
+                            <span class="material-symbols-outlined">{{ $tugas['icon'] }}</span>
+                        </div>
+                        <div>
+                            <span class="font-title-md text-title-md text-on-surface block">{{ $tugas['label'] }}</span>
+                            <span class="text-on-surface-variant font-body-md text-sm">{{ $tugas['sub'] }}</span>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
+                </div>
+                <div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+                    <div class="h-full bg-gradient-to-r {{ $tugas['error'] ? 'from-error/60 to-error' : 'from-gold-accent/70 to-gold-accent' }} rounded-full transition-all duration-500" style="width: {{ max(4, $tugas['pct']) }}%"></div>
+                </div>
+            </a>
+        @endforeach
     </div>
 </section>
+
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <section class="rise lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Omzet 7 Hari Terakhir</h2>
-            <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">Total Rp 113,2JT</span>
+            <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">Total Rp {{ $omzetJuta }}JT</span>
         </div>
-        <div class="h-48" data-bars='[{"label":"Sen","value":12.4},{"label":"Sel","value":15.1},{"label":"Rab","value":11.8},{"label":"Kam","value":18.2},{"label":"Jum","value":14.6},{"label":"Sab","value":21.3},{"label":"Min","value":19.8}]' data-bars-suffix=" JT"></div>
+        <div class="h-48" data-bars='@json($omzetMingguan['bars'])' data-bars-suffix=" JT"></div>
         <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[14px] text-gold-accent">insights</span>
-            Sabtu menjadi hari ter ramai — omzet melonjak +17% dibanding rata-rata harian.
+            Total omzet 7 hari terakhir dari pesanan valid di toko yang Anda tugaskan.
         </p>
     </section>
 
-    <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-4">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Produk Terlaris</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">emoji_events</span>
         </div>
-        <div data-leaderboard='[{"name":"Oversized Linen Shirt","meta":"Kemeja • Stok aman","display":"142 pcs","pct":100},{"name":"Relaxed Blazer","meta":"Blazer • Stok menipis","display":"96 pcs","pct":68},{"name":"Midi Dress Linen","meta":"Dress • Stok aman","display":"88 pcs","pct":62},{"name":"Knit Cardigan Rajut","meta":"Cardigan • Stok aman","display":"74 pcs","pct":52}]'></div>
+        @if (count($produkTerlaris))
+            <div data-leaderboard='@json($produkTerlaris)'></div>
+        @else
+            <p class="text-on-surface-variant text-sm py-8 text-center">Belum ada penjualan.</p>
+        @endif
         <a href="{{ route('admin.produk') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Katalog Produk</a>
     </section>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
         <div class="flex items-center justify-between mb-2">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Status Pesanan</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">donut_small</span>
         </div>
-        <p class="text-on-surface-variant font-body-md text-xs mb-4">Distribusi pesanan hari ini.</p>
-        <div data-donut='[{"value":6,"color":"#C9A24D","label":"Baru"},{"value":4,"color":"#E9CE8A","label":"Diproses"},{"value":5,"color":"#795905","label":"Dikirim"},{"value":9,"color":"#4ade80","label":"Selesai"},{"value":2,"color":"#BA1A26","label":"Dibatalkan"}]' data-donut-label="Pesanan" class="flex-grow"></div>
-        <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-[14px] text-gold-accent">bolt</span>
-            Termasuk 2 pesanan dibatalkan hari ini.
-        </p>
+        <p class="text-on-surface-variant font-body-md text-xs mb-4">Distribusi seluruh pesanan scope toko.</p>
+        @if (count($distribusiStatus))
+            <div data-donut='@json($distribusiStatus)' data-donut-label="Pesanan" class="flex-grow"></div>
+        @else
+            <p class="text-on-surface-variant text-sm py-8 text-center">Belum ada pesanan.</p>
+        @endif
     </section>
 
-    <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Pekerjaan Tertunda</h2>
-        <ul class="flex flex-col gap-5">
-            <li class="group cursor-pointer">
-                <div class="flex items-center justify-between pb-2">
-                    <div class="flex items-center gap-4">
-                        <div class="w-11 h-11 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center text-gold-accent shrink-0 shadow-sm">
-                            <span class="material-symbols-outlined">fact_check</span>
-                        </div>
-                        <div>
-                            <span class="font-title-md text-title-md text-on-surface block">Verifikasi Pembayaran</span>
-                            <span class="text-on-surface-variant font-body-md text-sm">2 dari 5 bukti transfer sudah ditinjau</span>
-                        </div>
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Komplain Terbaru</h2>
+        <ul class="flex flex-col">
+            @forelse ($komplainTerbaru as $komplain)
+                <li class="py-3 border-b last:border-b-0 border-muted-border">
+                    <div class="flex items-center justify-between gap-3">
+                        <p class="font-body-md text-sm text-on-surface truncate">{{ $komplain->subjek }}</p>
+                        <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ $komplain->status === \App\Models\Complaint::STATUS_OPEN ? 'bg-error/10 text-error border-error/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }}">{{ $komplain->status === \App\Models\Complaint::STATUS_OPEN ? 'Terbuka' : ucfirst($komplain->status) }}</span>
                     </div>
-                    <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
-                </div>
-                <div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
-                    <div class="h-full w-[40%] bg-gradient-to-r from-gold-accent/70 to-gold-accent rounded-full"></div>
-                </div>
-            </li>
-            <li class="group cursor-pointer">
-                <div class="flex items-center justify-between pb-2">
-                    <div class="flex items-center gap-4">
-                        <div class="w-11 h-11 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface shrink-0 shadow-sm">
-                            <span class="material-symbols-outlined">local_shipping</span>
-                        </div>
-                        <div>
-                            <span class="font-title-md text-title-md text-on-surface block">Input Resi Pengiriman</span>
-                            <span class="text-on-surface-variant font-body-md text-sm">3 dari 8 paket sudah dikirim</span>
-                        </div>
-                    </div>
-                    <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
-                </div>
-                <div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
-                    <div class="h-full w-[38%] bg-gradient-to-r from-gold-accent/70 to-gold-accent rounded-full"></div>
-                </div>
-            </li>
-            <li class="group cursor-pointer">
-                <div class="flex items-center justify-between pb-2">
-                    <div class="flex items-center gap-4">
-                        <div class="w-11 h-11 rounded-full bg-error-container flex items-center justify-center text-on-error-container shrink-0 shadow-sm">
-                            <span class="material-symbols-outlined">support_agent</span>
-                        </div>
-                        <div>
-                            <span class="font-title-md text-title-md text-on-surface block">Balas Komplain</span>
-                            <span class="text-on-surface-variant font-body-md text-sm">0 dari 3 komplain terjawab</span>
-                        </div>
-                    </div>
-                    <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
-                </div>
-                <div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
-                    <div class="h-full w-[8%] bg-gradient-to-r from-error/60 to-error rounded-full"></div>
-                </div>
-            </li>
+                    <p class="text-xs text-on-surface-variant mt-1">{{ $komplain->user?->nama_lengkap ?? '-' }} • {{ $komplain->store?->nama_toko ?? '-' }} • {{ $komplain->dibuat_pada?->translatedFormat('d M') }}</p>
+                </li>
+            @empty
+                <li class="py-8 text-center text-on-surface-variant text-sm">Tidak ada komplain.</li>
+            @endforelse
         </ul>
+        <a href="{{ route('admin.komplain') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Kelola Komplain</a>
     </section>
 
-    <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-6">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Pesanan Masuk</h2>
             <a href="{{ route('admin.pesanan') }}" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Semua</a>
         </div>
         <ul class="flex flex-col">
-            <li class="p-4 border-b border-muted-border hover:bg-surface-container-low transition-colors flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-9 h-9 rounded-full bg-secondary-container/30 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-sm text-secondary">shopping_bag</span>
+            @forelse ($pesananTerbaru as $pesanan)
+                <li class="p-4 {{ ! $loop->last ? 'border-b border-muted-border' : '' }} hover:bg-surface-container-low transition-colors flex items-center justify-between">
+                    <div class="flex items-center gap-4 min-w-0">
+                        <div class="w-9 h-9 rounded-full {{ $pesanan->status === \App\Models\Order::STATUS_DIBAYAR ? 'bg-secondary-container/30' : 'bg-surface-container-high' }} flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-sm {{ $pesanan->status === \App\Models\Order::STATUS_DIBAYAR ? 'text-secondary' : 'text-on-surface' }}">shopping_bag</span>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="font-body-md text-on-surface truncate"><span class="font-bold">{{ $pesanan->nomor_order }}</span> • {{ $pesanan->checkout?->user?->nama_lengkap ?? '-' }} • {{ $pesanan->items->count() }} produk</p>
+                            <p class="text-on-surface-variant text-sm mt-0.5">Rp {{ number_format((float) $pesanan->grand_total, 0, ',', '.') }} • {{ $pesanan->created_at?->diffForHumans() }}</p>
+                        </div>
                     </div>
-                    <div>
-                        <p class="font-body-md text-on-surface"><span class="font-bold">#RLV-2081</span> • Sarah Jenkins • 3 produk</p>
-                        <p class="text-on-surface-variant text-sm mt-0.5">Rp 890.000 • 10 menit lalu</p>
-                    </div>
-                </div>
-                <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Baru</span>
-            </li>
-            <li class="p-4 border-b border-muted-border hover:bg-surface-container-low transition-colors flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-9 h-9 rounded-full bg-secondary-container/30 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-sm text-secondary">shopping_bag</span>
-                    </div>
-                    <div>
-                        <p class="font-body-md text-on-surface"><span class="font-bold">#RLV-2080</span> • Andi Pratama • 1 produk</p>
-                        <p class="text-on-surface-variant text-sm mt-0.5">Rp 320.000 • 45 menit lalu</p>
-                    </div>
-                </div>
-                <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Baru</span>
-            </li>
-            <li class="p-4 hover:bg-surface-container-low transition-colors flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center">
-                        <span class="material-symbols-outlined text-sm text-on-surface">shopping_bag</span>
-                    </div>
-                    <div>
-                        <p class="font-body-md text-on-surface"><span class="font-bold">#RLV-2079</span> • Dewi Lestari • 2 produk</p>
-                        <p class="text-on-surface-variant text-sm mt-0.5">Rp 1.150.000 • 1 jam lalu</p>
-                    </div>
-                </div>
-                <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Diproses</span>
-            </li>
+                </li>
+            @empty
+                <li class="py-8 text-center text-on-surface-variant text-sm">Belum ada pesanan.</li>
+            @endforelse
         </ul>
     </section>
 </div>

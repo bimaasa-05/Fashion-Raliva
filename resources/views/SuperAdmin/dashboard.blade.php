@@ -8,7 +8,7 @@
 @section('header-subtitle', 'Ini yang terjadi hari ini.')
 
 @section('content')
-<div class="rise flex flex-wrap items-center gap-3 -mt-2 mb-2">
+<div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
         <span class="material-symbols-outlined text-[14px]">calendar_today</span>
         Sabtu, 22 Agustus 2026
@@ -19,9 +19,9 @@
     </span>
 </div>
 
-<section class="rise">
-    <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Platform</h2>
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-gutter">
+<section>
+    <h2 data-reveal class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Platform</h2>
+    <div data-reveal-group class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-gutter">
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Pengguna</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="24.5" data-count-suffix="K">24.5K</span></span>
@@ -68,7 +68,7 @@
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">payments</span>
         </div>
         <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium col-span-2 md:col-span-1 hover:border-gold-accent transition-colors hero-glow">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Komisi</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Komisi Raliva</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold">Rp <span data-count="1.2" data-count-suffix="B">1.2B</span></span>
             <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>+15,3%</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
@@ -79,8 +79,8 @@
     </div>
 </section>
 
-<section class="rise">
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
+<section>
+    <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
         <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Target Omzet Bulan Ini</p>
             <div data-donut='[{"value":87,"color":"#C9A24D","label":"Tercapai"},{"value":13,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Target" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
@@ -99,7 +99,7 @@
     </div>
 </section>
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <section class="rise lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Pesanan per Bulan</h2>
             <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">6 Bulan Terakhir</span>
@@ -111,53 +111,46 @@
         </p>
     </section>
 
-    <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-4">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Toko</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">emoji_events</span>
         </div>
         <div data-leaderboard='[{"name":"LUNARA Fashion","meta":"892 pesanan • Rating 4.9","display":"Rp 245JT","pct":100},{"name":"NOIRÉ Studio","meta":"412 pesanan • Rating 4.8","display":"Rp 158JT","pct":64},{"name":"KAYANA Apparel","meta":"318 pesanan • Rating 3.2","display":"Rp 121JT","pct":49},{"name":"Velvet Closet","meta":"264 pesanan • Rating 4.6","display":"Rp 98JT","pct":40}]'></div>
-        <a href="{{ route('superadmin.manajemen-toko') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Kelola Semua Toko</a>
+        <div class="flex items-center justify-center gap-6 mt-4 pt-4 border-t border-muted-border">
+            <a href="{{ route('superadmin.peringkat') }}#toko" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
+            <span class="w-px h-4 bg-muted-border"></span>
+            <a href="{{ route('superadmin.manajemen-toko') }}" class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest hover:underline">Kelola Semua Toko</a>
+        </div>
     </section>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <section class="rise lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
-        <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Kinerja Platform</h2>
-            <div class="flex gap-2">
-                <button type="button" data-periode="7d" class="periode-btn px-3 py-1 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase rounded-full">7D</button>
-                <button type="button" data-periode="30d" class="periode-btn px-3 py-1 border border-muted-border text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm uppercase rounded-full transition-colors">30D</button>
+    <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading whitespace-nowrap">Kinerja Platform</h2>
+            <div class="inline-flex self-start sm:self-auto bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
+                <button type="button" data-chart-range="7" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">7 Hari</button>
+                <button type="button" data-chart-range="30" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">30 Hari</button>
+                <button type="button" data-chart-range="90" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">3 Bulan</button>
             </div>
         </div>
-        <div class="flex-1 relative min-h-[250px] w-full mt-4">
-            <svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 500 200">
-                <line stroke="#E9E8E7" stroke-width="1" x1="0" x2="500" y1="50" y2="50"></line>
-                <line stroke="#E9E8E7" stroke-width="1" x1="0" x2="500" y1="100" y2="100"></line>
-                <line stroke="#E9E8E7" stroke-width="1" x1="0" x2="500" y1="150" y2="150"></line>
-                <line stroke="#E9E8E7" stroke-width="1" x1="0" x2="500" y1="200" y2="200"></line>
-                <path id="perf-line" class="animate-line" d="M 0,180 C 50,150 100,160 150,100 C 200,40 250,80 300,60 C 350,40 400,90 450,30 C 480,10 500,20 500,20" fill="none" stroke="#C9A24D" stroke-width="3"></path>
-                <path id="perf-area" d="M 0,180 C 50,150 100,160 150,100 C 200,40 250,80 300,60 C 350,40 400,90 450,30 C 480,10 500,20 500,20 L 500,200 L 0,200 Z" fill="url(#fade)" opacity="0.2"></path>
-                <defs>
-                    <lineargradient id="fade" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="0%" stop-color="#C9A24D" stop-opacity="1"></stop>
-                        <stop offset="100%" stop-color="#C9A24D" stop-opacity="0"></stop>
-                    </lineargradient>
-                </defs>
-            </svg>
-            <div id="perf-labels" class="flex justify-between mt-2 text-on-surface-variant font-label-sm text-[10px] uppercase">
-                <span>Senin</span>
-                <span>Selasa</span>
-                <span>Rabu</span>
-                <span>Kamis</span>
-                <span>Jumat</span>
-                <span>Sabtu</span>
-                <span>Minggu</span>
+        <div id="chart-wrap" class="relative h-72 md:h-80">
+            <canvas id="sales-chart"></canvas>
+        </div>
+        <div id="chart-error" class="hidden flex-col items-center justify-center h-72 md:h-80 text-center gap-3">
+            <div class="w-14 h-14 rounded-full bg-error-container flex items-center justify-center">
+                <span class="material-symbols-outlined text-on-error-container">cloud_off</span>
             </div>
+            <div>
+                <p class="font-title-md text-title-md text-on-surface">Data gagal dimuat</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-1">Terjadi masalah saat mengambil data grafik. Silakan coba lagi.</p>
+            </div>
+            <button type="button" id="chart-retry" class="mt-2 px-5 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium">Coba Lagi</button>
         </div>
     </section>
 
-    <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-2">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Komposisi Toko</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">donut_small</span>
@@ -172,7 +165,7 @@
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <section class="rise lg:col-span-1 bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
+    <section data-reveal class="lg:col-span-1 bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Perlu Perhatian</h2>
         <ul class="flex flex-col gap-4">
             <li class="flex items-center justify-between group cursor-pointer pb-4 border-b border-muted-border last:border-0 last:pb-0">
@@ -214,7 +207,7 @@
         </ul>
     </section>
 
-    <section class="rise lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Aktivitas Terbaru</h2>
         <ul class="flex flex-col">
             <li class="p-4 border-b border-muted-border hover:bg-surface-container-low transition-colors flex items-center justify-between">
@@ -265,65 +258,153 @@
     </section>
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-4">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Kategori</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">category</span>
         </div>
         <div data-leaderboard='[{"name":"Pakaian","meta":"18.420 terjual • 240 toko aktif","display":"Rp 4,2M","pct":100},{"name":"Dress","meta":"9.310 terjual • 186 toko aktif","display":"Rp 2,8M","pct":67},{"name":"Celana","meta":"8.140 terjual • 202 toko aktif","display":"Rp 2,1M","pct":50},{"name":"Aksesori","meta":"6.020 terjual • 154 toko aktif","display":"Rp 1,4M","pct":33}]'></div>
+        <a href="{{ route('superadmin.peringkat') }}#kategori" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
     </section>
 
-    <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-4">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Pelanggan</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">military_tech</span>
         </div>
         <div data-leaderboard='[{"name":"Sarah Jenkins","meta":"14 pesanan • Loyal sejak Mar 2025","display":"Rp 12,4JT","pct":100},{"name":"Dewi Lestari","meta":"9 pesanan • Loyal sejak Jan 2026","display":"Rp 8,7JT","pct":70},{"name":"Andi Pratama","meta":"6 pesanan • Loyal sejak Jul 2025","display":"Rp 3,9JT","pct":31},{"name":"Maya Rossi","meta":"5 pesanan • Loyal sejak Des 2025","display":"Rp 3,2JT","pct":26}]'></div>
+        <a href="{{ route('superadmin.peringkat') }}#pelanggan" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
     </section>
 </div>
 
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const periodeBtns = document.querySelectorAll('.periode-btn');
-    const perfLine = document.getElementById('perf-line');
-    const perfArea = document.getElementById('perf-area');
-    const perfLabels = document.getElementById('perf-labels');
+    let platformChart = null;
+    let currentRange = '7';
+    const chartWrap = document.getElementById('chart-wrap');
+    const chartError = document.getElementById('chart-error');
 
-    const periodeData = {
-        '7d': {
-            d: 'M 0,180 C 50,150 100,160 150,100 C 200,40 250,80 300,60 C 350,40 400,90 450,30 C 480,10 500,20 500,20',
-            labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']
-        },
-        '30d': {
-            d: 'M 0,160 C 60,170 120,120 180,130 C 240,140 300,80 360,95 C 420,110 470,50 500,45',
-            labels: ['Pekan 1', 'Pekan 2', 'Pekan 3', 'Pekan 4']
-        }
+    const rangeData = {
+        '7': { labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'], transaksi: [45200000, 38500000, 61000000, 56500000, 82000000, 78200000, 49500000], pesanan: [212, 186, 294, 268, 376, 341, 205] },
+        '30': { labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'], transaksi: [284000000, 316500000, 348200000, 373000000], pesanan: [1286, 1402, 1518, 1634] },
+        '90': { labels: ['Juni', 'Juli', 'Agustus'], transaksi: [682000000, 754000000, 823000000], pesanan: [3120, 3560, 3890] }
     };
 
-    periodeBtns.forEach((btn) => {
-        btn.addEventListener('click', () => {
-            periodeBtns.forEach((b) => {
-                b.classList.remove('bg-deep-onyx', 'text-on-primary');
-                b.classList.add('border', 'border-muted-border', 'text-on-surface-variant', 'hover:text-on-surface');
-            });
-            btn.classList.remove('border', 'border-muted-border', 'text-on-surface-variant', 'hover:text-on-surface');
-            btn.classList.add('bg-deep-onyx', 'text-on-primary');
+    const formatRupiahShort = (value) => {
+        if (value >= 1000000000) return (value / 1000000000).toFixed(1).replace('.', ',') + ' M';
+        if (value >= 1000000) return (value / 1000000).toFixed(1).replace('.', ',') + ' jt';
+        if (value >= 1000) return Math.round(value / 1000) + ' rb';
+        return value;
+    };
 
-            const data = periodeData[btn.getAttribute('data-periode')];
-            if (!data) return;
-            if (perfLine) {
-                perfLine.setAttribute('d', data.d);
-                perfLine.style.animation = 'none';
-                void perfLine.offsetWidth;
-                perfLine.style.animation = '';
-            }
-            perfArea?.setAttribute('d', data.d + ' L 500,200 L 0,200 Z');
-            if (perfLabels) {
-                perfLabels.innerHTML = data.labels.map((l) => '<span>' + l + '</span>').join('');
-            }
+    const chartTheme = () => {
+        const isDark = document.documentElement.classList.contains('dark');
+        return {
+            grid: isDark ? '#333333' : '#E9E8E7',
+            tick: isDark ? '#BAB8B8' : '#747878',
+            tooltipBg: isDark ? '#F0EEEE' : '#1b1c1c',
+            tooltipText: isDark ? '#111111' : '#ffffff'
+        };
+    };
+
+    /* Seluruh titik meluncur serentak dari kiri -> garis terbuka mulus tanpa patah */
+    const smoothDraw = (total = 950) => ({
+        x: { type: 'number', duration: total, easing: 'easeOutQuart', from: (ctx) => (ctx.chart && ctx.chart.chartArea ? ctx.chart.chartArea.left : 0) },
+        y: { type: 'number', duration: total, easing: 'easeOutQuart' }
+    });
+
+    const renderPlatformChart = () => {
+        if (!window.Chart) {
+            chartWrap?.classList.add('hidden');
+            chartError?.classList.remove('hidden');
+            return;
+        }
+        const c = chartTheme();
+        const data = rangeData[currentRange];
+
+        if (!platformChart) {
+            platformChart = new Chart(document.getElementById('sales-chart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        { label: 'Volume Transaksi', data: data.transaksi, borderColor: '#C9A24D', backgroundColor: 'rgba(201, 162, 77, 0.12)', fill: true, tension: 0.38, borderWidth: 2, pointBackgroundColor: '#C9A24D', pointRadius: 3 },
+                        { label: 'Jumlah Pesanan', data: data.pesanan, borderColor: c.tick, backgroundColor: 'transparent', fill: false, tension: 0.38, borderWidth: 2, pointBackgroundColor: c.tick, pointRadius: 3, yAxisID: 'y1' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: smoothDraw(),
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, color: c.tick, font: { family: 'Manrope', size: 12 } } },
+                        tooltip: {
+                            backgroundColor: c.tooltipBg, titleColor: c.tooltipText, bodyColor: c.tooltipText,
+                            titleFont: { family: 'Manrope', size: 12, weight: '700' }, bodyFont: { family: 'Manrope', size: 14 },
+                            padding: 12, cornerRadius: 0, displayColors: true,
+                            callbacks: { label: (ctx) => ctx.datasetIndex === 0 ? ' Volume Transaksi: Rp ' + new Intl.NumberFormat('id-ID').format(ctx.raw) : ' Pesanan: ' + new Intl.NumberFormat('id-ID').format(ctx.raw) }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, position: 'left', grid: { color: c.grid }, ticks: { color: c.tick, font: { family: 'Manrope', size: 11 }, callback: (v) => formatRupiahShort(v) } },
+                        y1: { beginAtZero: true, position: 'right', grid: { display: false }, ticks: { color: c.tick, font: { family: 'Manrope', size: 11 }, callback: (v) => new Intl.NumberFormat('id-ID').format(v) } },
+                        x: { grid: { display: false }, ticks: { color: c.tick, font: { family: 'Manrope', size: 11 } } }
+                    }
+                }
+            });
+            /* Setelah render pertama: pakai transisi standar agar ganti rentang tetap glide */
+            platformChart.options.animation = { duration: 700, easing: 'easeOutCubic' };
+            return;
+        }
+
+        /* Transisi mulus saat ganti rentang: elemen meluncur dari nilai lama ke baru */
+        platformChart.data.labels = data.labels;
+        platformChart.data.datasets[0].data = data.transaksi;
+        platformChart.data.datasets[1].data = data.pesanan;
+        platformChart.data.datasets[1].borderColor = c.tick;
+        platformChart.data.datasets[1].pointBackgroundColor = c.tick;
+        platformChart.options.scales.y.grid.color = c.grid;
+        platformChart.options.scales.y.ticks.color = c.tick;
+        platformChart.options.scales.y1.ticks.color = c.tick;
+        platformChart.options.scales.x.ticks.color = c.tick;
+        platformChart.options.plugins.legend.labels.color = c.tick;
+        platformChart.update();
+    };
+
+    const setActiveRangeButton = () => {
+        document.querySelectorAll('.chart-range-btn').forEach((b) => {
+            const isActive = b.getAttribute('data-chart-range') === currentRange;
+            b.classList.toggle('bg-deep-onyx', isActive);
+            b.classList.toggle('text-on-primary', isActive);
+            b.classList.toggle('text-on-surface-variant', !isActive);
         });
+    };
+
+    document.querySelectorAll('[data-chart-range]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            currentRange = btn.getAttribute('data-chart-range');
+            setActiveRangeButton();
+            renderPlatformChart();
+        });
+    });
+
+    document.getElementById('chart-retry')?.addEventListener('click', () => {
+        chartError?.classList.add('hidden');
+        chartWrap?.classList.remove('hidden');
+        renderPlatformChart();
+    });
+
+    window.ralivaOnReady(() => {
+        try {
+            renderPlatformChart();
+        } catch (e) {
+            chartWrap?.classList.add('hidden');
+            chartError?.classList.remove('hidden');
+        }
     });
 </script>
 @endpush

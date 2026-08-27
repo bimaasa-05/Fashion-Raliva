@@ -29,7 +29,12 @@
 
 <div data-real class="hidden space-y-section-gap" data-table-scope>
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 md:p-6 card-premium">
-        <div class="flex flex-col lg:flex-row lg:items-center gap-gutter mb-6">
+        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 mb-6">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter & Pencarian</span>
+            </div>
+            <div class="flex flex-col lg:flex-row lg:items-center gap-gutter">
             <div class="relative flex-1 min-w-0">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                 <input type="text" data-table-search placeholder="Cari nomor, produk, alasan..." class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-10 pr-4 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent transition-colors" />
@@ -44,6 +49,7 @@
                 <span class="material-symbols-outlined text-[16px]">add</span>
                 Catat Stok Rusak
             </button>
+        </div>
         </div>
 
         <div data-table-wrap class="overflow-x-auto">
@@ -68,7 +74,7 @@
                             <td class="p-4 text-on-surface">{{ $row[1] }}</td>
                             <td class="p-4 text-center text-on-surface-variant">{{ $row[2] }}</td>
                             <td class="p-4 text-center font-bold text-error">{{ $row[3] }}</td>
-                            <td class="p-4 text-on-surface">{{ $row[4] }}</td>
+                            <td class="p-4 text-on-surface">{{ $row[4] }}@if(in_array($row[0], ['SR-0008', 'SR-0006']))<span class="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 text-[10px] font-bold uppercase text-gold-accent"><span class="material-symbols-outlined text-[12px]">fact_check</span>Dari {{ ['SR-0008' => 'QC-0009', 'SR-0006' => 'QC-0007'][$row[0]] }}</span>@endif</td>
                             <td class="p-4 text-center text-on-surface-variant whitespace-nowrap">{{ $row[5] }}</td>
                             <td class="p-4 text-center text-on-surface whitespace-nowrap">{{ $row[6] }}</td>
                             <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass[$row[7]] }} text-[10px] font-bold uppercase border">{{ $row[7] }}</span></td>

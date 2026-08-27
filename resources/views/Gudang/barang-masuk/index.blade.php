@@ -9,7 +9,7 @@
 @section('content')
 @php
     $rows = [
-        ['BM-0012', 'Produksi', 'PRD-0412', 'Oversized Linen Shirt', 50, '22 Agu 2026 • 08:15', 'Andi Pratama', 'Menunggu Pemeriksaan'],
+        ['BM-0012', 'Produksi', 'FIN-0012', 'Oversized Linen Shirt', 50, '22 Agu 2026 • 08:15', 'Andi Pratama', 'Menunggu Pemeriksaan'],
         ['BM-0011', 'Supplier', 'SUP-2201', 'Silk Scarf', 30, '22 Agu 2026 • 09:02', 'Budi Santoso', 'Selesai'],
         ['BM-0010', 'Produksi', 'PRD-0409', 'Midi Dress Linen', 40, '21 Agu 2026 • 10:44', 'Andi Pratama', 'Diterima'],
         ['BM-0009', 'Gudang Lain', 'PM-0004', 'Hoodie Fleece Premium', 25, '21 Agu 2026 • 13:20', 'Citra Dewi', 'Diterima'],
@@ -31,7 +31,12 @@
 
 <div data-real class="hidden space-y-section-gap" data-table-scope>
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 md:p-6 card-premium">
-        <div class="flex flex-col lg:flex-row lg:items-center gap-gutter mb-6">
+        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 mb-6">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter & Pencarian</span>
+            </div>
+            <div class="flex flex-col lg:flex-row lg:items-center gap-gutter">
             <div class="relative flex-1 min-w-0">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                 <input type="text" data-table-search placeholder="Cari nomor transaksi, produk..." class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-10 pr-4 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent transition-colors" />
@@ -55,6 +60,7 @@
                 Catat Barang Masuk
             </button>
         </div>
+        </div>
 
         <div data-table-wrap class="overflow-x-auto">
             <table class="w-full min-w-[980px] premium-table">
@@ -77,7 +83,7 @@
                             $sumberKey = str_replace(' ', '-', strtolower($row[1]));
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors" data-table-row data-sumber="{{ $sumberKey }}" data-status="{{ $statusKey }}">
-                            <td class="p-4"><span class="font-bold text-on-surface">{{ $row[0] }}</span><span class="block text-xs text-on-surface-variant mt-0.5">Ref: {{ $row[2] }}</span></td>
+                            <td class="p-4"><span class="font-bold text-on-surface">{{ $row[0] }}</span><span class="block text-xs text-on-surface-variant mt-0.5">Ref: {{ $row[2] }}</span>@if(str_starts_with($row[2], 'FIN'))<span class="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 text-[10px] font-bold uppercase text-gold-accent"><span class="material-symbols-outlined text-[12px]">auto_awesome</span>Otomatis dari Produksi</span>@endif</td>
                             <td class="p-4 text-center">
                                 <span class="inline-flex items-center gap-1.5 text-on-surface">
                                     <span class="material-symbols-outlined text-[16px] text-on-surface-variant">{{ ['Produksi' => 'precision_manufacturing', 'Supplier' => 'local_shipping', 'Gudang Lain' => 'warehouse'][$row[1]] }}</span>
