@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class LoginController extends Controller
@@ -45,6 +46,11 @@ class LoginController extends Controller
         }
 
         $request->session()->regenerate();
+
+        $intended = $request->input('redirect');
+        if (is_string($intended) && Str::startsWith($intended, '/') && ! Str::contains($intended, '//')) {
+            return redirect($intended);
+        }
 
         return redirect()->intended(route(EnsureRole::homeRouteFor($user->role?->nama_role)));
     }
