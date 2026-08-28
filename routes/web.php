@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\StokController;
 use App\Http\Controllers\Admin\VerifikasiPembayaranController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\Gudang\BarangKeluarController as GudangBarangKeluarController;
 use App\Http\Controllers\Gudang\BarangMasukController as GudangBarangMasukController;
 use App\Http\Controllers\Gudang\DashboardController as GudangDashboardController;
@@ -134,6 +135,8 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('/account', function () {
             return view('customer.account.index');
         })->name('account');
+
+        Route::post('/account', [ProfileController::class, 'update'])->name('account.update');
 
         Route::get('/account/edit', function () {
             return view('customer.account.edit');
