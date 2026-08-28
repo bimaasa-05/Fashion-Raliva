@@ -253,9 +253,9 @@
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
 <img alt="{{ $product['name'] }}" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" src="{{ $product['img'] }}"/>
-<a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<button type="button" aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center bg-surface/70 rounded-full backdrop-blur-sm">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</a>
+</button>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $product['brand'] }}</span>
 <h3 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">{{ $product['name'] }}</h3>
@@ -265,8 +265,7 @@
 </div>
 </section>
 </main>
-<!-- BottomNavBar -->
-<!-- BottomNavBar -->
+<!-- BottomNavBar (Mobile Only) -->
 @include('customer._partials.bottom-nav')
 @include('customer._partials.drawer')
 </body></html>
