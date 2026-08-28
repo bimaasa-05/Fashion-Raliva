@@ -3,7 +3,7 @@
 @section('title', 'Pengajuan Toko')
 
 @section('header-title', 'Pengajuan Toko')
-@section('header-badge', 'Disetujui')
+@section('header-badge', $store ? 'Disetujui' : 'Menunggu')
 @section('header-subtitle', 'Pantau status verifikasi dan riwayat pengajuan toko Anda.')
 
 @section('content')
@@ -23,8 +23,8 @@
                 </div>
                 <div>
                     <p class="text-xs font-medium text-on-surface-variant">Status Pengajuan</p>
-                    <h2 class="raliva-figure text-[26px] text-on-surface mt-1">Toko Telah Disetujui</h2>
-                    <p class="text-on-surface-variant font-body-md text-sm mt-1">ID Pengajuan <span class="font-bold text-on-surface">#SUB-2024-0021</span> &bull; Disetujui 18 Maret 2026 oleh Super Admin</p>
+                    <h2 class="raliva-figure text-[26px] text-on-surface mt-1">{{ $store ? 'Toko Telah Disetujui' : 'Pengajuan Diproses' }}</h2>
+                    <p class="text-on-surface-variant font-body-md text-sm mt-1">ID Pengajuan <span class="font-bold text-on-surface">#SUB-{{ $store?->store_id ? str_pad($store->store_id, 4, '0', STR_PAD_LEFT) : '----' }}</span> &bull; Disetujui {{ optional($store?->created_at)->translatedFormat('d M Y') }} oleh Super Admin</p>
                 </div>
             </div>
             <div class="flex items-center gap-gutter self-start lg:self-auto">
@@ -103,7 +103,7 @@
                         <td class="py-4 px-4 text-error max-w-md">Foto depan toko tidak sesuai dengan alamat yang terdaftar pada dokumen usaha. Mohon unggah foto terbaru yang jelas menampilkan nama dan alamat toko.</td>
                         <td class="py-4 px-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Ditolak</span></td>
                         <td class="py-4 px-4 text-right">
-                            <button type="button" data-modal-open="modal-kirim-ulang" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Perbaiki &amp; Kirim Ulang</button>
+                            <span class="text-xs text-on-surface-variant">Read-only</span>
                         </td>
                     </tr>
                 </tbody>
@@ -116,79 +116,4 @@
     </section>
 </div>
 
-{{-- Modal Kirim Ulang --}}
-<div id="modal-kirim-ulang" data-modal class="fixed inset-0 z-[70] hidden">
-    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-    <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-xl bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
-        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-            <div>
-                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Perbaiki &amp; Kirim Ulang</h3>
-                <p class="text-on-surface-variant font-body-md text-xs mt-1">Perbarui dokumen yang ditolak pada pengajuan v1.0.</p>
-            </div>
-            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-        <form data-toast-message="Pengajuan revisi berhasil dikirim untuk diverifikasi ulang." class="p-6 space-y-5">
-            <div class="border border-error/20 bg-error/5 rounded-lg px-4 py-3 flex items-start gap-3">
-                <span class="material-symbols-outlined text-[20px] text-error mt-0.5">error</span>
-                <p class="text-error font-body-md text-sm">Alasan penolakan: Foto depan toko tidak sesuai dengan alamat yang terdaftar.</p>
-            </div>
-            <div>
-                <label for="dokumen-revisi" class="block raliva-label mb-2">Unggah Ulang Foto Depan Toko</label>
-                <label for="dokumen-revisi" class="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-outline-variant rounded-lg px-6 py-10 cursor-pointer hover:border-gold-accent hover:bg-surface-container-low transition-colors group">
-                    <span class="material-symbols-outlined text-[36px] text-on-surface-variant group-hover:text-gold-accent transition-colors">upload_file</span>
-                    <span class="text-on-surface-variant font-body-md text-sm text-center">Tarik file ke sini atau <span class="text-gold-accent font-bold underline">pilih dari perangkat</span></span>
-                    <span class="text-on-surface-variant text-xs">JPG/PNG maksimal 5 MB</span>
-                </label>
-                <input id="dokumen-revisi" type="file" accept=".jpg,.jpeg,.png" class="hidden" />
-            </div>
-            <div>
-                <label for="catatan-revisi" class="block raliva-label mb-2">Catatan untuk Verifikator</label>
-                <textarea id="catatan-revisi" rows="3" placeholder="Jelaskan perbaikan yang Anda lakukan..." class="raliva-textarea"></textarea>
-            </div>
-            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-[16px]">send</span>Kirim Ulang
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-{{-- Drawer Detail Pengajuan --}}
-<div id="drawer-detail" data-drawer-panel class="fixed inset-y-0 right-0 z-[80] w-full max-w-md bg-surface-container-lowest border-l border-muted-border shadow-xl translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
-    <div class="flex items-center justify-between px-6 py-5 border-b border-muted-border">
-        <h3 class="font-title-md text-title-md text-on-surface premium-heading">Detail Pengajuan v1.1</h3>
-        <button type="button" data-drawer-close class="text-on-surface-variant hover:text-on-surface transition-colors">
-            <span class="material-symbols-outlined">close</span>
-        </button>
-    </div>
-    <div class="flex-1 overflow-y-auto p-6 space-y-6">
-        <dl class="space-y-4 font-body-md text-sm">
-            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">ID Pengajuan</dt><dd class="text-on-surface font-bold text-right">#SUB-2024-0021</dd></div>
-            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Diverifikasi Oleh</dt><dd class="text-on-surface text-right">Super Admin Raliva</dd></div>
-            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Waktu Review</dt><dd class="text-on-surface text-right">14 Mar — 18 Mar 2026</dd></div>
-            <div class="flex justify-between gap-4"><dt class="text-on-surface-variant shrink-0">Status Akhir</dt><dd><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Disetujui</span></dd></div>
-        </dl>
-        <div>
-            <p class="raliva-label mb-3">Dokumen Terlampir</p>
-            <ul class="space-y-3">
-                @foreach ([['description', 'ktp_owner.pdf', '1,2 MB'], ['receipt_long', 'npwp_toko.pdf', '480 KB'], ['storefront', 'foto_depan_toko.jpg', '2,4 MB'], ['gavel', 'nib_raliva.pdf', '310 KB']] as $file)
-                    <li class="flex items-center gap-3 border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low">
-                        <span class="material-symbols-outlined text-[20px] text-gold-accent">{{ $file[0] }}</span>
-                        <div class="flex-1 min-w-0">
-                            <p class="font-body-md text-sm text-on-surface truncate">{{ $file[1] }}</p>
-                            <p class="text-xs text-on-surface-variant">{{ $file[2] }}</p>
-                        </div>
-                        <button type="button" onclick="showRalivaToast('Pratinjau dokumen dibuka (demo).', 'visibility')" class="text-on-surface-variant hover:text-gold-accent transition-colors" aria-label="Pratinjau">
-                            <span class="material-symbols-outlined text-[20px]">visibility</span>
-                        </button>
-                    </li>
-                @endforeach
-            </ul>
-        </div>
-    </div>
-</div>
 @endsection
