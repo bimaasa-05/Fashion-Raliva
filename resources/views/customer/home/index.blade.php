@@ -447,7 +447,7 @@
 <h3 class="font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Be the first to know') }}</h3>
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-md max-w-md">{{ __('Subscribe to our newsletter for exclusive collections and editorial insights.') }}</p>
 <form class="w-full max-w-sm lg:max-w-lg flex flex-col lg:flex-row gap-sm" onsubmit="return false;">
-<input class="w-full lg:flex-1 rounded-full border border-outline-variant bg-surface px-5 py-3 font-body-lg text-on-surface placeholder-on-surface-variant focus:outline-red focus:ring-0 focus:border-primary transition-colors" placeholder="{{ __('Email Address') }}" type="email"/>
+<input class="w-full lg:flex-1 rounded-full border border-outline-variant bg-surface px-5 py-3 font-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors" placeholder="{{ __('Email Address') }}" type="email"/>
 <button class="btn-gold font-label-caps text-label-caps py-3 lg:px-xl rounded-full uppercase tracking-widest" type="submit">{{ __('SUBSCRIBE') }}</button>
 </form>
 </div>
@@ -525,7 +525,7 @@
             slides[idx].style.opacity = '0';
             idx = (idx + 1) % slides.length;
             slides[idx].style.opacity = '1';
-        }, 4000);
+        }, 3000);
     })();
 
     /* Subtle scroll reveal */
