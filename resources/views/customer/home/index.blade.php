@@ -338,7 +338,7 @@
 <div data-category="Women" class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A high-quality minimalist editorial product shot of a tailored linen blazer in a soft ivory shade." src="{{ asset('storage/home-pictures/1.jfif') }}"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A high-quality minimalist editorial product shot of a tailored linen blazer in a soft ivory shade." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ"/>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Noiré Studio</span>
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Tailored Linen Blazer</h4>
@@ -352,7 +352,7 @@
 <div data-category="Bags" class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A sleek, minimalist editorial photograph of a black leather structured tote bag." src="{{ asset('storage/home-pictures/2.jfif') }}"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A sleek, minimalist editorial photograph of a black leather structured tote bag." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDotrquQ9ru5aXlWl5XbgLhEMJq3WBfo5DDEAS3Z-F5LnAIv27Q3259la3QLZghjnF5R8udNJqY0Toq6SHw5JvN3PqANThsUOvwujXixkrq5zZBH5OW_D3QTRD3qObufW5Uz2-ahDe36xdtDHuA8SK2Ldhp4wpMReozYAnqkNj5ZG3A37LwDOS6aXDnCEg_MNh_j2C1VKegB7PNMCwMV-jwzYAwrhuqG1UCGjQoSl3A0QRKO-gFHlQ"/>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Structured Leather Tote</h4>
@@ -366,7 +366,7 @@
 <div data-category="Women" class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A beautiful, clean editorial product shot of a minimalist silk slip dress in a muted olive tone." src="{{ asset('storage/home-pictures/3.jfif') }}"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A beautiful, clean editorial product shot of a minimalist silk slip dress in a muted olive tone." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrQWexD2Xms4d7-qplQNqqTI4EebkIxaCqpOssP3jfxkcDDAjBvE4kuCEgO-j-Yd-Vfxm6sW-zOaQShx89-kFo0JwvaQ9DnVYjw0ZeHlwNYQaWtigNJNUb1P2E3VS7jVbvb2gfkn5AgK0_pHzGjUiSO2kjiDWXbTKy2tRqRQq5I2md_UYdyHQR_axy07aFn3BeoVctJgri9jLNSSEizCJoXGSF5I0rX6QAaqkzanalXeH6sTmuLnA"/>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Maëva House</span>
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Silk Slip Dress</h4>
@@ -380,7 +380,7 @@
 <div data-category="Accessories" class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A pristine editorial shot of minimal, modern geometric gold hoop earrings resting on a white marble surface." src="{{ asset('storage/home-pictures/1.jfif') }}"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A pristine editorial shot of minimal, modern geometric gold hoop earrings resting on a white marble surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXqNhNFWMr-Gm8_uwAVgBbqtzcNdb5MAfQUsG_3GJbmE0gm167f27WLQY44QclgDSw7N_b2k0qpe9HdTKZlExYsZl6FJUCnKft0foIHP3pp3uFUAxnwrYM3o7ap46wCmmnSGAbNN-gDM_Kptg0bVNG6ghZhp7r3PeQ66ZD2yhgIMKhB9sSycHTa8yXBJ3fTbNvx2tH5SUu76da_WcZ3bJW7JeJmVuEnVOdIHENcwQB0a1sOCp-u_s"/>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Kayana Apparel</span>
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Geometric Gold Hoops</h4>
@@ -408,7 +408,7 @@
 <!-- Store 1 -->
 <a href="{{ route('customer.shop.store-detail', 1) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Lunara Fashion boutique exterior." src="{{ asset('storage/home-pictures/2.jfif') }}"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Lunara Fashion boutique exterior." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATiKrXBx3vVfoNsTu1_JuFvfVqHhF9A63yLIFGC0hF5MVVUZB6Nu-eyjEa5IxqGiEpPzawhFtGfTAatsc-_9Pwi9D9AsVEO7TOOEszevnRdatfxPYIK7ZAvB0-Aa3R8CSQPOhV3EN9w5_S8sCYYX8NCMlAs_gD3RYhAkt91QyBdC8bmQs-v4yGHXrAH2KKGIPWNoi7jJqivQtsOliueGluswaKxAgwLxl1rh_aTfA_gB_LTeqw8oU"/>
 </div>
 <h4 class="font-title-md text-title-md text-on-surface group-hover:text-secondary transition-colors">Lunara Fashion</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Modern feminine silhouettes.') }}</p>
@@ -416,7 +416,7 @@
 <!-- Store 2 -->
 <a href="{{ route('customer.shop.store-detail', 2) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Noiré Studio interior." src="{{ asset('storage/home-pictures/3.jfif') }}"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Noiré Studio interior." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGwknduyLPGxjMRvTx7tN4JeGs-9IICVVEqumRS28Y9jTBxPfkTa9uV98aPjekXCG1uLxayAYmBwFZIIf73qfeWOcTQ6jI97GOQBVdIzBaAZhTlYEO8RKF_NsqCMXssspqoctKzP8RpOHtJI_bw-qZI1QF_fn1OH80mwa6ht1vSJY8vkFSZq_OBTROdz1TubDt_Y_Ax7quip7t8HNO7TkKNnLYOEFLbmjlpYvis2wIP6LJwYtpaNo"/>
 </div>
 <h4 class="font-title-md text-title-md text-on-surface group-hover:text-secondary transition-colors">Noiré Studio</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Tailored, stark minimalism.') }}</p>
@@ -424,7 +424,7 @@
 <!-- Store 3 -->
 <a href="{{ route('customer.shop.store-detail', 3) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Kayana Apparel lifestyle shot." src="{{ asset('storage/home-pictures/1.jfif') }}"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Kayana Apparel lifestyle shot." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSCazvaWZuccedNS2ILQbkHUJlNvuZ7i1_N2EHvjuBbo7CLD3CW8iHh-xOfNuHEsio3RxsEYKR2jEnuEUUOg9R7Xza1li0VetG6_yfhRrJs3dSULL6lG6fVDPX4qijbhNAokLUQ8tn673XhAZ-l8Vx3WZDIaxtdNLAHriglRfoPt6xRPff_qYINXAgslwYqW_xSQsAbEn2mjrBLNDh6NTT4t86gs2BbXDST-ewDyDYcbA5FZIEMUM"/>
 </div>
 <h4 class="font-title-md text-title-md text-on-surface group-hover:text-secondary transition-colors">Kayana Apparel</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Organic textures and flow.') }}</p>
@@ -432,7 +432,7 @@
 <!-- Store 4 -->
 <a href="{{ route('customer.shop.store-detail', 4) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Maëva House still-life." src="{{ asset('storage/home-pictures/2.jfif') }}"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Maëva House still-life." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBces6Xx741Ae5cYEDlbS_pgcHXZ9vEiOAGb5jvlBttKDyIRgUl6PUSDzKjI9nXu8X8Zb-RxuuplZY4dbVXDDBRqOVusLCAlczBCFDMM9qeGCl18jyL9AKeYbo_KYUolJQ-tUyLZ6kLqZFaQ2yKWY0Gs6ucQPlMm57RTWXBipH9At2Nbp1nWNEZDCqkafxCVNpFOE3MSCOi3nOPMbtk9_6tU4iBkCexkl7qGGFlVexn74kqDcVgzRc"/>
 </div>
 <h4 class="font-title-md text-title-md text-on-surface group-hover:text-secondary transition-colors">Maëva House</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Essential daily luxury.') }}</p>
