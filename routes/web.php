@@ -28,6 +28,7 @@ use App\Http\Controllers\Gudang\ProfilController as GudangProfilController;
 use App\Http\Controllers\Gudang\RiwayatStokController as GudangRiwayatStokController;
 use App\Http\Controllers\Gudang\StokController as GudangStokController;
 use App\Http\Controllers\Gudang\StokRusakController as GudangStokRusakController;
+use App\Http\Controllers\Gudang\GantiGudangController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboardController;
 use App\Http\Controllers\Owner\DataPelangganController;
 use App\Http\Controllers\Owner\DataTokoController;
@@ -297,6 +298,10 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang'])->g
     Route::get('/notifikasi', [GudangNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [GudangProfilController::class, 'index'])->name('profil');
 });
+
+Route::post('/gudang/ganti', [GantiGudangController::class, 'store'])
+    ->name('gudang.ganti')
+    ->middleware(['auth', 'role:Gudang']);
 
 Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->group(function () {
     Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('dashboard');
