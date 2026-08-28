@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\PromoController;
 use App\Http\Controllers\Admin\RiwayatAktivitasController as AdminRiwayatAktivitasController;
 use App\Http\Controllers\Admin\StokController;
 use App\Http\Controllers\Admin\VerifikasiPembayaranController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Gudang\BarangKeluarController as GudangBarangKeluarController;
 use App\Http\Controllers\Gudang\BarangMasukController as GudangBarangMasukController;
 use App\Http\Controllers\Gudang\DashboardController as GudangDashboardController;
@@ -27,7 +29,6 @@ use App\Http\Controllers\Gudang\RiwayatStokController as GudangRiwayatStokContro
 use App\Http\Controllers\Gudang\StokController as GudangStokController;
 use App\Http\Controllers\Gudang\StokRusakController as GudangStokRusakController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboardController;
-use App\Http\Controllers\Owner\ProdukController as OwnerProdukController;
 use App\Http\Controllers\Owner\DataPelangganController;
 use App\Http\Controllers\Owner\DataTokoController;
 use App\Http\Controllers\Owner\KaryawanController;
@@ -37,6 +38,7 @@ use App\Http\Controllers\Owner\NotifikasiController as OwnerNotifikasiController
 use App\Http\Controllers\Owner\PengajuanTokoController;
 use App\Http\Controllers\Owner\PengaturanTokoController;
 use App\Http\Controllers\Owner\PesananController as OwnerPesananController;
+use App\Http\Controllers\Owner\ProdukController as OwnerProdukController;
 use App\Http\Controllers\Owner\ProfilController as OwnerProfilController;
 use App\Http\Controllers\Owner\PromoController as OwnerPromoController;
 use App\Http\Controllers\Owner\SaldoController;
@@ -77,8 +79,6 @@ use App\Http\Controllers\SuperAdmin\ProfilController;
 use App\Http\Controllers\SuperAdmin\PromoPlatformController;
 use App\Http\Controllers\SuperAdmin\RiwayatAktivitasController;
 use App\Http\Controllers\SuperAdmin\SaldoTokoController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\SuperAdmin\StokController as SaStokController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -127,9 +127,9 @@ Route::prefix('customer')->name('customer.')->group(function () {
             return view('customer.checkout.index');
         })->name('checkout');
 
-    Route::get('/order-tracking', function () {
-        return view('customer.order-tracking.index');
-    })->name('order-tracking');
+        Route::get('/order-tracking', function () {
+            return view('customer.order-tracking.index');
+        })->name('order-tracking');
 
         Route::get('/account', function () {
             return view('customer.account.index');
@@ -188,6 +188,12 @@ Route::prefix('customer')->name('customer.')->group(function () {
 Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Super Admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/manajemen-pengguna', [ManajemenPenggunaController::class, 'index'])->name('manajemen-pengguna');
+    Route::post('/manajemen-pengguna', [ManajemenPenggunaController::class, 'store'])->name('manajemen-pengguna.store');
+    Route::get('/manajemen-pengguna/{user}/detail', [ManajemenPenggunaController::class, 'getDetail'])->name('manajemen-pengguna.detail');
+    Route::put('/manajemen-pengguna/{user}', [ManajemenPenggunaController::class, 'update'])->name('manajemen-pengguna.update');
+    Route::delete('/manajemen-pengguna/{user}', [ManajemenPenggunaController::class, 'destroy'])->name('manajemen-pengguna.destroy');
+    Route::put('/manajemen-pengguna/{user}/role', [ManajemenPenggunaController::class, 'updateRole'])->name('manajemen-pengguna.role');
+    Route::put('/manajemen-pengguna/{user}/nonaktifkan', [ManajemenPenggunaController::class, 'nonaktifkan'])->name('manajemen-pengguna.nonaktifkan');
     Route::get('/manajemen-toko', [ManajemenTokoController::class, 'index'])->name('manajemen-toko');
     Route::post('/manajemen-toko/{toko}/setujui', [ManajemenTokoController::class, 'setujui'])->name('manajemen-toko.setujui');
     Route::post('/manajemen-toko/{toko}/tolak', [ManajemenTokoController::class, 'tolak'])->name('manajemen-toko.tolak');
@@ -237,6 +243,8 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/pengaturan-sistem', [PengaturanSistemController::class, 'index'])->name('pengaturan-sistem');
     Route::post('/pengaturan-sistem/legal', [PengaturanSistemController::class, 'updateLegal'])->name('pengaturan-sistem.legal');
     Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
+    Route::match(['put', 'post'], '/profil', [ProfilController::class, 'updateProfile'])->name('profil.update');
+    Route::match(['put', 'post'], '/profil/password', [ProfilController::class, 'updatePassword'])->name('profil.password');
     Route::get('/komplain', [SaKomplainController::class, 'index'])->name('komplain');
     Route::post('/komplain/{komplain}/eskalasi', [SaKomplainController::class, 'eskalasi'])->name('komplain.eskalasi');
     Route::post('/komplain/{komplain}/tutup', [SaKomplainController::class, 'tutup'])->name('komplain.tutup');

@@ -2,7 +2,7 @@
     $user = Auth::user();
     $displayName = $user?->nama_lengkap ?? ($name ?? 'Rizky Pratama');
     $displayRole = $user?->role?->nama_role ?? ($role ?? 'Super Admin');
-    $photo = $user?->foto_profil ? asset($user->foto_profil) : 'https://lh3.googleusercontent.com/aida-public/AB6AXuAuUf094pPsvMlxNz9CEzztLZIPfB4q2FE_6HM73O8sFoIt42FkBx43D1cxFlylMdSolVSJZNCBDrc8ttYGcVUIYXcsS0AUGBhcZYBAFGqcAXzmuJyVyjyJY6CXvyxdr0Zwzlwi2Tw3Djm9F2wtwaOLZklTUYLsRg7NCbF9hgI1uCTcTdgGi-0zShSJMzVkR1HYp_C02xOHHVWnGLI4_rrhbWQnSlrZ2VpmUbZL0Gc18YDjNwDrrkAcPg';
+    $photo = $user?->foto_profil_url ?? 'https://lh3.googleusercontent.com/aida-public/AB6AXuAuUf094pPsvMlxNz9CEzztLZIPfB4q2FE_6HM73O8sFoIt42FkBx43D1cxFlylMdSolVSJZNCBDrc8ttYGcVUIYXcsS0AUGBhcZYBAFGqcAXzmuJyVyjyJY6CXvyxdr0Zwzlwi2Tw3Djm9F2wtwaOLZklTUYLsRg7NCbF9hgI1uCTcTdgGi-0zShSJMzVkR1HYp_C02xOHHVWnGLI4_rrhbWQnSlrZ2VpmUbZL0Gc18YDjNwDrrkAcPg';
 @endphp
 <div class="relative" data-profile-container>
     <button type="button" data-profile-toggle class="flex items-center gap-3 hover:opacity-80 transition-opacity" aria-label="Menu profil">
