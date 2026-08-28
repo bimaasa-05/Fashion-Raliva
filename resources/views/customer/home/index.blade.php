@@ -267,6 +267,19 @@
         .hero-photos, .hero-reveal, .reveal-up { animation: none !important; opacity: 1 !important; transform: none !important; }
         .btn-gold:hover::after { animation: none !important; }
     }
+
+    /* ============ RALIVA HOME: remap drawer + bottom-nav accent to burgundy (Register language)
+       Scoped so only the Home page is affected; other customer pages keep their own theme. ============ */
+    #drawer-panel {
+        --chrome-accent: #8B1E1E;
+        --gold-wash: rgba(139, 30, 30, .10);
+    }
+    html.theme-dark #drawer-panel {
+        --chrome-accent: #A32626;
+        --gold-wash: rgba(163, 38, 38, .16);
+    }
+    .bn-active .material-symbols-outlined { color: #8B1E1E !important; }
+    html.theme-dark .bn-active .material-symbols-outlined { color: #A32626 !important; }
 </style>
 </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72">
