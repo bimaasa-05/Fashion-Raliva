@@ -24,7 +24,7 @@ class PeringkatIklanController extends Controller
             ->orderBy('nama_produk')
             ->get();
 
-        return view('SuperAdmin.peringkat-iklan', [
+        return view('SuperAdmin.peringkat.peringkat-iklan', [
             'slots' => $slots,
             'totalPendapatan' => $totalPendapatan,
             'slotAktif' => $slotAktif,
