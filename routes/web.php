@@ -41,6 +41,12 @@ use App\Http\Controllers\Owner\ProfilController as OwnerProfilController;
 use App\Http\Controllers\Owner\PromoController as OwnerPromoController;
 use App\Http\Controllers\Owner\SaldoController;
 use App\Http\Controllers\Owner\UlasanController;
+use App\Http\Controllers\Owner\KomplainController as OwnerKomplainController;
+use App\Http\Controllers\Owner\PengirimanController as OwnerPengirimanController;
+use App\Http\Controllers\Owner\ProduksiController as OwnerProduksiController;
+use App\Http\Controllers\Owner\GudangController as OwnerGudangController;
+use App\Http\Controllers\Owner\ModerasiProdukController as OwnerModerasiProdukController;
+use App\Http\Controllers\Owner\PaketSlotController;
 use App\Http\Controllers\Produksi\BahanProduksiController as ProduksiBahanController;
 use App\Http\Controllers\Produksi\BarangRusakController as ProduksiBarangRusakController;
 use App\Http\Controllers\Produksi\DashboardController as ProduksiDashboardController;
@@ -89,9 +95,9 @@ Route::get('/', function () {
 
 /* ===== Unified Authentication (semua role) ===== */
 Route::get('/login', [LoginController::class, 'create'])->name('login');
-Route::post('/login', [LoginController::class, 'store']);
+Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:5,1');
 Route::get('/register', [RegisterController::class, 'create'])->name('register');
-Route::post('/register', [RegisterController::class, 'store']);
+Route::post('/register', [RegisterController::class, 'store'])->middleware('throttle:5,1');
 Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->middleware('auth');
 Route::get('/forgot-password', fn () => view('customer.auth.forgot-password'))->name('password.request');
 Route::get('/reset-password', fn () => view('customer.auth.reset-password'))->name('password.reset');
@@ -293,7 +299,6 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/pengajuan-toko', [PengajuanTokoController::class, 'index'])->name('pengajuan-toko');
     Route::get('/pengaturan-toko', [PengaturanTokoController::class, 'index'])->name('pengaturan-toko');
     Route::get('/produk', [OwnerProdukController::class, 'index'])->name('produk');
-    Route::get('/kelola-slot', [KelolaSlotController::class, 'index'])->name('kelola-slot');
     Route::get('/pesanan', [OwnerPesananController::class, 'index'])->name('pesanan');
     Route::get('/promo', [OwnerPromoController::class, 'index'])->name('promo');
     Route::get('/ulasan', [UlasanController::class, 'index'])->name('ulasan');
@@ -303,6 +308,12 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/laporan', [OwnerLaporanController::class, 'index'])->name('laporan');
     Route::get('/notifikasi', [OwnerNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [OwnerProfilController::class, 'index'])->name('profil');
+    Route::get('/komplain', [OwnerKomplainController::class, 'index'])->name('komplain');
+    Route::get('/pengiriman', [OwnerPengirimanController::class, 'index'])->name('pengiriman');
+    Route::get('/produksi', [OwnerProduksiController::class, 'index'])->name('produksi');
+    Route::get('/gudang', [OwnerGudangController::class, 'index'])->name('gudang');
+    Route::get('/moderasi-produk', [OwnerModerasiProdukController::class, 'index'])->name('moderasi-produk');
+    Route::get('/paket-slot', [PaketSlotController::class, 'index'])->name('paket-slot');
 });
 
 Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi'])->group(function () {
