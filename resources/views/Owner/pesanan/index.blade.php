@@ -16,7 +16,7 @@
 <div data-real class="hidden space-y-section-gap">
     {{-- Ringkasan Status --}}
     <section data-reveal-group class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-gutter">
-        @foreach ([['Semua', 248, 'on-surface'], ['Baru', 18, 'gold-accent'], ['Diproses', 32, 'secondary'], ['Dikirim', 45, 'on-surface'], ['Selesai', 148, 'secondary'], ['Dibatalkan', 5, 'error']] as $stat)
+        @foreach ([['Semua', $counts['semua'], 'on-surface'], ['Baru', $counts['baru'], 'gold-accent'], ['Diproses', $counts['diproses'], 'secondary'], ['Dikirim', $counts['dikirim'], 'on-surface'], ['Selesai', $counts['selesai'], 'secondary'], ['Dibatalkan', $counts['dibatalkan'], 'error']] as $stat)
             <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-1 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">{{ $stat[0] }}</span>
                 <span class="raliva-figure text-2xl text-{{ $stat[2] }}">{{ $stat[1] }}</span>
@@ -33,11 +33,17 @@
             </div>
             <select data-table-filter="status" class="raliva-select">
                 <option value="">Semua Status</option>
-                <option value="baru">Baru</option>
-                <option value="diproses">Diproses</option>
-                <option value="dikirim">Dikirim</option>
-                <option value="selesai">Selesai</option>
-                <option value="dibatalkan">Dibatalkan</option>
+                <option value="baru" @selected($status === 'baru')>Baru</option>
+                <option value="diproses" @selected($status === 'diproses')>Diproses</option>
+                <option value="dikirim" @selected($status === 'dikirim')>Dikirim</option>
+                <option value="selesai" @selected($status === 'selesai')>Selesai</option>
+                <option value="dibatalkan" @selected($status === 'dibatalkan')>Dibatalkan</option>
+            </select>
+            <select data-table-filter="period" class="raliva-select">
+                <option value="">Semua Waktu</option>
+                <option value="today" @selected($period === 'today')>Hari Ini</option>
+                <option value="week" @selected($period === 'week')>Minggu Ini</option>
+                <option value="month" @selected($period === 'month')>Bulan Ini</option>
             </select>
         </div>
 
@@ -64,32 +70,37 @@
                             'dibatalkan' => 'bg-error/10 text-error border-error/20',
                         ];
                     @endphp
-                    @foreach ([
-                        ['kode' => '#RLV-2093', 'tgl' => '22 Agu, 14:32', 'customer' => 'Sarah Jenkins', 'item' => '3 produk', 'total' => 'Rp 1.240.000', 'bayar' => 'Transfer Bank', 'status' => 'Baru', 'key' => 'baru'],
-                        ['kode' => '#RLV-2092', 'tgl' => '22 Agu, 13:05', 'customer' => 'Dimas Anggara', 'item' => '1 produk', 'total' => 'Rp 689.000', 'bayar' => 'Raliva Pay', 'status' => 'Diproses', 'key' => 'diproses'],
-                        ['kode' => '#RLV-2091', 'tgl' => '21 Agu, 19:48', 'customer' => 'Aulia Rahma', 'item' => '5 produk', 'total' => 'Rp 2.150.000', 'bayar' => 'Kartu Kredit', 'status' => 'Dikirim', 'key' => 'dikirim'],
-                        ['kode' => '#RLV-2090', 'tgl' => '21 Agu, 11:20', 'customer' => 'Kevin Sanjaya', 'item' => '2 produk', 'total' => 'Rp 459.000', 'bayar' => 'QRIS', 'status' => 'Diproses', 'key' => 'diproses'],
-                        ['kode' => '#RLV-2089', 'tgl' => '20 Agu, 16:02', 'customer' => 'Nadia Putri', 'item' => '4 produk', 'total' => 'Rp 1.890.000', 'bayar' => 'Transfer Bank', 'status' => 'Selesai', 'key' => 'selesai'],
-                        ['kode' => '#RLV-2088', 'tgl' => '20 Agu, 09:41', 'customer' => 'Raka Aditya', 'item' => '1 produk', 'total' => 'Rp 320.000', 'bayar' => 'COD', 'status' => 'Dibatalkan', 'key' => 'dibatalkan'],
-                        ['kode' => '#RLV-2087', 'tgl' => '19 Agu, 20:15', 'customer' => 'Bella Safira', 'item' => '6 produk', 'total' => 'Rp 3.420.000', 'bayar' => 'Raliva Pay', 'status' => 'Dikirim', 'key' => 'dikirim'],
-                    ] as $o)
-                        <tr data-table-row data-status="{{ $o['key'] }}" class="border-b border-muted-border last:border-0">
+                    @forelse ($orders as $o)
+                        @php
+                            $key = match($o->status) {
+                                'selesai' => 'selesai',
+                                'dibatalkan' => 'dibatalkan',
+                                'dikirim' => 'dikirim',
+                                'diproses' => 'diproses',
+                                default => 'baru',
+                            };
+                            $customer = $o->checkout?->user;
+                            $itemCount = $o->items?->count() ?? 0;
+                        @endphp
+                        <tr data-table-row data-status="{{ $key }}" class="border-b border-muted-border last:border-0">
                             <td class="py-3.5 px-4">
-                                <p class="font-bold text-on-surface">{{ $o['kode'] }}</p>
-                                <p class="text-xs text-on-surface-variant mt-0.5">{{ $o['tgl'] }}</p>
+                                <p class="font-bold text-on-surface">{{ $o->nomor_order }}</p>
+                                <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->created_at?->translatedFormat('d M, H:i') }}</p>
                             </td>
-                            <td class="py-3.5 px-4 text-on-surface">{{ $o['customer'] }}</td>
-                            <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $o['item'] }}</td>
-                            <td class="py-3.5 px-4 font-bold text-gold-accent whitespace-nowrap">{{ $o['total'] }}</td>
-                            <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $o['bayar'] }}</td>
+                            <td class="py-3.5 px-4 text-on-surface">{{ $customer?->name ?? 'Customer' }}</td>
+                            <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $itemCount }} produk</td>
+                            <td class="py-3.5 px-4 font-bold text-gold-accent whitespace-nowrap">{{ 'Rp ' . number_format($o->grand_total, 0, ',', '.') }}</td>
+                            <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $o->checkout?->paymentMethod?->nama_metode ?? '-' }}</td>
                             <td class="py-3.5 px-4 text-center">
-                                <span class="inline-flex items-center px-2 py-1 rounded-full {{ $statusPill[$o['key']] }} text-[10px] font-bold uppercase">{{ $o['status'] }}</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full {{ $statusPill[$key] }} text-[10px] font-bold uppercase">{{ $o->status }}</span>
                             </td>
                             <td class="py-3.5 px-4 text-right">
-                                <button type="button" data-drawer-open="drawer-detail-pesanan" onclick="window.currentOrder = '{{ $o['kode'] }}'" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Detail</button>
+                                <button type="button" data-drawer-open="drawer-detail-pesanan" onclick="window.currentOrder = '{{ $o->nomor_order }}'" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Detail</button>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr><td colspan="7" class="py-6 text-center text-on-surface-variant">Belum ada pesanan.</td></tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
