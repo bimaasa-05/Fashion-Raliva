@@ -1,5 +1,9 @@
 @extends('layouts.superadmin')
 
+@php
+/** @var \Illuminate\Support\Collection<int, array{deskripsi:string,waktu:string}> $aktivitas */
+@endphp
+
 @section('title', 'Dashboard Admin Utama')
 
 @section('header-title', 'Selamat datang, Super Admin')
