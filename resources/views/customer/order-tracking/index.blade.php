@@ -112,7 +112,7 @@
             left: 0;
             right: 0;
             height: 1px;
-            background-color: #e5e2e1; /* primary-fixed */
+            background-color: var(--chrome-border);
             z-index: 0;
         }
         .timeline-progress {
@@ -120,9 +120,18 @@
             top: 12px;
             left: 0;
             height: 1px;
-            background-color: #c9a24d; /* Custom gold for timeline as per prompt, but overriding secondary-container to match visual */
+            background-color: var(--chrome-accent);
             z-index: 1;
             width: 0%; /* Dynamic based on active step */
+        }
+        .timeline-active-circle {
+            border-color: var(--chrome-accent) !important;
+        }
+        .timeline-active-dot {
+            background-color: var(--chrome-accent) !important;
+        }
+        .timeline-active-label {
+            color: var(--chrome-accent) !important;
         }
     </style>
 <style>
@@ -207,7 +216,7 @@
   </head>
 <body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen lg:pl-72">
 <!-- TopAppBar (Transactional variation - Back button) -->
-<header class="flex justify-between items-center w-full px-container-margin h-16 bg-[var(--chrome-bg)] text-[var(--chrome-text)] border-b border-[var(--chrome-border)] docked full-width top-0 sticky z-50">
+<header class="flex justify-between items-center w-full px-container-margin h-16 bg-[var(--chrome-bg)] text-[var(--chrome-text)] border-b border-[var(--chrome-border)] sticky top-0 z-50">
 <a href="{{ auth()->check() ? route('customer.account') : route('login', ['redirect' => route('customer.account')]) }}" class="w-10 h-10 flex items-center justify-start hover:opacity-80 transition-opacity">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
@@ -215,7 +224,7 @@
 <div class="w-10"></div> <!-- Spacer for centering -->
 </header>
 <!-- Main Content Canvas -->
-<main class="flex-grow pb-32"> <!-- Extra padding for bottom nav -->
+<main class="flex-grow pb-32 lg:pb-16 lg:max-w-screen-xl lg:mx-auto w-full"> <!-- Extra padding for bottom nav -->
 <!-- Order Header -->
 <section class="px-container-margin py-lg border-b border-outline-variant">
 <div class="flex justify-between items-end">
@@ -233,14 +242,14 @@
 <div class="relative max-w-lg mx-auto">
 <div class="timeline-line"></div>
 <!-- 0% for first step active -->
-<div class="timeline-progress" style="width: 0%; background-color: #c9a24d;"></div>
+<div class="timeline-progress" style="width: 0%;"></div>
 <div class="flex justify-between relative z-10">
 <!-- Step 1: Preparing (Active) -->
 <div class="flex flex-col items-center group cursor-pointer">
-<div class="w-6 h-6 rounded-full flex items-center justify-center mb-sm bg-surface transition-colors" style="border: 2px solid #c9a24d;">
-<div class="w-2 h-2 rounded-full" style="background-color: #c9a24d;"></div>
+<div class="w-6 h-6 rounded-full flex items-center justify-center mb-sm bg-surface transition-colors timeline-active-circle" style="border: 2px solid var(--chrome-accent);">
+<div class="w-2 h-2 rounded-full timeline-active-dot" style="background-color: var(--chrome-accent);"></div>
 </div>
-<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface text-center whitespace-nowrap" style="color: #c9a24d;">{{ __('Preparing') }}</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface text-center whitespace-nowrap timeline-active-label" style="color: var(--chrome-accent);">{{ __('Preparing') }}</span>
 </div>
 <!-- Step 2: Packed -->
 <div class="flex flex-col items-center group cursor-pointer">
@@ -263,7 +272,7 @@
 </div>
 </div>
 <!-- Current Status Detail -->
-<div class="mt-lg text-center bg-surface p-md border border-outline-variant rounded-none">
+<div class="mt-lg text-center bg-surface-container-low p-md border border-outline-variant rounded-lg">
 <h3 class="font-title-md text-title-md text-on-surface mb-xs">{{ __("We're getting your order ready") }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Your items are currently being processed in our warehouse and will be packed shortly.') }}</p>
 </div>
@@ -309,7 +318,7 @@
 </div>
 </section>
 <!-- Order Summary (Tonal Background) -->
-<section class="bg-[#F8F7F4] px-container-margin py-lg mt-sm border-t border-b border-outline-variant">
+<section class="bg-surface-container-low px-container-margin py-lg mt-sm border-t border-b border-outline-variant lg:border lg:rounded-lg lg:mt-lg">
 <h2 class="font-title-md text-title-md text-on-surface mb-md">{{ __('Order Summary') }}</h2>
 <div class="flex flex-col gap-sm">
 <div class="flex justify-between">
