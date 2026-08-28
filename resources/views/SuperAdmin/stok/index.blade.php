@@ -33,6 +33,7 @@
         <table class="w-full min-w-[850px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                    <th class="p-4 text-center w-12">No.</th>
                     <th class="p-4 text-left">Produk</th>
                     <th class="p-4 text-left">SKU</th>
                     <th class="p-4 text-left">Toko</th>
@@ -44,7 +45,9 @@
             </thead>
             <tbody class="font-body-md text-sm">
                 @forelse($stocks as $stock)
+                    @php $rowNumber = $loop->iteration + ($stocks->currentPage() - 1) * $stocks->perPage(); @endphp
                     <tr data-table-row data-status="{{ $stock->status_stok }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                        <td class="p-4 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
                         <td class="p-4">
                             <p class="text-on-surface">{{ $stock->nama_produk }}</p>
                             <p class="text-on-surface-variant text-xs">{{ $stock->warna ? $stock->warna.' • ' : '' }}{{ $stock->ukuran ?? '-' }}</p>
@@ -66,7 +69,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="p-8 text-center text-on-surface-variant">Belum ada data stok tercatat.</td>
+                        <td colspan="8" class="p-8 text-center text-on-surface-variant">Belum ada data stok tercatat.</td>
                     </tr>
                 @endforelse
             </tbody>

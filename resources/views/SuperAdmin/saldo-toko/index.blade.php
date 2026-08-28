@@ -58,6 +58,7 @@
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-center w-12">No.</th>
                         <th class="p-4 text-left">Toko</th>
                         <th class="p-4 text-left">Jenis Transaksi</th>
                         <th class="p-4 text-left">Keterangan</th>
@@ -69,10 +70,12 @@
                 </thead>
                 <tbody class="font-body-md text-sm">
                     @forelse($transactions as $tx)
+                        @php $rowNumber = $loop->iteration + ($transactions->currentPage() - 1) * $transactions->perPage(); @endphp
                         @php
                             $isPositive = in_array($tx->jenis_transaksi, ['penjualan_masuk', 'komisi_masuk', 'penyesuaian']);
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                            <td class="p-4 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
                             <td class="p-4 text-on-surface">{{ $tx->wallet->store->nama_toko ?? '-' }}</td>
                             <td class="p-4 text-on-surface-variant text-xs uppercase">{{ str_replace('_', ' ', $tx->jenis_transaksi) }}</td>
                             <td class="p-4 text-on-surface">{{ $tx->keterangan ?? '-' }}</td>
@@ -85,7 +88,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="p-8 text-center text-on-surface-variant">Belum ada mutasi tercatat.</td>
+                            <td colspan="8" class="p-8 text-center text-on-surface-variant">Belum ada mutasi tercatat.</td>
                         </tr>
                     @endforelse
                 </tbody>

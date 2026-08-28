@@ -43,6 +43,7 @@
         <table class="w-full min-w-[900px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                    <th class="p-4 text-center w-12">No.</th>
                     <th class="p-4 text-left">ID Pesanan</th>
                     <th class="p-4 text-left">Toko</th>
                     <th class="p-4 text-left">Kurir</th>
@@ -56,8 +57,10 @@
             </thead>
             <tbody class="font-body-md text-sm">
                 @forelse($shipments as $shipment)
+                    @php $rowNumber = $loop->iteration + ($shipments->currentPage() - 1) * $shipments->perPage(); @endphp
                     @php $st = $statusMap[$shipment->status] ?? [$shipment->status, 'bg-surface-container-high text-on-surface-variant']; @endphp
                     <tr data-table-row data-status="{{ $shipment->status }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                        <td class="p-4 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
                         <td class="p-4 font-mono text-on-surface">{{ $shipment->order->nomor_order ?? '-' }}</td>
                         <td class="p-4 text-on-surface">{{ $shipment->order->store->nama_toko ?? '-' }}</td>
                         <td class="p-4 text-on-surface">{{ $shipment->courier->nama_kurir ?? '-' }}</td>
@@ -72,7 +75,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="p-8 text-center text-on-surface-variant">Belum ada data pengiriman.</td>
+                        <td colspan="10" class="p-8 text-center text-on-surface-variant">Belum ada data pengiriman.</td>
                     </tr>
                 @endforelse
             </tbody>

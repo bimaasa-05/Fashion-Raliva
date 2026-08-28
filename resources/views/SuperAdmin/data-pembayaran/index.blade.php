@@ -59,6 +59,7 @@
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-center w-12">No.</th>
                         <th class="p-4 text-left">ID Pembayaran</th>
                         <th class="p-4 text-left">Metode</th>
                         <th class="p-4 text-left">Pelanggan</th>
@@ -73,6 +74,7 @@
                 </thead>
                 <tbody class="font-body-md text-sm">
                     @forelse ($payments as $pay)
+                        @php $rowNumber = $loop->iteration + ($payments->currentPage() - 1) * $payments->perPage(); @endphp
                         @php
                             $statusMap = [
                                 'pending' => ['Menunggu', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
@@ -86,6 +88,7 @@
                             $tanggal = $pay->created_at ? Carbon::parse($pay->created_at)->locale('id')->translatedFormat('d M Y • H.i') : '-';
                         @endphp
                         <tr data-table-row data-status="{{ $pay->status }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                            <td class="p-4 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
                             <td class="p-4 font-mono text-on-surface">PAY-{{ $pay->payment_id }}</td>
                             <td class="p-4 text-on-surface">{{ $pay->paymentMethod->nama_metode ?? '-' }}</td>
                             <td class="p-4">
@@ -104,7 +107,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10" class="p-8 text-center text-on-surface-variant">Belum ada transaksi pembayaran tercatat.</td>
+                            <td colspan="11" class="p-8 text-center text-on-surface-variant">Belum ada transaksi pembayaran tercatat.</td>
                         </tr>
                     @endforelse
                 </tbody>

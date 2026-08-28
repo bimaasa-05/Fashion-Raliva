@@ -90,6 +90,7 @@
         <table class="w-full text-left border-collapse premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low/50">
+                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap text-center w-12">No.</th>
                     <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Nomor Order</th>
                     <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Tanggal</th>
                     <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Toko</th>
@@ -99,6 +100,7 @@
             </thead>
             <tbody>
                 @forelse($recentTransactions as $tx)
+                    @php $rowNumber = $loop->iteration + ($recentTransactions->currentPage() - 1) * $recentTransactions->perPage(); @endphp
                     @php
                         $statusMap = [
                             'dibayar' => ['Dibayar', 'bg-info/10 text-info'],
@@ -109,6 +111,7 @@
                         $st = $statusMap[$tx->status] ?? [$tx->status, 'bg-surface-container-high text-on-surface-variant'];
                     @endphp
                     <tr class="border-b border-muted-border last:border-0 hover:bg-surface-container-low/30 transition-colors">
+                        <td class="p-4 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
                         <td class="p-4 font-mono text-sm text-on-surface">{{ $tx->nomor_order }}</td>
                         <td class="p-4 font-body-md text-sm text-on-surface-variant">{{ $tx->created_at ? \Carbon\Carbon::parse($tx->created_at)->locale('id')->translatedFormat('d M Y - H.i') : '-' }}</td>
                         <td class="p-4 font-body-md text-sm text-on-surface">{{ $tx->store->nama_toko ?? '-' }}</td>
@@ -117,7 +120,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="p-8 text-center text-on-surface-variant">Belum ada transaksi tercatat.</td>
+                        <td colspan="6" class="p-8 text-center text-on-surface-variant">Belum ada transaksi tercatat.</td>
                     </tr>
                 @endforelse
             </tbody>

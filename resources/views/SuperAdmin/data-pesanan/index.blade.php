@@ -32,6 +32,7 @@
         <table class="w-full min-w-full bg-surface-container-lowest rounded-lg overflow-hidden premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
+                    <th class="p-6 w-12 text-center">No.</th>
                     <th class="p-6">ID Pesanan</th>
                     <th class="p-6">Toko</th>
                     <th class="p-6">Pelanggan</th>
@@ -43,6 +44,7 @@
             </thead>
             <tbody>
                 @forelse ($orders as $order)
+                    @php $rowNumber = $loop->iteration + ($orders->currentPage() - 1) * $orders->perPage(); @endphp
                     @php
                         $statusMap = [
                             'pending_payment' => ['Menunggu', 'bg-surface-container-high text-on-surface'],
@@ -57,6 +59,7 @@
                         $pelanggan = $order->checkout?->user;
                     @endphp
                     <tr data-table-row data-status="{{ $order->status }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                        <td class="p-6 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
                         <td class="p-6 font-mono">{{ $order->nomor_order }}</td>
                         <td class="p-6">
                             <div class="flex items-center gap-3">
@@ -86,7 +89,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="p-8 text-center text-on-surface-variant">Belum ada pesanan tercatat.</td>
+                        <td colspan="8" class="p-8 text-center text-on-surface-variant">Belum ada pesanan tercatat.</td>
                     </tr>
                 @endforelse
             </tbody>
