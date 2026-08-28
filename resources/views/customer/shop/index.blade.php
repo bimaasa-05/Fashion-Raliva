@@ -193,33 +193,27 @@
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
 <style>
-    /* ============ RALIVA GOLD BUTTON (same system as Home / Register) ============ */
+    /* ============  BUTTON + LIGHT FLASH ============ */
     .btn-gold {
         position: relative;
         overflow: hidden;
         background-color: var(--btn-gold-bg) !important;
         color: var(--btn-gold-text) !important;
-        isolation: isolate;
     }
-    .btn-gold > * { position: relative; z-index: 2; }
     .btn-gold::after {
         content: '';
         position: absolute;
-        inset: 0;
+        top: -10%;
+        bottom: -10%;
         left: -80%;
-        width: 55%;
-        background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.6) 50%, transparent 100%);
+        width: 45%;
+        background: rgba(255,255,255,.55);
         transform: skewX(-24deg);
         pointer-events: none;
-        z-index: 1;
-        opacity: 0;
     }
-    .btn-gold:hover::after,
-    .btn-gold.flashing::after { opacity: 1; animation: authFlash 1.4s linear infinite; }
+    .btn-gold:hover::after { animation: authFlash 1.4s linear infinite; }
     .btn-gold.flashing::after { animation: authFlash 1.4s cubic-bezier(.4,0,.2,1) 1; }
     @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
-    .btn-gold:hover { box-shadow: 0 0 0 1px rgba(139,30,30,.35), 0 8px 22px -8px rgba(139,30,30,.45); }
-    html.theme-dark .btn-gold:hover { box-shadow: 0 0 0 1px rgba(163,38,38,.4), 0 8px 22px -8px rgba(163,38,38,.5); }
     :root           { --btn-gold-bg: #8B1E1E; --btn-gold-text: #ffffff; }
     html.theme-dark { --btn-gold-bg: #5E0F0F; --btn-gold-text: #ffffff; }
 </style>
