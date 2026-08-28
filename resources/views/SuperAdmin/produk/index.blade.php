@@ -19,42 +19,43 @@
         <table class="w-full min-w-[850px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                    <th class="p-4 text-center w-12">No.</th>
                     <th class="p-4 text-left">Produk</th>
                     <th class="p-4 text-left">Toko</th>
                     <th class="p-4 text-left">Kategori</th>
+                    <th class="p-4 text-left">Tipe</th>
                     <th class="p-4 text-right">Harga</th>
                     <th class="p-4 text-center">Status Moderasi</th>
                 </tr>
             </thead>
             <tbody class="font-body-md text-sm">
-                <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                    <td class="p-4 text-on-surface">Oversized Linen Shirt</td>
-                    <td class="p-4 text-on-surface">LUNARA Fashion</td>
-                    <td class="p-4 text-on-surface-variant">Atasan</td>
-                    <td class="p-4 text-right font-bold text-gold-accent">Rp 289.000</td>
-                    <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Disetujui</span></td>
-                </tr>
-                <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                    <td class="p-4 text-on-surface">Straight Fit Pants</td>
-                    <td class="p-4 text-on-surface">LUNARA Fashion</td>
-                    <td class="p-4 text-on-surface-variant">Bawahan</td>
-                    <td class="p-4 text-right font-bold text-gold-accent">Rp 329.000</td>
-                    <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Disetujui</span></td>
-                </tr>
-                <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                    <td class="p-4 text-on-surface">Velvet Midi Dress</td>
-                    <td class="p-4 text-on-surface">Velvet Closet</td>
-                    <td class="p-4 text-on-surface-variant">Dress</td>
-                    <td class="p-4 text-right font-bold text-gold-accent">Rp 549.000</td>
-                    <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Menunggu</span></td>
-                </tr>
-                <tr class="hover:bg-surface-container-low transition-colors">
-                    <td class="p-4 text-on-surface">Denim Jacket Vintage</td>
-                    <td class="p-4 text-on-surface">KAYANA Apparel</td>
-                    <td class="p-4 text-on-surface-variant">Outerwear</td>
-                    <td class="p-4 text-right font-bold text-gold-accent">Rp 479.000</td>
-                    <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Ditolak</span></td>
-                </tr>
+                @forelse ($products as $produk)
+                    @php $rowNumber = $loop->iteration + ($products->currentPage() - 1) * $products->perPage(); @endphp
+                    @php
+                        $statusLabel = match ($produk->status) {
+                            'aktif' => ['Disetujui', 'bg-secondary-container/20 text-secondary border-secondary/20'],
+                            'pending' => ['Menunggu', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                            'ditolak' => ['Ditolak', 'bg-error/10 text-error border-error/20'],
+                            'nonaktif' => ['Nonaktif', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                            'draft' => ['Draft', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                            'arsip' => ['Arsip', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                            default => [ucfirst($produk->status), 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                        };
+                    @endphp
+                    <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                        <td class="p-4 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
+                        <td class="p-4 text-on-surface">{{ $produk->nama_produk }}</td>
+                        <td class="p-4 text-on-surface">{{ $produk->store->nama_toko ?? '-' }}</td>
+                        <td class="p-4 text-on-surface-variant">{{ $produk->category->nama_kategori ?? '-' }}</td>
+                        <td class="p-4"><span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ ucfirst($produk->tipe_produk) }}</span></td>
+                        <td class="p-4 text-right font-bold text-gold-accent">Rp {{ number_format((float) $produk->harga_dasar, 0, ',', '.') }}</td>
+                        <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $statusLabel[1] }} text-[10px] font-bold uppercase border">{{ $statusLabel[0] }}</span></td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="p-8 text-center text-on-surface-variant">Belum ada produk terdaftar di platform.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

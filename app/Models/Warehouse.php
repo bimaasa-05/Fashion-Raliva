@@ -33,7 +33,7 @@ class Warehouse extends Model
         return $this->hasMany(WarehouseStaff::class, 'warehouse_id', 'warehouse_id');
     }
 
-    public function staff(): BelongsToMany
+    public function staff(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(User::class, 'warehouse_staff', 'warehouse_id', 'user_id')
             ->withPivot('warehouse_staff_id', 'tanggal_penugasan', 'status')

@@ -272,6 +272,21 @@
     @media (prefers-reduced-motion: no-preference) {
         .page-enter { animation: pageEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
         .rise { opacity: 0; animation: riseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+        /* Container beranimasi (page-enter / .rise) tetap menangkap event pointer
+           saat masih opacity:0 / ber-transform, sehingga tombol di dalamnya tidak
+           bisa diklik sampai animasi selesai. Solusi: container tidak menangkap
+           klik, tapi semua elemen interaktif di dalamnya di-whitelist agar
+           langsung bisa diklik meski container masih beranimasi. */
+        .page-enter, .rise { pointer-events: none; }
+        .page-enter button, .page-enter a, .page-enter input, .page-enter select,
+        .page-enter textarea, .page-enter label, .page-enter [onclick],
+        .page-enter [role="button"], .page-enter .filter-chip, .page-enter .user-card,
+        .rise button, .rise a, .rise input, .rise select,
+        .rise textarea, .rise label, .rise [onclick],
+        .rise [role="button"], .rise .filter-chip, .rise .user-card {
+            pointer-events: auto;
+        }
     }
 
     /* ===== Sidebar mini (collapse) — semua role ===== */

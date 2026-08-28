@@ -1,17 +1,21 @@
 @extends('layouts.superadmin')
 
+@php
+/** @var \Illuminate\Support\Collection<int, array{deskripsi:string,waktu:string}> $aktivitas */
+@endphp
+
 @section('title', 'Dashboard Admin Utama')
 
 @section('header-title', 'Selamat datang, Super Admin')
 @section('header-badge', 'Kelola & Lihat')
 
-@section('header-subtitle', 'Ini yang terjadi hari ini.')
+@section('header-subtitle', 'Ringkasan kondisi seluruh platform Raliva.')
 
 @section('content')
 <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
         <span class="material-symbols-outlined text-[14px]">calendar_today</span>
-        Sabtu, 22 Agustus 2026
+        {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
     </span>
     <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
         <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
@@ -24,8 +28,8 @@
     <div data-reveal-group class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-gutter">
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Pengguna</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="24.5" data-count-suffix="K">24.5K</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>+8,2%</span>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $kpi['pengguna'] }}">{{ number_format($kpi['pengguna'], 0, ',', '.') }}</span></span>
+            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>real-time</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:70%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:62%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:85%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:78%"></i>
             </div>
@@ -33,8 +37,8 @@
         </div>
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Toko</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="1.2" data-count-suffix="K">1.2K</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>+5,4%</span>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $kpi['toko'] }}">{{ number_format($kpi['toko'], 0, ',', '.') }}</span></span>
+            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>real-time</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:30%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:35%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:32%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:38%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:42%"></i>
             </div>
@@ -42,8 +46,8 @@
         </div>
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Pesanan</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="8.4" data-count-suffix="K">8.4K</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>+11,9%</span>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $kpi['pesanan'] }}">{{ number_format($kpi['pesanan'], 0, ',', '.') }}</span></span>
+            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>real-time</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:50%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:70%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:64%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:80%"></i>
             </div>
@@ -51,8 +55,8 @@
         </div>
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Produk</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="45.2" data-count-suffix="K">45.2K</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>+6,7%</span>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $kpi['produk'] }}">{{ number_format($kpi['produk'], 0, ',', '.') }}</span></span>
+            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>real-time</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:25%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:30%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:28%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:35%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:33%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:38%"></i>
             </div>
@@ -60,8 +64,8 @@
         </div>
         <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium col-span-2 md:col-span-1 hover:border-gold-accent transition-colors hero-glow">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Nilai Transaksi</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Rp <span data-count="12.5" data-count-suffix="B">12.5B</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>+12,5%</span>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Rp <span data-count="{{ $kpi['nilai_transaksi'] }}" data-count-decimals="0">{{ number_format($kpi['nilai_transaksi'], 0, ',', '.') }}</span></span>
+            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>akumulasi</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:66%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:58%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:74%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:68%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:88%"></i>
             </div>
@@ -69,8 +73,8 @@
         </div>
         <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium col-span-2 md:col-span-1 hover:border-gold-accent transition-colors hero-glow">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Komisi Raliva</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold">Rp <span data-count="1.2" data-count-suffix="B">1.2B</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>+15,3%</span>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold">Rp <span data-count="{{ $kpi['komisi'] }}" data-count-decimals="0">{{ number_format($kpi['komisi'], 0, ',', '.') }}</span></span>
+            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>akumulasi</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:72%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:84%"></i>
             </div>
@@ -104,7 +108,7 @@
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Pesanan per Bulan</h2>
             <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">6 Bulan Terakhir</span>
         </div>
-        <div class="h-48" data-bars='[{"label":"Mar","value":820},{"label":"Apr","value":910},{"label":"Mei","value":1050},{"label":"Jun","value":980},{"label":"Jul","value":1180},{"label":"Agu","value":1248}]' data-bars-suffix=""></div>
+        <div class="h-48" data-bars='@json($chartPesananBars)' data-bars-suffix=""></div>
         <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[14px] text-gold-accent">insights</span>
             Pertumbuhan konsisten — Agustus tertinggi dengan 1.248 pesanan (+5,8% vs Juli).
@@ -116,7 +120,7 @@
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Toko</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">emoji_events</span>
         </div>
-        <div data-leaderboard='[{"name":"LUNARA Fashion","meta":"892 pesanan • Rating 4.9","display":"Rp 245JT","pct":100},{"name":"NOIRÉ Studio","meta":"412 pesanan • Rating 4.8","display":"Rp 158JT","pct":64},{"name":"KAYANA Apparel","meta":"318 pesanan • Rating 3.2","display":"Rp 121JT","pct":49},{"name":"Velvet Closet","meta":"264 pesanan • Rating 4.6","display":"Rp 98JT","pct":40}]'></div>
+        <div data-leaderboard='@json($topToko)'></div>
         <div class="flex items-center justify-center gap-6 mt-4 pt-4 border-t border-muted-border">
             <a href="{{ route('superadmin.peringkat') }}#toko" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
             <span class="w-px h-4 bg-muted-border"></span>
@@ -156,7 +160,7 @@
             <span class="material-symbols-outlined text-gold-accent text-[20px]">donut_small</span>
         </div>
         <p class="text-on-surface-variant font-body-md text-xs mb-4">Sebaran status seluruh toko terdaftar.</p>
-        <div data-donut='[{"value":1104,"color":"#C9A24D","label":"Aktif"},{"value":68,"color":"#E9CE8A","label":"Menunggu"},{"value":28,"color":"#BA1A26","label":"Ditangguhkan"}]' data-donut-label="Toko Terdaftar"></div>
+        <div data-donut='@json($komposisiTokoDonut)' data-donut-label="Toko Terdaftar"></div>
         <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[14px] text-gold-accent">sync</span>
             Sinkron dengan Total Toko di ringkasan atas.
@@ -175,7 +179,7 @@
                     </div>
                     <div>
                         <span class="font-title-md text-title-md text-on-surface block">Verifikasi Toko</span>
-                        <span class="text-on-surface-variant font-body-md text-sm"><span data-count="12">12</span> permintaan menunggu</span>
+                        <span class="text-on-surface-variant font-body-md text-sm"><span data-count="{{ $perhatian['toko'] }}">{{ number_format($perhatian['toko']) }}</span> permintaan menunggu</span>
                     </div>
                 </div>
                 <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
@@ -187,7 +191,7 @@
                     </div>
                     <div>
                         <span class="font-title-md text-title-md text-on-surface block">Moderasi Produk</span>
-                        <span class="text-on-surface-variant font-body-md text-sm"><span data-count="45">45</span> item ditandai</span>
+                        <span class="text-on-surface-variant font-body-md text-sm"><span data-count="{{ $perhatian['produk'] }}">{{ number_format($perhatian['produk']) }}</span> item ditandai</span>
                     </div>
                 </div>
                 <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
@@ -199,7 +203,7 @@
                     </div>
                     <div>
                         <span class="font-title-md text-title-md text-on-surface block">Permintaan Refund</span>
-                        <span class="text-on-surface-variant font-body-md text-sm"><span data-count="8">8</span> menunggu tinjauan</span>
+                        <span class="text-on-surface-variant font-body-md text-sm"><span data-count="{{ $perhatian['refund'] }}">{{ number_format($perhatian['refund']) }}</span> menunggu tinjauan</span>
                     </div>
                 </div>
                 <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
@@ -210,50 +214,26 @@
     <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Aktivitas Terbaru</h2>
         <ul class="flex flex-col">
-            <li class="p-4 border-b border-muted-border hover:bg-surface-container-low transition-colors flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-9 h-9 rounded-full bg-secondary-container/30 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-sm text-secondary">person_add</span>
+            @forelse($aktivitas as $act)
+                @php
+                    $prefix = explode('.', $act['deskripsi'])[0] ?? 'system';
+                    $iconMap = ['user' => 'person_add', 'store' => 'storefront', 'product' => 'inventory_2', 'order' => 'shopping_cart', 'setting' => 'settings'];
+                    $icon = $iconMap[$prefix] ?? 'info';
+                @endphp
+                <li class="p-4 border-b border-muted-border hover:bg-surface-container-low transition-colors flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-sm text-gold-accent">{{ $icon }}</span>
+                        </div>
+                        <div>
+                            <p class="font-body-md text-on-surface">{{ $act['deskripsi'] ?? '-' }}</p>
+                            <p class="text-on-surface-variant text-sm mt-0.5">{{ $act['waktu'] }}</p>
+                        </div>
                     </div>
-                    <div>
-                        <p class="font-body-md text-on-surface"><span class="font-bold">Sarah Jenkins</span> mendaftar sebagai pengguna baru.</p>
-                        <p class="text-on-surface-variant text-sm mt-0.5">2 menit lalu</p>
-                    </div>
-                </div>
-            </li>
-            <li class="p-4 border-b border-muted-border hover:bg-surface-container-low transition-colors flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-sm text-gold-accent">store</span>
-                    </div>
-                    <div>
-                        <p class="font-body-md text-on-surface">Toko <span class="font-bold">LUNARA Fashion</span> terverifikasi.</p>
-                        <p class="text-on-surface-variant text-sm mt-0.5">15 menit lalu</p>
-                    </div>
-                </div>
-            </li>
-            <li class="p-4 border-b border-muted-border hover:bg-surface-container-low transition-colors flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center">
-                        <span class="material-symbols-outlined text-sm text-on-surface">shopping_cart</span>
-                    </div>
-                    <div>
-                        <p class="font-body-md text-on-surface">Pesanan besar #RLV-2405 telah selesai.</p>
-                        <p class="text-on-surface-variant text-sm mt-0.5">1 jam lalu</p>
-                    </div>
-                </div>
-            </li>
-            <li class="p-4 hover:bg-surface-container-low transition-colors flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-9 h-9 rounded-full bg-error-container flex items-center justify-center">
-                        <span class="material-symbols-outlined text-sm text-on-error-container">warning</span>
-                    </div>
-                    <div>
-                        <p class="font-body-md text-on-surface">Produk <span class="font-bold">Oversized Linen Shirt</span> ditandai untuk ditinjau.</p>
-                        <p class="text-on-surface-variant text-sm mt-0.5">2 jam lalu</p>
-                    </div>
-                </div>
-            </li>
+                </li>
+            @empty
+                <li class="p-4 text-center text-on-surface-variant">Belum ada aktivitas terbaru.</li>
+            @endforelse
         </ul>
     </section>
 </div>
@@ -263,7 +243,7 @@
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Kategori</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">category</span>
         </div>
-        <div data-leaderboard='[{"name":"Pakaian","meta":"18.420 terjual • 240 toko aktif","display":"Rp 4,2M","pct":100},{"name":"Dress","meta":"9.310 terjual • 186 toko aktif","display":"Rp 2,8M","pct":67},{"name":"Celana","meta":"8.140 terjual • 202 toko aktif","display":"Rp 2,1M","pct":50},{"name":"Aksesori","meta":"6.020 terjual • 154 toko aktif","display":"Rp 1,4M","pct":33}]'></div>
+        <div data-leaderboard='@json($topKategori)'></div>
         <a href="{{ route('superadmin.peringkat') }}#kategori" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
     </section>
 
@@ -272,7 +252,7 @@
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Pelanggan</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">military_tech</span>
         </div>
-        <div data-leaderboard='[{"name":"Sarah Jenkins","meta":"14 pesanan • Loyal sejak Mar 2025","display":"Rp 12,4JT","pct":100},{"name":"Dewi Lestari","meta":"9 pesanan • Loyal sejak Jan 2026","display":"Rp 8,7JT","pct":70},{"name":"Andi Pratama","meta":"6 pesanan • Loyal sejak Jul 2025","display":"Rp 3,9JT","pct":31},{"name":"Maya Rossi","meta":"5 pesanan • Loyal sejak Des 2025","display":"Rp 3,2JT","pct":26}]'></div>
+        <div data-leaderboard='@json($topPelanggan)'></div>
         <a href="{{ route('superadmin.peringkat') }}#pelanggan" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
     </section>
 </div>

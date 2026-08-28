@@ -13,6 +13,11 @@
         /* transform:none (bukan translateY(0)) — agar elemen fixed di dalamnya
            (modal/drawer) kembali relatif ke viewport setelah reveal selesai */
         [data-reveal].revealed:not(.fixed):not(.sticky) { opacity: 1; transform: none; }
+        /* Elemen hidden tidak boleh kena opacity/transform reveal —
+           display:none bikin computed position jadi 'static', jadi fixed class terlewat */
+        [data-reveal][hidden] { opacity: 0 !important; pointer-events: none !important; }
+        [data-reveal][style*="display: none"] { opacity: 0 !important; pointer-events: none !important; }
+        [data-reveal][style*="display:none"] { opacity: 0 !important; pointer-events: none !important; }
 
         /* Isi widget (progress/bar/donut) tetap kosong sampai card-nya ter-reveal */
         [data-reveal]:not(.revealed) .raliva-lb-fill { width: 0% !important; }
@@ -139,10 +144,20 @@
         const REVEAL_CONTENT_SELECTOR = ':scope > div, :scope > section, :scope > article, :scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > p, :scope > ul, :scope > ol, :scope > table, :scope > form, :scope > a';
 
         /* Drawer/overlay/modal (fixed) dan action bar (sticky) tidak di-reveal:
-           transform & opacity reveal akan merusak perilaku mereka */
+           transform & opacity reveal akan merusak perilaku mereka.
+           Elemen interaktif (button/a/input/select + yang punya handler onclick)
+           JUGA dikecualikan: mereka harus SELALU bisa diklik, tidak boleh
+           terkunci di opacity:0 oleh reveal sebelum observer memicu.
+           Elemen hidden (display:none) juga dikecualikan — computed position
+           jadi 'static' saat display:none, sehingga modal/fixed terlewat. */
         const isRevealExempt = (el) => {
+            if (el.hidden || el.style.display === 'none' || getComputedStyle(el).display === 'none') return true;
             const pos = getComputedStyle(el).position;
-            return pos === 'fixed' || pos === 'sticky';
+            if (pos === 'fixed' || pos === 'sticky') return true;
+            const tag = el.tagName;
+            if (tag === 'BUTTON' || tag === 'A' || tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || tag === 'LABEL') return true;
+            if (el.hasAttribute('onclick') || el.getAttribute('role') === 'button') return true;
+            return false;
         };
 
         /* Count-up ditahan sampai card-nya terlihat di viewport */
@@ -165,11 +180,9 @@
         };
 
         window.initRalivaReveal = () => {
-            /* Wrapper konten utama: semua section top-level halaman ikut reveal */
-            const master = document.querySelector('main > div.page-enter');
-            if (master && !master.hasAttribute('data-reveal-group')) master.setAttribute('data-reveal-group', '');
-
-            /* Grup eksplisit: anak-anaknya dapat delay berurutan */
+            /* Grup eksplisit: anak-anaknya dapat delay berurutan.
+               page-enter TIDAK lagi auto jadi reveal-group —
+               view yang pakai reveal harus pasang data-reveal-group sendiri. */
             document.querySelectorAll('[data-reveal-group]').forEach((group) => {
                 Array.from(group.children).forEach((child, index) => {
                     if (isRevealExempt(child)) return;

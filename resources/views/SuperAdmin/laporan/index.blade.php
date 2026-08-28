@@ -3,54 +3,19 @@
 @section('title', 'Laporan')
 
 @section('header-title', 'Laporan & Analitik')
-@section('header-badge', 'Kelola & Lihat')
+@section('header-badge', 'Lihat')
 
 @section('header-subtitle', 'Laporan transaksi, komisi, toko, pengguna, refund, dan pencairan.')
 
 @push('styles')
 <style>
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 @endpush
 
 @section('content')
-<div class="flex justify-end">
-    <button type="button" onclick="showRalivaToast('Laporan berhasil diekspor (demo).', 'download')" class="bg-deep-onyx text-on-primary font-label-sm px-6 py-3 uppercase tracking-widest rounded btn-premium flex items-center gap-2">
-        <span class="material-symbols-outlined text-[16px]">download</span>
-        Ekspor Laporan
-    </button>
-</div>
-
-<!-- Filters -->
-<div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium mb-10">
-    <div class="flex items-center gap-2 mb-3">
-        <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-        <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Laporan</span>
-    </div>
-    <div id="laporan-tabs" class="flex overflow-x-auto no-scrollbar gap-2 pb-2 border-b border-muted-border">
-        <button type="button" data-laporan-tab="ringkasan" class="px-4 py-2 font-label-sm text-secondary border-b-2 border-secondary whitespace-nowrap uppercase tracking-widest">Ringkasan</button>
-        <button type="button" data-laporan-tab="transaksi" class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Transaksi</button>
-        <button type="button" data-laporan-tab="komisi" class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Komisi</button>
-        <button type="button" data-laporan-tab="toko" class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Toko</button>
-        <button type="button" data-laporan-tab="pengguna" class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Pengguna</button>
-        <button type="button" data-laporan-tab="refund" class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Refund</button>
-        <button type="button" data-laporan-tab="pencairan" class="px-4 py-2 font-label-sm text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap uppercase tracking-widest">Pencairan</button>
-    </div>
-
-    <!-- Date Range Filter -->
-    <div id="laporan-range" class="flex items-center gap-2 mt-4 overflow-x-auto no-scrollbar">
-        <button type="button" data-range="hari-ini" class="range-btn px-4 py-1.5 border border-muted-border bg-surface text-on-surface font-label-sm rounded-lg hover:bg-surface-container-low transition-colors whitespace-nowrap">HARI INI</button>
-        <button type="button" data-range="7d" class="range-btn px-4 py-1.5 border border-muted-border bg-surface text-on-surface font-label-sm rounded-lg hover:bg-surface-container-low transition-colors whitespace-nowrap">7D</button>
-        <button type="button" data-range="30d" class="range-btn px-4 py-1.5 border border-secondary bg-secondary-container/10 text-secondary font-label-sm rounded-lg whitespace-nowrap">30D</button>
-        <button type="button" onclick="showRalivaToast('Pemilih tanggal kustom demo belum tersedia.', 'calendar_today')" class="px-4 py-1.5 border border-muted-border bg-surface text-on-surface font-label-sm rounded-lg hover:bg-surface-container-low transition-colors flex items-center gap-1 whitespace-nowrap">
-            KUSTOM <span class="material-symbols-outlined text-[16px]">calendar_today</span>
-        </button>
-    </div>
-</div>
-
 <!-- Summary Cards Grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-section-gap">
     <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 flex flex-col gap-2 relative overflow-hidden card-premium">
@@ -58,13 +23,10 @@
             <span class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">account_balance_wallet</span>
             </span>
-            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">
-                <span class="material-symbols-outlined text-[12px]">trending_up</span>+12,5%
-            </span>
         </div>
         <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Total Pendapatan</span>
-        <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">Rp 245,9JT</span>
-        <span class="text-on-surface-variant text-xs">vs 30 hari terakhir</span>
+        <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">Rp {{ number_format($totalPendapatan / 1000, 0, ',', '.') }}JT</span>
+        <span class="text-on-surface-variant text-xs">Semua transaksi berhasil</span>
     </div>
 
     <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 flex flex-col gap-2 relative overflow-hidden card-premium">
@@ -72,13 +34,10 @@
             <span class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">shopping_bag</span>
             </span>
-            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">
-                <span class="material-symbols-outlined text-[12px]">trending_up</span>+8,2%
-            </span>
         </div>
         <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Total Pesanan</span>
-        <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">1.248</span>
-        <span class="text-on-surface-variant text-xs">vs 30 hari terakhir</span>
+        <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">{{ number_format($totalPesanan) }}</span>
+        <span class="text-on-surface-variant text-xs">Pesanan berhasil</span>
     </div>
 
     <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 flex flex-col gap-2 relative overflow-hidden card-premium">
@@ -86,13 +45,10 @@
             <span class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">payments</span>
             </span>
-            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">
-                <span class="material-symbols-outlined text-[12px]">trending_up</span>+15,3%
-            </span>
         </div>
         <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Komisi Raliva</span>
-        <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold leading-tight">Rp 12,3JT</span>
-        <span class="text-on-surface-variant text-xs">vs 30 hari terakhir</span>
+        <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold leading-tight">Rp {{ number_format($komisiRaliva / 1000, 0, ',', '.') }}JT</span>
+        <span class="text-on-surface-variant text-xs">Total komisi terkumpul</span>
     </div>
 
     <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 flex flex-col gap-2 relative overflow-hidden card-premium">
@@ -100,13 +56,10 @@
             <span class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">storefront</span>
             </span>
-            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-muted-border">
-                <span class="material-symbols-outlined text-[12px]">trending_flat</span>0%
-            </span>
         </div>
         <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Toko Aktif</span>
-        <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">42</span>
-        <span class="text-on-surface-variant text-xs">vs 30 hari terakhir</span>
+        <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">{{ $tokoAktif }}</span>
+        <span class="text-on-surface-variant text-xs">Toko terverifikasi</span>
     </div>
 </div>
 
@@ -115,9 +68,6 @@
     <div class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex justify-between items-center mb-6">
             <h3 class="font-title-md text-on-surface uppercase tracking-wider premium-heading">Tren Pendapatan</h3>
-            <button type="button" onclick="showRalivaToast('Opsi tampilan grafik demo belum tersedia.', 'more_horiz')" class="text-on-surface-variant hover:text-on-surface transition-colors p-1">
-                <span class="material-symbols-outlined">more_horiz</span>
-            </button>
         </div>
         <div class="h-[300px] w-full relative">
             <canvas id="revenueChart"></canvas>
@@ -126,9 +76,8 @@
     <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
         <div class="flex justify-between items-center mb-6">
             <h3 class="font-title-md text-on-surface uppercase tracking-wider premium-heading">Toko Teratas</h3>
-            <a class="font-label-sm text-secondary hover:underline uppercase tracking-widest" href="#">Lihat Semua</a>
         </div>
-        <div data-leaderboard='[{"name":"LUNARA Fashion","meta":"342 pesanan • Rating 4.9","display":"Rp 85JT","pct":100},{"name":"NOIRÉ Studio","meta":"218 pesanan • Rating 4.8","display":"Rp 62JT","pct":73},{"name":"KAYANA Apparel","meta":"195 pesanan • Rating 4.7","display":"Rp 48JT","pct":56},{"name":"MAÉVA House","meta":"156 pesanan • Rating 4.6","display":"Rp 35JT","pct":41}]'></div>
+        <div data-leaderboard='@json($topToko)'></div>
     </div>
 </div>
 
@@ -136,13 +85,13 @@
 <div class="mb-section-gap">
     <div class="flex justify-between items-center mb-6">
         <h3 class="font-title-md text-on-surface uppercase tracking-wider premium-heading">Transaksi Terbaru</h3>
-        <a class="font-label-sm text-secondary hover:underline uppercase tracking-widest" href="#">Lihat Semua</a>
     </div>
     <div class="border border-muted-border bg-surface-container-lowest rounded-lg overflow-x-auto card-premium">
         <table class="w-full text-left border-collapse premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low/50">
-                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">ID Transaksi</th>
+                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap text-center w-12">No.</th>
+                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Nomor Order</th>
                     <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Tanggal</th>
                     <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Toko</th>
                     <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Jumlah</th>
@@ -150,34 +99,30 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="border-b border-muted-border last:border-0 hover:bg-surface-container-low/30 transition-colors">
-                    <td class="p-4 font-mono text-sm text-on-surface">#TRX-8924-A</td>
-                    <td class="p-4 font-body-md text-sm text-on-surface-variant">24 Okt 2023 - 14.32</td>
-                    <td class="p-4 font-body-md text-sm text-on-surface">LUNARA Fashion</td>
-                    <td class="p-4 font-title-md text-sm text-on-surface">Rp 1.250.000</td>
-                    <td class="p-4"><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Selesai</span></td>
-                </tr>
-                <tr class="border-b border-muted-border hover:bg-surface-container-low/30 transition-colors">
-                    <td class="p-4 font-mono text-sm text-on-surface">#TRX-8923-B</td>
-                    <td class="p-4 font-body-md text-sm text-on-surface-variant">24 Okt 2023 - 11.15</td>
-                    <td class="p-4 font-body-md text-sm text-on-surface">NOIRÉ Studio</td>
-                    <td class="p-4 font-title-md text-sm text-on-surface">Rp 850.000</td>
-                    <td class="p-4"><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Selesai</span></td>
-                </tr>
-                <tr class="border-b border-muted-border hover:bg-surface-container-low/30 transition-colors">
-                    <td class="p-4 font-mono text-sm text-on-surface">#TRX-8922-C</td>
-                    <td class="p-4 font-body-md text-sm text-on-surface-variant">24 Okt 2023 - 09.45</td>
-                    <td class="p-4 font-body-md text-sm text-on-surface">KAYANA Apparel</td>
-                    <td class="p-4 font-title-md text-sm text-on-surface">Rp 420.000</td>
-                    <td class="p-4"><span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30"><span class="material-symbols-outlined text-[12px]">hourglass_top</span>Menunggu</span></td>
-                </tr>
-                <tr class="hover:bg-surface-container-low/30 transition-colors">
-                    <td class="p-4 font-mono text-sm text-on-surface">#TRX-8921-D</td>
-                    <td class="p-4 font-body-md text-sm text-on-surface-variant">23 Okt 2023 - 18.20</td>
-                    <td class="p-4 font-body-md text-sm text-on-surface">MAÉVA House</td>
-                    <td class="p-4 font-title-md text-sm text-on-surface">Rp 2.100.000</td>
-                    <td class="p-4"><span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/25"><span class="material-symbols-outlined text-[12px]">undo</span>Direfund</span></td>
-                </tr>
+                @forelse($recentTransactions as $tx)
+                    @php $rowNumber = $loop->iteration + ($recentTransactions->currentPage() - 1) * $recentTransactions->perPage(); @endphp
+                    @php
+                        $statusMap = [
+                            'dibayar' => ['Dibayar', 'bg-info/10 text-info'],
+                            'diproses' => ['Diproses', 'bg-secondary-container/20 text-secondary'],
+                            'dikirim' => ['Dikirim', 'bg-secondary-container/20 text-secondary'],
+                            'selesai' => ['Selesai', 'bg-success/10 text-success'],
+                        ];
+                        $st = $statusMap[$tx->status] ?? [$tx->status, 'bg-surface-container-high text-on-surface-variant'];
+                    @endphp
+                    <tr class="border-b border-muted-border last:border-0 hover:bg-surface-container-low/30 transition-colors">
+                        <td class="p-4 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
+                        <td class="p-4 font-mono text-sm text-on-surface">{{ $tx->nomor_order }}</td>
+                        <td class="p-4 font-body-md text-sm text-on-surface-variant">{{ $tx->created_at ? \Carbon\Carbon::parse($tx->created_at)->locale('id')->translatedFormat('d M Y - H.i') : '-' }}</td>
+                        <td class="p-4 font-body-md text-sm text-on-surface">{{ $tx->store->nama_toko ?? '-' }}</td>
+                        <td class="p-4 font-title-md text-sm text-on-surface">Rp {{ number_format((float)$tx->grand_total, 0, ',', '.') }}</td>
+                        <td class="p-4"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $st[1] }} text-[10px] font-bold uppercase border">{{ $st[0] }}</span></td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="p-8 text-center text-on-surface-variant">Belum ada transaksi tercatat.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
@@ -188,7 +133,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('revenueChart').getContext('2d');
+        const ctx = document.getElementById('revenueChart');
+        if (!ctx) return;
         const isDark = document.documentElement.classList.contains('dark');
         const gridColor = isDark ? '#333333' : '#E9E8E7';
         const tickColor = isDark ? '#BAB8B8' : '#747878';
@@ -197,13 +143,13 @@
         Chart.defaults.font.family = 'Manrope, sans-serif';
         Chart.defaults.color = tickColor;
         Chart.defaults.scale.grid.color = gridColor;
-        new Chart(ctx, {
+        new Chart(ctx.getContext('2d'), {
             type: 'line',
             data: {
-                labels: ['1 Okt', '5 Okt', '10 Okt', '15 Okt', '20 Okt', '25 Okt', '30 Okt'],
+                labels: @json($chartLabels),
                 datasets: [{
                     label: 'Pendapatan',
-                    data: [120, 190, 150, 220, 180, 280, 245],
+                    data: @json($chartData),
                     borderColor: '#C9A24D',
                     backgroundColor: 'rgba(201, 162, 77, 0.1)',
                     borderWidth: 2,
@@ -223,30 +169,6 @@
                 scales: { x: { grid: { display: false, drawBorder: false }, ticks: { font: { size: 11 } } }, y: { grid: { drawBorder: false, borderDash: [4, 4] }, ticks: { callback: function (value) { return value + 'M'; }, font: { size: 11 }, maxTicksLimit: 6 }, beginAtZero: true } },
                 interaction: { intersect: false, mode: 'index' }
             }
-        });
-    });
-
-    const laporanTabs = document.querySelectorAll('[data-laporan-tab]');
-    laporanTabs.forEach((tab) => {
-        tab.addEventListener('click', () => {
-            laporanTabs.forEach((t) => {
-                t.classList.remove('text-secondary', 'border-secondary');
-                t.classList.add('text-on-surface-variant', 'hover:text-on-surface');
-            });
-            tab.classList.remove('text-on-surface-variant', 'hover:text-on-surface');
-            tab.classList.add('text-secondary', 'border-secondary');
-        });
-    });
-
-    const rangeBtns = document.querySelectorAll('.range-btn');
-    rangeBtns.forEach((btn) => {
-        btn.addEventListener('click', () => {
-            rangeBtns.forEach((b) => {
-                b.classList.remove('border-secondary', 'bg-secondary-container/10', 'text-secondary');
-                b.classList.add('border-muted-border', 'bg-surface', 'text-on-surface');
-            });
-            btn.classList.remove('border-muted-border', 'bg-surface', 'text-on-surface');
-            btn.classList.add('border-secondary', 'bg-secondary-container/10', 'text-secondary');
         });
     });
 </script>

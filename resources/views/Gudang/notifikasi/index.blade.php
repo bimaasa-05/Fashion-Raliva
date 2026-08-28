@@ -3,7 +3,7 @@
 @section('title', 'Notifikasi')
 
 @section('header-title', 'Notifikasi')
-@section('header-badge', 'Gudang Utama Bandung')
+@section('header-badge', $warehouse->nama_gudang ?? 'Gudang')
 @section('header-subtitle', 'Pemberitahuan pekerjaan dan kondisi stok gudang Anda.')
 
 @section('content')
@@ -52,31 +52,38 @@
         </div>
 
         <div class="flex items-center justify-between gap-4 pb-4 mb-2 border-b border-muted-border">
-            <p class="font-label-sm text-xs text-on-surface-variant"><span id="notif-unread-count" class="font-bold text-gold-accent">4 notifikasi belum dibaca</span></p>
+            <p class="font-label-sm text-xs text-on-surface-variant"><span id="notif-unread-count" class="font-bold text-gold-accent">{{ $notifications->whereNull('dibaca_pada')->count() }} notifikasi belum dibaca</span></p>
             <button type="button" id="mark-all-read" class="font-label-sm text-[10px] text-gold-accent uppercase tracking-widest hover:underline shrink-0">Tandai Semua Dibaca</button>
         </div>
 
         <ul id="notif-list" class="divide-y divide-muted-border">
-            @foreach ($items as $item)
-                <li class="notif-item {{ $item['unread'] ? '' : 'opacity-80' }} flex items-start gap-4 px-4 py-4 hover:bg-surface-container-low transition-colors cursor-pointer rounded-lg" data-tipe-item="{{ $item['tipe'] }}">
+            @forelse ($notifications as $item)
+                @php
+                    $m = $meta[$item->tipe] ?? ['icon' => 'info', 'tone' => 'neutral', 'label' => 'Sistem'];
+                    $unread = is_null($item->dibaca_pada);
+                    $relTime = $item->created_at?->diffForHumans() ?? '-';
+                @endphp
+                <li class="notif-item {{ $unread ? '' : 'opacity-80' }} flex items-start gap-4 px-4 py-4 hover:bg-surface-container-low transition-colors cursor-pointer rounded-lg" data-tipe-item="{{ $item->tipe }}">
                     <div class="relative shrink-0 mt-0.5">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center {{ ['gold' => 'bg-gold-accent/10 border border-gold-accent/30 text-gold-accent', 'error' => 'bg-error/10 border border-error/20 text-error', 'neutral' => 'bg-surface-container-high text-on-surface'][$item['tone']] }}">
-                            <span class="material-symbols-outlined text-[20px]">{{ $item['icon'] }}</span>
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center {{ $toneClass[$m['tone']] ?? 'bg-surface-container-high text-on-surface' }}">
+                            <span class="material-symbols-outlined text-[20px]">{{ $m['icon'] }}</span>
                         </div>
-                        @if ($item['unread'])
+                        @if ($unread)
                             <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-error rounded-full border-2 border-surface-container-lowest notif-dot"></span>
                         @endif
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="font-body-md text-sm text-on-surface {{ $item['unread'] ? 'font-semibold' : '' }} notif-text">{!! $item['html'] !!}</p>
+                        <p class="font-body-md text-sm text-on-surface {{ $unread ? 'font-semibold' : '' }} notif-text">{!! $item->pesan !!}</p>
                         <div class="flex items-center gap-3 mt-1.5 flex-wrap">
-                            <span class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">{{ $item['time'] }}</span>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ $item['label'] }}</span>
+                            <span class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">{{ $relTime }}</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ $m['label'] }}</span>
                         </div>
                     </div>
                     <span class="material-symbols-outlined text-outline-variant text-[20px] self-center shrink-0">chevron_right</span>
                 </li>
-            @endforeach
+            @empty
+                <li class="py-10 text-center text-on-surface-variant">Belum ada notifikasi.</li>
+            @endforelse
         </ul>
 
         <div id="notif-empty" class="hidden flex-col items-center justify-center py-16 text-center gap-3">
@@ -88,7 +95,7 @@
         </div>
 
         <div class="flex justify-center mt-8 pt-6 border-t border-muted-border">
-            <button type="button" onclick="showRalivaToast('Halaman demo: hanya 1 halaman data tersedia.', 'info')" class="px-5 py-2.5 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant hover:text-on-surface hover:border-gold-accent transition-colors">Muat Notifikasi Sebelumnya</button>
+            <button type="button" onclick="showRalivaToast('Semua notifikasi sudah ditampilkan.', 'info')" class="px-5 py-2.5 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant hover:text-on-surface hover:border-gold-accent transition-colors">Muat Notifikasi Sebelumnya</button>
         </div>
     </section>
 </div>

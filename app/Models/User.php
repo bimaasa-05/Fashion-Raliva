@@ -44,6 +44,29 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * URL lengkap foto profil. Menangani dua lokasi penyimpanan:
+     * - baru: public/profil/... (path disimpan sebagai "profil/namafile.jpg")
+     * - lama: storage/app/public/profil/... (juga "profil/namafile.jpg")
+     */
+    public function getFotoProfilUrlAttribute(): ?string
+    {
+        if (empty($this->foto_profil)) {
+            return null;
+        }
+
+        if (file_exists(public_path($this->foto_profil))) {
+            return asset($this->foto_profil);
+        }
+
+        $legacy = 'profil/' . basename($this->foto_profil);
+        if (file_exists(storage_path('app/public/' . $legacy))) {
+            return asset('storage/' . $legacy);
+        }
+
+        return null;
+    }
+
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class, 'role_id', 'role_id');
