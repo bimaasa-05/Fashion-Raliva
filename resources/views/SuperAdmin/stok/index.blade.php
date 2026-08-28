@@ -37,6 +37,7 @@
                     <th class="p-4 text-left">SKU</th>
                     <th class="p-4 text-left">Toko</th>
                     <th class="p-4 text-center">Stok</th>
+                    <th class="p-4 text-center">Direservasi</th>
                     <th class="p-4 text-center">Minimum</th>
                     <th class="p-4 text-center">Status</th>
                 </tr>
@@ -51,6 +52,7 @@
                         <td class="p-4 font-mono text-on-surface-variant text-xs">{{ $stock->sku }}</td>
                         <td class="p-4 text-on-surface">{{ $stock->nama_toko }}</td>
                         <td class="p-4 text-center font-bold {{ $stock->status_stok === 'habis' || $stock->status_stok === 'menipis' ? 'text-error' : 'text-on-surface' }}">{{ $stock->jumlah_stok }}</td>
+                        <td class="p-4 text-center text-on-surface-variant">{{ $stock->jumlah_direservasi }}</td>
                         <td class="p-4 text-center text-on-surface-variant">{{ $stock->stok_minimum }}</td>
                         <td class="p-4 text-center">
                             @if($stock->status_stok === 'aman')
@@ -64,7 +66,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="p-8 text-center text-on-surface-variant">Belum ada data stok tercatat.</td>
+                        <td colspan="7" class="p-8 text-center text-on-surface-variant">Belum ada data stok tercatat.</td>
                     </tr>
                 @endforelse
             </tbody>

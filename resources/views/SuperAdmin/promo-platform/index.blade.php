@@ -60,6 +60,14 @@
                     @endif
                     <p class="font-headline-lg text-headline-lg text-gold-accent mb-1">{{ $promo->nama_promo }}</p>
                     <p class="text-on-surface-variant text-xs">{{ $tipeLabel }} &bull; Kode: {{ $promo->kode_promo }}</p>
+                    @if($promo->maksimal_diskon)
+                        <p class="text-on-surface-variant text-xs mt-1">Maks. Diskon: Rp {{ number_format((float)$promo->maksimal_diskon, 0, ',', '.') }}</p>
+                    @endif
+                    @if($promo->dapat_digabung)
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20 mt-2">
+                            <span class="material-symbols-outlined text-[10px]">merge</span> Dapat Digabung
+                        </span>
+                    @endif
                     <p class="text-on-surface-variant text-xs mt-1">Tersisa: {{ $sisaHari > 0 ? $sisaHari.' hari' : 'Berakhir' }}</p>
                 </div>
             @empty
@@ -112,6 +120,20 @@
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="minimal_pembelian">Minimal Pembelian</label>
                         <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="minimal_pembelian" name="minimal_pembelian" type="number" min="0" value="{{ old('minimal_pembelian', 0) }}" />
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                    <div>
+                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="maksimal_diskon">Maksimal Diskon (Rp)</label>
+                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="maksimal_diskon" name="maksimal_diskon" type="number" min="0" value="{{ old('maksimal_diskon') }}" />
+                        @error('maksimal_diskon')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Dapat Digabung</label>
+                        <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="dapat_digabung" name="dapat_digabung">
+                            <option value="0" {{ old('dapat_digabung', 0) == 0 ? 'selected' : '' }}>Tidak</option>
+                            <option value="1" {{ old('dapat_digabung') == 1 ? 'selected' : '' }}>Ya</option>
+                        </select>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-gutter">

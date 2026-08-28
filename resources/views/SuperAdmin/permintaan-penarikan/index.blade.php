@@ -94,6 +94,7 @@
                             <th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase">Detail Pengajuan</th>
                             <th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase">Info Bank</th>
                             <th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase">Status</th>
+                            <th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase text-left">Dibayar</th>
                             <th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -131,6 +132,7 @@
                                     <span class="inline-flex items-center px-2 py-1 rounded-full font-label-sm text-xs uppercase border {{ $badge['class'] }}">{{ $badge['label'] }}</span>
                                     @if ($w->ditinjau_pada)<p class="text-[11px] text-on-surface-variant mt-1">Ditinjau {{ $w->ditinjau_pada->translatedFormat('d M Y') }}</p>@endif
                                 </td>
+                                <td class="py-4 px-6 text-on-surface-variant text-xs">{{ $w->dibayar_pada ? \Carbon\Carbon::parse($w->dibayar_pada)->locale('id')->diffForHumans() : '-' }}</td>
                                 <td class="py-4 px-6 text-right">
                                     @if ($w->status === \App\Models\Withdrawal::STATUS_PENDING)
                                         <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
@@ -152,7 +154,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="5" class="py-12 text-center text-on-surface-variant">Tidak ada pengajuan pada status ini.</td></tr>
+                            <tr><td colspan="6" class="py-12 text-center text-on-surface-variant">Tidak ada pengajuan pada status ini.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

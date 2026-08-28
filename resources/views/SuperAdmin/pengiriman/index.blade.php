@@ -47,7 +47,10 @@
                     <th class="p-4 text-left">Toko</th>
                     <th class="p-4 text-left">Kurir</th>
                     <th class="p-4 text-left">No. Resi</th>
+                    <th class="p-4 text-right">Ongkir</th>
                     <th class="p-4 text-left">Estimasi Tiba</th>
+                    <th class="p-4 text-left">Dikirim</th>
+                    <th class="p-4 text-left">Diterima</th>
                     <th class="p-4 text-center">Status</th>
                 </tr>
             </thead>
@@ -59,14 +62,17 @@
                         <td class="p-4 text-on-surface">{{ $shipment->order->store->nama_toko ?? '-' }}</td>
                         <td class="p-4 text-on-surface">{{ $shipment->courier->nama_kurir ?? '-' }}</td>
                         <td class="p-4 font-mono text-on-surface-variant text-xs">{{ $shipment->nomor_resi ?? '-' }}</td>
+                        <td class="p-4 text-right text-on-surface">Rp {{ number_format((float)$shipment->ongkir, 0, ',', '.') }}</td>
                         <td class="p-4 text-on-surface-variant">{{ $shipment->estimasi_tiba ? \Carbon\Carbon::parse($shipment->estimasi_tiba)->locale('id')->translatedFormat('d M Y') : '-' }}</td>
+                        <td class="p-4 text-on-surface-variant">{{ $shipment->dikirim_pada ? \Carbon\Carbon::parse($shipment->dikirim_pada)->locale('id')->translatedFormat('d M Y') : '-' }}</td>
+                        <td class="p-4 text-on-surface-variant">{{ $shipment->diterima_pada ? \Carbon\Carbon::parse($shipment->diterima_pada)->locale('id')->translatedFormat('d M Y') : '-' }}</td>
                         <td class="p-4 text-center">
                             <span class="inline-flex items-center px-2 py-1 rounded-full {{ $st[1] }} text-[10px] font-bold uppercase border">{{ $st[0] }}</span>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="p-8 text-center text-on-surface-variant">Belum ada data pengiriman.</td>
+                        <td colspan="9" class="p-8 text-center text-on-surface-variant">Belum ada data pengiriman.</td>
                     </tr>
                 @endforelse
             </tbody>

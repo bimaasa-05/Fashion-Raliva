@@ -22,6 +22,7 @@
                     <th class="p-4 text-left">Produk</th>
                     <th class="p-4 text-left">Toko</th>
                     <th class="p-4 text-left">Kategori</th>
+                    <th class="p-4 text-left">Tipe</th>
                     <th class="p-4 text-right">Harga</th>
                     <th class="p-4 text-center">Status Moderasi</th>
                 </tr>
@@ -43,12 +44,13 @@
                         <td class="p-4 text-on-surface">{{ $produk->nama_produk }}</td>
                         <td class="p-4 text-on-surface">{{ $produk->store->nama_toko ?? '-' }}</td>
                         <td class="p-4 text-on-surface-variant">{{ $produk->category->nama_kategori ?? '-' }}</td>
+                        <td class="p-4"><span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ ucfirst($produk->tipe_produk) }}</span></td>
                         <td class="p-4 text-right font-bold text-gold-accent">Rp {{ number_format((float) $produk->harga_dasar, 0, ',', '.') }}</td>
                         <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $statusLabel[1] }} text-[10px] font-bold uppercase border">{{ $statusLabel[0] }}</span></td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="p-8 text-center text-on-surface-variant">Belum ada produk terdaftar di platform.</td>
+                        <td colspan="6" class="p-8 text-center text-on-surface-variant">Belum ada produk terdaftar di platform.</td>
                     </tr>
                 @endforelse
             </tbody>

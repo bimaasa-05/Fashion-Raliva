@@ -61,6 +61,7 @@
                         <th class="p-4 text-left">Toko</th>
                         <th class="p-4 text-left">Jenis Transaksi</th>
                         <th class="p-4 text-left">Keterangan</th>
+                        <th class="p-4 text-right">Saldo Awal</th>
                         <th class="p-4 text-right">Nominal</th>
                         <th class="p-4 text-right">Saldo Akhir</th>
                         <th class="p-4 text-left">Waktu</th>
@@ -75,6 +76,7 @@
                             <td class="p-4 text-on-surface">{{ $tx->wallet->store->nama_toko ?? '-' }}</td>
                             <td class="p-4 text-on-surface-variant text-xs uppercase">{{ str_replace('_', ' ', $tx->jenis_transaksi) }}</td>
                             <td class="p-4 text-on-surface">{{ $tx->keterangan ?? '-' }}</td>
+                            <td class="p-4 text-right text-on-surface-variant">Rp {{ number_format((float)$tx->saldo_sebelum, 0, ',', '.') }}</td>
                             <td class="p-4 text-right font-bold {{ $isPositive ? 'text-secondary' : 'text-error' }}">
                                 {{ $isPositive ? '+' : '-' }} Rp {{ number_format(abs((float)$tx->jumlah), 0, ',', '.') }}
                             </td>
@@ -83,7 +85,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="p-8 text-center text-on-surface-variant">Belum ada mutasi tercatat.</td>
+                            <td colspan="7" class="p-8 text-center text-on-surface-variant">Belum ada mutasi tercatat.</td>
                         </tr>
                     @endforelse
                 </tbody>

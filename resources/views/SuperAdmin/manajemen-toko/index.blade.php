@@ -77,6 +77,7 @@
                 data-rating="{{ $item->rating ?? '--' }}"
                 data-desc="{{ $store->deskripsi }}"
                 data-reason="{{ $store->alasan_penolakan }}"
+                data-phone="{{ $store->nomor_telepon ?? '-' }}"
                 onclick="openStoreModal(this)"
                 class="toko-card group bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden cursor-pointer card-premium">
                 <div class="h-1 w-full {{ $isSuspended || $store->status === \App\Models\Store::STATUS_DITOLAK
@@ -118,6 +119,7 @@
                     <div class="flex items-center justify-between pt-4 border-t border-muted-border">
                         <span class="toko-detail-hint font-label-sm text-[11px] uppercase tracking-widest text-gold-accent inline-flex items-center gap-1">Lihat Detail <span class="material-symbols-outlined text-[14px]">arrow_forward</span></span>
                         <span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">place</span>{{ $item->location }}</span>
+                        <span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">call</span>{{ $item->model->nomor_telepon ?? '-' }}</span>
                     </div>
                 </div>
             </article>
@@ -181,6 +183,7 @@
         document.getElementById('info-location').textContent = d.location;
         document.getElementById('info-joined').textContent = d.joined;
         document.getElementById('info-verification').textContent = meta.verification;
+        document.getElementById('info-phone').textContent = d.phone || '-';
 
         const reasonBox = document.getElementById('reject-reason-box');
         if (d.status === 'ditolak' && d.reason) {
@@ -326,6 +329,10 @@
                     <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 flex items-center gap-3">
                         <div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[18px]">fact_check</span></div>
                         <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Verifikasi</span><span id="info-verification" class="font-title-md text-title-md text-on-surface block truncate">-</span></div>
+                    </div>
+                    <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[18px]">call</span></div>
+                        <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Telepon</span><span id="info-phone" class="font-title-md text-title-md text-on-surface block truncate">-</span></div>
                     </div>
                 </div>
             </section>

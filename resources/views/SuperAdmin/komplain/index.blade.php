@@ -76,8 +76,10 @@
                         <th class="p-4 text-left">ID Komplain</th>
                         <th class="p-4 text-left">Customer</th>
                         <th class="p-4 text-left">Toko</th>
+                        <th class="p-4 text-left">Kategori</th>
                         <th class="p-4 text-left">Topik</th>
                         <th class="p-4 text-center">Status</th>
+                        <th class="p-4 text-left">Waktu</th>
                         <th class="p-4 text-right">Aksi</th>
                     </tr>
                 </thead>
@@ -96,8 +98,10 @@
                             <td class="p-4 font-mono text-on-surface">{{ $kode }}</td>
                             <td class="p-4 text-on-surface">{{ $complaint->user?->nama_lengkap ?? '-' }}</td>
                             <td class="p-4 text-on-surface">{{ $complaint->store?->nama_toko ?? '-' }}</td>
+                            <td class="p-4"><span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ ucfirst($complaint->kategori) }}</span></td>
                             <td class="p-4 text-on-surface max-w-[240px]" title="{{ $complaint->deskripsi }}">{{ $complaint->subjek }}</td>
                             <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $badge['class'] }}">{{ $statusLabel }}</span></td>
+                            <td class="p-4 text-on-surface-variant text-xs">{{ $complaint->dibuat_pada ? \Carbon\Carbon::parse($complaint->dibuat_pada)->locale('id')->diffForHumans() : '-' }}</td>
                             <td class="p-4 text-right whitespace-nowrap">
                                 @if ($bisaAksi && ! $complaint->eskalasi_oleh_sa)
                                     <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $complaint->complaint_id) }}" class="inline-block" onsubmit="return confirm('Eskalasi komplain {{ $kode }} ke Owner toko {{ $complaint->store?->nama_toko }}?');">
@@ -113,13 +117,15 @@
                                     data-d-nomor="{{ $kode }}"
                                     data-d-pelanggan="{{ $complaint->user?->nama_lengkap }}"
                                     data-d-toko="{{ $complaint->store?->nama_toko }}"
+                                    data-d-kategori="{{ $complaint->kategori }}"
                                     data-d-topik="{{ $complaint->subjek }} — {{ \Illuminate\Support\Str::limit($complaint->deskripsi, 80) }}"
                                     data-d-status="{{ $statusLabel }}"
+                                    data-d-waktu="{{ $complaint->dibuat_pada ? \Carbon\Carbon::parse($complaint->dibuat_pada)->locale('id')->diffForHumans() : '-' }}"
                                     class="px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="py-12 text-center text-on-surface-variant">Tidak ada komplain pada status ini.</td></tr>
+                        <tr><td colspan="8" class="py-12 text-center text-on-surface-variant">Tidak ada komplain pada status ini.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -164,8 +170,10 @@
         <dl class="space-y-4 font-body-md text-sm">
             <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Customer</dt><dd class="text-on-surface text-right"><span data-slot="pelanggan"></span></dd></div>
             <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Toko</dt><dd class="text-on-surface text-right"><span data-slot="toko"></span></dd></div>
+            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Kategori</dt><dd class="text-on-surface text-right"><span data-slot="kategori"></span></dd></div>
             <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Topik</dt><dd class="text-on-surface text-right"><span data-slot="topik"></span></dd></div>
-            <div class="flex justify-between gap-4 items-start"><dt class="text-on-surface-variant shrink-0">Status</dt><dd class="text-on-surface text-right"><span data-slot="status"></span></dd></div>
+            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Status</dt><dd class="text-on-surface text-right"><span data-slot="status"></span></dd></div>
+            <div class="flex justify-between gap-4"><dt class="text-on-surface-variant shrink-0">Waktu</dt><dd class="text-on-surface text-right"><span data-slot="waktu"></span></dd></div>
         </dl>
         <button type="button" data-modal-close class="w-full mt-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tutup</button>
     </div>

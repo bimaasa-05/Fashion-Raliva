@@ -48,6 +48,9 @@
                     <th class="p-4 text-left">Produk</th>
                     <th class="p-4 text-center">Jumlah</th>
                     <th class="p-4 text-center">Prioritas</th>
+                    <th class="p-4 text-left">Catatan</th>
+                    <th class="p-4 text-left">Dimulai</th>
+                    <th class="p-4 text-left">Selesai</th>
                     <th class="p-4 text-center">Status</th>
                 </tr>
             </thead>
@@ -71,13 +74,16 @@
                             @endphp
                             <span class="inline-flex items-center px-2 py-1 rounded-full {{ $prio[1] }} text-[10px] font-bold uppercase border">{{ $prio[0] }}</span>
                         </td>
+                        <td class="p-4 text-on-surface-variant text-xs max-w-[200px]" title="{{ $prod->catatan }}">{{ \Illuminate\Support\Str::limit($prod->catatan ?? '-', 40) }}</td>
+                        <td class="p-4 text-on-surface-variant text-xs">{{ $prod->dimulai_pada ? \Carbon\Carbon::parse($prod->dimulai_pada)->locale('id')->translatedFormat('d M Y') : '-' }}</td>
+                        <td class="p-4 text-on-surface-variant text-xs">{{ $prod->selesai_pada ? \Carbon\Carbon::parse($prod->selesai_pada)->locale('id')->translatedFormat('d M Y') : '-' }}</td>
                         <td class="p-4 text-center">
                             <span class="inline-flex items-center px-2 py-1 rounded-full {{ $st[1] }} text-[10px] font-bold uppercase border">{{ $st[0] }}</span>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="p-8 text-center text-on-surface-variant">Belum ada data produksi.</td>
+                        <td colspan="9" class="p-8 text-center text-on-surface-variant">Belum ada data produksi.</td>
                     </tr>
                 @endforelse
             </tbody>

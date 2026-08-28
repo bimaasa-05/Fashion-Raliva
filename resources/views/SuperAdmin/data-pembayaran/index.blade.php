@@ -65,6 +65,8 @@
                         <th class="p-4 text-left">Toko</th>
                         <th class="p-4 text-right">Jumlah</th>
                         <th class="p-4 text-center">Status Verifikasi</th>
+                        <th class="p-4 text-left">Batas Waktu</th>
+                        <th class="p-4 text-left">Dibayar</th>
                         <th class="p-4 text-left">Tanggal</th>
                         <th class="p-4 text-right">Aksi</th>
                     </tr>
@@ -95,12 +97,14 @@
                             <td class="p-4 text-center">
                                 <span class="inline-flex items-center px-2 py-1 rounded-full {{ $st[1] }} text-[10px] font-bold uppercase">{{ $st[0] }}</span>
                             </td>
+                            <td class="p-4 text-on-surface-variant">{{ $pay->batas_waktu ? \Carbon\Carbon::parse($pay->batas_waktu)->locale('id')->translatedFormat('d M Y H:i') : '-' }}</td>
+                            <td class="p-4 text-on-surface-variant">{{ $pay->dibayar_pada ? \Carbon\Carbon::parse($pay->dibayar_pada)->locale('id')->translatedFormat('d M Y H:i') : '-' }}</td>
                             <td class="p-4 text-on-surface-variant">{{ $tanggal }}</td>
-                            <td class="p-4 text-right"><button type="button" data-detail-open="detail-pembayaran" data-d-nomor="PAY-{{ $pay->payment_id }}" data-d-metode="{{ $pay->paymentMethod->nama_metode ?? '-' }}" data-d-pelanggan="{{ $cust->nama_lengkap ?? '-' }} ({{ $cust->email ?? '' }})" data-d-toko="{{ $pay->nama_toko }}" data-d-jumlah="Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}" data-d-status="{{ $st[0] }}" data-d-tanggal="{{ $tanggal }}" class="text-gold-accent hover:underline uppercase font-label-sm text-[10px]">Detail</button></td>
+                            <td class="p-4 text-right"><button type="button" data-detail-open="detail-pembayaran" data-d-nomor="PAY-{{ $pay->payment_id }}" data-d-metode="{{ $pay->paymentMethod->nama_metode ?? '-' }}" data-d-pelanggan="{{ $cust->nama_lengkap ?? '-' }} ({{ $cust->email ?? '' }})" data-d-toko="{{ $pay->nama_toko }}" data-d-jumlah="Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}" data-d-status="{{ $st[0] }}" data-d-batas="{{ $pay->batas_waktu ? \Carbon\Carbon::parse($pay->batas_waktu)->locale('id')->translatedFormat('d M Y H:i') : '-' }}" data-d-dibayar="{{ $pay->dibayar_pada ? \Carbon\Carbon::parse($pay->dibayar_pada)->locale('id')->translatedFormat('d M Y H:i') : '-' }}" data-d-tanggal="{{ $tanggal }}" class="text-gold-accent hover:underline uppercase font-label-sm text-[10px]">Detail</button></td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="p-8 text-center text-on-surface-variant">Belum ada transaksi pembayaran tercatat.</td>
+                            <td colspan="10" class="p-8 text-center text-on-surface-variant">Belum ada transaksi pembayaran tercatat.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -127,6 +131,8 @@
             <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Toko</dt><dd class="text-on-surface text-right"><span data-slot="toko"></span></dd></div>
             <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Jumlah</dt><dd class="font-bold text-gold-accent text-right"><span data-slot="jumlah"></span></dd></div>
             <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Status Verifikasi</dt><dd class="text-on-surface text-right"><span data-slot="status"></span></dd></div>
+            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Batas Waktu</dt><dd class="text-on-surface text-right"><span data-slot="batas"></span></dd></div>
+            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Dibayar</dt><dd class="text-on-surface text-right"><span data-slot="dibayar"></span></dd></div>
             <div class="flex justify-between gap-4"><dt class="text-on-surface-variant shrink-0">Tanggal</dt><dd class="text-on-surface text-right"><span data-slot="tanggal"></span></dd></div>
         </dl>
         <button type="button" data-modal-close class="w-full mt-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tutup</button>
