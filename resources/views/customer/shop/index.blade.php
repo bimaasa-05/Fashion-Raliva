@@ -216,6 +216,21 @@
     @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
     :root           { --btn-gold-bg: #8B1E1E; --btn-gold-text: #ffffff; }
     html.theme-dark { --btn-gold-bg: #5E0F0F; --btn-gold-text: #ffffff; }
+    /* ============ SHOP FILTER CHECKBOX (same system as Register .terms-checkbox) ============ */
+    .shop-checkbox {
+        border-radius: 4px;
+        transition: border-color .2s ease, background-color .2s ease;
+    }
+    .shop-checkbox:hover:not(:checked) { border-color: #8B1E1E; }
+    .shop-checkbox:checked {
+        background-color: #8B1E1E !important;
+        border-color: #8B1E1E !important;
+    }
+    .shop-checkbox:focus-visible { box-shadow: 0 0 0 3px rgba(139,30,30,.3); }
+    html.theme-dark .shop-checkbox {
+        border-color: #3a3937;
+        background-color: #201f1e;
+    }
 </style>
 <style>
     /* ============ Shop: remap drawer + bottom-nav accent to burgundy (Register language) ============ */
@@ -386,7 +401,7 @@
 <span class="w-10 h-1 rounded-full bg-outline-variant"></span>
 </div>
 <div class="flex justify-between items-center px-container-margin py-sm border-b border-outline-variant shrink-0">
-<h2 class="font-title-md text-title-md uppercase tracking-widest">{{ __('Filters') }} <span id="applied-count" class="normal-case tracking-normal text-body-sm font-body-sm text-on-surface-variant"></span></h2>
+<h2 class="font-headline-md text-headline-md uppercase tracking-widest">{{ __('Filters') }} <span id="applied-count" class="normal-case tracking-normal text-body-sm font-body-sm text-on-surface-variant"></span></h2>
 <button aria-label="{{ __('Close filters') }}" class="hover:opacity-80 transition-opacity flex" onclick="closeFilter()" type="button">
 <span class="material-symbols-outlined" data-icon="close">close</span>
 </button>
@@ -394,11 +409,11 @@
 <div class="overflow-y-auto px-container-margin pb-md grow">
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Category') }}</h3>
 <div class="grid grid-cols-2 gap-sm">
-<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4" type="checkbox"/><span class="font-body-sm text-body-sm">Women</span></label>
-<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4" type="checkbox"/><span class="font-body-sm text-body-sm">Men</span></label>
-<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4" type="checkbox"/><span class="font-body-sm text-body-sm">Accessories</span></label>
-<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4" type="checkbox"/><span class="font-body-sm text-body-sm">Shoes</span></label>
-<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4" type="checkbox"/><span class="font-body-sm text-body-sm">Bags</span></label>
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">Women</span></label>
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">Men</span></label>
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">Accessories</span></label>
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">Shoes</span></label>
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">Bags</span></label>
 </div>
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Size') }}</h3>
 <div class="flex flex-wrap gap-sm">
@@ -420,18 +435,18 @@
 <div class="flex items-end gap-gutter">
 <div class="flex-1">
 <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs" for="price-min">{{ __('Min') }}</label>
-<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-sm text-body-sm focus:outline-none focus:border-primary transition-colors" id="price-min" inputmode="numeric" placeholder="Rp 0"/>
+<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-sm text-body-sm focus:outline-none focus:ring-0 focus:border-secondary transition-colors" id="price-min" inputmode="numeric" placeholder="Rp 0"/>
 </div>
 <span class="text-on-surface-variant pb-sm">—</span>
 <div class="flex-1">
 <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs" for="price-max">{{ __('Max') }}</label>
-<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-sm text-body-sm focus:outline-none focus:border-primary transition-colors" id="price-max" inputmode="numeric" placeholder="Rp 1.000.000"/>
+<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-sm text-body-sm focus:outline-none focus:ring-0 focus:border-secondary transition-colors" id="price-max" inputmode="numeric" placeholder="Rp 1.000.000"/>
 </div>
 </div>
 </div>
 <div class="flex gap-gutter px-container-margin py-md border-t border-outline-variant shrink-0">
-<button class="flex-1 h-12 border border-primary text-primary font-label-caps text-label-caps tracking-widest hover:bg-surface-container-low transition-colors" onclick="resetFilters()" type="button">{{ __('RESET') }}</button>
-<button class="flex-1 h-12 bg-primary text-on-primary font-label-caps text-label-caps tracking-widest hover:opacity-90 transition-opacity" onclick="applyFilters()" type="button">{{ __('APPLY') }}</button>
+<button class="flex-1 h-12 border border-secondary text-secondary font-label-caps text-label-caps tracking-widest hover:bg-secondary/5 transition-colors" onclick="resetFilters()" type="button">{{ __('RESET') }}</button>
+<button class="btn-gold flex-1 h-12 font-label-caps text-label-caps tracking-widest" onclick="applyFilters()" type="button">{{ __('APPLY') }}</button>
 </div>
 </div>
     <script>
@@ -453,7 +468,7 @@
             });
             activeFilters.size = [];
             document.querySelectorAll('#filter-sheet .f-opt[data-type="size"]').forEach(function (b) {
-                if (b.classList.contains('bg-primary')) activeFilters.size.push(b.textContent.trim());
+                if (b.classList.contains('bg-secondary')) activeFilters.size.push(b.textContent.trim());
             });
             activeFilters.color = [];
             document.querySelectorAll('#filter-sheet .f-opt[data-type="color"]').forEach(function (b) {
@@ -514,7 +529,7 @@
         function resetFilters() {
             document.querySelectorAll('#filter-sheet input[type="checkbox"]').forEach(function (cb) { cb.checked = false; });
             document.querySelectorAll('#filter-sheet .f-opt').forEach(function (el) {
-                el.classList.remove('ring-2', 'ring-on-surface', 'ring-offset-2', 'bg-primary', 'text-on-primary', 'border-primary');
+                el.classList.remove('ring-2', 'ring-secondary', 'ring-offset-2', 'bg-secondary', 'text-on-secondary', 'border-secondary');
             });
             document.getElementById('price-min').value = '';
             document.getElementById('price-max').value = '';
@@ -554,11 +569,11 @@
                 });
             } else if (type === 'size') {
                 document.querySelectorAll('#filter-sheet .f-opt[data-type="size"]').forEach(function (b) {
-                    if (b.textContent.trim() === val) b.classList.remove('bg-primary', 'text-on-primary', 'border-primary', 'ring-2', 'ring-on-surface');
+                    if (b.textContent.trim() === val) b.classList.remove('bg-secondary', 'text-on-secondary', 'border-secondary', 'ring-2', 'ring-secondary');
                 });
             } else if (type === 'color') {
                 document.querySelectorAll('#filter-sheet .f-opt[data-type="color"]').forEach(function (b) {
-                    if (b.getAttribute('aria-label') === val) b.classList.remove('ring-2', 'ring-on-surface', 'ring-offset-2');
+                    if (b.getAttribute('aria-label') === val) b.classList.remove('ring-2', 'ring-secondary', 'ring-offset-2');
                 });
             } else if (type === 'price') {
                 document.getElementById('price-min').value = '';
@@ -625,14 +640,14 @@
         }
         function toggleSel(el) {
             if (el.dataset.type === 'size') {
-                el.classList.toggle('bg-primary');
-                el.classList.toggle('text-on-primary');
-                el.classList.toggle('border-primary');
+                el.classList.toggle('bg-secondary');
+                el.classList.toggle('text-on-secondary');
+                el.classList.toggle('border-secondary');
                 el.classList.toggle('ring-2');
-                el.classList.toggle('ring-on-surface');
+                el.classList.toggle('ring-secondary');
             } else if (el.dataset.type === 'color') {
                 el.classList.toggle('ring-2');
-                el.classList.toggle('ring-on-surface');
+                el.classList.toggle('ring-secondary');
                 el.classList.toggle('ring-offset-2');
             }
         }
