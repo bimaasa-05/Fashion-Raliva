@@ -49,11 +49,15 @@
 <div class="drawer-sec px-md py-sm border-b border-[var(--chrome-border)] shrink-0">
     @if(auth()->check())
         <a href="{{ route('customer.account') }}" class="flex items-center gap-sm group">
-            <span class="w-12 h-12 rounded-full bg-[var(--gold-wash)] flex items-center justify-center ring-2 ring-[var(--gold-wash)] shrink-0">
-                <span class="material-symbols-outlined text-[24px] text-[var(--chrome-accent)]">person</span>
+            <span class="w-12 h-12 rounded-full bg-[var(--gold-wash)] flex items-center justify-center ring-2 ring-[var(--gold-wash)] shrink-0 overflow-hidden">
+                @if(auth()->user()->foto_profil_url)
+                    <img src="{{ auth()->user()->foto_profil_url }}" alt="{{ auth()->user()->nama_lengkap }}" class="w-full h-full object-cover"/>
+                @else
+                    <span class="material-symbols-outlined text-[24px] text-[var(--chrome-accent)]">person</span>
+                @endif
             </span>
             <span class="flex flex-col min-w-0">
-                <span class="font-title-md text-title-md truncate text-[var(--chrome-text)]">{{ auth()->user()->name ?? 'Customer' }}</span>
+                <span class="font-title-md text-title-md truncate text-[var(--chrome-text)]">{{ auth()->user()->nama_lengkap ?? 'Customer' }}</span>
                 <span class="font-label-sm text-label-sm text-[var(--chrome-text-dim)] truncate">{{ auth()->user()->email ?? '' }}</span>
             </span>
         </a>
