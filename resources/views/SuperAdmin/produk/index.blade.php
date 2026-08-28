@@ -19,6 +19,7 @@
         <table class="w-full min-w-[850px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                    <th class="p-4 text-center w-12">No.</th>
                     <th class="p-4 text-left">Produk</th>
                     <th class="p-4 text-left">Toko</th>
                     <th class="p-4 text-left">Kategori</th>
@@ -29,6 +30,7 @@
             </thead>
             <tbody class="font-body-md text-sm">
                 @forelse ($products as $produk)
+                    @php $rowNumber = $loop->iteration + ($products->currentPage() - 1) * $products->perPage(); @endphp
                     @php
                         $statusLabel = match ($produk->status) {
                             'aktif' => ['Disetujui', 'bg-secondary-container/20 text-secondary border-secondary/20'],
@@ -41,6 +43,7 @@
                         };
                     @endphp
                     <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                        <td class="p-4 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
                         <td class="p-4 text-on-surface">{{ $produk->nama_produk }}</td>
                         <td class="p-4 text-on-surface">{{ $produk->store->nama_toko ?? '-' }}</td>
                         <td class="p-4 text-on-surface-variant">{{ $produk->category->nama_kategori ?? '-' }}</td>
@@ -50,7 +53,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="p-8 text-center text-on-surface-variant">Belum ada produk terdaftar di platform.</td>
+                        <td colspan="7" class="p-8 text-center text-on-surface-variant">Belum ada produk terdaftar di platform.</td>
                     </tr>
                 @endforelse
             </tbody>

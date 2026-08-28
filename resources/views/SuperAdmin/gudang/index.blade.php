@@ -32,6 +32,7 @@
         <table class="w-full min-w-[850px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                    <th class="p-4 text-center w-12">No.</th>
                     <th class="p-4 text-left">Nama Gudang</th>
                     <th class="p-4 text-left">Toko</th>
                     <th class="p-4 text-left">Alamat</th>
@@ -41,7 +42,9 @@
             </thead>
             <tbody class="font-body-md text-sm">
                 @forelse($warehouses as $wh)
+                    @php $rowNumber = $loop->iteration + ($warehouses->currentPage() - 1) * $warehouses->perPage(); @endphp
                     <tr data-table-row data-status="{{ $wh->status }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                        <td class="p-4 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
                         <td class="p-4 text-on-surface font-bold">{{ $wh->nama_gudang }}</td>
                         <td class="p-4 text-on-surface">{{ $wh->store->nama_toko ?? '-' }}</td>
                         <td class="p-4 text-on-surface-variant text-xs">{{ Str::limit($wh->alamat, 40) }}</td>
@@ -56,7 +59,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="p-8 text-center text-on-surface-variant">Belum ada data gudang.</td>
+                        <td colspan="6" class="p-8 text-center text-on-surface-variant">Belum ada data gudang.</td>
                     </tr>
                 @endforelse
             </tbody>

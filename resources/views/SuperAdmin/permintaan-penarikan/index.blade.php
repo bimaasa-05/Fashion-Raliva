@@ -90,6 +90,7 @@
                 <table class="w-full min-w-[850px] text-left border-collapse premium-table">
                     <thead>
                         <tr class="border-b border-muted-border bg-surface-container-low">
+                            <th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase text-center w-12">No.</th>
                             <th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase">Toko / Pemilik</th>
                             <th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase">Detail Pengajuan</th>
                             <th class="py-4 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase">Info Bank</th>
@@ -100,6 +101,7 @@
                     </thead>
                     <tbody class="divide-y divide-muted-border font-body-md text-sm">
                         @forelse ($withdrawals as $w)
+                            @php $rowNumber = $loop->iteration + ($withdrawals->currentPage() - 1) * $withdrawals->perPage(); @endphp
                             @php
                                 $badge = $badgeMap[$w->status];
                                 $initial = strtoupper(substr(collect(preg_split('/\s+/', trim($w->store->nama_toko ?? '')))->map(fn ($k) => mb_substr($k, 0, 1))->implode(''), 0, 2));
@@ -108,6 +110,7 @@
                                 data-id="{{ $w->withdrawal_id }}"
                                 data-nama="{{ $w->store->nama_toko }}"
                                 data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}">
+                                <td class="py-4 px-6 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
                                 <td class="py-4 px-6">
                                     <div class="flex items-center gap-3">
                                         <div class="w-10 h-10 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center font-label-sm shrink-0">{{ $initial }}</div>
@@ -154,7 +157,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="6" class="py-12 text-center text-on-surface-variant">Tidak ada pengajuan pada status ini.</td></tr>
+                            <tr><td colspan="7" class="py-12 text-center text-on-surface-variant">Tidak ada pengajuan pada status ini.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

@@ -82,6 +82,7 @@
                 <table class="w-full min-w-[950px] premium-table">
                     <thead>
                         <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                            <th class="p-4 text-center w-12">No.</th>
                             <th class="p-4 text-left">ID Refund</th>
                             <th class="p-4 text-left">Pesanan</th>
                             <th class="p-4 text-left">Pelanggan / Toko</th>
@@ -95,12 +96,14 @@
                     </thead>
                     <tbody class="font-body-md text-sm">
                         @forelse ($refunds as $refund)
+                            @php $rowNumber = $loop->iteration + ($refunds->currentPage() - 1) * $refunds->perPage(); @endphp
                             @php
                                 $badge = $badgeMap[$refund->status];
                                 $kode = 'REF-' . str_pad((string) $refund->refund_id, 10, '0', STR_PAD_LEFT);
                             @endphp
                             <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors"
                                 data-id="{{ $refund->refund_id }}" data-kode="{{ $kode }}">
+                                <td class="p-4 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
                                 <td class="p-4 font-mono text-on-surface">{{ $kode }}
                                     <span class="block mt-1 w-fit px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border {{ $refund->tipe_refund === \App\Models\Refund::TIPE_FULL ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }}">{{ $refund->tipe_refund }}</span>
                                 </td>
@@ -139,7 +142,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="9" class="py-12 text-center text-on-surface-variant">Tidak ada refund pada status ini.</td></tr>
+                            <tr><td colspan="10" class="py-12 text-center text-on-surface-variant">Tidak ada refund pada status ini.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

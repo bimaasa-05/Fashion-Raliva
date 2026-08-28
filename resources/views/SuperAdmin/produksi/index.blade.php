@@ -43,6 +43,7 @@
         <table class="w-full min-w-[900px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                    <th class="p-4 text-center w-12">No.</th>
                     <th class="p-4 text-left">Nomor Produksi</th>
                     <th class="p-4 text-left">Toko</th>
                     <th class="p-4 text-left">Produk</th>
@@ -56,8 +57,10 @@
             </thead>
             <tbody class="font-body-md text-sm">
                 @forelse($productions as $prod)
+                    @php $rowNumber = $loop->iteration + ($productions->currentPage() - 1) * $productions->perPage(); @endphp
                     @php $st = $statusMap[$prod->status] ?? [$prod->status, 'bg-surface-container-high text-on-surface-variant']; @endphp
                     <tr data-table-row data-status="{{ $prod->status }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                        <td class="p-4 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
                         <td class="p-4 font-mono text-on-surface">{{ $prod->nomor_produksi }}</td>
                         <td class="p-4 text-on-surface">{{ $prod->store->nama_toko ?? '-' }}</td>
                         <td class="p-4 text-on-surface">{{ $prod->items->first()?->productVariant?->product?->nama_produk ?? '-' }}</td>
@@ -83,7 +86,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="p-8 text-center text-on-surface-variant">Belum ada data produksi.</td>
+                        <td colspan="10" class="p-8 text-center text-on-surface-variant">Belum ada data produksi.</td>
                     </tr>
                 @endforelse
             </tbody>
