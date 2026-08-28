@@ -193,30 +193,29 @@
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
   </head>
-<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0 lg:pl-72">
+<body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
-<header class="bg-[var(--chrome-bg)] text-[var(--chrome-text)] sticky full-width top-0 border-b border-[var(--chrome-border)] flat no shadows z-40">
-<div class="flex justify-between items-center w-full px-container-margin h-16 lg:h-24">
-<button aria-label="{{ __('Menu') }}" class="hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center p-2 -ml-2" onclick="openDrawer()" type="button">
+<header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
+<button aria-label="{{ __('Menu') }}" class="hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
-<div>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
-<p class="hidden lg:block font-label-sm text-label-sm text-[var(--chrome-text-dim)] tracking-wide mt-0.5">{{ __('The Art of Everyday Dressing') }}</p>
-</div>
-<div class="flex items-center gap-2">
-<a aria-label="Search" href="{{ route('customer.search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2">
+<div class="flex items-center gap-sm">
+<a aria-label="Search" href="{{ route('customer.search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center">
 <span class="material-symbols-outlined" data-icon="search">search</span>
 </a>
-</div>
+<a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart') }}" class="relative hover:opacity-80 transition-opacity hidden md:flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+</a>
 </div>
 </header>
 <!-- Main Content -->
-<main class="flex-grow w-full flex flex-col">
+<main class="flex-grow w-full flex flex-col pt-16">
 <!-- Canvas Area -->
 <div class="flex-grow flex flex-col w-full">
 <!-- Category Bar (Desktop/Tablet) -->
-<div class="hidden md:flex w-full border-b border-outline-variant sticky top-16 lg:top-24 bg-surface z-30 px-container-margin py-sm gap-sm overflow-x-auto hide-scrollbar">
+<div class="hidden md:flex w-full border-b border-outline-variant sticky top-16 lg:top-16 bg-surface z-30 px-container-margin py-sm gap-sm overflow-x-auto hide-scrollbar">
 <button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-pill shrink-0 px-md py-xs border border-primary text-primary font-label-sm text-label-sm rounded-full bg-primary/5">{{ __('All') }}</button>
 <button type="button" data-cat="Women" onclick="selectCategory('Women')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Women') }}</button>
 <button type="button" data-cat="Men" onclick="selectCategory('Men')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Men') }}</button>
