@@ -204,7 +204,7 @@
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
 <style>
-    /* ============ RALIVA GOLD BUTTON (same system as Register) ============ */
+    /* ============  BUTTON + LIGHT FLASH ============ */
     .btn-gold {
         position: relative;
         overflow: hidden;
@@ -265,7 +265,6 @@
 
     @media (prefers-reduced-motion: reduce) {
         .hero-photos, .hero-reveal, .reveal-up { animation: none !important; opacity: 1 !important; transform: none !important; }
-        .btn-gold:hover::after { animation: none !important; }
     }
 
     /* ============ RALIVA HOME: remap drawer + bottom-nav accent to burgundy (Register language)
