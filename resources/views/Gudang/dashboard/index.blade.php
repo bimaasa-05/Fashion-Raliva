@@ -111,18 +111,18 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Target Penerimaan Hari Ini</p>
-                <div data-donut='[{"value":84,"color":"#C9A24D","label":"Tercapai"},{"value":16,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Target" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-                <p class="text-[11px] text-on-surface-variant mt-1">126 dari 150 unit hari ini</p>
+                <div data-donut='[{"value":{{ $targetPenerimaan["pct"] ?? 0 }},"color":"#C9A24D","label":"Tercapai"},{"value":{{ 100 - ($targetPenerimaan["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Target" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <p class="text-[11px] text-on-surface-variant mt-1">{{ $targetPenerimaan["masuk"] ?? 0 }} dari {{ $targetPenerimaan["target"] ?? 0 }} unit hari ini</p>
             </div>
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Akurasi Stok</p>
-                <div data-donut='[{"value":96,"color":"#795905","label":"Akurat"},{"value":4,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Akurasi" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-                <p class="text-[11px] text-on-surface-variant mt-1">Berdasarkan 6 pemeriksaan terakhir</p>
+                <div data-donut='[{"value":{{ $akurasi["pct"] ?? 0 }},"color":"#795905","label":"Akurat"},{"value":{{ 100 - ($akurasi["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Akurasi" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <p class="text-[11px] text-on-surface-variant mt-1">{{ $akurasi["tersedia"] ?? 0 }} dari {{ $akurasi["total"] ?? 0 }} varian stok tersedia</p>
             </div>
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">SLA Pemenuhan Pesanan</p>
-                <div data-donut='[{"value":91,"color":"#E9CE8A","label":"Tepat SLA"},{"value":9,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Target 4 Jam" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-                <p class="text-[11px] text-on-surface-variant mt-1">Rata-rata proses pesanan 3 jam</p>
+                <div data-donut='[{"value":{{ $sla["pct"] ?? 0 }},"color":"#E9CE8A","label":"Tepat SLA"},{"value":{{ 100 - ($sla["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Stok Tersedia" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <p class="text-[11px] text-on-surface-variant mt-1">{{ $sla["tersedia"] ?? 0 }} dari {{ $sla["total"] ?? 0 }} pesanan stok tersedia</p>
             </div>
         </div>
     </section>
@@ -169,10 +169,10 @@
                 <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Unit Masuk per Hari</h2>
                 <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">7 Hari Terakhir</span>
             </div>
-            <div class="h-48" data-bars='[{"label":"Sen","value":96},{"label":"Sel","value":118},{"label":"Rab","value":104},{"label":"Kam","value":132},{"label":"Jum","value":110},{"label":"Sab","value":148},{"label":"Min","value":126}]'></div>
+            <div class="h-48" data-bars='@json(array_map(function($i){ return ["label" => $chart["labels"][$i] ?? "?", "value" => $chart["masuk"][$i] ?? 0]; }, array_keys($chart["labels"] ?? [])))'></div>
             <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
                 <span class="material-symbols-outlined text-[14px] text-gold-accent">insights</span>
-                Kamis tertinggi dengan 132 unit — kedatangan ganda dari supplier utama.
+                Total masuk 7 hari terakhir: {{ array_sum($chart["masuk"] ?? []) }} unit.
             </p>
         </section>
 
@@ -181,7 +181,7 @@
                 <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Kategori Stok Terbesar</h2>
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">emoji_events</span>
             </div>
-            <div data-leaderboard='[{"name":"Kemeja","meta":"312 SKU • Rak A–B","display":"1.240 pcs","pct":100},{"name":"Celana","meta":"286 SKU • Rak B–C","display":"980 pcs","pct":79},{"name":"Dress","meta":"198 SKU • Rak C–D","display":"760 pcs","pct":61},{"name":"Outerwear","meta":"142 SKU • Rak D","display":"540 pcs","pct":44}]'></div>
+            <div data-leaderboard='@json($kategoriTerbesar->map(function($k, $i) use ($kategoriTerbesar){ $max = $kategoriTerbesar->max("jumlah") ?: 1; return ["name" => $k->nama, "meta" => ($k->sku ?? 0) . " produk • Rak " . chr(65 + $i), "display" => number_format($k->jumlah, 0, ",", ".") . " pcs", "pct" => (int) round($k->jumlah / $max * 100)]; }))'></div>
             <a href="{{ route('gudang.stok') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Semua Kategori</a>
         </section>
     </div>
