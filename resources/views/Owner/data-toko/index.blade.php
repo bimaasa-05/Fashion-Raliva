@@ -29,13 +29,13 @@
             </div>
             <div class="flex-1 text-center sm:text-left">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3 justify-center sm:justify-start">
-                    <h2 class="raliva-figure text-[26px] text-on-surface">Raliva Atelier Jakarta</h2>
+                    <h2 class="raliva-figure text-[26px] text-on-surface">{{ $store->nama_toko ?? 'Toko' }}</h2>
                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20 w-fit mx-auto sm:mx-0">
                         <span class="material-symbols-outlined fill text-[12px]">verified</span>Terverifikasi
                     </span>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm mt-1">Fashion &mdash; ID Toko: RLV-TOKO-0021 &bull; Bergabung Mar 2024</p>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Rating toko <span class="font-bold text-gold-accent">4,9/5,0</span> &bull; 1.284 ulasan</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-1">Fashion &mdash; ID Toko: RLV-TOKO-{{ str_pad($store->store_id ?? 0, 4, '0', STR_PAD_LEFT) }} &bull; Bergabung {{ $store->created_at?->translatedFormat('M Y') ?? '-' }}</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Rating toko <span class="font-bold text-gold-accent">{{ number_format($rating, 1, ',', '.') }}/5,0</span> &bull; {{ $reviewCount }} ulasan</p>
             </div>
         </div>
     </section>
@@ -48,7 +48,7 @@
                 <div class="space-y-5">
                     <div>
                         <label for="nama-toko" class="block raliva-label mb-2">Nama Toko</label>
-                        <input id="nama-toko" type="text" value="Raliva Atelier Jakarta" required class="raliva-input" />
+                        <input id="nama-toko" type="text" value="{{ old('nama_toko', $store->nama_toko ?? '') }}" required class="raliva-input" />
                     </div>
                     <div>
                         <label for="kategori-toko" class="block raliva-label mb-2">Kategori</label>
@@ -61,7 +61,7 @@
                     </div>
                     <div>
                         <label for="deskripsi-toko" class="block raliva-label mb-2">Deskripsi Toko</label>
-                        <textarea id="deskripsi-toko" rows="4" class="raliva-textarea">Butik fashion lokal yang menghadirkan koleksi premium dengan sentuhan elegan khas Indonesia. Setiap produk dibuat dari bahan pilihan terbaik.</textarea>
+                        <textarea id="deskripsi-toko" rows="4" class="raliva-textarea">{{ old('deskripsi', $store->deskripsi ?? '') }}</textarea>
                     </div>
                 </div>
             </section>
@@ -72,11 +72,11 @@
                 <div class="space-y-5">
                     <div>
                         <label for="telepon-toko" class="block raliva-label mb-2">Nomor Telepon</label>
-                        <input id="telepon-toko" type="text" value="+62 21 7280 1122" required class="raliva-input" />
+                        <input id="telepon-toko" type="text" value="{{ old('nomor_telepon', $store->nomor_telepon ?? '') }}" required class="raliva-input" />
                     </div>
                     <div>
                         <label for="email-toko" class="block raliva-label mb-2">Email Toko</label>
-                        <input id="email-toko" type="email" value="halo@ralivaatelier.id" required class="raliva-input" />
+                        <input id="email-toko" type="email" value="{{ old('email', Auth::user()->email ?? '') }}" required class="raliva-input" />
                     </div>
                     <div>
                         <label for="instagram-toko" class="block raliva-label mb-2">Instagram</label>
@@ -84,7 +84,7 @@
                     </div>
                     <div>
                         <label for="alamat-toko" class="block raliva-label mb-2">Alamat Lengkap</label>
-                        <textarea id="alamat-toko" rows="3" required class="raliva-textarea">Jl. Kemang Raya No. 21, RT 04/RW 02, Bangka, Mampang Prapatan, Jakarta Selatan, DKI Jakarta 12730</textarea>
+                        <textarea id="alamat-toko" rows="3" required class="raliva-textarea">{{ old('alamat', $store->alamat ?? '') }}</textarea>
                     </div>
                 </div>
             </section>
