@@ -176,6 +176,7 @@
                     data-name="{{ $u->nama_lengkap }}"
                     data-email="{{ $u->email }}"
                     data-phone="{{ $u->nomor_telepon ?? '' }}"
+                    data-verified="{{ $u->email_verified_at ? 'true' : 'false' }}"
                     data-role-id="{{ $u->role_id }}"
                     data-initial="{{ strtoupper(mb_substr($u->nama_lengkap, 0, 2)) }}"
                     data-role-label="{{ $u->role->nama_role ?? '' }}"
@@ -202,6 +203,15 @@
                                     <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-tertiary-container/30 text-on-tertiary-container border border-tertiary-container/50 text-[9px] font-bold uppercase">Suspend</span>
                                 @else
                                     <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Non-aktif</span>
+                                @endif
+                                @if ($u->email_verified_at)
+                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-secondary-container/20 text-secondary text-[9px] font-bold uppercase border border-secondary/20">
+                                        <span class="material-symbols-outlined text-[12px]">verified</span>Verified
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">
+                                        <span class="material-symbols-outlined text-[12px]">email</span>Belum Verified
+                                    </span>
                                 @endif
                             </div>
                         </div>
@@ -258,6 +268,7 @@
                 <div class="flex items-center gap-2 mt-1.5">
                     <span id="drawer-role" class="inline-flex px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase"></span>
                     <span id="drawer-status" class="inline-flex px-1.5 py-0.5 rounded text-[9px] font-bold uppercase"></span>
+                    <span id="drawer-verified" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase"></span>
                 </div>
             </div>
         </div>
@@ -425,6 +436,10 @@
         document.getElementById('drawer-role').textContent = d.roleLabel;
         document.getElementById('drawer-status').textContent = d.status;
         document.getElementById('drawer-status').className = 'inline-flex px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (d.status === 'aktif' ? 'bg-success/10 text-success border border-success/20' : d.status === 'suspend' ? 'bg-tertiary-container/30 text-on-tertiary-container border border-tertiary-container/50' : 'bg-error/10 text-error border border-error/20');
+        document.getElementById('drawer-verified').innerHTML = d.verified === 'true'
+            ? '<span class="material-symbols-outlined text-[10px]">verified</span>Verified'
+            : '<span class="material-symbols-outlined text-[10px]">email</span>Belum Verified';
+        document.getElementById('drawer-verified').className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (d.verified === 'true' ? 'bg-secondary-container/20 text-secondary border border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant');
 
         document.getElementById('role-form').action = urls.role(userId);
         document.getElementById('nonaktifkan-form').action = urls.nonaktifkan(userId);

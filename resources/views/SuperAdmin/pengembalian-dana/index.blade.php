@@ -88,6 +88,8 @@
                             <th class="p-4 text-left">Alasan</th>
                             <th class="p-4 text-right">Jumlah</th>
                             <th class="p-4 text-center">Status</th>
+                            <th class="p-4 text-left">Diajukan</th>
+                            <th class="p-4 text-left">Selesai</th>
                             <th class="p-4 text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -116,6 +118,8 @@
                                 <td class="p-4 text-center">
                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $badge['class'] }}">{{ $badge['label'] }}</span>
                                 </td>
+                                <td class="p-4 text-on-surface-variant text-xs">{{ $refund->diajukan_pada ? \Carbon\Carbon::parse($refund->diajukan_pada)->locale('id')->diffForHumans() : '-' }}</td>
+                                <td class="p-4 text-on-surface-variant text-xs">{{ $refund->selesai_pada ? \Carbon\Carbon::parse($refund->selesai_pada)->locale('id')->diffForHumans() : '-' }}</td>
                                 <td class="p-4 text-right whitespace-nowrap">
                                     @if ($refund->status === \App\Models\Refund::STATUS_REQUESTED)
                                         <button type="button" onclick="openRejectRefund(this.closest('tr'))"
@@ -135,7 +139,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="7" class="py-12 text-center text-on-surface-variant">Tidak ada refund pada status ini.</td></tr>
+                            <tr><td colspan="9" class="py-12 text-center text-on-surface-variant">Tidak ada refund pada status ini.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

@@ -63,6 +63,7 @@
                 data-desc="{{ $product->deskripsi }}"
                 data-status="{{ $product->status }}"
                 data-reason="{{ $product->alasan_penolakan }}"
+                data-tipe="{{ ucfirst($product->tipe_produk) }}"
                 data-variants="{{ $product->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}">
                 <div class="relative w-full aspect-[3/4] bg-surface-container-low mb-element-gap overflow-hidden rounded-lg">
                     @if ($product->images->first())
@@ -77,7 +78,7 @@
                         <div class="absolute bottom-2 left-2 right-2 px-2 py-1 bg-error/90 text-on-error text-[9px] font-bold uppercase tracking-widest rounded text-center">Ditolak • Lihat Alasan</div>
                     @endif
                 </div>
-                <div class="flex flex-col flex-grow"><span class="font-label-sm text-label-sm text-on-surface-variant mb-1">{{ strtoupper($product->store->nama_toko ?? '-') }}</span><h3 class="font-body-md text-body-md text-on-surface leading-tight mb-1 truncate">{{ $product->nama_produk }}</h3><div class="font-body-md text-body-md text-on-surface mt-auto">Rp {{ number_format($product->harga_dasar, 0, ',', '.') }}</div></div>
+                <div class="flex flex-col flex-grow"><span class="font-label-sm text-label-sm text-on-surface-variant mb-1">{{ strtoupper($product->store->nama_toko ?? '-') }}</span><h3 class="font-body-md text-body-md text-on-surface leading-tight mb-1 truncate">{{ $product->nama_produk }}</h3><div class="font-body-md text-body-md text-on-surface mt-auto">Rp {{ number_format($product->harga_dasar, 0, ',', '.') }}</div><span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant mt-2">{{ ucfirst($product->tipe_produk) }}</span></div>
             </div>
         @empty
             <p id="moderasi-kosong" class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-16">Belum ada produk pada status ini.</p>
@@ -104,6 +105,7 @@
         document.getElementById('mod-category').textContent = d.category;
         document.getElementById('mod-variants').textContent = d.variants || '-';
         document.getElementById('mod-desc').textContent = d.desc;
+        document.getElementById('mod-tipe').textContent = d.tipe;
 
         const img = card.querySelector('img');
         const imgEl = document.getElementById('mod-img');
@@ -193,6 +195,7 @@
             <div class="grid md:grid-cols-2 gap-0">
                 <div class="bg-surface-container-low min-h-[220px]"><img id="mod-img" class="w-full h-full object-cover" src="" alt="Foto produk" /></div>
                 <div class="p-6 space-y-4">
+                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Tipe Produk</span><span id="mod-tipe" class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">-</span></div>
                     <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Kategori</span><span id="mod-category" class="font-body-md text-body-md text-on-surface">-</span></div>
                     <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Varian (Warna & Ukuran)</span><span id="mod-variants" class="font-body-md text-body-md text-on-surface">-</span></div>
                     <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Deskripsi</span><p id="mod-desc" class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-sm">-</p></div>
