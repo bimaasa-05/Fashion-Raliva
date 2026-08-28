@@ -13,7 +13,6 @@
                 ['route' => 'superadmin.manajemen-toko', 'icon' => 'storefront', 'text' => 'Data Toko'],
                 ['route' => 'superadmin.moderasi-produk', 'icon' => 'inventory_2', 'text' => 'Moderasi Produk'],
                 ['route' => 'superadmin.kategori-produk', 'icon' => 'category', 'text' => 'Kategori Produk'],
-                ['route' => 'superadmin.paket-slot-produk', 'icon' => 'package_2', 'text' => 'Paket Slot Produk'],
                 ['route' => 'superadmin.produk', 'icon' => 'checkroom', 'text' => 'Data Produk'],
             ],
         ],
