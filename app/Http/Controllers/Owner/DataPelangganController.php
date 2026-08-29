@@ -26,7 +26,6 @@ class DataPelangganController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        // segment + rank
         $ranked = collect($rows->items())->map(function ($c, $i) {
             $c->rank = $i + 1;
             $c->segment = $c->rank <= 4 ? 'leader' : ($c->jumlah_order >= 2 ? 'setia' : 'baru');
@@ -34,6 +33,27 @@ class DataPelangganController extends Controller
             return $c;
         });
         $rows->setCollection($ranked);
+
+        // Barang dibeli per customer (halaman ini saja) dalam 1 query
+        $userIds = $ranked->pluck('id')->all();
+        $itemsByUser = DB::table('orders')
+            ->join('checkouts', 'checkouts.checkout_id', '=', 'orders.checkout_id')
+            ->join('order_items', 'order_items.order_id', '=', 'orders.order_id')
+            ->join('product_variants', 'product_variants.product_variant_id', '=', 'order_items.product_variant_id')
+            ->join('products', 'products.product_id', '=', 'product_variants.product_id')
+            ->where('orders.store_id', $storeId)
+            ->whereIn('checkouts.user_id', $userIds)
+            ->select('checkouts.user_id', 'products.nama_produk', DB::raw('SUM(order_items.quantity) as qty'))
+            ->groupBy('checkouts.user_id', 'products.nama_produk')
+            ->get()
+            ->groupBy('user_id')
+            ->map(function ($grp) {
+                return $grp->sortByDesc('qty')->take(3)->map(fn($i) => $i->nama_produk . ' (' . $i->qty . ')');
+            });
+
+        $ranked->each(function ($c) use ($itemsByUser) {
+            $c->items = $itemsByUser->get($c->id, collect());
+        });
 
         $topLeader = $ranked->first();
         $top3 = $ranked->take(3)->values();
