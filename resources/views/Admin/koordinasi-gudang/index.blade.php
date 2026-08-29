@@ -9,7 +9,7 @@
 @section('content')
 <div class="space-y-section-gap">
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Pesanan Perlu Diambil di Gudang</h2>
+        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Pesanan Perlu Diambil di Gudang</h2>
         <div class="space-y-gutter">
             <div class="border border-muted-border rounded-lg p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
@@ -31,7 +31,7 @@
     </section>
 
     <section class="space-y-gutter">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Status Permintaan</h2>
+        <h2 class="font-title-md text-title-md text-on-surface premium-heading">Status Permintaan</h2>
         <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
             <table class="w-full min-w-[750px] premium-table">
                 <thead>
