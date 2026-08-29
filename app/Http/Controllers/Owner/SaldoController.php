@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Models\Refund;
+use App\Models\StoreExpense;
 use App\Models\WalletTransaction;
 use App\Models\Withdrawal;
 use Illuminate\Http\Request;
@@ -94,10 +95,60 @@ class SaldoController extends Controller
             ];
         });
 
+        $expenses = StoreExpense::where('store_id', $store->store_id)
+            ->orderByDesc('tanggal')
+            ->get();
+
+        // Estimasi margin (asumsi HPP 60% revenue, pajak 25% laba, tanpa D&A/bunga).
+        $revenue = $pemasukan;
+        $hpp = $revenue * 0.60;
+        $grossProfit = $revenue - $hpp;
+        $operasional = (float) $expenses->where('tanggal', '>=', $startOfMonth)->sum('nominal');
+        $ebitda = $grossProfit - $operasional;
+        $ebit = $ebitda;
+        $ebt = $ebit;
+        $netProfit = $ebt * 0.75;
+
+        $margin = [
+            'revenue' => $revenue,
+            'gross' => $grossProfit,
+            'ebitda' => $ebitda,
+            'ebit' => $ebit,
+            'ebt' => $ebt,
+            'net' => $netProfit,
+        ];
+
         return view('Owner.saldo.index', compact(
             'wallet', 'bankAccounts', 'totalDicairkan',
-            'mutations', 'withdrawals', 'refunds', 'summary', 'chart'
+            'mutations', 'withdrawals', 'refunds', 'summary', 'chart',
+            'expenses', 'margin'
         ));
+    }
+
+    public function storePengeluaran(Request $request)
+    {
+        $user = $request->user();
+        $store = $user->ownedStores()->first();
+        if (! $store) {
+            return back()->with('error', 'Toko tidak ditemukan.');
+        }
+
+        $validated = $request->validate([
+            'nama' => ['required', 'string', 'max:150'],
+            'kategori' => ['required', 'string', 'max:100'],
+            'nominal' => ['required', 'numeric', 'min:1'],
+            'tanggal' => ['required', 'date', 'before_or_equal:today'],
+        ]);
+
+        StoreExpense::create([
+            'store_id' => $store->store_id,
+            'nama' => $validated['nama'],
+            'kategori' => $validated['kategori'],
+            'nominal' => $validated['nominal'],
+            'tanggal' => $validated['tanggal'],
+        ]);
+
+        return redirect()->route('owner.saldo')->with('success', 'Pengeluaran berhasil dicatat.');
     }
 
     public function storePencairan(Request $request)
