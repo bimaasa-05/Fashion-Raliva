@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Stok')
 
@@ -14,7 +14,7 @@
     </div>
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Kelola Stok Produk</h2>
+        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Kelola Stok Produk</h2>
 
         <div class="overflow-x-auto">
             <table class="w-full min-w-[750px] premium-table">
@@ -30,7 +30,7 @@
                     <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-4">
                             <p class="text-on-surface">Oversized Linen Shirt</p>
-                            <p class="text-on-surface-variant text-xs">Kemeja • S, M, L, XL</p>
+                            <p class="text-on-surface-variant text-xs">Kemeja &#8226; S, M, L, XL</p>
                         </td>
                         <td class="p-4 text-center font-bold text-on-surface">24</td>
                         <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aman</span></td>
@@ -44,7 +44,7 @@
                     <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-4">
                             <p class="text-on-surface">Straight Fit Pants</p>
-                            <p class="text-on-surface-variant text-xs">Celana • 28–34</p>
+                            <p class="text-on-surface-variant text-xs">Celana &#8226; 28–34</p>
                         </td>
                         <td class="p-4 text-center font-bold text-error">3</td>
                         <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Menipis</span></td>
@@ -58,7 +58,7 @@
                     <tr class="hover:bg-surface-container-low transition-colors">
                         <td class="p-4">
                             <p class="text-on-surface">Relaxed Blazer</p>
-                            <p class="text-on-surface-variant text-xs">Blazer • M, L</p>
+                            <p class="text-on-surface-variant text-xs">Blazer &#8226; M, L</p>
                         </td>
                         <td class="p-4 text-center font-bold text-on-surface">8</td>
                         <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aman</span></td>
