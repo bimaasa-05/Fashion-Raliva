@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Verifikasi Pembayaran')
 
@@ -21,7 +21,7 @@
 <div class="space-y-section-gap">
     <section>
         <div class="flex items-center justify-between gap-4 flex-wrap mb-6">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Verifikasi Pembayaran</h2>
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading">Verifikasi Pembayaran</h2>
             <div class="flex flex-wrap gap-2">
                 @foreach ($tabs as $key => $label)
                     <a href="{{ route('admin.verifikasi-pembayaran', $key === 'menunggu' ? [] : ['tab' => $key]) }}"
@@ -44,7 +44,7 @@
                 <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-id="{{ $pembayaran->payment_id }}">
                     <div class="flex items-start justify-between mb-4">
                         <div>
-                            <p class="font-mono text-sm text-on-surface-variant">#CKT-{{ str_pad((string) $pembayaran->checkout_id, 4, '0', STR_PAD_LEFT) }} • {{ $pembayaran->checkout?->user?->nama_lengkap ?? '-' }}</p>
+                            <p class="font-mono text-sm text-on-surface-variant">#CKT-{{ str_pad((string) $pembayaran->checkout_id, 4, '0', STR_PAD_LEFT) }} &#8226; {{ $pembayaran->checkout?->user?->nama_lengkap ?? '-' }}</p>
                             <p class="text-xs text-on-surface-variant mt-0.5">{{ $orderUtama?->store?->nama_toko ?? '-' }}</p>
                             <p class="font-title-md text-title-md text-gold-accent mt-1">Rp {{ number_format((float) $pembayaran->jumlah, 0, ',', '.') }}</p>
                         </div>
@@ -77,7 +77,7 @@
                             </div>
                         </form>
                     @else
-                        <p class="text-center text-on-surface-variant text-xs uppercase tracking-widest py-2 border-t border-muted-border">Diverifikasi oleh {{ $verifTerakhir?->verifier?->nama_lengkap ?? '-' }} • {{ $verifTerakhir?->diverifikasi_pada?->translatedFormat('d M Y H:i') }}</p>
+                        <p class="text-center text-on-surface-variant text-xs uppercase tracking-widest py-2 border-t border-muted-border">Diverifikasi oleh {{ $verifTerakhir?->verifier?->nama_lengkap ?? '-' }} &#8226; {{ $verifTerakhir?->diverifikasi_pada?->translatedFormat('d M Y H:i') }}</p>
                     @endif
                 </div>
             @empty
@@ -90,7 +90,7 @@
 <form method="POST" action="" id="tolak-pembayaran-form" onsubmit="closeTolakPembayaran()">
     @csrf
     <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="tolakPembayaranModal" onclick="if (event.target === this) closeTolakPembayaran()">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
+        <div class="bg-surface-container-lowest w-full max-w-md rounded-lg border border-muted-border shadow-2xl overflow-hidden">
             <div class="p-8">
                 <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
                     <span class="material-symbols-outlined text-error text-[28px]">gpp_bad</span>
@@ -98,7 +98,7 @@
                 <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Tolak Pembayaran</h3>
                 <p class="text-on-surface-variant text-sm text-center mb-4">Checkout #<span id="tolak-pembayaran-id" class="font-mono font-bold text-on-surface">-</span> akan ditolak. Customer diminta mengunggah ulang bukti.</p>
                 <textarea name="alasan" required minlength="10" maxlength="1000" rows="4"
-                    class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-4"
+                    class="raliva-textarea"
                     placeholder="Contoh: Nominal transfer tidak sesuai dengan total tagihan... (minimal 10 karakter)"></textarea>
                 <div class="flex space-x-3">
                     <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeTolakPembayaran()">Batal</button>
