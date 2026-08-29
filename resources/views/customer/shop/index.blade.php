@@ -308,7 +308,7 @@
 </div>
 <a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart') }}" class="relative hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
-<span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+<span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
 </a>
 <button aria-label="{{ __('Filter') }}" class="hover:text-secondary transition-colors flex items-center relative" onclick="openFilter()" type="button">
 <span class="material-symbols-outlined text-[22px]" data-icon="tune">tune</span>
