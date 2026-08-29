@@ -312,16 +312,22 @@ Route::post('/gudang/ganti', [GantiGudangController::class, 'store'])
 Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->group(function () {
     Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/data-toko', [DataTokoController::class, 'index'])->name('data-toko');
+    Route::put('/data-toko', [DataTokoController::class, 'update'])->name('data-toko.update');
     Route::get('/pengajuan-toko', [PengajuanTokoController::class, 'index'])->name('pengajuan-toko');
+    Route::post('/pengajuan-toko', [PengajuanTokoController::class, 'store'])->name('pengajuan-toko.store');
     Route::get('/pengaturan-toko', [PengaturanTokoController::class, 'index'])->name('pengaturan-toko');
     Route::get('/produk', [OwnerProdukController::class, 'index'])->name('produk');
     Route::get('/pesanan', [OwnerPesananController::class, 'index'])->name('pesanan');
     Route::get('/promo', [OwnerPromoController::class, 'index'])->name('promo');
+    Route::post('/promo', [OwnerPromoController::class, 'store'])->name('promo.store');
     Route::get('/ulasan', [UlasanController::class, 'index'])->name('ulasan');
     Route::get('/data-pelanggan', [DataPelangganController::class, 'index'])->name('data-pelanggan');
     Route::get('/saldo', [SaldoController::class, 'index'])->name('saldo');
+    Route::post('/keuangan/pengeluaran', [SaldoController::class, 'storePengeluaran'])->name('keuangan.pengeluaran.store');
     Route::get('/karyawan', [KaryawanController::class, 'index'])->name('karyawan');
-    Route::get('/laporan', [OwnerLaporanController::class, 'index'])->name('laporan');
+    Route::post('/karyawan', [KaryawanController::class, 'store'])->name('karyawan.store');
+    Route::get('/laporan', [App\Http\Controllers\Owner\LaporanController::class, 'index'])->name('laporan');
+    Route::get('/laporan/export', [App\Http\Controllers\Owner\LaporanController::class, 'export'])->name('laporan.export');
     Route::get('/notifikasi', [OwnerNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [OwnerProfilController::class, 'index'])->name('profil');
     Route::get('/komplain', [OwnerKomplainController::class, 'index'])->name('komplain');
