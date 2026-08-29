@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Pengembalian Dana')
 
@@ -9,12 +9,12 @@
 @section('content')
 <div class="space-y-section-gap">
     <section>
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Pengajuan Refund Masuk</h2>
+        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Pengajuan Refund Masuk</h2>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
                 <div class="flex items-start justify-between mb-4">
                     <div>
-                        <p class="font-mono text-sm text-on-surface-variant">REF-2601 • Pesanan #RLV-2069</p>
+                        <p class="font-mono text-sm text-on-surface-variant">REF-2601 &#8226; Pesanan #RLV-2069</p>
                         <p class="font-title-md text-title-md text-gold-accent mt-1">Rp 289.000</p>
                     </div>
                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Menunggu</span>
@@ -30,7 +30,7 @@
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
                 <div class="flex items-start justify-between mb-4">
                     <div>
-                        <p class="font-mono text-sm text-on-surface-variant">REF-2598 • Pesanan #RLV-2065</p>
+                        <p class="font-mono text-sm text-on-surface-variant">REF-2598 &#8226; Pesanan #RLV-2065</p>
                         <p class="font-title-md text-title-md text-gold-accent mt-1">Rp 455.000</p>
                     </div>
                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Menunggu</span>
@@ -46,7 +46,7 @@
     </section>
 
     <section class="space-y-gutter">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Riwayat Refund</h2>
+        <h2 class="font-title-md text-title-md text-on-surface premium-heading">Riwayat Refund</h2>
         <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
             <table class="w-full min-w-[750px] premium-table">
                 <thead>
