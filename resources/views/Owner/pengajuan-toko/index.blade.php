@@ -55,12 +55,56 @@
         </div>
     </section>
 
-    {{-- Checklist Dokumen --}}
-    <section>
-        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Dokumen Persyaratan</h2>
-        <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
-            @foreach ([['description', 'KTP / Identitas Owner', 'Disetujui'], ['receipt_long', 'NPWP Toko', 'Disetujui'], ['storefront', 'Foto Depan Toko', 'Disetujui'], ['gavel', 'Surat Izin Usaha (NIB)', 'Disetujui']] as $doc)
-                <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-4 card-premium">
+    {{-- Upload Dokumen (hanya jika belum punya toko) --}}
+    @if (! $store)
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <div class="flex items-center justify-between gap-4 mb-6">
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading">Ajukan Toko</h2>
+            <span class="text-xs text-on-surface-variant">{{ $documents->count() }} / 4 dokumen diunggah</span>
+        </div>
+        <form method="POST" action="{{ route('owner.pengajuan-toko.store') }}" enctype="multipart/form-data" class="space-y-4">
+            @csrf
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
+                @foreach ([['ktp', 'description', 'KTP / Identitas Owner'], ['npwp', 'receipt_long', 'NPWP Toko'], ['foto_depan', 'storefront', 'Foto Depan Toko'], ['siu', 'gavel', 'Surat Izin Usaha (NIB)']] as $doc)
+                    @php
+                        $existing = $documents->firstWhere('jenis', $doc[0]);
+                    @endphp
+                    <div class="bg-surface-container-low p-4 border border-muted-border rounded-lg flex flex-col gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-gold-accent">{{ $doc[1] }}</span>
+                        </div>
+                        <p class="font-title-md text-sm text-on-surface leading-snug">{{ $doc[2] }}</p>
+                        @if ($existing)
+                            <span class="inline-flex w-fit items-center gap-1.5 px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">
+                                <span class="material-symbols-outlined fill text-[12px]">check_circle</span>{{ ucfirst($existing->status) }}
+                            </span>
+                        @else
+                            <input type="file" name="{{ $doc[0] }}" accept=".jpg,.jpeg,.png,.pdf" class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-[16px]">upload</span>Unggah Dokumen
+                </button>
+            </div>
+        </form>
+    </section>
+    @else
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading">Dokumen Persyaratan</h2>
+                <p class="text-on-surface-variant text-sm mt-1">Toko Anda sudah aktif. Pengajuan dokumen dikunci.</p>
+            </div>
+            <button type="button" disabled class="py-3 px-8 bg-surface-container-low border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant cursor-not-allowed opacity-60 flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[16px]">lock</span>Ajukan Toko
+            </button>
+        </div>
+        <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter mt-6">
+            @foreach ([['description', 'KTP / Identitas Owner'], ['receipt_long', 'NPWP Toko'], ['storefront', 'Foto Depan Toko'], ['gavel', 'Surat Izin Usaha (NIB)']] as $doc)
+                <div data-reveal class="bg-surface-container-low p-5 border border-muted-border rounded-lg flex flex-col gap-4 card-premium">
                     <div class="w-11 h-11 rounded-xl bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center">
                         <span class="material-symbols-outlined text-gold-accent">{{ $doc[0] }}</span>
                     </div>
@@ -68,52 +112,13 @@
                         <p class="font-title-md text-sm text-on-surface leading-snug">{{ $doc[1] }}</p>
                     </div>
                     <span class="inline-flex w-fit items-center gap-1.5 px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">
-                        <span class="material-symbols-outlined fill text-[12px]">check_circle</span>{{ $doc[2] }}
+                        <span class="material-symbols-outlined fill text-[12px]">check_circle</span>Terverifikasi
                     </span>
                 </div>
             @endforeach
         </div>
     </section>
-
-    {{-- Riwayat Pengajuan --}}
-    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
-        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Riwayat Pengajuan</h2>
-        <div data-table-wrap class="overflow-x-auto">
-            <table class="premium-table w-full min-w-[760px] font-body-md text-sm">
-                <thead>
-                    <tr class="border-b border-muted-border text-left">
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Versi</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tanggal Kirim</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Catatan Super Admin</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-b border-muted-border last:border-0 align-top">
-                        <td class="py-4 px-4 font-bold text-on-surface whitespace-nowrap">v1.1</td>
-                        <td class="py-4 px-4 text-on-surface-variant whitespace-nowrap">14 Mar 2026</td>
-                        <td class="py-4 px-4 text-on-surface max-w-md">Semua dokumen valid. Foto toko sudah jelas dan sesuai alamat terdaftar.</td>
-                        <td class="py-4 px-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Disetujui</span></td>
-                        <td class="py-4 px-4 text-right"><button type="button" data-drawer-open="drawer-detail" class="text-xs font-semibold text-gold-accent hover:underline">Detail</button></td>
-                    </tr>
-                    <tr class="border-b border-muted-border align-top">
-                        <td class="py-4 px-4 font-bold text-on-surface whitespace-nowrap">v1.0</td>
-                        <td class="py-4 px-4 text-on-surface-variant whitespace-nowrap">02 Mar 2026</td>
-                        <td class="py-4 px-4 text-error max-w-md">Foto depan toko tidak sesuai dengan alamat yang terdaftar pada dokumen usaha. Mohon unggah foto terbaru yang jelas menampilkan nama dan alamat toko.</td>
-                        <td class="py-4 px-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Ditolak</span></td>
-                        <td class="py-4 px-4 text-right">
-                            <span class="text-xs text-on-surface-variant">Read-only</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div data-empty-state class="hidden flex-col items-center py-10 text-center gap-2">
-            <span class="material-symbols-outlined text-[40px] text-on-surface-variant">inbox</span>
-            <p class="text-on-surface-variant font-body-md text-sm">Belum ada riwayat pengajuan.</p>
-        </div>
-    </section>
+    @endif
 </div>
 
 @endsection
