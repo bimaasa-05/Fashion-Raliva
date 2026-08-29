@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 
-<html class="light" lang="{{ app()->getLocale() }}"><head>
+<html lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta name="color-scheme" content="light dark"/>
 <title>RALIVA - {{ __('Order Tracking') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -22,7 +25,7 @@
                         "primary-fixed-dim": "#c8c6c5",
                         "surface-variant": "#e3e2e2",
                         "on-surface": "#1b1c1c",
-                        "secondary": "#795905",
+                        "secondary": "#8B1E1E",
                         "surface-dim": "#dbdad9",
                         "on-error": "#ffffff",
                         "primary": "#000000",
@@ -30,7 +33,7 @@
                         "tertiary-container": "#1a1c1a",
                         "error-container": "#ffdad6",
                         "on-tertiary": "#ffffff",
-                        "secondary-fixed": "#ffdf9f",
+                        "secondary-fixed": "#8B1E1E",
                         "on-primary": "#ffffff",
                         "surface-container-lowest": "#ffffff",
                         "error": "#ba1a1a",
@@ -41,20 +44,20 @@
                         "primary-fixed": "#e5e2e1",
                         "outline-variant": "#c4c7c7",
                         "surface-tint": "#5f5e5e",
-                        "secondary-fixed-dim": "#ebc168",
+                        "secondary-fixed-dim": "#8B1E1E",
                         "outline": "#747878",
                         "on-primary-fixed-variant": "#474646",
-                        "on-secondary-fixed-variant": "#5c4300",
+                        "on-secondary-fixed-variant": "#5E0F0F",
                         "on-tertiary-fixed": "#1a1c1a",
-                        "on-secondary-container": "#775804",
+                        "on-secondary-container": "#5E0F0F",
                         "inverse-on-surface": "#f2f0f0",
                         "tertiary-fixed-dim": "#c7c6c4",
                         "tertiary-fixed": "#e3e2df",
                         "surface-container-high": "#e9e8e7",
-                        "on-secondary-fixed": "#261a00",
+                        "on-secondary-fixed": "#5E0F0F",
                         "background": "#fbf9f9",
                         "surface": "#fbf9f9",
-                        "secondary-container": "#fdd177",
+                        "secondary-container": "#8B1E1E",
                         "on-surface-variant": "#444748",
                         "primary-container": "#1c1b1b",
                         "inverse-primary": "#c8c6c5",
@@ -76,8 +79,7 @@
                         "container-margin": "20px",
                         "sm": "16px",
                         "md": "24px",
-                        "xs": "8px",
-                        "safe": "env(safe-area-inset-bottom)"
+                        "xs": "8px"
                     },
                     "fontFamily": {
                         "display-lg": ["Playfair Display"],
@@ -148,7 +150,7 @@
         --chrome-text-faint: rgba(0,0,0,.45);
         --chrome-border: rgba(0,0,0,.1);
         --chrome-hover: rgba(0,0,0,.06);
-        --chrome-accent: #795905;
+        --chrome-accent: #8B1E1E;
     }
     html.theme-dark {
         --chrome-bg: #1c1b1b;
@@ -158,7 +160,7 @@
         --chrome-text-faint: rgba(255,255,255,.5);
         --chrome-border: rgba(255,255,255,.1);
         --chrome-hover: rgba(255,255,255,.1);
-        --chrome-accent: #ebc168;
+        --chrome-accent: #A32626;
     }
 </style>
 <style>
@@ -185,7 +187,7 @@
     html.theme-dark .text-outline { color: #8a8781 !important; }
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
-    html.theme-dark .text-secondary { color: #ebc168 !important; }
+    html.theme-dark .text-secondary { color: #A32626 !important; }
     html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
     html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
@@ -199,7 +201,7 @@
     html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
     html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
     html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
-    html.theme-dark .hover\:text-secondary:hover { color: #ebc168 !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #A32626 !important; }
     html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
     html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
     html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
@@ -213,10 +215,59 @@
     html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+        .no-scrollbar::-webkit-scrollbar, .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar, .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+</style>
+<style>
+    /* ============  BUTTON + LIGHT FLASH (burgundy - parity home/shop) ============ */
+    .btn-gold {
+        position: relative;
+        overflow: hidden;
+        background-color: var(--btn-gold-bg) !important;
+        color: var(--btn-gold-text) !important;
+    }
+    .btn-gold::after {
+        content: '';
+        position: absolute;
+        top: -10%;
+        bottom: -10%;
+        left: -80%;
+        width: 45%;
+        background: rgba(255,255,255,.55);
+        transform: skewX(-24deg);
+        pointer-events: none;
+    }
+    .btn-gold:hover::after { animation: authFlash 1.4s linear infinite; }
+    .btn-gold.flashing::after { animation: authFlash 1.4s cubic-bezier(.4,0,.2,1) 1; }
+    @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
+    :root           { --btn-gold-bg: #8B1E1E; --btn-gold-text: #ffffff; }
+    html.theme-dark { --btn-gold-bg: #5E0F0F; --btn-gold-text: #ffffff; }
+</style>
+<style>
+    /* ============ Order-Tracking: remap drawer + bottom-nav accent to burgundy (parity home/shop) ============ */
+    #drawer-panel { --chrome-accent: #8B1E1E; --gold-wash: rgba(139,30,30,.10); }
+    html.theme-dark #drawer-panel { --chrome-accent: #A32626; --gold-wash: rgba(163,38,38,.16); }
+    .bn-active .material-symbols-outlined { color: #8B1E1E !important; }
+    html.theme-dark .bn-active .material-symbols-outlined { color: #A32626 !important; }
+    .bn-active { color: #8B1E1E !important; }
+    html.theme-dark .bn-active { color: #A32626 !important; }
+</style>
   </head>
-<body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen lg:pl-72">
-<!-- TopAppBar (Transactional variation - Back button) -->
-<header class="flex justify-between items-center w-full px-container-margin h-16 bg-[var(--chrome-bg)] text-[var(--chrome-text)] border-b border-[var(--chrome-border)] sticky top-0 z-50">
+<body class="bg-surface text-on-surface antialiased font-body-lg flex flex-col min-h-screen pb-[72px] md:pb-0 lg:pl-72">
+<!-- TopAppBar (parity home/shop - fixed with burgundy) -->
+<header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
 <a href="{{ auth()->check() ? route('customer.account') : route('login', ['redirect' => route('customer.account')]) }}" class="w-10 h-10 flex items-center justify-start hover:opacity-80 transition-opacity">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
@@ -224,7 +275,7 @@
 <div class="w-10"></div> <!-- Spacer for centering -->
 </header>
 <!-- Main Content Canvas -->
-<main class="flex-grow pb-32 lg:pb-16 lg:max-w-screen-xl lg:mx-auto w-full"> <!-- Extra padding for bottom nav -->
+<main class="flex-grow pt-16 pb-32 lg:pb-16 lg:max-w-screen-xl lg:mx-auto w-full"> <!-- pt-16 for fixed header, pb for bottom nav -->
 <!-- Order Header -->
 <section class="px-container-margin py-lg border-b border-outline-variant">
 <div class="flex justify-between items-end">
