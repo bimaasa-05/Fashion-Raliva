@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Gudang;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\Product;
 use App\Models\StockMovement;
 use App\Models\WarehouseStock;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -27,6 +27,8 @@ class DashboardController extends Controller
                 'recentActivity' => collect(),
                 'chart' => ['labels' => [], 'masuk' => [], 'keluar' => []],
                 'statusDist' => ['aman' => 0, 'menipis' => 0, 'kritis' => 0, 'habis' => 0],
+                'leaderboardData' => [],
+                'barsData' => [],
             ]);
         }
 
@@ -86,8 +88,8 @@ class DashboardController extends Controller
 
         // Pelanggan request = pesanan toko ini yang menunggu pemenuhan gudang
         // (status dibayar/diproses), konsisten dengan halaman Pelanggan Request.
-        $pelangganRequest = \App\Models\Order::where('store_id', $warehouse->store_id)
-            ->whereIn('status', [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_DIPROSES])
+        $pelangganRequest = Order::where('store_id', $warehouse->store_id)
+            ->whereIn('status', [Order::STATUS_DIBAYAR, Order::STATUS_DIPROSES])
             ->count();
 
         // --- Widget ringkasan real (pengganti kartu statis hardcode) ---
@@ -101,11 +103,11 @@ class DashboardController extends Controller
         $akurasiPct = $totalVarian > 0 ? (int) round($varianTersedia / $totalVarian * 100) : 100;
 
         // SLA pemenuhan = persentase pesanan menunggu yang stoknya tersedia di gudang ini.
-        $orderRequests = \App\Models\Order::where('store_id', $warehouse->store_id)
-            ->whereIn('status', [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_DIPROSES])
+        $orderRequests = Order::where('store_id', $warehouse->store_id)
+            ->whereIn('status', [Order::STATUS_DIBAYAR, Order::STATUS_DIPROSES])
             ->with(['items.productVariant'])
             ->get();
-        $stokWh = \App\Models\WarehouseStock::where('warehouse_id', $warehouseId)
+        $stokWh = WarehouseStock::where('warehouse_id', $warehouseId)
             ->pluck('jumlah_stok', 'product_variant_id');
         $reqTersedia = 0;
         foreach ($orderRequests as $o) {
@@ -127,7 +129,7 @@ class DashboardController extends Controller
             return (object) [
                 'nama' => $grp->first()->nama,
                 'jumlah' => $grp->sum('jumlah'),
-                'sku' => \App\Models\Product::where('category_id', $grp->first()->sku)->count(),
+                'sku' => Product::where('category_id', $grp->first()->sku)->count(),
             ];
         })->sortByDesc('jumlah')->take(4)->values();
 
@@ -141,6 +143,20 @@ class DashboardController extends Controller
             'habis' => $statusCounts['habis'] ?? 0,
             'rusak' => $pelangganRequest,
         ];
+
+        $maxKategori = $kategoriTerbesar->max('jumlah') ?: 1;
+        $leaderboardData = $kategoriTerbesar->map(function ($k, $i) use ($maxKategori) {
+            return [
+                'name' => $k->nama,
+                'meta' => ($k->sku ?? 0).' produk • Rak '.chr(65 + $i),
+                'display' => number_format($k->jumlah, 0, ',', '.').' pcs',
+                'pct' => (int) round($k->jumlah / $maxKategori * 100),
+            ];
+        })->values()->all();
+
+        $barsData = collect($chart['labels'] ?? [])->map(function ($label, $i) use ($chart) {
+            return ['label' => $label, 'value' => $chart['masuk'][$i] ?? 0];
+        })->values()->all();
 
         return view('Gudang.dashboard.index', [
             'warehouses' => $warehouses,
@@ -171,6 +187,8 @@ class DashboardController extends Controller
                 'total' => $orderRequests->count(),
             ],
             'kategoriTerbesar' => $kategoriTerbesar,
+            'leaderboardData' => $leaderboardData,
+            'barsData' => $barsData,
         ]);
     }
 
