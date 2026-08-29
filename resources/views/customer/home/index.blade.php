@@ -25,7 +25,7 @@
                         "primary-fixed-dim": "#c8c6c5",
                         "surface-variant": "#e3e2e2",
                         "on-surface": "#1b1c1c",
-                        "secondary": "#8B1E1E",
+                        "secondary": "#8B1E3F",
                         "surface-dim": "#dbdad9",
                         "on-error": "#ffffff",
                         "primary": "#000000",
@@ -33,9 +33,9 @@
                         "tertiary-container": "#1a1c1a",
                         "error-container": "#ffdad6",
                         "on-tertiary": "#ffffff",
-                        "secondary-fixed": "#8B1E1E",
+                        "secondary-fixed": "#8B1E3F",
                         "on-primary": "#ffffff",
-                        "surface-container-lowest": "#ffffff",
+                        "surface-container-lowest": "#F8F6F2",
                         "error": "#ba1a1a",
                         "surface-container-highest": "#e3e2e2",
                         "inverse-surface": "#303031",
@@ -44,20 +44,20 @@
                         "primary-fixed": "#e5e2e1",
                         "outline-variant": "#c4c7c7",
                         "surface-tint": "#5f5e5e",
-                        "secondary-fixed-dim": "#8B1E1E",
+                        "secondary-fixed-dim": "#8B1E3F",
                         "outline": "#747878",
                         "on-primary-fixed-variant": "#474646",
-                        "on-secondary-fixed-variant": "#5E0F0F",
+                        "on-secondary-fixed-variant": "#6D1428",
                         "on-tertiary-fixed": "#1a1c1a",
-                        "on-secondary-container": "#5E0F0F",
+                        "on-secondary-container": "#6D1428",
                         "inverse-on-surface": "#f2f0f0",
                         "tertiary-fixed-dim": "#c7c6c4",
                         "tertiary-fixed": "#e3e2df",
                         "surface-container-high": "#e9e8e7",
-                        "on-secondary-fixed": "#5E0F0F",
-                        "background": "#fbf9f9",
-                        "surface": "#fbf9f9",
-                        "secondary-container": "#8B1E1E",
+                        "on-secondary-fixed": "#6D1428",
+                        "background": "#F3F0EA",
+                        "surface": "#F3F0EA",
+                        "secondary-container": "#8B1E3F",
                         "on-surface-variant": "#444748",
                         "primary-container": "#1c1b1b",
                         "inverse-primary": "#c8c6c5",
@@ -109,14 +109,18 @@
     </script>
 <style>
         :root {
-        --chrome-bg: #ffffff;
+        --chrome-bg: #ffffff;          /* header/nav */
         --chrome-bg-soft: rgba(255,255,255,.92);
-        --chrome-text: #1b1c1c;
-        --chrome-text-dim: rgba(0,0,0,.55);
-        --chrome-text-faint: rgba(0,0,0,.45);
-        --chrome-border: rgba(0,0,0,.1);
-        --chrome-hover: rgba(0,0,0,.06);
-        --chrome-accent: #8B1E1E;
+        --chrome-text: #111111;
+        --chrome-text-dim: rgba(17,17,17,.55);
+        --chrome-text-faint: rgba(17,17,17,.45);
+        --chrome-border: #E5E1DA;
+        --chrome-hover: rgba(17,17,17,.05);
+        --chrome-accent: #8B1E3F;       /* Burgundy */
+        --surface-ivory: #F8F6F2;       /* Soft Ivory */
+        --surface-warm: #F3F0EA;        /* Warm Ivory */
+        --border-soft: #E5E1DA;
+        --text-muted: #777777;          /* Secondary Text */
     }
     html.theme-dark {
         --chrome-bg: #1c1b1b;
@@ -126,7 +130,11 @@
         --chrome-text-faint: rgba(255,255,255,.5);
         --chrome-border: rgba(255,255,255,.1);
         --chrome-hover: rgba(255,255,255,.1);
-        --chrome-accent: #A32626;
+        --chrome-accent: #8B1E3F;       /* Burgundy (same identity) */
+        --surface-ivory: #1e1d1c;       /* dark secondary surface */
+        --surface-warm: #201f1e;        /* dark elevated surface */
+        --border-soft: rgba(255,255,255,.1);
+        --text-muted: #b9b6b1;
     }
 </style>
 <style>
@@ -175,7 +183,7 @@
     html.theme-dark .text-outline { color: #8a8781 !important; }
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
-    html.theme-dark .text-secondary { color: #A32626 !important; }
+    html.theme-dark .text-secondary { color: #8B1E3F !important; }
     html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
     html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
@@ -189,7 +197,7 @@
     html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
     html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
     html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
-    html.theme-dark .hover\:text-secondary:hover { color: #A32626 !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #8B1E3F !important; }
     html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
     html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
     html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
@@ -225,8 +233,8 @@
     .btn-gold:hover::after { animation: authFlash 1.4s linear infinite; }
     .btn-gold.flashing::after { animation: authFlash 1.4s cubic-bezier(.4,0,.2,1) 1; }
     @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
-    :root           { --btn-gold-bg: #8B1E1E; --btn-gold-text: #ffffff; }
-    html.theme-dark { --btn-gold-bg: #5E0F0F; --btn-gold-text: #ffffff; }
+    :root           { --btn-gold-bg: #8B1E3F; --btn-gold-text: #ffffff; }
+    html.theme-dark { --btn-gold-bg: #6D1428; --btn-gold-text: #ffffff; }
 
     /* ============ HERO ENTRANCE (image fade + staggered text) ============ */
     @keyframes heroFade { from { opacity: 0; } to { opacity: 1; } }
@@ -270,15 +278,15 @@
     /* ============ RALIVA HOME: remap drawer + bottom-nav accent to burgundy (Register language)
        Scoped so only the Home page is affected; other customer pages keep their own theme. ============ */
     #drawer-panel {
-        --chrome-accent: #8B1E1E;
-        --gold-wash: rgba(139, 30, 30, .10);
+        --chrome-accent: #8B1E3F;
+        --gold-wash: rgba(139, 30, 63, .10);
     }
     html.theme-dark #drawer-panel {
-        --chrome-accent: #A32626;
-        --gold-wash: rgba(163, 38, 38, .16);
+        --chrome-accent: #8B1E3F;
+        --gold-wash: rgba(109, 20, 40, .16);
     }
-    .bn-active .material-symbols-outlined { color: #8B1E1E !important; }
-    html.theme-dark .bn-active .material-symbols-outlined { color: #A32626 !important; }
+    .bn-active .material-symbols-outlined { color: #8B1E3F !important; }
+    html.theme-dark .bn-active .material-symbols-outlined { color: #8B1E3F !important; }
 </style>
 </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72">
@@ -307,7 +315,8 @@
 <img alt="RALIVA Home Editorial 2" src="{{ asset('storage/home-pictures/2.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" data-hero-slide/>
 <img alt="RALIVA Home Editorial 3" src="{{ asset('storage/home-pictures/3.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" data-hero-slide/>
 </div>
-<div class="absolute inset-0 bg-black/45"></div>
+<div class="absolute inset-0 bg-black/15"></div>
+<div class="absolute inset-0" style="background: radial-gradient(120% 90% at 50% 100%, rgba(0,0,0,.42) 0%, rgba(0,0,0,0) 55%);"></div>
 <div class="hero-content relative z-10 h-full flex flex-col justify-end items-center text-center px-container-margin pb-xl">
 <span class="hero-reveal font-label-caps text-label-caps uppercase tracking-[0.22em] text-white/90 mb-sm">{{ __('NEW COLLECTION') }}</span>
 <h2 class="hero-reveal font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-white mb-xs max-w-xl">{{ __('The Art of Everyday Dressing') }}</h2>
@@ -316,7 +325,7 @@
 </div>
 </section>
 <!-- Categories -->
-<section class="py-lg border-b border-outline-variant">
+<section class="py-lg border-b border-outline-variant" style="background-color: var(--surface-ivory);">
 <div class="flex overflow-x-auto no-scrollbar px-container-margin gap-sm pb-xs">
 <button type="button" data-cat="All" onclick="selectHomeCategory(null)" class="home-cat-pill shrink-0 px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('Semua') }}</button>
 <button type="button" data-cat="Women" onclick="selectHomeCategory('Women')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Women') }}</button>
@@ -327,7 +336,7 @@
 </div>
 </section>
 <!-- New Arrivals -->
-<section class="py-xl px-container-margin reveal-up">
+<section class="py-xl px-container-margin reveal-up" style="background-color: var(--surface-ivory);">
 <div class="atl-eyebrow mb-xs">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('New Arrivals') }}</span>
 </div>
@@ -396,7 +405,7 @@
 </div>
 </section>
 <!-- Featured Stores -->
-<section class="py-xl bg-surface-container-low border-t border-b border-outline-variant reveal-up">
+<section class="py-xl border-t border-b border-outline-variant reveal-up" style="background-color: var(--surface-warm);">
 <div class="px-container-margin mb-md">
 <div class="atl-eyebrow mb-xs">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Featured Stores') }}</span>
@@ -439,7 +448,7 @@
 </div>
 </section>
 <!-- Newsletter -->
-<section class="py-xl px-container-margin border-b border-outline-variant reveal-up">
+<section class="py-xl px-container-margin border-b border-outline-variant reveal-up" style="background-color: var(--surface-ivory);">
 <div class="mx-auto max-w-[1200px] flex flex-col items-center text-center">
 <div class="atl-eyebrow mb-xs justify-center">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Newsletter') }}</span>
@@ -454,7 +463,7 @@
 </section>
 </main>
 <!-- Footer -->
-<footer class="bg-surface-bright py-xl px-container-margin md:pb-xl pb-32 reveal-up">
+<footer class="py-xl px-container-margin md:pb-xl pb-32 reveal-up" style="background-color: var(--surface-ivory);">
 <div class="mx-auto max-w-[1200px]">
 <div class="grid grid-cols-1 md:grid-cols-12 gap-xl mb-xl">
 <div class="md:col-span-6">
