@@ -50,6 +50,9 @@
     <section>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <h2 data-reveal class="font-title-md text-title-md text-on-surface premium-heading">Daftar Promo</h2>
+            <button type="button" data-modal-open="modal-tambah-promo" class="py-2.5 px-5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center gap-2 shrink-0">
+                <span class="material-symbols-outlined text-[18px]">add</span>Tambah Promo
+            </button>
         </div>
 
         <div data-reveal-group class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-section-gap">
@@ -92,6 +95,74 @@
             @endforelse
         </div>
     </section>
+</div>
+
+{{-- Modal Tambah Promo (centered) --}}
+<div id="modal-tambah-promo" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Promo Baru</h3>
+                <p class="text-on-surface-variant font-body-md text-xs mt-1">Promo akan langsung aktif untuk toko Anda.</p>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form method="POST" action="{{ route('owner.promo.store') }}" class="p-6 space-y-5">
+            @csrf
+            <div class="grid grid-cols-2 gap-gutter">
+                <div>
+                    <label class="block raliva-label mb-2">Kode Promo</label>
+                    <input name="kode_promo" type="text" required placeholder="DISKON10" class="raliva-input uppercase" />
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">Nama Promo</label>
+                    <input name="nama_promo" type="text" required placeholder="Diskon Lebaran" class="raliva-input" />
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-gutter">
+                <div>
+                    <label class="block raliva-label mb-2">Tipe Diskon</label>
+                    <select name="tipe_diskon" class="raliva-select">
+                        <option value="persen">Persen (%)</option>
+                        <option value="nominal">Nominal (Rp)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">Nilai Diskon</label>
+                    <input name="nilai_diskon" type="number" min="1" required placeholder="10" class="raliva-input" />
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-gutter">
+                <div>
+                    <label class="block raliva-label mb-2">Min. Pembelian (Rp)</label>
+                    <input name="minimal_pembelian" type="number" min="0" placeholder="0" class="raliva-input" />
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">Maks. Diskon (Rp)</label>
+                    <input name="maksimal_diskon" type="number" min="0" placeholder="opsional" class="raliva-input" />
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-gutter">
+                <div>
+                    <label class="block raliva-label mb-2">Mulai</label>
+                    <input name="mulai_pada" type="date" required value="{{ date('Y-m-d') }}" class="raliva-input" />
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">Berakhir</label>
+                    <input name="berakhir_pada" type="date" required class="raliva-input" />
+                </div>
+            </div>
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-[16px]">check_circle</span>Simpan Promo
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 @endsection
