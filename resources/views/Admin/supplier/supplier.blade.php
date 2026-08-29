@@ -37,7 +37,7 @@
     <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium">
         <div class="p-4 md:p-6 pb-0">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-6">
-                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Supplier</h2>
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Supplier</h2>
                 <button type="button" data-modal-open="modal-form-supplier" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
                     <span class="material-symbols-outlined text-[18px]">add</span> Tambah Supplier
                 </button>
@@ -143,7 +143,7 @@
 <!-- Modal Form Supplier -->
 <div id="modal-form-supplier" data-modal class="fixed inset-0 z-[70] hidden">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close></div>
-    <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
+    <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-lg border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
         <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div>
                 <h3 id="supplier-modal-title" class="font-title-md text-title-md text-on-surface premium-heading">Tambah Supplier Baru</h3>
@@ -154,20 +154,20 @@
         <form data-toast-message="Data supplier berhasil disimpan." class="p-6 space-y-5">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="supplierNama">Nama Supplier</label>
-                    <input type="text" id="supplierNama" required placeholder="Misal: CV Tekstil Bandung" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" />
+                    <label class="raliva-label" for="supplierNama">Nama Supplier</label>
+                    <input type="text" id="supplierNama" required placeholder="Misal: CV Tekstil Bandung" class="raliva-input" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="supplierKota">Kota</label>
-                    <input type="text" id="supplierKota" required placeholder="Misal: Bandung" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" />
+                    <label class="raliva-label" for="supplierKota">Kota</label>
+                    <input type="text" id="supplierKota" required placeholder="Misal: Bandung" class="raliva-input" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="supplierKontak">Nama Kontak</label>
-                    <input type="text" id="supplierKontak" required placeholder="Nama PIC" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" />
+                    <label class="raliva-label" for="supplierKontak">Nama Kontak</label>
+                    <input type="text" id="supplierKontak" required placeholder="Nama PIC" class="raliva-input" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="supplierTelp">No. Telepon</label>
-                    <input type="tel" id="supplierTelp" required placeholder="08xx-xxxx-xxxx" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" />
+                    <label class="raliva-label" for="supplierTelp">No. Telepon</label>
+                    <input type="tel" id="supplierTelp" required placeholder="08xx-xxxx-xxxx" class="raliva-input" />
                 </div>
             </div>
             <div>
@@ -196,8 +196,8 @@
                 </div>
             </div>
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="supplierCatatan">Catatan</label>
-                <textarea id="supplierCatatan" rows="3" placeholder="Syarat pembayaran, minimal order, dsb." class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50"></textarea>
+                <label class="raliva-label" for="supplierCatatan">Catatan</label>
+                <textarea class="raliva-textarea" id="supplierCatatan" rows="3" placeholder="Syarat pembayaran, minimal order, dsb."></textarea>
             </div>
             <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
                 <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
