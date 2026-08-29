@@ -54,6 +54,7 @@ class ProdukController extends Controller
             'total' => $usedSlot,
             'aktif' => Product::where('store_id', $storeId)->where('status', 'aktif')->count(),
             'nonaktif' => Product::where('store_id', $storeId)->where('status', 'nonaktif')->count(),
+            'varian' => \App\Models\ProductVariant::whereHas('product', fn($q) => $q->where('store_id', $storeId))->count(),
         ];
 
         return view('Owner.produk.index', compact('products', 'counts', 'totalSlot', 'usedSlot'));
