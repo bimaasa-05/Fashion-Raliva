@@ -9,7 +9,7 @@
 @section('content')
 <div class="space-y-section-gap">
     <section>
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Komplain Perlu Respons</h2>
+        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Komplain Perlu Respons</h2>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
                 <div class="flex items-start justify-between mb-4">
@@ -22,7 +22,7 @@
                 <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 mb-4">
                     <p class="font-body-md text-sm text-on-surface-variant">"Saya order size L tapi yang datang M. Mohon solusinya, karena butuh untuk acara minggu depan." â€” <span class="text-on-surface font-bold">Sarah Jenkins</span></p>
                 </div>
-                <textarea class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-sm focus:outline-none focus:border-gold-accent mb-4" rows="2" placeholder="Tulis balasan untuk customer..."></textarea>
+                <textarea class="raliva-textarea" rows="2" placeholder="Tulis balasan untuk customer..."></textarea>
                 <div class="flex gap-3">
                     <button type="button" onclick="showRalivaToast('Balasan terkirim ke customer.', 'send')" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Kirim Balasan</button>
                     <button class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors" onclick="showRalivaToast('Komplain dieskalasi ke Owner Toko.', 'move_up')">Eskalasi ke Owner</button>
@@ -49,7 +49,7 @@
     </section>
 
     <section class="space-y-gutter">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Riwayat Komplain</h2>
+        <h2 class="font-title-md text-title-md text-on-surface premium-heading">Riwayat Komplain</h2>
         <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
             <table class="w-full min-w-[750px] premium-table">
                 <thead>
