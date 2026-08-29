@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Data Pesanan')
 
@@ -21,7 +21,7 @@
 
 @section('content')
 @php
-    /* ===== DUMMY DATA (sementara) — ganti sumber DB hingga backend siap ===== */
+    /* ===== DUMMY DATA (sementara) â€” ganti sumber DB hingga backend siap ===== */
     $statuses = [
         'pending_payment' => 'Menunggu Bayar',
         'dibayar' => 'Baru',
@@ -57,7 +57,7 @@
 
 <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Pesanan Toko</h2>
+        <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Pesanan Toko</h2>
         <span class="text-on-surface-variant font-label-sm text-[11px] uppercase tracking-wider">Scope: {{ \Illuminate\Support\Str::limit(\App\Models\Store::whereIn('store_id', \App\Support\AdminContext::assignedStoreIds())->pluck('nama_toko')->implode(', '), 60) }}</span>
     </div>
 
@@ -106,7 +106,7 @@
                             <p class="text-on-surface">{{ $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</p>
                             <p class="text-on-surface-variant text-xs">{{ $pesanan->store?->nama_toko }}</p>
                         </td>
-                        <td class="p-4 text-on-surface" title="{{ $pesanan->items->pluck('nama_produk_snapshot')->implode(', ') }}">{{ $pesanan->items->count() }} produk • {{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->first(), 28) }}</td>
+                        <td class="p-4 text-on-surface" title="{{ $pesanan->items->pluck('nama_produk_snapshot')->implode(', ') }}">{{ $pesanan->items->count() }} produk &#8226; {{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->first(), 28) }}</td>
                         <td class="p-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format((float) $pesanan->grand_total, 0, ',', '.') }}</td>
                         <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $badge['class'] }}">{{ $badge['label'] }}</span></td>
                         <td class="p-4 text-right whitespace-nowrap">
@@ -140,7 +140,7 @@
 <form method="POST" action="" id="batalkan-pesanan-form" onsubmit="closeBatalkanPesanan()">
     @csrf
     <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="batalkanPesananModal" onclick="if (event.target === this) closeBatalkanPesanan()">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
+        <div class="bg-surface-container-lowest w-full max-w-md rounded-lg border border-muted-border shadow-2xl overflow-hidden">
             <div class="p-8">
                 <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
                     <span class="material-symbols-outlined text-error text-[28px]">cancel</span>
@@ -148,7 +148,7 @@
                 <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Batalkan Pesanan</h3>
                 <p class="text-on-surface-variant text-sm text-center mb-4">Pesanan <span id="batalkan-nomor" class="font-mono font-bold text-on-surface">-</span> akan dibatalkan dan Customer dinotifikasi.</p>
                 <textarea name="alasan" required minlength="10" maxlength="1000" rows="3"
-                    class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-4"
+                    class="raliva-textarea"
                     placeholder="Alasan pembatalan... (minimal 10 karakter)"></textarea>
                 <div class="flex space-x-3">
                     <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeBatalkanPesanan()">Batal</button>
@@ -161,7 +161,7 @@
 
 <div id="detail-pesanan" data-modal class="fixed inset-0 z-[70] hidden">
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-    <div class="relative mx-auto mt-16 md:mt-24 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6 max-h-[80vh] overflow-y-auto">
+    <div class="relative mx-auto mt-16 md:mt-24 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl p-6 max-h-[80vh] overflow-y-auto">
         <div class="flex items-start justify-between gap-4 mb-6">
             <div>
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading">Detail Pesanan</h3>
