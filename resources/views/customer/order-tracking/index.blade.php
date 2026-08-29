@@ -372,14 +372,11 @@
 <!-- Order Items List -->
 <section class="px-container-margin py-lg md:py-xl border-t border-outline-variant reveal-up">
 <div class="max-w-[960px] mx-auto">
-<div class="flex items-center justify-between mb-md">
-<div>
+<div class="mb-md">
 <div class="atl-eyebrow mb-1">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Order Items') }}</span>
 </div>
 <h2 class="font-title-md md:font-headline-md text-title-md md:text-headline-md text-on-surface">{{ __('Items in Order') }} <span class="font-body-sm text-body-sm text-on-surface-variant font-normal">• 2 items</span></h2>
-</div>
-<a href="{{ route('customer.shop') }}" class="hidden md:inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary hover:text-secondary/80 transition-colors">{{ __('Browse Shop') }} <span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
 </div>
 <div class="flex flex-col gap-sm md:gap-md">
 <!-- Item 1 -->
@@ -461,15 +458,11 @@
 </div>
 <h3 class="font-title-md text-title-md text-on-surface mb-xs">{{ __('We’re here for you') }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mb-md max-w-md mx-auto">{{ __('Questions about your order? Our team typically replies within 2 hours.') }}</p>
-<div class="flex flex-col sm:flex-row gap-sm justify-center">
-<button class="inline-flex items-center justify-center gap-2 border border-secondary text-secondary font-label-caps text-label-caps px-lg py-sm rounded-full hover:bg-secondary/5 transition-colors" type="button">
+<div class="flex justify-center">
+<button class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest" type="button">
 <span class="material-symbols-outlined text-[18px]">support_agent</span>
                     {{ __('Contact Customer Service') }}
                 </button>
-<a href="{{ route('customer.shop') }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest">
-<span class="material-symbols-outlined text-[18px]">shopping_bag</span>
-                    {{ __('Continue Shopping') }}
-                </a>
 </div>
 </div>
 </div>
