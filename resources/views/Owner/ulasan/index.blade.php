@@ -3,7 +3,7 @@
 @section('title', 'Ulasan & Penilaian')
 
 @section('header-title', 'Ulasan & Penilaian')
-@section('header-badge', '4,9 / 5,0')
+@section('header-badge', number_format($avg, 1, ',', '.') . ' / 5,0')
 @section('header-subtitle', 'Rating dan ulasan customer sebagai bahan evaluasi produk dan layanan.')
 
 @section('content')
@@ -44,17 +44,21 @@
                 @endforeach
             </ul>
             <div class="grid grid-cols-3 gap-gutter mt-7 pt-6 border-t border-muted-border">
+                @php
+                    $positif = $total > 0 ? round((($distribution[4]['count'] ?? 0) + ($distribution[5]['count'] ?? 0)) / $total * 100) : 0;
+                    $rendah = ($distribution[1]['count'] ?? 0) + ($distribution[2]['count'] ?? 0) + ($distribution[3]['count'] ?? 0);
+                @endphp
                 <div class="text-center">
-                    <p class="font-title-md text-title-md text-on-surface">97%</p>
+                    <p class="font-title-md text-title-md text-secondary">{{ $positif }}%</p>
                     <p class="text-xs text-on-surface-variant mt-1">Ulasan positif</p>
                 </div>
                 <div class="text-center border-x border-muted-border">
-                    <p class="font-title-md text-title-md text-on-surface">&lt; 2 jam</p>
-                    <p class="text-xs text-on-surface-variant mt-1">Rata-rata balasan</p>
+                    <p class="font-title-md text-title-md text-on-surface">{{ $total }}</p>
+                    <p class="text-xs text-on-surface-variant mt-1">Total ulasan</p>
                 </div>
                 <div class="text-center">
-                    <p class="font-title-md text-title-md text-on-surface">12</p>
-                    <p class="text-xs text-on-surface-variant mt-1">Belum dibalas</p>
+                    <p class="font-title-md text-title-md text-gold-accent">{{ number_format($avg, 1, ',', '.') }}</p>
+                    <p class="text-xs text-on-surface-variant mt-1">Rata-rata bintang</p>
                 </div>
             </div>
         </section>
@@ -117,31 +121,6 @@
                 if (target === 'rendah') show = card.getAttribute('data-rendah') === 'yes';
                 card.classList.toggle('hidden', !show);
             });
-        });
-    });
-
-    document.querySelectorAll('[data-reply-toggle]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            const form = btn.closest('article').querySelector('[data-reply-form]');
-            form.classList.remove('hidden');
-            form.querySelector('textarea').focus();
-        });
-    });
-
-    document.querySelectorAll('[data-reply-cancel]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            const form = btn.closest('[data-reply-form]');
-            form.reset();
-            form.classList.add('hidden');
-        });
-    });
-
-    document.querySelectorAll('form[data-reply-form]').forEach((form) => {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            window.showRalivaToast(form.getAttribute('data-toast-message'));
-            form.reset();
-            form.classList.add('hidden');
         });
     });
 </script>
