@@ -20,7 +20,7 @@
                         "on-primary-fixed": "#1c1b1b",
                         "on-error-container": "#93000a",
                         "on-tertiary-container": "#848482",
-                        "surface-bright": "#fbf9f9",
+                        "surface-bright": "#f2f0ee",
                         "on-primary-container": "#858383",
                         "primary-fixed-dim": "#c8c6c5",
                         "surface-variant": "#e3e2e2",
@@ -35,17 +35,17 @@
                         "on-tertiary": "#ffffff",
                         "secondary-fixed": "#8B1E1E",
                         "on-primary": "#ffffff",
-                        "surface-container-lowest": "#ffffff",
+                        "surface-container-lowest": "#f5f3f1",
                         "error": "#ba1a1a",
                         "surface-container-highest": "#e3e2e2",
                         "inverse-surface": "#303031",
-                        "surface-container": "#efeded",
+                        "surface-container": "#e8e6e4",
                         "tertiary": "#000000",
                         "primary-fixed": "#e5e2e1",
-                        "outline-variant": "#c4c7c7",
+                        "outline-variant": "#c8c6c4",
                         "surface-tint": "#5f5e5e",
                         "secondary-fixed-dim": "#8B1E1E",
-                        "outline": "#747878",
+                        "outline": "#797775",
                         "on-primary-fixed-variant": "#474646",
                         "on-secondary-fixed-variant": "#5E0F0F",
                         "on-tertiary-fixed": "#1a1c1a",
@@ -55,13 +55,13 @@
                         "tertiary-fixed": "#e3e2df",
                         "surface-container-high": "#e9e8e7",
                         "on-secondary-fixed": "#5E0F0F",
-                        "background": "#fbf9f9",
-                        "surface": "#fbf9f9",
+                        "background": "#f2f0ee",
+                        "surface": "#f2f0ee",
                         "secondary-container": "#8B1E1E",
                         "on-surface-variant": "#444748",
                         "primary-container": "#1c1b1b",
                         "inverse-primary": "#c8c6c5",
-                        "surface-container-low": "#f5f3f3",
+                        "surface-container-low": "#ecebe9",
                         "on-tertiary-fixed-variant": "#464745",
                         "on-background": "#1b1c1c"
                     },
@@ -146,14 +146,14 @@
       min-height: max(884px, 100dvh);
     }
   </style>
-<style>
+ <style>
         :root {
-        --chrome-bg: #ffffff;
-        --chrome-bg-soft: rgba(255,255,255,.92);
+        --chrome-bg: #f2f0ee;
+        --chrome-bg-soft: rgba(242,240,238,.96);
         --chrome-text: #1b1c1c;
         --chrome-text-dim: rgba(0,0,0,.55);
         --chrome-text-faint: rgba(0,0,0,.45);
-        --chrome-border: rgba(0,0,0,.1);
+        --chrome-border: rgba(0,0,0,.08);
         --chrome-hover: rgba(0,0,0,.06);
         --chrome-accent: #8B1E1E;
     }
@@ -329,7 +329,7 @@
 <!-- Visual Tracking Timeline -->
 <section class="px-container-margin py-lg md:py-xl bg-surface reveal-up">
 <div class="max-w-[960px] mx-auto">
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm shadow-[0_2px_12px_rgba(0,0,0,.06)]">
 <div class="relative max-w-[480px] mx-auto">
 <div class="timeline-line"></div>
 <div class="timeline-progress" style="width: 0%;"></div>
@@ -362,7 +362,7 @@
 </div>
 </div>
 <!-- Current Status Detail -->
-<div class="mt-lg text-center bg-surface-container-low p-md border border-outline-variant rounded-xl shadow-sm">
+<div class="mt-lg text-center bg-surface-container-low p-md border border-outline-variant rounded-xl shadow-sm shadow-[0_2px_10px_rgba(0,0,0,.05)]">
 <h3 class="font-title-md text-title-md text-on-surface mb-xs">{{ __("We're getting your order ready") }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Your items are currently being processed in our warehouse and will be packed shortly.') }}</p>
 </div>
@@ -380,7 +380,7 @@
 </div>
 <div class="flex flex-col gap-sm md:gap-md">
 <!-- Item 1 -->
-<div class="group flex gap-sm md:gap-md bg-surface-container-lowest border border-outline-variant rounded-xl p-sm md:p-md hover:shadow-sm hover:border-outline/50 transition-all">
+<div class="group flex gap-sm md:gap-md bg-surface-container-lowest border border-outline-variant rounded-xl p-sm md:p-md hover:shadow-md hover:border-outline/50 transition-all shadow-[0_1px_8px_rgba(0,0,0,.04)]">
 <div class="w-24 h-32 md:w-28 md:h-36 bg-surface-container rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant/30">
 <img class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" data-alt="A luxurious, minimalist product shot of an oversized linen shirt in a pristine white color, styled neatly folded against a stark white background with soft, diffused high-key studio lighting. The texture of the premium linen is highlighted, evoking a sophisticated, modern, and editorial fashion aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJlZAPwP-_xQgZVO14xE3Iu5npa30PNtPh-mhwqhHFy8WGyDIB88pqpUCiHtphw4m9zlFgrt_ycF_HlVLz0pUDshR1F3eqGVZYdqp4_qIihhITt0Blr3kgQOXjSp8iPBaotQEQIy3fGR8WUWbYK9JzLS_tYGjRSwZ8AMmViSKwigSNj1QeNqICwi6gOfkES04iTCN8Q-PxuntGupL9_rET-Zmjx_exlyS_3ai4_QXi8XxmMbFdQq4"/>
 </div>
@@ -397,7 +397,7 @@
 </div>
 </div>
 <!-- Item 2 -->
-<div class="group flex gap-sm md:gap-md bg-surface-container-lowest border border-outline-variant rounded-xl p-sm md:p-md hover:shadow-sm hover:border-outline/50 transition-all">
+<div class="group flex gap-sm md:gap-md bg-surface-container-lowest border border-outline-variant rounded-xl p-sm md:p-md hover:shadow-md hover:border-outline/50 transition-all shadow-[0_1px_8px_rgba(0,0,0,.04)]">
 <div class="w-24 h-32 md:w-28 md:h-36 bg-surface-container rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant/30">
 <img class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" data-alt="A high-end editorial product photograph of tailored straight fit pants in deep black, sharply folded and presented on a minimalist gray textured surface. The lighting is crisp and dramatic, highlighting the structural integrity and premium fabric of the garment, perfectly suited for a luxury fashion marketplace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjIMzWrbFLT6KKutzy6PhQHHWEnYzrTgY-dKZrde1_cde8Vn6WRo8ZqI5d6eCMRbNv0V1GLwD501aHhMDfqY2xyaMilKOQFanRXb_E2Lgr0zm2E07fnIj01Ek7udmiq8489lpf4z38jLzFHJTW_XAKLUZO5a5fvIj1yMCqo1OlmFisVMzLkqVYJ0_nUJurX6Us8b3nT34YQMqNISCpv1fVNHyXNZkUn8-wgCUk-2yx6KcGEJn3Ncs"/>
 </div>
@@ -419,7 +419,7 @@
 <!-- Order Summary (Tonal Background) -->
 <section class="px-container-margin py-lg md:py-xl bg-surface reveal-up">
 <div class="max-w-[960px] mx-auto">
-<div class="bg-surface-container-low border border-outline-variant rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm">
+<div class="bg-surface-container-low border border-outline-variant rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm shadow-[0_2px_12px_rgba(0,0,0,.06)]">
 <div class="flex items-center gap-sm mb-md">
 <div class="w-8 h-8 rounded-full bg-secondary/10 border border-secondary/15 flex items-center justify-center">
 <span class="material-symbols-outlined text-secondary text-[18px]">receipt_long</span>
@@ -452,7 +452,7 @@
 <!-- Need Help Action -->
 <section class="px-container-margin py-lg md:py-xl text-center reveal-up">
 <div class="max-w-[960px] mx-auto">
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md md:p-lg">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md md:p-lg shadow-[0_2px_10px_rgba(0,0,0,.05)]">
 <div class="atl-eyebrow mb-sm justify-center">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Need Help?') }}</span>
 </div>
