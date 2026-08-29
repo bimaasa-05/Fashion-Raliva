@@ -162,7 +162,8 @@
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
-            <form data-toast-message="Permintaan pemindahan berhasil dibuat." class="p-6 space-y-5">
+            <form action="{{ route('gudang.pemindahan.store') }}" method="POST" class="p-6 space-y-5">
+                @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                     <div>
                         <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Gudang Asal</label>
@@ -171,7 +172,8 @@
                     </div>
                     <div>
                         <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Gudang Tujuan</label>
-                        <select required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
+                        <select name="to_warehouse_id" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
+                            <option value="">Pilih Gudang Tujuan</option>
                             @foreach ($otherWarehouses as $ow)
                                 <option value="{{ $ow->warehouse_id }}">{{ $ow->nama_gudang }}</option>
                             @endforeach
@@ -179,8 +181,21 @@
                     </div>
                 </div>
                 <div>
+                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Produk</label>
+                    <select name="product_variant_id" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
+                        <option value="">Pilih Produk</option>
+                        @foreach ($products as $ws)
+                            <option value="{{ $ws->product_variant_id }}">{{ $ws->productVariant->product->nama_produk ?? '-' }} — {{ trim(($ws->productVariant->warna ?? '').' '.($ws->productVariant->ukuran ?? '')) ?: $ws->productVariant->sku }} (stok: {{ $ws->jumlah_stok }})</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Jumlah</label>
+                    <input type="number" name="jumlah" min="1" value="1" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
+                </div>
+                <div>
                     <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Catatan</label>
-                    <textarea rows="3" placeholder="Alasan pemindahan, kondisi barang, dll. (opsional)" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent resize-none"></textarea>
+                    <textarea name="catatan" rows="3" placeholder="Alasan pemindahan, kondisi barang, dll. (opsional)" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent resize-none"></textarea>
                 </div>
                 <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
                     <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>

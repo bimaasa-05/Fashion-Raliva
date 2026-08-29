@@ -169,7 +169,7 @@
                 <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Unit Masuk per Hari</h2>
                 <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">7 Hari Terakhir</span>
             </div>
-            <div class="h-48" data-bars='@json(array_map(function($i){ return ["label" => $chart["labels"][$i] ?? "?", "value" => $chart["masuk"][$i] ?? 0]; }, array_keys($chart["labels"] ?? [])))'></div>
+            <div class="h-48" data-bars='@json($barsData)'></div>
             <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
                 <span class="material-symbols-outlined text-[14px] text-gold-accent">insights</span>
                 Total masuk 7 hari terakhir: {{ array_sum($chart["masuk"] ?? []) }} unit.
@@ -181,7 +181,7 @@
                 <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Kategori Stok Terbesar</h2>
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">emoji_events</span>
             </div>
-            <div data-leaderboard='@json($kategoriTerbesar->map(function($k, $i) use ($kategoriTerbesar){ $max = $kategoriTerbesar->max("jumlah") ?: 1; return ["name" => $k->nama, "meta" => ($k->sku ?? 0) . " produk • Rak " . chr(65 + $i), "display" => number_format($k->jumlah, 0, ",", ".") . " pcs", "pct" => (int) round($k->jumlah / $max * 100)]; }))'></div>
+            <div data-leaderboard='@json($leaderboardData)'></div>
             <a href="{{ route('gudang.stok') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Semua Kategori</a>
         </section>
     </div>
@@ -275,13 +275,7 @@
     let movementChart = null;
     let currentRange = '7';
 
-    const serverChart = @json($chart);
-
-    const rangeData = {
-        '7': { labels: serverChart.labels, masuk: serverChart.masuk, keluar: serverChart.keluar },
-        '30': { labels: serverChart.labels, masuk: serverChart.masuk, keluar: serverChart.keluar },
-        '90': { labels: serverChart.labels, masuk: serverChart.masuk, keluar: serverChart.keluar }
-    };
+    const rangeData = @json($chartRangeData);
 
     const renderMovementChart = () => {
         if (!window.Chart) {

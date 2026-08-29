@@ -59,5 +59,9 @@
             </tbody>
         </table>
     </div>
+
+    <div class="mt-6 flex justify-center">
+        {{ $products->links() }}
+    </div>
 </section>
 @endsection

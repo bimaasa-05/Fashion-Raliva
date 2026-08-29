@@ -267,11 +267,7 @@
     const chartWrap = document.getElementById('chart-wrap');
     const chartError = document.getElementById('chart-error');
 
-    const rangeData = {
-        '7': { labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'], transaksi: [45200000, 38500000, 61000000, 56500000, 82000000, 78200000, 49500000], pesanan: [212, 186, 294, 268, 376, 341, 205] },
-        '30': { labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'], transaksi: [284000000, 316500000, 348200000, 373000000], pesanan: [1286, 1402, 1518, 1634] },
-        '90': { labels: ['Juni', 'Juli', 'Agustus'], transaksi: [682000000, 754000000, 823000000], pesanan: [3120, 3560, 3890] }
-    };
+    const rangeData = @json($rangeData);
 
     const formatRupiahShort = (value) => {
         if (value >= 1000000000) return (value / 1000000000).toFixed(1).replace('.', ',') + ' M';
