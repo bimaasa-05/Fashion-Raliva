@@ -95,7 +95,7 @@
                                 <span class="inline-flex items-center px-2 py-1 rounded-full {{ $statusPill[$key] }} text-[10px] font-bold uppercase">{{ $o->status }}</span>
                             </td>
                             <td class="py-3.5 px-4 text-right">
-                                <button type="button" data-drawer-open="drawer-detail-pesanan" onclick="window.currentOrder = '{{ $o->nomor_order }}'" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Detail</button>
+                                <button type="button" data-drawer-open="drawer-order-{{ $o->order_id }}" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Detail</button>
                             </td>
                         </tr>
                     @empty
@@ -115,78 +115,89 @@
     </section>
 </div>
 
-{{-- Drawer Detail Pesanan --}}
+{{-- Drawer Detail Pesanan (dinamis per order) --}}
 <div id="drawer-overlay" class="fixed inset-0 bg-black/50 z-[70] hidden opacity-0 transition-opacity duration-300"></div>
-<div id="drawer-detail-pesanan" data-drawer-panel class="fixed inset-y-0 right-0 z-[80] w-full max-w-lg bg-surface-container-lowest border-l border-muted-border shadow-xl translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+@foreach ($orders as $o)
+<?php
+    $oKey = match($o->status) {
+        'selesai' => 'selesai',
+        'dibatalkan' => 'dibatalkan',
+        'dikirim' => 'dikirim',
+        'diproses' => 'diproses',
+        default => 'baru',
+    };
+    $oCustomer = $o->checkout?->user;
+    $oPayment = $o->checkout?->payment;
+?>
+<div id="drawer-order-{{ $o->order_id }}" data-drawer-panel class="fixed inset-y-0 right-0 z-[80] w-full max-w-lg bg-surface-container-lowest border-l border-muted-border shadow-xl translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
     <div class="flex items-start justify-between px-6 py-5 border-b border-muted-border shrink-0">
         <div>
             <p class="text-xs font-medium text-on-surface-variant">Detail Pesanan</p>
-            <h3 class="font-title-md text-title-md text-on-surface mt-1" id="drawer-order-code">#RLV-2093</h3>
+            <h3 class="font-title-md text-title-md text-on-surface mt-1">{{ $o->nomor_order }}</h3>
         </div>
         <button type="button" data-drawer-close class="text-on-surface-variant hover:text-on-surface transition-colors">
             <span class="material-symbols-outlined">close</span>
         </button>
     </div>
     <div class="flex-1 overflow-y-auto p-6 space-y-7">
-        {{-- Timeline --}}
         <section>
-            <p class="text-xs font-mediumr text-gold-accent mb-4">Perkembangan Pesanan</p>
+            <p class="text-xs font-medium text-gold-accent mb-4">Perkembangan Pesanan</p>
             <ol class="space-y-0">
-                @foreach ([['Pesanan Diterima', '22 Agu, 14:32', true], ['Pembayaran Terverifikasi', '22 Agu, 14:35', true], ['Dikemas oleh Gudang', '—', false], ['Dikirim', '—', false], ['Selesai', '—', false]] as $i => $step)
+                @php
+                    $steps = [
+                        ['Pesanan Diterima', $oKey !== 'baru' || $o->status === 'pending_payment'],
+                        ['Pembayaran Terverifikasi', in_array($o->status, ['dibayar','diproses','dikirim','selesai'])],
+                        ['Diproses / Dikemas', in_array($o->status, ['diproses','dikirim','selesai'])],
+                        ['Dikirim', in_array($o->status, ['dikirim','selesai'])],
+                        ['Selesai', $o->status === 'selesai'],
+                    ];
+                @endphp
+                @foreach ($steps as $i => $step)
                     <li class="relative flex gap-4 pb-6 last:pb-0">
                         @if (! $loop->last)
-                            <span class="absolute left-[13px] top-7 bottom-0 w-[2px] {{ $step[2] ? 'bg-gold-accent/50' : 'bg-muted-border' }}"></span>
+                            <span class="absolute left-[13px] top-7 bottom-0 w-[2px] {{ $step[1] ? 'bg-gold-accent/50' : 'bg-muted-border' }}"></span>
                         @endif
-                        <span class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 z-10 {{ $step[2] ? 'bg-deep-onyx text-on-primary ring-4 ring-surface-container-lowest' : 'border-2 border-outline-variant bg-surface-container-lowest text-transparent' }}">
-                            <span class="material-symbols-outlined fill text-[14px]">{{ $step[2] ? 'check' : 'radio_button_unchecked' }}</span>
+                        <span class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 z-10 {{ $step[1] ? 'bg-deep-onyx text-on-primary ring-4 ring-surface-container-lowest' : 'border-2 border-outline-variant bg-surface-container-lowest text-transparent' }}">
+                            <span class="material-symbols-outlined fill text-[14px]">{{ $step[1] ? 'check' : 'radio_button_unchecked' }}</span>
                         </span>
                         <div class="pt-0.5">
-                            <p class="font-title-md text-sm {{ $step[2] ? 'text-on-surface' : 'text-on-surface-variant' }}">{{ $step[0] }}</p>
-                            @if ($step[1] !== '—')<p class="text-xs text-on-surface-variant mt-0.5">{{ $step[1] }}</p>@endif
+                            <p class="font-title-md text-sm {{ $step[1] ? 'text-on-surface' : 'text-on-surface-variant' }}">{{ $step[0] }}</p>
+                            @if ($i === 0 && $o->created_at)
+                                <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->created_at->translatedFormat('d M, H:i') }}</p>
+                            @endif
                         </div>
                     </li>
                 @endforeach
             </ol>
         </section>
 
-        {{-- Item --}}
         <section>
-            <p class="text-xs font-mediumr text-gold-accent mb-4">Produk Dipesan</p>
+            <p class="text-xs font-medium text-gold-accent mb-4">Produk Dipesan</p>
             <ul class="space-y-3">
-                @foreach ([['Trench Coat Signature', 'M • Krem × 1', 'Rp 1.290.000'], ['Silk Scarf Monogram', 'One Size • Gold × 2', 'Rp 518.000']] as $item)
+                @foreach ($o->items as $it)
                     <li class="flex items-center gap-3 border border-muted-border rounded-lg p-3 bg-surface-container-low">
                         <div class="w-11 aspect-[4/5] rounded-md bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0 overflow-hidden">
                             <span class="material-symbols-outlined text-[20px] text-on-surface-variant">checkroom</span>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="font-title-md text-sm text-on-surface truncate">{{ $item[0] }}</p>
-                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $item[1] }}</p>
+                            <p class="font-title-md text-sm text-on-surface truncate">{{ $it->variant?->product?->nama_produk ?? '-' }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $it->variant?->ukuran ?? '-' }} • {{ $it->variant?->warna ?? '-' }} × {{ $it->quantity }}</p>
                         </div>
-                        <span class="font-bold text-sm text-on-surface whitespace-nowrap">{{ $item[2] }}</span>
+                        <span class="font-bold text-sm text-on-surface whitespace-nowrap">Rp {{ number_format($it->harga_satuan * $it->quantity, 0, ',', '.') }}</span>
                     </li>
                 @endforeach
             </ul>
         </section>
 
-        {{-- Alamat --}}
         <section>
-            <p class="text-xs font-mediumr text-gold-accent mb-3">Alamat Pengiriman</p>
-            <div class="border border-muted-border rounded-lg p-4 bg-surface-container-low font-body-md text-sm">
-                <p class="font-bold text-on-surface">Sarah Jenkins — +62 812-9911-2233</p>
-                <p class="text-on-surface-variant mt-1">Jl. Senopati No. 88 Apt. Cendana Lantai 3, Kebayoran Baru, Jakarta Selatan, 12190</p>
-                <p class="text-xs text-on-surface-variant mt-2 flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-gold-accent">local_shipping</span>JNE Reguler — JNE0239845122</p>
-            </div>
-        </section>
-
-        {{-- Pembayaran --}}
-        <section>
-            <p class="text-xs font-mediumr text-gold-accent mb-3">Ringkasan Pembayaran</p>
+            <p class="text-xs font-medium text-gold-accent mb-3">Ringkasan Pembayaran</p>
             <dl class="space-y-2.5 font-body-md text-sm border border-muted-border rounded-lg p-4 bg-surface-container-low">
-                <div class="flex justify-between"><dt class="text-on-surface-variant">Subtotal Produk</dt><dd class="text-on-surface">Rp 1.808.000</dd></div>
-                <div class="flex justify-between"><dt class="text-on-surface-variant">Diskon Promo GAJIAN25</dt><dd class="text-secondary">− Rp 568.000</dd></div>
-                <div class="flex justify-between"><dt class="text-on-surface-variant">Ongkos Kirim</dt><dd class="text-on-surface">Gratis</dd></div>
-                <div class="flex justify-between pt-2.5 border-t border-muted-border"><dt class="font-bold text-on-surface">Total Bayar</dt><dd class="font-bold text-gold-accent text-base">Rp 1.240.000</dd></div>
+                <div class="flex justify-between"><dt class="text-on-surface-variant">Subtotal Produk</dt><dd class="text-on-surface">Rp {{ number_format($o->subtotal, 0, ',', '.') }}</dd></div>
+                <div class="flex justify-between"><dt class="text-on-surface-variant">Diskon</dt><dd class="text-secondary">− Rp {{ number_format($o->total_diskon, 0, ',', '.') }}</dd></div>
+                <div class="flex justify-between"><dt class="text-on-surface-variant">Ongkos Kirim</dt><dd class="text-on-surface">Rp {{ number_format($o->total_ongkir, 0, ',', '.') }}</dd></div>
+                <div class="flex justify-between pt-2.5 border-t border-muted-border"><dt class="font-bold text-on-surface">Total Bayar</dt><dd class="font-bold text-gold-accent text-base">Rp {{ number_format($o->grand_total, 0, ',', '.') }}</dd></div>
             </dl>
+            <p class="text-xs text-on-surface-variant mt-3 flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-gold-accent">payments</span>Metode: {{ $oPayment?->nama_metode ?? '—' }} • Customer: {{ $oCustomer?->nama_lengkap ?? '-' }}</p>
         </section>
     </div>
     <div class="shrink-0 border-t border-muted-border p-4 flex flex-col-reverse sm:flex-row gap-gutter">
@@ -196,6 +207,7 @@
         <button type="button" onclick="showRalivaToast('Pesanan diteruskan ke Admin untuk diproses (demo).', 'forward_to_inbox')" class="flex-1 py-3 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium">Teruskan ke Admin</button>
     </div>
 </div>
+@endforeach
 @endsection
 
 @push('scripts')
