@@ -117,10 +117,24 @@
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
-            <form data-toast-message="Stok rusak berhasil dilaporkan." class="p-6 space-y-5">
+            <form action="{{ route('gudang.stok-rusak.store') }}" method="POST" class="p-6 space-y-5">
+                @csrf
                 <div>
-                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Catatan</label>
-                    <textarea rows="3" placeholder="Detail kerusakan, lokasi penemuan, foto pendukung (opsional)" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent resize-none"></textarea>
+                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Produk</label>
+                    <select name="product_variant_id" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
+                        <option value="">Pilih Produk</option>
+                        @foreach ($products as $ws)
+                            <option value="{{ $ws->product_variant_id }}">{{ $ws->productVariant->product->nama_produk ?? '-' }} — {{ trim(($ws->productVariant->warna ?? '').' '.($ws->productVariant->ukuran ?? '')) ?: $ws->productVariant->sku }} (stok: {{ $ws->jumlah_stok }})</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Jumlah Rusak</label>
+                    <input type="number" name="jumlah_rusak" min="1" value="1" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
+                </div>
+                <div>
+                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Alasan / Keterangan</label>
+                    <textarea name="alasan" rows="3" placeholder="Detail kerusakan, lokasi penemuan, foto pendukung (opsional)" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent resize-none"></textarea>
                 </div>
                 <div class="flex items-start gap-3 p-4 border border-error/30 bg-error-container/60 rounded-lg">
                     <span class="material-symbols-outlined text-error mt-0.5 text-[20px]">info</span>

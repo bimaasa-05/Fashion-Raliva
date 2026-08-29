@@ -275,13 +275,7 @@
     let movementChart = null;
     let currentRange = '7';
 
-    const serverChart = @json($chart);
-
-    const rangeData = {
-        '7': { labels: serverChart.labels, masuk: serverChart.masuk, keluar: serverChart.keluar },
-        '30': { labels: serverChart.labels, masuk: serverChart.masuk, keluar: serverChart.keluar },
-        '90': { labels: serverChart.labels, masuk: serverChart.masuk, keluar: serverChart.keluar }
-    };
+    const rangeData = @json($chartRangeData);
 
     const renderMovementChart = () => {
         if (!window.Chart) {

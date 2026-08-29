@@ -154,7 +154,7 @@ class ManajemenPenggunaController extends Controller
         ActivityLogger::log(
             'user.delete',
             User::class,
-            1,
+            $user->user_id,
             ['nama_lengkap' => $nama, 'role' => $roleName],
             [],
             sprintf('Menghapus pengguna "%s" (peran: %s).', $nama, $roleName)

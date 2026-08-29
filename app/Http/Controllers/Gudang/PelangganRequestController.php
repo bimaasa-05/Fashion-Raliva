@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Gudang;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
+use App\Models\Order;
+use App\Models\WarehouseStock;
+use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 
 class PelangganRequestController extends Controller
@@ -14,19 +18,15 @@ class PelangganRequestController extends Controller
         $warehouses = $this->assignedWarehouses();
         $warehouse = $this->activeWarehouse();
 
-        // Customer request terkait toko gudang ini: pesanan dengan status
-        // menunggu pemenuhan dari gudang (cek stok/bahan). Untuk V1 ditampilkan
-        // sebagai daftar pesanan toko yang butuh pengecekan stok.
         $requests = collect();
 
-        // Klasifikasi request berdasarkan keberadaan stok di gudang aktif.
-        $stokWh = \App\Models\WarehouseStock::where('warehouse_id', $warehouse?->warehouse_id)
+        $stokWh = WarehouseStock::where('warehouse_id', $warehouse?->warehouse_id)
             ->pluck('jumlah_stok', 'product_variant_id');
 
         if ($warehouse) {
-            $requests = \App\Models\Order::with(['store', 'items.productVariant.product'])
+            $requests = Order::with(['store', 'items.productVariant.product'])
                 ->where('store_id', $warehouse->store_id)
-                ->whereIn('status', [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_DIPROSES])
+                ->whereIn('status', [Order::STATUS_DIBAYAR, Order::STATUS_DIPROSES])
                 ->orderByDesc('created_at')
                 ->get()
                 ->map(function ($order) use ($stokWh) {
@@ -36,7 +36,6 @@ class PelangganRequestController extends Controller
                         ? $stokWh->get($variant?->product_variant_id) > 0
                         : false;
 
-                    // Status pengecekan gudang (bukan status pesanan).
                     if (! $stokTersedia) {
                         $statusKey = 'kosong';
                         $statusLabel = 'Tidak Tersedia';
@@ -75,5 +74,54 @@ class PelangganRequestController extends Controller
             'counts' => $counts ?? ['menunggu' => 0, 'tersedia' => 0, 'kosong' => 0, 'total' => 0],
             'firstCheck' => $requests->firstWhere('status_key', '!=', 'menunggu'),
         ]);
+    }
+
+    public function konfirmasi(Request $request)
+    {
+        $warehouse = $this->activeWarehouse();
+
+        if (! $warehouse) {
+            return back()->with('toast', ['message' => 'Tidak ada gudang aktif.', 'icon' => 'gpp_maybe']);
+        }
+
+        $data = $request->validate([
+            'order_id' => 'required|exists:orders,order_id',
+            'hasil' => 'required|in:tersedia,diteruskan,tidak_tersedia',
+            'catatan' => 'nullable|string|max:500',
+        ], [
+            'order_id.required' => 'Order wajib dipilih.',
+            'order_id.exists' => 'Order tidak valid.',
+            'hasil.required' => 'Hasil pengecekan wajib dipilih.',
+            'hasil.in' => 'Hasil pengecekan tidak valid.',
+        ]);
+
+        $order = Order::where('order_id', $data['order_id'])->with(['items.productVariant', 'checkout.user'])->firstOrFail();
+
+        $labelMap = [
+            'tersedia' => 'Tersedia — Siap diproses',
+            'diteruskan' => 'Diteruskan ke Produksi',
+            'tidak_tersedia' => 'Tidak Tersedia — Bahan kosong',
+        ];
+
+        ActivityLogger::log(
+            'stock.request.confirm',
+            Order::class,
+            $order->order_id,
+            null,
+            ['hasil' => $data['hasil'], 'catatan' => $data['catatan']],
+            sprintf('Konfirmasi ketersediaan untuk order %s: %s.', $order->nomor_order, $labelMap[$data['hasil']] ?? $data['hasil'])
+        );
+
+        $userId = $order->checkout?->user_id;
+        if ($userId) {
+            Notification::create([
+                'user_id' => $userId,
+                'tipe' => Notification::TIPE_ORDER,
+                'judul' => 'Status Ketersediaan Bahan',
+                'pesan' => sprintf('Pengecekan bahan untuk order %s: %s.', $order->nomor_order, $labelMap[$data['hasil']] ?? $data['hasil']),
+            ]);
+        }
+
+        return back()->with('toast', ['message' => 'Konfirmasi ketersediaan berhasil dikirim.', 'icon' => 'task_alt']);
     }
 }
