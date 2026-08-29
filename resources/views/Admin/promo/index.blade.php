@@ -14,9 +14,9 @@
     </div>
 
     <section>
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Daftar Promo Toko</h2>
+        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Daftar Promo Toko</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter">
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
                 <div class="flex items-center justify-between">
                     <span class="font-title-md text-title-md text-on-surface">Diskon Gajian</span>
                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aktif</span>
@@ -28,7 +28,7 @@
                 </div>
             </div>
 
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
                 <div class="flex items-center justify-between">
                     <span class="font-title-md text-title-md text-on-surface">Flash Sale Weekend</span>
                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Non-aktif</span>
@@ -40,7 +40,7 @@
                 </div>
             </div>
 
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
                 <div class="flex items-center justify-between">
                     <span class="font-title-md text-title-md text-on-surface">Gratis Ongkir Se-Indonesia</span>
                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aktif</span>
