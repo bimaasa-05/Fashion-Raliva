@@ -35,8 +35,7 @@
     {{-- Tab Switcher --}}
     <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 overflow-x-auto max-w-full">
         <button type="button" data-saldo-tab="ringkasan" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">Ringkasan</button>
-        <button type="button" data-saldo-tab="pencairan" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pencairan Dana</button>
-        <button type="button" data-saldo-tab="pengembalian" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pengembalian Dana</button>
+        <button type="button" data-saldo-tab="pengeluaran" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pengeluaran</button>
     </div>
 
     {{-- ============ PANEL: RINGKASAN ============ --}}
@@ -67,6 +66,41 @@
                 <div class="flex items-center justify-between mt-auto pt-6 relative gap-gutter flex-wrap">
                     <p class="font-body-md text-xs text-on-surface-variant">{{ $withdrawals->count() }} pencairan tercatat</p>
                     <a href="#pencairan" class="py-2.5 px-5 border border-muted-border text-xs font-semibold rounded-lg hover:border-gold-accent transition-colors shrink-0">Riwayat</a>
+                </div>
+            </div>
+        </section>
+
+        {{-- Estimasi Margin (5 lapis) --}}
+        <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+            <div class="flex items-center justify-between gap-4 mb-6">
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading">Estimasi Margin Keuangan</h2>
+                <span class="text-[10px] uppercase tracking-wider text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">Asumsi HPP 60% · Pajak 25%</span>
+            </div>
+            <div data-reveal-group class="grid grid-cols-2 md:grid-cols-5 gap-gutter">
+                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1">
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Cross Margin</span>
+                    <span class="raliva-figure text-[20px] text-on-surface">{{ $fmt($margin['revenue']) }}</span>
+                    <span class="text-[10px] text-on-surface-variant">Revenue / Omzet</span>
+                </div>
+                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1">
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Gross Profit</span>
+                    <span class="raliva-figure text-[20px] text-secondary">{{ $fmt($margin['gross']) }}</span>
+                    <span class="text-[10px] text-on-surface-variant">Setelah HPP</span>
+                </div>
+                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1">
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">EBITDA</span>
+                    <span class="raliva-figure text-[20px] text-on-surface">{{ $fmt($margin['ebitda']) }}</span>
+                    <span class="text-[10px] text-on-surface-variant">Setelah operasional</span>
+                </div>
+                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1">
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">EBT</span>
+                    <span class="raliva-figure text-[20px] text-on-surface">{{ $fmt($margin['ebt']) }}</span>
+                    <span class="text-[10px] text-on-surface-variant">Setelah pendanaan</span>
+                </div>
+                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1">
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Net Profit</span>
+                    <span class="raliva-figure text-[20px] text-gold-accent">{{ $fmt($margin['net']) }}</span>
+                    <span class="text-[10px] text-on-surface-variant">Laba bersih</span>
                 </div>
             </div>
         </section>
@@ -140,195 +174,71 @@
         </section>
     </div>
 
-    {{-- ============ PANEL: PENCAIRAN DANA ============ --}}
-    <div data-saldo-panel="pencairan" class="hidden space-y-section-gap">
-        <div class="grid grid-cols-1 lg:grid-cols-5 gap-section-gap items-start">
-            {{-- Form Pengajuan --}}
-            <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-                <h2 class="font-title-md text-title-md text-on-surface premium-heading mb-6">Ajukan Pencairan</h2>
-
-                <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 mb-6 flex items-center justify-between">
-                    <div>
-                        <p class="raliva-label">Saldo Tersedia</p>
-                        <p class="font-title-md text-title-md text-secondary mt-1">{{ $fmt($wallet->saldo_tersedia) }}</p>
-                    </div>
-                    <span class="material-symbols-outlined fill text-[28px] text-gold-accent">account_balance_wallet</span>
+        {{-- ============ PANEL: PENGELUARAN ============ --}}
+    <div data-saldo-panel="pengeluaran" class="hidden space-y-section-gap">
+        <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Catat Pengeluaran Toko</h2>
+            <form method="POST" action="{{ route('owner.keuangan.pengeluaran.store') }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                @csrf
+                <div>
+                    <label class="block raliva-label mb-2">Nama Pengeluaran</label>
+                    <input name="nama" type="text" required placeholder="cth. Listrik Toko" class="raliva-input" />
                 </div>
-
-                <div class="border border-muted-border rounded-lg p-5 flex items-start gap-3 bg-surface-container-low">
-                    <span class="material-symbols-outlined text-[22px] text-gold-accent mt-0.5 shrink-0">lock</span>
-                    <div>
-                        <p class="font-title-md text-sm text-on-surface">Pengajuan Pencairan Dinonaktifkan</p>
-                        <p class="text-xs text-on-surface-variant mt-1">Halaman pencairan dana telah dipindahkan ke Super Admin. Saldo Anda tetap tercatat dan riwayat di bawah ini adalah data nyata.</p>
-                    </div>
+                <div>
+                    <label class="block raliva-label mb-2">Kategori</label>
+                    <input name="kategori" type="text" list="kategori-list" required placeholder="cth. Operasional" class="raliva-input" />
+                    <datalist id="kategori-list">
+                        @foreach ($expenses->pluck('kategori')->unique() as $k)
+                            <option value="{{ $k }}">
+                        @endforeach
+                    </datalist>
                 </div>
-            </section>
-
-            {{-- Riwayat Pencairan --}}
-            <section data-reveal class="lg:col-span-3 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                    <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Riwayat Pencairan</h2>
-                    <select data-table-filter="status-cair" class="raliva-select">
-                        <option value="">Semua Status</option>
-                        <option value="pending">Diproses</option>
-                        <option value="dibayar">Dibayar</option>
-                        <option value="ditolak">Ditolak</option>
-                    </select>
+                <div>
+                    <label class="block raliva-label mb-2">Nominal (Rp)</label>
+                    <input name="nominal" type="number" min="1" required placeholder="500000" class="raliva-input" />
                 </div>
-
-                <div data-table-wrap class="overflow-x-auto">
-                    <table class="premium-table w-full min-w-[760px] font-body-md text-sm">
-                        <thead>
-                            <tr class="border-b border-muted-border text-left">
-                                <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Kode</th>
-                                <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tanggal</th>
-                                <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Nominal</th>
-                                <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Rekening</th>
-                                <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($withdrawals as $row)
-                                @php
-                                    $label = match($row->status) {
-                                        'dibayar' => ['Dibayar', 'dibayar'],
-                                        'ditolak' => ['Ditolak', 'ditolak'],
-                                        default => ['Diproses', 'pending'],
-                                    };
-                                @endphp
-                                <tr data-table-row data-status-cair="{{ $label[1] }}" class="border-b border-muted-border last:border-0">
-                                    <td class="py-3.5 px-4 font-bold text-on-surface whitespace-nowrap">WD-{{ str_pad($row->withdrawal_id, 4, '0', STR_PAD_LEFT) }}</td>
-                                    <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $row->diajukan_pada?->format('d M Y') }}</td>
-                                    <td class="py-3.5 px-4 font-bold text-gold-accent whitespace-nowrap">{{ $fmt($row->jumlah) }}</td>
-                                    <td class="py-3.5 px-4 text-on-surface whitespace-nowrap">{{ $row->bankAccount?->bank?->nama_bank ?? 'Bank' }} {{ $row->bankAccount?->nomor_rekening }}</td>
-                                    <td class="py-3.5 px-4 text-center">
-                                        @if ($label[1] === 'dibayar')
-                                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20"><span class="material-symbols-outlined fill text-[12px]">check_circle</span>{{ $label[0] }}</span>
-                                        @elseif ($label[1] === 'ditolak')
-                                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20" title="{{ $row->alasan_penolakan }}">{{ $label[0] }}</span>
-                                        @else
-                                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30"><span class="material-symbols-outlined fill text-[12px]">schedule</span>{{ $label[0] }}</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr><td colspan="5" class="py-8 text-center text-on-surface-variant">Belum ada pencairan dana.</td></tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                <div>
+                    <label class="block raliva-label mb-2">Tanggal</label>
+                    <input name="tanggal" type="date" required value="{{ date('Y-m-d') }}" class="raliva-input" />
                 </div>
-
-                <div data-empty-state class="hidden flex-col items-center py-12 text-center gap-3">
-                    <span class="material-symbols-outlined text-[40px] text-on-surface-variant">inbox</span>
-                    <p class="text-on-surface-variant font-body-md text-sm">Tidak ada pencairan pada status ini.</p>
+                <div class="md:col-span-2 flex justify-end">
+                    <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[16px]">add</span>Catat Pengeluaran
+                    </button>
                 </div>
-            </section>
-        </div>
-    </div>
-
-    {{-- ============ PANEL: PENGEMBALIAN DANA ============ --}}
-    <div data-saldo-panel="pengembalian" class="hidden space-y-section-gap">
-        <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
-            <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Kasus Berjalan</span>
-                <span class="raliva-figure text-[26px] text-gold-accent">{{ $refunds->whereIn('status', ['requested', 'disetujui'])->count() }}</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">assignment_return</span>
-            </div>
-            <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Selesai</span>
-                <span class="raliva-figure text-[26px] text-on-surface">{{ $refunds->where('status', 'selesai')->count() }}</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">task_alt</span>
-            </div>
-            <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Nilai Refund</span>
-                <span class="raliva-figure text-[26px] text-error">{{ $fmt($refunds->where('status', 'selesai')->sum('jumlah')) }}</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">money_off</span>
-            </div>
-            <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Ditolak</span>
-                <span class="raliva-figure text-[26px] text-on-surface-variant">{{ $refunds->where('status', 'ditolak')->count() }}</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">block</span>
-            </div>
+            </form>
         </section>
 
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Daftar Kasus Pengembalian Dana</h2>
-                <select data-table-filter="status-refund" class="raliva-select">
-                    <option value="">Semua Status</option>
-                    <option value="requested">Diminta</option>
-                    <option value="disetujui">Diproses</option>
-                    <option value="selesai">Refund Selesai</option>
-                    <option value="ditolak">Ditolak</option>
-                </select>
-            </div>
-
+            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Daftar Pengeluaran</h2>
             <div data-table-wrap class="overflow-x-auto">
-                <table class="premium-table w-full min-w-[940px] font-body-md text-sm">
+                <table class="premium-table w-full min-w-[720px] font-body-md text-sm">
                     <thead>
                         <tr class="border-b border-muted-border text-left">
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Pesanan / Tanggal</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Customer</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Alasan</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tanggal</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Nama</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Kategori</th>
                             <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Nominal</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($refunds as $row)
-                            @php
-                                $key = match($row->status) {
-                                    'selesai' => 'selesai',
-                                    'ditolak' => 'ditolak',
-                                    'disetujui' => 'diproses',
-                                    default => 'diminta',
-                                };
-                                $statusLabel = match($row->status) {
-                                    'selesai' => 'Refund Selesai',
-                                    'ditolak' => 'Ditolak',
-                                    'disetujui' => 'Diproses',
-                                    default => 'Diminta',
-                                };
-                            @endphp
-                            <tr data-table-row data-status-refund="{{ $key }}" class="border-b border-muted-border last:border-0 align-top">
-                                <td class="py-3.5 px-4">
-                                    <p class="font-bold text-on-surface whitespace-nowrap">{{ $row->order?->nomor_order ?? ('#' . $row->order_id) }}</p>
-                                    <p class="text-xs text-on-surface-variant mt-0.5">{{ $row->diajukan_pada?->format('d M Y') }}</p>
-                                </td>
-                                <td class="py-3.5 px-4 text-on-surface whitespace-nowrap">{{ $row->requester?->nama_lengkap ?? 'Customer' }}</td>
-                                <td class="py-3.5 px-4 text-on-surface-variant max-w-[260px]">{{ $row->alasan }}</td>
-                                <td class="py-3.5 px-4 text-right font-bold text-gold-accent whitespace-nowrap">{{ $fmt($row->jumlah) }}</td>
-                                <td class="py-3.5 px-4 text-center">
-                                    @if ($key === 'selesai')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">{{ $statusLabel }}</span>
-                                    @elseif ($key === 'ditolak')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">{{ $statusLabel }}</span>
-                                    @elseif ($key === 'diproses')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">{{ $statusLabel }}</span>
-                                    @else
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ $statusLabel }}</span>
-                                    @endif
-                                </td>
+                        @forelse ($expenses as $ex)
+                            <tr data-table-row class="border-b border-muted-border last:border-0">
+                                <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $ex->tanggal->format('d M Y') }}</td>
+                                <td class="py-3.5 px-4 text-on-surface">{{ $ex->nama }}</td>
+                                <td class="py-3.5 px-4 text-on-surface-variant">{{ $ex->kategori }}</td>
+                                <td class="py-3.5 px-4 text-right font-bold text-error whitespace-nowrap">- {{ $fmt($ex->nominal) }}</td>
                             </tr>
                         @empty
-                            <tr><td colspan="5" class="py-8 text-center text-on-surface-variant">Belum ada kasus pengembalian dana.</td></tr>
+                            <tr><td colspan="4" class="py-8 text-center text-on-surface-variant">Belum ada pengeluaran tercatat.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-
-            <div data-empty-state class="hidden flex-col items-center py-12 text-center gap-3">
-                <span class="material-symbols-outlined text-[40px] text-on-surface-variant">inbox</span>
-                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada kasus refund pada status ini.</p>
-            </div>
-
-            <p class="text-xs text-on-surface-variant mt-6 pt-5 border-t border-muted-border flex items-start gap-2">
-                <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 shrink-0">info</span>
-                Keputusan akhir refund ditentukan Super Admin sesuai kebijakan platform. Nilai refund yang disetujui akan otomatis dipotong dari saldo toko.
-            </p>
         </section>
     </div>
-    @endif
+
+@endif
 </div>
 @endsection
 
@@ -357,7 +267,7 @@
 
     const initSaldoFromHash = () => {
         const h = location.hash.replace('#', '');
-        if (['pencairan', 'pengembalian'].includes(h)) setSaldoTab(h);
+        if (['pengeluaran'].includes(h)) setSaldoTab(h);
     };
     window.addEventListener('hashchange', initSaldoFromHash);
 
