@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Promotion;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PromoPlatformController extends Controller
 {
@@ -44,7 +45,7 @@ class PromoPlatformController extends Controller
         ]);
 
         $promo = Promotion::create([
-            'creator_id' => 1,
+            'creator_id' => Auth::id(),
             'kode_promo' => $data['kode_promo'],
             'nama_promo' => $data['nama_promo'],
             'deskripsi' => $data['deskripsi'] ?? null,

@@ -135,7 +135,11 @@
                             </td>
                             <td class="py-3.5 px-4 text-right">
                                 @if ($skey === 'kosong' || $skey === 'tersedia')
-                                    <button type="button" data-modal-open="modal-cek-request" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Cek Stok</button>
+                                    @if ($firstCheck && $row->order_id === $firstCheck->order_id)
+                                        <button type="button" data-modal-open="modal-cek-request" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Cek Stok</button>
+                                    @else
+                                        <button type="button" onclick="showRalivaToast('Hanya request pertama yang bisa dikonfirmasi.', 'info')" class="text-xs font-semibold text-on-surface-variant hover:text-gold-accent transition-colors whitespace-nowrap">Detail</button>
+                                    @endif
                                 @else
                                     <button type="button" onclick="showRalivaToast('Detail request dibuka.', 'visibility')" class="text-xs font-semibold text-on-surface-variant hover:text-gold-accent transition-colors whitespace-nowrap">Detail</button>
                                 @endif
@@ -171,11 +175,16 @@
             $fc = $firstCheck;
             $fcVariant = $fc?->variant;
             $fcBahan = $fcVariant?->warna ? (($fcVariant->warna) . ($fcVariant->ukuran ? ' / ' . $fcVariant->ukuran : '')) : '-';
+            $fcStok = $fcVariant && $warehouse
+                ? \App\Models\WarehouseStock::where('warehouse_id', $warehouse->warehouse_id)
+                    ->where('product_variant_id', $fcVariant->product_variant_id)
+                    ->value('jumlah_stok')
+                : 0;
         @endphp
         <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div>
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading">Konfirmasi Ketersediaan</h3>
-                <p class="text-on-surface-variant font-body-md text-xs mt-1">{{ $fc->nomor_order ?? '-' }} — {{ $fc->produk ?? '-' }} • {{ $fcBahan }} @if ($fcVariant) ({{ $fcVariant->jumlah_stok ?? 0 }} unit) @endif</p>
+                <p class="text-on-surface-variant font-body-md text-xs mt-1">{{ $fc->nomor_order ?? '-' }} — {{ $fc->produk ?? '-' }} • {{ $fcBahan }} @if ($fcVariant) ({{ $fcStok ?? 0 }} unit) @endif</p>
             </div>
             <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
                 <span class="material-symbols-outlined">close</span>
@@ -200,7 +209,7 @@
                 <div class="bg-surface-container-low border border-muted-border rounded-lg p-3 text-center">
                     <p class="raliva-label">Bahan / Varian</p>
                     <p class="font-title-md text-sm text-on-surface mt-1">{{ $fcBahan }}</p>
-                    <p class="text-xs text-secondary font-bold mt-1">{{ $fcVariant?->jumlah_stok ?? 0 }} unit tersedia</p>
+                    <p class="text-xs text-secondary font-bold mt-1">{{ $fcStok ?? 0 }} unit tersedia</p>
                 </div>
                 <div class="bg-surface-container-low border border-muted-border rounded-lg p-3 text-center">
                     <p class="raliva-label">Modal (HPP)</p>

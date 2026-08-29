@@ -70,6 +70,13 @@ class DashboardController extends Controller
         // Pergerakan 7 hari terakhir untuk chart.
         $chart = $this->buildMovementChart($warehouseId, 7);
 
+        // Chart data untuk 7/30/90 hari (untuk JS filter rentang)
+        $chartRangeData = [
+            '7' => $this->buildMovementChart($warehouseId, 7),
+            '30' => $this->buildMovementChart($warehouseId, 30),
+            '90' => $this->buildMovementChart($warehouseId, 90),
+        ];
+
         // Aktivitas terbaru (5 terakhir).
         $recentActivity = StockMovement::with(['productVariant.product'])
             ->where('warehouse_id', $warehouseId)
@@ -165,6 +172,7 @@ class DashboardController extends Controller
             'lowStock' => $lowStock,
             'recentActivity' => $recentActivity,
             'chart' => $chart,
+            'chartRangeData' => $chartRangeData,
             'statusDist' => [
                 'aman' => $statusCounts['aman'] ?? 0,
                 'menipis' => $statusCounts['menipis'] ?? 0,

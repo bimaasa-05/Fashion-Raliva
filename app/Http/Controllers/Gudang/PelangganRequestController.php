@@ -95,7 +95,7 @@ class PelangganRequestController extends Controller
             'hasil.in' => 'Hasil pengecekan tidak valid.',
         ]);
 
-        $order = Order::with(['items.productVariant', 'checkout.user'])->firstOrFail();
+        $order = Order::where('order_id', $data['order_id'])->with(['items.productVariant', 'checkout.user'])->firstOrFail();
 
         $labelMap = [
             'tersedia' => 'Tersedia — Siap diproses',
