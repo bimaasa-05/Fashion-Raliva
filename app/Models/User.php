@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Order;
 
 class User extends Authenticatable
 {
@@ -109,6 +111,11 @@ class User extends Authenticatable
     public function cart(): HasOne
     {
         return $this->hasOne(Cart::class, 'user_id', 'user_id');
+    }
+
+    public function orders(): HasManyThrough
+    {
+        return $this->hasManyThrough(Order::class, Checkout::class, 'user_id', 'checkout_id', 'user_id', 'checkout_id');
     }
 
     public function checkouts(): HasMany
