@@ -8,21 +8,23 @@
 
 @section('content')
 <div class="space-y-section-gap">
-    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">precision_manufacturing</span></div>
-            <div>
-                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Permintaan Produksi</h2>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Ajukan kebutuhan produksi baru.</p>
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">precision_manufacturing</span></div>
+                <div>
+                    <h2 class="font-title-md text-title-md text-on-surface premium-heading">Permintaan Produksi</h2>
+                    <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Ajukan kebutuhan produksi baru.</p>
+                </div>
             </div>
+            <button type="button" data-modal-open="modal-produksi" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
+                <span class="material-symbols-outlined text-[18px]">add</span> Ajukan Produksi
+            </button>
         </div>
-        <button type="button" data-modal-open="modal-produksi" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
-            <span class="material-symbols-outlined text-[18px]">add</span> Ajukan Produksi
-        </button>
     </section>
 
     <section class="space-y-gutter">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Riwayat Pengajuan</h2>
+        <h2 class="font-title-md text-title-md text-on-surface premium-heading">Riwayat Pengajuan</h2>
         <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
             <table class="w-full min-w-[750px] premium-table">
                 <thead>
@@ -58,7 +60,7 @@
 <!-- Modal Ajukan Produksi -->
 <div id="modal-produksi" data-modal class="fixed inset-0 z-[70] hidden">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close></div>
-    <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
+    <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-lg border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
         <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div>
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading">Ajukan Produksi</h3>
@@ -68,8 +70,8 @@
         </div>
         <form class="p-6 space-y-5" id="produksi-form" data-toast-message="Permintaan produksi berhasil dikirim.">
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="produk">Produk</label>
-                <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="produk">
+                <label class="raliva-label" for="produk">Produk</label>
+                <select class="raliva-select" id="produk">
                     <option>Straight Fit Pants (stok 3)</option>
                     <option>Relaxed Blazer</option>
                     <option>Oversized Linen Shirt</option>
@@ -77,17 +79,17 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="jumlah">Jumlah</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="jumlah" type="number" min="1" placeholder="Misal: 50" />
+                    <label class="raliva-label" for="jumlah">Jumlah</label>
+                    <input class="raliva-input" id="jumlah" type="number" min="1" placeholder="Misal: 50" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="target">Target Selesai</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="target" type="date" />
+                    <label class="raliva-label" for="target">Target Selesai</label>
+                    <input class="raliva-input" id="target" type="date" />
                 </div>
             </div>
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="catatan">Catatan untuk Produksi</label>
-                <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none" id="catatan" rows="3" placeholder="Contoh: prioritas warna hitam, ukuran 28-34..."></textarea>
+                <label class="raliva-label" for="catatan">Catatan untuk Produksi</label>
+                <textarea class="raliva-textarea" id="catatan" rows="3" placeholder="Contoh: prioritas warna hitam, ukuran 28-34..."></textarea>
             </div>
             <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
                 <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
@@ -95,5 +97,6 @@
             </div>
         </form>
     </div>
+</div>
 </div>
 @endsection
