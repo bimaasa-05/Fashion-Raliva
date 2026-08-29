@@ -9,6 +9,8 @@ class StockOpname extends Model
 {
     public const UPDATED_AT = null;
 
+    protected $table = 'stock_opname';
+
     protected $primaryKey = 'stock_opname_id';
 
     protected $fillable = [

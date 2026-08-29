@@ -9,6 +9,8 @@ class StockDamage extends Model
 {
     public const UPDATED_AT = null;
 
+    protected $table = 'stock_damage';
+
     protected $primaryKey = 'stock_damage_id';
 
     protected $fillable = [
