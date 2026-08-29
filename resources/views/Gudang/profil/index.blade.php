@@ -109,18 +109,24 @@
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
-            <form data-toast-message="Profil berhasil diperbarui." class="p-6 space-y-5">
+            <form action="{{ route('gudang.profil.update') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5">
+                @csrf
                 <div>
                     <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Nama Lengkap</label>
-                    <input type="text" value="{{ $user->nama_lengkap ?? '' }}" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
+                    <input type="text" name="nama_lengkap" value="{{ $user->nama_lengkap ?? '' }}" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
                 </div>
                 <div>
                     <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Email</label>
-                    <input type="email" value="{{ $user->email ?? '' }}" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
+                    <input type="email" name="email" value="{{ $user->email ?? '' }}" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
                 </div>
                 <div>
                     <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Nomor HP</label>
-                    <input type="text" value="{{ $user->nomor_telepon ?? '' }}" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
+                    <input type="text" name="nomor_telepon" value="{{ $user->nomor_telepon ?? '' }}" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
+                </div>
+                <div>
+                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Foto Profil</label>
+                    <input type="file" name="foto_profil" accept="image/*" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent file:mr-3 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-gold-accent/10 file:text-gold-accent hover:file:bg-gold-accent/20" />
+                    <p class="text-xs text-on-surface-variant mt-1">Maks 2MB. Kosongkan jika tidak ingin mengubah.</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                     <div>

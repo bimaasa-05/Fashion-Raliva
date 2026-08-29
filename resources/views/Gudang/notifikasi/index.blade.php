@@ -8,24 +8,12 @@
 
 @section('content')
 @php
-    $items = [
-        ['tipe' => 'stok-menipis', 'label' => 'Stok Menipis', 'icon' => 'warning', 'tone' => 'gold', 'html' => 'Stok <span class="font-bold">Silk Scarf</span> tinggal <span class="font-bold">5 unit</span>.', 'time' => '10 menit lalu', 'unread' => true],
-        ['tipe' => 'barang-masuk', 'label' => 'Barang Masuk', 'icon' => 'archive', 'tone' => 'neutral', 'html' => 'Barang masuk <span class="font-bold">BM-0012</span> menunggu pemeriksaan.', 'time' => '30 menit lalu', 'unread' => true],
-        ['tipe' => 'stok-habis', 'label' => 'Stok Habis', 'icon' => 'priority_high', 'tone' => 'error', 'html' => 'Stok <span class="font-bold">Denim Jacket Classic</span> habis. Segera ajukan restock.', 'time' => '1 jam lalu', 'unread' => true],
-        ['tipe' => 'pemenuhan', 'label' => 'Pemenuhan Pesanan', 'icon' => 'shopping_bag', 'tone' => 'neutral', 'html' => 'Permintaan pemenuhan pesanan <span class="font-bold">#RLV-2085</span> menunggu pengambilan barang.', 'time' => '2 jam lalu', 'unread' => true],
-        ['tipe' => 'barang-keluar', 'label' => 'Barang Keluar', 'icon' => 'unarchive', 'tone' => 'neutral', 'html' => '<span class="font-bold">BK-0008</span> telah diserahkan ke kurir untuk pesanan <span class="font-bold">#RLV-2085</span>.', 'time' => '2 jam lalu', 'unread' => false],
-        ['tipe' => 'pemeriksaan', 'label' => 'Pemeriksaan Stok', 'icon' => 'fact_check', 'tone' => 'error', 'html' => 'Pemeriksaan <span class="font-bold">PS-0012</span> menemukan selisih <span class="font-bold">2 unit</span> pada Silk Scarf.', 'time' => '3 jam lalu', 'unread' => false],
-        ['tipe' => 'pemindahan', 'label' => 'Pemindahan Stok', 'icon' => 'swap_horiz', 'tone' => 'gold', 'html' => 'Pemindahan stok <span class="font-bold">PM-0004</span> telah diterima oleh Gudang Cabang Cimahi.', 'time' => '4 jam lalu', 'unread' => false],
-        ['tipe' => 'stok-menipis', 'label' => 'Stok Menipis', 'icon' => 'warning', 'tone' => 'gold', 'html' => 'Stok <span class="font-bold">Wide Leg Trousers</span> tinggal <span class="font-bold">4 unit</span> — status kritis.', 'time' => 'Kemarin • 16:20', 'unread' => false],
-        ['tipe' => 'pemindahan', 'label' => 'Pemindahan Stok', 'icon' => 'swap_horiz', 'tone' => 'gold', 'html' => 'Permintaan pemindahan <span class="font-bold">PM-0006</span> dibuat sebagai draft.', 'time' => 'Kemarin • 09:15', 'unread' => false],
-        ['tipe' => 'pemeriksaan', 'label' => 'Pemeriksaan Stok', 'icon' => 'fact_check', 'tone' => 'neutral', 'html' => 'Jadwalkan pemeriksaan stok mingguan untuk rak A dan B.', 'time' => 'Kemarin • 08:00', 'unread' => false],
-    ];
     $chips = [
         ['semua', 'Semua'],
-        ['stok-menipis', 'Stok Menipis'],
-        ['stok-habis', 'Stok Habis'],
-        ['barang-masuk', 'Barang Masuk'],
-        ['barang-keluar', 'Barang Keluar'],
+        ['stok_menipis', 'Stok Menipis'],
+        ['stok_habis', 'Stok Habis'],
+        ['barang_masuk', 'Barang Masuk'],
+        ['barang_keluar', 'Barang Keluar'],
         ['pemenuhan', 'Pemenuhan'],
         ['pemeriksaan', 'Pemeriksaan'],
         ['pemindahan', 'Pemindahan'],
@@ -129,13 +117,22 @@
     });
 
     document.getElementById('mark-all-read')?.addEventListener('click', () => {
-        notifList?.querySelectorAll('.notif-dot').forEach((dot) => dot.remove());
-        notifList?.querySelectorAll('.notif-item').forEach((item) => {
-            item.classList.add('opacity-80');
-            item.querySelector('.notif-text')?.classList.remove('font-semibold');
+        fetch('{{ route('gudang.notifikasi.tandai-dibaca') }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+        }).then(() => {
+            notifList?.querySelectorAll('.notif-dot').forEach((dot) => dot.remove());
+            notifList?.querySelectorAll('.notif-item').forEach((item) => {
+                item.classList.add('opacity-80');
+                item.querySelector('.notif-text')?.classList.remove('font-semibold');
+            });
+            updateUnreadCount();
+            showRalivaToast('Semua notifikasi ditandai sudah dibaca.');
         });
-        updateUnreadCount();
-        showRalivaToast('Semua notifikasi ditandai sudah dibaca.');
     });
 
     document.querySelectorAll('[data-chip]').forEach((chip) => {

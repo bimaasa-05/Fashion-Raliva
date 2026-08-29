@@ -181,18 +181,20 @@
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
-        <form data-toast-message="Status request berhasil diperbarui." class="p-6 space-y-5">
+        <form action="{{ route('gudang.pelanggan-request.konfirmasi') }}" method="POST" class="p-6 space-y-5">
+            @csrf
+            <input type="hidden" name="order_id" value="{{ $fc->order_id ?? '' }}" />
             <div>
                 <label class="block raliva-label mb-2">Hasil Pengecekan</label>
-                <select class="raliva-select">
-                    <option selected>Tersedia — Siap diproses</option>
-                    <option>Diteruskan ke Produksi (bahan perlu produksi)</option>
-                    <option>Tidak Tersedia — Bahan kosong</option>
+                <select name="hasil" class="raliva-select" required>
+                    <option value="tersedia" selected>Tersedia — Siap diproses</option>
+                    <option value="diteruskan">Diteruskan ke Produksi (bahan perlu produksi)</option>
+                    <option value="tidak_tersedia">Tidak Tersedia — Bahan kosong</option>
                 </select>
             </div>
             <div>
                 <label for="cek-catatan" class="block raliva-label mb-2">Catatan untuk Admin</label>
-                <textarea id="cek-catatan" rows="2" placeholder="Stok bahan cukup untuk pemenuhan pesanan, estimasi..." class="raliva-textarea"></textarea>
+                <textarea name="catatan" id="cek-catatan" rows="2" placeholder="Stok bahan cukup untuk pemenuhan pesanan, estimasi..." class="raliva-textarea"></textarea>
             </div>
             <div class="grid grid-cols-2 gap-gutter">
                 <div class="bg-surface-container-low border border-muted-border rounded-lg p-3 text-center">
