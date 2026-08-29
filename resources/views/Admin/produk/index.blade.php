@@ -15,7 +15,7 @@
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Katalog Produk Toko</h2>
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading">Katalog Produk Toko</h2>
             <button type="button" onclick="showRalivaToast('Tambah produk baru memerlukan persetujuan Owner (demo).', 'add')" class="px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Tambah Produk</button>
         </div>
 
