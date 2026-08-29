@@ -40,7 +40,9 @@
         </div>
     </section>
 
-    <form data-toast-message="Data toko berhasil disimpan." class="space-y-section-gap">
+    <form method="POST" action="{{ route('owner.data-toko.update') }}" class="space-y-section-gap">
+        @csrf
+        @method('PUT')
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-section-gap">
             {{-- Informasi Umum --}}
             <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
@@ -48,7 +50,7 @@
                 <div class="space-y-5">
                     <div>
                         <label for="nama-toko" class="block raliva-label mb-2">Nama Toko</label>
-                        <input id="nama-toko" type="text" value="{{ old('nama_toko', $store->nama_toko ?? '') }}" required class="raliva-input" />
+                        <input id="nama-toko" name="nama_toko" type="text" value="{{ old('nama_toko', $store->nama_toko ?? '') }}" required class="raliva-input" />
                     </div>
                     <div>
                         <label for="kategori-toko" class="block raliva-label mb-2">Kategori</label>
@@ -61,7 +63,7 @@
                     </div>
                     <div>
                         <label for="deskripsi-toko" class="block raliva-label mb-2">Deskripsi Toko</label>
-                        <textarea id="deskripsi-toko" rows="4" class="raliva-textarea">{{ old('deskripsi', $store->deskripsi ?? '') }}</textarea>
+                        <textarea id="deskripsi-toko" name="deskripsi" rows="4" class="raliva-textarea">{{ old('deskripsi', $store->deskripsi ?? '') }}</textarea>
                     </div>
                 </div>
             </section>
@@ -72,11 +74,11 @@
                 <div class="space-y-5">
                     <div>
                         <label for="telepon-toko" class="block raliva-label mb-2">Nomor Telepon</label>
-                        <input id="telepon-toko" type="text" value="{{ old('nomor_telepon', $store->nomor_telepon ?? '') }}" required class="raliva-input" />
+                        <input id="telepon-toko" name="nomor_telepon" type="text" value="{{ old('nomor_telepon', $store->nomor_telepon ?? '') }}" required class="raliva-input" />
                     </div>
                     <div>
                         <label for="email-toko" class="block raliva-label mb-2">Email Toko</label>
-                        <input id="email-toko" type="email" value="{{ old('email', Auth::user()->email ?? '') }}" required class="raliva-input" />
+                        <input id="email-toko" name="email" type="email" value="{{ old('email', Auth::user()->email ?? '') }}" required class="raliva-input" />
                     </div>
                     <div>
                         <label for="instagram-toko" class="block raliva-label mb-2">Instagram</label>
@@ -84,7 +86,7 @@
                     </div>
                     <div>
                         <label for="alamat-toko" class="block raliva-label mb-2">Alamat Lengkap</label>
-                        <textarea id="alamat-toko" rows="3" required class="raliva-textarea">{{ old('alamat', $store->alamat ?? '') }}</textarea>
+                        <textarea id="alamat-toko" name="alamat" rows="3" required class="raliva-textarea">{{ old('alamat', $store->alamat ?? '') }}</textarea>
                     </div>
                 </div>
             </section>
@@ -111,11 +113,27 @@
         </section>
 
         <div data-reveal class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter sticky bottom-20 md:bottom-4 z-30">
-            <button type="reset" class="py-3 px-6 bg-surface-container-lowest border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors shadow-sm">Atur Ulang</button>
+            <button type="button" data-modal-open="modal-atur-ulang" class="py-3 px-6 bg-surface-container-lowest border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors shadow-sm">Atur Ulang</button>
             <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined text-[16px]">save</span>Simpan Perubahan
             </button>
         </div>
     </form>
+
+    {{-- Modal konfirmasi Atur Ulang --}}
+    <div id="modal-atur-ulang" data-modal class="fixed inset-0 z-[70] hidden">
+        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+        <div class="relative mx-auto mt-24 w-[calc(100%-2rem)] max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="material-symbols-outlined text-gold-accent">restart_alt</span>
+                <h3 class="font-title-md text-title-md text-on-surface">Atur Ulang Formulir?</h3>
+            </div>
+            <p class="text-on-surface-variant text-sm mb-6">Semua perubahan yang belum disimpan akan dikembalikan ke data terakhir yang tersimpan. Tindakan ini tidak menghapus data toko Anda.</p>
+            <div class="flex gap-3">
+                <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="button" onclick="document.querySelector('form[action=\'{{ route('owner.data-toko.update') }}\']').reset(); document.querySelector('[data-modal-close]').click();" class="flex-1 py-2.5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Ya, Atur Ulang</button>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
