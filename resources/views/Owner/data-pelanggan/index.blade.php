@@ -16,34 +16,56 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
-    {{-- Top Leader --}}
+    {{-- Podium Top Leader --}}
+    @if ($top3->count() >= 3)
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 md:p-8 card-premium">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <p class="raliva-label text-gold-accent">Papan Peringkat Pembeli</p>
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading mt-1">Top Customer</h2>
+            </div>
+            <span class="material-symbols-outlined text-[40px] text-gold-accent/20">workspace_premium</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 items-end gap-gutter md:gap-4">
+            {{-- #2 Kiri --}}
+            <div class="order-2 md:order-1 bg-surface-container-low border border-muted-border rounded-xl p-5 flex flex-col items-center text-center md:mb-8">
+                <div class="w-16 h-16 rounded-full bg-surface-container-high border-2 border-outline-variant flex items-center justify-center font-title-md text-lg text-on-surface">{{ $top3[1]->initials }}</div>
+                <p class="font-title-md text-sm text-on-surface mt-3">{{ $top3[1]->name }}</p>
+                <p class="text-gold-accent font-bold text-sm mt-1">Rp {{ number_format($top3[1]->total_belanja, 0, ',', '.') }}</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">{{ $top3[1]->jumlah_order }} pesanan</p>
+                <span class="mt-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase">#2</span>
+            </div>
+
+            {{-- #1 Tengah (tinggi) --}}
+            <div class="order-1 md:order-2 bg-deep-onyx text-on-primary rounded-xl p-6 flex flex-col items-center text-center md:-mt-4 shadow-xl relative overflow-hidden">
+                <span class="material-symbols-outlined absolute -right-4 -top-4 text-[120px] text-on-primary/5 pointer-events-none select-none" aria-hidden="true">military_tech</span>
+                <div class="w-20 h-20 rounded-full bg-gold-accent text-deep-onyx flex items-center justify-center font-bold text-xl relative z-10">{{ $top3[0]->initials }}</div>
+                <p class="raliva-figure text-[20px] text-on-primary mt-3 relative z-10">{{ $top3[0]->name }}</p>
+                <p class="text-inverse-on-surface/70 text-xs mt-1 relative z-10">{{ $top3[0]->jumlah_order }} pesanan</p>
+                <span class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent text-deep-onyx text-xs font-bold relative z-10"><span class="material-symbols-outlined text-[16px]">payments</span>Rp {{ number_format($top3[0]->total_belanja, 0, ',', '.') }}</span>
+            </div>
+
+            {{-- #3 Kanan --}}
+            <div class="order-3 bg-surface-container-low border border-muted-border rounded-xl p-5 flex flex-col items-center text-center md:mb-4">
+                <div class="w-16 h-16 rounded-full bg-surface-container-high border-2 border-outline-variant flex items-center justify-center font-title-md text-lg text-on-surface">{{ $top3[2]->initials }}</div>
+                <p class="font-title-md text-sm text-on-surface mt-3">{{ $top3[2]->name }}</p>
+                <p class="text-gold-accent font-bold text-sm mt-1">Rp {{ number_format($top3[2]->total_belanja, 0, ',', '.') }}</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">{{ $top3[2]->jumlah_order }} pesanan</p>
+                <span class="mt-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase">#3</span>
+            </div>
+        </div>
+    </section>
+    @else
     <section data-reveal class="bg-deep-onyx text-on-primary rounded-lg p-6 md:p-8 relative overflow-hidden">
         <span class="material-symbols-outlined absolute -right-6 -bottom-8 text-[160px] text-on-primary/5 pointer-events-none select-none" aria-hidden="true">workspace_premium</span>
         <div class="relative">
             <p class="raliva-label text-gold-accent">Top Leader Bulan Ini</p>
-            <div class="mt-4 flex flex-col sm:flex-row sm:items-center gap-6">
-                <div class="w-20 h-20 rounded-full bg-gold-accent text-deep-onyx flex items-center justify-center shrink-0 text-xl font-bold">{{ $topLeader ? $topLeader->initials : '-' }}</div>
-                <div>
-                    <p class="raliva-figure text-[26px] text-on-primary">{{ $topLeader->name ?? '-' }}</p>
-                    <p class="text-inverse-on-surface/60 font-body-md text-sm mt-1">{{ $topLeader->email ?? '' }} • {{ $topLeader->jumlah_order ?? 0 }} pesanan • Bergabung {{ optional(\Carbon\Carbon::parse($topLeader->join_date))->translatedFormat('M Y') }}</p>
-                    <div class="mt-3 flex flex-wrap gap-gutter">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent text-deep-onyx text-xs font-bold"><span class="material-symbols-outlined text-[16px]">payments</span>Rp {{ number_format($topLeader->total_belanja ?? 0, 0, ',', '.') }} total belanja</span>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 text-on-primary text-xs font-bold border border-white/10"><span class="material-symbols-outlined text-[16px]">military_tech</span>#1 Leader</span>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-8 grid grid-cols-3 gap-gutter">
-                @foreach ($top3 as $top)
-                    <div class="bg-white/5 border border-white/10 rounded-lg p-4 text-center">
-                        <p class="text-gold-accent raliva-label">#{{ $loop->iteration + 1 }}</p>
-                        <p class="font-title-md text-sm text-on-primary mt-1">{{ $top->name }}</p>
-                        <p class="text-gold-accent font-bold text-sm mt-1">Rp {{ number_format($top->total_belanja, 0, ',', '.') }}</p>
-                        <p class="text-inverse-on-surface/60 text-xs mt-0.5">{{ $top->jumlah_order }} pesanan</p>
-                    </div>
-                @endforeach
-            </div>
+            <p class="raliva-figure text-[26px] text-on-primary mt-4">{{ $topLeader->name ?? '-' }}</p>
+            <p class="text-inverse-on-surface/60 font-body-md text-sm mt-1">{{ $topLeader->email ?? '' }} • {{ $topLeader->jumlah_order ?? 0 }} pesanan</p>
         </div>
     </section>
+    @endif
 
     {{-- Ringkasan --}}
     <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
@@ -94,6 +116,7 @@
                     <tr class="border-b border-muted-border text-left">
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Pelanggan</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Kontak</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Barang Dibeli</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Pesanan</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Total Belanja</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Terakhir Belanja</th>
@@ -111,6 +134,17 @@
                                 </div>
                             </td>
                             <td class="py-3.5 px-4 text-on-surface-variant text-xs">{{ $row->email }}</td>
+                            <td class="py-3.5 px-4 text-on-surface text-xs max-w-[220px]">
+                                @if ($row->items->isNotEmpty())
+                                    <ul class="space-y-0.5">
+                                        @foreach ($row->items as $item)
+                                            <li class="truncate">{{ $item }}</li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <span class="text-on-surface-variant">-</span>
+                                @endif
+                            </td>
                             <td class="py-3.5 px-4 text-center text-on-surface">{{ $row->jumlah_order }}</td>
                             <td class="py-3.5 px-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format($row->total_belanja, 0, ',', '.') }}</td>
                             <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ optional(\Carbon\Carbon::parse($row->last_order))->translatedFormat('d M Y') }}</td>
