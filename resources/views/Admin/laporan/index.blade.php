@@ -14,33 +14,33 @@
     </div>
 
     <section>
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Kinerja Operasional 30 Hari</h2>
+        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Kinerja Operasional 30 Hari</h2>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pesanan Diproses</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">186</span>
+                <span class="raliva-figure text-[26px] text-on-surface">186</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pengiriman Tepat Waktu</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary">94%</span>
+                <span class="raliva-figure text-[26px] text-secondary">94%</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">local_shipping</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Komplain Ditangani</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">22</span>
+                <span class="raliva-figure text-[26px] text-on-surface">22</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">support_agent</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Refund Diproses</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">9</span>
+                <span class="raliva-figure text-[26px] text-on-surface">9</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">assignment_return</span>
             </div>
         </div>
     </section>
 
     <section class="space-y-gutter">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Rincian per Toko</h2>
+        <h2 class="font-title-md text-title-md text-on-surface premium-heading">Rincian per Toko</h2>
         <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
             <table class="w-full min-w-[750px] premium-table">
                 <thead>
