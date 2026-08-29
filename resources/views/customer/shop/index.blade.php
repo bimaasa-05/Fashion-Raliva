@@ -253,10 +253,6 @@
 <a aria-label="Search" href="{{ route('customer.search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center">
 <span class="material-symbols-outlined" data-icon="search">search</span>
 </a>
-<a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart') }}" class="relative hover:opacity-80 transition-opacity hidden md:flex items-center justify-center">
-<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
-<span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
-</a>
 </div>
 </header>
 <!-- Main Content -->
@@ -425,11 +421,11 @@
 </div>
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Color') }}</h3>
 <div class="flex flex-wrap gap-md">
-<button data-type="color" aria-label="Black" class="f-opt w-8 h-8 rounded-full bg-[#111111] transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button data-type="color" aria-label="Black" class="f-opt w-8 h-8 rounded-full bg-[#111111] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
 <button data-type="color" aria-label="White" class="f-opt w-8 h-8 rounded-full bg-[#FFFFFF] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
-<button data-type="color" aria-label="Beige" class="f-opt w-8 h-8 rounded-full bg-[#E5DCC5] transition-shadow" onclick="toggleSel(this)" type="button"></button>
-<button data-type="color" aria-label="Brown" class="f-opt w-8 h-8 rounded-full bg-[#6B4F3A] transition-shadow" onclick="toggleSel(this)" type="button"></button>
-<button data-type="color" aria-label="Gold" class="f-opt w-8 h-8 rounded-full bg-[#D4AF37] transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button data-type="color" aria-label="Beige" class="f-opt w-8 h-8 rounded-full bg-[#E5DCC5] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button data-type="color" aria-label="Brown" class="f-opt w-8 h-8 rounded-full bg-[#6B4F3A] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button data-type="color" aria-label="Gold" class="f-opt w-8 h-8 rounded-full bg-[#D4AF37] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
 </div>
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Price Range') }}</h3>
 <div class="flex items-end gap-gutter">
