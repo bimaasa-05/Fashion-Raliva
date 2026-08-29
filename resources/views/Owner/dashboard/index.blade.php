@@ -39,11 +39,13 @@
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-gutter self-start md:self-auto">
+            <div class="flex items-center gap-2 px-3 py-2 bg-surface-container-low rounded-lg border border-muted-border">
+                <span class="material-symbols-outlined text-[18px] text-gold-accent fill">star</span>
+                <span class="font-title-md text-sm text-on-surface">{{ number_format($rating, 1, ',', '.') }}</span>
+                <span class="text-[11px] text-on-surface-variant">{{ $ratingCount }} ulasan</span>
+            </div>
             <a href="{{ route('owner.laporan') }}" class="flex items-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">
                 <span class="material-symbols-outlined text-[16px]">monitoring</span>Laporan
-            </a>
-            <a href="{{ route('owner.saldo') }}#pencairan" class="flex items-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">
-                <span class="material-symbols-outlined text-[16px]">payments</span>Cairkan Dana
             </a>
         </div>
     </section>
@@ -120,74 +122,27 @@
         <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Aktivitas Berjalan</h2>
             <ul class="space-y-5">
-                <li>
-                    <div class="flex items-start justify-between gap-3 mb-2">
-                        <div class="flex items-start gap-3">
-                            <div class="w-9 h-9 rounded-lg bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
-                                <span class="material-symbols-outlined text-[18px] text-gold-accent">precision_manufacturing</span>
+                @forelse ($aktivitas as $a)
+                    <li>
+                        <div class="flex items-start justify-between gap-3 mb-2">
+                            <div class="flex items-start gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-[18px] text-gold-accent">{{ $a['icon'] }}</span>
+                                </div>
+                                <div>
+                                    <p class="font-title-md text-sm text-on-surface leading-snug">{{ $a['title'] }}</p>
+                                    <p class="text-on-surface-variant text-xs mt-0.5">{{ $a['subtitle'] }}</p>
+                                </div>
                             </div>
-                            <div>
-                                <p class="font-title-md text-sm text-on-surface leading-snug">Permintaan Produksi PRQ-0041</p>
-                                <p class="text-on-surface-variant text-xs mt-0.5">Blazer Wool Premium — 40 unit</p>
-                            </div>
+                            <span class="font-label-sm text-[11px] font-bold text-secondary shrink-0">{{ $a['progress'] }}%</span>
                         </div>
-                        <span class="font-label-sm text-[11px] font-bold text-secondary shrink-0">65%</span>
-                    </div>
-                    <div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                        <div class="progress-fill h-full bg-gold-accent rounded-full" data-progress="65"></div>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-start justify-between gap-3 mb-2">
-                        <div class="flex items-start gap-3">
-                            <div class="w-9 h-9 rounded-lg bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
-                                <span class="material-symbols-outlined text-[18px] text-gold-accent">local_shipping</span>
-                            </div>
-                            <div>
-                                <p class="font-title-md text-sm text-on-surface leading-snug">Pengiriman #RLV-2087</p>
-                                <p class="text-on-surface-variant text-xs mt-0.5">12 paket dalam perjalanan — JNE Reguler</p>
-                            </div>
+                        <div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+                            <div class="progress-fill h-full bg-gold-accent rounded-full" data-progress="{{ $a['progress'] }}"></div>
                         </div>
-                        <span class="font-label-sm text-[11px] font-bold text-secondary shrink-0">40%</span>
-                    </div>
-                    <div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                        <div class="progress-fill h-full bg-gold-accent rounded-full" data-progress="40"></div>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-start justify-between gap-3 mb-2">
-                        <div class="flex items-start gap-3">
-                            <div class="w-9 h-9 rounded-lg bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
-                                <span class="material-symbols-outlined text-[18px] text-gold-accent">local_offer</span>
-                            </div>
-                            <div>
-                                <p class="font-title-md text-sm text-on-surface leading-snug">Promo GAJIAN25 Berjalan</p>
-                                <p class="text-on-surface-variant text-xs mt-0.5">Diskon 25% — sisa 5 hari, terpakai 84×</p>
-                            </div>
-                        </div>
-                        <span class="font-label-sm text-[11px] font-bold text-secondary shrink-0">56%</span>
-                    </div>
-                    <div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                        <div class="progress-fill h-full rounded-full" data-progress-mode="quota" data-progress="56"></div>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-start justify-between gap-3 mb-2">
-                        <div class="flex items-start gap-3">
-                            <div class="w-9 h-9 rounded-lg bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
-                                <span class="material-symbols-outlined text-[18px] text-gold-accent">grid_view</span>
-                            </div>
-                            <div>
-                                <p class="font-title-md text-sm text-on-surface leading-snug">Slot Paket Growth</p>
-                                <p class="text-on-surface-variant text-xs mt-0.5">142 dari 200 slot produk terpakai</p>
-                            </div>
-                        </div>
-                        <span class="font-label-sm text-[11px] font-bold text-secondary shrink-0">71%</span>
-                    </div>
-                    <div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                        <div class="progress-fill h-full rounded-full" data-progress-mode="quota" data-progress="71"></div>
-                    </div>
-                </li>
+                    </li>
+                @empty
+                    <li class="text-on-surface-variant text-sm py-4 text-center">Tidak ada aktivitas berjalan saat ini.</li>
+                @endforelse
             </ul>
             <p class="mt-6 w-full flex items-center justify-center gap-2 py-3 border border-muted-border rounded-lg text-xs font-semibold text-on-surface-variant">
                 Kapasitas Slot Terkunci<span class="material-symbols-outlined text-[16px]">lock</span>
