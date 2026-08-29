@@ -48,10 +48,9 @@
                     <option value="nonaktif">Nonaktif</option>
                 </select>
             </div>
-            <p class="text-xs text-on-surface-variant mt-6 pt-5 border-t border-muted-border flex items-start gap-2">
-                <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 shrink-0">info</span>
-                Satu staf dapat ditugaskan ke beberapa toko milik Anda. Halaman ini read-only — pengelolaan staf dilakukan melalui SuperAdmin.
-            </p>
+            <button type="button" data-modal-open="modal-tambah-karyawan" class="py-2.5 px-5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center gap-2 shrink-0">
+                <span class="material-symbols-outlined text-[18px]">person_add</span>Tambah Karyawan
+            </button>
         </div>
 
         <div data-table-wrap class="overflow-x-auto">
@@ -72,7 +71,7 @@
                             $u = $s->user;
                             $nm = $u?->nama_lengkap ?? '-';
                             $initial = collect(explode(' ', $nm))->map(fn($w)=>mb_substr($w,0,1))->slice(0,2)->implode('');
-                            $rkey = $s->role;
+                            $rkey = \App\Http\Controllers\Owner\KaryawanController::ROLE_MAP[$u?->role_id] ?? 'lainnya';
                             $rlabel = $roleLabel[$rkey] ?? ucfirst($rkey);
                         @endphp
                         <tr data-table-row data-role="{{ $rkey }}" data-status="{{ $s->status }}" class="border-b border-muted-border last:border-0">
@@ -122,9 +121,53 @@
 
         <p class="text-xs text-on-surface-variant mt-6 pt-5 border-t border-muted-border flex items-start gap-2">
             <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 shrink-0">info</span>
-            Satu staf dapat ditugaskan ke beberapa toko milik Anda. Akun baru akan menerima undangan aktivasi melalui email.
+            Satu staf dapat ditugaskan ke toko Anda. Akun baru akan menerima undangan aktivasi melalui email.
         </p>
     </section>
+
+{{-- Modal Tambah Karyawan --}}
+<div id="modal-tambah-karyawan" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Karyawan</h3>
+                <p class="text-on-surface-variant font-body-md text-xs mt-1">Buat akun staf untuk toko Anda.</p>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form method="POST" action="{{ route('owner.karyawan.store') }}" class="p-6 space-y-5">
+            @csrf
+            <div>
+                <label class="block raliva-label mb-2">Nama Lengkap</label>
+                <input name="nama_lengkap" type="text" required placeholder="Budi Santoso" class="raliva-input" />
+            </div>
+            <div>
+                <label class="block raliva-label mb-2">Email</label>
+                <input name="email" type="email" required placeholder="budi@raliva.com" class="raliva-input" />
+            </div>
+            <div>
+                <label class="block raliva-label mb-2">Password Sementara</label>
+                <input name="password" type="password" required minlength="6" placeholder="Min. 6 karakter" class="raliva-input" />
+            </div>
+            <div>
+                <label class="block raliva-label mb-2">Role</label>
+                <select name="role" class="raliva-select">
+                    <option value="admin">Admin Toko</option>
+                    <option value="produksi">Staf Produksi</option>
+                    <option value="gudang">Staf Gudang</option>
+                </select>
+            </div>
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-[16px]">check_circle</span>Simpan Karyawan
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 @endsection
