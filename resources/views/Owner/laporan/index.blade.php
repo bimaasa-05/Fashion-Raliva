@@ -54,10 +54,21 @@
     {{-- Tabel Laporan --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Laporan Mingguan — Agustus</h2>
-            <button type="button" onclick="showRalivaToast('Laporan diekspor sebagai CSV (demo).', 'download')" class="flex items-center justify-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors w-full sm:w-auto shrink-0">
-                <span class="material-symbols-outlined text-[16px]">download</span>Ekspor CSV
-            </button>
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Laporan Periode</h2>
+            <div class="flex items-center gap-2 flex-wrap">
+                <select data-report-filter class="raliva-select" onchange="window.location.href='?period='+this.value">
+                    <option value="7" @selected($period === 7)>1 Minggu</option>
+                    <option value="30" @selected($period === 30)>30 Hari</option>
+                    <option value="90" @selected($period === 90)>3 Bulan</option>
+                    <option value="365" @selected($period === 365)>1 Tahun</option>
+                </select>
+                <a href="{{ route('owner.laporan.export', ['period' => $period]) }}" class="flex items-center justify-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors shrink-0">
+                    <span class="material-symbols-outlined text-[16px]">download</span>CSV
+                </a>
+                <button type="button" onclick="window.print()" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium shrink-0">
+                    <span class="material-symbols-outlined text-[16px]">picture_as_pdf</span>PDF
+                </button>
+            </div>
         </div>
         <div data-table-wrap class="overflow-x-auto">
             <table class="premium-table w-full min-w-[820px] font-body-md text-sm">
@@ -72,25 +83,27 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($weekly as $row)
+                    @forelse ($report as $row)
                         <tr class="border-b border-muted-border last:border-0">
                             <td class="py-3.5 px-4 font-bold text-on-surface whitespace-nowrap">{{ $row['periode'] }}</td>
                             <td class="py-3.5 px-4 text-right text-on-surface">{{ $row['pesanan'] }}</td>
                             <td class="py-3.5 px-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format($row['pendapatan'],0,',','.') }}</td>
                             <td class="py-3.5 px-4 text-right text-error whitespace-nowrap">Rp {{ number_format($row['refund'],0,',','.') }}</td>
-                            <td class="py-3.5 px-4 text-right text-on-surface-variant whitespace-nowrap">—</td>
-                            <td class="py-3.5 px-4 text-right text-on-surface font-bold whitespace-nowrap">—</td>
+                            <td class="py-3.5 px-4 text-right text-on-surface-variant whitespace-nowrap">Rp {{ number_format($row['pencairan'],0,',','.') }}</td>
+                            <td class="py-3.5 px-4 text-right text-on-surface font-bold whitespace-nowrap">Rp {{ number_format($row['pendapatan'] - $row['refund'] - $row['pencairan'],0,',','.') }}</td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr><td colspan="6" class="py-6 text-center text-on-surface-variant">Belum ada data pada periode ini.</td></tr>
+                    @endforelse
                 </tbody>
                 <tfoot>
                     <tr class="border-t-2 border-outline-variant">
-                        <td class="py-3.5 px-4 font-bold text-on-surface">Total Agustus</td>
-                        <td class="py-3.5 px-4 text-right font-bold text-on-surface">148</td>
-                        <td class="py-3.5 px-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp 41.250.000</td>
-                        <td class="py-3.5 px-4 text-right font-bold text-error whitespace-nowrap">Rp 1.890.000</td>
-                        <td class="py-3.5 px-4 text-right font-bold text-on-surface-variant whitespace-nowrap">Rp 25.000.000</td>
-                        <td class="py-3.5 px-4 text-right font-bold text-on-surface whitespace-nowrap">—</td>
+                        <td class="py-3.5 px-4 font-bold text-on-surface">Total</td>
+                        <td class="py-3.5 px-4 text-right font-bold text-on-surface">{{ $totals['pesanan'] }}</td>
+                        <td class="py-3.5 px-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format($totals['pendapatan'],0,',','.') }}</td>
+                        <td class="py-3.5 px-4 text-right font-bold text-error whitespace-nowrap">Rp {{ number_format($totals['refund'],0,',','.') }}</td>
+                        <td class="py-3.5 px-4 text-right font-bold text-on-surface-variant whitespace-nowrap">Rp {{ number_format($totals['pencairan'],0,',','.') }}</td>
+                        <td class="py-3.5 px-4 text-right font-bold text-on-surface whitespace-nowrap">Rp {{ number_format($totals['pendapatan'] - $totals['refund'] - $totals['pencairan'],0,',','.') }}</td>
                     </tr>
                 </tfoot>
             </table>
