@@ -27,4 +27,36 @@ class PromoController extends Controller
 
         return view('Owner.promo.index', compact('promos', 'counts'));
     }
+
+    public function store(Request $request)
+    {
+        $storeId = OwnerContext::firstStoreId();
+
+        $validated = $request->validate([
+            'kode_promo' => ['required', 'string', 'max:30', 'unique:promotions,kode_promo'],
+            'nama_promo' => ['required', 'string', 'max:100'],
+            'tipe_diskon' => ['required', 'in:persen,nominal'],
+            'nilai_diskon' => ['required', 'numeric', 'min:1'],
+            'minimal_pembelian' => ['nullable', 'numeric', 'min:0'],
+            'maksimal_diskon' => ['nullable', 'numeric', 'min:0'],
+            'mulai_pada' => ['required', 'date'],
+            'berakhir_pada' => ['required', 'date', 'after:mulai_pada'],
+        ]);
+
+        Promotion::create([
+            'creator_id' => $request->user()->user_id,
+            'store_id' => $storeId,
+            'kode_promo' => strtoupper($validated['kode_promo']),
+            'nama_promo' => $validated['nama_promo'],
+            'tipe_diskon' => $validated['tipe_diskon'],
+            'nilai_diskon' => $validated['nilai_diskon'],
+            'minimal_pembelian' => $validated['minimal_pembelian'] ?? 0,
+            'maksimal_diskon' => $validated['maksimal_diskon'] ?? null,
+            'mulai_pada' => $validated['mulai_pada'],
+            'berakhir_pada' => $validated['berakhir_pada'],
+            'status' => 'aktif',
+        ]);
+
+        return redirect()->route('owner.promo')->with('success', 'Promo berhasil ditambahkan.');
+    }
 }
