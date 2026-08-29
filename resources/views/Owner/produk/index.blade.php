@@ -3,7 +3,7 @@
 @section('title', 'Data Produk')
 
 @section('header-title', 'Data Produk')
-@section('header-badge', '142 / 200 Slot')
+@section('header-badge', $counts['total'] . ' Produk')
 @section('header-subtitle', 'Kelola produk, harga, variasi, dan stok toko Anda.')
 
 @section('content')
@@ -25,21 +25,20 @@
             <span class="raliva-figure text-[26px] text-on-surface">{{ $counts['total'] }}</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">checkroom</span>
         </div>
-        <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-3 relative overflow-hidden card-premium col-span-2">
-            <div class="flex items-center justify-between gap-3">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Kuota Slot Produk</span>
-                <span class="text-xs font-semibold text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">lock</span>Terkunci</span>
-            </div>
-            <span class="raliva-figure text-[26px] text-secondary"><span>{{ $usedSlot }}</span> / {{ $totalSlot }}</span>
-            <div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
-                <div class="progress-fill h-full rounded-full" data-progress-mode="quota" data-progress="71"></div>
-            </div>
-            <span class="font-label-sm text-[11px] text-on-surface-variant">58 slot tersedia — aktif s.d. 12 Feb 2027</span>
+        <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Produk Aktif</span>
+            <span class="raliva-figure text-[26px] text-secondary">{{ $counts['aktif'] }}</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">check_circle</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Produk Nonaktif</span>
             <span class="raliva-figure text-[26px] text-error">{{ $counts['nonaktif'] }}</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">visibility_off</span>
+        </div>
+        <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Varian</span>
+            <span class="raliva-figure text-[26px] text-on-surface">{{ $counts['varian'] }}</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">tune</span>
         </div>
     </section>
 
@@ -139,13 +138,22 @@
             <button type="button" data-filter-reset class="mt-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Reset Filter</button>
         </div>
 
-        <div data-pagination class="flex items-center justify-between pt-6 mt-2 border-t border-muted-border">
-            <p class="text-xs text-on-surface-variant">Menampilkan 8 dari 148 produk</p>
+        <div data-pagination class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 mt-2 border-t border-muted-border">
+            <p class="text-xs text-on-surface-variant">
+                Menampilkan {{ $products->firstItem() ?? 0 }}–{{ $products->lastItem() ?? 0 }} dari {{ $products->total() }} produk
+            </p>
             <div class="flex items-center gap-1">
-                <button type="button" disabled class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface-variant opacity-50 cursor-not-allowed"><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
-                <button type="button" class="w-9 h-9 rounded-lg bg-deep-onyx text-on-primary font-label-sm text-[12px]">1</button>
-                <button type="button" onclick="showRalivaToast('Halaman berikutnya (demo).')" class="w-9 h-9 rounded-lg border border-muted-border font-label-sm text-[12px] text-on-surface hover:border-gold-accent transition-colors">2</button>
-                <button type="button" onclick="showRalivaToast('Halaman berikutnya (demo).')" class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface hover:border-gold-accent transition-colors"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+                @if ($products->onFirstPage())
+                    <span class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface-variant opacity-50 cursor-not-allowed"><span class="material-symbols-outlined text-[18px]">chevron_left</span></span>
+                @else
+                    <a href="{{ $products->previousPageUrl() }}" class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface hover:border-gold-accent transition-colors"><span class="material-symbols-outlined text-[18px]">chevron_left</span></a>
+                @endif
+                <span class="px-3 py-1.5 text-xs font-medium text-on-surface-variant whitespace-nowrap">Halaman {{ $products->currentPage() }} / {{ $products->lastPage() }}</span>
+                @if ($products->hasMorePages())
+                    <a href="{{ $products->nextPageUrl() }}" class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface hover:border-gold-accent transition-colors"><span class="material-symbols-outlined text-[18px]">chevron_right</span></a>
+                @else
+                    <span class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface-variant opacity-50 cursor-not-allowed"><span class="material-symbols-outlined text-[18px]">chevron_right</span></span>
+                @endif
             </div>
         </div>
     </section>
