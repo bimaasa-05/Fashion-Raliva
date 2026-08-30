@@ -76,4 +76,36 @@ class KaryawanController extends Controller
 
         return redirect()->route('owner.karyawan')->with('success', 'Karyawan berhasil ditambahkan.');
     }
+
+    public function update(Request $request, StoreStaff $storeStaff)
+    {
+        if ($storeStaff->store_id !== OwnerContext::firstStoreId()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'role' => ['required', 'in:admin,produksi,gudang'],
+            'status' => ['required', 'in:aktif,nonaktif'],
+        ]);
+
+        $roleId = array_search($validated['role'], self::ROLE_MAP);
+        if ($storeStaff->user) {
+            $storeStaff->user->update(['role_id' => $roleId]);
+        }
+        $storeStaff->update(['status' => $validated['status']]);
+
+        return redirect()->route('owner.karyawan')->with('success', 'Data karyawan berhasil diperbarui.');
+    }
+
+    public function destroy(StoreStaff $storeStaff)
+    {
+        if ($storeStaff->store_id !== OwnerContext::firstStoreId()) {
+            abort(403);
+        }
+
+        // Soft: nonaktifkan penugasan (jangan hapus user agar aman).
+        $storeStaff->update(['status' => 'nonaktif']);
+
+        return redirect()->route('owner.karyawan')->with('success', 'Karyawan dinonaktifkan.');
+    }
 }
