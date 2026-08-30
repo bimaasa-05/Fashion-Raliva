@@ -271,6 +271,35 @@
         opacity: .7;
     }
 
+    /* ============ PREMIUM CARD + HEADING (style tiruan Super-Admin, aksen Burgundy) ============ */
+    .card-premium {
+        box-shadow: 0 1px 2px rgb(17 17 17 / 0.04), 0 12px 32px -16px rgb(17 17 17 / 0.16);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .card-premium:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 2px 4px rgb(17 17 17 / 0.05), 0 20px 48px -20px rgb(17 17 17 / 0.22);
+        border-color: rgba(139, 30, 63, .45);   /* Burgundy, bukan gold */
+    }
+    html.theme-dark .card-premium {
+        box-shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 12px 32px -16px rgb(0 0 0 / 0.55);
+    }
+    html.theme-dark .card-premium:hover {
+        box-shadow: 0 2px 4px rgb(0 0 0 / 0.4), 0 20px 48px -20px rgb(0 0 0 / 0.7);
+        border-color: rgba(139, 30, 63, .55);
+    }
+
+    .premium-heading::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 0.95em;
+        margin-right: 0.65rem;
+        background: #8B1E3F;                      /* Burgundy accent bar */
+        border-radius: 9999px;
+        vertical-align: -0.05em;
+    }
+
     @media (prefers-reduced-motion: reduce) {
         .hero-photos, .hero-reveal, .reveal-up { animation: none !important; opacity: 1 !important; transform: none !important; }
     }
@@ -307,7 +336,7 @@
 </div>
 </header>
 <!-- Main Content -->
-<main class="pt-16">
+<main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Hero Section (editorial crossfade, RALIVA Home pictures) -->
 <section class="relative w-full h-[78vh] min-h-[560px] max-h-[860px] overflow-hidden">
 <div class="hero-photos absolute inset-0">
@@ -336,11 +365,13 @@
 </div>
 </section>
 <!-- New Arrivals -->
-<section class="py-xl px-container-margin reveal-up" style="background-color: var(--surface-ivory);">
+<section class="py-xl px-container-margin reveal-up">
+<div class="mx-auto max-w-7xl">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm card-premium">
 <div class="atl-eyebrow mb-xs">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('New Arrivals') }}</span>
 </div>
-<h3 class="font-headline-md text-headline-md text-on-surface mb-md">{{ __('The Latest from Our Ateliers') }}</h3>
+<h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('The Latest from Our Ateliers') }}</h3>
 <div id="new-arrivals-grid" class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
 <!-- Product 1 -->
 <div data-category="Women" class="relative flex flex-col group cursor-pointer">
@@ -403,14 +434,18 @@
 <div class="mt-md flex justify-center">
 <a href="{{ route('customer.shop') }}" class="border border-secondary text-secondary bg-transparent font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:bg-secondary/5 transition-colors inline-block">{{ __('VIEW ALL NEW ARRIVALS') }}</a>
 </div>
+</div>
+</div>
 </section>
 <!-- Featured Stores -->
-<section class="py-xl border-t border-b border-outline-variant reveal-up" style="background-color: var(--surface-warm);">
-<div class="px-container-margin mb-md">
+<section class="py-xl px-container-margin border-t border-[var(--border-soft)] reveal-up">
+<div class="mx-auto max-w-7xl">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm card-premium">
+<div class="mb-md">
 <div class="atl-eyebrow mb-xs">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Featured Stores') }}</span>
 </div>
-<h3 class="font-headline-md text-headline-md text-on-surface">{{ __('Maisions We Love') }}</h3>
+<h3 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ __('Maisions We Love') }}</h3>
 </div>
 <div class="flex overflow-x-auto no-scrollbar lg:grid lg:grid-cols-4 lg:overflow-visible pl-container-margin pr-container-margin gap-md pb-xs snap-x snap-mandatory">
 <!-- Store 1 -->
@@ -445,6 +480,8 @@
 <h4 class="font-title-md text-title-md text-on-surface group-hover:text-secondary transition-colors">Maëva House</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Essential daily luxury.') }}</p>
 </a>
+</div>
+</div>
 </div>
 </section>
 <!-- Newsletter -->
