@@ -12,6 +12,7 @@ class DataCustomerController extends Controller
     {
         $customers = User::withCount('orders')
             ->withSum('orders', 'grand_total')
+            ->with(['orders' => fn ($q) => $q->latest()->limit(5), 'reviews' => fn ($q) => $q->latest()->limit(5)])
             ->where('role_id', 6)
             ->orderByDesc('created_at')
             ->paginate(20);
