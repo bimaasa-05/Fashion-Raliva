@@ -141,7 +141,7 @@
                                 @endif
                             </td>
                             <td class="py-3.5 px-4 text-right">
-                                <button type="button" onclick="showRalivaToast('Lacak pesanan #{{ $ship->order_id }} (read-only).', 'location_searching')" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Lacak</button>
+                                <button type="button" data-modal-open="modal-kirim-{{ $ship->order_id }}" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Lacak</button>
                             </td>
                         </tr>
                     @empty
@@ -156,4 +156,38 @@
         </div>
     </section>
 </div>
+
+{{-- Modal Lacak Pengiriman --}}
+@foreach ($shipments as $ship)
+<div id="modal-kirim-{{ $ship->order_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <p class="raliva-label text-gold-accent">Lacak Pengiriman</p>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">#{{ $ship->order_id }}</h3>
+                <p class="text-xs text-on-surface-variant mt-0.5">{{ $ship->nomor_order }}</p>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 space-y-3">
+            <div class="flex items-center justify-between bg-surface-container-low rounded-lg px-4 py-3">
+                <span class="text-[10px] uppercase text-on-surface-variant">Status</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase">{{ $ship->status }}</span>
+            </div>
+            <div class="bg-surface-container-low rounded-lg p-4 space-y-1.5 text-sm">
+                <div class="flex justify-between"><span class="text-on-surface-variant">Customer</span><span class="text-on-surface">{{ $ship->checkout?->user?->nama_lengkap ?? '-' }}</span></div>
+                <div class="flex justify-between"><span class="text-on-surface-variant">Total</span><span class="text-on-surface">Rp {{ number_format($ship->grand_total, 0, ',', '.') }}</span></div>
+                <div class="flex justify-between"><span class="text-on-surface-variant">Tanggal</span><span class="text-on-surface">{{ optional($ship->created_at)->translatedFormat('d M Y') }}</span></div>
+            </div>
+            <p class="text-xs text-on-surface-variant flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">info</span>Resi otomatis terbit saat pesanan dikirim oleh Admin Produksi.</p>
+        </div>
+        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end">
+            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+        </div>
+    </div>
+</div>
+@endforeach
 @endsection
