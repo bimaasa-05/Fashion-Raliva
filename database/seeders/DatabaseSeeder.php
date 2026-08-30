@@ -19,6 +19,9 @@ class DatabaseSeeder extends Seeder
             SuperAdminSeeder::class,
             UserSeeder::class,
             WalletSeeder::class,
+            GudangDemoSeeder::class,
+            OwnerSeeder::class,
+            AdminDemoSeeder::class,
         ]);
     }
 }
