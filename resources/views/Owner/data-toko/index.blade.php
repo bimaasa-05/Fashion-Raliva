@@ -23,7 +23,7 @@
                 <div class="w-24 h-24 rounded-xl overflow-hidden border border-outline-variant bg-surface-container-high flex items-center justify-center">
                     <img src="{{ asset('images/logo.svg') }}" alt="Logo Toko" class="w-full h-full object-cover" />
                 </div>
-                <button type="button" onclick="showRalivaToast('Silakan pilih logo baru (demo).', 'image')" class="absolute -bottom-2 -right-2 w-9 h-9 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center btn-premium shadow-md" aria-label="Ubah Logo">
+                <button type="button" onclick="showRalivaToast('Silakan pilih logo baru.', 'image')" class="absolute -bottom-2 -right-2 w-9 h-9 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center btn-premium shadow-md" aria-label="Ubah Logo">
                     <span class="material-symbols-outlined text-[18px]">photo_camera</span>
                 </button>
             </div>
@@ -94,15 +94,38 @@
 
         {{-- Jam Operasional --}}
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Jam Operasional</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
-                @foreach ([['Senin - Jumat', '09:00 - 21:00', true], ['Sabtu', '10:00 - 22:00', true], ['Minggu', '10:00 - 18:00', true], ['Hari Libur Nasional', 'Tutup', false]] as $jam)
-                    <div class="border border-muted-border rounded-lg px-4 py-3.5 flex items-center justify-between gap-3 bg-surface-container-low">
-                        <div>
-                            <p class="font-title-md text-sm text-on-surface">{{ $jam[0] }}</p>
-                            <p class="text-on-surface-variant text-xs mt-0.5">{{ $jam[2] ? $jam[1] : 'Libur' }}</p>
+            <div class="flex items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="font-title-md text-title-md mb-1 text-on-surface premium-heading">Jam Operasional</h2>
+                    <p class="text-xs text-on-surface-variant">Atur hari buka dan jam operasional toko Anda.</p>
+                </div>
+            </div>
+            @php
+                $days = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+                $hours = $store->operational_hours ?? [];
+            @endphp
+            <div class="space-y-3">
+                @foreach ($days as $day)
+                    @php
+                        $h = $hours[$day] ?? ['buka' => true, 'mulai' => '09:00', 'selesai' => '21:00'];
+                        $buka = $h['buka'] ?? true;
+                        $mulai = $h['mulai'] ?? '09:00';
+                        $selesai = $h['selesai'] ?? '21:00';
+                    @endphp
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3 border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low">
+                        <div class="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-44 shrink-0">
+                            <span class="font-title-md text-sm text-on-surface">{{ $day }}</span>
+                            <label class="inline-flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="operational_hours[{{ $day }}][buka]" value="1" {{ $buka ? 'checked' : '' }} class="peer sr-only">
+                                <span class="relative inline-flex w-11 h-6 bg-surface-container-high border border-outline-variant rounded-full peer-checked:bg-gold-accent peer-checked:border-gold-accent transition-colors duration-200 after:absolute after:left-0.5 after:top-0.5 after:w-5 after:h-5 after:bg-white rounded-full after:transition-transform peer-checked:after:translate-x-5"></span>
+                                <span class="text-xs text-on-surface-variant">{{ $buka ? 'Buka' : 'Tutup' }}</span>
+                            </label>
                         </div>
-                        <span class="material-symbols-outlined {{ $jam[2] ? 'text-secondary fill' : 'text-error' }}">{{ $jam[2] ? 'check_circle' : 'cancel' }}</span>
+                        <div class="flex items-center gap-2 w-full sm:w-auto {{ $buka ? '' : 'opacity-40 pointer-events-none' }}">
+                            <input type="time" name="operational_hours[{{ $day }}][mulai]" value="{{ $mulai }}" class="raliva-input !py-2 !px-3 text-sm w-full sm:w-32" />
+                            <span class="text-on-surface-variant text-sm">—</span>
+                            <input type="time" name="operational_hours[{{ $day }}][selesai]" value="{{ $selesai }}" class="raliva-input !py-2 !px-3 text-sm w-full sm:w-32" />
+                        </div>
                     </div>
                 @endforeach
             </div>
