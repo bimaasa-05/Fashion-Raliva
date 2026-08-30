@@ -70,37 +70,40 @@
             </div>
         </section>
 
-        {{-- Estimasi Margin (5 lapis) --}}
+        {{-- Estimasi Margin (5 lapis) — bahasa awam --}}
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <div class="flex items-center justify-between gap-4 mb-6">
-                <h2 class="font-title-md text-title-md text-on-surface premium-heading">Estimasi Margin Keuangan</h2>
-                <span class="text-[10px] uppercase tracking-wider text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">Asumsi HPP 60% · Pajak 25%</span>
+                <div>
+                    <h2 class="font-title-md text-title-md text-on-surface premium-heading">Perkiraan Keuntungan Toko</h2>
+                    <p class="text-xs text-on-surface-variant mt-1">Estimasi laba dari total penjualan, setelah potong HPP dan pajak.</p>
+                </div>
+                <span class="text-[10px] uppercase tracking-wider text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">Asumsi: HPP 60% · Pajak 25%</span>
             </div>
             <div data-reveal-group class="grid grid-cols-2 md:grid-cols-5 gap-gutter">
-                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Cross Margin</span>
+                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Total Omzet</span>
                     <span class="raliva-figure text-[20px] text-on-surface">{{ $fmt($margin['revenue']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Revenue / Omzet</span>
+                    <span class="text-[10px] text-on-surface-variant">Semua pendapatan kotor</span>
                 </div>
-                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Gross Profit</span>
+                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Kotor</span>
                     <span class="raliva-figure text-[20px] text-secondary">{{ $fmt($margin['gross']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Setelah HPP</span>
+                    <span class="text-[10px] text-on-surface-variant">Setelah potong HPP barang</span>
                 </div>
-                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">EBITDA</span>
+                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Operasional</span>
                     <span class="raliva-figure text-[20px] text-on-surface">{{ $fmt($margin['ebitda']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Setelah operasional</span>
+                    <span class="text-[10px] text-on-surface-variant">Setelah biaya operasional</span>
                 </div>
-                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">EBT</span>
+                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Sebelum Pajak</span>
                     <span class="raliva-figure text-[20px] text-on-surface">{{ $fmt($margin['ebt']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Setelah pendanaan</span>
+                    <span class="text-[10px] text-on-surface-variant">Setelah biaya pendanaan</span>
                 </div>
-                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Net Profit</span>
+                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Bersih</span>
                     <span class="raliva-figure text-[20px] text-gold-accent">{{ $fmt($margin['net']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Laba bersih</span>
+                    <span class="text-[10px] text-on-surface-variant">Uang riil di kantong</span>
                 </div>
             </div>
         </section>
