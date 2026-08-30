@@ -121,11 +121,11 @@ class LaporanController extends Controller
             ->groupBy('product_variants.product_id')
             ->orderByDesc('terjual')
             ->limit(5)
-            ->with('variant.product')
+            ->with('productVariant.product')
             ->get()
             ->map(function ($oi) {
                 return [
-                    'nama' => $oi->variant?->product?->nama_produk ?? '-',
+                    'nama' => $oi->productVariant?->product?->nama_produk ?? '-',
                     'terjual' => (int) $oi->terjual,
                 ];
             })->all();
