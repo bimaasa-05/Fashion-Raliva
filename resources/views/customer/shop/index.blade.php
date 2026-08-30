@@ -350,9 +350,9 @@
 <!-- Canvas Area -->
 <div class="flex-grow flex flex-col w-full">
 <!-- Shop Toolbar (parent container: category navigation left, actions right) -->
-<div class="shop-toolbar flex flex-col gap-sm md:flex-row md:justify-between md:items-center px-container-margin py-sm border-b border-outline-variant sticky top-16 lg:top-16 z-30" style="background-color: var(--surface-ivory);">
+<div class="shop-toolbar flex flex-row items-center gap-sm md:gap-md px-container-margin py-sm border-b border-outline-variant sticky top-16 lg:top-16 z-30" style="background-color: var(--surface-ivory);">
     <!-- Category Navigation (scrolls horizontally on small screens) -->
-    <div class="shop-category-nav flex items-center gap-sm overflow-x-auto hide-scrollbar -mx-container-margin px-container-margin md:mx-0 md:px-0">
+    <div class="shop-category-nav flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar -mx-container-margin px-container-margin md:mx-0 md:px-0">
         <button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-pill shrink-0 px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('All') }}</button>
         <button type="button" data-cat="Women" onclick="selectCategory('Women')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Women') }}</button>
         <button type="button" data-cat="Men" onclick="selectCategory('Men')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Men') }}</button>
@@ -361,7 +361,7 @@
         <button type="button" data-cat="Bags" onclick="selectCategory('Bags')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Bags') }}</button>
     </div>
     <!-- Shop Actions (Filter · Cart · Sort) -->
-    <div class="shop-actions flex items-center gap-xs md:gap-sm shrink-0">
+    <div class="shop-actions ml-auto flex items-center gap-xs md:gap-sm shrink-0">
         <button aria-label="{{ __('Filter') }}" class="shop-action-btn order-3 border border-outline-variant hover:text-secondary hover:border-secondary transition-colors relative" onclick="openFilter()" type="button">
             <span class="material-symbols-outlined text-[18px]" data-icon="tune">tune</span>
             <span id="filter-badge" class="absolute -top-1 -right-1.5 bg-secondary text-on-secondary text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold hidden">0</span>
