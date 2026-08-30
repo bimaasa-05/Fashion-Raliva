@@ -264,6 +264,20 @@
     html.theme-dark { --btn-gold-bg: #6D1428; --btn-gold-text: #ffffff; }
     .btn-gold:hover { box-shadow: 0 0 0 1px rgba(139,30,63,.35), 0 8px 22px -8px rgba(139,30,63,.45); }
 
+    /* ============ PREMIUM CARD + HEADING (tiruan Super-Admin, aksen Burgundy) ============ */
+    .card-premium {
+        background-color: var(--surface-ivory);
+        border: 1px solid var(--border-soft);
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 2px rgba(17,17,17,.04), 0 8px 24px -12px rgba(17,17,17,.12);
+        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    .card-premium:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(17,17,17,.06), 0 18px 40px -16px rgba(17,17,17,.18); border-color: rgba(139,30,63,.45); }
+    html.theme-dark .card-premium { background-color: var(--surface-ivory); border-color: var(--border-soft); box-shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5); }
+    html.theme-dark .card-premium:hover { border-color: rgba(139,30,63,.5); box-shadow: 0 4px 12px rgba(0,0,0,.35), 0 20px 44px -16px rgba(0,0,0,.6); }
+    .premium-heading { position: relative; padding-left: 0.9rem; }
+    .premium-heading::before { content: ''; position: absolute; left: 0; top: 0.1em; bottom: 0.1em; width: 4px; border-radius: 9999px; background: var(--chrome-accent); }
+
     @media (prefers-reduced-motion: reduce) {
         .reveal-up { animation: none !important; opacity: 1 !important; transform: none !important; }
     }
@@ -284,7 +298,7 @@
 </div>
 </header>
 <!-- Main Content -->
-<main class="pt-16 lg:max-w-screen-xl lg:mx-auto lg:w-full">
+<main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Wishlist Header (editorial parity home/order-tracking) -->
 <section class="px-container-margin py-lg md:py-xl border-b border-[var(--border-soft)] reveal-up">
 <div class="flex items-center justify-between gap-md">
@@ -298,8 +312,10 @@
 <span class="material-symbols-outlined text-secondary text-[30px] shrink-0" data-icon="favorite" data-weight="fill">favorite</span>
 </div>
 </section>
-<!-- Wishlist Grid -->
-<section class="py-xl px-container-margin reveal-up" style="background-color: var(--surface-ivory);">
+<!-- Wishlist Grid (wrapped in Super-Admin style premium card, aksen Burgundy) -->
+<section class="py-xl px-container-margin reveal-up">
+<div class="mx-auto max-w-7xl">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm card-premium">
 <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
 @foreach ([
                     ['brand' => 'Noiré Studio', 'name' => 'Tailored Linen Blazer', 'price' => '$245.00', 'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ'],
@@ -319,12 +335,14 @@
 <h3 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">{{ $product['name'] }}</h3>
 <span class="font-body-sm text-body-sm text-on-surface mt-1">{{ $product['price'] }}</span>
 </a>
-<a href="{{ route('customer.chart') }}" class="btn-gold mt-sm font-label-caps text-label-caps py-xs uppercase tracking-widest transition-colors flex items-center justify-center gap-xs">
+<a href="{{ route('customer.chart') }}" class="btn-gold mt-sm font-label-caps text-label-caps px-xs py-xs lg:px-md uppercase tracking-widest transition-colors flex items-center justify-center gap-xs">
 <span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
 {{ __('ADD TO CART') }}
 </a>
 </div>
 @endforeach
+</div>
+</div>
 </div>
 </section>
 </main>
