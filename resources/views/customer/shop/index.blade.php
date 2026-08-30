@@ -288,6 +288,32 @@
         background: var(--chrome-accent);
         opacity: .7;
     }
+    /* ============ SHOP TOOLBAR (scoped: category nav + actions) ============ */
+    .shop-action-btn {
+        min-height: 40px;
+        min-width: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9999px;
+        transition: color .2s ease, border-color .2s ease, background-color .2s ease;
+    }
+    .shop-action-btn:hover { background-color: var(--chrome-hover); }
+    .shop-sort-trigger { min-height: 40px; }
+    /* ============ SHOP CONTENT CONTAINER (single product-area container, mirrors Wishlist card feel) ============ */
+    .shop-content-container {
+        background-color: #ffffff;
+        border: 1px solid var(--border-soft);
+        border-radius: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+        transition: border-color .35s ease;
+    }
+    .shop-content-container:hover { border-color: rgba(139, 30, 63, .45); }
+    html.theme-dark .shop-content-container {
+        background-color: #1e1d1c;
+        border-color: var(--border-soft);
+    }
+    html.theme-dark .shop-content-container:hover { border-color: rgba(139, 30, 63, .55); }
 </style>
   </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72">
@@ -304,74 +330,67 @@
 </div>
 </header>
 <!-- Main Content -->
-<main class="flex-grow w-full flex flex-col pt-16 pb-8 lg:pb-12 overflow-x-hidden">
+<main class="flex-grow w-full flex flex-col pt-16 pb-8 lg:pb-12 overflow-x-clip">
 <!-- Canvas Area -->
 <div class="flex-grow flex flex-col w-full">
-<!-- Category Bar (Desktop/Tablet) -->
-<div class="hidden md:flex w-full border-b border-outline-variant sticky top-16 lg:top-16 bg-surface z-30 px-container-margin py-sm gap-sm overflow-x-auto hide-scrollbar" style="background-color: var(--surface-ivory);">
-<button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-pill shrink-0 px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('All') }}</button>
-<button type="button" data-cat="Women" onclick="selectCategory('Women')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Women') }}</button>
-<button type="button" data-cat="Men" onclick="selectCategory('Men')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Men') }}</button>
-<button type="button" data-cat="Accessories" onclick="selectCategory('Accessories')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Accessories') }}</button>
-<button type="button" data-cat="Shoes" onclick="selectCategory('Shoes')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Shoes') }}</button>
-<button type="button" data-cat="Bags" onclick="selectCategory('Bags')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Bags') }}</button>
-</div>
-<!-- Category Tabs (Mobile/Tablet) -->
-<div class="w-full border-b border-outline-variant overflow-x-auto hide-scrollbar sticky top-16 z-30 md:hidden" style="background-color: var(--surface-ivory);">
-<div class="flex px-container-margin gap-lg min-w-max h-12 items-center">
-<button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-tab font-label-sm text-label-sm text-secondary border-b-2 border-secondary h-full flex items-center px-1">{{ __('All') }}</button>
-<button type="button" data-cat="Women" onclick="selectCategory('Women')" class="cat-tab font-label-sm text-label-sm text-on-surface-variant h-full flex items-center px-1 hover:text-on-surface transition-colors">Women</button>
-<button type="button" data-cat="Men" onclick="selectCategory('Men')" class="cat-tab font-label-sm text-label-sm text-on-surface-variant h-full flex items-center px-1 hover:text-on-surface transition-colors">Men</button>
-<button type="button" data-cat="Accessories" onclick="selectCategory('Accessories')" class="cat-tab font-label-sm text-label-sm text-on-surface-variant h-full flex items-center px-1 hover:text-on-surface transition-colors">Accessories</button>
-</div>
-</div>
-<!-- Sort & Filter Bar -->
-<div class="flex justify-between items-center px-container-margin py-sm border-b border-outline-variant" style="background-color: var(--surface-ivory);">
-<div class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Shop Collection') }}</div>
-<div class="flex gap-sm items-center">
-<div class="relative" id="sort-menu-container">
-<button class="flex items-center gap-1 font-label-sm text-label-sm text-on-surface hover:text-secondary transition-colors" onclick="toggleSortMenu()" type="button">
-<span id="sort-label">{{ __('Sort') }}</span>
-<span class="material-symbols-outlined text-[16px] transition-transform duration-200" data-icon="expand_more" id="sort-chevron">expand_more</span>
-</button>
-<div id="sort-menu" class="absolute right-0 top-full mt-xs w-56 bg-surface rounded-lg border border-outline-variant shadow-xl z-20 py-xs origin-top-right transition-all duration-200 ease-out invisible opacity-0 scale-95 -translate-y-1">
-<p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest px-md pt-xs pb-sm">{{ __('Sort By') }}</p>
-<button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors font-semibold" data-sort="Newest" onclick="selectSort('Newest')" type="button">
-<span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">schedule</span>{{ __('Newest') }}</span>
-<span class="material-symbols-outlined text-[18px] text-secondary sort-check">check</span>
-</button>
-<button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Price: Low to High" onclick="selectSort('Price: Low to High')" type="button">
-<span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_upward</span>{{ __('Price: Low to High') }}</span>
-<span class="material-symbols-outlined text-[18px] text-secondary sort-check invisible">check</span>
-</button>
-<button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Price: High to Low" onclick="selectSort('Price: High to Low')" type="button">
-<span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_downward</span>{{ __('Price: High to Low') }}</span>
-<span class="material-symbols-outlined text-[18px] text-secondary sort-check invisible">check</span>
-</button>
-<button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Popular" onclick="selectSort('Popular')" type="button">
-<span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">local_fire_department</span>{{ __('Popular') }}</span>
-<span class="material-symbols-outlined text-[18px] text-secondary sort-check invisible">check</span>
-</button>
-</div>
-</div>
-<a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart') }}" class="relative hover:text-secondary transition-colors flex items-center">
-<span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
-<span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
-</a>
-<button aria-label="{{ __('Filter') }}" class="hover:text-secondary transition-colors flex items-center relative" onclick="openFilter()" type="button">
-<span class="material-symbols-outlined text-[22px]" data-icon="tune">tune</span>
-<span id="filter-badge" class="absolute -top-1 -right-1.5 bg-secondary text-on-secondary text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold hidden">0</span>
-</button>
-</div>
+<!-- Shop Toolbar (parent container: category navigation left, actions right) -->
+<div class="shop-toolbar flex flex-col gap-sm md:flex-row md:justify-between md:items-center px-container-margin py-sm border-b border-outline-variant sticky top-16 lg:top-16 z-30" style="background-color: var(--surface-ivory);">
+    <!-- Category Navigation (scrolls horizontally on small screens) -->
+    <div class="shop-category-nav flex items-center gap-sm overflow-x-auto hide-scrollbar -mx-container-margin px-container-margin md:mx-0 md:px-0">
+        <button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-pill shrink-0 px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('All') }}</button>
+        <button type="button" data-cat="Women" onclick="selectCategory('Women')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Women') }}</button>
+        <button type="button" data-cat="Men" onclick="selectCategory('Men')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Men') }}</button>
+        <button type="button" data-cat="Accessories" onclick="selectCategory('Accessories')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Accessories') }}</button>
+        <button type="button" data-cat="Shoes" onclick="selectCategory('Shoes')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Shoes') }}</button>
+        <button type="button" data-cat="Bags" onclick="selectCategory('Bags')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Bags') }}</button>
+    </div>
+    <!-- Shop Actions (Filter · Cart · Sort) -->
+    <div class="shop-actions flex items-center gap-sm md:gap-md shrink-0">
+        <button aria-label="{{ __('Filter') }}" class="shop-action-btn px-md gap-1 font-label-sm text-label-sm text-on-surface border border-outline-variant hover:text-secondary hover:border-secondary transition-colors relative" onclick="openFilter()" type="button">
+            <span class="material-symbols-outlined text-[18px]" data-icon="tune">tune</span>
+            <span class="hidden sm:inline">{{ __('Filter') }}</span>
+            <span id="filter-badge" class="absolute -top-1 -right-1.5 bg-secondary text-on-secondary text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold hidden">0</span>
+        </button>
+        <a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart') }}" class="shop-action-btn relative text-on-surface hover:text-secondary transition-colors">
+            <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
+            <span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+        </a>
+        <div class="relative shop-sort-trigger" id="sort-menu-container">
+            <button class="shop-action-btn px-md gap-1 border border-outline-variant font-label-sm text-label-sm text-on-surface hover:text-secondary hover:border-secondary transition-colors" onclick="toggleSortMenu()" type="button">
+                <span id="sort-label">{{ __('Sort') }}</span>
+                <span class="material-symbols-outlined text-[16px] transition-transform duration-200" data-icon="expand_more" id="sort-chevron">expand_more</span>
+            </button>
+            <div id="sort-menu" class="absolute right-0 top-full mt-xs w-56 bg-surface rounded-lg border border-outline-variant shadow-xl z-20 py-xs origin-top-right transition-all duration-200 ease-out invisible opacity-0 scale-95 -translate-y-1">
+                <p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest px-md pt-xs pb-sm">{{ __('Sort By') }}</p>
+                <button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Newest" onclick="selectSort('Newest')" type="button">
+                    <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">schedule</span>{{ __('Newest') }}</span>
+                    <span class="material-symbols-outlined text-[18px] text-secondary sort-check">check</span>
+                </button>
+                <button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Price: Low to High" onclick="selectSort('Price: Low to High')" type="button">
+                    <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_upward</span>{{ __('Price: Low to High') }}</span>
+                    <span class="material-symbols-outlined text-[18px] text-secondary sort-check invisible">check</span>
+                </button>
+                <button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Price: High to Low" onclick="selectSort('Price: High to Low')" type="button">
+                    <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_downward</span>{{ __('Price: High to Low') }}</span>
+                    <span class="material-symbols-outlined text-[18px] text-secondary sort-check invisible">check</span>
+                </button>
+                <button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Popular" onclick="selectSort('Popular')" type="button">
+                    <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">local_fire_department</span>{{ __('Popular') }}</span>
+                    <span class="material-symbols-outlined text-[18px] text-secondary sort-check invisible">check</span>
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- Active Filter Chips -->
-<div id="active-chips" class="hidden px-container-margin py-sm border-b border-outline-variant flex flex-wrap gap-sm items-center">
+<div id="active-chips" class="px-container-margin py-sm border-b border-outline-variant flex flex-wrap gap-sm items-center min-h-[2.75rem] opacity-0 pointer-events-none border-transparent transition-opacity duration-200">
 <div id="chips-list" class="flex flex-wrap gap-sm items-center grow"></div>
 <button id="clear-all" class="font-label-sm text-label-sm text-secondary underline hover:opacity-80 transition-opacity shrink-0" onclick="clearAll()" type="button">{{ __('Clear all') }}</button>
 </div>
-<!-- Product Grid (wrapped in Super-Admin style premium card, aksen Burgundy) -->
+<!-- Shop Content Container -->
 <div class="mx-auto max-w-[1400px] px-container-margin py-xl">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm card-premium">
+<div class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg">
+<!-- Shop Header -->
 <div class="flex items-center justify-between gap-md mb-md flex-wrap">
 <div class="atl-eyebrow">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Shop') }}</span>
@@ -436,7 +455,7 @@
 </div>
 </a>
 </div>
-<div class="flex justify-center py-xl border-t border-outline-variant mt-md">
+<div class="flex justify-center py-xl mt-md">
 <button class="btn-gold font-label-caps text-label-caps px-lg py-3 lg:px-xl rounded-full uppercase tracking-widest" type="button">
                     {{ __('LOAD MORE') }}
                 </button>
@@ -614,7 +633,11 @@
                 var pmax = activeFilters.price.max !== null ? 'Rp ' + activeFilters.price.max.toLocaleString('id-ID') : '∞';
                 addChip(pmin + ' – ' + pmax, 'price', 'price');
             }
-            document.getElementById('active-chips').classList.toggle('hidden', countActive() === 0);
+            var ac = document.getElementById('active-chips');
+            var hasChips = countActive() > 0;
+            ac.classList.toggle('opacity-0', !hasChips);
+            ac.classList.toggle('pointer-events-none', !hasChips);
+            ac.classList.toggle('border-transparent', !hasChips);
         }
         function removeFilter(type, val) {
             if (type === 'category') {
