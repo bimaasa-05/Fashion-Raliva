@@ -26,25 +26,36 @@
 
     {{-- Tabel Pesanan --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
-        <div class="flex items-center gap-3 flex-wrap mb-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+            <div>
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Pesanan</h2>
+                <p class="text-xs text-on-surface-variant mt-1">Pantau seluruh pesanan masuk, status, dan detail pembayarannya.</p>
+            </div>
+        </div>
+
+        {{-- Toolbar: 1 baris rapi — search kiri, filter kanan --}}
+        <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
             <div class="relative flex-1 min-w-[220px]">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                 <input type="text" placeholder="Cari kode pesanan atau customer..." data-table-search class="raliva-search" />
             </div>
-            <select data-table-filter="status" class="raliva-select">
-                <option value="">Semua Status</option>
-                <option value="baru" @selected($status === 'baru')>Baru</option>
-                <option value="diproses" @selected($status === 'diproses')>Diproses</option>
-                <option value="dikirim" @selected($status === 'dikirim')>Dikirim</option>
-                <option value="selesai" @selected($status === 'selesai')>Selesai</option>
-                <option value="dibatalkan" @selected($status === 'dibatalkan')>Dibatalkan</option>
-            </select>
-            <select data-table-filter="period" class="raliva-select">
-                <option value="">Semua Waktu</option>
-                <option value="today" @selected($period === 'today')>Hari Ini</option>
-                <option value="week" @selected($period === 'week')>Minggu Ini</option>
-                <option value="month" @selected($period === 'month')>Bulan Ini</option>
-            </select>
+            <div class="flex flex-wrap items-center gap-3 lg:justify-end">
+                <select data-table-filter="status" class="raliva-select lg:w-44">
+                    <option value="">Semua Status</option>
+                    <option value="baru" @selected($status === 'baru')>Baru</option>
+                    <option value="diproses" @selected($status === 'diproses')>Diproses</option>
+                    <option value="dikirim" @selected($status === 'dikirim')>Dikirim</option>
+                    <option value="selesai" @selected($status === 'selesai')>Selesai</option>
+                    <option value="dibatalkan" @selected($status === 'dibatalkan')>Dibatalkan</option>
+                </select>
+                <select data-table-filter="period" class="raliva-select lg:w-44">
+                    <option value="">Semua Waktu</option>
+                    <option value="today" @selected($period === 'today')>Hari Ini</option>
+                    <option value="week" @selected($period === 'week')>Minggu Ini</option>
+                    <option value="month" @selected($period === 'month')>Bulan Ini</option>
+                </select>
+                <button type="button" data-filter-reset class="py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Reset</button>
+            </div>
         </div>
 
         <div data-table-wrap class="overflow-x-auto">
@@ -95,7 +106,7 @@
                                 <span class="inline-flex items-center px-2 py-1 rounded-full {{ $statusPill[$key] }} text-[10px] font-bold uppercase">{{ $o->status }}</span>
                             </td>
                             <td class="py-3.5 px-4 text-right">
-                                <button type="button" data-drawer-open="drawer-order-{{ $o->order_id }}" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Detail</button>
+                                <button type="button" data-modal-open="modal-order-{{ $o->order_id }}" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Detail</button>
                             </td>
                         </tr>
                     @empty
@@ -115,8 +126,7 @@
     </section>
 </div>
 
-{{-- Drawer Detail Pesanan (dinamis per order) --}}
-<div id="drawer-overlay" class="fixed inset-0 bg-black/50 z-[70] hidden opacity-0 transition-opacity duration-300"></div>
+{{-- Modal Detail Pesanan (centered, dinamis per order) --}}
 @foreach ($orders as $o)
 <?php
     $oKey = match($o->status) {
@@ -129,7 +139,9 @@
     $oCustomer = $o->checkout?->user;
     $oPayment = $o->checkout?->payment;
 ?>
-<div id="drawer-order-{{ $o->order_id }}" data-drawer-panel class="fixed inset-y-0 right-0 z-[80] w-full max-w-lg bg-surface-container-lowest border-l border-muted-border shadow-xl translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+<div id="modal-order-{{ $o->order_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
     <div class="flex items-start justify-between px-6 py-5 border-b border-muted-border shrink-0">
         <div>
             <p class="text-xs font-medium text-on-surface-variant">Detail Pesanan</p>
@@ -201,23 +213,27 @@
         </section>
     </div>
     <div class="shrink-0 border-t border-muted-border p-4 flex flex-col-reverse sm:flex-row gap-gutter">
-        <button type="button" onclick="showRalivaToast('Invoice sedang disiapkan (demo).', 'download')" class="flex-1 py-3 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors flex items-center justify-center gap-2">
+        <button type="button" onclick="window.print()" class="flex-1 py-3 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors flex items-center justify-center gap-2">
             <span class="material-symbols-outlined text-[16px]">download</span>Unduh Invoice
         </button>
-        <button type="button" onclick="showRalivaToast('Pesanan diteruskan ke Admin untuk diproses (demo).', 'forward_to_inbox')" class="flex-1 py-3 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium">Teruskan ke Admin</button>
+        <button type="button" data-modal-open="modal-forward-{{ $o->order_id }}" class="flex-1 py-3 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium">Teruskan ke Admin</button>
     </div>
-</div>
+    </div>{{-- /inner --}}
+</div>{{-- /modal root --}}
+    <div id="modal-forward-{{ $o->order_id }}" data-modal class="fixed inset-0 z-[75] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+        <div class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="material-symbols-outlined text-gold-accent">forward_to_inbox</span>
+                <h3 class="font-title-md text-title-md text-on-surface">Teruskan ke Admin?</h3>
+            </div>
+            <p class="text-on-surface-variant text-sm mb-6">Pesanan <span class="font-mono text-on-surface">{{ $o->nomor_order }}</span> akan diteruskan ke Admin Produksi untuk diproses. Status berubah menjadi <b>Diproses</b>.</p>
+            <form method="POST" action="{{ route('owner.pesanan.forward', $o->order_id) }}" class="flex gap-3">
+                @csrf
+                <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Teruskan</button>
+            </form>
+        </div>
+    </div>
 @endforeach
 @endsection
-
-@push('scripts')
-<script>
-    document.querySelectorAll('[data-drawer-open="drawer-detail-pesanan"]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            const code = window.currentOrder || '#RLV-2093';
-            const el = document.getElementById('drawer-order-code');
-            if (el) el.textContent = code;
-        });
-    });
-</script>
-@endpush
