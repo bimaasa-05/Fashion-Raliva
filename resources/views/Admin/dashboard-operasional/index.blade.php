@@ -149,67 +149,66 @@
             <p class="text-on-surface-variant text-sm py-8 text-center">Belum ada penjualan.</p>
         @endif
         <a href="{{ route('admin.produk') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Katalog Produk</a>
-</section>
     </section>
+</div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter items-stretch">
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
-        <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center justify-between mb-4">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Status Pesanan</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">donut_small</span>
         </div>
         <p class="text-on-surface-variant font-body-md text-xs mb-4">Distribusi seluruh pesanan scope toko.</p>
         @if (count($distribusiStatus))
-            <div data-donut='@json($distribusiStatus)' data-donut-label="Pesanan" class="flex-grow"></div>
+            <div data-donut='@json($distribusiStatus)' data-donut-label="Pesanan" data-donut-max="220" class="flex-1 flex items-center justify-center min-h-[240px]"></div>
         @else
             <p class="text-on-surface-variant text-sm py-8 text-center">Belum ada pesanan.</p>
         @endif
     </section>
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
-        <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center justify-between mb-4">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Komplain Terbaru</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">support_agent</span>
         </div>
-        <ul class="flex flex-col">
-            @forelse ($komplainTerbaru as $komplain)
-                <li class="py-3 border-b last:border-b-0 border-muted-border">
-                    <div class="flex items-center justify-between gap-3">
-                        <p class="font-body-md text-sm text-on-surface truncate">{{ $komplain->subjek }}</p>
-                        <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ $komplain->status === \App\Models\Complaint::STATUS_OPEN ? 'bg-error/10 text-error border-error/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }}">{{ $komplain->status === \App\Models\Complaint::STATUS_OPEN ? 'Terbuka' : ucfirst($komplain->status) }}</span>
-                    </div>
-                    <p class="text-xs text-on-surface-variant mt-1">{{ $komplain->user?->nama_lengkap ?? '-' }} &#8226; {{ $komplain->store?->nama_toko ?? '-' }} &#8226; {{ $komplain->dibuat_pada?->translatedFormat('d M') }}</p>
-                </li>
-            @empty
-                <li class="py-8 text-center text-on-surface-variant text-sm">Tidak ada komplain.</li>
-            @endforelse
-        </ul>
-        <a href="{{ route('admin.komplain') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Kelola Komplain</a>
-    </section>
+        <ul class="flex flex-col flex-1 overflow-y-auto premium-scroll max-h-80">
+                @forelse ($komplainTerbaru as $komplain)
+                    <li class="py-3 border-b last:border-b-0 border-muted-border">
+                        <div class="flex items-center justify-between gap-3">
+                            <p class="font-body-md text-sm text-on-surface truncate">{{ $komplain->subjek }}</p>
+                            <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ $komplain->status === \App\Models\Complaint::STATUS_OPEN ? 'bg-error/10 text-error border-error/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }}">{{ $komplain->status === \App\Models\Complaint::STATUS_OPEN ? 'Terbuka' : ucfirst($komplain->status) }}</span>
+                        </div>
+                        <p class="text-xs text-on-surface-variant mt-1">{{ $komplain->user?->nama_lengkap ?? '-' }} &#8226; {{ $komplain->store?->nama_toko ?? '-' }} &#8226; {{ $komplain->dibuat_pada?->translatedFormat('d M') }}</p>
+                    </li>
+                @empty
+                    <li class="py-8 text-center text-on-surface-variant text-sm">Tidak ada komplain.</li>
+                @endforelse
+            </ul>
+            <a href="{{ route('admin.komplain') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Kelola Komplain</a>
+        </section>
 
-    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <div class="flex items-center justify-between mb-6">
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
+        <div class="flex items-center justify-between mb-4">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Pesanan Masuk</h2>
             <a href="{{ route('admin.pesanan') }}" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Semua</a>
         </div>
-        <ul class="flex flex-col">
-            @forelse ($pesananTerbaru as $pesanan)
-                <li class="p-4 {{ ! $loop->last ? 'border-b border-muted-border' : '' }} hover:bg-surface-container-low transition-colors flex items-center justify-between">
-                    <div class="flex items-center gap-4 min-w-0">
-                        <div class="w-9 h-9 rounded-full {{ $pesanan->status === \App\Models\Order::STATUS_DIBAYAR ? 'bg-secondary-container/30' : 'bg-surface-container-high' }} flex items-center justify-center shrink-0">
-                            <span class="material-symbols-outlined text-sm {{ $pesanan->status === \App\Models\Order::STATUS_DIBAYAR ? 'text-secondary' : 'text-on-surface' }}">shopping_bag</span>
+        <ul class="flex flex-col flex-1 overflow-y-auto premium-scroll max-h-80">
+                @forelse ($pesananTerbaru as $pesanan)
+                    <li class="p-4 {{ ! $loop->last ? 'border-b border-muted-border' : '' }} hover:bg-surface-container-low transition-colors flex items-center justify-between">
+                        <div class="flex items-center gap-4 min-w-0">
+                            <div class="w-9 h-9 rounded-full {{ $pesanan->status === \App\Models\Order::STATUS_DIBAYAR ? 'bg-secondary-container/30' : 'bg-surface-container-high' }} flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-sm {{ $pesanan->status === \App\Models\Order::STATUS_DIBAYAR ? 'text-secondary' : 'text-on-surface' }}">shopping_bag</span>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-body-md text-on-surface truncate"><span class="font-bold">{{ $pesanan->nomor_order }}</span> &#8226; {{ $pesanan->checkout?->user?->nama_lengkap ?? '-' }} &#8226; {{ $pesanan->items->count() }} produk</p>
+                                <p class="text-on-surface-variant text-sm mt-0.5">Rp {{ number_format((float) $pesanan->grand_total, 0, ',', '.') }} &#8226; {{ $pesanan->created_at?->diffForHumans() }}</p>
+                            </div>
                         </div>
-                        <div class="min-w-0">
-                            <p class="font-body-md text-on-surface truncate"><span class="font-bold">{{ $pesanan->nomor_order }}</span> &#8226; {{ $pesanan->checkout?->user?->nama_lengkap ?? '-' }} &#8226; {{ $pesanan->items->count() }} produk</p>
-                            <p class="text-on-surface-variant text-sm mt-0.5">Rp {{ number_format((float) $pesanan->grand_total, 0, ',', '.') }} &#8226; {{ $pesanan->created_at?->diffForHumans() }}</p>
-                        </div>
-                    </div>
-                </li>
-            @empty
-                <li class="py-8 text-center text-on-surface-variant text-sm">Belum ada pesanan.</li>
-            @endforelse
-        </ul>
-    </section>
-</div>
+                    </li>
+                @empty
+                    <li class="py-8 text-center text-on-surface-variant text-sm">Belum ada pesanan.</li>
+                @endforelse
+            </ul>
+        </section>
 </div>
 @endsection
