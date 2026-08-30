@@ -216,6 +216,58 @@
     .bn-active { color: #8B1E3F !important; }
     html.theme-dark .bn-active { color: #8B1E3F !important; }
 </style>
+<style>
+    /* ============ ATELIER EYEBROW (parity home/order-tracking) ============ */
+    .atl-eyebrow { display: inline-flex; align-items: center; gap: .65rem; }
+    .atl-eyebrow::before {
+        content: '';
+        width: 30px;
+        height: 1px;
+        background: var(--chrome-accent);
+        opacity: .7;
+    }
+
+    /* ============ SUBTLE SCROLL REVEAL (parity home) ============ */
+    @keyframes sectionRise {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: none; }
+    }
+    .reveal-up { opacity: 0; }
+    .reveal-up.in { animation: sectionRise .7s cubic-bezier(.22, 1, .36, 1) forwards; }
+
+    /* ============ BUTTON (burgundy, parity home/shop/order-tracking) ============ */
+    .btn-gold {
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        background-color: var(--btn-gold-bg) !important;
+        color: var(--btn-gold-text) !important;
+    }
+    .btn-gold > * { position: relative; z-index: 2; }
+    .btn-gold::after {
+        content: '';
+        position: absolute;
+        top: -10%;
+        bottom: -10%;
+        left: -80%;
+        width: 45%;
+        background: rgba(255,255,255,.55);
+        transform: skewX(-24deg);
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0;
+    }
+    .btn-gold:hover::after, .btn-gold.flashing::after { opacity: 1; animation: authFlash 1.4s linear infinite; }
+    .btn-gold.flashing::after { animation: authFlash 1.4s cubic-bezier(.4,0,.2,1) 1; }
+    @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
+    :root           { --btn-gold-bg: #8B1E3F; --btn-gold-text: #ffffff; }
+    html.theme-dark { --btn-gold-bg: #6D1428; --btn-gold-text: #ffffff; }
+    .btn-gold:hover { box-shadow: 0 0 0 1px rgba(139,30,63,.35), 0 8px 22px -8px rgba(139,30,63,.45); }
+
+    @media (prefers-reduced-motion: reduce) {
+        .reveal-up { animation: none !important; opacity: 1 !important; transform: none !important; }
+    }
+</style>
   </head>
 <body class="antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72" style="background-color: var(--surface-warm);">
 <!-- TopAppBar -->
@@ -233,16 +285,21 @@
 </header>
 <!-- Main Content -->
 <main class="pt-16 lg:max-w-screen-xl lg:mx-auto lg:w-full">
-<!-- Wishlist Header -->
-<section class="py-lg px-container-margin border-b border-outline-variant flex items-center justify-between">
+<!-- Wishlist Header (editorial parity home/order-tracking) -->
+<section class="px-container-margin py-lg md:py-xl border-b border-[var(--border-soft)] reveal-up">
+<div class="flex items-center justify-between gap-md">
 <div>
-<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">{{ __('My Wishlist') }}</h2>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">4 items saved</p>
+<div class="atl-eyebrow mb-xs">
+<span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Saved Items') }}</span>
 </div>
-<span class="material-symbols-outlined text-secondary text-[28px]" data-icon="favorite" data-weight="fill">favorite</span>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">{{ __('My Wishlist') }}</h2>
+<p class="font-body-sm text-body-sm text-[var(--text-muted)] mt-1">4 {{ __('items saved') }}</p>
+</div>
+<span class="material-symbols-outlined text-secondary text-[30px] shrink-0" data-icon="favorite" data-weight="fill">favorite</span>
+</div>
 </section>
 <!-- Wishlist Grid -->
-<section class="py-xl px-container-margin">
+<section class="py-xl px-container-margin reveal-up" style="background-color: var(--surface-ivory);">
 <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
 @foreach ([
                     ['brand' => 'Noiré Studio', 'name' => 'Tailored Linen Blazer', 'price' => '$245.00', 'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ'],
@@ -251,26 +308,45 @@
                     ['brand' => 'Kayana Apparel', 'name' => 'Geometric Gold Hoops', 'price' => '$85.00', 'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuAXqNhNFWMr-Gm8_uwAVgBbqtzcNdb5MAfQUsG_3GJbmE0gm167f27WLQY44QclgDSw7N_b2k0qpe9HdTKZlExYsZl6FJUCnKft0foIHP3pp3uFUAxnwrYM3o7ap46wCmmnSGAbNN-gDM_Kptg0bVNG6ghZhp7r3PeQ66ZD2yhgIMKhB9sSycHTa8yXBJ3fTbNvx2tH5SUu76da_WcZ3bJW7JeJmVuEnVOdIHENcwQB0a1sOCp-u_s'],
                 ] as $product)
 <div class="flex flex-col group cursor-pointer">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden block">
-<img alt="{{ $product['name'] }}" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" src="{{ $product['img'] }}"/>
-<span role="button" tabindex="0" aria-label="{{ __('Remove from wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors cursor-pointer">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
+<div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden rounded-lg">
+<img loading="lazy" decoding="async" alt="{{ $product['name'] }}" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" src="{{ $product['img'] }}"/>
+<span role="button" tabindex="0" aria-label="{{ __('Remove from wishlist') }}" class="absolute top-2 right-2 p-2 rounded-full bg-black/15 backdrop-blur-sm text-white hover:bg-black/30 hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite" data-weight="fill">favorite</span>
 </span>
-</a>
-<a href="{{ route('customer.shop.produk-detail', 1) }}">
+</div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $product['brand'] }}</span>
 <h3 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">{{ $product['name'] }}</h3>
 <span class="font-body-sm text-body-sm text-on-surface mt-1">{{ $product['price'] }}</span>
 </a>
-<a href="{{ route('customer.chart') }}" class="mt-sm border border-secondary text-secondary bg-transparent font-label-caps text-label-caps py-xs uppercase tracking-widest hover:bg-secondary/5 transition-colors flex items-center justify-center gap-xs">
+<a href="{{ route('customer.chart') }}" class="btn-gold mt-sm font-label-caps text-label-caps py-xs uppercase tracking-widest transition-colors flex items-center justify-center gap-xs">
 <span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
-ADD TO CART
+{{ __('ADD TO CART') }}
 </a>
 </div>
 @endforeach
 </div>
 </section>
 </main>
+<script>
+    /* Subtle scroll reveal (parity home) */
+    (function () {
+        var els = document.querySelectorAll('.reveal-up');
+        if (!('IntersectionObserver' in window)) {
+            els.forEach(function (e) { e.classList.add('in'); });
+            return;
+        }
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                if (en.isIntersecting) {
+                    en.target.classList.add('in');
+                    io.unobserve(en.target);
+                }
+            });
+        }, { threshold: 0.12 });
+        els.forEach(function (e) { io.observe(e); });
+    })();
+</script>
 <!-- BottomNavBar -->
 @include('customer._partials.bottom-nav')
 @include('customer._partials.drawer')
