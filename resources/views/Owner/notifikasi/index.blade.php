@@ -61,7 +61,7 @@
     </section>
 
     <div data-reveal class="flex justify-center pt-2">
-        <button type="button" onclick="showRalivaToast('Memuat notifikasi lama (demo).', 'history')" class="px-8 py-3 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Muat Lebih Banyak</button>
+        <button type="button" onclick="showRalivaToast('Memuat notifikasi lama.', 'history')" class="px-8 py-3 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Muat Lebih Banyak</button>
     </div>
 </div>
 @endsection
