@@ -1,7 +1,6 @@
 @extends('layouts.admin')
 
 @section('title', 'Data Customer')
-
 @section('header-title', 'Data Customer')
 @section('header-badge', 'Lihat')
 @section('header-subtitle', 'Data customer yang berhubungan dengan toko dan riwayat pesanannya.')
@@ -37,7 +36,7 @@
                         <td class="p-4 text-on-surface-variant">{{ $c->created_at?->translatedFormat('M Y') }}</td>
                         <td class="p-4 text-center text-on-surface">{{ $c->total_pesanan }}</td>
                         <td class="p-4 text-right font-bold text-gold-accent">Rp {{ number_format($c->orders_sum_grand_total ?? 0, 0, ',', '.') }}</td>
-                        <td class="p-4 text-right"><button type="button" onclick="showRalivaToast('Riwayat pesanan customer (demo).', 'history')" class="text-gold-accent font-label-sm text-[10px] uppercase hover:underline">Riwayat</button></td>
+                        <td class="p-4 text-right"><button type="button" data-modal-open="modal-cust-{{ $c->user_id }}" class="text-gold-accent font-label-sm text-[10px] uppercase hover:underline">Detail</button></td>
                     </tr>
                 @empty
                     <tr><td colspan="5" class="p-8 text-center text-on-surface-variant">Belum ada customer terdaftar.</td></tr>
@@ -45,5 +44,81 @@
             </tbody>
         </table>
     </div>
+    <div class="mt-4">{{ $customers->links() }}</div>
 </section>
 @endsection
+
+@foreach ($customers as $c)
+@php
+    $wa = preg_replace('/[^0-9]/', '', $c->nomor_telepon ?? '');
+    if (str_starts_with($wa, '0')) $wa = '62' . substr($wa, 1);
+    $waLink = $wa ? 'https://wa.me/' . $wa : null;
+@endphp
+<div id="modal-cust-{{ $c->user_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl max-h-[85vh] overflow-y-auto">
+        <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ $c->nama_lengkap }}</h3>
+                <p class="text-on-surface-variant text-sm mt-0.5">{{ $c->email }}</p>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="p-6 space-y-5">
+            <div class="flex items-center justify-between gap-3 bg-surface-container-low rounded-lg p-4">
+                <div>
+                    <p class="text-[10px] uppercase text-on-surface-variant">No. Telepon</p>
+                    <p class="font-body-md text-sm text-on-surface">{{ $c->nomor_telepon ?? '-' }}</p>
+                </div>
+                @if ($waLink)
+                    <a href="{{ $waLink }}" target="_blank" rel="noopener" class="flex items-center gap-2 px-4 py-2.5 bg-[#25D366] text-white font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">
+                        <span class="material-symbols-outlined text-[18px]">whatsapp</span> Chat WA
+                    </a>
+                @else
+                    <span class="text-on-surface-variant text-xs">No. WA belum ada</span>
+                @endif
+            </div>
+
+            <div>
+                <p class="raliva-label mb-2">Riwayat Pesanan</p>
+                @if ($c->orders->isEmpty())
+                    <p class="text-on-surface-variant text-sm">Belum ada pesanan.</p>
+                @else
+                    <div class="grid grid-cols-1 gap-2">
+                        @foreach ($c->orders as $o)
+                            <a href="{{ route('admin.pesanan') }}?cari={{ $o->nomor_order ?? $o->order_id }}" class="flex items-center justify-between gap-3 bg-surface-container-low rounded-lg p-3 hover:border-gold-accent border border-transparent transition-colors">
+                                <span class="text-on-surface font-mono text-sm">{{ $o->nomor_order ?? ('#'.$o->order_id) }}</span>
+                                <span class="text-gold-accent font-bold text-sm">Rp {{ number_format((float) ($o->total_harga ?? 0), 0, ',', '.') }}</span>
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
+            <div>
+                <p class="raliva-label mb-2">Ulasan</p>
+                @if ($c->reviews->isEmpty())
+                    <p class="text-on-surface-variant text-sm">Belum ada ulasan.</p>
+                @else
+                    <div class="grid grid-cols-1 gap-2">
+                        @foreach ($c->reviews as $rv)
+                            <div class="bg-surface-container-low rounded-lg p-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-on-surface text-sm font-semibold">{{ $rv->rating ?? '-' }}/5</span>
+                                    @if ($rv->product)
+                                        <span class="text-on-surface-variant text-xs">{{ $rv->product->nama_produk ?? '' }}</span>
+                                    @endif
+                                </div>
+                                <p class="text-on-surface-variant text-sm mt-1">{{ $rv->komentar ?? '-' }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end">
+            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+        </div>
+    </div>
+</div>
+@endforeach
