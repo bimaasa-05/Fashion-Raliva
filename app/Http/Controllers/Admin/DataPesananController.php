@@ -79,6 +79,72 @@ class DataPesananController extends Controller
         ]);
     }
 
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $sourceOrderId = $request->input('order_id');
+        $userId = $request->input('user_id');
+
+        if ($sourceOrderId) {
+            $source = Order::with(['checkout.user', 'items'])->findOrFail($sourceOrderId);
+            $customerId = $source->checkout?->user_id ?? $userId;
+        } elseif ($userId) {
+            $source = Order::with(['checkout.user', 'items'])
+                ->whereHas('checkout', fn ($q) => $q->where('user_id', $userId))
+                ->orderByDesc('order_id')
+                ->first();
+            $customerId = $userId;
+        } else {
+            return back()->with('toast', ['message' => 'Pilih customer atau pesanan sumber.', 'icon' => 'gpp_maybe']);
+        }
+
+        if (! $source || $source->items->isEmpty()) {
+            return back()->with('toast', ['message' => 'Tidak ada item pesanan yang bisa disalin.', 'icon' => 'gpp_maybe']);
+        }
+
+        $newOrder = \DB::transaction(function () use ($source, $customerId) {
+            $checkout = \App\Models\Checkout::create([
+                'user_id' => $customerId,
+                'subtotal' => $source->checkout?->subtotal ?? $source->total_harga ?? 0,
+                'total_diskon' => $source->checkout?->total_diskon ?? 0,
+                'total_pajak' => $source->checkout?->total_pajak ?? 0,
+                'biaya_layanan' => $source->checkout?->biaya_layanan ?? 0,
+                'total_ongkir' => $source->checkout?->total_ongkir ?? 0,
+                'grand_total' => $source->checkout?->grand_total ?? $source->total_harga ?? 0,
+                'status' => \App\Models\Checkout::STATUS_DIBAYAR,
+            ]);
+
+            $newOrder = Order::create([
+                'store_id' => $source->store_id,
+                'checkout_id' => $checkout->checkout_id,
+                'nomor_order' => 'RLV-' . $source->store_id . '-' . strtoupper(substr(md5(uniqid()), 0, 6)),
+                'subtotal' => $source->subtotal ?? $source->total_harga ?? 0,
+                'grand_total' => $source->grand_total ?? $source->total_harga ?? 0,
+                'status' => Order::STATUS_PENDING_PAYMENT,
+                'total_harga' => $source->total_harga ?? $source->checkout?->grand_total ?? 0,
+            ]);
+
+            foreach ($source->items as $item) {
+                \App\Models\OrderItem::create([
+                    'order_id' => $newOrder->order_id,
+                    'product_variant_id' => $item->product_variant_id,
+                    'nama_produk_snapshot' => $item->nama_produk_snapshot,
+                    'harga_snapshot' => $item->harga_snapshot,
+                    'quantity' => $item->quantity,
+                    'subtotal' => $item->subtotal,
+                    'diskon' => $item->diskon,
+                    'total' => $item->total,
+                ]);
+            }
+
+            return $newOrder;
+        });
+
+        return back()->with('toast', [
+            'message' => 'Pesanan ' . ($newOrder->nomor_order ?? ('#'.$newOrder->order_id)) . ' dibuat ulang untuk customer.',
+            'icon' => 'task_alt',
+        ]);
+    }
+
     public function batalkan(Request $request, Order $pesanan)
     {
         if (! AdminContext::canAccessStore($pesanan->store_id)) {
