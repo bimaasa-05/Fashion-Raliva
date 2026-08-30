@@ -116,7 +116,7 @@
                         <div class="w-20 h-20 rounded-full overflow-hidden border border-outline-variant">
                             <img alt="Foto Profil" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuUf094pPsvMlxNz9CEzztLZIPfB4q2FE_6HM73O8sFoIt42FkBx43D1cxFlylMdSolVSJZNCBDrc8ttYGcVUIYXcsS0AUGBhcZYBAFGqcAXzmuJyVyjyJY6CXvyxdr0Zwzlwi2Tw3Djm9F2wtwaOLZklTUYLsRg7NCbF9hgI1uCTcTdgGi-0zShSJMzVkR1HYp_C02xOHHVWnGLI4_rrhbWQnSlrZ2VpmUbZL0Gc18YDjNwDrrkAcPg" />
                         </div>
-                        <button type="button" onclick="showRalivaToast('Silakan pilih foto baru (demo).', 'image')" class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center btn-premium shadow-md" aria-label="Ubah Foto">
+                        <button type="button" onclick="showRalivaToast('Silakan pilih foto baru.', 'image')" class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center btn-premium shadow-md" aria-label="Ubah Foto">
                             <span class="material-symbols-outlined text-[16px]">photo_camera</span>
                         </button>
                     </div>
