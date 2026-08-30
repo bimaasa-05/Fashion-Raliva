@@ -8,41 +8,40 @@
 
 @section('content')
 <div class="space-y-section-gap">
+    @if (session('success'))
+        <div class="bg-secondary-container/15 border border-secondary/30 text-secondary rounded-lg px-4 py-3 text-sm font-body-md">{{ session('success') }}</div>
+    @endif
+    @if (session('error'))
+        <div class="bg-error/10 border border-error/30 text-error rounded-lg px-4 py-3 text-sm font-body-md">{{ session('error') }}</div>
+    @endif
+
     <section>
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Pengajuan Refund Masuk</h2>
+        @if ($pengajuan->isEmpty())
+            <p class="text-on-surface-variant text-sm py-8 text-center bg-surface-container-lowest border border-muted-border rounded-lg">Tidak ada pengajuan refund yang menunggu.</p>
+        @else
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+            @foreach ($pengajuan as $r)
+            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
                 <div class="flex items-start justify-between mb-4">
                     <div>
-                        <p class="font-mono text-sm text-on-surface-variant">REF-2601 &#8226; Pesanan #RLV-2069</p>
-                        <p class="font-title-md text-title-md text-gold-accent mt-1">Rp 289.000</p>
+                        <p class="font-mono text-sm text-on-surface-variant">{{ $r->kode }} &#8226; Pesanan #{{ $r->order_id }}</p>
+                        <p class="font-title-md text-title-md text-gold-accent mt-1">Rp {{ number_format($r->jumlah, 0, ',', '.') }}</p>
                     </div>
-                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Menunggu</span>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ $r->status === 'escalated' ? 'Eskalasi' : 'Menunggu' }}</span>
                 </div>
-                <p class="font-body-md text-sm text-on-surface-variant mb-4"><span class="text-on-surface font-bold">Sarah Jenkins:</span> "Ukuran tidak sesuai dengan deskripsi, minta refund ya."</p>
+                <p class="font-body-md text-sm text-on-surface-variant mb-4 flex-1"><span class="text-on-surface font-bold">{{ $r->requester?->nama_lengkap ?? 'Customer' }}:</span> "{{ $r->alasan }}"</p>
                 <div class="flex gap-3">
-                    <button type="button" onclick="showRalivaToast('Refund REF-2601 disetujui.', 'task_alt')" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Setujui</button>
-                    <button type="button" onclick="showRalivaToast('Refund REF-2601 ditolak.', 'block')" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error/20 transition-colors">Tolak</button>
-                    <button type="button" onclick="showRalivaToast('Refund REF-2601 dieskalasi ke Super Admin.', 'move_up')" class="px-4 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Eskalasi</button>
+                    <button type="button" data-modal-open="modal-setuju-{{ $r->kode }}" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Setujui</button>
+                    <button type="button" data-modal-open="modal-tolak-{{ $r->kode }}" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error/20 transition-colors">Tolak</button>
+                    @if ($r->status === 'requested')
+                    <button type="button" data-modal-open="modal-eskalasi-{{ $r->kode }}" class="px-4 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Eskalasi</button>
+                    @endif
                 </div>
             </div>
-
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-                <div class="flex items-start justify-between mb-4">
-                    <div>
-                        <p class="font-mono text-sm text-on-surface-variant">REF-2598 &#8226; Pesanan #RLV-2065</p>
-                        <p class="font-title-md text-title-md text-gold-accent mt-1">Rp 455.000</p>
-                    </div>
-                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Menunggu</span>
-                </div>
-                <p class="font-body-md text-sm text-on-surface-variant mb-4"><span class="text-on-surface font-bold">Budi Santoso:</span> "Barang diterima dalam kondisi kusut berat, tidak layak pakai."</p>
-                <div class="flex gap-3">
-                    <button type="button" onclick="showRalivaToast('Refund REF-2598 disetujui.', 'task_alt')" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Setujui</button>
-                    <button type="button" onclick="showRalivaToast('Refund REF-2598 ditolak.', 'block')" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error/20 transition-colors">Tolak</button>
-                    <button type="button" onclick="showRalivaToast('Refund REF-2598 dieskalasi ke Super Admin.', 'move_up')" class="px-4 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Eskalasi</button>
-                </div>
-            </div>
+            @endforeach
         </div>
+        @endif
     </section>
 
     <section class="space-y-gutter">
@@ -59,23 +58,77 @@
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
+                    @forelse ($riwayat as $r)
                     <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                        <td class="p-4 font-mono text-on-surface">REF-2590</td>
-                        <td class="p-4 text-on-surface">Andi Pratama</td>
-                        <td class="p-4 text-right font-bold text-gold-accent">Rp 320.000</td>
-                        <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Disetujui</span></td>
-                        <td class="p-4 text-on-surface-variant">Kemarin, 14.05</td>
+                        <td class="p-4 font-mono text-on-surface">{{ $r->kode }}</td>
+                        <td class="p-4 text-on-surface">{{ $r->requester?->nama_lengkap ?? '-' }}</td>
+                        <td class="p-4 text-right font-bold text-gold-accent">Rp {{ number_format($r->jumlah, 0, ',', '.') }}</td>
+                        <td class="p-4 text-center">
+                            @php $st = $r->status; @endphp
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border
+                                @if($st==='disetujui') bg-secondary-container/20 text-secondary border-secondary/20
+                                @elseif($st==='ditolak') bg-error/10 text-error border-error/20
+                                @else bg-surface-container-high text-on-surface-variant border-outline-variant @endif">
+                                {{ $st }}
+                            </span>
+                        </td>
+                        <td class="p-4 text-on-surface-variant">{{ optional($r->selesai_pada)->translatedFormat('d M Y, H.i') ?? '-' }}</td>
                     </tr>
-                    <tr class="hover:bg-surface-container-low transition-colors">
-                        <td class="p-4 font-mono text-on-surface">REF-2585</td>
-                        <td class="p-4 text-on-surface">Maya Rossi</td>
-                        <td class="p-4 text-right font-bold text-gold-accent">Rp 780.000</td>
-                        <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Ditolak</span></td>
-                        <td class="p-4 text-on-surface-variant">20 Agu 2026</td>
-                    </tr>
+                    @empty
+                    <tr><td colspan="5" class="p-6 text-center text-on-surface-variant text-sm">Belum ada riwayat refund.</td></tr>
+                    @endforelse
                 </tbody>
             </table>
+            <div class="p-4">
+                {{ $riwayat->links() }}
+            </div>
         </div>
     </section>
 </div>
+
+{{-- Modal konfirmasi per refund --}}
+@foreach ($pengajuan as $r)
+<div id="modal-setuju-{{ $r->kode }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <form method="POST" action="{{ route('admin.pengembalian-dana.setujui', $r) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+        @csrf
+        <p class="raliva-label text-gold-accent">Setujui Refund</p>
+        <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $r->kode }}</h3>
+        <p class="text-sm text-on-surface-variant mt-3">Setujui refund sebesar <span class="font-bold text-on-surface">Rp {{ number_format($r->jumlah, 0, ',', '.') }}</span> untuk {{ $r->requester?->nama_lengkap ?? 'customer' }}?</p>
+        <div class="flex gap-3 mt-6">
+            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
+            <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Ya, Setujui</button>
+        </div>
+    </form>
+</div>
+
+<div id="modal-tolak-{{ $r->kode }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <form method="POST" action="{{ route('admin.pengembalian-dana.tolak', $r) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+        @csrf
+        <p class="raliva-label text-gold-accent">Tolak Refund</p>
+        <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $r->kode }}</h3>
+        <label class="block mt-4 text-xs uppercase text-on-surface-variant mb-1">Alasan Penolakan</label>
+        <textarea name="alasan_penolakan" rows="3" class="raliva-textarea" placeholder="Opsional"></textarea>
+        <div class="flex gap-3 mt-5">
+            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
+            <button type="submit" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error/20 transition-colors">Ya, Tolak</button>
+        </div>
+    </form>
+</div>
+
+<div id="modal-eskalasi-{{ $r->kode }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <form method="POST" action="{{ route('admin.pengembalian-dana.eskalasi', $r) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+        @csrf
+        <p class="raliva-label text-gold-accent">Eskalasi Refund</p>
+        <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $r->kode }}</h3>
+        <p class="text-sm text-on-surface-variant mt-3">Eskalasi refund ini ke Super Admin untuk keputusan akhir?</p>
+        <div class="flex gap-3 mt-6">
+            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
+            <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Ya, Eskalasi</button>
+        </div>
+    </form>
+</div>
+@endforeach
 @endsection
