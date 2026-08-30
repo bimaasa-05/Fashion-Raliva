@@ -12,6 +12,7 @@ class PromoController extends Controller
     public function index(Request $request)
     {
         $storeId = OwnerContext::firstStoreId();
+        $store = OwnerContext::currentStore();
 
         $promos = Promotion::where('store_id', $storeId)
             ->when($request->input('status'), fn($q, $s) => $q->where('status', $s))
@@ -25,12 +26,16 @@ class PromoController extends Controller
             'total' => Promotion::where('store_id', $storeId)->count(),
         ];
 
-        return view('Owner.promo.index', compact('promos', 'counts'));
+        return view('Owner.promo.index', compact('promos', 'counts', 'store'));
     }
 
     public function store(Request $request)
     {
         $storeId = OwnerContext::firstStoreId();
+
+        if (! $storeId) {
+            return back()->with('error', 'Anda belum memiliki toko. Ajukan toko terlebih dahulu sebelum membuat promo.');
+        }
 
         $validated = $request->validate([
             'kode_promo' => ['required', 'string', 'max:30', 'unique:promotions,kode_promo'],
