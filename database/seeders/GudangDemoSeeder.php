@@ -28,6 +28,7 @@ class GudangDemoSeeder extends Seeder
         $store = Store::firstOrCreate(['store_id' => 1], [
             'owner_id' => 4,
             'nama_toko' => 'Raliva Atelier Jakarta',
+            'alamat' => 'Jl. Kemang Raya No. 21, Jakarta Selatan',
             'status' => 'aktif',
         ]);
 
