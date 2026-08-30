@@ -30,27 +30,36 @@
 
     {{-- Tabel Karyawan --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-3 flex-wrap w-full sm:w-auto">
-                <div class="relative flex-1 min-w-[220px]">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                    <input type="text" placeholder="Cari nama atau email..." data-table-search class="raliva-search" />
-                </div>
-                <select data-table-filter="role" class="raliva-select">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+            <div>
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Karyawan</h2>
+                <p class="text-xs text-on-surface-variant mt-1">Kelola tim Admin, Produksi, dan Gudang toko Anda.</p>
+            </div>
+            <button type="button" data-modal-open="modal-tambah-karyawan" class="py-2.5 px-5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center gap-2 shrink-0">
+                <span class="material-symbols-outlined text-[18px]">person_add</span>Tambah Karyawan
+            </button>
+        </div>
+
+        {{-- Toolbar: 1 baris rapi — search kiri, filter kanan --}}
+        <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
+            <div class="relative flex-1 min-w-[220px]">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
+                <input type="text" placeholder="Cari nama atau email..." data-table-search class="raliva-search" />
+            </div>
+            <div class="flex flex-wrap items-center gap-3 lg:justify-end">
+                <select data-table-filter="role" class="raliva-select lg:w-44">
                     <option value="">Semua Role</option>
                     <option value="admin">Admin Toko</option>
                     <option value="produksi">Produksi</option>
                     <option value="gudang">Gudang</option>
                 </select>
-                <select data-table-filter="status" class="raliva-select">
+                <select data-table-filter="status" class="raliva-select lg:w-44">
                     <option value="">Semua Status</option>
                     <option value="aktif">Aktif</option>
                     <option value="nonaktif">Nonaktif</option>
                 </select>
+                <button type="button" data-filter-reset class="py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Reset</button>
             </div>
-            <button type="button" data-modal-open="modal-tambah-karyawan" class="py-2.5 px-5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center gap-2 shrink-0">
-                <span class="material-symbols-outlined text-[18px]">person_add</span>Tambah Karyawan
-            </button>
         </div>
 
         <div data-table-wrap class="overflow-x-auto">
@@ -101,7 +110,16 @@
                                 @endif
                             </td>
                             <td class="py-3.5 px-4 text-right">
-                                <span class="text-xs text-on-surface-variant">Read-only</span>
+                                <div class="flex items-center justify-end gap-1">
+                                    <button type="button" data-modal-open="modal-edit-karyawan-{{ $s->store_staff_id }}" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
+                                        <span class="material-symbols-outlined text-[16px]">edit</span>Edit
+                                    </button>
+                                    @if ($s->status === 'aktif')
+                                    <button type="button" data-modal-open="modal-nonaktifkan-{{ $s->store_staff_id }}" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-error/30 text-xs font-semibold text-error hover:bg-error/10 transition-colors">
+                                        <span class="material-symbols-outlined text-[16px]">person_off</span>Nonaktifkan
+                                    </button>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -124,6 +142,75 @@
             Satu staf dapat ditugaskan ke toko Anda. Akun baru akan menerima undangan aktivasi melalui email.
         </p>
     </section>
+
+{{-- Modal Edit & Nonaktifkan per karyawan --}}
+@foreach ($staff as $s)
+    <div id="modal-edit-karyawan-{{ $s->store_staff_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+        <div class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+                <div>
+                    <p class="raliva-label text-gold-accent">Edit Karyawan</p>
+                    <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $s->user?->nama_lengkap ?? '-' }}</h3>
+                </div>
+                <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form method="POST" action="{{ route('owner.karyawan.update', $s->store_staff_id) }}" class="p-6 space-y-5">
+                @csrf
+                @method('PUT')
+                <div>
+                    <label class="block raliva-label mb-2">Nama</label>
+                    <input type="text" value="{{ $s->user?->nama_lengkap ?? '-' }}" disabled class="raliva-input opacity-70" />
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">Email</label>
+                    <input type="email" value="{{ $s->user?->email ?? '-' }}" disabled class="raliva-input opacity-70" />
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">Role</label>
+                    <select name="role" class="raliva-select">
+                        @php $curRole = \App\Http\Controllers\Owner\KaryawanController::ROLE_MAP[$s->user?->role_id] ?? 'lainnya'; @endphp
+                        <option value="admin" {{ $curRole === 'admin' ? 'selected' : '' }}>Admin Toko</option>
+                        <option value="produksi" {{ $curRole === 'produksi' ? 'selected' : '' }}>Staf Produksi</option>
+                        <option value="gudang" {{ $curRole === 'gudang' ? 'selected' : '' }}>Staf Gudang</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">Status</label>
+                    <select name="status" class="raliva-select">
+                        <option value="aktif" {{ $s->status === 'aktif' ? 'selected' : '' }}>Aktif</option>
+                        <option value="nonaktif" {{ $s->status === 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                    </select>
+                </div>
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+                    <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                    <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[16px]">save</span>Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-nonaktifkan-{{ $s->store_staff_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+        <div class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="material-symbols-outlined text-error">person_off</span>
+                <h3 class="font-title-md text-title-md text-on-surface">Nonaktifkan Karyawan?</h3>
+            </div>
+            <p class="text-on-surface-variant text-sm mb-6">{{ $s->user?->nama_lengkap ?? 'Karyawan' }} akan dinonaktifkan dari toko ini. Akses akunnya ke toko ditutup, namun datanya tetap tersimpan.</p>
+            <form method="POST" action="{{ route('owner.karyawan.destroy', $s->store_staff_id) }}" class="flex gap-3">
+                @csrf
+                @method('DELETE')
+                <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="submit" class="flex-1 py-2.5 bg-error text-on-primary text-sm font-semibold rounded btn-premium">Nonaktifkan</button>
+            </form>
+        </div>
+    </div>
+@endforeach
 
 {{-- Modal Tambah Karyawan --}}
 <div id="modal-tambah-karyawan" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
