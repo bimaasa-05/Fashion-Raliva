@@ -22,6 +22,8 @@ class Refund extends Model
 
     public const STATUS_SELESAI = 'selesai';
 
+    public const STATUS_ESKALASI = 'escalated';
+
     protected $fillable = [
         'order_id',
         'payment_id',
@@ -67,6 +69,12 @@ class Refund extends Model
     public function items(): HasMany
     {
         return $this->hasMany(RefundItem::class, 'refund_id', 'refund_id');
+    }
+
+    public function getKodeAttribute(): string
+    {
+        $year = $this->diajukan_pada?->format('Y') ?? now()->format('Y');
+        return 'RF-' . $year . '-' . str_pad($this->refund_id, 5, '0', STR_PAD_LEFT);
     }
 
     public function walletTransactions(): HasMany
