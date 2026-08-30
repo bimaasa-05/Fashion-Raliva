@@ -362,7 +362,6 @@
         <button type="button" data-cat="Bags" onclick="selectCategory('Bags')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Bags') }}</button>
     </div>
         <!-- Shop Actions (Filter · Cart · Sort) -->
-        <div class="shop-actions ml-auto flex items-center gap-xs md:gap-sm shrink-0">
         <button aria-label="{{ __('Filter') }}" class="shop-action-btn order-3 border border-outline-variant hover:text-secondary hover:border-secondary transition-colors relative" onclick="openFilter()" type="button">
             <span class="material-symbols-outlined text-[18px]" data-icon="tune">tune</span>
             <span id="filter-badge" class="absolute -top-1 -right-1.5 bg-secondary text-on-secondary text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold hidden">0</span>
@@ -371,7 +370,7 @@
             <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
             <span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
         </a>
-        <div class="relative shop-sort-trigger order-1" id="sort-menu-container">
+        <div class="relative shop-sort-trigger order-1 ml-auto" id="sort-menu-container">
             <button class="shop-action-btn px-md gap-1 border border-outline-variant font-label-sm text-label-sm text-on-surface hover:text-secondary hover:border-secondary transition-colors" onclick="toggleSortMenu()" type="button">
                 <span id="sort-label">{{ __('Sort') }}</span>
                 <span class="material-symbols-outlined text-[16px] transition-transform duration-200" data-icon="expand_more" id="sort-chevron">expand_more</span>
@@ -397,7 +396,6 @@
             </div>
         </div>
     </div>
-</div>
 </div>
 <!-- Active Filter Chips -->
 <div id="active-chips" class="px-container-margin py-sm border-b border-outline-variant flex flex-wrap gap-sm items-center min-h-[2.75rem] opacity-0 pointer-events-none border-transparent transition-opacity duration-200">
