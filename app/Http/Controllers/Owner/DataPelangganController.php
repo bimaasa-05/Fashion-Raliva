@@ -55,6 +55,35 @@ class DataPelangganController extends Controller
             $c->items = $itemsByUser->get($c->id, collect());
         });
 
+        // Riwayat pesanan per customer (untuk modal histori)
+        $ordersByUser = DB::table('orders')
+            ->join('checkouts', 'checkouts.checkout_id', '=', 'orders.checkout_id')
+            ->join('order_items', 'order_items.order_id', '=', 'orders.order_id')
+            ->join('product_variants', 'product_variants.product_variant_id', '=', 'order_items.product_variant_id')
+            ->join('products', 'products.product_id', '=', 'product_variants.product_id')
+            ->where('orders.store_id', $storeId)
+            ->whereIn('checkouts.user_id', $userIds)
+            ->select('checkouts.user_id', 'orders.order_id', 'orders.nomor_order', 'orders.status', 'orders.grand_total', 'orders.created_at', 'products.nama_produk', 'order_items.quantity')
+            ->orderByDesc('orders.created_at')
+            ->get()
+            ->groupBy('user_id')
+            ->map(function ($grp) {
+                return $grp->groupBy('order_id')->map(function ($lines) {
+                    return (object) [
+                        'order_id' => $lines->first()->order_id,
+                        'nomor_order' => $lines->first()->nomor_order,
+                        'status' => $lines->first()->status,
+                        'grand_total' => $lines->first()->grand_total,
+                        'created_at' => $lines->first()->created_at,
+                        'items' => $lines->map(fn($l) => $l->nama_produk . ' ×' . $l->quantity)->all(),
+                    ];
+                })->values();
+            });
+
+        $ranked->each(function ($c) use ($ordersByUser) {
+            $c->ordersList = $ordersByUser->get($c->id, collect());
+        });
+
         $topLeader = $ranked->first();
         $top3 = $ranked->take(3)->values();
 
