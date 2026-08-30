@@ -24,7 +24,7 @@ class PesananController extends Controller
         $status = $request->input('status');
         $period = $request->input('period');
 
-        $query = Order::with(['checkout.user', 'checkout.payment', 'items.variant.product'])
+        $query = Order::with(['checkout.user', 'checkout.payment', 'items.productVariant.product'])
             ->where('store_id', $storeId);
 
         if ($status && isset(self::STATUS_MAP[$status])) {
@@ -51,5 +51,21 @@ class PesananController extends Controller
         ];
 
         return view('Owner.pesanan.index', compact('orders', 'counts', 'status', 'period'));
+    }
+
+    public function forward(Request $request, Order $order)
+    {
+        if ($order->store_id !== OwnerContext::firstStoreId()) {
+            abort(403);
+        }
+
+        // Teruskan pesanan ke Admin Produksi untuk diproses.
+        if (! in_array($order->status, ['baru', 'dibayar'])) {
+            return back()->with('error', 'Pesanan sudah diproses atau tidak dapat diteruskan.');
+        }
+
+        $order->update(['status' => 'diproses']);
+
+        return back()->with('success', 'Pesanan ' . $order->nomor_order . ' diteruskan ke Admin Produksi.');
     }
 }
