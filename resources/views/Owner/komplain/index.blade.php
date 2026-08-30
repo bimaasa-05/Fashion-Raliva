@@ -99,7 +99,7 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-gutter mt-5 pt-4 border-t border-muted-border">
-                        <button type="button" onclick="showRalivaToast('Detail komplain {{ $c->complaint_id }} (read-only).', 'chat')" class="py-2 px-4 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium">Lihat Detail</button>
+                        <button type="button" data-modal-open="modal-komplain-{{ $c->complaint_id }}" class="py-2 px-4 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium">Lihat Detail</button>
                     </div>
                 </article>
             @empty
@@ -114,6 +114,46 @@
     </section>
 </div>
 
+{{-- Modal Detail Komplain --}}
+@foreach ($complaints as $c)
+<div id="modal-komplain-{{ $c->complaint_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <p class="raliva-label text-gold-accent">Detail Komplain</p>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $c->subjek ?? $c->kategori }}</h3>
+                <p class="text-xs text-on-surface-variant mt-0.5">{{ $c->complaint_id }} • {{ $c->user?->nama_lengkap ?? 'Customer' }}</p>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-surface-container-low rounded-lg p-3">
+                    <p class="text-[10px] uppercase text-on-surface-variant">Kategori</p>
+                    <p class="font-bold text-on-surface capitalize">{{ $c->kategori }}</p>
+                </div>
+                <div class="bg-surface-container-low rounded-lg p-3">
+                    <p class="text-[10px] uppercase text-on-surface-variant">Status</p>
+                    <p class="font-bold text-on-surface capitalize">{{ $c->status }}</p>
+                </div>
+            </div>
+            <div class="bg-surface-container-low border border-muted-border rounded-lg p-4">
+                <p class="text-[10px] uppercase text-on-surface-variant mb-1">Deskripsi</p>
+                <p class="font-body-md text-sm text-on-surface">{{ $c->deskripsi }}</p>
+            </div>
+            @if ($c->order_id)
+            <p class="text-xs text-on-surface-variant">Terkait pesanan <span class="font-mono text-on-surface">#{{ $c->order_id }}</span></p>
+            @endif
+        </div>
+        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end">
+            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+        </div>
+    </div>
+</div>
+@endforeach
 @endsection
 
 @push('scripts')
