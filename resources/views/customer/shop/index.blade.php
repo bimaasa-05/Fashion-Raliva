@@ -306,9 +306,25 @@
         border: 1px solid var(--border-soft);
         border-radius: 1rem;
         box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
-        transition: border-color .35s ease;
+        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
     }
     .shop-content-container:hover { border-color: rgba(139, 30, 63, .45); }
+    /* Customer premium-heading: vertical burgundy accent bar (mirrors super-admin card-premium heading, NO gold) */
+    .shop-content-heading {
+        position: relative;
+        padding-left: 0.85rem;
+    }
+    .shop-content-heading::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 1.1em;
+        background: #8B1E3F;
+        border-radius: 9999px;
+    }
     html.theme-dark .shop-content-container {
         background-color: #1e1d1c;
         border-color: var(--border-soft);
@@ -388,11 +404,11 @@
 </div>
 <!-- Shop Content Container -->
 <div class="mx-auto max-w-[1400px] px-container-margin py-xl">
-<div class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg">
+<div class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <!-- Shop Header -->
 <div class="flex items-center justify-between gap-md mb-md flex-wrap">
 <div class="atl-eyebrow">
-<span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Shop') }}</span>
+<span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary shop-content-heading">{{ __('Shop') }}</span>
 </div>
 <div class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Showing') }} <span id="result-count">0</span> {{ __('items') }}</div>
 </div>
