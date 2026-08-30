@@ -49,10 +49,17 @@
     {{-- Daftar Promo --}}
     <section>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <h2 data-reveal class="font-title-md text-title-md text-on-surface premium-heading">Daftar Promo</h2>
+            <div>
+                <h2 data-reveal class="font-title-md text-title-md text-on-surface premium-heading">Daftar Promo</h2>
+                <p class="text-xs text-on-surface-variant mt-1">Kelola promo aktif, terjadwal, dan riwayat diskon toko Anda.</p>
+            </div>
+            @if ($store)
             <button type="button" data-modal-open="modal-tambah-promo" class="py-2.5 px-5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-[18px]">add</span>Tambah Promo
             </button>
+            @else
+            <span class="text-xs text-on-surface-variant bg-surface-container-low border border-muted-border rounded-lg px-4 py-2.5">Ajukan toko untuk membuat promo</span>
+            @endif
         </div>
 
         <div data-reveal-group class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-section-gap">
@@ -87,9 +94,61 @@
                     </dl>
 
                     <div class="flex items-center gap-gutter pt-1 mt-auto">
-                        <button type="button" onclick="showRalivaToast('Detail promo hanya bisa diubah via admin.', 'info')" class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Lihat Detail</button>
+                        <button type="button" data-modal-open="modal-detail-promo-{{ $promo->promotion_id }}" class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Lihat Detail</button>
                     </div>
                 </article>
+
+                {{-- Modal Detail Promo --}}
+                <div id="modal-detail-promo-{{ $promo->promotion_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+                    <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+                        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+                            <div>
+                                <p class="raliva-label text-gold-accent">Detail Promo</p>
+                                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $promo->kode_promo }}</h3>
+                            </div>
+                            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-xl bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-[24px] text-gold-accent">sell</span>
+                                </div>
+                                <div>
+                                    <p class="font-title-md text-base text-on-surface">{{ $promo->nama_promo }}</p>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">{{ $promo->status }}</span>
+                                </div>
+                            </div>
+                            <dl class="grid grid-cols-2 gap-4 font-body-md text-sm">
+                                <div class="bg-surface-container-low rounded-lg p-3">
+                                    <dt class="text-on-surface-variant text-[11px] uppercase">Jenis Diskon</dt>
+                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->tipe_diskon === 'persen' ? 'Persen (%)' : 'Nominal (Rp)' }}</dd>
+                                </div>
+                                <div class="bg-surface-container-low rounded-lg p-3">
+                                    <dt class="text-on-surface-variant text-[11px] uppercase">Nilai Diskon</dt>
+                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->tipe_diskon === 'persen' ? $promo->nilai_diskon.'%' : 'Rp '.number_format($promo->nilai_diskon,0,',','.') }}</dd>
+                                </div>
+                                <div class="bg-surface-container-low rounded-lg p-3">
+                                    <dt class="text-on-surface-variant text-[11px] uppercase">Min. Pembelian</dt>
+                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->minimal_pembelian ? 'Rp '.number_format($promo->minimal_pembelian,0,',','.') : 'Tanpa minimum' }}</dd>
+                                </div>
+                                <div class="bg-surface-container-low rounded-lg p-3">
+                                    <dt class="text-on-surface-variant text-[11px] uppercase">Maks. Diskon</dt>
+                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->maksimal_diskon ? 'Rp '.number_format($promo->maksimal_diskon,0,',','.') : 'Tidak dibatasi' }}</dd>
+                                </div>
+                                <div class="bg-surface-container-low rounded-lg p-3 col-span-2">
+                                    <dt class="text-on-surface-variant text-[11px] uppercase">Periode Berlaku</dt>
+                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->mulai_pada?->translatedFormat('d M Y') }} — {{ $promo->berakhir_pada?->translatedFormat('d M Y') }}</dd>
+                                </div>
+                            </dl>
+                        </div>
+                        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end">
+                            <button type="button" data-modal-close class="py-2.5 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+                        </div>
+                    </div>
+                </div>
             @empty
                 <p class="text-on-surface-variant text-sm col-span-full py-8 text-center">Belum ada promo.</p>
             @endforelse
