@@ -10,7 +10,7 @@
     </script>
 @endif
 
-@if ($errors->any())
+@if (isset($errors) && $errors->any())
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const message = @js($errors->first());
