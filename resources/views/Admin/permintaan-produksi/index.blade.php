@@ -9,6 +9,28 @@
 @section('content')
 <div class="space-y-section-gap">
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Produksi</h2>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter mb-2">
+            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
+                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Total Ajuan</p>
+                <p class="font-title-md text-title-md text-on-surface mt-1">2</p>
+            </div>
+            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
+                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Diproduksi</p>
+                <p class="font-title-md text-title-md text-secondary mt-1">1</p>
+            </div>
+            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
+                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Selesai</p>
+                <p class="font-title-md text-title-md text-gold-accent mt-1">1</p>
+            </div>
+            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
+                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Unit Diminta</p>
+                <p class="font-title-md text-title-md text-on-surface mt-1">80</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">precision_manufacturing</span></div>
@@ -58,9 +80,9 @@
 </div>
 
 <!-- Modal Ajukan Produksi -->
-<div id="modal-produksi" data-modal class="fixed inset-0 z-[70] hidden">
+<div id="modal-produksi" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close></div>
-    <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-lg border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
+    <div class="relative mx-auto w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-lg border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
         <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div>
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading">Ajukan Produksi</h3>
