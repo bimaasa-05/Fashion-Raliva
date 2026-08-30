@@ -455,7 +455,13 @@
 </div>
 </a>
 </div>
-<div class="flex justify-center py-xl mt-md">
+<!-- Empty State (shown when no products match the selected filters) -->
+<div id="product-empty" class="hidden w-full flex-col items-center justify-center text-center gap-md py-2xl">
+    <span class="material-symbols-outlined text-[72px] text-on-surface-variant/40" data-icon="inventory_2">inventory_2</span>
+    <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No products found for this selection.') }}</p>
+    <button class="btn-gold font-label-caps text-label-caps px-lg py-3 lg:px-xl rounded-full uppercase tracking-widest mt-xs" type="button" onclick="selectCategory(null)">{{ __('Reset filters') }}</button>
+</div>
+<div id="load-more-wrap" class="flex justify-center py-xl mt-md">
 <button class="btn-gold font-label-caps text-label-caps px-lg py-3 lg:px-xl rounded-full uppercase tracking-widest" type="button">
                     {{ __('LOAD MORE') }}
                 </button>
@@ -701,6 +707,13 @@
             });
             var countEl = document.getElementById('result-count');
             if (countEl) countEl.textContent = shown;
+            var emptyEl = document.getElementById('product-empty');
+            if (emptyEl) {
+                emptyEl.classList.toggle('hidden', shown > 0);
+                emptyEl.classList.toggle('flex', shown === 0);
+            }
+            var loadMoreEl = document.getElementById('load-more-wrap');
+            if (loadMoreEl) loadMoreEl.classList.toggle('hidden', shown === 0);
         }
         function applySort() {
             var grid = document.getElementById('product-grid');
