@@ -38,8 +38,8 @@
                 <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Pendapatan &amp; Refund</h2>
                 <div class="inline-flex self-start sm:self-auto bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
                     <button type="button" data-lr-range="30" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">30 Hari</button>
-                    <button type="button" data-lr-range="90" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">3 Bulan</button>
-                    <button type="button" data-lr-range="365" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">12 Bulan</button>
+                    <button type="button" data-lr-range="90" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant">3 Bulan</button>
+                    <button type="button" data-lr-range="365" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant">12 Bulan</button>
                 </div>
             </div>
             <div id="chart-wrap" class="relative h-72 md:h-80"><canvas id="revenue-chart"></canvas></div>
@@ -54,7 +54,10 @@
     {{-- Tabel Laporan --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Laporan Periode</h2>
+            <div>
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Laporan Periode</h2>
+                <p class="text-xs text-on-surface-variant mt-1">Rekap pendapatan, refund, dan pencairan per periode.</p>
+            </div>
             <div class="flex items-center gap-2 flex-wrap">
                 <select data-report-filter class="raliva-select" onchange="window.location.href='?period='+this.value">
                     <option value="7" @selected($period === 7)>1 Minggu</option>
