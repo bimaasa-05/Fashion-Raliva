@@ -299,17 +299,24 @@
 </header>
 <!-- Main Content -->
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
-<!-- Wishlist Header (editorial parity home/order-tracking) -->
-<section class="px-container-margin py-lg md:py-xl border-b border-[var(--border-soft)] reveal-up">
+<!-- Wishlist Header (Super-Admin style premium card, aksen Burgundy) -->
+<section class="py-xl px-container-margin reveal-up">
+<div class="mx-auto max-w-7xl">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm card-premium">
 <div class="flex items-center justify-between gap-md">
 <div>
 <div class="atl-eyebrow mb-xs">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Saved Items') }}</span>
 </div>
-<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">{{ __('My Wishlist') }}</h2>
-<p class="font-body-sm text-body-sm text-[var(--text-muted)] mt-1">4 {{ __('items saved') }}</p>
+<h2 class="premium-heading font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">{{ __('My Wishlist') }}</h2>
+<p class="mt-2 inline-flex items-center gap-xs font-label-sm text-label-sm text-secondary rounded-full bg-secondary/5 px-sm py-xs">
+<span class="material-symbols-outlined text-[16px]" data-icon="checkroom">checkroom</span>
+4 {{ __('items saved') }}
+</p>
 </div>
 <span class="material-symbols-outlined text-secondary text-[30px] shrink-0" data-icon="favorite" data-weight="fill">favorite</span>
+</div>
+</div>
 </div>
 </section>
 <!-- Wishlist Grid (wrapped in Super-Admin style premium card, aksen Burgundy) -->
