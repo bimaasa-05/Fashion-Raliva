@@ -249,6 +249,46 @@
     .bn-active { color: #8B1E3F !important; }
     html.theme-dark .bn-active { color: #8B1E3F !important; }
 </style>
+<style>
+    /* ============ PREMIUM CARD + HEADING (style tiruan Super-Admin, aksen Burgundy) ============ */
+    .card-premium {
+        box-shadow: 0 1px 2px rgb(17 17 17 / 0.04), 0 12px 32px -16px rgb(17 17 17 / 0.16);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .card-premium:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 2px 4px rgb(17 17 17 / 0.05), 0 20px 48px -20px rgb(17 17 17 / 0.22);
+        border-color: rgba(139, 30, 63, .45);   /* Burgundy, bukan gold */
+    }
+    html.theme-dark .card-premium {
+        box-shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 12px 32px -16px rgb(0 0 0 / 0.55);
+    }
+    html.theme-dark .card-premium:hover {
+        box-shadow: 0 2px 4px rgb(0 0 0 / 0.4), 0 20px 48px -20px rgb(0 0 0 / 0.7);
+        border-color: rgba(139, 30, 63, .55);
+    }
+
+    .premium-heading::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 0.95em;
+        margin-right: 0.65rem;
+        background: #8B1E3F;                      /* Burgundy accent bar */
+        border-radius: 9999px;
+        vertical-align: -0.05em;
+    }
+
+    /* ============ ATELIER EYEBROW MARKER ============ */
+    .atl-eyebrow { display: inline-flex; align-items: center; gap: .65rem; }
+    .atl-eyebrow::before {
+        content: '';
+        width: 30px;
+        height: 1px;
+        background: var(--chrome-accent);
+        opacity: .7;
+    }
+</style>
   </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
@@ -264,7 +304,7 @@
 </div>
 </header>
 <!-- Main Content -->
-<main class="flex-grow w-full flex flex-col pt-16">
+<main class="flex-grow w-full flex flex-col pt-16 pb-8 lg:pb-12 overflow-x-hidden">
 <!-- Canvas Area -->
 <div class="flex-grow flex flex-col w-full">
 <!-- Category Bar (Desktop/Tablet) -->
@@ -287,7 +327,7 @@
 </div>
 <!-- Sort & Filter Bar -->
 <div class="flex justify-between items-center px-container-margin py-sm border-b border-outline-variant" style="background-color: var(--surface-ivory);">
-<div class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Showing') }} <span id="result-count">0</span> {{ __('items') }}</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Shop Collection') }}</div>
 <div class="flex gap-sm items-center">
 <div class="relative" id="sort-menu-container">
 <button class="flex items-center gap-1 font-label-sm text-label-sm text-on-surface hover:text-secondary transition-colors" onclick="toggleSortMenu()" type="button">
@@ -329,8 +369,16 @@
 <div id="chips-list" class="flex flex-wrap gap-sm items-center grow"></div>
 <button id="clear-all" class="font-label-sm text-label-sm text-secondary underline hover:opacity-80 transition-opacity shrink-0" onclick="clearAll()" type="button">{{ __('Clear all') }}</button>
 </div>
-<!-- Product Grid -->
-<div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-gutter p-container-margin" style="background-color: var(--surface-warm);">
+<!-- Product Grid (wrapped in Super-Admin style premium card, aksen Burgundy) -->
+<div class="mx-auto max-w-[1400px] px-container-margin py-xl">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm card-premium">
+<div class="flex items-center justify-between gap-md mb-md flex-wrap">
+<div class="atl-eyebrow">
+<span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Shop') }}</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Showing') }} <span id="result-count">0</span> {{ __('items') }}</div>
+</div>
+<div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-gutter" style="background-color: transparent;">
 <!-- Product 1 -->
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
@@ -389,9 +437,11 @@
 </a>
 </div>
 <div class="flex justify-center py-xl border-t border-outline-variant mt-md">
-<button class="btn-gold font-label-caps text-label-caps py-3 lg:px-xl rounded-full uppercase tracking-widest" type="button">
+<button class="btn-gold font-label-caps text-label-caps px-lg py-3 lg:px-xl rounded-full uppercase tracking-widest" type="button">
                     {{ __('LOAD MORE') }}
                 </button>
+</div>
+</div>
 </div>
 </div>
 </main>
