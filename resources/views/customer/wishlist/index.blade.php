@@ -24,7 +24,7 @@
                         "primary-fixed-dim": "#c8c6c5",
                         "surface-variant": "#e3e2e2",
                         "on-surface": "#1b1c1c",
-                        "secondary": "#795905",
+                        "secondary": "#8B1E3F",
                         "surface-dim": "#dbdad9",
                         "on-error": "#ffffff",
                         "primary": "#000000",
@@ -32,7 +32,7 @@
                         "tertiary-container": "#1a1c1a",
                         "error-container": "#ffdad6",
                         "on-tertiary": "#ffffff",
-                        "secondary-fixed": "#ffdf9f",
+                        "secondary-fixed": "#8B1E3F",
                         "on-primary": "#ffffff",
                         "surface-container-lowest": "#ffffff",
                         "error": "#ba1a1a",
@@ -43,20 +43,20 @@
                         "primary-fixed": "#e5e2e1",
                         "outline-variant": "#c4c7c7",
                         "surface-tint": "#5f5e5e",
-                        "secondary-fixed-dim": "#ebc168",
+                        "secondary-fixed-dim": "#8B1E3F",
                         "outline": "#747878",
                         "on-primary-fixed-variant": "#474646",
-                        "on-secondary-fixed-variant": "#5c4300",
+                        "on-secondary-fixed-variant": "#6D1428",
                         "on-tertiary-fixed": "#1a1c1a",
-                        "on-secondary-container": "#775804",
+                        "on-secondary-container": "#6D1428",
                         "inverse-on-surface": "#f2f0f0",
                         "tertiary-fixed-dim": "#c7c6c4",
                         "tertiary-fixed": "#e3e2df",
                         "surface-container-high": "#e9e8e7",
-                        "on-secondary-fixed": "#261a00",
+                        "on-secondary-fixed": "#6D1428",
                         "background": "#fbf9f9",
                         "surface": "#fbf9f9",
-                        "secondary-container": "#fdd177",
+                        "secondary-container": "#8B1E3F",
                         "on-surface-variant": "#444748",
                         "primary-container": "#1c1b1b",
                         "inverse-primary": "#c8c6c5",
@@ -136,7 +136,11 @@
         --chrome-text-faint: rgba(0,0,0,.45);
         --chrome-border: rgba(0,0,0,.1);
         --chrome-hover: rgba(0,0,0,.06);
-        --chrome-accent: #795905;
+        --chrome-accent: #8B1E3F;       /* Burgundy */
+        --surface-ivory: #F8F6F2;       /* Soft Ivory */
+        --surface-warm: #F3F0EA;       /* Warm Ivory */
+        --border-soft: #E5E1DA;         /* Soft border */
+        --text-muted: #777777;          /* Secondary text */
     }
     html.theme-dark {
         --chrome-bg: #1c1b1b;
@@ -146,7 +150,11 @@
         --chrome-text-faint: rgba(255,255,255,.5);
         --chrome-border: rgba(255,255,255,.1);
         --chrome-hover: rgba(255,255,255,.1);
-        --chrome-accent: #ebc168;
+        --chrome-accent: #8B1E3F;       /* Burgundy (same identity) */
+        --surface-ivory: #1e1d1c;       /* dark secondary surface */
+        --surface-warm: #201f1e;
+        --border-soft: #3a3937;
+        --text-muted: #b9b6b1;
     }
 </style>
 <style>
@@ -173,7 +181,7 @@
     html.theme-dark .text-outline { color: #8a8781 !important; }
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
-    html.theme-dark .text-secondary { color: #ebc168 !important; }
+    html.theme-dark .text-secondary { color: #8B1E3F !important; }
     html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
     html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
@@ -187,7 +195,7 @@
     html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
     html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
     html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
-    html.theme-dark .hover\:text-secondary:hover { color: #ebc168 !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #8B1E3F !important; }
     html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
     html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
     html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
@@ -200,9 +208,16 @@
     html.theme-dark .group:hover .group-hover\:text-primary { color: #f2efec !important; }
     html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
+    /* Scoped burgundy accent for the shared drawer + bottom-nav partials on this page */
+    #drawer-panel { --chrome-accent: #8B1E3F; --gold-wash: rgba(139,30,30,.10); }
+    html.theme-dark #drawer-panel { --chrome-accent: #8B1E3F; --gold-wash: rgba(163,38,38,.16); }
+    .bn-active .material-symbols-outlined { color: #8B1E3F !important; }
+    html.theme-dark .bn-active .material-symbols-outlined { color: #8B1E3F !important; }
+    .bn-active { color: #8B1E3F !important; }
+    html.theme-dark .bn-active { color: #8B1E3F !important; }
 </style>
   </head>
-<body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72">
+<body class="antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72" style="background-color: var(--surface-warm);">
 <!-- TopAppBar -->
 <header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
 <a href="{{ url()->previous() }}" aria-label="Back" class="hover:opacity-80 transition-opacity flex">
@@ -212,7 +227,7 @@
 <div class="flex items-center gap-sm">
 <a href="{{ route('customer.chart') }}" aria-label="Cart" class="relative hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
-<span class="absolute -top-1 -right-1 bg-secondary text-on-secondary text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+<span class="absolute -top-1 -right-1 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
 </a>
 </div>
 </header>
@@ -247,7 +262,7 @@
 <h3 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">{{ $product['name'] }}</h3>
 <span class="font-body-sm text-body-sm text-on-surface mt-1">{{ $product['price'] }}</span>
 </a>
-<a href="{{ route('customer.chart') }}" class="mt-sm border border-primary text-primary bg-transparent font-label-caps text-label-caps py-xs uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-colors flex items-center justify-center gap-xs">
+<a href="{{ route('customer.chart') }}" class="mt-sm border border-secondary text-secondary bg-transparent font-label-caps text-label-caps py-xs uppercase tracking-widest hover:bg-secondary/5 transition-colors flex items-center justify-center gap-xs">
 <span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
 ADD TO CART
 </a>
