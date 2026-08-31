@@ -22,6 +22,7 @@ use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\Gudang\BarangKeluarController as GudangBarangKeluarController;
 use App\Http\Controllers\Gudang\BarangMasukController as GudangBarangMasukController;
 use App\Http\Controllers\Gudang\DashboardController as GudangDashboardController;
+
 use App\Http\Controllers\Gudang\GantiGudangController;
 use App\Http\Controllers\Gudang\NotifikasiController as GudangNotifikasiController;
 use App\Http\Controllers\Gudang\PelangganRequestController as GudangPelangganRequestController;
