@@ -8,10 +8,12 @@ use App\Models\Complaint;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use App\Models\ProductVariant;
 use App\Models\ProductionOrder;
+use App\Models\ProductionOrderItem;
+use App\Models\ProductVariant;
 use App\Models\Promotion;
 use App\Models\Review;
+use App\Models\Role;
 use App\Models\Store;
 use App\Models\StoreDocument;
 use App\Models\StoreExpense;
@@ -21,7 +23,9 @@ use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Models\Warehouse;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class OwnerSeeder extends Seeder
 {
@@ -41,7 +45,7 @@ class OwnerSeeder extends Seeder
         if ($old) {
             // Reset data toko lama: matikan FK check agar semua child (varian,
             // stok, warehouse, pesanan, dll) bisa dihapus tanpa violasi constraint.
-            \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS=0');
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
             Wallet::where('store_id', $old->store_id)->delete();
             StoreExpense::where('store_id', $old->store_id)->delete();
             StoreDocument::where('store_id', $old->store_id)->delete();
@@ -49,15 +53,15 @@ class OwnerSeeder extends Seeder
             Review::where('store_id', $old->store_id)->delete();
             Complaint::where('store_id', $old->store_id)->delete();
             // Bersihkan produk lama (FK check sudah dimatikan di awal blok).
-            \App\Models\ProductVariant::whereIn('product_id', Product::where('store_id', $old->store_id)->pluck('product_id'))->delete();
-            \App\Models\ProductionOrderItem::whereIn('production_order_id', \App\Models\ProductionOrder::where('store_id', $old->store_id)->pluck('production_order_id'))->delete();
-            \App\Models\ProductionOrder::where('store_id', $old->store_id)->delete();
+            ProductVariant::whereIn('product_id', Product::where('store_id', $old->store_id)->pluck('product_id'))->delete();
+            ProductionOrderItem::whereIn('production_order_id', ProductionOrder::where('store_id', $old->store_id)->pluck('production_order_id'))->delete();
+            ProductionOrder::where('store_id', $old->store_id)->delete();
             OrderItem::whereIn('order_id', Order::where('store_id', $old->store_id)->pluck('order_id'))->delete();
             Order::where('store_id', $old->store_id)->delete();
             Product::where('store_id', $old->store_id)->delete();
             StoreStaff::where('store_id', $old->store_id)->delete();
             Warehouse::where('store_id', $old->store_id)->delete();
-            \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS=1');
+            DB::statement('SET FOREIGN_KEY_CHECKS=1');
             $old->delete();
         }
 
@@ -143,7 +147,7 @@ class OwnerSeeder extends Seeder
             );
             foreach ($variants as $vi => [$warna, $stok]) {
                 ProductVariant::updateOrCreate(
-                    ['product_id' => $product->product_id, 'sku' => $prefix . '-' . str_pad($idx + 1, 3, '0') . '-' . ($vi + 1)],
+                    ['product_id' => $product->product_id, 'sku' => $prefix.'-'.str_pad($idx + 1, 3, '0').'-'.($vi + 1)],
                     ['warna' => $warna, 'ukuran' => null, 'harga' => $harga, 'status' => 'aktif']
                 );
             }
@@ -189,8 +193,8 @@ class OwnerSeeder extends Seeder
                 [
                     'nama_lengkap' => $cname,
                     'password' => Hash::make('password'),
-                    'role_id' => \App\Models\Role::where('nama_role', 'Customer')->value('role_id'),
-                    'nomor_telepon' => '08120000' . str_pad($ci + 1, 3, '0'),
+                    'role_id' => Role::where('nama_role', 'Customer')->value('role_id'),
+                    'nomor_telepon' => '08120000'.str_pad($ci + 1, 3, '0'),
                     'status' => User::STATUS_AKTIF,
                 ]
             );
@@ -213,7 +217,7 @@ class OwnerSeeder extends Seeder
                 $order = Order::create([
                     'checkout_id' => $checkout->checkout_id,
                     'store_id' => $store->store_id,
-                    'nomor_order' => 'RLV-' . $store->store_id . '-' . str_pad($si + 1, 4, '0') . strtoupper(\Illuminate\Support\Str::random(2)),
+                    'nomor_order' => 'RLV-'.$store->store_id.'-'.str_pad($si + 1, 4, '0').strtoupper(Str::random(2)),
                     'subtotal' => $subtotal,
                     'total_diskon' => 0,
                     'total_pajak' => 0,
@@ -248,8 +252,10 @@ class OwnerSeeder extends Seeder
         ];
         foreach ($reviewProducts as $ri => $prod) {
             $cust = $reviewCustomers[$ri] ?? $reviewCustomers->first();
-            if (! $cust) continue;
-            $orderItem = \App\Models\OrderItem::whereHas('productVariant.product', fn ($q) => $q->where('product_id', $prod->product_id))->first();
+            if (! $cust) {
+                continue;
+            }
+            $orderItem = OrderItem::whereHas('productVariant.product', fn ($q) => $q->where('product_id', $prod->product_id))->first();
             Review::updateOrCreate(
                 ['store_id' => $store->store_id, 'product_id' => $prod->product_id, 'user_id' => $cust->user_id],
                 [
@@ -310,7 +316,7 @@ class OwnerSeeder extends Seeder
         foreach (['ktp', 'npwp', 'foto_depan', 'siu'] as $jenis) {
             StoreDocument::updateOrCreate(
                 ['store_id' => $store->store_id, 'jenis' => $jenis],
-                ['path' => 'store-documents/' . $store->store_id . '/' . $jenis . '.pdf', 'status' => 'terverifikasi', 'catatan' => null]
+                ['path' => 'store-documents/'.$store->store_id.'/'.$jenis.'.pdf', 'status' => 'terverifikasi', 'catatan' => null]
             );
         }
 
@@ -357,7 +363,7 @@ class OwnerSeeder extends Seeder
                 'selesai_pada' => $p[2] === 'selesai' ? now()->subDays(2) : null,
             ]);
             if ($variantDemo) {
-                \App\Models\ProductionOrderItem::create([
+                ProductionOrderItem::create([
                     'production_order_id' => $po->production_order_id,
                     'product_variant_id' => $variantDemo->product_variant_id,
                     'jumlah_diminta' => 25,
@@ -365,7 +371,7 @@ class OwnerSeeder extends Seeder
             }
         }
 
-        $this->command?->info('OwnerSeeder selesai: toko #' . $store->store_id . ', ' . Product::where('store_id', $store->store_id)->count() . ' produk, ' . Order::where('store_id', $store->store_id)->count() . ' pesanan, ' . Promotion::where('store_id', $store->store_id)->count() . ' promo.');
+        $this->command?->info('OwnerSeeder selesai: toko #'.$store->store_id.', '.Product::where('store_id', $store->store_id)->count().' produk, '.Order::where('store_id', $store->store_id)->count().' pesanan, '.Promotion::where('store_id', $store->store_id)->count().' promo.');
     }
 
     private function defaultOperationalHours(): array
@@ -380,6 +386,7 @@ class OwnerSeeder extends Seeder
                 'selesai' => $isWeekend ? null : '21:00',
             ];
         }
+
         return $hours;
     }
 }

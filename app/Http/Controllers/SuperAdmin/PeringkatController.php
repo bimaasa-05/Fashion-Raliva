@@ -129,8 +129,8 @@ class PeringkatController extends Controller
 
         return $items
             ->map(function (array $item, int $index) use ($max) {
-                $item['peringkat'] = $index + 1;
-                $item['persentase'] = $max > 0 ? max(4, (int) round($item['nilai'] / $max * 100)) : 0;
+                $item['name'] = $item['nama'];
+                $item['pct'] = $max > 0 ? max(4, (int) round($item['nilai'] / $max * 100)) : 0;
                 $item['display'] = 'Rp '.number_format($item['nilai'], 0, ',', '.');
 
                 return $item;
