@@ -214,10 +214,10 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/kategori-produk/{kategori}/hapus', [KategoriProdukController::class, 'hapus'])->name('kategori-produk.hapus');
     Route::get('/data-pesanan', [DataPesananController::class, 'index'])->name('data-pesanan');
     Route::get('/data-pembayaran', [DataPembayaranController::class, 'index'])->name('data-pembayaran');
-    Route::get('/pengembalian-dana', [AdminPengembalianDanaController::class, 'index'])->name('pengembalian-dana');
-    Route::post('/pengembalian-dana/{refund}/setujui', [AdminPengembalianDanaController::class, 'setujui'])->name('pengembalian-dana.setujui');
-    Route::post('/pengembalian-dana/{refund}/tolak', [AdminPengembalianDanaController::class, 'tolak'])->name('pengembalian-dana.tolak');
-    Route::post('/pengembalian-dana/{refund}/selesaikan', [AdminPengembalianDanaController::class, 'selesaikan'])->name('pengembalian-dana.selesaikan');
+    Route::get('/pengembalian-dana', [PengembalianDanaController::class, 'index'])->name('pengembalian-dana');
+    Route::post('/pengembalian-dana/{refund}/setujui', [PengembalianDanaController::class, 'setujui'])->name('pengembalian-dana.setujui');
+    Route::post('/pengembalian-dana/{refund}/tolak', [PengembalianDanaController::class, 'tolak'])->name('pengembalian-dana.tolak');
+    Route::post('/pengembalian-dana/{refund}/selesaikan', [PengembalianDanaController::class, 'selesaikan'])->name('pengembalian-dana.selesaikan');
     Route::get('/permintaan-penarikan', [PermintaanPenarikanController::class, 'index'])->name('permintaan-penarikan');
     Route::post('/permintaan-penarikan/{penarikan}/setujui', [PermintaanPenarikanController::class, 'setujui'])->name('permintaan-penarikan.setujui');
     Route::post('/permintaan-penarikan/{penarikan}/tolak', [PermintaanPenarikanController::class, 'tolak'])->name('permintaan-penarikan.tolak');
