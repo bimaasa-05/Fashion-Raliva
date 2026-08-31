@@ -70,7 +70,7 @@
                 </thead>
                 <tbody class="font-body-md text-sm">
                     @forelse($transactions as $tx)
-                        @php $rowNumber = $loop->iteration + ($transactions->currentPage() - 1) * $transactions->perPage(); @endphp
+                        @php $rowNumber = $loop->iteration; @endphp
                         @php
                             $isPositive = in_array($tx->jenis_transaksi, ['penjualan_masuk', 'komisi_masuk', 'penyesuaian']);
                         @endphp

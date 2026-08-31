@@ -47,11 +47,11 @@
 @endpush
 
 @section('content')
-<div class="w-full max-w-5xl mx-auto space-y-section-gap">
+<div class="w-full space-y-6">
 
     <section class="relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl card-premium hero-glow">
         <span class="material-symbols-outlined fill absolute -right-6 -bottom-10 text-[220px] text-gold-accent/[0.06] pointer-events-none select-none" aria-hidden="true">percent</span>
-        <div class="relative z-10 p-8 md:p-12 flex flex-col lg:flex-row lg:items-center justify-between gap-section-gap">
+        <div class="relative z-10 p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-center gap-3 mb-6">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase tracking-wider border border-secondary/20">
@@ -95,7 +95,7 @@
 
     <section>
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Dampak Komisi Bulan Ini</h2>
-        <div data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+        <div data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Estimasi Komisi</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp {{ number_format($stats['estimasi_komisi'] / 1000, 0, ',', '.') }}JT</span>
@@ -135,7 +135,7 @@
             </span>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-section-gap">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
                 <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-3" for="sim-sales">Estimasi Penjualan Toko / Bulan</label>
                 <div class="relative">
@@ -155,7 +155,7 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter content-start">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
                 <div class="rounded-xl p-6 bg-gradient-to-br from-gold-accent/15 via-gold-accent/5 to-transparent border border-gold-accent/25">
                     <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant block mb-2">Komisi Platform</span>
                     <span id="sim-commission" class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent block leading-tight">Rp 2.500.000</span>
@@ -176,7 +176,7 @@
 
     <section id="riwayat-komisi" class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 md:p-8 card-premium scroll-mt-24">
         <h2 class="font-title-md text-title-md mb-8 uppercase tracking-wider text-on-surface premium-heading">Riwayat Perubahan Tarif</h2>
-        <ol class="relative border-l border-muted-border ml-3 space-y-10">
+        <ol class="relative border-l border-muted-border ml-3 space-y-6">
             @forelse ($riwayat as $item)
                 <li class="pl-8 relative">
                     <span class="absolute -left-[9px] top-1 w-4 h-4 rounded-full {{ $loop->first ? 'bg-gold-accent border-4 border-surface-container-lowest shadow-[0_0_0_3px_rgba(201,162,77,0.25)]' : 'bg-secondary border-4 border-surface-container-lowest' }}"></span>

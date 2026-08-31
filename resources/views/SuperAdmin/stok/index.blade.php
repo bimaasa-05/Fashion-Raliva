@@ -3,8 +3,16 @@
 @section('title', 'Stok')
 
 @section('header-title', 'Stok')
-@section('header-badge', 'Lihat')
+@section('header-badge', 'Pantau')
 @section('header-subtitle', 'Pantau ketersediaan stok dari seluruh toko di platform.')
+
+@php
+    $statusBadgeMap = [
+        'aman' => ['label' => 'Aman', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
+        'menipis' => ['label' => 'Menipis', 'class' => 'bg-error/10 text-error border-error/20'],
+        'habis' => ['label' => 'Habis', 'class' => 'bg-error/10 text-error border-error/20'],
+    ];
+@endphp
 
 @section('content')
 <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
@@ -15,20 +23,36 @@
         </span>
     </div>
 
-    <div class="mb-6 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
+    <!-- Filters -->
+    <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
         <div class="flex items-center gap-2 shrink-0">
             <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
             <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
         </div>
         <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
-        <div data-chip-group data-chip-key="status" class="flex flex-wrap gap-2">
-            <button type="button" data-chip="semua" class="px-4 py-2 rounded-lg bg-deep-onyx text-on-primary border border-deep-onyx font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua</button>
-            <button type="button" data-chip="aman" class="px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Aman</button>
-            <button type="button" data-chip="menipis" class="px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menipis</button>
-            <button type="button" data-chip="habis" class="px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Habis</button>
+        <div id="chip-group" class="flex flex-wrap gap-2">
+            <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
+            <button type="button" data-chip="aman" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Aman ({{ $stats['aman'] }})</button>
+            <button type="button" data-chip="menipis" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menipis ({{ $stats['menipis'] }})</button>
+            <button type="button" data-chip="habis" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Habis ({{ $stats['habis'] }})</button>
         </div>
     </div>
 
+    <!-- Search + Result Count -->
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
+        <div class="relative flex-1">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+            <input id="stok-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama produk, SKU, toko, atau gudang..." />
+            <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+        </div>
+        <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+            <span id="result-count">{{ $stocks->count() }}</span> item stok
+        </p>
+    </div>
+
+    <!-- Table -->
     <div class="overflow-x-auto">
         <table class="w-full min-w-[850px] premium-table">
             <thead>
@@ -45,9 +69,9 @@
             </thead>
             <tbody class="font-body-md text-sm">
                 @forelse($stocks as $stock)
-                    @php $rowNumber = $loop->iteration + ($stocks->currentPage() - 1) * $stocks->perPage(); @endphp
-                    <tr data-table-row data-status="{{ $stock->status_stok }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                        <td class="p-4 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
+                    @php $badge = $statusBadgeMap[$stock->status_stok] ?? ['label' => $stock->status_stok, 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant']; @endphp
+                    <tr data-table-row data-status="{{ $stock->status_stok }}" data-search="{{ strtolower($stock->nama_produk.' '.($stock->sku ?? '').' '.($stock->warna ?? '').' '.($stock->ukuran ?? '').' '.$stock->nama_toko.' '.($stock->nama_gudang ?? '')) }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                        <td class="p-4 text-center text-on-surface-variant font-mono row-num"></td>
                         <td class="p-4">
                             <p class="text-on-surface">{{ $stock->nama_produk }}</p>
                             <p class="text-on-surface-variant text-xs">{{ $stock->warna ? $stock->warna.' • ' : '' }}{{ $stock->ukuran ?? '-' }}</p>
@@ -58,13 +82,7 @@
                         <td class="p-4 text-center text-on-surface-variant">{{ $stock->jumlah_direservasi }}</td>
                         <td class="p-4 text-center text-on-surface-variant">{{ $stock->stok_minimum }}</td>
                         <td class="p-4 text-center">
-                            @if($stock->status_stok === 'aman')
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aman</span>
-                            @elseif($stock->status_stok === 'menipis')
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Menipis</span>
-                            @else
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Habis</span>
-                            @endif
+                            <span class="inline-flex items-center px-2 py-1 rounded-full {{ $badge['class'] }} text-[10px] font-bold uppercase border">{{ $badge['label'] }}</span>
                         </td>
                     </tr>
                 @empty
@@ -72,14 +90,84 @@
                         <td colspan="8" class="p-8 text-center text-on-surface-variant">Belum ada data stok tercatat.</td>
                     </tr>
                 @endforelse
+                <tr id="empty-search" class="hidden">
+                    <td colspan="8" class="p-8 text-center">
+                        <div class="flex flex-col items-center gap-2">
+                            <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
+                            <p class="text-on-surface-variant font-body-md text-sm">Tidak ada data stok yang cocok.</p>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
-
-    @if($stocks->hasPages())
-        <div class="pt-4">
-            {{ $stocks->links() }}
-        </div>
-    @endif
 </section>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const scope = document.querySelector('[data-table-scope]');
+        if (!scope) return;
+
+        const rows = Array.from(scope.querySelectorAll('[data-table-row]'));
+        const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
+        const searchInput = document.getElementById('stok-search');
+        const clearBtn = document.getElementById('clear-search');
+        const countEl = document.getElementById('result-count');
+        const emptySearch = document.getElementById('empty-search');
+
+        const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
+        const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
+
+        let activeStatus = 'semua';
+
+        function applyFilter() {
+            const term = searchInput.value.trim().toLowerCase();
+            let visible = 0;
+
+            rows.forEach((row) => {
+                const matchStatus = activeStatus === 'semua' || row.getAttribute('data-status') === activeStatus;
+                const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
+                const show = matchStatus && matchSearch;
+                row.classList.toggle('hidden', !show);
+                if (show) {
+                    visible++;
+                    row.querySelector('.row-num').textContent = visible;
+                }
+            });
+
+            countEl.textContent = visible;
+            emptySearch.classList.toggle('hidden', visible > 0);
+        }
+
+        chipBtns.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                chipBtns.forEach((b) => {
+                    b.classList.remove(...activeClasses);
+                    b.classList.add(...idleClasses, 'hover:bg-surface-container-high');
+                });
+                btn.classList.remove(...idleClasses, 'hover:bg-surface-container-high');
+                btn.classList.add(...activeClasses);
+                activeStatus = btn.getAttribute('data-chip');
+                applyFilter();
+            });
+        });
+
+        let debounce;
+        searchInput.addEventListener('input', () => {
+            clearBtn.classList.toggle('opacity-0', !searchInput.value);
+            clearTimeout(debounce);
+            debounce = setTimeout(applyFilter, 200);
+        });
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearBtn.classList.add('opacity-0');
+            applyFilter();
+        });
+
+        applyFilter();
+    });
+</script>
+@endpush

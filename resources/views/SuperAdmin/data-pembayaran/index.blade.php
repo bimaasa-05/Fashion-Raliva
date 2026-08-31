@@ -102,7 +102,7 @@
                             ];
                             $st = $statusMap[$pay->status] ?? [ucfirst($pay->status), 'bg-surface-container-high text-on-surface'];
                             $cust = $pay->checkout?->user;
-                            $tanggal = $pay->created_at ? Carbon::parse($pay->created_at)->locale('id')->translatedFormat('d M Y • H.i') : '-';
+                            $tanggal = $pay->created_at ? Illuminate\Support\Carbon::parse($pay->created_at)->locale('id')->translatedFormat('d M Y • H.i') : '-';
                         @endphp
                         <tr data-table-row data-status="{{ $pay->status }}" data-search="{{ strtolower('PAY-'.$pay->payment_id.' '.($cust->nama_lengkap ?? '').' '.($cust->email ?? '').' '.$pay->nama_toko.' '.($pay->paymentMethod->nama_metode ?? '')) }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                             <td class="p-6 text-center text-on-surface-variant font-mono row-num"></td>

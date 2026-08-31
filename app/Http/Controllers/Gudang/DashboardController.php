@@ -19,14 +19,37 @@ class DashboardController extends Controller
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {
+            // Jalur "belum ada gudang aktif": kirim semua variabel yang dipakai
+            // view dengan nilai kosong agar tidak terjadi Undefined variable
+            // (sebelumnya chartRangeData/targetPenerimaan/akurasi/sla tidak dikirim).
+            $emptyChart = ['labels' => [], 'masuk' => [], 'keluar' => []];
+
             return view('Gudang.dashboard.index', [
                 'warehouses' => $warehouses,
                 'warehouse' => null,
-                'stats' => null,
+                'stats' => (object) [
+                    'total_produk' => 0,
+                    'total_stok' => 0,
+                    'masuk_hari_ini' => 0,
+                    'keluar_hari_ini' => 0,
+                    'menipis' => 0,
+                    'kritis' => 0,
+                    'habis' => 0,
+                    'rusak' => 0,
+                ],
                 'lowStock' => collect(),
                 'recentActivity' => collect(),
-                'chart' => ['labels' => [], 'masuk' => [], 'keluar' => []],
+                'chart' => $emptyChart,
+                'chartRangeData' => [
+                    '7' => $emptyChart,
+                    '30' => $emptyChart,
+                    '90' => $emptyChart,
+                ],
                 'statusDist' => ['aman' => 0, 'menipis' => 0, 'kritis' => 0, 'habis' => 0],
+                'targetPenerimaan' => ['pct' => 0, 'masuk' => 0, 'target' => 0],
+                'akurasi' => ['pct' => 100, 'tersedia' => 0, 'total' => 0],
+                'sla' => ['pct' => 100, 'tersedia' => 0, 'total' => 0],
+                'kategoriTerbesar' => collect(),
                 'leaderboardData' => [],
                 'barsData' => [],
             ]);
@@ -42,14 +65,14 @@ class DashboardController extends Controller
         $totalProduk = $stocks->pluck('productVariant.product_id')->unique()->count();
         $totalStok = $stocks->sum('jumlah_stok');
 
-        $statusCounts = $stocks->map(function ($s) {
+        $statusCounts = $stocks->map(function (WarehouseStock $s) {
             return $this->stockStatus($s);
         })->countBy()->all();
 
-        $lowStock = $stocks->filter(fn ($s) => $s->jumlah_stok <= $s->stok_minimum)
+        $lowStock = $stocks->filter(fn (WarehouseStock $s) => $s->jumlah_stok <= $s->stok_minimum)
             ->sortBy('jumlah_stok')
             ->take(8)
-            ->map(function ($s) {
+            ->map(function (WarehouseStock $s) {
                 return (object) [
                     'nama_produk' => $s->productVariant->product->nama_produk ?? '-',
                     'sku' => $s->productVariant->sku ?? '-',
@@ -126,7 +149,7 @@ class DashboardController extends Controller
         $slaPct = $orderRequests->count() > 0 ? (int) round($reqTersedia / $orderRequests->count() * 100) : 100;
 
         // Kategori stok terbesar (top 4 by total unit).
-        $kategoriTerbesar = $stocks->map(function ($s) {
+        $kategoriTerbesar = $stocks->map(function (WarehouseStock $s) {
             return (object) [
                 'nama' => $s->productVariant->product->category->nama_kategori ?? 'Lainnya',
                 'jumlah' => $s->jumlah_stok,

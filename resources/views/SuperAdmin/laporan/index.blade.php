@@ -100,7 +100,7 @@
             </thead>
             <tbody>
                 @forelse($recentTransactions as $tx)
-                    @php $rowNumber = $loop->iteration + ($recentTransactions->currentPage() - 1) * $recentTransactions->perPage(); @endphp
+                    @php $rowNumber = $loop->iteration; @endphp
                     @php
                         $statusMap = [
                             'dibayar' => ['Dibayar', 'bg-info/10 text-info'],

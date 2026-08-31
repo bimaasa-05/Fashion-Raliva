@@ -108,7 +108,7 @@
                             @if($log->user)
                                 <span class="font-bold text-on-surface">{{ $log->user->nama_lengkap }}</span>
                             @endif
-                            {{ $log->deskripsi ?? $log->aksi }}
+                            {!! $log->deskripsi ?? $log->aksi !!}
                         </div>
                         @if($log->nilai_lama || $log->nilai_baru)
                             <div class="mt-2 text-sm text-on-surface-variant bg-surface p-2 border border-muted-border rounded-sm">

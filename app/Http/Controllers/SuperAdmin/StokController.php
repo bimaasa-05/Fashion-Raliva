@@ -26,11 +26,18 @@ class StokController extends Controller
                 DB::raw('CASE WHEN warehouse_stocks.jumlah_stok = 0 THEN "habis" WHEN warehouse_stocks.jumlah_stok <= warehouse_stocks.stok_minimum THEN "menipis" ELSE "aman" END as status_stok')
             )
             ->orderBy('products.nama_produk')
-            ->paginate(30)
-            ->withQueryString();
+            ->get();
+
+        $stats = [
+            'semua' => $stocks->count(),
+            'aman' => $stocks->where('status_stok', 'aman')->count(),
+            'menipis' => $stocks->where('status_stok', 'menipis')->count(),
+            'habis' => $stocks->where('status_stok', 'habis')->count(),
+        ];
 
         return view('SuperAdmin.stok.index', [
             'stocks' => $stocks,
+            'stats' => $stats,
         ]);
     }
 }
