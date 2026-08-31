@@ -77,7 +77,7 @@
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors" data-row>
                             <td class="p-4 text-on-surface-variant whitespace-nowrap">{{ $m->created_at?->format('d M Y • H:i') ?? '-' }}</td>
-                            <td class="p-4"><span class="text-on-surface">{{ $m->productVariant->product->nama_produk ?? '-' }}</span></td>
+                            <td class="p-4"><span class="text-on-surface">{{ $m->productVariant?->product?->nama_produk ?? '-' }}</span></td>
                             <td class="p-4">
                                 <span class="inline-flex items-center gap-1.5 whitespace-nowrap text-on-surface">
                                     <span class="material-symbols-outlined text-[16px] {{ in_array($m->tipe_pergerakan, ['keluar', 'mutasi_keluar']) ? 'text-error' : ($m->tipe_pergerakan === 'penyesuaian' ? 'text-gold-accent' : 'text-on-surface-variant') }}">{{ $icon }}</span>
