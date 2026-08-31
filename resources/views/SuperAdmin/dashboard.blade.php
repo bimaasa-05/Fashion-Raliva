@@ -226,7 +226,7 @@
                             <span class="material-symbols-outlined text-sm text-gold-accent">{{ $icon }}</span>
                         </div>
                         <div>
-                            <p class="font-body-md text-on-surface">{{ $act['deskripsi'] ?? '-' }}</p>
+                            <p class="font-body-md text-on-surface">{!! $act['deskripsi'] ?? '-' !!}</p>
                             <p class="text-on-surface-variant text-sm mt-0.5">{{ $act['waktu'] }}</p>
                         </div>
                     </div>
