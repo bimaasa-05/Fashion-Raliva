@@ -24,7 +24,7 @@
                         "primary-fixed-dim": "#c8c6c5",
                         "surface-variant": "#e3e2e2",
                         "on-surface": "#1b1c1c",
-                        "secondary": "#795905",
+                        "secondary": "#8B1E3F",
                         "surface-dim": "#dbdad9",
                         "on-error": "#ffffff",
                         "primary": "#000000",
@@ -32,7 +32,7 @@
                         "tertiary-container": "#1a1c1a",
                         "error-container": "#ffdad6",
                         "on-tertiary": "#ffffff",
-                        "secondary-fixed": "#ffdf9f",
+                        "secondary-fixed": "#fbe2e9",
                         "on-primary": "#ffffff",
                         "surface-container-lowest": "#ffffff",
                         "error": "#ba1a1a",
@@ -43,20 +43,20 @@
                         "primary-fixed": "#e5e2e1",
                         "outline-variant": "#c4c7c7",
                         "surface-tint": "#5f5e5e",
-                        "secondary-fixed-dim": "#ebc168",
+                        "secondary-fixed-dim": "#f1c2cf",
                         "outline": "#747878",
                         "on-primary-fixed-variant": "#474646",
-                        "on-secondary-fixed-variant": "#5c4300",
+                        "on-secondary-fixed-variant": "#6D1428",
                         "on-tertiary-fixed": "#1a1c1a",
-                        "on-secondary-container": "#775804",
+                        "on-secondary-container": "#8B1E3F",
                         "inverse-on-surface": "#f2f0f0",
                         "tertiary-fixed-dim": "#c7c6c4",
                         "tertiary-fixed": "#e3e2df",
                         "surface-container-high": "#e9e8e7",
-                        "on-secondary-fixed": "#261a00",
+                        "on-secondary-fixed": "#5e0f23",
                         "background": "#fbf9f9",
                         "surface": "#fbf9f9",
-                        "secondary-container": "#fdd177",
+                        "secondary-container": "#fbe2e9",
                         "on-surface-variant": "#444748",
                         "primary-container": "#1c1b1b",
                         "inverse-primary": "#c8c6c5",
@@ -128,7 +128,9 @@
         --chrome-text-faint: rgba(0,0,0,.45);
         --chrome-border: rgba(0,0,0,.1);
         --chrome-hover: rgba(0,0,0,.06);
-        --chrome-accent: #795905;
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #F8F6F2;
+        --border-soft: #E5E1DA;
     }
     html.theme-dark {
         --chrome-bg: #1c1b1b;
@@ -138,7 +140,9 @@
         --chrome-text-faint: rgba(255,255,255,.5);
         --chrome-border: rgba(255,255,255,.1);
         --chrome-hover: rgba(255,255,255,.1);
-        --chrome-accent: #ebc168;
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #1e1d1c;
+        --border-soft: rgba(255,255,255,.1);
     }
 </style>
 <style>
@@ -165,7 +169,7 @@
     html.theme-dark .text-outline { color: #8a8781 !important; }
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
-    html.theme-dark .text-secondary { color: #ebc168 !important; }
+    html.theme-dark .text-secondary { color: #8B1E3F !important; }
     html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
     html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
@@ -179,7 +183,7 @@
     html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
     html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
     html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
-    html.theme-dark .hover\:text-secondary:hover { color: #ebc168 !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #8B1E3F !important; }
     html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
     html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
     html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
@@ -193,7 +197,27 @@
     html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
-  </head>
+<style>
+  /* ===== Premium cards + burgundy accents (parity with home) ===== */
+  .card-premium { box-shadow:0 1px 2px rgb(17 17 17 / .04),0 12px 32px -16px rgb(17 17 17 / .16); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; }
+  .card-premium:hover { transform:translateY(-3px); box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
+  html.theme-dark .card-premium { background-color:var(--surface-ivory); border-color:var(--border-soft); box-shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px -12px rgb(0 0 0 / .5); }
+  html.theme-dark .card-premium:hover { box-shadow:0 2px 4px rgb(0 0 0 / .4),0 20px 48px -20px rgb(0 0 0 / .7); border-color:rgba(139,30,63,.55); }
+  .premium-heading { display:block; }
+  .premium-heading::before { content:''; display:inline-block; width:4px; height:.95em; margin-right:.65rem; background:#8B1E3F; border-radius:9999px; vertical-align:-.05em; }
+  .atl-eyebrow { display:inline-flex; align-items:center; gap:.65rem; }
+  .atl-eyebrow::before { content:''; width:30px; height:1px; background:var(--chrome-accent); opacity:.7; }
+  html.theme-dark .premium-heading::before { background:#8B1E3F; }
+  /* ===== Drawer / chrome burgundy remap ===== */
+  html.theme-dark .bg-chrome-burgundy { background-color:#8B1E3F !important; }
+  html.theme-dark .text-chrome-burgundy { color:#8B1E3F !important; }
+  .border-burgundy { border-color:#8B1E3F !important; }
+  /* ===== Scroll reveal ===== */
+  .reveal-up { opacity:0; transform:translateY(12px); transition:opacity .5s ease,transform .5s ease; }
+  .reveal-up.is-visible { opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce) { .reveal-up { opacity:1; transform:none; transition:none; } }
+</style>
+</head>
 <body class="bg-surface text-on-surface antialiased font-body-lg lg:pl-72">
 <!-- TopAppBar -->
 <header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
@@ -205,19 +229,21 @@
 </header>
 <!-- Main Content -->
 <main class="pt-16 pb-xl w-full">
-<!-- Hero + Search -->
-<section class="bg-surface-container-low border-b border-outline-variant px-container-margin py-xl">
+<!-- Hero + Search + Categories -->
+<section class="py-xl reveal-up">
+<div class="mx-auto max-w-[1400px]">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
 <div class="max-w-3xl mx-auto text-center">
-<h2 class="font-headline-lg text-headline-lg text-on-surface mb-sm">{{ __('How can we help?') }}</h2>
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">SUPPORT</p>
+<h2 class="premium-heading font-headline-lg text-headline-lg text-on-surface mb-sm">{{ __('How can we help?') }}</h2>
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-lg">{{ __('Search our help center or browse popular topics below.') }}</p>
 <form class="relative max-w-xl mx-auto" onsubmit="return false;">
 <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-<input class="w-full bg-surface border border-outline-variant rounded-full pl-14 pr-md py-md font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" placeholder="{{ __('Search help topics...') }}" type="search"/>
+<input class="w-full bg-surface border border-outline-variant rounded-full pl-14 pr-md py-md font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors" placeholder="{{ __('Search help topics...') }}" type="search"/>
 </form>
 </div>
-</section>
-<!-- Category Cards -->
-<section class="px-container-margin py-xl max-w-screen-xl mx-auto">
+<div class="mt-xl pt-xl border-t border-[var(--border-soft)]">
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-md text-center">BROWSE BY CATEGORY</p>
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
 @foreach ([
                 ['icon' => 'local_shipping', 'title' => __('Shipping'), 'sub' => __('Track & delivery')],
@@ -225,7 +251,7 @@
                 ['icon' => 'payments', 'title' => __('Payments'), 'sub' => __('Methods & security')],
                 ['icon' => 'support_agent', 'title' => __('Contact'), 'sub' => __('Talk to our team')],
             ] as $cat)
-<a href="#faq" class="flex flex-col items-center text-center gap-xs p-md border border-outline-variant rounded-lg bg-surface hover:border-primary hover:bg-surface-container-low transition-colors group">
+<a href="#faq" class="flex flex-col items-center text-center gap-xs p-md border border-outline-variant rounded-lg bg-surface hover:border-secondary hover:bg-surface-container-low transition-colors group">
 <span class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-xs">
 <span class="material-symbols-outlined text-[24px] text-secondary group-hover:scale-110 transition-transform">{{ $cat['icon'] }}</span>
 </span>
@@ -234,10 +260,14 @@
 </a>
 @endforeach
 </div>
+</div>
+</div>
+</div>
 </section>
 <!-- FAQ -->
-<section id="faq" class="px-container-margin max-w-screen-xl mx-auto pb-xl">
-<h2 class="font-headline-md text-headline-md text-on-surface mb-md">{{ __('Frequently Asked Questions') }}</h2>
+<div class="mx-auto max-w-[1400px]">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('Frequently Asked Questions') }}</h2>
 <div class="flex flex-col gap-sm">
 <details class="group bg-surface-container-low rounded-lg border border-outline-variant px-md">
 <summary class="flex justify-between items-center py-sm cursor-pointer list-none">
@@ -295,12 +325,15 @@
 </div>
 </details>
 </div>
-</section>
+</div>
+</div>
 <!-- Contact Support -->
-<section class="px-container-margin pb-xl max-w-screen-xl mx-auto">
-<h2 class="font-headline-md text-headline-md text-on-surface mb-md">{{ __('Still Need Help?') }}</h2>
+<section class="py-xl reveal-up">
+<div class="mx-auto max-w-[1400px]">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('Still Need Help?') }}</h2>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
-<button class="flex items-center gap-sm p-md border border-outline-variant rounded-lg bg-surface hover:border-primary transition-colors text-left" type="button">
+<button class="flex items-center gap-sm p-md border border-outline-variant rounded-lg bg-surface hover:border-secondary transition-colors text-left" type="button">
 <span class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0">
 <span class="material-symbols-outlined text-[20px] text-on-surface-variant">chat</span>
 </span>
@@ -309,7 +342,7 @@
 <span class="font-label-sm text-label-sm text-on-surface-variant block">Mon–Fri, 09.00–17.00 WIB</span>
 </span>
 </button>
-<button class="flex items-center gap-sm p-md border border-outline-variant rounded-lg bg-surface hover:border-primary transition-colors text-left" type="button">
+<button class="flex items-center gap-sm p-md border border-outline-variant rounded-lg bg-surface hover:border-secondary transition-colors text-left" type="button">
 <span class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0">
 <span class="material-symbols-outlined text-[20px] text-on-surface-variant">mail</span>
 </span>
@@ -319,7 +352,19 @@
 </span>
 </button>
 </div>
+</div>
+</div>
 </section>
 </main>
 @include('customer._partials.drawer')
+
+<script>
+(function(){
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal-up').forEach(function(el){ io.observe(el); });
+})();
+</script>
 </body></html>
