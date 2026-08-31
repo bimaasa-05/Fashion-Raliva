@@ -354,8 +354,9 @@
 </div>
 </section>
 <!-- Categories -->
-<section class="py-lg border-b border-outline-variant" style="background-color: var(--surface-ivory);">
-<div class="flex overflow-x-auto no-scrollbar px-container-margin gap-sm pb-xs">
+<section class="py-xl reveal-up">
+<div class="mx-auto max-w-[1400px]">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium flex items-center gap-sm md:gap-md overflow-x-auto no-scrollbar">
 <button type="button" data-cat="All" onclick="selectHomeCategory(null)" class="home-cat-pill shrink-0 px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('Semua') }}</button>
 <button type="button" data-cat="Women" onclick="selectHomeCategory('Women')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Women') }}</button>
 <button type="button" data-cat="Men" onclick="selectHomeCategory('Men')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Men') }}</button>
@@ -363,10 +364,11 @@
 <button type="button" data-cat="Shoes" onclick="selectHomeCategory('Shoes')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Shoes') }}</button>
 <button type="button" data-cat="Bags" onclick="selectHomeCategory('Bags')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Bags') }}</button>
 </div>
+</div>
 </section>
 <!-- New Arrivals -->
-<section class="py-xl px-container-margin reveal-up">
-<div class="mx-auto max-w-7xl">
+<section class="py-xl reveal-up">
+<div class="mx-auto max-w-[1400px]">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm card-premium">
 <div class="atl-eyebrow mb-xs">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('New Arrivals') }}</span>
@@ -437,17 +439,17 @@
 </div>
 </div>
 </section>
+
+
 <!-- Featured Stores -->
-<section class="py-xl px-container-margin border-t border-[var(--border-soft)] reveal-up">
-<div class="mx-auto max-w-7xl">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm card-premium">
-<div class="mb-md">
+<section class="py-xl reveal-up">
+<div class="mx-auto max-w-[1400px]">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
 <div class="atl-eyebrow mb-xs">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Featured Stores') }}</span>
 </div>
-<h3 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ __('Maisions We Love') }}</h3>
-</div>
-<div class="flex overflow-x-auto no-scrollbar lg:grid lg:grid-cols-4 lg:overflow-visible pl-container-margin pr-container-margin gap-md pb-xs snap-x snap-mandatory">
+<h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Maisions We Love') }}</h3>
+<div class="flex overflow-x-auto no-scrollbar lg:grid lg:grid-cols-4 lg:overflow-visible pl-container-margin pr-container-margin gap-md pb-xs mt-md snap-x snap-mandatory">
 <!-- Store 1 -->
 <a href="{{ route('customer.shop.store-detail', 1) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
@@ -485,19 +487,21 @@
 </div>
 </section>
 <!-- Newsletter -->
-<section class="py-xl px-container-margin border-b border-outline-variant reveal-up" style="background-color: var(--surface-ivory);">
-<div class="mx-auto max-w-[1200px] flex flex-col items-center text-center">
+
+<div class="mx-auto max-w-[1400px]">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium flex flex-col items-center text-center">
 <div class="atl-eyebrow mb-xs justify-center">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Newsletter') }}</span>
 </div>
-<h3 class="font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Be the first to know') }}</h3>
+<h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Be the first to know') }}</h3>
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-md max-w-md">{{ __('Subscribe to our newsletter for exclusive collections and editorial insights.') }}</p>
 <form class="w-full max-w-sm lg:max-w-lg flex flex-col lg:flex-row gap-sm" onsubmit="return false;">
 <input class="w-full lg:flex-1 rounded-full border border-outline-variant bg-surface px-5 py-3 font-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors" placeholder="{{ __('Email Address') }}" type="email"/>
 <button class="btn-gold font-label-caps text-label-caps py-3 lg:px-xl rounded-full uppercase tracking-widest" type="submit">{{ __('SUBSCRIBE') }}</button>
 </form>
 </div>
-</section>
+</div>
+
 </main>
 <!-- Footer -->
 <footer class="py-xl px-container-margin md:pb-xl pb-32 reveal-up" style="background-color: var(--surface-ivory);">
