@@ -39,21 +39,25 @@ class OwnerSeeder extends Seeder
         // Bersihkan data demo lama agar seeding deterministik (idempoten).
         $old = Store::where('nama_toko', 'Raliva Atelier Jakarta')->first();
         if ($old) {
-            WalletTransaction::whereIn('wallet_id', Wallet::where('store_id', $old->store_id)->pluck('wallet_id'))->delete();
+            // Reset data toko lama: matikan FK check agar semua child (varian,
+            // stok, warehouse, pesanan, dll) bisa dihapus tanpa violasi constraint.
+            \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS=0');
             Wallet::where('store_id', $old->store_id)->delete();
             StoreExpense::where('store_id', $old->store_id)->delete();
             StoreDocument::where('store_id', $old->store_id)->delete();
             Promotion::where('store_id', $old->store_id)->delete();
             Review::where('store_id', $old->store_id)->delete();
             Complaint::where('store_id', $old->store_id)->delete();
+            // Bersihkan produk lama (FK check sudah dimatikan di awal blok).
+            \App\Models\ProductVariant::whereIn('product_id', Product::where('store_id', $old->store_id)->pluck('product_id'))->delete();
             \App\Models\ProductionOrderItem::whereIn('production_order_id', \App\Models\ProductionOrder::where('store_id', $old->store_id)->pluck('production_order_id'))->delete();
             \App\Models\ProductionOrder::where('store_id', $old->store_id)->delete();
             OrderItem::whereIn('order_id', Order::where('store_id', $old->store_id)->pluck('order_id'))->delete();
             Order::where('store_id', $old->store_id)->delete();
-            ProductVariant::whereIn('product_id', Product::where('store_id', $old->store_id)->pluck('product_id'))->delete();
             Product::where('store_id', $old->store_id)->delete();
             StoreStaff::where('store_id', $old->store_id)->delete();
             Warehouse::where('store_id', $old->store_id)->delete();
+            \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS=1');
             $old->delete();
         }
 
