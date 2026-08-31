@@ -350,10 +350,10 @@
 <!-- Canvas Area -->
 <div class="flex-grow flex flex-col w-full">
 <!-- Shop Toolbar (parent container: category navigation left, actions right) -->
-<div class="shop-toolbar flex flex-row items-center gap-sm md:gap-md px-container-margin py-sm border-b border-outline-variant sticky top-16 lg:top-16 z-30" style="background-color: var(--surface-ivory);">
+<div class="shop-toolbar flex flex-row items-center gap-sm md:gap-md px-container-margin py-sm sticky top-16 lg:top-16 z-30">
     <!-- Category Navigation Card (Super-Admin card-premium style) -->
-    <div class="shop-category-card flex-1 min-w-0 flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm">
-    <div class="shop-category-nav flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar">
+    <div class="shop-category-card flex-1 min-w-0 flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-md md:px-[64px] py-sm md:py-md shadow-sm">
+    <div class="shop-category-nav w-1/2 md:flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar">
         <button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-pill shrink-0 px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('All') }}</button>
         <button type="button" data-cat="Women" onclick="selectCategory('Women')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Women') }}</button>
         <button type="button" data-cat="Men" onclick="selectCategory('Men')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Men') }}</button>
@@ -371,8 +371,8 @@
             <span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
         </a>
         <div class="relative shop-sort-trigger order-1 ml-auto" id="sort-menu-container">
-            <button class="shop-action-btn px-md gap-1 border border-outline-variant font-label-sm text-label-sm text-on-surface hover:text-secondary hover:border-secondary transition-colors" onclick="toggleSortMenu()" type="button">
-                <span id="sort-label">{{ __('Sort') }}</span>
+            <button class="shop-action-btn md:px-md gap-1 border border-outline-variant font-label-sm text-label-sm text-on-surface hover:text-secondary hover:border-secondary transition-colors" onclick="toggleSortMenu()" type="button">
+                <span id="sort-label" class="hidden md:inline">{{ __('Sort') }}</span>
                 <span class="material-symbols-outlined text-[16px] transition-transform duration-200" data-icon="expand_more" id="sort-chevron">expand_more</span>
             </button>
             <div id="sort-menu" class="absolute right-0 top-full mt-xs w-56 bg-surface rounded-lg border border-outline-variant shadow-xl z-20 py-xs origin-top-right transition-all duration-200 ease-out invisible opacity-0 scale-95 -translate-y-1">
