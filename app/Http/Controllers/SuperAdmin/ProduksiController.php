@@ -9,19 +9,23 @@ class ProduksiController extends Controller
 {
     public function index()
     {
-        $query = ProductionOrder::with([
+        $productions = ProductionOrder::with([
             'store:store_id,nama_toko',
             'items.productVariant.product:product_id,nama_produk',
-        ])->orderByDesc('production_orders.created_at');
+        ])->orderByDesc('production_orders.created_at')->get();
 
-        if ($status = request('status')) {
-            $query->where('production_orders.status', $status);
-        }
-
-        $productions = $query->paginate(20)->withQueryString();
+        $stats = [
+            'semua' => $productions->count(),
+            'requested' => $productions->where('status', 'requested')->count(),
+            'diproses' => $productions->where('status', 'diproses')->count(),
+            'menunggu_qc' => $productions->where('status', 'menunggu_qc')->count(),
+            'selesai' => $productions->where('status', 'selesai')->count(),
+            'dibatalkan' => $productions->where('status', 'dibatalkan')->count(),
+        ];
 
         return view('SuperAdmin.produksi.index', [
             'productions' => $productions,
+            'stats' => $stats,
         ]);
     }
 }

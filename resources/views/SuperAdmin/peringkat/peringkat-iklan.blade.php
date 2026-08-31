@@ -104,7 +104,6 @@
                 </thead>
                 <tbody class="font-body-md text-sm">
                     @forelse($slots as $i => $slot)
-                        @php $rowNumber = $loop->iteration + ($slots->currentPage() - 1) * $slots->perPage(); @endphp
                         @php
                             $statusMap = [
                                 'aktif' => ['Aktif', 'bg-secondary-container/20 text-secondary border-secondary/20'],
@@ -115,7 +114,7 @@
                             $rank = $i + 1;
                         @endphp
                         <tr data-table-row class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                            <td class="p-4 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
+                            <td class="p-4 text-center text-on-surface-variant font-mono">{{ $loop->iteration }}</td>
                             <td class="p-4">
                                 @if($rank <= 3)
                                     <span class="inline-flex w-8 h-8 rounded-full {{ $rank === 1 ? 'bg-gold-accent text-deep-onyx' : 'bg-surface-container-high border border-outline-variant text-on-surface' }} items-center justify-center font-bold">{{ $rank }}</span>

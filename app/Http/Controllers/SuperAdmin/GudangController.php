@@ -9,18 +9,20 @@ class GudangController extends Controller
 {
     public function index()
     {
-        $query = Warehouse::with(['store:store_id,nama_toko'])
+        $warehouses = Warehouse::with(['store:store_id,nama_toko'])
             ->withCount('stocks')
-            ->orderByDesc('updated_at');
+            ->orderByDesc('updated_at')
+            ->get();
 
-        if ($status = request('status')) {
-            $query->where('status', $status);
-        }
-
-        $warehouses = $query->paginate(20)->withQueryString();
+        $stats = [
+            'semua' => $warehouses->count(),
+            'aktif' => $warehouses->where('status', 'aktif')->count(),
+            'nonaktif' => $warehouses->where('status', 'nonaktif')->count(),
+        ];
 
         return view('SuperAdmin.gudang.index', [
             'warehouses' => $warehouses,
+            'stats' => $stats,
         ]);
     }
 }
