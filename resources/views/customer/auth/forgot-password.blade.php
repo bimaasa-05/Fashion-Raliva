@@ -283,9 +283,9 @@
 <body class="bg-surface text-on-surface antialiased font-body-lg min-h-screen flex flex-col lg:flex-row">
 <!-- Editorial Panel -->
 <aside class="relative overflow-hidden shrink-0 h-44 lg:h-auto lg:w-[44%] flex">
-<img alt="RALIVA Editorial 1" src="{{ asset('storage/forgot-password-pictures/1.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"/>
-<img alt="RALIVA Editorial 2" src="{{ asset('storage/forgot-password-pictures/2.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000"/>
-<img alt="RALIVA Editorial 3" src="{{ asset('storage/forgot-password-pictures/3.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000"/>
+<img alt="RALIVA Editorial 1" src="{{ asset('assets/picture/forgot-password-pictures/1.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"/>
+<img alt="RALIVA Editorial 2" src="{{ asset('assets/picture/forgot-password-pictures/2.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000"/>
+<img alt="RALIVA Editorial 3" src="{{ asset('assets/picture/forgot-password-pictures/3.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000"/>
 <div class="absolute inset-0 bg-black/50"></div>
 <div class="relative z-10 flex flex-col items-center justify-center text-center h-full w-full p-lg lg:items-start lg:justify-between lg:text-left lg:p-xl">
 <div>

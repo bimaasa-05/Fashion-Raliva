@@ -344,9 +344,9 @@
 <!-- Main Content Canvas -->
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Order Header (Super-Admin style premium card, aksen Burgundy) -->
-<section class="py-xl px-container-margin reveal-up">
-<div class="max-w-7xl mx-auto">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm card-premium">
+<section class="py-xl reveal-up">
+<div class="mx-auto max-w-[1400px]">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
 <div class="atl-eyebrow mb-sm">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Order Tracking') }}</span>
 </div>
@@ -368,8 +368,8 @@
 </div>
 </section>
 <!-- Visual Tracking Timeline -->
-<div class="max-w-7xl mx-auto">
-<div class="rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
+<div class="mx-auto max-w-[1400px]">
+<div class="rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
 <div class="relative max-w-[480px] mx-auto">
 <div class="timeline-line"></div>
 <div class="timeline-progress" style="width: 0%;"></div>
@@ -409,9 +409,9 @@
 </div>
 </div>
 <!-- Order Items List -->
-<section class="px-container-margin py-lg md:py-xl reveal-up">
-<div class="max-w-7xl mx-auto">
-<div class="rounded-xl md:rounded-2xl p-sm md:p-lg card-premium">
+<section class="py-lg md:py-xl reveal-up">
+<div class="mx-auto max-w-[1400px]">
+<div class="rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
 <div class="mb-md md:mb-lg">
 <div class="atl-eyebrow mb-1">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Order Items') }}</span>
@@ -460,8 +460,8 @@
 </div>
 </section>
 <!-- Order Summary (Tonal Background) -->
-<div class="max-w-7xl mx-auto">
-<div class="rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
+<div class="mx-auto max-w-[1400px]">
+<div class="rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
 <div class="flex items-center gap-sm mb-md">
 <div class="w-8 h-8 rounded-full bg-secondary/10 border border-secondary/15 flex items-center justify-center">
 <span class="material-symbols-outlined text-secondary text-[18px]">receipt_long</span>
@@ -491,9 +491,9 @@
 </div>
 </div>  
 <!-- Need Help Action -->
-<section class="px-container-margin py-lg md:py-xl text-center reveal-up">
-<div class="max-w-7xl mx-auto">
-<div class="rounded-xl p-md md:p-lg card-premium">
+<section class="py-lg md:py-xl text-center reveal-up">
+<div class="mx-auto max-w-[1400px]">
+<div class="rounded-xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
 <div class="atl-eyebrow mb-sm justify-center">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Need Help?') }}</span>
 </div>

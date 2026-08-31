@@ -403,8 +403,8 @@
 <button id="clear-all" class="font-label-sm text-label-sm text-secondary underline hover:opacity-80 transition-opacity shrink-0" onclick="clearAll()" type="button">{{ __('Clear all') }}</button>
 </div>
 <!-- Shop Content Container -->
-<div class="mx-auto max-w-[1400px] px-container-margin py-xl">
-<div class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
+<div class="mx-auto max-w-[1400px] py-xl">
+<div class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
 <!-- Shop Header -->
 <div class="flex items-center justify-between gap-md mb-md flex-wrap">
 <div class="atl-eyebrow">

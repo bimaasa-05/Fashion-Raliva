@@ -340,9 +340,9 @@
 <!-- Hero Section (editorial crossfade, RALIVA Home pictures) -->
 <section class="relative w-full h-[78vh] min-h-[560px] max-h-[860px] overflow-hidden">
 <div class="hero-photos absolute inset-0">
-<img alt="RALIVA Home Editorial 1" src="{{ asset('storage/home-pictures/1.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000" data-hero-slide/>
-<img alt="RALIVA Home Editorial 2" src="{{ asset('storage/home-pictures/2.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" data-hero-slide/>
-<img alt="RALIVA Home Editorial 3" src="{{ asset('storage/home-pictures/3.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" data-hero-slide/>
+<img alt="RALIVA Home Editorial 1" src="{{ asset('assets/picture/home-pictures/1.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000" data-hero-slide/>
+<img alt="RALIVA Home Editorial 2" src="{{ asset('assets/picture/home-pictures/2.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" data-hero-slide/>
+<img alt="RALIVA Home Editorial 3" src="{{ asset('assets/picture/home-pictures/3.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" data-hero-slide/>
 </div>
 <div class="absolute inset-0 bg-black/15"></div>
 <div class="absolute inset-0" style="background: radial-gradient(120% 90% at 50% 100%, rgba(0,0,0,.42) 0%, rgba(0,0,0,0) 55%);"></div>
@@ -504,8 +504,8 @@
 
 </main>
 <!-- Footer -->
-<footer class="py-xl px-container-margin md:pb-xl pb-32 reveal-up" style="background-color: var(--surface-ivory);">
-<div class="mx-auto max-w-[1200px]">
+<footer class="mx-auto max-w-[1400px] py-xl md:pb-xl pb-32 reveal-up" style="background-color: var(--surface-ivory);">
+<div class="px-xl md:px-[64px]">
 <div class="grid grid-cols-1 md:grid-cols-12 gap-xl mb-xl">
 <div class="md:col-span-6">
 <h4 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] mb-md">RALIVA</h4>
