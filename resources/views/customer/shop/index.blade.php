@@ -352,8 +352,8 @@
 <!-- Shop Toolbar (parent container: category navigation left, actions right) -->
 <div class="shop-toolbar flex flex-row items-center gap-sm md:gap-md px-container-margin py-sm sticky top-16 lg:top-16 z-30">
     <!-- Category Navigation Card (Super-Admin card-premium style) -->
-    <div class="shop-category-card flex-1 min-w-0 flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-md md:px-[64px] py-sm md:py-md shadow-sm">
-    <div class="shop-category-nav w-1/2 md:flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar">
+    <div class="shop-category-card flex-1 min-w-0 flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm">
+    <div class="shop-category-nav flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar">
         <button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-pill shrink-0 px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('All') }}</button>
         <button type="button" data-cat="Women" onclick="selectCategory('Women')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Women') }}</button>
         <button type="button" data-cat="Men" onclick="selectCategory('Men')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Men') }}</button>
@@ -403,8 +403,8 @@
 <button id="clear-all" class="font-label-sm text-label-sm text-secondary underline hover:opacity-80 transition-opacity shrink-0" onclick="clearAll()" type="button">{{ __('Clear all') }}</button>
 </div>
 <!-- Shop Content Container -->
-<div class="mx-auto max-w-[1400px] py-xl">
-<div class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="mx-auto max-w-[1400px] px-container-margin py-xl">
+<div class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <!-- Shop Header -->
 <div class="flex items-center justify-between gap-md mb-md flex-wrap">
 <div class="atl-eyebrow">

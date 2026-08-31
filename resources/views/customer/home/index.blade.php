@@ -367,7 +367,6 @@
 </div>
 </section>
 <!-- New Arrivals -->
-
 <div class="mx-auto max-w-[1400px]">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
 <div class="atl-eyebrow mb-xs">
@@ -438,7 +437,6 @@
 </div>
 </div>
 </div>
-
 
 
 <!-- Featured Stores -->
