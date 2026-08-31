@@ -220,16 +220,20 @@
 </button>
 </header>
 <!-- Main Content Canvas -->
-<main class="flex-grow w-full max-w-[600px] mx-auto px-container-margin py-md">
+<main class="flex-grow w-full max-w-[600px] lg:max-w-3xl mx-auto px-container-margin py-md">
 <!-- Page Title -->
 <div class="mb-lg text-center md:text-left">
 <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">{{ __('ACCOUNT') }}</h2>
 </div>
 <!-- Profile Header -->
 @auth
-<section class="flex flex-col items-center md:flex-row md:items-start gap-md mb-xl">
+<section class="flex flex-col items-center md:flex-row md:items-start gap-md mb-xl bg-surface-container-low rounded-lg p-md">
 <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant flex-shrink-0 bg-surface-container-high flex items-center justify-center">
+@if(Auth::user()->foto_profil_url)
+<img src="{{ Auth::user()->foto_profil_url }}" alt="{{ Auth::user()->nama_lengkap }}" class="w-full h-full object-cover"/>
+@else
 <span class="material-symbols-outlined text-[44px] text-on-surface-variant">person</span>
+@endif
 </div>
 <div class="flex flex-col items-center md:items-start justify-center flex-grow">
 <h3 class="font-title-md text-title-md text-on-surface mb-1">{{ Auth::user()->nama_lengkap }}</h3>
@@ -238,10 +242,6 @@
 <a class="px-6 py-2 border border-primary text-primary font-label-caps text-label-caps uppercase hover:bg-surface-container-low transition-colors duration-200 inline-block" href="{{ route('customer.account.edit') }}">
                     {{ __('Edit Profile') }}
                 </a>
-<form method="POST" action="{{ route('logout') }}">
-    @csrf
-    <button type="submit" class="px-6 py-2 border border-error text-error font-label-caps text-label-caps uppercase hover:bg-error/10 transition-colors duration-200 inline-block">{{ __('Keluar') }}</button>
-</form>
 </div>
 </div>
 </section>
@@ -286,13 +286,6 @@
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
-<a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="#">
-<div class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="credit_card">credit_card</span>
-<span class="font-body-lg text-body-lg text-on-surface">{{ __('Payment Methods') }}</span>
-</div>
-<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
-</a>
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.reviews') }}">
 <div class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="star_border">star_border</span>
@@ -321,12 +314,15 @@
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
-<a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group mt-lg" href="#">
-<div class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-error" data-icon="logout">logout</span>
-<span class="font-body-lg text-body-lg text-error">{{ __('Logout') }}</span>
-</div>
-</a>
+<form method="POST" action="{{ route('logout') }}" class="mt-lg">
+    @csrf
+    <button type="submit" class="w-full flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+        <div class="flex items-center gap-sm">
+            <span class="material-symbols-outlined text-error" data-icon="logout">logout</span>
+            <span class="font-body-lg text-body-lg text-error">{{ __('Logout') }}</span>
+        </div>
+    </button>
+</form>
 </nav>
 </main>
 <!-- BottomNavBar (Mobile Only) -->

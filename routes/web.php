@@ -14,9 +14,11 @@ use App\Http\Controllers\Admin\ProfilController as AdminProfilController;
 use App\Http\Controllers\Admin\PromoController;
 use App\Http\Controllers\Admin\RiwayatAktivitasController as AdminRiwayatAktivitasController;
 use App\Http\Controllers\Admin\StokController;
+use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\VerifikasiPembayaranController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\Gudang\BarangKeluarController as GudangBarangKeluarController;
 use App\Http\Controllers\Gudang\BarangMasukController as GudangBarangMasukController;
 use App\Http\Controllers\Gudang\DashboardController as GudangDashboardController;
@@ -140,6 +142,8 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('/account', function () {
             return view('customer.account.index');
         })->name('account');
+
+        Route::post('/account', [ProfileController::class, 'update'])->name('account.update');
 
         Route::get('/account/edit', function () {
             return view('customer.account.edit');
@@ -277,10 +281,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->grou
     Route::get('/customer', [DataCustomerController::class, 'index'])->name('customer');
     Route::get('/produk', [DataProdukController::class, 'index'])->name('produk');
     Route::post('/produk', [DataProdukController::class, 'store'])->name('produk.store');
-    Route::get('/supplier', [App\Http\Controllers\Admin\SupplierController::class, 'index'])->name('supplier');
-    Route::post('/supplier', [App\Http\Controllers\Admin\SupplierController::class, 'store'])->name('supplier.store');
-    Route::put('/supplier/{supplier}', [App\Http\Controllers\Admin\SupplierController::class, 'update'])->name('supplier.update');
-    Route::delete('/supplier/{supplier}', [App\Http\Controllers\Admin\SupplierController::class, 'destroy'])->name('supplier.destroy');
+    Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier');
+    Route::post('/supplier', [SupplierController::class, 'store'])->name('supplier.store');
+    Route::put('/supplier/{supplier}', [SupplierController::class, 'update'])->name('supplier.update');
+    Route::delete('/supplier/{supplier}', [SupplierController::class, 'destroy'])->name('supplier.destroy');
     Route::get('/stok', [StokController::class, 'index'])->name('stok');
     Route::post('/stok/{warehouseStock}/update', [StokController::class, 'update'])->name('stok.update');
     Route::get('/pengiriman', [PengirimanController::class, 'index'])->name('pengiriman');
@@ -303,7 +307,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->grou
     Route::post('/profil/foto', [AdminProfilController::class, 'updatePhoto'])->name('profil.foto');
     Route::post('/profil/password', [AdminProfilController::class, 'updatePassword'])->name('profil.password');
     Route::get('/laporan', [AdminLaporanController::class, 'index'])->name('laporan');
-    Route::get('/riwayat-aktivitas', [App\Http\Controllers\Admin\RiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
+    Route::get('/riwayat-aktivitas', [AdminRiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
 });
 
 Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang'])->group(function () {
@@ -353,8 +357,8 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::post('/karyawan', [KaryawanController::class, 'store'])->name('karyawan.store');
     Route::put('/karyawan/{storeStaff}', [KaryawanController::class, 'update'])->name('karyawan.update');
     Route::delete('/karyawan/{storeStaff}', [KaryawanController::class, 'destroy'])->name('karyawan.destroy');
-    Route::get('/laporan', [App\Http\Controllers\Owner\LaporanController::class, 'index'])->name('laporan');
-    Route::get('/laporan/export', [App\Http\Controllers\Owner\LaporanController::class, 'export'])->name('laporan.export');
+    Route::get('/laporan', [OwnerLaporanController::class, 'index'])->name('laporan');
+    Route::get('/laporan/export', [OwnerLaporanController::class, 'export'])->name('laporan.export');
     Route::get('/notifikasi', [OwnerNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [OwnerProfilController::class, 'index'])->name('profil');
     Route::get('/komplain', [OwnerKomplainController::class, 'index'])->name('komplain');

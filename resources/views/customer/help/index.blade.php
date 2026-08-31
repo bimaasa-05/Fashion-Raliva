@@ -204,78 +204,103 @@
 <div class="w-10"></div> <!-- Spacer for centering -->
 </header>
 <!-- Main Content -->
-<main class="pt-16 pb-xl max-w-2xl mx-auto w-full">
-<!-- Search -->
-<section class="py-lg px-container-margin border-b border-outline-variant">
-<div class="relative">
-<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-<input class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-xl pr-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" placeholder="Search help topics..." type="search"/>
+<main class="pt-16 pb-xl w-full">
+<!-- Hero + Search -->
+<section class="bg-surface-container-low border-b border-outline-variant px-container-margin py-xl">
+<div class="max-w-3xl mx-auto text-center">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-sm">{{ __('How can we help?') }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-lg">{{ __('Search our help center or browse popular topics below.') }}</p>
+<form class="relative max-w-xl mx-auto" onsubmit="return false;">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface border border-outline-variant rounded-full pl-14 pr-md py-md font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" placeholder="{{ __('Search help topics...') }}" type="search"/>
+</form>
+</div>
+</section>
+<!-- Category Cards -->
+<section class="px-container-margin py-xl max-w-screen-xl mx-auto">
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+@foreach ([
+                ['icon' => 'local_shipping', 'title' => __('Shipping'), 'sub' => __('Track & delivery')],
+                ['icon' => 'assignment_return', 'title' => __('Returns'), 'sub' => __('Exchanges & refunds')],
+                ['icon' => 'payments', 'title' => __('Payments'), 'sub' => __('Methods & security')],
+                ['icon' => 'support_agent', 'title' => __('Contact'), 'sub' => __('Talk to our team')],
+            ] as $cat)
+<a href="#faq" class="flex flex-col items-center text-center gap-xs p-md border border-outline-variant rounded-lg bg-surface hover:border-primary hover:bg-surface-container-low transition-colors group">
+<span class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-xs">
+<span class="material-symbols-outlined text-[24px] text-secondary group-hover:scale-110 transition-transform">{{ $cat['icon'] }}</span>
+</span>
+<span class="font-title-md text-title-md text-on-surface">{{ $cat['title'] }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">{{ $cat['sub'] }}</span>
+</a>
+@endforeach
 </div>
 </section>
 <!-- FAQ -->
-<section class="border-b border-outline-variant">
-<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest px-container-margin pt-lg pb-sm">{{ __('Frequently Asked Questions') }}</h2>
-<details class="group border-b border-outline-variant">
-<summary class="flex justify-between items-center px-container-margin py-sm cursor-pointer list-none">
+<section id="faq" class="px-container-margin max-w-screen-xl mx-auto pb-xl">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-md">{{ __('Frequently Asked Questions') }}</h2>
+<div class="flex flex-col gap-sm">
+<details class="group bg-surface-container-low rounded-lg border border-outline-variant px-md">
+<summary class="flex justify-between items-center py-sm cursor-pointer list-none">
 <span class="font-title-md text-title-md text-on-surface">{{ __('How do I track my order?') }}</span>
 <span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<div class="px-container-margin pb-sm">
+<div class="pb-sm">
 <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
                     Go to Account → My Orders and select the order you want to follow. You will see the latest delivery status there, from preparing to delivered.
                 </p>
 </div>
 </details>
-<details class="group border-b border-outline-variant">
-<summary class="flex justify-between items-center px-container-margin py-sm cursor-pointer list-none">
+<details class="group bg-surface-container-low rounded-lg border border-outline-variant px-md">
+<summary class="flex justify-between items-center py-sm cursor-pointer list-none">
 <span class="font-title-md text-title-md text-on-surface">{{ __('What is your return policy?') }}</span>
 <span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<div class="px-container-margin pb-sm">
+<div class="pb-sm">
 <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
                     Returns are accepted within 14 days of delivery. Items must be unworn with original tags attached. Start a return by contacting our support team with your order number.
                 </p>
 </div>
 </details>
-<details class="group border-b border-outline-variant">
-<summary class="flex justify-between items-center px-container-margin py-sm cursor-pointer list-none">
+<details class="group bg-surface-container-low rounded-lg border border-outline-variant px-md">
+<summary class="flex justify-between items-center py-sm cursor-pointer list-none">
 <span class="font-title-md text-title-md text-on-surface">{{ __('Which payment methods do you accept?') }}</span>
 <span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<div class="px-container-margin pb-sm">
+<div class="pb-sm">
 <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
                     We accept bank transfer, major credit cards, and popular e-wallets. All payments are processed securely at checkout.
                 </p>
 </div>
 </details>
-<details class="group border-b border-outline-variant">
-<summary class="flex justify-between items-center px-container-margin py-sm cursor-pointer list-none">
+<details class="group bg-surface-container-low rounded-lg border border-outline-variant px-md">
+<summary class="flex justify-between items-center py-sm cursor-pointer list-none">
 <span class="font-title-md text-title-md text-on-surface">{{ __('Can I change my delivery address?') }}</span>
 <span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<div class="px-container-margin pb-sm">
+<div class="pb-sm">
 <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
                     Yes, as long as the order has not been shipped. Update your saved addresses in Account → Addresses, then contact support so we can apply it to your open order.
                 </p>
 </div>
 </details>
-<details class="group border-b border-outline-variant">
-<summary class="flex justify-between items-center px-container-margin py-sm cursor-pointer list-none">
+<details class="group bg-surface-container-low rounded-lg border border-outline-variant px-md">
+<summary class="flex justify-between items-center py-sm cursor-pointer list-none">
 <span class="font-title-md text-title-md text-on-surface">{{ __('How do I contact a store?') }}</span>
 <span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
-<div class="px-container-margin pb-sm">
+<div class="pb-sm">
 <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
                     Open the store page from any product or from Featured Stores on the home page. Store contact options are available on their profile.
                 </p>
 </div>
 </details>
+</div>
 </section>
 <!-- Contact Support -->
-<section class="py-lg px-container-margin">
-<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Still Need Help?') }}</h2>
+<section class="px-container-margin pb-xl max-w-screen-xl mx-auto">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-md">{{ __('Still Need Help?') }}</h2>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
-<button class="flex items-center gap-sm p-md border border-outline-variant rounded-DEFAULT bg-surface hover:border-primary transition-colors text-left" type="button">
+<button class="flex items-center gap-sm p-md border border-outline-variant rounded-lg bg-surface hover:border-primary transition-colors text-left" type="button">
 <span class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0">
 <span class="material-symbols-outlined text-[20px] text-on-surface-variant">chat</span>
 </span>
@@ -284,7 +309,7 @@
 <span class="font-label-sm text-label-sm text-on-surface-variant block">Mon–Fri, 09.00–17.00 WIB</span>
 </span>
 </button>
-<button class="flex items-center gap-sm p-md border border-outline-variant rounded-DEFAULT bg-surface hover:border-primary transition-colors text-left" type="button">
+<button class="flex items-center gap-sm p-md border border-outline-variant rounded-lg bg-surface hover:border-primary transition-colors text-left" type="button">
 <span class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0">
 <span class="material-symbols-outlined text-[20px] text-on-surface-variant">mail</span>
 </span>
