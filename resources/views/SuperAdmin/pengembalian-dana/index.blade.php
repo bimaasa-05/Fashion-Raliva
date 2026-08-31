@@ -8,18 +8,11 @@
 @section('header-subtitle', 'Monitor dan tangani kasus refund yang dieskalasikan ke platform.')
 
 @php
-    $tabs = [
-        \App\Models\Refund::STATUS_REQUESTED => ['label' => 'Menunggu Keputusan'],
-        \App\Models\Refund::STATUS_DISETUJUI => ['label' => 'Disetujui'],
-        \App\Models\Refund::STATUS_SELESAI => ['label' => 'Selesai'],
-        \App\Models\Refund::STATUS_DITOLAK => ['label' => 'Ditolak'],
-    ];
-
     $badgeMap = [
-        \App\Models\Refund::STATUS_REQUESTED => ['label' => 'Menunggu Keputusan', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-        \App\Models\Refund::STATUS_DISETUJUI => ['label' => 'Disetujui', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        \App\Models\Refund::STATUS_SELESAI => ['label' => 'Selesai', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        \App\Models\Refund::STATUS_DITOLAK => ['label' => 'Ditolak', 'class' => 'bg-error/10 text-error border-error/20'],
+        'requested' => ['label' => 'Menunggu Keputusan', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+        'disetujui' => ['label' => 'Disetujui', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
+        'selesai' => ['label' => 'Selesai', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
+        'ditolak' => ['label' => 'Ditolak', 'class' => 'bg-error/10 text-error border-error/20'],
     ];
 @endphp
 
@@ -32,7 +25,7 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Kasus Menunggu</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary">{{ $stats['menunggu'] }}</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary">{{ $stats['requested'] }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">perlu keputusan</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
@@ -54,99 +47,110 @@
         </div>
     </section>
 
-    <section data-table-scope class="space-y-gutter">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Pengembalian Dana</h2>
+    <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Daftar Pengembalian Dana</h2>
 
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col lg:flex-row lg:items-center gap-3">
+        <!-- Filters -->
+        <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
             <div class="flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
                 <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
             </div>
             <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
-            <div class="flex flex-wrap gap-2">
-                <a href="{{ route('superadmin.pengembalian-dana') }}"
-                    class="px-4 py-2 rounded-lg font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200 {{ $activeStatus === 'semua'
-                        ? 'bg-deep-onyx text-on-primary border border-deep-onyx'
-                        : 'border border-muted-border text-on-surface-variant hover:bg-surface-container-high' }}">Semua</a>
-                @foreach ($tabs as $key => $tab)
-                    <a href="{{ route('superadmin.pengembalian-dana', ['status' => $key]) }}"
-                        class="px-4 py-2 rounded-lg font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200 {{ $activeStatus === $key
-                            ? 'bg-deep-onyx text-on-primary border border-deep-onyx'
-                            : 'border border-muted-border text-on-surface-variant hover:bg-surface-container-high' }}">{{ $tab['label'] }}</a>
-                @endforeach
+            <div id="chip-group" class="flex flex-wrap gap-2">
+                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
+                <button type="button" data-chip="requested" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu ({{ $stats['requested'] }})</button>
+                <button type="button" data-chip="disetujui" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Disetujui ({{ $stats['disetujui'] }})</button>
+                <button type="button" data-chip="selesai" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Selesai ({{ $stats['selesai'] }})</button>
+                <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditolak ({{ $stats['ditolak'] }})</button>
             </div>
         </div>
 
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium">
-            <div class="overflow-x-auto">
-                <table class="w-full min-w-[950px] premium-table">
-                    <thead>
-                        <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                            <th class="p-4 text-center w-12">No.</th>
-                            <th class="p-4 text-left">ID Refund</th>
-                            <th class="p-4 text-left">Pesanan</th>
-                            <th class="p-4 text-left">Pelanggan / Toko</th>
-                            <th class="p-4 text-left">Alasan</th>
-                            <th class="p-4 text-right">Jumlah</th>
-                            <th class="p-4 text-center">Status</th>
-                            <th class="p-4 text-left">Diajukan</th>
-                            <th class="p-4 text-left">Selesai</th>
-                            <th class="p-4 text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="font-body-md text-sm">
-                        @forelse ($refunds as $refund)
-                            @php $rowNumber = $loop->iteration + ($refunds->currentPage() - 1) * $refunds->perPage(); @endphp
-                            @php
-                                $badge = $badgeMap[$refund->status];
-                                $kode = 'REF-' . str_pad((string) $refund->refund_id, 10, '0', STR_PAD_LEFT);
-                            @endphp
-                            <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors"
-                                data-id="{{ $refund->refund_id }}" data-kode="{{ $kode }}">
-                                <td class="p-4 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
-                                <td class="p-4 font-mono text-on-surface">{{ $kode }}
-                                    <span class="block mt-1 w-fit px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border {{ $refund->tipe_refund === \App\Models\Refund::TIPE_FULL ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }}">{{ $refund->tipe_refund }}</span>
-                                </td>
-                                <td class="p-4 font-mono text-on-surface-variant">{{ $refund->order?->nomor_order ?? '-' }}</td>
-                                <td class="p-4">
-                                    <p class="text-on-surface">{{ $refund->requester?->nama_lengkap ?? '-' }}</p>
-                                    <p class="text-on-surface-variant text-xs">{{ $refund->order?->store?->nama_toko ?? '-' }}</p>
-                                </td>
-                                <td class="p-4 text-on-surface max-w-[240px]" title="{{ $refund->alasan }}">{{ \Illuminate\Support\Str::limit($refund->alasan, 60) }}
-                                    @if ($refund->status === \App\Models\Refund::STATUS_DITOLAK && $refund->alasan_penolakan)
-                                        <span class="block text-xs text-error mt-1" title="{{ $refund->alasan_penolakan }}">Alasan tolak: {{ \Illuminate\Support\Str::limit($refund->alasan_penolakan, 50) }}</span>
-                                    @endif
-                                </td>
-                                <td class="p-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</td>
-                                <td class="p-4 text-center">
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $badge['class'] }}">{{ $badge['label'] }}</span>
-                                </td>
-                                <td class="p-4 text-on-surface-variant text-xs">{{ $refund->diajukan_pada ? \Carbon\Carbon::parse($refund->diajukan_pada)->locale('id')->diffForHumans() : '-' }}</td>
-                                <td class="p-4 text-on-surface-variant text-xs">{{ $refund->selesai_pada ? \Carbon\Carbon::parse($refund->selesai_pada)->locale('id')->diffForHumans() : '-' }}</td>
-                                <td class="p-4 text-right whitespace-nowrap">
-                                    @if ($refund->status === \App\Models\Refund::STATUS_REQUESTED)
-                                        <button type="button" onclick="openRejectRefund(this.closest('tr'))"
-                                            class="px-3 py-1.5 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Tolak</button>
-                                        <form method="POST" action="{{ route('superadmin.pengembalian-dana.setujui', $refund->refund_id) }}" class="inline-block ml-1" onsubmit="return confirm('Setujui refund Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }} untuk pesanan {{ $refund->order?->nomor_order }}?');">
-                                            @csrf
-                                            <button type="submit" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Setujui</button>
-                                        </form>
-                                    @elseif ($refund->status === \App\Models\Refund::STATUS_DISETUJUI)
-                                        <form method="POST" action="{{ route('superadmin.pengembalian-dana.selesaikan', $refund->refund_id) }}" class="inline-block" onsubmit="return confirm('Tandai refund {{ $kode }} sudah dikirim ke Customer?');">
-                                            @csrf
-                                            <button type="submit" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Selesaikan</button>
-                                        </form>
-                                    @else
-                                        <span class="text-on-surface-variant text-xs uppercase">&mdash;</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="10" class="py-12 text-center text-on-surface-variant">Tidak ada refund pada status ini.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
+        <!-- Search + Result Count -->
+        <div class="mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
+            <div class="relative flex-1">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                <input id="refund-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari ID refund, nomor order, nama pelanggan, atau toko..." />
+                <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
             </div>
+            <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span id="result-count">{{ $refunds->count() }}</span> refund
+            </p>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            <table class="w-full min-w-[950px] premium-table">
+                <thead>
+                    <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
+                        <th class="p-6 w-12 text-center">No.</th>
+                        <th class="p-6">ID Refund</th>
+                        <th class="p-6">Pesanan</th>
+                        <th class="p-6">Pelanggan / Toko</th>
+                        <th class="p-6">Alasan</th>
+                        <th class="p-6 text-right">Jumlah</th>
+                        <th class="p-6 text-center">Status</th>
+                        <th class="p-6">Diajukan</th>
+                        <th class="p-6 text-right">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="font-body-md text-sm">
+                    @forelse ($refunds as $refund)
+                        @php
+                            $badge = $badgeMap[$refund->status];
+                            $kode = 'REF-' . str_pad((string) $refund->refund_id, 10, '0', STR_PAD_LEFT);
+                        @endphp
+                        <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors"
+                            data-table-row data-status="{{ $refund->status }}" data-search="{{ strtolower($kode.' '.$refund->order?->nomor_order.' '.($refund->requester?->nama_lengkap ?? '').' '.($refund->order?->store?->nama_toko ?? '').' '.$refund->alasan) }}"
+                            data-id="{{ $refund->refund_id }}" data-kode="{{ $kode }}">
+                            <td class="p-6 text-center text-on-surface-variant font-mono row-num"></td>
+                            <td class="p-6 font-mono text-on-surface">{{ $kode }}
+                                <span class="block mt-1 w-fit px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border {{ $refund->tipe_refund === \App\Models\Refund::TIPE_FULL ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }}">{{ $refund->tipe_refund }}</span>
+                            </td>
+                            <td class="p-6 font-mono text-on-surface-variant">{{ $refund->order?->nomor_order ?? '-' }}</td>
+                            <td class="p-6">
+                                <p class="text-on-surface">{{ $refund->requester?->nama_lengkap ?? '-' }}</p>
+                                <p class="text-on-surface-variant text-xs">{{ $refund->order?->store?->nama_toko ?? '-' }}</p>
+                            </td>
+                            <td class="p-6 text-on-surface max-w-[240px]" title="{{ $refund->alasan }}">{{ \Illuminate\Support\Str::limit($refund->alasan, 60) }}</td>
+                            <td class="p-6 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</td>
+                            <td class="p-6 text-center">
+                                <span class="inline-flex items-center px-2 py-1 rounded {{ $badge['class'] }} text-xs uppercase">{{ $badge['label'] }}</span>
+                            </td>
+                            <td class="p-6 text-on-surface-variant text-xs">{{ $refund->diajukan_pada ? \Carbon\Carbon::parse($refund->diajukan_pada)->locale('id')->diffForHumans() : '-' }}</td>
+                            <td class="p-6 text-right whitespace-nowrap">
+                                @if ($refund->status === 'requested')
+                                    <button type="button" onclick="openRejectRefund(this.closest('tr'))"
+                                        class="px-3 py-1.5 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Tolak</button>
+                                    <form method="POST" action="{{ route('superadmin.pengembalian-dana.setujui', $refund->refund_id) }}" class="inline-block ml-1" onsubmit="return confirm('Setujui refund Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }} untuk pesanan {{ $refund->order?->nomor_order }}?');">
+                                        @csrf
+                                        <button type="submit" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Setujui</button>
+                                    </form>
+                                @elseif ($refund->status === 'disetujui')
+                                    <form method="POST" action="{{ route('superadmin.pengembalian-dana.selesaikan', $refund->refund_id) }}" class="inline-block" onsubmit="return confirm('Tandai refund {{ $kode }} sudah dikirim ke Customer?');">
+                                        @csrf
+                                        <button type="submit" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Selesaikan</button>
+                                    </form>
+                                @else
+                                    <span class="text-on-surface-variant text-xs uppercase">&mdash;</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="9" class="py-12 text-center text-on-surface-variant">Tidak ada refund tercatat.</td></tr>
+                    @endforelse
+                    <tr id="empty-search" class="hidden">
+                        <td colspan="9" class="p-8 text-center">
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
+                                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada refund yang cocok.</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </section>
 </div>
@@ -197,6 +201,70 @@
 
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeRejectRefund();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const scope = document.querySelector('[data-table-scope]');
+        if (!scope) return;
+
+        const rows = Array.from(scope.querySelectorAll('[data-table-row]'));
+        const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
+        const searchInput = document.getElementById('refund-search');
+        const clearBtn = document.getElementById('clear-search');
+        const countEl = document.getElementById('result-count');
+        const emptySearch = document.getElementById('empty-search');
+
+        const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
+        const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
+
+        let activeStatus = 'semua';
+
+        function applyFilter() {
+            const term = searchInput.value.trim().toLowerCase();
+            let visible = 0;
+
+            rows.forEach((row) => {
+                const matchStatus = activeStatus === 'semua' || row.getAttribute('data-status') === activeStatus;
+                const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
+                const show = matchStatus && matchSearch;
+                row.classList.toggle('hidden', !show);
+                if (show) {
+                    visible++;
+                    row.querySelector('.row-num').textContent = visible;
+                }
+            });
+
+            countEl.textContent = visible;
+            emptySearch.classList.toggle('hidden', visible > 0);
+        }
+
+        chipBtns.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                chipBtns.forEach((b) => {
+                    b.classList.remove(...activeClasses);
+                    b.classList.add(...idleClasses, 'hover:bg-surface-container-high');
+                });
+                btn.classList.remove(...idleClasses, 'hover:bg-surface-container-high');
+                btn.classList.add(...activeClasses);
+                activeStatus = btn.getAttribute('data-chip');
+                applyFilter();
+            });
+        });
+
+        let debounce;
+        searchInput.addEventListener('input', () => {
+            clearBtn.classList.toggle('opacity-0', !searchInput.value);
+            clearTimeout(debounce);
+            debounce = setTimeout(applyFilter, 200);
+        });
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearBtn.classList.add('opacity-0');
+            applyFilter();
+        });
+
+        applyFilter();
     });
 </script>
 @endpush

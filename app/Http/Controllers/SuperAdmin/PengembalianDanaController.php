@@ -12,29 +12,24 @@ class PengembalianDanaController extends Controller
 {
     public function index(Request $request)
     {
-        $status = $request->query('status', Refund::STATUS_REQUESTED);
-
-        $stats = [
-            'menunggu' => Refund::where('status', Refund::STATUS_REQUESTED)->count(),
-            'nominal_menunggu' => (float) Refund::where('status', Refund::STATUS_REQUESTED)->sum('jumlah'),
-            'disetujui' => Refund::where('status', Refund::STATUS_DISETUJUI)->count(),
-            'selesai' => Refund::where('status', Refund::STATUS_SELESAI)->count(),
-        ];
-
         $refunds = Refund::query()
             ->with(['order.store', 'payment', 'requester'])
-            ->when(
-                in_array($status, [Refund::STATUS_REQUESTED, Refund::STATUS_DISETUJUI, Refund::STATUS_DITOLAK, Refund::STATUS_SELESAI], true),
-                fn ($query) => $query->where('status', $status)
-            )
             ->orderByRaw("CASE status WHEN 'requested' THEN 0 WHEN 'disetujui' THEN 1 ELSE 2 END")
             ->orderByDesc('diajukan_pada')
             ->get();
 
+        $stats = [
+            'semua' => $refunds->count(),
+            'requested' => $refunds->where('status', Refund::STATUS_REQUESTED)->count(),
+            'nominal_menunggu' => (float) $refunds->where('status', Refund::STATUS_REQUESTED)->sum('jumlah'),
+            'disetujui' => $refunds->where('status', Refund::STATUS_DISETUJUI)->count(),
+            'selesai' => $refunds->where('status', Refund::STATUS_SELESAI)->count(),
+            'ditolak' => $refunds->where('status', Refund::STATUS_DITOLAK)->count(),
+        ];
+
         return view('SuperAdmin.pengembalian-dana.index', [
             'refunds' => $refunds,
             'stats' => $stats,
-            'activeStatus' => $status,
         ]);
     }
 
