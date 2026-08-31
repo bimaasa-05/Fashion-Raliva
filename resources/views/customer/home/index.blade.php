@@ -504,8 +504,8 @@
 
 </main>
 <!-- Footer -->
-<footer class="py-xl px-container-margin md:pb-xl pb-32 reveal-up" style="background-color: var(--surface-ivory);">
-<div class="mx-auto max-w-[1200px]">
+<footer class="mx-auto max-w-[1400px] py-xl md:pb-xl pb-32 reveal-up" style="background-color: var(--surface-ivory);">
+<div class="px-xl md:px-[64px]">
 <div class="grid grid-cols-1 md:grid-cols-12 gap-xl mb-xl">
 <div class="md:col-span-6">
 <h4 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] mb-md">RALIVA</h4>
