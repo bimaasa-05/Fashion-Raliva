@@ -16,7 +16,8 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
-    <form data-toast-message="Pengaturan toko berhasil disimpan." data-reveal-group>
+    <form data-reveal-group>
+        <p class="text-xs text-on-surface-variant mb-4 flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">lock</span> Halaman ini read-only. Pengaturan operasional hanya dapat diubah melalui SuperAdmin / tim Raliva.</p>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-section-gap">
             {{-- Operasional --}}
             <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
@@ -49,7 +50,7 @@
                             <p class="font-title-md text-sm text-on-surface">Batas Pesanan per Hari</p>
                             <p class="text-on-surface-variant text-xs mt-1">Membatasi jumlah pesanan agar kapasitas produksi terjaga.</p>
                         </div>
-                        <input type="number" value="150" min="0" class="raliva-input !w-24 py-2 text-center shrink-0" />
+                        <input type="number" value="150" min="0" disabled class="raliva-input !w-24 py-2 text-center shrink-0 opacity-60" />
                     </li>
                 </ul>
             </section>
@@ -133,9 +134,8 @@
         </section>
 
         <div data-reveal class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter sticky bottom-20 md:bottom-4 z-30 pt-2">
-            <button type="reset" class="py-3 px-6 bg-surface-container-lowest border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors shadow-sm">Atur Ulang</button>
-            <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined text-[16px]">save</span>Simpan Pengaturan
+            <button type="button" disabled class="py-3 px-8 bg-surface-container-high text-on-surface-variant text-sm font-semibold rounded cursor-not-allowed opacity-60 flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[16px]">lock</span>Simpan Pengaturan (Read-only)
             </button>
         </div>
     </form>

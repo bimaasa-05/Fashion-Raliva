@@ -1,5 +1,9 @@
 @extends('layouts.superadmin')
 
+@php
+/** @var \Illuminate\Support\Collection<int, array{deskripsi:string,waktu:string}> $aktivitas */
+@endphp
+
 @section('title', 'Dashboard Admin Utama')
 
 @section('header-title', 'Selamat datang, Super Admin')
@@ -175,7 +179,7 @@
                     </div>
                     <div>
                         <span class="font-title-md text-title-md text-on-surface block">Verifikasi Toko</span>
-                        <span class="text-on-surface-variant font-body-md text-sm"><span data-count="12">12</span> permintaan menunggu</span>
+                        <span class="text-on-surface-variant font-body-md text-sm"><span data-count="{{ $perhatian['toko'] }}">{{ number_format($perhatian['toko']) }}</span> permintaan menunggu</span>
                     </div>
                 </div>
                 <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
@@ -187,7 +191,7 @@
                     </div>
                     <div>
                         <span class="font-title-md text-title-md text-on-surface block">Moderasi Produk</span>
-                        <span class="text-on-surface-variant font-body-md text-sm"><span data-count="45">45</span> item ditandai</span>
+                        <span class="text-on-surface-variant font-body-md text-sm"><span data-count="{{ $perhatian['produk'] }}">{{ number_format($perhatian['produk']) }}</span> item ditandai</span>
                     </div>
                 </div>
                 <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
@@ -199,7 +203,7 @@
                     </div>
                     <div>
                         <span class="font-title-md text-title-md text-on-surface block">Permintaan Refund</span>
-                        <span class="text-on-surface-variant font-body-md text-sm"><span data-count="8">8</span> menunggu tinjauan</span>
+                        <span class="text-on-surface-variant font-body-md text-sm"><span data-count="{{ $perhatian['refund'] }}">{{ number_format($perhatian['refund']) }}</span> menunggu tinjauan</span>
                     </div>
                 </div>
                 <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
@@ -210,50 +214,26 @@
     <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Aktivitas Terbaru</h2>
         <ul class="flex flex-col">
-            <li class="p-4 border-b border-muted-border hover:bg-surface-container-low transition-colors flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-9 h-9 rounded-full bg-secondary-container/30 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-sm text-secondary">person_add</span>
+            @forelse($aktivitas as $act)
+                @php
+                    $prefix = explode('.', $act['deskripsi'])[0] ?? 'system';
+                    $iconMap = ['user' => 'person_add', 'store' => 'storefront', 'product' => 'inventory_2', 'order' => 'shopping_cart', 'setting' => 'settings'];
+                    $icon = $iconMap[$prefix] ?? 'info';
+                @endphp
+                <li class="p-4 border-b border-muted-border hover:bg-surface-container-low transition-colors flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-sm text-gold-accent">{{ $icon }}</span>
+                        </div>
+                        <div>
+                            <p class="font-body-md text-on-surface">{{ $act['deskripsi'] ?? '-' }}</p>
+                            <p class="text-on-surface-variant text-sm mt-0.5">{{ $act['waktu'] }}</p>
+                        </div>
                     </div>
-                    <div>
-                        <p class="font-body-md text-on-surface"><span class="font-bold">Sarah Jenkins</span> mendaftar sebagai pengguna baru.</p>
-                        <p class="text-on-surface-variant text-sm mt-0.5">2 menit lalu</p>
-                    </div>
-                </div>
-            </li>
-            <li class="p-4 border-b border-muted-border hover:bg-surface-container-low transition-colors flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-sm text-gold-accent">store</span>
-                    </div>
-                    <div>
-                        <p class="font-body-md text-on-surface">Toko <span class="font-bold">LUNARA Fashion</span> terverifikasi.</p>
-                        <p class="text-on-surface-variant text-sm mt-0.5">15 menit lalu</p>
-                    </div>
-                </div>
-            </li>
-            <li class="p-4 border-b border-muted-border hover:bg-surface-container-low transition-colors flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center">
-                        <span class="material-symbols-outlined text-sm text-on-surface">shopping_cart</span>
-                    </div>
-                    <div>
-                        <p class="font-body-md text-on-surface">Pesanan besar #RLV-2405 telah selesai.</p>
-                        <p class="text-on-surface-variant text-sm mt-0.5">1 jam lalu</p>
-                    </div>
-                </div>
-            </li>
-            <li class="p-4 hover:bg-surface-container-low transition-colors flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="w-9 h-9 rounded-full bg-error-container flex items-center justify-center">
-                        <span class="material-symbols-outlined text-sm text-on-error-container">warning</span>
-                    </div>
-                    <div>
-                        <p class="font-body-md text-on-surface">Produk <span class="font-bold">Oversized Linen Shirt</span> ditandai untuk ditinjau.</p>
-                        <p class="text-on-surface-variant text-sm mt-0.5">2 jam lalu</p>
-                    </div>
-                </div>
-            </li>
+                </li>
+            @empty
+                <li class="p-4 text-center text-on-surface-variant">Belum ada aktivitas terbaru.</li>
+            @endforelse
         </ul>
     </section>
 </div>
@@ -263,7 +243,7 @@
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Kategori</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">category</span>
         </div>
-        <div data-leaderboard='[{"name":"Pakaian","meta":"18.420 terjual • 240 toko aktif","display":"Rp 4,2M","pct":100},{"name":"Dress","meta":"9.310 terjual • 186 toko aktif","display":"Rp 2,8M","pct":67},{"name":"Celana","meta":"8.140 terjual • 202 toko aktif","display":"Rp 2,1M","pct":50},{"name":"Aksesori","meta":"6.020 terjual • 154 toko aktif","display":"Rp 1,4M","pct":33}]'></div>
+        <div data-leaderboard='@json($topKategori)'></div>
         <a href="{{ route('superadmin.peringkat') }}#kategori" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
     </section>
 
@@ -272,7 +252,7 @@
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Pelanggan</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">military_tech</span>
         </div>
-        <div data-leaderboard='[{"name":"Sarah Jenkins","meta":"14 pesanan • Loyal sejak Mar 2025","display":"Rp 12,4JT","pct":100},{"name":"Dewi Lestari","meta":"9 pesanan • Loyal sejak Jan 2026","display":"Rp 8,7JT","pct":70},{"name":"Andi Pratama","meta":"6 pesanan • Loyal sejak Jul 2025","display":"Rp 3,9JT","pct":31},{"name":"Maya Rossi","meta":"5 pesanan • Loyal sejak Des 2025","display":"Rp 3,2JT","pct":26}]'></div>
+        <div data-leaderboard='@json($topPelanggan)'></div>
         <a href="{{ route('superadmin.peringkat') }}#pelanggan" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
     </section>
 </div>
@@ -287,11 +267,7 @@
     const chartWrap = document.getElementById('chart-wrap');
     const chartError = document.getElementById('chart-error');
 
-    const rangeData = {
-        '7': { labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'], transaksi: [45200000, 38500000, 61000000, 56500000, 82000000, 78200000, 49500000], pesanan: [212, 186, 294, 268, 376, 341, 205] },
-        '30': { labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'], transaksi: [284000000, 316500000, 348200000, 373000000], pesanan: [1286, 1402, 1518, 1634] },
-        '90': { labels: ['Juni', 'Juli', 'Agustus'], transaksi: [682000000, 754000000, 823000000], pesanan: [3120, 3560, 3890] }
-    };
+    const rangeData = @json($rangeData);
 
     const formatRupiahShort = (value) => {
         if (value >= 1000000000) return (value / 1000000000).toFixed(1).replace('.', ',') + ' M';

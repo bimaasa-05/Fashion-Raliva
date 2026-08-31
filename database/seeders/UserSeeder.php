@@ -3,11 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Role;
-use App\Models\Store;
-use App\Models\StoreStaff;
 use App\Models\User;
-use App\Models\Warehouse;
-use App\Models\WarehouseStaff;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -29,16 +25,10 @@ class UserSeeder extends Seeder
             ]
         );
 
-        $store = Store::updateOrCreate(
-            ['nama_toko' => 'Raliva Atelier Jakarta'],
-            [
-                'owner_id' => $owner->user_id,
-                'deskripsi' => 'Atelier fashion premium Raliva di Jakarta.',
-                'alamat' => 'Jl. Sudirman No. 10, Jakarta',
-                'nomor_telepon' => '0215551234',
-                'status' => Store::STATUS_AKTIF,
-            ]
-        );
+        // Catatan: toko TIDAK dibuat otomatis di sini agar owner default
+        // (setelah `migrate:fresh --seed`) belum memiliki toko.
+        // Data toko + demo lengkap diisi lewat `OwnerSeeder`
+        // (jalankan: php artisan db:seed --class=OwnerSeeder).
 
         $admin = User::updateOrCreate(
             ['email' => 'admin@raliva.test'],
@@ -52,13 +42,8 @@ class UserSeeder extends Seeder
             ]
         );
 
-        StoreStaff::updateOrCreate(
-            ['user_id' => $admin->user_id, 'store_id' => $store->store_id],
-            [
-                'tanggal_penugasan' => now(),
-                'status' => 'aktif',
-            ]
-        );
+        // Penugasan admin ke toko + pembuatan warehouse ditangani di OwnerSeeder
+        // (karena membutuhkan store yang baru dibuat di sana).
 
         $gudang = User::updateOrCreate(
             ['email' => 'gudang@raliva.test'],
@@ -96,23 +81,7 @@ class UserSeeder extends Seeder
             ]
         );
 
-        $warehouse = Warehouse::updateOrCreate(
-            ['nama_gudang' => 'Gudang Utama Bandung'],
-            [
-                'store_id' => $store->store_id,
-                'alamat' => 'Jl. Asia Afrika No. 20, Bandung',
-                'nomor_telepon' => '0225551234',
-                'status' => Warehouse::STATUS_AKTIF,
-            ]
-        );
-
-        WarehouseStaff::updateOrCreate(
-            ['user_id' => $gudang->user_id, 'warehouse_id' => $warehouse->warehouse_id],
-            [
-                'tanggal_penugasan' => now(),
-                'status' => 'aktif',
-            ]
-        );
+        $warehouse = null; // warehouse dibuat di OwnerSeeder / GudangDemoSeeder
 
         User::updateOrCreate(
             ['email' => 'produksi@raliva.test'],

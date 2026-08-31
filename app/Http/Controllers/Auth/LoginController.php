@@ -15,10 +15,6 @@ class LoginController extends Controller
 {
     public function create(): View|RedirectResponse
     {
-        if (Auth::check()) {
-            return redirect()->route(EnsureRole::homeRouteFor(Auth::user()->role?->nama_role));
-        }
-
         return view('customer.auth.login');
     }
 

@@ -18,12 +18,30 @@
                 <span class="material-symbols-outlined icon-moon">dark_mode</span>
                 <span class="material-symbols-outlined icon-sun hidden">light_mode</span>
             </button>
-            @include('partials.notification-panel', ['items' => [
-                ['icon' => 'inventory_2', 'html' => 'Stok <span class="font-bold">Silk Scarf</span> tinggal 5 unit.', 'time' => '10 menit lalu'],
-                ['icon' => 'archive', 'html' => 'Barang masuk <span class="font-bold">BM-0012</span> menunggu pemeriksaan.', 'time' => '30 menit lalu'],
-                ['icon' => 'swap_horiz', 'html' => 'Pemindahan stok <span class="font-bold">PM-0004</span> telah diterima.', 'time' => '2 jam lalu'],
-            ], 'lihatSemuaRoute' => 'gudang.notifikasi'])
-            @include('partials.profile-menu', ['compact' => true, 'name' => 'Andi Pratama', 'role' => 'Staf Gudang', 'profilRoute' => 'gudang.profil', 'showPengaturan' => false])
+            @php
+                $user = Auth::user();
+                $notifications = $user ? \App\Models\Notification::where('user_id', $user->user_id)
+                    ->orderByDesc('created_at')
+                    ->take(3)
+                    ->get()
+                    ->map(function ($n) {
+                        return [
+                            'icon' => match ($n->tipe) {
+                                \App\Models\Notification::TIPE_ORDER => 'archive',
+                                \App\Models\Notification::TIPE_PENGIRIMAN => 'local_shipping',
+                                \App\Models\Notification::TIPE_PEMBAYARAN => 'payments',
+                                \App\Models\Notification::TIPE_KOMPLAIN => 'support_agent',
+                                \App\Models\Notification::TIPE_WALLET => 'account_balance_wallet',
+                                \App\Models\Notification::TIPE_PROMO => 'local_offer',
+                                default => 'notifications',
+                            },
+                            'html' => $n->pesan,
+                            'time' => $n->created_at?->diffForHumans() ?? '-',
+                        ];
+                    })->all() : [];
+            @endphp
+            @include('partials.notification-panel', ['items' => $notifications, 'lihatSemuaRoute' => 'gudang.notifikasi'])
+            @include('partials.profile-menu', ['compact' => true, 'name' => $user?->nama_lengkap ?? 'User', 'role' => $user?->role?->nama_role ?? 'Gudang', 'profilRoute' => 'gudang.profil', 'showPengaturan' => false])
         </div>
     </header>
 
@@ -67,12 +85,8 @@
                     <span class="material-symbols-outlined icon-moon">dark_mode</span>
                     <span class="material-symbols-outlined icon-sun hidden">light_mode</span>
                 </button>
-                @include('partials.notification-panel', ['items' => [
-                    ['icon' => 'inventory_2', 'html' => 'Stok <span class="font-bold">Silk Scarf</span> tinggal 5 unit.', 'time' => '10 menit lalu'],
-                    ['icon' => 'archive', 'html' => 'Barang masuk <span class="font-bold">BM-0012</span> menunggu pemeriksaan.', 'time' => '30 menit lalu'],
-                    ['icon' => 'swap_horiz', 'html' => 'Pemindahan stok <span class="font-bold">PM-0004</span> telah diterima.', 'time' => '2 jam lalu'],
-                ], 'lihatSemuaRoute' => 'gudang.notifikasi'])
-                @include('partials.profile-menu', ['name' => 'Andi Pratama', 'role' => 'Staf Gudang', 'profilRoute' => 'gudang.profil', 'showPengaturan' => false])
+                @include('partials.notification-panel', ['items' => $notifications, 'lihatSemuaRoute' => 'gudang.notifikasi'])
+                @include('partials.profile-menu', ['name' => $user?->nama_lengkap ?? 'User', 'role' => $user?->role?->nama_role ?? 'Gudang', 'profilRoute' => 'gudang.profil', 'showPengaturan' => false])
             </div>
         </header>
 

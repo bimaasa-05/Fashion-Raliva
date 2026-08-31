@@ -98,7 +98,7 @@
             <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Ringkasan performa dan aktivitas toko Anda.')</p>
         </div>
 
-        <div class="px-container-margin pt-8 pb-section-gap flex flex-col gap-section-gap max-w-7xl mx-auto w-full">
+        <div class="px-container-margin pt-8 pb-section-gap flex flex-col gap-section-gap max-w-[1500px] mx-auto w-full">
             @yield('content')
         </div>
     </main>
@@ -146,18 +146,29 @@
             document.body.style.overflow = '';
         };
 
+        // Kunci scroll tanpa menggeser layout (kompensasi lebar scrollbar)
+        const lockScroll = () => {
+            const sbw = window.innerWidth - document.documentElement.clientWidth;
+            if (sbw > 0) document.body.style.paddingRight = sbw + 'px';
+            document.body.style.overflow = 'hidden';
+        };
+        const unlockScroll = () => {
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        };
+
         document.querySelectorAll('[data-modal-open]').forEach((btn) => {
             btn.addEventListener('click', () => {
                 const modal = document.getElementById(btn.getAttribute('data-modal-open'));
                 modal?.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
+                lockScroll();
             });
         });
 
         document.querySelectorAll('[data-modal-close]').forEach((el) => {
             el.addEventListener('click', () => {
                 el.closest('[data-modal]')?.classList.add('hidden');
-                document.body.style.overflow = '';
+                unlockScroll();
             });
         });
 
@@ -168,7 +179,7 @@
                 drawer?.classList.remove('translate-x-full');
                 overlay?.classList.remove('hidden');
                 requestAnimationFrame(() => overlay?.classList.remove('opacity-0'));
-                document.body.style.overflow = 'hidden';
+                lockScroll();
             });
         });
 
@@ -178,7 +189,7 @@
                 const overlay = document.getElementById('drawer-overlay');
                 overlay?.classList.add('opacity-0');
                 if (overlay) setTimeout(() => overlay.classList.add('hidden'), 300);
-                document.body.style.overflow = '';
+                unlockScroll();
             });
         });
 
@@ -204,7 +215,7 @@
                 e.preventDefault();
                 window.showRalivaToast(form.getAttribute('data-toast-message'));
                 form.closest('[data-modal]')?.classList.add('hidden');
-                document.body.style.overflow = '';
+                unlockScroll();
                 form.reset();
             });
         });

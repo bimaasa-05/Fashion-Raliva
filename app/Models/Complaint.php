@@ -26,6 +26,8 @@ class Complaint extends Model
 
     public const STATUS_DITUTUP = 'ditutup';
 
+    public const STATUS_ESKALASI = 'escalated';
+
     protected $fillable = [
         'user_id',
         'order_id',

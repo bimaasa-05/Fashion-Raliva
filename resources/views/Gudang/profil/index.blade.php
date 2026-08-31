@@ -22,17 +22,23 @@
         <div class="px-6 md:px-8 pb-6">
             <div class="flex flex-col sm:flex-row sm:items-end gap-4 -mt-12">
                 <div class="w-24 h-24 rounded-2xl ring-4 ring-surface-container-lowest overflow-hidden bg-surface-container-high shadow-xl shrink-0 mx-auto sm:mx-0">
-                    <img alt="Foto Profil Andi Pratama" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuUf094pPsvMlxNz9CEzztLZIPfB4q2FE_6HM73O8sFoIt42FkBx43D1cxFlylMdSolVSJZNCBDrc8ttYGcVUIYXcsS0AUGBhcZYBAFGqcAXzmuJyVyjyJY6CXvyxdr0Zwzlwi2Tw3Djm9F2wtwaOLZklTUYLsRg7NCbF9hgI1uCTcTdgGi-0zShSJMzVkR1HYp_C02xOHHVWnGLI4_rrhbWQnSlrZ2VpmUbZL0Gc18YDjNwDrrkAcPg" />
+                    @if ($user->foto_profil_url)
+                        <img alt="Foto Profil {{ $user->nama_lengkap }}" class="w-full h-full object-cover" src="{{ $user->foto_profil_url }}" />
+                    @else
+                        <div class="w-full h-full flex items-center justify-center bg-gold-accent/10 text-gold-accent">
+                            <span class="material-symbols-outlined text-[40px]">person</span>
+                        </div>
+                    @endif
                 </div>
                 <div class="flex-grow text-center sm:text-left pb-1 min-w-0">
                     <div class="flex items-center gap-3 justify-center sm:justify-start flex-wrap">
-                        <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Andi Pratama</h2>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">Gudang</span>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-[10px] uppercase tracking-wider"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>Aktif</span>
+                        <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $user->nama_lengkap ?? '-' }}</h2>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">{{ $user->role->nama_role ?? 'Gudang' }}</span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-[10px] uppercase tracking-wider"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>{{ ucfirst($user->status ?? 'aktif') }}</span>
                     </div>
                     <p class="text-on-surface-variant font-body-md text-sm mt-2 flex items-center justify-center sm:justify-start gap-4 flex-wrap">
-                        <span class="inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">mail</span>andi.pratama@raliva.id</span>
-                        <span class="inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">call</span>+62 812-3456-7890</span>
+                        <span class="inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">mail</span>{{ $user->email ?? '-' }}</span>
+                        <span class="inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">call</span>{{ $user->nomor_telepon ?? '-' }}</span>
                     </p>
                 </div>
                 <button type="button" data-modal-open="modal-edit-profil" class="px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">Edit Profil</button>
@@ -46,19 +52,19 @@
             <div class="grid sm:grid-cols-2 gap-gutter">
                 <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[18px]">person</span></div>
-                    <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Nama Lengkap</span><span class="font-title-md text-title-md text-on-surface block truncate">Andi Pratama</span></div>
+                    <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Nama Lengkap</span><span class="font-title-md text-title-md text-on-surface block truncate">{{ $user->nama_lengkap ?? '-' }}</span></div>
                 </div>
                 <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[18px]">mail</span></div>
-                    <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Email</span><span class="font-title-md text-sm text-on-surface block truncate">andi.pratama@raliva.id</span></div>
+                    <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Email</span><span class="font-title-md text-sm text-on-surface block truncate">{{ $user->email ?? '-' }}</span></div>
                 </div>
                 <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[18px]">call</span></div>
-                    <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Nomor HP</span><span class="font-title-md text-title-md text-on-surface block truncate">+62 812-3456-7890</span></div>
+                    <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Nomor HP</span><span class="font-title-md text-title-md text-on-surface block truncate">{{ $user->nomor_telepon ?? '-' }}</span></div>
                 </div>
                 <div class="bg-surface-container-low border border-secondary/20 rounded-lg p-4 flex items-center gap-3">
                     <div class="w-9 h-9 rounded-full bg-secondary-container/30 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-secondary text-[18px]">verified_user</span></div>
-                    <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Status Akun</span><span class="font-title-md text-title-md text-secondary block">Aktif</span></div>
+                    <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Status Akun</span><span class="font-title-md text-title-md text-secondary block">{{ ucfirst($user->status ?? 'aktif') }}</span></div>
                 </div>
             </div>
         </section>
@@ -66,13 +72,13 @@
         <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Penugasan &amp; Akses</h2>
             <dl class="space-y-5 font-body-md text-sm">
-                <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Toko</dt><dd class="text-on-surface font-bold text-right">Raliva Store Bandung</dd></div>
+                <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Toko</dt><dd class="text-on-surface font-bold text-right">{{ $warehouse?->store?->nama_toko ?? '-' }}</dd></div>
                 <div class="flex justify-between gap-4 pb-4 border-b border-muted-border items-start">
                     <dt class="text-on-surface-variant shrink-0">Gudang Ditugaskan</dt>
                     <dd>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface text-xs font-bold border border-outline-variant whitespace-nowrap">
                             <span class="material-symbols-outlined text-[16px] text-gold-accent">warehouse</span>
-                            Gudang Utama Bandung
+                            {{ $warehouse?->nama_gudang ?? 'Belum ada' }}
                         </span>
                         <p class="text-xs text-on-surface-variant mt-2 text-right">Anda hanya dapat mengakses data gudang ini.</p>
                     </dd>
@@ -103,27 +109,33 @@
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
-            <form data-toast-message="Profil berhasil diperbarui." class="p-6 space-y-5">
+            <form action="{{ route('gudang.profil.update') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5">
+                @csrf
                 <div>
                     <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Nama Lengkap</label>
-                    <input type="text" value="Andi Pratama" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
+                    <input type="text" name="nama_lengkap" value="{{ $user->nama_lengkap ?? '' }}" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
                 </div>
                 <div>
                     <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Email</label>
-                    <input type="email" value="andi.pratama@raliva.id" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
+                    <input type="email" name="email" value="{{ $user->email ?? '' }}" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
                 </div>
                 <div>
                     <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Nomor HP</label>
-                    <input type="text" value="+62 812-3456-7890" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
+                    <input type="text" name="nomor_telepon" value="{{ $user->nomor_telepon ?? '' }}" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
+                </div>
+                <div>
+                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Foto Profil</label>
+                    <input type="file" name="foto_profil" accept="image/*" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent file:mr-3 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-gold-accent/10 file:text-gold-accent hover:file:bg-gold-accent/20" />
+                    <p class="text-xs text-on-surface-variant mt-1">Maks 2MB. Kosongkan jika tidak ingin mengubah.</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                     <div>
                         <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Role</label>
-                        <input type="text" value="Gudang" readonly disabled class="w-full bg-surface-container-low border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface-variant opacity-80 cursor-not-allowed" />
+                        <input type="text" value="{{ $user->role->nama_role ?? 'Gudang' }}" readonly disabled class="w-full bg-surface-container-low border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface-variant opacity-80 cursor-not-allowed" />
                     </div>
                     <div>
                         <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Gudang</label>
-                        <input type="text" value="Gudang Utama Bandung" readonly disabled class="w-full bg-surface-container-low border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface-variant opacity-80 cursor-not-allowed" />
+                        <input type="text" value="{{ $warehouse?->nama_gudang ?? 'Belum ada' }}" readonly disabled class="w-full bg-surface-container-low border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface-variant opacity-80 cursor-not-allowed" />
                     </div>
                 </div>
                 <p class="text-xs text-on-surface-variant flex items-start gap-2">

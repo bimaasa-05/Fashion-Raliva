@@ -23,6 +23,7 @@ class Promotion extends Model
         'store_id',
         'kode_promo',
         'nama_promo',
+        'deskripsi',
         'tipe_diskon',
         'nilai_diskon',
         'minimal_pembelian',

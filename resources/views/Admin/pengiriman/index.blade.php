@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Pengiriman')
 
@@ -12,7 +12,7 @@
 
 <div class="space-y-section-gap">
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Siap Kirim</h2>
+        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Siap Kirim</h2>
         <div class="space-y-gutter">
             @forelse ($siapDikirim as $pesanan)
                 <div class="border border-muted-border rounded-lg p-5">
@@ -20,20 +20,20 @@
                         @csrf
                         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                             <div>
-                                <p class="font-mono text-sm text-on-surface-variant">{{ $pesanan->nomor_order }} • {{ $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</p>
+                                <p class="font-mono text-sm text-on-surface-variant">{{ $pesanan->nomor_order }} &#8226; {{ $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</p>
                                 <p class="font-title-md text-title-md text-on-surface mt-1">{{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->implode(', '), 60) }}</p>
-                                <p class="font-body-md text-sm text-on-surface-variant mt-1">Tujuan: {{ $pesanan->store?->nama_toko }} • Ongkir: Rp {{ number_format((float) $pesanan->total_ongkir, 0, ',', '.') }}</p>
+                                <p class="font-body-md text-sm text-on-surface-variant mt-1">Tujuan: {{ $pesanan->store?->nama_toko }} &#8226; Ongkir: Rp {{ number_format((float) $pesanan->total_ongkir, 0, ',', '.') }}</p>
                             </div>
                             <div class="flex flex-col sm:flex-row gap-3 shrink-0">
                                 <select name="courier_id" required data-kurir-select
-                                    class="bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
+                                    class="raliva-select">
                                     <option value="">Pilih Kurir</option>
                                     @foreach ($couriers as $courier)
                                         <option value="{{ $courier->courier_id }}">{{ $courier->nama_kurir }}</option>
                                     @endforeach
                                 </select>
                                 <select name="shipping_service_id" data-layanan-select
-                                    class="bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
+                                    class="raliva-select">
                                     <option value="">Layanan (opsional)</option>
                                     @foreach ($couriers as $courier)
                                         @foreach ($courier->services as $service)
@@ -42,7 +42,7 @@
                                     @endforeach
                                 </select>
                                 <input required name="nomor_resi" minlength="4" maxlength="50"
-                                    class="bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent w-full sm:w-44"
+                                    class="raliva-input w-full sm:w-44"
                                     type="text" placeholder="Masukkan No. Resi" />
                                 <button type="submit" class="px-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-black transition-colors btn-premium whitespace-nowrap">Simpan Resi</button>
                             </div>
@@ -56,7 +56,7 @@
     </section>
 
     <section class="space-y-gutter">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Dalam Pengiriman &amp; Riwayat</h2>
+        <h2 class="font-title-md text-title-md text-on-surface premium-heading">Dalam Pengiriman &amp; Riwayat</h2>
         <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
             <table class="w-full min-w-[850px] premium-table">
                 <thead>

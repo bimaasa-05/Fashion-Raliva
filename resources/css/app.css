@@ -9,4 +9,8 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --spacing-gutter: 1.25rem;
+    --spacing-section-gap: 2rem;
+    --spacing-container-margin: 1.5rem;
 }

@@ -33,31 +33,11 @@
             </div>
             <div>
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Gudang Aktif</p>
-                <p class="font-title-md text-title-md text-on-surface leading-tight">Gudang Utama Bandung</p>
+                <p class="font-title-md text-title-md text-on-surface leading-tight">{{ $warehouse->nama_gudang ?? 'Belum ada gudang' }}</p>
             </div>
         </div>
-        <div class="relative self-start sm:self-auto">
-            <button type="button" data-dropdown-toggle class="w-full sm:w-auto flex items-center justify-between gap-2 border border-muted-border rounded-lg px-4 py-2.5 font-body-md text-sm text-on-surface hover:border-gold-accent transition-colors bg-surface-container-lowest min-w-[180px]">
-                <span>Ganti Gudang</span>
-                <span class="material-symbols-outlined text-[18px]">expand_more</span>
-            </button>
-            <div data-dropdown-menu class="hidden absolute right-0 top-full mt-2 w-full sm:w-72 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden">
-                <div class="px-4 py-3 border-b border-muted-border flex items-center gap-3 bg-surface-container-low">
-                    <span class="material-symbols-outlined text-[20px] text-secondary fill">check_circle</span>
-                    <div class="flex-1">
-                        <p class="font-body-md text-sm text-on-surface">Gudang Utama Bandung</p>
-                        <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant mt-0.5">Toko Raliva Store Bandung</p>
-                    </div>
-                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20 shrink-0">Aktif</span>
-                </div>
-                <button type="button" disabled class="w-full px-4 py-3 flex items-center gap-3 opacity-60 cursor-not-allowed text-left">
-                    <span class="material-symbols-outlined text-[20px] text-on-surface-variant">lock</span>
-                    <div class="flex-1">
-                        <p class="font-body-md text-sm text-on-surface-variant">Gudang Cabang Cimahi</p>
-                        <p class="font-label-sm text-[10px] uppercase tracking-wider text-error mt-0.5">Tidak Ada Akses</p>
-                    </div>
-                </button>
-            </div>
+        <div class="flex items-center gap-2">
+            @include('partials.ganti-gudang')
         </div>
     </section>
 
@@ -66,8 +46,8 @@
         <div class="grid grid-cols-2 xl:grid-cols-3 gap-gutter">
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Produk</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="248">248</span></span>
-                <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>+4,2% bulan ini</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $stats->total_produk ?? 0 }}">{{ $stats->total_produk ?? 0 }}</span></span>
+                <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">inventory_2</span>SKU aktif</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
                     <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:30%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:38%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:34%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:44%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:48%"></i>
                 </div>
@@ -75,8 +55,8 @@
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Stok</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="8426">8.426</span></span>
-                <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>+6,8% bulan ini</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $stats->total_stok ?? 0 }}">{{ number_format($stats->total_stok ?? 0, 0, ',', '.') }}</span></span>
+                <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">inventory_2</span>unit tersedia</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
                     <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:35%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:38%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:44%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:54%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:50%"></i>
                 </div>
@@ -84,8 +64,8 @@
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Barang Masuk Hari Ini</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary"><span data-count="126">126</span></span>
-                <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>+18 dari kemarin</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary"><span data-count="{{ $stats->masuk_hari_ini ?? 0 }}">{{ $stats->masuk_hari_ini ?? 0 }}</span></span>
+                <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">archive</span>unit masuk</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
                     <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:72%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:66%"></i>
                 </div>
@@ -93,37 +73,37 @@
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Barang Keluar Hari Ini</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary"><span data-count="84">84</span></span>
-                <span class="inline-flex items-center gap-1 text-xs text-error"><span class="material-symbols-outlined text-[14px]">trending_down</span>-5 dari kemarin</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary"><span data-count="{{ $stats->keluar_hari_ini ?? 0 }}">{{ $stats->keluar_hari_ini ?? 0 }}</span></span>
+                <span class="inline-flex items-center gap-1 text-xs text-error"><span class="material-symbols-outlined text-[14px]">unarchive</span>unit keluar</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
                     <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:44%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:58%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:50%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:62%"></i>
                 </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">unarchive</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Stok Menipis</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent"><span data-count="12">12</span></span>
-                <span class="inline-flex items-center gap-1 text-xs text-error"><span class="material-symbols-outlined text-[14px]">north</span>+2 minggu ini</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Stok Menipis & Kritis</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent"><span data-count="{{ ($stats->menipis ?? 0) + ($stats->kritis ?? 0) }}">{{ ($stats->menipis ?? 0) + ($stats->kritis ?? 0) }}</span></span>
+                <span class="inline-flex items-center gap-1 text-xs text-error"><span class="material-symbols-outlined text-[14px]">north</span>perlu restock</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
                     <i class="w-1.5 rounded-sm bg-error/40" style="height:25%"></i><i class="w-1.5 rounded-sm bg-error/40" style="height:32%"></i><i class="w-1.5 rounded-sm bg-error/60" style="height:28%"></i><i class="w-1.5 rounded-sm bg-error/60" style="height:40%"></i><i class="w-1.5 rounded-sm bg-error/80" style="height:36%"></i><i class="w-1.5 rounded-sm bg-error" style="height:48%"></i><i class="w-1.5 rounded-sm bg-error" style="height:55%"></i>
                 </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">warning</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-error/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Barang Rusak</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-error"><span data-count="7">7</span></span>
-                <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">south</span>-1 dari minggu lalu</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Stok Habis</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-error"><span data-count="{{ $stats->habis ?? 0 }}">{{ $stats->habis ?? 0 }}</span></span>
+                <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">report</span>varian habis</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
                     <i class="w-1.5 rounded-sm bg-error/30" style="height:30%"></i><i class="w-1.5 rounded-sm bg-error/30" style="height:26%"></i><i class="w-1.5 rounded-sm bg-error/50" style="height:34%"></i><i class="w-1.5 rounded-sm bg-error/50" style="height:28%"></i><i class="w-1.5 rounded-sm bg-error/70" style="height:38%"></i><i class="w-1.5 rounded-sm bg-error" style="height:30%"></i><i class="w-1.5 rounded-sm bg-error" style="height:42%"></i>
                 </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">report</span>
             </div>
-            <a href="{{ route('gudang.pelanggan-request') }}" class="bg-deep-onyx text-on-primary rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-inverse-on-surface/60 font-label-sm text-label-sm uppercase">Pelanggan Request</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent"><span data-count="5">5</span></span>
-                <span class="inline-flex items-center gap-1 text-xs text-gold-accent"><span class="material-symbols-outlined text-[14px]">schedule</span>menunggu cek stok/bahan</span>
+            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pelanggan Request</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $stats->rusak ?? 0 }}">{{ $stats->rusak ?? 0 }}</span></span>
+                <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">schedule</span>pesanan menunggu cek stok</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">assignment_ind</span>
-            </a>
+            </div>
         </div>
     </section>
 
@@ -131,18 +111,18 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Target Penerimaan Hari Ini</p>
-                <div data-donut='[{"value":84,"color":"#C9A24D","label":"Tercapai"},{"value":16,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Target" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-                <p class="text-[11px] text-on-surface-variant mt-1">126 dari 150 unit hari ini</p>
+                <div data-donut='[{"value":{{ $targetPenerimaan["pct"] ?? 0 }},"color":"#C9A24D","label":"Tercapai"},{"value":{{ 100 - ($targetPenerimaan["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Target" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <p class="text-[11px] text-on-surface-variant mt-1">{{ $targetPenerimaan["masuk"] ?? 0 }} dari {{ $targetPenerimaan["target"] ?? 0 }} unit hari ini</p>
             </div>
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Akurasi Stok</p>
-                <div data-donut='[{"value":96,"color":"#795905","label":"Akurat"},{"value":4,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Akurasi" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-                <p class="text-[11px] text-on-surface-variant mt-1">Berdasarkan 6 pemeriksaan terakhir</p>
+                <div data-donut='[{"value":{{ $akurasi["pct"] ?? 0 }},"color":"#795905","label":"Akurat"},{"value":{{ 100 - ($akurasi["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Akurasi" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <p class="text-[11px] text-on-surface-variant mt-1">{{ $akurasi["tersedia"] ?? 0 }} dari {{ $akurasi["total"] ?? 0 }} varian stok tersedia</p>
             </div>
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">SLA Pemenuhan Pesanan</p>
-                <div data-donut='[{"value":91,"color":"#E9CE8A","label":"Tepat SLA"},{"value":9,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Target 4 Jam" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-                <p class="text-[11px] text-on-surface-variant mt-1">Rata-rata proses pesanan 3 jam</p>
+                <div data-donut='[{"value":{{ $sla["pct"] ?? 0 }},"color":"#E9CE8A","label":"Tepat SLA"},{"value":{{ 100 - ($sla["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Stok Tersedia" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <p class="text-[11px] text-on-surface-variant mt-1">{{ $sla["tersedia"] ?? 0 }} dari {{ $sla["total"] ?? 0 }} pesanan stok tersedia</p>
             </div>
         </div>
     </section>
@@ -177,8 +157,8 @@
                 <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Status Stok</h2>
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">donut_small</span>
             </div>
-            <p class="text-on-surface-variant font-body-md text-xs mb-4">Sebaran kondisi 248 produk.</p>
-            <div data-donut='[{"value":196,"color":"#C9A24D","label":"Aman"},{"value":32,"color":"#E9CE8A","label":"Menipis"},{"value":14,"color":"#BA1A26","label":"Kritis"},{"value":6,"color":"#7f1010","label":"Habis"}]' data-donut-label="Produk"></div>
+            <p class="text-on-surface-variant font-body-md text-xs mb-4">Sebaran kondisi {{ $stats->total_produk ?? 0 }} produk.</p>
+            <div data-donut='[{"value":{{ $statusDist['aman'] ?? 0 }},"color":"#C9A24D","label":"Aman"},{"value":{{ $statusDist['menipis'] ?? 0 }},"color":"#E9CE8A","label":"Menipis"},{"value":{{ $statusDist['kritis'] ?? 0 }},"color":"#BA1A26","label":"Kritis"},{"value":{{ $statusDist['habis'] ?? 0 }},"color":"#7f1010","label":"Habis"}]' data-donut-label="Produk"></div>
             <a href="{{ route('gudang.stok') }}" class="block text-center mt-5 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Data Stok</a>
         </section>
     </div>
@@ -189,10 +169,10 @@
                 <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Unit Masuk per Hari</h2>
                 <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">7 Hari Terakhir</span>
             </div>
-            <div class="h-48" data-bars='[{"label":"Sen","value":96},{"label":"Sel","value":118},{"label":"Rab","value":104},{"label":"Kam","value":132},{"label":"Jum","value":110},{"label":"Sab","value":148},{"label":"Min","value":126}]'></div>
+            <div class="h-48" data-bars='@json($barsData)'></div>
             <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
                 <span class="material-symbols-outlined text-[14px] text-gold-accent">insights</span>
-                Kamis tertinggi dengan 132 unit — kedatangan ganda dari supplier utama.
+                Total masuk 7 hari terakhir: {{ array_sum($chart["masuk"] ?? []) }} unit.
             </p>
         </section>
 
@@ -201,7 +181,7 @@
                 <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Kategori Stok Terbesar</h2>
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">emoji_events</span>
             </div>
-            <div data-leaderboard='[{"name":"Kemeja","meta":"312 SKU • Rak A–B","display":"1.240 pcs","pct":100},{"name":"Celana","meta":"286 SKU • Rak B–C","display":"980 pcs","pct":79},{"name":"Dress","meta":"198 SKU • Rak C–D","display":"760 pcs","pct":61},{"name":"Outerwear","meta":"142 SKU • Rak D","display":"540 pcs","pct":44}]'></div>
+            <div data-leaderboard='@json($leaderboardData)'></div>
             <a href="{{ route('gudang.stok') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Semua Kategori</a>
         </section>
     </div>
@@ -225,24 +205,26 @@
                         </tr>
                     </thead>
                     <tbody class="font-body-md text-sm">
-                        @foreach ([['Oversized Linen Shirt', 'KEM-001', 8, 20, 'Menipis'], ['Silk Scarf', 'SYL-004', 5, 15, 'Kritis'], ['Straight Fit Pants', 'CEL-014', 12, 25, 'Menipis'], ['Long Sleeve Polo', 'KSL-017', 9, 20, 'Menipis']] as $item)
+                        @forelse ($lowStock as $item)
                             <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                                <td class="p-4 text-on-surface">{{ $item[0] }}</td>
-                                <td class="p-4 text-center text-on-surface-variant">{{ $item[1] }}</td>
-                                <td class="p-4 text-center font-bold {{ $item[4] === 'Kritis' ? 'text-error' : 'text-on-surface' }}">{{ $item[2] }}</td>
-                                <td class="p-4 text-center text-on-surface-variant">{{ $item[3] }}</td>
+                                <td class="p-4 text-on-surface">{{ $item->nama_produk }}</td>
+                                <td class="p-4 text-center text-on-surface-variant">{{ $item->sku }}</td>
+                                <td class="p-4 text-center font-bold {{ $item->status === 'kritis' || $item->status === 'habis' ? 'text-error' : 'text-on-surface' }}">{{ $item->jumlah_stok }}</td>
+                                <td class="p-4 text-center text-on-surface-variant">{{ $item->stok_minimum }}</td>
                                 <td class="p-4 text-center">
-                                    @if ($item[4] === 'Kritis')
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Kritis</span>
+                                    @if ($item->status === 'kritis' || $item->status === 'habis')
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">{{ $item->status === 'habis' ? 'Habis' : 'Kritis' }}</span>
                                     @else
                                         <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Menipis</span>
                                     @endif
                                 </td>
                                 <td class="p-4 text-center">
-                                    <button type="button" onclick="showRalivaToast('Permintaan restock untuk {{ $item[0] }} dikirim ke Admin Toko.', 'local_shipping')" class="px-3 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors btn-premium">Ajukan Restock</button>
+                                    <button type="button" onclick="showRalivaToast('Permintaan restock untuk {{ $item->nama_produk }} dikirim ke Admin Toko.', 'local_shipping')" class="px-3 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors btn-premium">Ajukan Restock</button>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr><td colspan="6" class="p-8 text-center text-on-surface-variant">Tidak ada produk dengan stok menipis.</td></tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -251,54 +233,32 @@
         <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
             <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Aktivitas Terbaru</h2>
             <ul class="flex flex-col gap-4 flex-grow">
-                <li class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shrink-0">
-                            <span class="material-symbols-outlined">archive</span>
+                @forelse ($recentActivity as $act)
+                    @php
+                        $icon = match ($act->tipe) {
+                            'masuk', 'mutasi_masuk' => 'archive',
+                            'keluar', 'mutasi_keluar' => 'unarchive',
+                            'penyesuaian' => 'fact_check',
+                            default => 'inventory_2',
+                        };
+                        $sign = in_array($act->tipe, ['masuk', 'mutasi_masuk', 'penyesuaian']) ? '+' : '-';
+                        $color = in_array($act->tipe, ['keluar', 'mutasi_keluar']) ? 'text-error' : 'text-secondary';
+                    @endphp
+                    <li class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface shrink-0">
+                                <span class="material-symbols-outlined">{{ $icon }}</span>
+                            </div>
+                            <div class="min-w-0">
+                                <span class="font-title-md text-base text-on-surface block">{{ $act->nama_produk }}</span>
+                                <span class="text-on-surface-variant font-body-md text-xs truncate block">{{ $act->alasan ?? ucfirst($act->tipe) }} <span class="{{ $color }} font-bold">{{ $sign }}{{ $act->jumlah }}</span></span>
+                            </div>
                         </div>
-                        <div class="min-w-0">
-                            <span class="font-title-md text-base text-on-surface block">Barang Masuk</span>
-                            <span class="text-on-surface-variant font-body-md text-xs truncate block">Linen Shirt <span class="text-secondary font-bold">+50</span></span>
-                        </div>
-                    </div>
-                    <span class="font-label-sm text-xs text-on-surface-variant shrink-0">09:32</span>
-                </li>
-                <li class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface shrink-0">
-                            <span class="material-symbols-outlined">unarchive</span>
-                        </div>
-                        <div class="min-w-0">
-                            <span class="font-title-md text-base text-on-surface block">Barang Keluar</span>
-                            <span class="text-on-surface-variant font-body-md text-xs truncate block">Cardigan <span class="text-error font-bold">-20</span></span>
-                        </div>
-                    </div>
-                    <span class="font-label-sm text-xs text-on-surface-variant shrink-0">10:15</span>
-                </li>
-                <li class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <div class="w-10 h-10 rounded-full bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center text-gold-accent shrink-0">
-                            <span class="material-symbols-outlined">swap_horiz</span>
-                        </div>
-                        <div class="min-w-0">
-                            <span class="font-title-md text-base text-on-surface block">Pemindahan Stok</span>
-                            <span class="text-on-surface-variant font-body-md text-xs truncate block">Skirt • 30 unit ke Cabang</span>
-                        </div>
-                    </div>
-                    <span class="font-label-sm text-xs text-on-surface-variant shrink-0">11:20</span>
-                </li>
-                <li class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-on-error-container shrink-0">
-                            <span class="material-symbols-outlined">fact_check</span>
-                        </div>
-                        <div class="min-w-0">
-                            <span class="font-title-md text-base text-on-surface block">Pemeriksaan Stok</span>
-                            <span class="text-on-surface-variant font-body-md text-xs truncate block">Silk Scarf • Selisih <span class="text-error font-bold">-2</span></span>
-                        </div>
-                    </div>
-                    <span class="font-label-sm text-xs text-on-surface-variant shrink-0">13:40</span>
-                </li>
+                        <span class="font-label-sm text-xs text-on-surface-variant shrink-0">{{ $act->created_at?->format('H:i') ?? '-' }}</span>
+                    </li>
+                @empty
+                    <li class="text-center text-on-surface-variant py-4">Belum ada aktivitas.</li>
+                @endforelse
             </ul>
             <a href="{{ route('gudang.riwayat-stok') }}" class="block text-center mt-6 w-full py-3 border border-muted-border rounded-lg font-label-sm text-label-sm text-gold-accent uppercase tracking-widest hover:bg-gold-accent/10 hover:border-gold-accent/40 transition-colors">Lihat Riwayat Lengkap</a>
         </section>
@@ -315,11 +275,7 @@
     let movementChart = null;
     let currentRange = '7';
 
-    const rangeData = {
-        '7': { labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'], masuk: [120, 180, 145, 210, 165, 240, 190], keluar: [80, 120, 95, 150, 110, 170, 130] },
-        '30': { labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'], masuk: [720, 845, 910, 880], keluar: [520, 610, 640, 590] },
-        '90': { labels: ['Juni', 'Juli', 'Agustus'], masuk: [2650, 2980, 3120], keluar: [1980, 2210, 2340] }
-    };
+    const rangeData = @json($chartRangeData);
 
     const renderMovementChart = () => {
         if (!window.Chart) {

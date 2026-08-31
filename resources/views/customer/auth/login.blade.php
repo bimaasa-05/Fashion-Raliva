@@ -349,9 +349,19 @@
 <div class="border-2 border-secondary rounded-lg p-lg lg:p-xl frame-gold">
 <!-- Heading -->
 <div class="mb-md">
-<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">{{ __('Raliva Account') }}</p>
-<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Welcome Back') }}</h2>
+    <p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">{{ __('Raliva Account') }}</p>
+    <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Welcome Back') }}</h2>
 </div>
+@auth
+<div class="mb-md rounded-DEFAULT border border-outline-variant bg-surface-container-low px-md py-sm font-body-sm text-body-sm text-on-surface-variant">
+    {{ __('Anda sudah login sebagai') }} <span class="font-semibold text-on-surface">{{ Auth::user()->nama_lengkap }}</span>
+    ({{ Auth::user()->role?->nama_role }}). {{ __('Masuk sebagai akun lain akan mengganti sesi ini.') }}
+    <form method="POST" action="{{ route('logout') }}" class="inline">
+        @csrf
+        <button type="submit" class="text-secondary font-semibold hover:opacity-80 underline ml-1">{{ __('Keluar') }}</button>
+    </form>
+</div>
+@endauth
 @if($errors->any())
 <div class="mb-md rounded-DEFAULT border border-error bg-error-container px-md py-sm font-body-sm text-body-sm text-error">
 {{ $errors->first() }}

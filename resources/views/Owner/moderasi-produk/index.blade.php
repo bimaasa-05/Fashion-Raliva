@@ -32,17 +32,17 @@
     <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Produk</span>
-            <span class="raliva-figure text-[26px] text-on-surface">136</span>
+            <span class="raliva-figure text-[26px] text-on-surface">{{ $summary['total'] }}</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">checkroom</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Review</span>
-            <span class="raliva-figure text-[26px] text-gold-accent">5</span>
+            <span class="raliva-figure text-[26px] text-gold-accent">{{ $summary['pending'] }}</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">schedule</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Disetujui &amp; Tayang</span>
-            <span class="raliva-figure text-[26px] text-secondary">128</span>
+            <span class="raliva-figure text-[26px] text-secondary">{{ $summary['aktif'] }}</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">verified</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
@@ -64,64 +64,63 @@
 
         {{-- Tab Status --}}
         <div data-reveal class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 mb-6 overflow-x-auto max-w-full">
-            <button type="button" data-mod-tab="semua" class="mod-tab px-4 py-2 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">Semua (8)</button>
-            <button type="button" data-mod-tab="pending" class="mod-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Menunggu (2)</button>
-            <button type="button" data-mod-tab="disetujui" class="mod-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Disetujui (4)</button>
-            <button type="button" data-mod-tab="ditolak" class="mod-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Ditolak (2)</button>
+            <button type="button" data-mod-tab="semua" class="mod-tab px-4 py-2 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">Semua ({{ $products->total() }})</button>
+            <button type="button" data-mod-tab="pending" class="mod-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Menunggu ({{ $summary['pending'] }})</button>
+            <button type="button" data-mod-tab="disetujui" class="mod-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Disetujui ({{ $summary['aktif'] }})</button>
+            <button type="button" data-mod-tab="ditolak" class="mod-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Ditolak ({{ $summary['ditolak'] }})</button>
         </div>
 
         <div data-reveal-group class="space-y-gutter">
-            @foreach ([
-                ['nama' => 'Blazer Wool Premium', 'sku' => 'RLV-BWP-014', 'versi' => 'Revisi v2 — perubahan harga & foto detail', 'tgl' => '21 Agu 2026', 'status' => 'pending', 'catatan' => 'Menunggu review moderator. Estimasi selesai dalam 1–2 hari kerja.', 'ikon' => 'schedule'],
-                ['nama' => 'Dress Midi Satin', 'sku' => 'RLV-DMS-011', 'versi' => 'Unggahan baru', 'tgl' => '19 Agu 2026', 'status' => 'disetujui', 'catatan' => 'Tayang publik sejak 20 Agu 2026, 09:12.', 'ikon' => 'verified'],
-                ['nama' => 'Jaket Denim Vintage Wash', 'sku' => 'RLV-JDV-005', 'versi' => 'Unggahan baru', 'tgl' => '18 Agu 2026', 'status' => 'ditolak', 'alasan' => 'Jumlah foto kurang dari 3. Mohon tambahkan foto detail bahan, jahitan, dan label ukuran sesuai panduan katalog.', 'ikon' => 'cancel'],
-                ['nama' => 'Kemeja Linen Oversized', 'sku' => 'RLV-KLO-032', 'versi' => 'Perubahan deskripsi bahan', 'tgl' => '17 Agu 2026', 'status' => 'disetujui', 'catatan' => 'Revisi disetujui dan tayang sejak 17 Agu 2026, 15:40.', 'ikon' => 'verified'],
-                ['nama' => 'Silk Scarf Monogram', 'sku' => 'RLV-SSM-002', 'versi' => 'Isi ulang stok & foto baru', 'tgl' => '16 Agu 2026', 'status' => 'pending', 'catatan' => 'Antrian review ke-2. Estimasi selesai besok pagi.', 'ikon' => 'schedule'],
-                ['nama' => 'Wide Leg Trousers', 'sku' => 'RLV-WLT-008', 'versi' => 'Perubahan harga promo', 'tgl' => '15 Agu 2026', 'status' => 'disetujui', 'catatan' => 'Harga baru berlaku sejak 16 Agu 2026.', 'ikon' => 'verified'],
-                ['nama' => 'Trench Coat Signature', 'sku' => 'RLV-TCS-001', 'versi' => 'Perbaikan ukuran chart', 'tgl' => '14 Agu 2026', 'status' => 'ditolak', 'alasan' => 'Tabel ukuran tidak sesuai standar (tidak mencantumkan lingkar pinggang). Gunakan template ukuran resmi Raliva pada pusat panduan.', 'ikon' => 'cancel'],
-                ['nama' => 'Knit Cardigan Rajut', 'sku' => 'RLV-KCR-021', 'versi' => 'Unggahan baru', 'tgl' => '12 Agu 2026', 'status' => 'disetujui', 'catatan' => 'Tayang publik sejak 13 Agu 2026, 08:05.', 'ikon' => 'verified'],
-            ] as $item)
-                <article data-reveal data-mod-row data-status="{{ $item['status'] }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 card-premium">
+            @forelse ($products as $item)
+                @php
+                    $sku = $item->variants->first()?->sku ?? '-';
+                    $status = $item->status;
+                    $catatan = $status === 'pending' ? 'Menunggu review moderator. Estimasi selesai dalam 1–2 hari kerja.'
+                        : ($status === 'ditolak' ? 'Produk ditolak moderator. Silakan perbaiki sesuai panduan dan ajukan ulang.' : 'Tayang publik sejak '.$item->created_at->translatedFormat('d M Y').'.');
+                @endphp
+                <article data-reveal data-mod-row data-status="{{ $status === 'aktif' ? 'disetujui' : $status }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 card-premium">
                     <div class="flex flex-col md:flex-row md:items-start gap-4 justify-between">
                         <div class="flex items-start gap-4 min-w-0">
                             <div class="w-12 aspect-[4/5] rounded-md bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0">
                                 <span class="material-symbols-outlined text-[22px] text-on-surface-variant">checkroom</span>
                             </div>
                             <div class="min-w-0">
-                                <p class="font-bold text-on-surface">{{ $item['nama'] }}</p>
-                                <p class="text-xs text-on-surface-variant mt-0.5">{{ $item['sku'] }} • {{ $item['versi'] }}</p>
-                                <p class="text-xs text-on-surface-variant mt-0.5">Diajukan {{ $item['tgl'] }}</p>
+                                <p class="font-bold text-on-surface">{{ $item->nama_produk }}</p>
+                                <p class="text-xs text-on-surface-variant mt-0.5">{{ $sku }} • Revisi produk</p>
+                                <p class="text-xs text-on-surface-variant mt-0.5">Diajukan {{ $item->created_at->translatedFormat('d M Y') }}</p>
                             </div>
                         </div>
-                        @if ($item['status'] === 'disetujui')
+                        @if ($status === 'aktif')
                             <span class="inline-flex shrink-0 items-center px-2.5 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Disetujui</span>
-                        @elseif ($item['status'] === 'ditolak')
+                        @elseif ($status === 'ditolak')
                             <span class="inline-flex shrink-0 items-center px-2.5 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Ditolak</span>
                         @else
                             <span class="inline-flex shrink-0 items-center px-2.5 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Menunggu Review</span>
                         @endif
                     </div>
 
-                    @if ($item['status'] === 'ditolak')
+                    @if ($status === 'ditolak')
                         <div class="mt-4 border border-error/25 bg-error/5 rounded-lg px-4 py-3.5 flex items-start gap-3">
                             <span class="material-symbols-outlined text-[20px] text-error mt-0.5 shrink-0">error</span>
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 flex-1">
-                                <p class="font-body-md text-sm text-on-surface"><span class="font-bold text-error">Alasan penolakan:</span> {{ $item['alasan'] }}</p>
-                                <button type="button" data-modal-open="modal-perbaiki-produk" class="shrink-0 px-4 py-2 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium whitespace-nowrap">Perbaiki &amp; Ajukan Ulang</button>
+                                <p class="font-body-md text-sm text-on-surface"><span class="font-bold text-error">Alasan penolakan:</span> {{ $catatan }}</p>
+                                <button type="button" onclick="showRalivaToast('Perbaiki produk {{ $item->nama_produk }} (read-only).', 'edit')" class="shrink-0 px-4 py-2 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium whitespace-nowrap">Perbaiki &amp; Ajukan Ulang</button>
                             </div>
                         </div>
-                    @elseif ($item['status'] === 'pending')
+                    @elseif ($status === 'pending')
                         <div class="mt-4 border border-gold-accent/25 bg-gold-accent/5 rounded-lg px-4 py-3 flex items-center gap-3">
                             <span class="material-symbols-outlined text-[20px] text-gold-accent">hourglass_top</span>
-                            <p class="font-body-md text-sm text-on-surface-variant">{{ $item['catatan'] }}</p>
+                            <p class="font-body-md text-sm text-on-surface-variant">{{ $catatan }}</p>
                         </div>
                     @else
                         <p class="mt-4 text-xs text-on-surface-variant flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[16px] fill text-secondary">check_circle</span>{{ $item['catatan'] }}
+                            <span class="material-symbols-outlined text-[16px] fill text-secondary">check_circle</span>{{ $catatan }}
                         </p>
                     @endif
                 </article>
-            @endforeach
+            @empty
+                <p class="text-on-surface-variant text-sm py-8 text-center">Tidak ada produk dalam antrean moderasi.</p>
+            @endforelse
         </div>
 
         <div data-empty-state class="hidden flex-col items-center py-12 text-center gap-3">

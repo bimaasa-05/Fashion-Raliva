@@ -16,58 +16,95 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
-    {{-- Top Leader --}}
-    <section data-reveal class="bg-deep-onyx text-on-primary rounded-lg p-6 md:p-8 relative overflow-hidden">
-        <span class="material-symbols-outlined absolute -right-6 -bottom-8 text-[160px] text-on-primary/5 pointer-events-none select-none" aria-hidden="true">workspace_premium</span>
-        <div class="relative">
-            <p class="raliva-label text-gold-accent">Top Leader Bulan Ini</p>
-            <div class="mt-4 flex flex-col sm:flex-row sm:items-center gap-6">
-                <div class="w-20 h-20 rounded-full bg-gold-accent text-deep-onyx flex items-center justify-center shrink-0 text-xl font-bold">SJ</div>
-                <div>
-                    <p class="raliva-figure text-[26px] text-on-primary">Sarah Jenkins</p>
-                    <p class="text-inverse-on-surface/60 font-body-md text-sm mt-1">sarah.jenkins@email.com • 18 pesanan • Bergabung Jan 2025</p>
-                    <div class="mt-3 flex flex-wrap gap-gutter">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent text-deep-onyx text-xs font-bold"><span class="material-symbols-outlined text-[16px]">payments</span>Rp 12.480.000 total belanja</span>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 text-on-primary text-xs font-bold border border-white/10"><span class="material-symbols-outlined text-[16px]">military_tech</span>#1 Leader</span>
-                    </div>
-                </div>
+    {{-- Podium Top Leader --}}
+    @if ($top3->count() >= 1)
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 md:p-8 card-premium">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <p class="raliva-label text-gold-accent">Papan Peringkat Pembeli</p>
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading mt-1">Top Customer</h2>
             </div>
-            <div class="mt-8 grid grid-cols-3 gap-gutter">
-                @foreach ([['#2', 'Dimas Anggara', 'Rp 9.820.000', '12 pesanan'], ['#3', 'Aulia Rahma', 'Rp 8.640.000', '9 pesanan'], ['#4', 'Raka Aditya', 'Rp 7.120.000', '7 pesanan']] as $top)
-                    <div class="bg-white/5 border border-white/10 rounded-lg p-4 text-center">
-                        <p class="text-gold-accent raliva-label">{{ $top[0] }}</p>
-                        <p class="font-title-md text-sm text-on-primary mt-1">{{ $top[1] }}</p>
-                        <p class="text-gold-accent font-bold text-sm mt-1">{{ $top[2] }}</p>
-                        <p class="text-inverse-on-surface/60 text-xs mt-0.5">{{ $top[3] }}</p>
-                    </div>
-                @endforeach
+            <span class="material-symbols-outlined text-[40px] text-gold-accent/20">workspace_premium</span>
+        </div>
+
+        @if ($top3->count() >= 3)
+        {{-- Podium lengkap (3 besar) --}}
+        <div class="grid grid-cols-1 md:grid-cols-3 items-end gap-gutter md:gap-4">
+            {{-- #2 Kiri --}}
+            <div class="order-2 md:order-1 bg-surface-container-low border border-muted-border rounded-xl p-5 flex flex-col items-center text-center md:mb-8">
+                <div class="w-16 h-16 rounded-full bg-surface-container-high border-2 border-outline-variant flex items-center justify-center font-title-md text-lg text-on-surface">{{ $top3[1]->initials }}</div>
+                <p class="font-title-md text-sm text-on-surface mt-3">{{ $top3[1]->name }}</p>
+                <p class="text-gold-accent font-bold text-sm mt-1">Rp {{ number_format($top3[1]->total_belanja, 0, ',', '.') }}</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">{{ $top3[1]->jumlah_order }} pesanan</p>
+                <span class="mt-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase">#2</span>
+            </div>
+
+            {{-- #1 Tengah (tinggi) --}}
+            <div class="order-1 md:order-2 bg-deep-onyx text-on-primary rounded-xl p-6 flex flex-col items-center text-center md:-mt-4 shadow-xl relative overflow-hidden">
+                <span class="material-symbols-outlined absolute -right-4 -top-4 text-[120px] text-on-primary/5 pointer-events-none select-none" aria-hidden="true">military_tech</span>
+                <div class="w-20 h-20 rounded-full bg-gold-accent text-deep-onyx flex items-center justify-center font-bold text-xl relative z-10">{{ $top3[0]->initials }}</div>
+                <p class="raliva-figure text-[20px] text-on-primary mt-3 relative z-10">{{ $top3[0]->name }}</p>
+                <p class="text-inverse-on-surface/70 text-xs mt-1 relative z-10">{{ $top3[0]->jumlah_order }} pesanan</p>
+                <span class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent text-deep-onyx text-xs font-bold relative z-10"><span class="material-symbols-outlined text-[16px]">payments</span>Rp {{ number_format($top3[0]->total_belanja, 0, ',', '.') }}</span>
+            </div>
+
+            {{-- #3 Kanan --}}
+            <div class="order-3 bg-surface-container-low border border-muted-border rounded-xl p-5 flex flex-col items-center text-center md:mb-4">
+                <div class="w-16 h-16 rounded-full bg-surface-container-high border-2 border-outline-variant flex items-center justify-center font-title-md text-lg text-on-surface">{{ $top3[2]->initials }}</div>
+                <p class="font-title-md text-sm text-on-surface mt-3">{{ $top3[2]->name }}</p>
+                <p class="text-gold-accent font-bold text-sm mt-1">Rp {{ number_format($top3[2]->total_belanja, 0, ',', '.') }}</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">{{ $top3[2]->jumlah_order }} pesanan</p>
+                <span class="mt-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase">#3</span>
             </div>
         </div>
+        @else
+        {{-- 1–2 pelanggan: tampilkan apa adanya (bukan single hero) --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
+            @foreach ($top3 as $i => $c)
+            <div class="bg-surface-container-low border {{ $i === 0 ? 'border-gold-accent/40' : 'border-muted-border' }} rounded-xl p-5 flex items-center gap-4">
+                <div class="w-14 h-14 rounded-full {{ $i === 0 ? 'bg-gold-accent text-deep-onyx' : 'bg-surface-container-high border-2 border-outline-variant text-on-surface' }} flex items-center justify-center font-bold text-lg shrink-0">{{ $c->initials }}</div>
+                <div class="min-w-0">
+                    <p class="font-title-md text-sm text-on-surface truncate">{{ $c->name }}</p>
+                    <p class="text-gold-accent font-bold text-sm mt-0.5">Rp {{ number_format($c->total_belanja, 0, ',', '.') }}</p>
+                    <p class="text-xs text-on-surface-variant mt-0.5">{{ $c->jumlah_order }} pesanan</p>
+                </div>
+                <span class="ml-auto inline-flex items-center px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase shrink-0">#{{ $i + 1 }}</span>
+            </div>
+            @endforeach
+        </div>
+        @endif
     </section>
+    @else
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 md:p-8 card-premium text-center">
+        <span class="material-symbols-outlined text-[40px] text-on-surface-variant">group</span>
+        <p class="font-title-md text-title-md text-on-surface mt-3">Belum ada pembeli</p>
+        <p class="text-on-surface-variant text-sm mt-1">Data Top Customer akan muncul setelah ada transaksi pada toko ini.</p>
+    </section>
+    @endif
 
     {{-- Ringkasan --}}
     <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Pelanggan</span>
-            <span class="raliva-figure text-[26px] text-on-surface">1.284</span>
+            <span class="raliva-figure text-[26px] text-on-surface">{{ number_format($summary['total'], 0, ',', '.') }}</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">unik pernah belanja</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">groups</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pelanggan Baru (Agu)</span>
-            <span class="raliva-figure text-[26px] text-secondary">86</span>
-            <span class="font-label-sm text-[11px] text-secondary">+14% vs Juli</span>
+            <span class="raliva-figure text-[26px] text-secondary">{{ $summary['baru'] }}</span>
+            <span class="font-label-sm text-[11px] text-secondary">bulan ini</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">person_add</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Repeat Buyer</span>
-            <span class="raliva-figure text-[26px] text-on-surface">42%</span>
+            <span class="raliva-figure text-[26px] text-on-surface">{{ $summary['total'] > 0 ? round($summary['repeat'] / $summary['total'] * 100) : 0 }}%</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">beli ≥2 kali</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">repeat</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Rata Belanja</span>
-            <span class="raliva-figure text-[26px] text-gold-accent">Rp 1,2<span class="text-[16px] font-normal">jt</span></span>
+            <span class="raliva-figure text-[26px] text-gold-accent">Rp {{ number_format($summary['rata'], 0, ',', '.') }}</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">per pelanggan</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">receipt_long</span>
         </div>
@@ -76,16 +113,27 @@
     {{-- Tabel Pelanggan --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+            <div>
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Pelanggan</h2>
+                <p class="text-xs text-on-surface-variant mt-1">Semua pembeli yang pernah bertransaksi di toko Anda.</p>
+            </div>
+        </div>
+
+        {{-- Toolbar: 1 baris rapi — search kiri, filter kanan --}}
+        <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
             <div class="relative flex-1 min-w-[220px] max-w-md">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                 <input type="text" placeholder="Cari nama atau email..." data-table-search class="raliva-search" />
             </div>
-            <select data-table-filter="segment" class="raliva-select">
-                <option value="">Semua Segmen</option>
-                <option value="leader">Top Leader</option>
-                <option value="setia">Pelanggan Setia</option>
-                <option value="baru">Baru</option>
-            </select>
+            <div class="flex flex-wrap items-center gap-3 lg:justify-end">
+                <select data-table-filter="segment" class="raliva-select lg:w-44">
+                    <option value="">Semua Segmen</option>
+                    <option value="leader">Top Leader</option>
+                    <option value="setia">Pelanggan Setia</option>
+                    <option value="baru">Baru</option>
+                </select>
+                <button type="button" data-filter-reset class="py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Reset</button>
+            </div>
         </div>
 
         <div data-table-wrap class="overflow-x-auto">
@@ -94,6 +142,7 @@
                     <tr class="border-b border-muted-border text-left">
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Pelanggan</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Kontak</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Barang Dibeli</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Pesanan</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Total Belanja</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Terakhir Belanja</th>
@@ -102,40 +151,45 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ([
-                        ['in' => 'SJ', 'nama' => 'Sarah Jenkins', 'email' => 'sarah.jenkins@email.com', 'pesan' => 18, 'total' => 'Rp 12.480.000', 'tgl' => '20 Agu 2026', 'seg' => 'leader', 'label' => 'Top Leader'],
-                        ['in' => 'DA', 'nama' => 'Dimas Anggara', 'email' => 'dimas.anggara@gmail.com', 'pesan' => 12, 'total' => 'Rp 9.820.000', 'tgl' => '22 Agu 2026', 'seg' => 'leader', 'label' => 'Top Leader'],
-                        ['in' => 'AR', 'nama' => 'Aulia Rahma', 'email' => 'aulia.rahma@yahoo.com', 'pesan' => 9, 'total' => 'Rp 8.640.000', 'tgl' => '19 Agu 2026', 'seg' => 'setia', 'label' => 'Setia'],
-                        ['in' => 'RA', 'nama' => 'Raka Aditya', 'email' => 'raka.aditya@email.com', 'pesan' => 7, 'total' => 'Rp 7.120.000', 'tgl' => '18 Agu 2026', 'seg' => 'setia', 'label' => 'Setia'],
-                        ['in' => 'NP', 'nama' => 'Nadia Putri', 'email' => 'nadia.putri@gmail.com', 'pesan' => 5, 'total' => 'Rp 4.200.000', 'tgl' => '15 Agu 2026', 'seg' => 'setia', 'label' => 'Setia'],
-                        ['in' => 'KS', 'nama' => 'Kevin Sanjaya', 'email' => 'kevin.sanjaya@email.com', 'pesan' => 2, 'total' => 'Rp 980.000', 'tgl' => '12 Agu 2026', 'seg' => 'baru', 'label' => 'Baru'],
-                        ['in' => 'BS', 'nama' => 'Bella Safira', 'email' => 'bella.safira@email.com', 'pesan' => 1, 'total' => 'Rp 450.000', 'tgl' => '10 Agu 2026', 'seg' => 'baru', 'label' => 'Baru'],
-                    ] as $row)
-                        <tr data-table-row data-segment="{{ $row['seg'] }}" class="border-b border-muted-border last:border-0">
+                    @forelse ($rows as $row)
+                        <tr data-table-row data-segment="{{ $row->segment }}" class="border-b border-muted-border last:border-0">
                             <td class="py-3.5 px-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0 font-title-md text-xs text-on-surface">{{ $row['in'] }}</div>
-                                    <span class="font-bold text-on-surface">{{ $row['nama'] }}</span>
+                                    <div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0 font-title-md text-xs text-on-surface">{{ $row->initials }}</div>
+                                    <span class="font-bold text-on-surface">{{ $row->name }}</span>
                                 </div>
                             </td>
-                            <td class="py-3.5 px-4 text-on-surface-variant text-xs">{{ $row['email'] }}</td>
-                            <td class="py-3.5 px-4 text-center text-on-surface">{{ $row['pesan'] }}</td>
-                            <td class="py-3.5 px-4 text-right font-bold text-gold-accent whitespace-nowrap">{{ $row['total'] }}</td>
-                            <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $row['tgl'] }}</td>
-                            <td class="py-3.5 px-4 text-center">
-                                @if ($row['seg'] === 'leader')
-                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gold-accent text-deep-onyx text-[10px] font-bold uppercase"><span class="material-symbols-outlined text-[12px]">military_tech</span>{{ $row['label'] }}</span>
-                                @elseif ($row['seg'] === 'setia')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">{{ $row['label'] }}</span>
+                            <td class="py-3.5 px-4 text-on-surface-variant text-xs">{{ $row->email }}</td>
+                            <td class="py-3.5 px-4 text-on-surface text-xs max-w-[220px]">
+                                @if ($row->items->isNotEmpty())
+                                    <ul class="space-y-0.5">
+                                        @foreach ($row->items as $item)
+                                            <li class="truncate">{{ $item }}</li>
+                                        @endforeach
+                                    </ul>
                                 @else
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ $row['label'] }}</span>
+                                    <span class="text-on-surface-variant">-</span>
+                                @endif
+                            </td>
+                            <td class="py-3.5 px-4 text-center text-on-surface">{{ $row->jumlah_order }}</td>
+                            <td class="py-3.5 px-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format($row->total_belanja, 0, ',', '.') }}</td>
+                            <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ optional(\Carbon\Carbon::parse($row->last_order))->translatedFormat('d M Y') }}</td>
+                            <td class="py-3.5 px-4 text-center">
+                                @if ($row->segment === 'leader')
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gold-accent text-deep-onyx text-[10px] font-bold uppercase"><span class="material-symbols-outlined text-[12px]">military_tech</span>Top Leader</span>
+                                @elseif ($row->segment === 'setia')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Setia</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Baru</span>
                                 @endif
                             </td>
                             <td class="py-3.5 px-4 text-right">
-                                <button type="button" onclick="showRalivaToast('Histori pesanan {{ $row['nama'] }} dibuka (demo).', 'visibility')" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Lihat</button>
+                                <button type="button" data-modal-open="modal-histori-{{ $row->id }}" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Lihat</button>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr><td colspan="7" class="py-6 text-center text-on-surface-variant">Belum ada pelanggan.</td></tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -154,4 +208,42 @@
         </p>
     </section>
 </div>
+
+{{-- Modal Histori Pesanan per pelanggan --}}
+@foreach ($rows as $row)
+<div id="modal-histori-{{ $row->id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <p class="raliva-label text-gold-accent">Histori Pesanan</p>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $row->name }}</h3>
+                <p class="text-xs text-on-surface-variant mt-0.5">{{ $row->email }}</p>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 space-y-3">
+            @forelse ($row->ordersList as $ord)
+            <div class="border border-muted-border rounded-lg p-4 bg-surface-container-low">
+                <div class="flex items-center justify-between gap-3">
+                    <span class="font-mono text-sm text-on-surface">{{ $ord->nomor_order }}</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase">{{ $ord->status }}</span>
+                </div>
+                <p class="text-xs text-on-surface-variant mt-1">{{ \Carbon\Carbon::parse($ord->created_at)->translatedFormat('d M Y') }}</p>
+                <ul class="mt-2 space-y-0.5 text-sm text-on-surface">
+                    @foreach ($ord->items as $it)
+                    <li class="flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-on-surface-variant">check_box_outline_blank</span>{{ $it }}</li>
+                    @endforeach
+                </ul>
+                <p class="text-right font-bold text-gold-accent text-sm mt-2">Rp {{ number_format($ord->grand_total, 0, ',', '.') }}</p>
+            </div>
+            @empty
+            <p class="text-center text-on-surface-variant text-sm py-6">Belum ada pesanan.</p>
+            @endforelse
+        </div>
+    </div>
+</div>
+@endforeach
 @endsection

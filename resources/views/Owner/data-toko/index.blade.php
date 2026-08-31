@@ -23,24 +23,26 @@
                 <div class="w-24 h-24 rounded-xl overflow-hidden border border-outline-variant bg-surface-container-high flex items-center justify-center">
                     <img src="{{ asset('images/logo.svg') }}" alt="Logo Toko" class="w-full h-full object-cover" />
                 </div>
-                <button type="button" onclick="showRalivaToast('Silakan pilih logo baru (demo).', 'image')" class="absolute -bottom-2 -right-2 w-9 h-9 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center btn-premium shadow-md" aria-label="Ubah Logo">
+                <button type="button" onclick="showRalivaToast('Silakan pilih logo baru.', 'image')" class="absolute -bottom-2 -right-2 w-9 h-9 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center btn-premium shadow-md" aria-label="Ubah Logo">
                     <span class="material-symbols-outlined text-[18px]">photo_camera</span>
                 </button>
             </div>
             <div class="flex-1 text-center sm:text-left">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3 justify-center sm:justify-start">
-                    <h2 class="raliva-figure text-[26px] text-on-surface">Raliva Atelier Jakarta</h2>
+                    <h2 class="raliva-figure text-[26px] text-on-surface">{{ $store->nama_toko ?? 'Toko' }}</h2>
                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20 w-fit mx-auto sm:mx-0">
                         <span class="material-symbols-outlined fill text-[12px]">verified</span>Terverifikasi
                     </span>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm mt-1">Fashion &mdash; ID Toko: RLV-TOKO-0021 &bull; Bergabung Mar 2024</p>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Rating toko <span class="font-bold text-gold-accent">4,9/5,0</span> &bull; 1.284 ulasan</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-1">Fashion &mdash; ID Toko: RLV-TOKO-{{ str_pad($store->store_id ?? 0, 4, '0', STR_PAD_LEFT) }} &bull; Bergabung {{ $store->created_at?->translatedFormat('M Y') ?? '-' }}</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Rating toko <span class="font-bold text-gold-accent">{{ number_format($rating, 1, ',', '.') }}/5,0</span> &bull; {{ $reviewCount }} ulasan</p>
             </div>
         </div>
     </section>
 
-    <form data-toast-message="Data toko berhasil disimpan." class="space-y-section-gap">
+    <form method="POST" action="{{ route('owner.data-toko.update') }}" class="space-y-section-gap">
+        @csrf
+        @method('PUT')
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-section-gap">
             {{-- Informasi Umum --}}
             <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
@@ -48,7 +50,7 @@
                 <div class="space-y-5">
                     <div>
                         <label for="nama-toko" class="block raliva-label mb-2">Nama Toko</label>
-                        <input id="nama-toko" type="text" value="Raliva Atelier Jakarta" required class="raliva-input" />
+                        <input id="nama-toko" name="nama_toko" type="text" value="{{ old('nama_toko', $store->nama_toko ?? '') }}" required class="raliva-input" />
                     </div>
                     <div>
                         <label for="kategori-toko" class="block raliva-label mb-2">Kategori</label>
@@ -61,7 +63,7 @@
                     </div>
                     <div>
                         <label for="deskripsi-toko" class="block raliva-label mb-2">Deskripsi Toko</label>
-                        <textarea id="deskripsi-toko" rows="4" class="raliva-textarea">Butik fashion lokal yang menghadirkan koleksi premium dengan sentuhan elegan khas Indonesia. Setiap produk dibuat dari bahan pilihan terbaik.</textarea>
+                        <textarea id="deskripsi-toko" name="deskripsi" rows="4" class="raliva-textarea">{{ old('deskripsi', $store->deskripsi ?? '') }}</textarea>
                     </div>
                 </div>
             </section>
@@ -72,11 +74,11 @@
                 <div class="space-y-5">
                     <div>
                         <label for="telepon-toko" class="block raliva-label mb-2">Nomor Telepon</label>
-                        <input id="telepon-toko" type="text" value="+62 21 7280 1122" required class="raliva-input" />
+                        <input id="telepon-toko" name="nomor_telepon" type="text" value="{{ old('nomor_telepon', $store->nomor_telepon ?? '') }}" required class="raliva-input" />
                     </div>
                     <div>
                         <label for="email-toko" class="block raliva-label mb-2">Email Toko</label>
-                        <input id="email-toko" type="email" value="halo@ralivaatelier.id" required class="raliva-input" />
+                        <input id="email-toko" name="email" type="email" value="{{ old('email', Auth::user()->email ?? '') }}" required class="raliva-input" />
                     </div>
                     <div>
                         <label for="instagram-toko" class="block raliva-label mb-2">Instagram</label>
@@ -84,7 +86,7 @@
                     </div>
                     <div>
                         <label for="alamat-toko" class="block raliva-label mb-2">Alamat Lengkap</label>
-                        <textarea id="alamat-toko" rows="3" required class="raliva-textarea">Jl. Kemang Raya No. 21, RT 04/RW 02, Bangka, Mampang Prapatan, Jakarta Selatan, DKI Jakarta 12730</textarea>
+                        <textarea id="alamat-toko" name="alamat" rows="3" required class="raliva-textarea">{{ old('alamat', $store->alamat ?? '') }}</textarea>
                     </div>
                 </div>
             </section>
@@ -92,15 +94,38 @@
 
         {{-- Jam Operasional --}}
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Jam Operasional</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
-                @foreach ([['Senin - Jumat', '09:00 - 21:00', true], ['Sabtu', '10:00 - 22:00', true], ['Minggu', '10:00 - 18:00', true], ['Hari Libur Nasional', 'Tutup', false]] as $jam)
-                    <div class="border border-muted-border rounded-lg px-4 py-3.5 flex items-center justify-between gap-3 bg-surface-container-low">
-                        <div>
-                            <p class="font-title-md text-sm text-on-surface">{{ $jam[0] }}</p>
-                            <p class="text-on-surface-variant text-xs mt-0.5">{{ $jam[2] ? $jam[1] : 'Libur' }}</p>
+            <div class="flex items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="font-title-md text-title-md mb-1 text-on-surface premium-heading">Jam Operasional</h2>
+                    <p class="text-xs text-on-surface-variant">Atur hari buka dan jam operasional toko Anda.</p>
+                </div>
+            </div>
+            @php
+                $days = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+                $hours = $store->operational_hours ?? [];
+            @endphp
+            <div class="space-y-3">
+                @foreach ($days as $day)
+                    @php
+                        $h = $hours[$day] ?? ['buka' => true, 'mulai' => '09:00', 'selesai' => '21:00'];
+                        $buka = $h['buka'] ?? true;
+                        $mulai = $h['mulai'] ?? '09:00';
+                        $selesai = $h['selesai'] ?? '21:00';
+                    @endphp
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3 border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low">
+                        <div class="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-44 shrink-0">
+                            <span class="font-title-md text-sm text-on-surface">{{ $day }}</span>
+                            <label class="inline-flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="operational_hours[{{ $day }}][buka]" value="1" {{ $buka ? 'checked' : '' }} class="peer sr-only">
+                                <span class="relative inline-flex w-11 h-6 bg-surface-container-high border border-outline-variant rounded-full peer-checked:bg-gold-accent peer-checked:border-gold-accent transition-colors duration-200 after:absolute after:left-0.5 after:top-0.5 after:w-5 after:h-5 after:bg-white rounded-full after:transition-transform peer-checked:after:translate-x-5"></span>
+                                <span class="text-xs text-on-surface-variant">{{ $buka ? 'Buka' : 'Tutup' }}</span>
+                            </label>
                         </div>
-                        <span class="material-symbols-outlined {{ $jam[2] ? 'text-secondary fill' : 'text-error' }}">{{ $jam[2] ? 'check_circle' : 'cancel' }}</span>
+                        <div class="flex items-center gap-2 w-full sm:w-auto {{ $buka ? '' : 'opacity-40 pointer-events-none' }}">
+                            <input type="time" name="operational_hours[{{ $day }}][mulai]" value="{{ $mulai }}" class="raliva-input !py-2 !px-3 text-sm w-full sm:w-32" />
+                            <span class="text-on-surface-variant text-sm">—</span>
+                            <input type="time" name="operational_hours[{{ $day }}][selesai]" value="{{ $selesai }}" class="raliva-input !py-2 !px-3 text-sm w-full sm:w-32" />
+                        </div>
                     </div>
                 @endforeach
             </div>
@@ -111,11 +136,27 @@
         </section>
 
         <div data-reveal class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter sticky bottom-20 md:bottom-4 z-30">
-            <button type="reset" class="py-3 px-6 bg-surface-container-lowest border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors shadow-sm">Atur Ulang</button>
+            <button type="button" data-modal-open="modal-atur-ulang" class="py-3 px-6 bg-surface-container-lowest border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors shadow-sm">Atur Ulang</button>
             <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined text-[16px]">save</span>Simpan Perubahan
             </button>
         </div>
     </form>
+
+    {{-- Modal konfirmasi Atur Ulang --}}
+    <div id="modal-atur-ulang" data-modal class="fixed inset-0 z-[70] hidden">
+        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+        <div class="relative mx-auto mt-24 w-[calc(100%-2rem)] max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="material-symbols-outlined text-gold-accent">restart_alt</span>
+                <h3 class="font-title-md text-title-md text-on-surface">Atur Ulang Formulir?</h3>
+            </div>
+            <p class="text-on-surface-variant text-sm mb-6">Semua perubahan yang belum disimpan akan dikembalikan ke data terakhir yang tersimpan. Tindakan ini tidak menghapus data toko Anda.</p>
+            <div class="flex gap-3">
+                <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="button" onclick="document.querySelector('form[action=\'{{ route('owner.data-toko.update') }}\']').reset(); document.querySelector('[data-modal-close]').click();" class="flex-1 py-2.5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Ya, Atur Ulang</button>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
