@@ -299,6 +299,37 @@
     }
     /* safe area for bottom nav */
     .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+
+    /* ============ PREMIUM CARD + HEADING (tiruan Super-Admin, aksen Burgundy) ============ */
+    .card-premium {
+        background-color: var(--surface-ivory);
+        border: 1px solid var(--border-soft);
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 2px rgba(17,17,17,.04), 0 8px 24px -12px rgba(17,17,17,.12);
+        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    .card-premium:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(17,17,17,.06), 0 18px 40px -16px rgba(17,17,17,.18); border-color: rgba(139,30,63,.45); }
+    html.theme-dark .card-premium { background-color: var(--surface-ivory); border-color: var(--border-soft); box-shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5); }
+    html.theme-dark .card-premium:hover { border-color: rgba(139,30,63,.5); box-shadow: 0 4px 12px rgba(0,0,0,.35), 0 20px 44px -16px rgba(0,0,0,.6); }
+    .premium-heading { position: relative; padding-left: 0.9rem; }
+    .premium-heading::before { content: ''; position: absolute; left: 0; top: 0.1em; bottom: 0.1em; width: 4px; border-radius: 9999px; background: var(--chrome-accent); }
+
+    /* ============ ORDER ITEMS: nested Product List (internal scroll only) ============ */
+    .ot-product-list {
+        background-color: #ffffff;                 /* White — slightly different from card (Soft Ivory) */
+        border: 1px solid var(--border-soft);
+        border-radius: 0.75rem;
+        padding: 0.5rem 0.75rem;
+        max-height: 60vh;                          /* responsive; 1-2 items show normally, more scrolls */
+        overflow-y: auto;
+        scrollbar-width: thin;                     /* subtle scrollbar (Firefox) */
+        scrollbar-color: var(--border-soft) transparent;
+    }
+    .ot-product-list::-webkit-scrollbar { width: 6px; }   /* subtle scrollbar (WebKit) */
+    .ot-product-list::-webkit-scrollbar-track { background: transparent; }
+    .ot-product-list::-webkit-scrollbar-thumb { background: var(--border-soft); border-radius: 9999px; }
+    html.theme-dark .ot-product-list { background-color: #262524; border-color: var(--border-soft); }  /* slightly lighter than main dark surface */
+    @media (max-width: 768px) { .ot-product-list { max-height: 55vh; padding: 0.5rem; } }
 </style>
   </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg flex flex-col min-h-screen pb-[72px] md:pb-0 lg:pl-72 overflow-x-hidden">
@@ -312,9 +343,10 @@
 </header>
 <!-- Main Content Canvas -->
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
-<!-- Order Header -->
-<section class="px-container-margin py-lg md:py-xl border-b border-outline-variant reveal-up">
-<div class="max-w-[960px] mx-auto">
+<!-- Order Header (Super-Admin style premium card, aksen Burgundy) -->
+<section class="py-xl px-container-margin reveal-up">
+<div class="max-w-7xl mx-auto">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm card-premium">
 <div class="atl-eyebrow mb-sm">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Order Tracking') }}</span>
 </div>
@@ -333,11 +365,11 @@
 </div>
 </div>
 </div>
+</div>
 </section>
 <!-- Visual Tracking Timeline -->
-<section class="px-container-margin py-lg md:py-xl bg-surface reveal-up">
-<div class="max-w-[960px] mx-auto">
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm shadow-[0_2px_12px_rgba(0,0,0,.06)]">
+<div class="max-w-7xl mx-auto">
+<div class="rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="relative max-w-[480px] mx-auto">
 <div class="timeline-line"></div>
 <div class="timeline-progress" style="width: 0%;"></div>
@@ -376,25 +408,26 @@
 </div>
 </div>
 </div>
-</section>
 <!-- Order Items List -->
-<section class="px-container-margin py-lg md:py-xl border-t border-outline-variant reveal-up">
-<div class="max-w-[960px] mx-auto">
-<div class="mb-md">
+<section class="px-container-margin py-lg md:py-xl reveal-up">
+<div class="max-w-7xl mx-auto">
+<div class="rounded-xl md:rounded-2xl p-sm md:p-lg card-premium">
+<div class="mb-md md:mb-lg">
 <div class="atl-eyebrow mb-1">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Order Items') }}</span>
 </div>
-<h2 class="font-title-md md:font-headline-md text-title-md md:text-headline-md text-on-surface">{{ __('Items in Order') }} <span class="font-body-sm text-body-sm text-on-surface-variant font-normal">• 2 items</span></h2>
+<h2 class="premium-heading font-title-md md:font-headline-md text-title-md md:text-headline-md text-on-surface">{{ __('Items in Order') }} <span class="font-body-sm text-body-sm text-on-surface-variant font-normal">• 2 items</span></h2>
 </div>
-<div class="flex flex-col gap-sm md:gap-md">
+<!-- Product List (nested scroll container) -->
+<div class="ot-product-list">
 <!-- Item 1 -->
-<div class="group flex gap-sm md:gap-md bg-surface-container-lowest border border-outline-variant rounded-xl p-sm md:p-md hover:shadow-md hover:border-outline/50 transition-all shadow-[0_1px_8px_rgba(0,0,0,.04)]">
-<div class="w-24 h-32 md:w-28 md:h-36 bg-surface-container rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant/30">
+<div class="group flex gap-sm md:gap-md">
+<div class="w-24 h-32 md:w-28 md:h-36 bg-surface-container-lowest rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant/30">
 <img class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" data-alt="A luxurious, minimalist product shot of an oversized linen shirt in a pristine white color, styled neatly folded against a stark white background with soft, diffused high-key studio lighting. The texture of the premium linen is highlighted, evoking a sophisticated, modern, and editorial fashion aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJlZAPwP-_xQgZVO14xE3Iu5npa30PNtPh-mhwqhHFy8WGyDIB88pqpUCiHtphw4m9zlFgrt_ycF_HlVLz0pUDshR1F3eqGVZYdqp4_qIihhITt0Blr3kgQOXjSp8iPBaotQEQIy3fGR8WUWbYK9JzLS_tYGjRSwZ8AMmViSKwigSNj1QeNqICwi6gOfkES04iTCN8Q-PxuntGupL9_rET-Zmjx_exlyS_3ai4_QXi8XxmMbFdQq4"/>
 </div>
 <div class="flex flex-col justify-between py-1 flex-grow min-w-0">
 <div class="min-w-0">
-<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">RALIVA</p>
+<div class="inline-flex items-center self-start px-2 py-0.5 mb-1 rounded-full bg-secondary/5 text-secondary border border-secondary/20 font-label-sm text-label-sm uppercase tracking-widest">RALIVA</div>
 <h3 class="font-body-sm md:font-title-md text-body-sm md:text-title-md font-semibold text-on-surface truncate">Oversized Linen Shirt</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex flex-wrap gap-2"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-low border border-outline-variant text-xs">{{ __('White') }} • M</span></p>
 </div>
@@ -404,14 +437,15 @@
 </div>
 </div>
 </div>
+<div class="h-px bg-outline-variant/40 mx-1 my-1"></div>
 <!-- Item 2 -->
-<div class="group flex gap-sm md:gap-md bg-surface-container-lowest border border-outline-variant rounded-xl p-sm md:p-md hover:shadow-md hover:border-outline/50 transition-all shadow-[0_1px_8px_rgba(0,0,0,.04)]">
-<div class="w-24 h-32 md:w-28 md:h-36 bg-surface-container rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant/30">
+<div class="group flex gap-sm md:gap-md">
+<div class="w-24 h-32 md:w-28 md:h-36 bg-surface-container-lowest rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant/30">
 <img class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" data-alt="A high-end editorial product photograph of tailored straight fit pants in deep black, sharply folded and presented on a minimalist gray textured surface. The lighting is crisp and dramatic, highlighting the structural integrity and premium fabric of the garment, perfectly suited for a luxury fashion marketplace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjIMzWrbFLT6KKutzy6PhQHHWEnYzrTgY-dKZrde1_cde8Vn6WRo8ZqI5d6eCMRbNv0V1GLwD501aHhMDfqY2xyaMilKOQFanRXb_E2Lgr0zm2E07fnIj01Ek7udmiq8489lpf4z38jLzFHJTW_XAKLUZO5a5fvIj1yMCqo1OlmFisVMzLkqVYJ0_nUJurX6Us8b3nT34YQMqNISCpv1fVNHyXNZkUn8-wgCUk-2yx6KcGEJn3Ncs"/>
 </div>
 <div class="flex flex-col justify-between py-1 flex-grow min-w-0">
 <div class="min-w-0">
-<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">RALIVA</p>
+<div class="inline-flex items-center self-start px-2 py-0.5 mb-1 rounded-full bg-secondary/5 text-secondary border border-secondary/20 font-label-sm text-label-sm uppercase tracking-widest">RALIVA</div>
 <h3 class="font-body-sm md:font-title-md text-body-sm md:text-title-md font-semibold text-on-surface truncate">Straight Fit Pants</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex flex-wrap gap-2"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-low border border-outline-variant text-xs">{{ __('Black') }} • 32</span></p>
 </div>
@@ -423,16 +457,16 @@
 </div>
 </div>
 </div>
+</div>
 </section>
 <!-- Order Summary (Tonal Background) -->
-<section class="px-container-margin py-lg md:py-xl bg-surface reveal-up">
-<div class="max-w-[960px] mx-auto">
-<div class="bg-surface-container-low border border-outline-variant rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm shadow-[0_2px_12px_rgba(0,0,0,.06)]">
+<div class="max-w-7xl mx-auto">
+<div class="rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="flex items-center gap-sm mb-md">
 <div class="w-8 h-8 rounded-full bg-secondary/10 border border-secondary/15 flex items-center justify-center">
 <span class="material-symbols-outlined text-secondary text-[18px]">receipt_long</span>
 </div>
-<h2 class="font-title-md md:font-headline-md text-title-md md:text-headline-md text-on-surface">{{ __('Order Summary') }}</h2>
+<h2 class="premium-heading font-title-md md:font-headline-md text-title-md md:text-headline-md text-on-surface">{{ __('Order Summary') }}</h2>
 </div>
 <div class="flex flex-col gap-sm">
 <div class="flex justify-between py-1">
@@ -455,12 +489,11 @@
 <p class="font-label-sm text-label-sm text-on-surface-variant/70 text-right mt-1">{{ __('Shipping & taxes calculated at checkout') }}</p>
 </div>
 </div>
-</div>
-</section>
+</div>  
 <!-- Need Help Action -->
 <section class="px-container-margin py-lg md:py-xl text-center reveal-up">
-<div class="max-w-[960px] mx-auto">
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md md:p-lg shadow-[0_2px_10px_rgba(0,0,0,.05)]">
+<div class="max-w-7xl mx-auto">
+<div class="rounded-xl p-md md:p-lg card-premium">
 <div class="atl-eyebrow mb-sm justify-center">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Need Help?') }}</span>
 </div>
