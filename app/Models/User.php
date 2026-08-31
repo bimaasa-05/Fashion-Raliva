@@ -74,6 +74,31 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class, 'role_id', 'role_id');
     }
 
+    /**
+     * Cek apakah user memiliki permission tertentu berdasarkan tabel
+     * role_permissions. Super Admin dianggap memiliki seluruh permission.
+     *
+     * @param string $kode Kode permission, mis. 'warehouse.stock_in'
+     */
+    public function hasPermission(string $kode): bool
+    {
+        $role = $this->role;
+
+        if (! $role) {
+            return false;
+        }
+
+        // Super Admin memiliki seluruh permission platform.
+        if ($role->nama_role === Role::SUPER_ADMIN) {
+            return true;
+        }
+
+        return $role->permissions()
+            ->where('kode_permission', $kode)
+            ->where('permissions.status', 'aktif')
+            ->exists();
+    }
+
     public function ownedStores(): HasMany
     {
         return $this->hasMany(Store::class, 'owner_id', 'user_id');

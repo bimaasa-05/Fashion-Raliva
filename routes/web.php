@@ -356,27 +356,27 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/riwayat-aktivitas', [AdminRiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
 });
 
-Route::prefix('gudang')->name('gudang.')->group(function () {
-    Route::get('/dashboard', [GudangDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/stok', [GudangStokController::class, 'index'])->name('stok');
-    Route::get('/barang-masuk', [GudangBarangMasukController::class, 'index'])->name('barang-masuk');
-    Route::post('/barang-masuk', [GudangBarangMasukController::class, 'store'])->name('barang-masuk.store');
-    Route::get('/barang-keluar', [GudangBarangKeluarController::class, 'index'])->name('barang-keluar');
-    Route::post('/barang-keluar', [GudangBarangKeluarController::class, 'store'])->name('barang-keluar.store');
-    Route::get('/pemindahan', [GudangPemindahanStokController::class, 'index'])->name('pemindahan');
-    Route::post('/pemindahan', [GudangPemindahanStokController::class, 'store'])->name('pemindahan.store');
-    Route::get('/pemeriksaan', [GudangPemeriksaanStokController::class, 'index'])->name('pemeriksaan');
-    Route::post('/pemeriksaan', [GudangPemeriksaanStokController::class, 'store'])->name('pemeriksaan.store');
-    Route::get('/stok-rusak', [GudangStokRusakController::class, 'index'])->name('stok-rusak');
-    Route::post('/stok-rusak', [GudangStokRusakController::class, 'store'])->name('stok-rusak.store');
-    Route::get('/riwayat-stok', [GudangRiwayatStokController::class, 'index'])->name('riwayat-stok');
-    Route::get('/pelanggan-request', [GudangPelangganRequestController::class, 'index'])->name('pelanggan-request');
-    Route::post('/pelanggan-request/konfirmasi', [GudangPelangganRequestController::class, 'konfirmasi'])->name('pelanggan-request.konfirmasi');
-    Route::get('/notifikasi', [GudangNotifikasiController::class, 'index'])->name('notifikasi');
-    Route::post('/notifikasi/tandai-dibaca', [GudangNotifikasiController::class, 'markRead'])->name('notifikasi.tandai-dibaca');
-    Route::get('/profil', [GudangProfilController::class, 'index'])->name('profil');
-    Route::post('/profil', [GudangProfilController::class, 'updateProfile'])->name('profil.update');
-    Route::post('/profil/password', [GudangProfilController::class, 'updatePassword'])->name('profil.password');
+Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang'])->group(function () {
+    Route::get('/dashboard', [GudangDashboardController::class, 'index'])->name('dashboard')->middleware('permission:warehouse.view');
+    Route::get('/stok', [GudangStokController::class, 'index'])->name('stok')->middleware('permission:warehouse.view');
+    Route::get('/barang-masuk', [GudangBarangMasukController::class, 'index'])->name('barang-masuk')->middleware('permission:warehouse.stock_in');
+    Route::post('/barang-masuk', [GudangBarangMasukController::class, 'store'])->name('barang-masuk.store')->middleware('permission:warehouse.stock_in');
+    Route::get('/barang-keluar', [GudangBarangKeluarController::class, 'index'])->name('barang-keluar')->middleware('permission:warehouse.stock_out');
+    Route::post('/barang-keluar', [GudangBarangKeluarController::class, 'store'])->name('barang-keluar.store')->middleware('permission:warehouse.stock_out');
+    Route::get('/pemindahan', [GudangPemindahanStokController::class, 'index'])->name('pemindahan')->middleware('permission:warehouse.transfer');
+    Route::post('/pemindahan', [GudangPemindahanStokController::class, 'store'])->name('pemindahan.store')->middleware('permission:warehouse.transfer');
+    Route::get('/pemeriksaan', [GudangPemeriksaanStokController::class, 'index'])->name('pemeriksaan')->middleware('permission:warehouse.stock_adjust');
+    Route::post('/pemeriksaan', [GudangPemeriksaanStokController::class, 'store'])->name('pemeriksaan.store')->middleware('permission:warehouse.stock_adjust');
+    Route::get('/stok-rusak', [GudangStokRusakController::class, 'index'])->name('stok-rusak')->middleware('permission:warehouse.stock_adjust');
+    Route::post('/stok-rusak', [GudangStokRusakController::class, 'store'])->name('stok-rusak.store')->middleware('permission:warehouse.stock_adjust');
+    Route::get('/riwayat-stok', [GudangRiwayatStokController::class, 'index'])->name('riwayat-stok')->middleware('permission:warehouse.view');
+    Route::get('/pelanggan-request', [GudangPelangganRequestController::class, 'index'])->name('pelanggan-request')->middleware('permission:order.view');
+    Route::post('/pelanggan-request/konfirmasi', [GudangPelangganRequestController::class, 'konfirmasi'])->name('pelanggan-request.konfirmasi')->middleware('permission:order.view');
+    Route::get('/notifikasi', [GudangNotifikasiController::class, 'index'])->name('notifikasi')->middleware('permission:warehouse.view');
+    Route::post('/notifikasi/tandai-dibaca', [GudangNotifikasiController::class, 'markRead'])->name('notifikasi.tandai-dibaca')->middleware('permission:warehouse.view');
+    Route::get('/profil', [GudangProfilController::class, 'index'])->name('profil')->middleware('permission:warehouse.view');
+    Route::post('/profil', [GudangProfilController::class, 'updateProfile'])->name('profil.update')->middleware('permission:warehouse.view');
+    Route::post('/profil/password', [GudangProfilController::class, 'updatePassword'])->name('profil.password')->middleware('permission:warehouse.view');
 });
 
 Route::post('/gudang/ganti', [GantiGudangController::class, 'store'])

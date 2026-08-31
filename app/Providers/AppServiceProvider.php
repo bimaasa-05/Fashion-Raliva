@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Warehouse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
@@ -56,5 +57,11 @@ class AppServiceProvider extends ServiceProvider
                 ]);
             }
         );
+
+        // Directive Blade @permission('kode') ... @endpermission untuk
+        // menyembunyikan bagian UI (tombol/menu) bagi user tanpa izin.
+        Blade::if('permission', function (string $kode) {
+            return Auth::check() && Auth::user()->hasPermission($kode);
+        });
     }
 }
