@@ -367,14 +367,14 @@
 </div>
 </section>
 <!-- New Arrivals -->
-<section class="py-xl reveal-up">
+
 <div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg shadow-sm card-premium">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
 <div class="atl-eyebrow mb-xs">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('New Arrivals') }}</span>
 </div>
-<h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('The Latest from Our Ateliers') }}</h3>
-<div id="new-arrivals-grid" class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+<h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('The Latest from Our Ateliers') }}</h3>
+<div id="new-arrivals-grid" class="grid grid-cols-2 md:grid-cols-4 gap-gutter mt-md">
 <!-- Product 1 -->
 <div data-category="Women" class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
@@ -382,8 +382,8 @@
 <img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A high-quality minimalist editorial product shot of a tailored linen blazer in a soft ivory shade." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ"/>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Noiré Studio</span>
-<h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Tailored Linen Blazer</h4>
-<span class="font-body-sm text-body-sm text-on-surface mt-1">$245.00</span>
+<h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Tailored Linen Blazer</h4>
+<span class="font-body-sm text-body-sm text-on-surface">$245.00</span>
 </a>
 <button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 rounded-full bg-black/15 backdrop-blur-sm text-white hover:bg-black/30 hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
@@ -396,8 +396,8 @@
 <img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A sleek, minimalist editorial photograph of a black leather structured tote bag." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDotrquQ9ru5aXlWl5XbgLhEMJq3WBfo5DDEAS3Z-F5LnAIv27Q3259la3QLZghjnF5R8udNJqY0Toq6SHw5JvN3PqANThsUOvwujXixkrq5zZBH5OW_D3QTRD3qObufW5Uz2-ahDe36xdtDHuA8SK2Ldhp4wpMReozYAnqkNj5ZG3A37LwDOS6aXDnCEg_MNh_j2C1VKegB7PNMCwMV-jwzYAwrhuqG1UCGjQoSl3A0QRKO-gFHlQ"/>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
-<h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Structured Leather Tote</h4>
-<span class="font-body-sm text-body-sm text-on-surface mt-1">$380.00</span>
+<h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Structured Leather Tote</h4>
+<span class="font-body-sm text-body-sm text-on-surface">$380.00</span>
 </a>
 <button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 rounded-full bg-black/15 backdrop-blur-sm text-white hover:bg-black/30 hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
@@ -410,8 +410,8 @@
 <img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A beautiful, clean editorial product shot of a minimalist silk slip dress in a muted olive tone." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrQWexD2Xms4d7-qplQNqqTI4EebkIxaCqpOssP3jfxkcDDAjBvE4kuCEgO-j-Yd-Vfxm6sW-zOaQShx89-kFo0JwvaQ9DnVYjw0ZeHlwNYQaWtigNJNUb1P2E3VS7jVbvb2gfkn5AgK0_pHzGjUiSO2kjiDWXbTKy2tRqRQq5I2md_UYdyHQR_axy07aFn3BeoVctJgri9jLNSSEizCJoXGSF5I0rX6QAaqkzanalXeH6sTmuLnA"/>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Maëva House</span>
-<h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Silk Slip Dress</h4>
-<span class="font-body-sm text-body-sm text-on-surface mt-1">$195.00</span>
+<h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Silk Slip Dress</h4>
+<span class="font-body-sm text-body-sm text-on-surface">$195.00</span>
 </a>
 <button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 rounded-full bg-black/15 backdrop-blur-sm text-white hover:bg-black/30 hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
@@ -424,8 +424,8 @@
 <img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A pristine editorial shot of minimal, modern geometric gold hoop earrings resting on a white marble surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXqNhNFWMr-Gm8_uwAVgBbqtzcNdb5MAfQUsG_3GJbmE0gm167f27WLQY44QclgDSw7N_b2k0qpe9HdTKZlExYsZl6FJUCnKft0foIHP3pp3uFUAxnwrYM3o7ap46wCmmnSGAbNN-gDM_Kptg0bVNG6ghZhp7r3PeQ66ZD2yhgIMKhB9sSycHTa8yXBJ3fTbNvx2tH5SUu76da_WcZ3bJW7JeJmVuEnVOdIHENcwQB0a1sOCp-u_s"/>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Kayana Apparel</span>
-<h4 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">Geometric Gold Hoops</h4>
-<span class="font-body-sm text-body-sm text-on-surface mt-1">$85.00</span>
+<h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Geometric Gold Hoops</h4>
+<span class="font-body-sm text-body-sm text-on-surface">$85.00</span>
 </a>
 <button type="button" aria-label="{{ __('Add to wishlist') }}" data-login-url="{{ route('login', ['redirect' => url()->current()]) }}" onclick="window.location.href=this.dataset.loginUrl" class="absolute top-2 right-2 p-2 rounded-full bg-black/15 backdrop-blur-sm text-white hover:bg-black/30 hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
@@ -438,7 +438,7 @@
 </div>
 </div>
 </div>
-</section>
+
 
 
 <!-- Featured Stores -->
