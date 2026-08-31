@@ -205,18 +205,33 @@
 </header>
 <!-- Main Content -->
 <main class="pt-16 pb-40 px-container-margin max-w-2xl mx-auto w-full">
-<form>
+<form id="profile-form" method="POST" action="{{ route('customer.account.update') }}" enctype="multipart/form-data" class="contents">
+    @csrf
 <!-- Profile Photo Section -->
-<section class="py-xl flex flex-col items-center border-b border-outline-variant">
-<div class="relative mb-sm">
-<div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant">
-<img alt="Profile Picture" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2mFOUgXwyToT210lLVyaVSmF1VogUfk85zb-0hplBwDJrLXcscOUZ6HC-QneJkQeiXtusGTnccpRNL_Qfwg6Iv1eVkAyIGJww1Oeb_iYCbIyOeCVeUW2b1Sm0yZ1Ilyxant3LPd15_T_3d5wXZ6WuDg04U46PEh96KMwKZLe0bO4ULe1L4wvC1WuBzsmGdp1FVC5JBPcCooQlUdVdE7hMrw6wp72LxJBvu2PdD4yA1caYdtRO7ss"/>
+<section class="py-lg flex flex-col items-center border-b border-outline-variant">
+<div class="w-full max-w-sm bg-surface-container-low rounded-xl p-md flex flex-col items-center">
+<div class="relative mb-sm mt-xs">
+<div class="w-28 h-28 rounded-full overflow-hidden border border-outline-variant bg-surface-container-high flex items-center justify-center shadow-md">
+@if(Auth::user()->foto_profil_url)
+<img id="photo-preview" alt="Profile Picture" class="w-full h-full object-cover" src="{{ Auth::user()->foto_profil_url }}"/>
+@else
+<img id="photo-preview" alt="Profile Picture" class="w-full h-full object-cover hidden" src=""/>
+<span id="photo-placeholder" class="material-symbols-outlined text-[52px] text-on-surface-variant">person</span>
+@endif
 </div>
-<span role="button" tabindex="0" aria-label="{{ __('Change profile photo') }}" class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity">
-<span class="material-symbols-outlined text-[18px]">photo_camera</span>
-</span>
+<input id="foto_profil" name="foto_profil" type="file" accept="image/*" class="sr-only"/>
 </div>
-<span role="button" tabindex="0" class="font-label-caps text-label-caps text-secondary uppercase tracking-widest underline underline-offset-4 cursor-pointer hover:opacity-80 transition-opacity">{{ __('Change Photo') }}</span>
+<div class="flex items-center justify-center gap-md mt-xs">
+<label for="foto_profil" class="font-label-caps text-label-caps text-secondary uppercase tracking-widest underline underline-offset-4 cursor-pointer hover:opacity-80 transition-opacity">{{ __('Change Photo') }}</label>
+@if(Auth::user()->foto_profil_url)
+<button type="button" id="remove-photo" aria-label="{{ __('Remove photo') }}" class="w-9 h-9 rounded-full bg-surface-container text-error flex items-center justify-center cursor-pointer hover:opacity-90 hover:scale-105 shadow transition-all">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+@endif
+</div>
+<p id="photo-error" class="font-label-sm text-label-sm text-error mt-xs hidden text-center"></p>
+<input type="hidden" name="remove_photo" id="remove-photo-flag" value="0"/>
+</div>
 </section>
 <!-- Personal Information -->
 <section class="py-lg">
@@ -224,19 +239,19 @@
 <div class="flex flex-col gap-md">
 <!-- Full Name -->
 <div>
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="full-name">{{ __('Full Name') }}</label>
-<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="full-name" type="text" value="Jane Doe"/>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="nama_lengkap">{{ __('Full Name') }}</label>
+<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="nama_lengkap" name="nama_lengkap" type="text" value="{{ old('nama_lengkap', Auth::user()->nama_lengkap) }}"/>
 </div>
 <!-- Email -->
 <div>
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">{{ __('Email Address') }}</label>
-<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="email" type="email" value="jane.doe@example.com"/>
+<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="email" name="email" type="email" value="{{ old('email', Auth::user()->email) }}"/>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Used for order updates and receipts.') }}</p>
 </div>
 <!-- Phone Number -->
 <div>
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="phone">{{ __('Phone Number') }}</label>
-<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="phone" type="tel" value="+62 812 3456 7890"/>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="nomor_telepon">{{ __('Phone Number') }}</label>
+<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="nomor_telepon" name="nomor_telepon" type="tel" value="{{ old('nomor_telepon', Auth::user()->nomor_telepon) }}"/>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('The courier will contact this number upon delivery.') }}</p>
 </div>
 </div>
@@ -282,9 +297,69 @@
 </main>
 <!-- Fixed Bottom Action Bar -->
 <div class="fixed bottom-0 inset-x-0 lg:left-72 bg-surface border-t border-outline-variant px-container-margin py-md z-50 max-w-2xl mx-auto">
-<a href="{{ route('customer.account') }}" class="w-full bg-primary text-on-primary font-label-caps text-label-caps h-14 flex items-center justify-center hover:opacity-90 transition-opacity uppercase tracking-widest">
+<button type="submit" form="profile-form" class="w-full bg-primary text-on-primary font-label-caps text-label-caps h-14 flex items-center justify-center hover:opacity-90 transition-opacity uppercase tracking-widest">
             {{ __('Save Changes') }}
-        </a>
+        </button>
 </div>
 @include('customer._partials.drawer')
+<script>
+        (function () {
+            var input = document.getElementById('foto_profil');
+            var preview = document.getElementById('photo-preview');
+            var placeholder = document.getElementById('photo-placeholder');
+            var nameEl = document.getElementById('photo-name');
+            var errorEl = document.getElementById('photo-error');
+            var removeFlag = document.getElementById('remove-photo-flag');
+            var removeBtn = document.getElementById('remove-photo');
+            if (!input) return;
+
+            function showPreview(src) {
+                if (preview) {
+                    preview.src = src;
+                    preview.classList.remove('hidden');
+                }
+                if (placeholder) placeholder.classList.add('hidden');
+            }
+            function showPlaceholder() {
+                if (preview) preview.classList.add('hidden');
+                if (placeholder) placeholder.classList.remove('hidden');
+            }
+            function clearError() {
+                if (errorEl) { errorEl.classList.add('hidden'); errorEl.textContent = ''; }
+            }
+
+            input.addEventListener('change', function () {
+                clearError();
+                var file = input.files && input.files[0];
+                if (!file) return;
+                if (!file.type.startsWith('image/')) {
+                    errorEl.textContent = '{{ __("File harus berupa gambar.") }}';
+                    errorEl.classList.remove('hidden');
+                    input.value = '';
+                    return;
+                }
+                if (file.size > 2 * 1024 * 1024) {
+                    errorEl.textContent = '{{ __("Ukuran foto maksimal 2MB.") }}';
+                    errorEl.classList.remove('hidden');
+                    input.value = '';
+                    return;
+                }
+                if (removeFlag) removeFlag.value = '0';
+                if (nameEl) nameEl.textContent = file.name;
+                var reader = new FileReader();
+                reader.onload = function (e) { showPreview(e.target.result); };
+                reader.readAsDataURL(file);
+            });
+
+            if (removeBtn) {
+                removeBtn.addEventListener('click', function () {
+                    if (input) input.value = '';
+                    if (removeFlag) removeFlag.value = '1';
+                    if (nameEl) nameEl.textContent = '';
+                    clearError();
+                    showPlaceholder();
+                });
+            }
+        })();
+    </script>
 </body></html>

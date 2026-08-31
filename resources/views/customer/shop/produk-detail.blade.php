@@ -22,7 +22,7 @@
                       "primary-fixed-dim": "#c8c6c5",
                       "surface-variant": "#e3e2e2",
                       "on-surface": "#1b1c1c",
-                      "secondary": "#795905",
+                      "secondary": "#8B1E1E",
                       "surface-dim": "#dbdad9",
                       "on-error": "#ffffff",
                       "primary": "#000000",
@@ -30,7 +30,7 @@
                       "tertiary-container": "#1a1c1a",
                       "error-container": "#ffdad6",
                       "on-tertiary": "#ffffff",
-                      "secondary-fixed": "#ffdf9f",
+                      "secondary-fixed": "#8B1E1E",
                       "on-primary": "#ffffff",
                       "surface-container-lowest": "#ffffff",
                       "error": "#ba1a1a",
@@ -41,20 +41,20 @@
                       "primary-fixed": "#e5e2e1",
                       "outline-variant": "#c4c7c7",
                       "surface-tint": "#5f5e5e",
-                      "secondary-fixed-dim": "#ebc168",
+                      "secondary-fixed-dim": "#8B1E1E",
                       "outline": "#747878",
                       "on-primary-fixed-variant": "#474646",
-                      "on-secondary-fixed-variant": "#5c4300",
+                      "on-secondary-fixed-variant": "#5E0F0F",
                       "on-tertiary-fixed": "#1a1c1a",
-                      "on-secondary-container": "#775804",
+                      "on-secondary-container": "#5E0F0F",
                       "inverse-on-surface": "#f2f0f0",
                       "tertiary-fixed-dim": "#c7c6c4",
                       "tertiary-fixed": "#e3e2df",
                       "surface-container-high": "#e9e8e7",
-                      "on-secondary-fixed": "#261a00",
+                      "on-secondary-fixed": "#5E0F0F",
                       "background": "#fbf9f9",
                       "surface": "#fbf9f9",
-                      "secondary-container": "#fdd177",
+                      "secondary-container": "#8B1E1E",
                       "on-surface-variant": "#444748",
                       "primary-container": "#1c1b1b",
                       "inverse-primary": "#c8c6c5",
@@ -205,7 +205,7 @@
         --chrome-text-faint: rgba(0,0,0,.45);
         --chrome-border: rgba(0,0,0,.1);
         --chrome-hover: rgba(0,0,0,.06);
-        --chrome-accent: #795905;
+        --chrome-accent: #8B1E1E;
     }
     html.theme-dark {
         --chrome-bg: #1c1b1b;
@@ -215,7 +215,7 @@
         --chrome-text-faint: rgba(255,255,255,.5);
         --chrome-border: rgba(255,255,255,.1);
         --chrome-hover: rgba(255,255,255,.1);
-        --chrome-accent: #ebc168;
+        --chrome-accent: #A32626;
     }
 </style>
 <style>
@@ -242,7 +242,7 @@
     html.theme-dark .text-outline { color: #8a8781 !important; }
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
-    html.theme-dark .text-secondary { color: #ebc168 !important; }
+    html.theme-dark .text-secondary { color: #A32626 !important; }
     html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
     html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
@@ -256,7 +256,7 @@
     html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
     html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
     html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
-    html.theme-dark .hover\:text-secondary:hover { color: #ebc168 !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #A32626 !important; }
     html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
     html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
     html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
@@ -269,6 +269,61 @@
     html.theme-dark .group:hover .group-hover\:text-primary { color: #f2efec !important; }
     html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
+</style>
+<style>
+    /* ============ RALIVA GOLD BUTTON (same system as Home / Shop / Register) ============ */
+    .btn-gold {
+        position: relative;
+        overflow: hidden;
+        background-color: var(--btn-gold-bg) !important;
+        color: var(--btn-gold-text) !important;
+        isolation: isolate;
+    }
+    .btn-gold > * { position: relative; z-index: 2; }
+    .btn-gold::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        left: -80%;
+        width: 55%;
+        background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.6) 50%, transparent 100%);
+        transform: skewX(-24deg);
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0;
+    }
+    .btn-gold:hover::after,
+    .btn-gold.flashing::after { opacity: 1; animation: authFlash 1.4s linear infinite; }
+    .btn-gold.flashing::after { animation: authFlash 1.4s cubic-bezier(.4,0,.2,1) 1; }
+    @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
+    .btn-gold:hover { box-shadow: 0 0 0 1px rgba(139,30,30,.35), 0 8px 22px -8px rgba(139,30,30,.45); }
+    html.theme-dark .btn-gold:hover { box-shadow: 0 0 0 1px rgba(163,38,38,.4), 0 8px 22px -8px rgba(163,38,38,.5); }
+    :root           { --btn-gold-bg: #8B1E1E; --btn-gold-text: #ffffff; }
+    html.theme-dark { --btn-gold-bg: #5E0F0F; --btn-gold-text: #ffffff; }
+    /* ============ SHOP/DETAIL CHECKBOX + RADIO (same system as Register .terms-checkbox) ============ */
+    .shop-checkbox {
+        border-radius: 4px;
+        transition: border-color .2s ease, background-color .2s ease;
+    }
+    .shop-checkbox:hover:not(:checked) { border-color: #8B1E1E; }
+    .shop-checkbox:checked {
+        background-color: #8B1E1E !important;
+        border-color: #8B1E1E !important;
+    }
+    .shop-checkbox:focus-visible { box-shadow: 0 0 0 3px rgba(139,30,30,.3); }
+    html.theme-dark .shop-checkbox {
+        border-color: #3a3937;
+        background-color: #201f1e;
+    }
+</style>
+<style>
+    /* ============ Product Detail: remap drawer + bottom-nav accent to burgundy (Register language) ============ */
+    #drawer-panel { --chrome-accent: #8B1E1E; --gold-wash: rgba(139,30,30,.10); }
+    html.theme-dark #drawer-panel { --chrome-accent: #A32626; --gold-wash: rgba(163,38,38,.16); }
+    .bn-active .material-symbols-outlined { color: #8B1E1E !important; }
+    html.theme-dark .bn-active .material-symbols-outlined { color: #A32626 !important; }
+    .bn-active { color: #8B1E1E !important; }
+    html.theme-dark .bn-active { color: #A32626 !important; }
 </style>
   </head>
 <body class="bg-surface text-on-surface font-body-lg antialiased pb-32 lg:pl-72 lg:pb-0">
@@ -339,17 +394,17 @@
 </div>
 <div class="grid grid-cols-4 gap-gutter">
 <button class="h-12 border border-outline-variant flex items-center justify-center font-body-sm text-body-sm text-on-surface hover:border-on-surface transition-colors">S</button>
-<button class="h-12 border border-on-surface bg-surface-container-low flex items-center justify-center font-body-sm text-body-sm text-on-surface font-semibold">M</button>
+<button class="h-12 border border-secondary bg-secondary/5 flex items-center justify-center font-body-sm text-body-sm text-secondary font-semibold">M</button>
 <button class="h-12 border border-outline-variant flex items-center justify-center font-body-sm text-body-sm text-on-surface hover:border-on-surface transition-colors">L</button>
 <button class="h-12 border border-outline-variant flex items-center justify-center font-body-sm text-body-sm text-on-surface hover:border-on-surface transition-colors">XL</button>
 </div>
 </div>
 <!-- Desktop Actions -->
 <div class="hidden lg:flex gap-sm mt-xl">
-<a href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="flex-1 h-12 border border-on-surface bg-transparent text-on-surface font-label-caps text-label-caps tracking-widest hover:bg-surface-variant transition-colors flex items-center justify-center">
+<a href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="flex-1 h-12 border border-secondary text-secondary bg-transparent font-label-caps text-label-caps tracking-widest hover:bg-secondary/5 transition-colors flex items-center justify-center">
             {{ __('ADD TO CART') }}
         </a>
-<a href="{{ route('customer.checkout') }}" class="flex-1 h-12 bg-primary text-on-primary font-label-caps text-label-caps tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center">
+<a href="{{ route('customer.checkout') }}" class="btn-gold flex-1 h-12 font-label-caps text-label-caps tracking-widest flex items-center justify-center">
             {{ __('BUY NOW') }}
         </a>
 </div>
@@ -518,16 +573,16 @@
 </div>
 </div>
 <!-- You May Also Like -->
-<section class="py-xl">
+<section class="py-xl border-t border-outline-variant">
 <h2 class="font-headline-md text-headline-md text-center text-on-surface mb-lg">{{ __('You May Also Like') }}</h2>
-<div class="flex overflow-x-auto lg:grid lg:grid-cols-3 lg:overflow-visible gap-gutter px-container-margin hide-scrollbar pb-sm">
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-gutter px-container-margin pb-sm">
 <!-- Card 1 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="min-w-[160px] md:min-w-[200px] lg:min-w-0 block">
-<div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant">
-<img class="w-full h-full object-cover" data-alt="A minimalist fashion editorial image of tailored wide-leg trousers in a soft beige tone, styled cleanly against a light, neutral background, reflecting premium quality and modern elegance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4IYXT8zx75qRHmyTLk9xkyFXQ2aqGro0exB1cwe11WPpyS4_FUyQA7qq8cxx_mFM3PPrNwyPQcZ-_wI0J8kAwOnv5OPd8VFDvqKFUJDKt9UwsYXTBwCIVxPjpYG2Tc4O-GOg6_Sx5cjoPIKUP4Xa4HwLQKlAk6lcw-xaN7sm1Ad78waPAEVlkv60tLR_o8Ap-HQ14icz3DI2UgdsVBjVQiozmTytcTh9-KT1npkU4xDEEJGQTJro"/>
-<a aria-label="{{ __('Add to wishlist') }}" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="block group cursor-pointer">
+<div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" data-alt="A minimalist fashion editorial image of tailored wide-leg trousers in a soft beige tone, styled cleanly against a light, neutral background, reflecting premium quality and modern elegance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4IYXT8zx75qRHmyTLk9xkyFXQ2aqGro0exB1cwe11WPpyS4_FUyQA7qq8cxx_mFM3PPrNwyPQcZ-_wI0J8kAwOnv5OPd8VFDvqKFUJDKt9UwsYXTBwCIVxPjpYG2Tc4O-GOg6_Sx5cjoPIKUP4Xa4HwLQKlAk6lcw-xaN7sm1Ad78waPAEVlkv60tLR_o8Ap-HQ14icz3DI2UgdsVBjVQiozmTytcTh9-KT1npkU4xDEEJGQTJro"/>
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-url="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" onclick="goWishlist(this)" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</a>
+</button>
 </div>
 <div class="space-y-1">
 <p class="font-label-sm text-label-sm text-on-surface-variant">RALIVA</p>
@@ -536,12 +591,12 @@
 </div>
 </a>
 <!-- Card 2 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="min-w-[160px] md:min-w-[200px] lg:min-w-0 block">
-<div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant">
-<img class="w-full h-full object-cover" data-alt="A chic, minimalist editorial shot of a ribbed knit tank top in black, draped elegantly on a hanger against a pristine white background. The focus is on the texture and modern silhouette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBSCYHpJJ10PR1rv62xsiSUHcgECc8Yl7gxPOJqlAhXqjJGHnlXSe3G3OT0zZOpoO6zdOywN_zGJ312gSUWGyrERx3QJH1sib9jdTkpcPR1UGz6uHG3aBCzTk7nRRLeHq2PxVj1WHkGQGh3Vuk2k_lfNftY_XKOXombF0_TGRpWMQudl33iPubHVACr4ZiMJFHeHt5rU1xGcveNoDt2q3Et_j-G22OqOzW2MDW8EobpXOmXTWjw3M"/>
-<a aria-label="{{ __('Add to wishlist') }}" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="block group cursor-pointer">
+<div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" data-alt="A chic, minimalist editorial shot of a ribbed knit tank top in black, draped elegantly on a hanger against a pristine white background. The focus is on the texture and modern silhouette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBSCYHpJJ10PR1rv62xsiSUHcgECc8Yl7gxPOJqlAhXqjJGHnlXSe3G3OT0zZOpoO6zdOywN_zGJ312gSUWGyrERx3QJH1sib9jdTkpcPR1UGz6uHG3aBCzTk7nRRLeHq2PxVj1WHkGQGh3Vuk2k_lfNftY_XKOXombF0_TGRpWMQudl33iPubHVACr4ZiMJFHeHt5rU1xGcveNoDt2q3Et_j-G22OqOzW2MDW8EobpXOmXTWjw3M"/>
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-url="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" onclick="goWishlist(this)" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</a>
+</button>
 </div>
 <div class="space-y-1">
 <p class="font-label-sm text-label-sm text-on-surface-variant">RALIVA</p>
@@ -550,12 +605,12 @@
 </div>
 </a>
 <!-- Card 3 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="min-w-[160px] md:min-w-[200px] lg:min-w-0 block">
-<div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant">
-<img class="w-full h-full object-cover" data-alt="A sophisticated editorial photograph of a minimalist leather tote bag in deep brown, placed thoughtfully on a smooth stone surface with soft, diffused lighting typical of luxury fashion campaigns." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1cthY8K2JPKLNpkQV3JBRI6w4KRyg6mQeqgXctAcetZp_v6EdYIOJjePq8SWVSrQa2JsuHIHIjEMmjJ5PJF-s2QDQm4sbvggtYfBOhWZFYXxH9UkXED66ErqitL29o75HKKd40LGYNnkEMndKxfJ4L-7z-rbdPVecIV7fdOrMA_mrvmKu5Y8cgTTHi3JY3AyfNe_NyppH-jBZSnRZdg5g_HhxOs5QixseLjNAx7O8kEcjJiOq07Q"/>
-<a aria-label="{{ __('Add to wishlist') }}" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="block group cursor-pointer">
+<div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" data-alt="A sophisticated editorial photograph of a minimalist leather tote bag in deep brown, placed thoughtfully on a smooth stone surface with soft, diffused lighting typical of luxury fashion campaigns." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1cthY8K2JPKLNpkQV3JBRI6w4KRyg6mQeqgXctAcetZp_v6EdYIOJjePq8SWVSrQa2JsuHIHIjEMmjJ5PJF-s2QDQm4sbvggtYfBOhWZFYXxH9UkXED66ErqitL29o75HKKd40LGYNnkEMndKxfJ4L-7z-rbdPVecIV7fdOrMA_mrvmKu5Y8cgTTHi3JY3AyfNe_NyppH-jBZSnRZdg5g_HhxOs5QixseLjNAx7O8kEcjJiOq07Q"/>
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-url="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" onclick="goWishlist(this)" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</a>
+</button>
 </div>
 <div class="space-y-1">
 <p class="font-label-sm text-label-sm text-on-surface-variant">RALIVA</p>
@@ -568,10 +623,10 @@
 </main>
 <!-- Sticky Bottom Action Bar -->
 <div class="fixed bottom-0 left-0 w-full lg:hidden bg-surface/95 backdrop-blur-sm px-container-margin py-md flex gap-sm z-40" style="padding-bottom: max(16px, env(safe-area-inset-bottom));">
-<a href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="flex-1 h-12 border border-on-surface bg-transparent text-on-surface font-label-caps text-label-caps tracking-widest hover:bg-surface-variant transition-colors flex items-center justify-center">
+<a href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="flex-1 h-12 border border-secondary text-secondary bg-transparent font-label-caps text-label-caps tracking-widest hover:bg-secondary/5 transition-colors flex items-center justify-center">
             {{ __('ADD TO CART') }}
         </a>
-<a href="{{ route('customer.checkout') }}" class="flex-1 h-12 bg-primary text-on-primary font-label-caps text-label-caps tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center">
+<a href="{{ route('customer.checkout') }}" class="btn-gold flex-1 h-12 font-label-caps text-label-caps tracking-widest flex items-center justify-center">
             {{ __('BUY NOW') }}
         </a>
 </div>
@@ -585,26 +640,26 @@
 <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">{{ __('Why are you reporting this review?') }}</p>
 <form id="report-form">
 <label class="flex items-center gap-sm py-sm border-b border-outline-variant cursor-pointer">
-<input class="w-4 h-4 shrink-0" name="reason" required type="radio" value="spam"/>
+<input class="w-4 h-4 shop-checkbox shrink-0" name="reason" required type="radio" value="spam"/>
 <span class="font-body-sm text-body-sm text-on-surface">{{ __('Spam or promotion') }}</span>
 </label>
 <label class="flex items-center gap-sm py-sm border-b border-outline-variant cursor-pointer">
-<input class="w-4 h-4 shrink-0" name="reason" type="radio" value="harassment"/>
+<input class="w-4 h-4 shop-checkbox shrink-0" name="reason" required type="radio" value="harassment"/>
 <span class="font-body-sm text-body-sm text-on-surface">{{ __('Harassment or offensive content') }}</span>
 </label>
 <label class="flex items-center gap-sm py-sm cursor-pointer">
-<input class="w-4 h-4 shrink-0" name="reason" type="radio" value="irrelevant"/>
+<input class="w-4 h-4 shop-checkbox shrink-0" name="reason" required type="radio" value="irrelevant"/>
 <span class="font-body-sm text-body-sm text-on-surface">{{ __('Irrelevant to the product') }}</span>
 </label>
 <div class="flex gap-gutter mt-lg">
-<button class="flex-1 h-12 border border-outline text-on-surface font-label-caps text-label-caps uppercase tracking-widest hover:bg-surface-container-low transition-colors" onclick="closeReport()" type="button">{{ __('Cancel') }}</button>
-<button class="flex-1 h-12 bg-primary text-on-primary font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity" type="submit">{{ __('Send report') }}</button>
+<button class="flex-1 h-12 border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-widest hover:bg-secondary/5 transition-colors" onclick="closeReport()" type="button">{{ __('Cancel') }}</button>
+<button class="flex-1 h-12 btn-gold font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center" type="submit">{{ __('Send report') }}</button>
 </div>
 </form>
 <div class="hidden text-center py-md" id="report-success">
 <span class="material-symbols-outlined text-secondary text-[48px]">check_circle</span>
 <p class="font-body-lg text-body-lg text-on-surface mt-sm mb-lg">{{ __('Thank you. Your report has been submitted.') }}</p>
-<button class="w-full h-12 bg-primary text-on-primary font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity" onclick="closeReport()" type="button">{{ __('Close') }}</button>
+<button class="w-full h-12 btn-gold font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center" onclick="closeReport()" type="button">{{ __('Close') }}</button>
 </div>
 </div>
 </div>
@@ -651,6 +706,18 @@
             this.classList.add('hidden');
             document.getElementById('report-success').classList.remove('hidden');
         });
+        document.querySelectorAll('.btn-gold').forEach(function (b) {
+            b.addEventListener('click', function () {
+                b.classList.remove('flashing');
+                void b.offsetWidth;
+                b.classList.add('flashing');
+                setTimeout(function () { b.classList.remove('flashing'); }, 600);
+            });
+        });
+        window.goWishlist = function (btn) {
+            event.stopPropagation();
+            window.location.href = btn.dataset.url;
+        };
     </script>
 @include('customer._partials.drawer')
 </body></html>

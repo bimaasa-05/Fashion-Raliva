@@ -22,7 +22,7 @@
                         "primary-fixed-dim": "#c8c6c5",
                         "surface-variant": "#e3e2e2",
                         "on-surface": "#1b1c1c",
-                        "secondary": "#795905",
+                        "secondary": "#8B1E3F",
                         "surface-dim": "#dbdad9",
                         "on-error": "#ffffff",
                         "primary": "#000000",
@@ -30,9 +30,9 @@
                         "tertiary-container": "#1a1c1a",
                         "error-container": "#ffdad6",
                         "on-tertiary": "#ffffff",
-                        "secondary-fixed": "#ffdf9f",
+                        "secondary-fixed": "#8B1E3F",
                         "on-primary": "#ffffff",
-                        "surface-container-lowest": "#ffffff",
+                        "surface-container-lowest": "#F8F6F2",
                         "error": "#ba1a1a",
                         "surface-container-highest": "#e3e2e2",
                         "inverse-surface": "#303031",
@@ -41,20 +41,20 @@
                         "primary-fixed": "#e5e2e1",
                         "outline-variant": "#c4c7c7",
                         "surface-tint": "#5f5e5e",
-                        "secondary-fixed-dim": "#ebc168",
+                        "secondary-fixed-dim": "#8B1E3F",
                         "outline": "#747878",
                         "on-primary-fixed-variant": "#474646",
-                        "on-secondary-fixed-variant": "#5c4300",
+                        "on-secondary-fixed-variant": "#6D1428",
                         "on-tertiary-fixed": "#1a1c1a",
-                        "on-secondary-container": "#775804",
+                        "on-secondary-container": "#6D1428",
                         "inverse-on-surface": "#f2f0f0",
                         "tertiary-fixed-dim": "#c7c6c4",
                         "tertiary-fixed": "#e3e2df",
                         "surface-container-high": "#e9e8e7",
-                        "on-secondary-fixed": "#261a00",
-                        "background": "#fbf9f9",
-                        "surface": "#fbf9f9",
-                        "secondary-container": "#fdd177",
+                        "on-secondary-fixed": "#6D1428",
+                        "background": "#F3F0EA",
+                        "surface": "#F3F0EA",
+                        "secondary-container": "#8B1E3F",
                         "on-surface-variant": "#444748",
                         "primary-container": "#1c1b1b",
                         "inverse-primary": "#c8c6c5",
@@ -122,12 +122,16 @@
         :root {
         --chrome-bg: #ffffff;
         --chrome-bg-soft: rgba(255,255,255,.92);
-        --chrome-text: #1b1c1c;
-        --chrome-text-dim: rgba(0,0,0,.55);
-        --chrome-text-faint: rgba(0,0,0,.45);
-        --chrome-border: rgba(0,0,0,.1);
-        --chrome-hover: rgba(0,0,0,.06);
-        --chrome-accent: #795905;
+        --chrome-text: #111111;
+        --chrome-text-dim: rgba(17,17,17,.55);
+        --chrome-text-faint: rgba(17,17,17,.45);
+        --chrome-border: #E5E1DA;
+        --chrome-hover: rgba(17,17,17,.05);
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #F8F6F2;
+        --surface-warm: #F3F0EA;
+        --border-soft: #E5E1DA;
+        --text-muted: #777777;
     }
     html.theme-dark {
         --chrome-bg: #1c1b1b;
@@ -137,7 +141,11 @@
         --chrome-text-faint: rgba(255,255,255,.5);
         --chrome-border: rgba(255,255,255,.1);
         --chrome-hover: rgba(255,255,255,.1);
-        --chrome-accent: #ebc168;
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #1e1d1c;
+        --surface-warm: #201f1e;
+        --border-soft: rgba(255,255,255,.1);
+        --text-muted: #b9b6b1;
     }
 </style>
 <style>
@@ -164,7 +172,7 @@
     html.theme-dark .text-outline { color: #8a8781 !important; }
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
-    html.theme-dark .text-secondary { color: #ebc168 !important; }
+    html.theme-dark .text-secondary { color: #8B1E3F !important; }
     html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
     html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
@@ -178,7 +186,7 @@
     html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
     html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
     html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
-    html.theme-dark .hover\:text-secondary:hover { color: #ebc168 !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #8B1E3F !important; }
     html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
     html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
     html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
@@ -192,97 +200,223 @@
     html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
+<style>
+    /* ============  BUTTON + LIGHT FLASH ============ */
+    .btn-gold {
+        position: relative;
+        overflow: hidden;
+        background-color: var(--btn-gold-bg) !important;
+        color: var(--btn-gold-text) !important;
+    }
+    .btn-gold::after {
+        content: '';
+        position: absolute;
+        top: -10%;
+        bottom: -10%;
+        left: -80%;
+        width: 45%;
+        background: rgba(255,255,255,.55);
+        transform: skewX(-24deg);
+        pointer-events: none;
+    }
+    .btn-gold:hover::after { animation: authFlash 1.4s linear infinite; }
+    .btn-gold.flashing::after { animation: authFlash 1.4s cubic-bezier(.4,0,.2,1) 1; }
+    @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
+    :root           { --btn-gold-bg: #8B1E3F; --btn-gold-text: #ffffff; }
+    html.theme-dark { --btn-gold-bg: #6D1428; --btn-gold-text: #ffffff; }
+    /* ============ SHOP FILTER CHECKBOX (same system as Register .terms-checkbox) ============ */
+    .shop-checkbox {
+        border-radius: 4px;
+        transition: border-color .2s ease, background-color .2s ease;
+    }
+    .shop-checkbox:hover:not(:checked) { border-color: #8B1E3F; }
+    .shop-checkbox:checked {
+        background-color: #8B1E3F !important;
+        border-color: #8B1E3F !important;
+    }
+    .shop-checkbox:focus-visible { box-shadow: 0 0 0 3px rgba(139,30,63,.3); }
+    html.theme-dark .shop-checkbox {
+        border-color: #3a3937;
+        background-color: #201f1e;
+    }
+</style>
+<style>
+    /* ============ Shop: remap drawer + bottom-nav accent to burgundy (Register language) ============ */
+    #drawer-panel { --chrome-accent: #8B1E3F; --gold-wash: rgba(139,30,30,.10); }
+    html.theme-dark #drawer-panel { --chrome-accent: #8B1E3F; --gold-wash: rgba(163,38,38,.16); }
+    .bn-active .material-symbols-outlined { color: #8B1E3F !important; }
+    html.theme-dark .bn-active .material-symbols-outlined { color: #8B1E3F !important; }
+    .bn-active { color: #8B1E3F !important; }
+    html.theme-dark .bn-active { color: #8B1E3F !important; }
+</style>
+<style>
+    /* ============ PREMIUM CARD + HEADING (style tiruan Super-Admin, aksen Burgundy) ============ */
+    .card-premium {
+        box-shadow: 0 1px 2px rgb(17 17 17 / 0.04), 0 12px 32px -16px rgb(17 17 17 / 0.16);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .card-premium:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 2px 4px rgb(17 17 17 / 0.05), 0 20px 48px -20px rgb(17 17 17 / 0.22);
+        border-color: rgba(139, 30, 63, .45);   /* Burgundy, bukan gold */
+    }
+    html.theme-dark .card-premium {
+        box-shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 12px 32px -16px rgb(0 0 0 / 0.55);
+    }
+    html.theme-dark .card-premium:hover {
+        box-shadow: 0 2px 4px rgb(0 0 0 / 0.4), 0 20px 48px -20px rgb(0 0 0 / 0.7);
+        border-color: rgba(139, 30, 63, .55);
+    }
+
+    .premium-heading::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 0.95em;
+        margin-right: 0.65rem;
+        background: #8B1E3F;                      /* Burgundy accent bar */
+        border-radius: 9999px;
+        vertical-align: -0.05em;
+    }
+
+    /* ============ ATELIER EYEBROW MARKER ============ */
+    .atl-eyebrow { display: inline-flex; align-items: center; gap: .65rem; }
+    .atl-eyebrow::before {
+        content: '';
+        width: 30px;
+        height: 1px;
+        background: var(--chrome-accent);
+        opacity: .7;
+    }
+    /* ============ SHOP TOOLBAR (scoped: category nav + actions) ============ */
+    .shop-action-btn {
+        min-height: 40px;
+        min-width: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9999px;
+        transition: color .2s ease, border-color .2s ease, background-color .2s ease;
+    }
+    .shop-action-btn:hover { background-color: var(--chrome-hover); }
+    .shop-sort-trigger { min-height: 40px; }
+    /* ============ SHOP CONTENT CONTAINER (single product-area container, mirrors Wishlist card feel) ============ */
+    .shop-content-container {
+        background-color: #ffffff;
+        border: 1px solid var(--border-soft);
+        border-radius: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    .shop-content-container:hover { border-color: rgba(139, 30, 63, .45); }
+    /* Customer premium-heading: vertical burgundy accent bar (mirrors super-admin card-premium heading, NO gold) */
+    .shop-content-heading {
+        position: relative;
+        padding-left: 0.85rem;
+    }
+    .shop-content-heading::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 1.1em;
+        background: #8B1E3F;
+        border-radius: 9999px;
+    }
+    html.theme-dark .shop-content-container {
+        background-color: #1e1d1c;
+        border-color: var(--border-soft);
+    }
+    html.theme-dark .shop-content-container:hover { border-color: rgba(139, 30, 63, .55); }
+</style>
   </head>
-<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0 lg:pl-72">
+<body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
-<header class="bg-[var(--chrome-bg)] text-[var(--chrome-text)] sticky full-width top-0 border-b border-[var(--chrome-border)] flat no shadows z-40">
-<div class="flex justify-between items-center w-full px-container-margin h-16 lg:h-24">
-<button aria-label="{{ __('Menu') }}" class="hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center p-2 -ml-2" onclick="openDrawer()" type="button">
+<header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
+<button aria-label="{{ __('Menu') }}" class="hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
-<div>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
-<p class="hidden lg:block font-label-sm text-label-sm text-[var(--chrome-text-dim)] tracking-wide mt-0.5">{{ __('The Art of Everyday Dressing') }}</p>
-</div>
-<div class="flex items-center gap-2">
-<a aria-label="Search" href="{{ route('customer.search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2">
+<div class="flex items-center gap-sm">
+<a aria-label="Search" href="{{ route('customer.search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center">
 <span class="material-symbols-outlined" data-icon="search">search</span>
 </a>
 </div>
-</div>
 </header>
 <!-- Main Content -->
-<main class="flex-grow w-full flex flex-col">
+<main class="flex-grow w-full flex flex-col pt-16 pb-8 lg:pb-12 overflow-x-clip">
 <!-- Canvas Area -->
 <div class="flex-grow flex flex-col w-full">
-<!-- Category Bar (Desktop/Tablet) -->
-<div class="hidden md:flex w-full border-b border-outline-variant sticky top-16 lg:top-24 bg-surface z-30 px-container-margin py-sm gap-sm overflow-x-auto hide-scrollbar">
-<button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-pill shrink-0 px-md py-xs border border-primary text-primary font-label-sm text-label-sm rounded-full bg-primary/5">{{ __('All') }}</button>
-<button type="button" data-cat="Women" onclick="selectCategory('Women')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Women') }}</button>
-<button type="button" data-cat="Men" onclick="selectCategory('Men')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Men') }}</button>
-<button type="button" data-cat="Accessories" onclick="selectCategory('Accessories')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Accessories') }}</button>
-<button type="button" data-cat="Shoes" onclick="selectCategory('Shoes')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Shoes') }}</button>
-<button type="button" data-cat="Bags" onclick="selectCategory('Bags')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ __('Bags') }}</button>
-</div>
-<!-- Category Tabs (Mobile/Tablet) -->
-<div class="w-full border-b border-outline-variant overflow-x-auto hide-scrollbar sticky top-16 bg-surface z-30 md:hidden">
-<div class="flex px-container-margin gap-lg min-w-max h-12 items-center">
-<button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-tab font-label-sm text-label-sm text-secondary border-b-2 border-secondary h-full flex items-center px-1">{{ __('All') }}</button>
-<button type="button" data-cat="Women" onclick="selectCategory('Women')" class="cat-tab font-label-sm text-label-sm text-on-surface-variant h-full flex items-center px-1 hover:text-on-surface transition-colors">Women</button>
-<button type="button" data-cat="Men" onclick="selectCategory('Men')" class="cat-tab font-label-sm text-label-sm text-on-surface-variant h-full flex items-center px-1 hover:text-on-surface transition-colors">Men</button>
-<button type="button" data-cat="Accessories" onclick="selectCategory('Accessories')" class="cat-tab font-label-sm text-label-sm text-on-surface-variant h-full flex items-center px-1 hover:text-on-surface transition-colors">Accessories</button>
-</div>
-</div>
-<!-- Sort & Filter Bar -->
-<div class="flex justify-between items-center px-container-margin py-sm border-b border-outline-variant">
-<div class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Showing') }} <span id="result-count">0</span> {{ __('items') }}</div>
-<div class="flex gap-sm items-center">
-<div class="relative" id="sort-menu-container">
-<button class="flex items-center gap-1 font-label-sm text-label-sm text-on-surface hover:text-secondary transition-colors" onclick="toggleSortMenu()" type="button">
-<span id="sort-label">{{ __('Sort') }}</span>
-<span class="material-symbols-outlined text-[16px] transition-transform duration-200" data-icon="expand_more" id="sort-chevron">expand_more</span>
-</button>
-<div id="sort-menu" class="absolute right-0 top-full mt-xs w-56 bg-surface rounded-lg border border-outline-variant shadow-xl z-20 py-xs origin-top-right transition-all duration-200 ease-out invisible opacity-0 scale-95 -translate-y-1">
-<p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest px-md pt-xs pb-sm">{{ __('Sort By') }}</p>
-<button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors font-semibold" data-sort="Newest" onclick="selectSort('Newest')" type="button">
-<span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">schedule</span>{{ __('Newest') }}</span>
-<span class="material-symbols-outlined text-[18px] text-secondary sort-check">check</span>
-</button>
-<button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Price: Low to High" onclick="selectSort('Price: Low to High')" type="button">
-<span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_upward</span>{{ __('Price: Low to High') }}</span>
-<span class="material-symbols-outlined text-[18px] text-secondary sort-check invisible">check</span>
-</button>
-<button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Price: High to Low" onclick="selectSort('Price: High to Low')" type="button">
-<span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_downward</span>{{ __('Price: High to Low') }}</span>
-<span class="material-symbols-outlined text-[18px] text-secondary sort-check invisible">check</span>
-</button>
-<button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Popular" onclick="selectSort('Popular')" type="button">
-<span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">local_fire_department</span>{{ __('Popular') }}</span>
-<span class="material-symbols-outlined text-[18px] text-secondary sort-check invisible">check</span>
-</button>
-</div>
-</div>
-<a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart') }}" class="relative hover:text-secondary transition-colors flex items-center">
-<span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
-<span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
-</a>
-<button aria-label="{{ __('Filter') }}" class="hover:text-secondary transition-colors flex items-center relative" onclick="openFilter()" type="button">
-<span class="material-symbols-outlined text-[22px]" data-icon="tune">tune</span>
-<span id="filter-badge" class="absolute -top-1 -right-1.5 bg-secondary text-on-secondary text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold hidden">0</span>
-</button>
-</div>
+<!-- Shop Toolbar (parent container: category navigation left, actions right) -->
+<div class="shop-toolbar flex flex-row items-center gap-sm md:gap-md px-container-margin py-sm sticky top-16 lg:top-16 z-30">
+    <!-- Category Navigation Card (Super-Admin card-premium style) -->
+    <div class="shop-category-card flex-1 min-w-0 flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-md md:px-[64px] py-sm md:py-md shadow-sm">
+    <div class="shop-category-nav w-1/2 md:flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar">
+        <button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-pill shrink-0 px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('All') }}</button>
+        <button type="button" data-cat="Women" onclick="selectCategory('Women')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Women') }}</button>
+        <button type="button" data-cat="Men" onclick="selectCategory('Men')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Men') }}</button>
+        <button type="button" data-cat="Accessories" onclick="selectCategory('Accessories')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Accessories') }}</button>
+        <button type="button" data-cat="Shoes" onclick="selectCategory('Shoes')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Shoes') }}</button>
+        <button type="button" data-cat="Bags" onclick="selectCategory('Bags')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Bags') }}</button>
+    </div>
+        <!-- Shop Actions (Filter · Cart · Sort) -->
+        <button aria-label="{{ __('Filter') }}" class="shop-action-btn order-3 border border-outline-variant hover:text-secondary hover:border-secondary transition-colors relative" onclick="openFilter()" type="button">
+            <span class="material-symbols-outlined text-[18px]" data-icon="tune">tune</span>
+            <span id="filter-badge" class="absolute -top-1 -right-1.5 bg-secondary text-on-secondary text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold hidden">0</span>
+        </button>
+        <a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart') }}" class="shop-action-btn relative order-2 border border-outline-variant hover:text-secondary hover:border-secondary transition-colors">
+            <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
+            <span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+        </a>
+        <div class="relative shop-sort-trigger order-1 ml-auto" id="sort-menu-container">
+            <button class="shop-action-btn md:px-md gap-1 border border-outline-variant font-label-sm text-label-sm text-on-surface hover:text-secondary hover:border-secondary transition-colors" onclick="toggleSortMenu()" type="button">
+                <span id="sort-label" class="hidden md:inline">{{ __('Sort') }}</span>
+                <span class="material-symbols-outlined text-[16px] transition-transform duration-200" data-icon="expand_more" id="sort-chevron">expand_more</span>
+            </button>
+            <div id="sort-menu" class="absolute right-0 top-full mt-xs w-56 bg-surface rounded-lg border border-outline-variant shadow-xl z-20 py-xs origin-top-right transition-all duration-200 ease-out invisible opacity-0 scale-95 -translate-y-1">
+                <p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest px-md pt-xs pb-sm">{{ __('Sort By') }}</p>
+                <button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Newest" onclick="selectSort('Newest')" type="button">
+                    <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">schedule</span>{{ __('Newest') }}</span>
+                    <span class="material-symbols-outlined text-[18px] text-secondary sort-check">check</span>
+                </button>
+                <button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Price: Low to High" onclick="selectSort('Price: Low to High')" type="button">
+                    <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_upward</span>{{ __('Price: Low to High') }}</span>
+                    <span class="material-symbols-outlined text-[18px] text-secondary sort-check invisible">check</span>
+                </button>
+                <button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Price: High to Low" onclick="selectSort('Price: High to Low')" type="button">
+                    <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_downward</span>{{ __('Price: High to Low') }}</span>
+                    <span class="material-symbols-outlined text-[18px] text-secondary sort-check invisible">check</span>
+                </button>
+                <button class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-sort="Popular" onclick="selectSort('Popular')" type="button">
+                    <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">local_fire_department</span>{{ __('Popular') }}</span>
+                    <span class="material-symbols-outlined text-[18px] text-secondary sort-check invisible">check</span>
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- Active Filter Chips -->
-<div id="active-chips" class="hidden px-container-margin py-sm border-b border-outline-variant flex flex-wrap gap-sm items-center">
+<div id="active-chips" class="px-container-margin py-sm border-b border-outline-variant flex flex-wrap gap-sm items-center min-h-[2.75rem] opacity-0 pointer-events-none border-transparent transition-opacity duration-200">
 <div id="chips-list" class="flex flex-wrap gap-sm items-center grow"></div>
 <button id="clear-all" class="font-label-sm text-label-sm text-secondary underline hover:opacity-80 transition-opacity shrink-0" onclick="clearAll()" type="button">{{ __('Clear all') }}</button>
 </div>
-<!-- Product Grid -->
-<div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-gutter p-container-margin">
+<!-- Shop Content Container -->
+<div class="mx-auto max-w-[1400px] px-container-margin py-xl">
+<div class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
+<!-- Shop Header -->
+<div class="flex items-center justify-between gap-md mb-md flex-wrap">
+<div class="atl-eyebrow">
+<span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary shop-content-heading">{{ __('Shop') }}</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Showing') }} <span id="result-count">0</span> {{ __('items') }}</div>
+</div>
+<div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-gutter" style="background-color: transparent;">
 <!-- Product 1 -->
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A full-length editorial shot of a model wearing high-end minimal straight fit trousers in a sophisticated ivory tone. The lighting is soft and natural, evoking a premium fashion lookbook style. The background is a stark, bright studio setting to emphasize the clean lines and texture of the fabric." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAps2M8arrWbQY6jXAaISjDMblJoS3se1hpcmHWepeH6VczwS5VPkR4AM-pXm-ncoDRs1Nvlc-uTUq0Njoh538e4U4gtMAG0OyE3mOcGJPaz0g4fpCbTiNUVrBR12VzliXLH0tih4PCW3xl2DSpKGC_xkQZAyXSyn5W9SfOUfPKBcD0MUHvDTvlix7j3UEroZX7lXoveWhsxMc0B1clCXYWJ-5Mct8SR210aTaGAxBrtYJbIinXAiU"/>
+<img class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" data-alt="A full-length editorial shot of a model wearing high-end minimal straight fit trousers in a sophisticated ivory tone. The lighting is soft and natural, evoking a premium fashion lookbook style. The background is a stark, bright studio setting to emphasize the clean lines and texture of the fabric." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAps2M8arrWbQY6jXAaISjDMblJoS3se1hpcmHWepeH6VczwS5VPkR4AM-pXm-ncoDRs1Nvlc-uTUq0Njoh538e4U4gtMAG0OyE3mOcGJPaz0g4fpCbTiNUVrBR12VzliXLH0tih4PCW3xl2DSpKGC_xkQZAyXSyn5W9SfOUfPKBcD0MUHvDTvlix7j3UEroZX7lXoveWhsxMc0B1clCXYWJ-5Mct8SR210aTaGAxBrtYJbIinXAiU"/>
 <button aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
@@ -296,7 +430,7 @@
 <!-- Product 2 -->
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A premium fashion editorial image featuring a relaxed fit blazer in a muted earthy tone, worn by a model in a high-end minimalist setting. The lighting is diffused, highlighting the drape and structure of the garment. The overall aesthetic is clean, sophisticated, and modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAax1OhxvSc1htL3J-oZrJsK06nXoqeC7N_pmJWtnMwexPZmJABVpA8hgsW7QimiCrKDbAbF2QZJZqX32JY1O-0BxXFuuSE5FkP0xonQAuzISb3yAK3r-YD1svUl5LmSg6Rdn_vJ_617kZ_uA83kwaYo-0divU3t_vq5baQRi1RcPOEZ4sCHHcfr_xsvzeGRThANll5NUxqWpFBAnjwzb4kGdK_w_CN6OXuOOTYMiLbt9ADnrPJAKA"/>
+<img class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" data-alt="A premium fashion editorial image featuring a relaxed fit blazer in a muted earthy tone, worn by a model in a high-end minimalist setting. The lighting is diffused, highlighting the drape and structure of the garment. The overall aesthetic is clean, sophisticated, and modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAax1OhxvSc1htL3J-oZrJsK06nXoqeC7N_pmJWtnMwexPZmJABVpA8hgsW7QimiCrKDbAbF2QZJZqX32JY1O-0BxXFuuSE5FkP0xonQAuzISb3yAK3r-YD1svUl5LmSg6Rdn_vJ_617kZ_uA83kwaYo-0divU3t_vq5baQRi1RcPOEZ4sCHHcfr_xsvzeGRThANll5NUxqWpFBAnjwzb4kGdK_w_CN6OXuOOTYMiLbt9ADnrPJAKA"/>
 <button aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
@@ -310,7 +444,7 @@
 <!-- Product 3 -->
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A striking close-up shot of a pleated midi skirt in motion, capturing the elegant flow of the fabric. The color is a soft, warm neutral. The studio lighting casts subtle shadows to emphasize the pleats. The mood is refined and distinctly high-fashion." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAumPepE3uIJ6AwAkmTZ9_-YsAJidBJhhtUl1zj0Gr1TL0xi50_O8B6t0Y-QrwVzrsGu6V9Ez0WWnJAMSroGzu5A9ZFd9BMdxY9fo9n62z5gEI_137Qx8UGHVAMXBxep6FQ7LwfN5GDvsLBShloSY7SE5-bycdtXhqUHyAWcA4B36P_xx4H5ldRuNR76fo3XUMsW3b0Mh-XLL12XFCmtO-5LE3uGUVWagT2xjawnzMa4frmfrKE-SU"/>
+<img class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" data-alt="A striking close-up shot of a pleated midi skirt in motion, capturing the elegant flow of the fabric. The color is a soft, warm neutral. The studio lighting casts subtle shadows to emphasize the pleats. The mood is refined and distinctly high-fashion." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAumPepE3uIJ6AwAkmTZ9_-YsAJidBJhhtUl1zj0Gr1TL0xi50_O8B6t0Y-QrwVzrsGu6V9Ez0WWnJAMSroGzu5A9ZFd9BMdxY9fo9n62z5gEI_137Qx8UGHVAMXBxep6FQ7LwfN5GDvsLBShloSY7SE5-bycdtXhqUHyAWcA4B36P_xx4H5ldRuNR76fo3XUMsW3b0Mh-XLL12XFCmtO-5LE3uGUVWagT2xjawnzMa4frmfrKE-SU"/>
 <button aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
@@ -324,7 +458,7 @@
 <!-- Product 4 -->
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="An editorial fashion photograph of a crisp linen blend shirt in pristine white. The shirt is styled simply on a model against a minimalist, warm grey background. Natural light illuminates the breathable texture of the linen, creating a serene, luxury aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFDVvGhk1fRmFqr2msVELhThiwYZS_qaw5B2sFlpG_oUABmy2HUkfTdsOGgu3QoYvDiwgRG62hQu2-iz4wze0Jgt10LNVpzeMWtp5JvLJ0s1T3mW9YBzf7XWv2f73BU_Dp8smVo8FG7viGA4YrJKUSEmOB9PLKo12---_uuSNV455LZytF66bBcFn8pdC4HPxE7imenZu4rcnccn6PDK8lreskykX-dBeOyaljMak73QzcCv8e4no"/>
+<img class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" data-alt="An editorial fashion photograph of a crisp linen blend shirt in pristine white. The shirt is styled simply on a model against a minimalist, warm grey background. Natural light illuminates the breathable texture of the linen, creating a serene, luxury aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFDVvGhk1fRmFqr2msVELhThiwYZS_qaw5B2sFlpG_oUABmy2HUkfTdsOGgu3QoYvDiwgRG62hQu2-iz4wze0Jgt10LNVpzeMWtp5JvLJ0s1T3mW9YBzf7XWv2f73BU_Dp8smVo8FG7viGA4YrJKUSEmOB9PLKo12---_uuSNV455LZytF66bBcFn8pdC4HPxE7imenZu4rcnccn6PDK8lreskykX-dBeOyaljMak73QzcCv8e4no"/>
 <button aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
@@ -336,10 +470,18 @@
 </div>
 </a>
 </div>
-<div class="flex justify-center py-xl border-t border-outline-variant mt-md">
-<button class="font-label-caps text-label-caps bg-transparent border border-primary text-primary px-8 py-3 rounded-none hover:bg-primary hover:text-on-primary transition-colors">
+<!-- Empty State (shown when no products match the selected filters) -->
+<div id="product-empty" class="hidden w-full flex-col items-center justify-center text-center gap-md py-2xl">
+    <span class="material-symbols-outlined text-[72px] text-on-surface-variant/40" data-icon="inventory_2">inventory_2</span>
+    <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No products found for this selection.') }}</p>
+    <button class="btn-gold font-label-caps text-label-caps px-lg py-3 lg:px-xl rounded-full uppercase tracking-widest mt-xs" type="button" onclick="selectCategory(null)">{{ __('Reset filters') }}</button>
+</div>
+<div id="load-more-wrap" class="flex justify-center py-xl mt-md">
+<button class="btn-gold font-label-caps text-label-caps px-lg py-3 lg:px-xl rounded-full uppercase tracking-widest" type="button">
                     {{ __('LOAD MORE') }}
                 </button>
+</div>
+</div>
 </div>
 </div>
 </main>
@@ -353,7 +495,7 @@
 <span class="w-10 h-1 rounded-full bg-outline-variant"></span>
 </div>
 <div class="flex justify-between items-center px-container-margin py-sm border-b border-outline-variant shrink-0">
-<h2 class="font-title-md text-title-md uppercase tracking-widest">{{ __('Filters') }} <span id="applied-count" class="normal-case tracking-normal text-body-sm font-body-sm text-on-surface-variant"></span></h2>
+<h2 class="font-headline-md text-headline-md uppercase tracking-widest">{{ __('Filters') }} <span id="applied-count" class="normal-case tracking-normal text-body-sm font-body-sm text-on-surface-variant"></span></h2>
 <button aria-label="{{ __('Close filters') }}" class="hover:opacity-80 transition-opacity flex" onclick="closeFilter()" type="button">
 <span class="material-symbols-outlined" data-icon="close">close</span>
 </button>
@@ -361,11 +503,11 @@
 <div class="overflow-y-auto px-container-margin pb-md grow">
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Category') }}</h3>
 <div class="grid grid-cols-2 gap-sm">
-<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4" type="checkbox"/><span class="font-body-sm text-body-sm">Women</span></label>
-<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4" type="checkbox"/><span class="font-body-sm text-body-sm">Men</span></label>
-<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4" type="checkbox"/><span class="font-body-sm text-body-sm">Accessories</span></label>
-<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4" type="checkbox"/><span class="font-body-sm text-body-sm">Shoes</span></label>
-<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4" type="checkbox"/><span class="font-body-sm text-body-sm">Bags</span></label>
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">Women</span></label>
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">Men</span></label>
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">Accessories</span></label>
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">Shoes</span></label>
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">Bags</span></label>
 </div>
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Size') }}</h3>
 <div class="flex flex-wrap gap-sm">
@@ -377,28 +519,28 @@
 </div>
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Color') }}</h3>
 <div class="flex flex-wrap gap-md">
-<button data-type="color" aria-label="Black" class="f-opt w-8 h-8 rounded-full bg-[#111111] transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button data-type="color" aria-label="Black" class="f-opt w-8 h-8 rounded-full bg-[#111111] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
 <button data-type="color" aria-label="White" class="f-opt w-8 h-8 rounded-full bg-[#FFFFFF] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
-<button data-type="color" aria-label="Beige" class="f-opt w-8 h-8 rounded-full bg-[#E5DCC5] transition-shadow" onclick="toggleSel(this)" type="button"></button>
-<button data-type="color" aria-label="Brown" class="f-opt w-8 h-8 rounded-full bg-[#6B4F3A] transition-shadow" onclick="toggleSel(this)" type="button"></button>
-<button data-type="color" aria-label="Gold" class="f-opt w-8 h-8 rounded-full bg-[#D4AF37] transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button data-type="color" aria-label="Beige" class="f-opt w-8 h-8 rounded-full bg-[#E5DCC5] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button data-type="color" aria-label="Brown" class="f-opt w-8 h-8 rounded-full bg-[#6B4F3A] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
+<button data-type="color" aria-label="Gold" class="f-opt w-8 h-8 rounded-full bg-[#D4AF37] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
 </div>
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Price Range') }}</h3>
 <div class="flex items-end gap-gutter">
 <div class="flex-1">
 <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs" for="price-min">{{ __('Min') }}</label>
-<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-sm text-body-sm focus:outline-none focus:border-primary transition-colors" id="price-min" inputmode="numeric" placeholder="Rp 0"/>
+<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-sm text-body-sm focus:outline-none focus:ring-0 focus:border-secondary transition-colors" id="price-min" inputmode="numeric" placeholder="Rp 0"/>
 </div>
 <span class="text-on-surface-variant pb-sm">—</span>
 <div class="flex-1">
 <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs" for="price-max">{{ __('Max') }}</label>
-<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-sm text-body-sm focus:outline-none focus:border-primary transition-colors" id="price-max" inputmode="numeric" placeholder="Rp 1.000.000"/>
+<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-sm text-body-sm focus:outline-none focus:ring-0 focus:border-secondary transition-colors" id="price-max" inputmode="numeric" placeholder="Rp 1.000.000"/>
 </div>
 </div>
 </div>
 <div class="flex gap-gutter px-container-margin py-md border-t border-outline-variant shrink-0">
-<button class="flex-1 h-12 border border-primary text-primary font-label-caps text-label-caps tracking-widest hover:bg-surface-container-low transition-colors" onclick="resetFilters()" type="button">{{ __('RESET') }}</button>
-<button class="flex-1 h-12 bg-primary text-on-primary font-label-caps text-label-caps tracking-widest hover:opacity-90 transition-opacity" onclick="applyFilters()" type="button">{{ __('APPLY') }}</button>
+<button class="flex-1 h-12 border border-secondary text-secondary font-label-caps text-label-caps tracking-widest hover:bg-secondary/5 transition-colors" onclick="resetFilters()" type="button">{{ __('RESET') }}</button>
+<button class="btn-gold flex-1 h-12 font-label-caps text-label-caps tracking-widest" onclick="applyFilters()" type="button">{{ __('APPLY') }}</button>
 </div>
 </div>
     <script>
@@ -420,7 +562,7 @@
             });
             activeFilters.size = [];
             document.querySelectorAll('#filter-sheet .f-opt[data-type="size"]').forEach(function (b) {
-                if (b.classList.contains('bg-primary')) activeFilters.size.push(b.textContent.trim());
+                if (b.classList.contains('bg-secondary')) activeFilters.size.push(b.textContent.trim());
             });
             activeFilters.color = [];
             document.querySelectorAll('#filter-sheet .f-opt[data-type="color"]').forEach(function (b) {
@@ -464,9 +606,9 @@
             var selected = activeFilters.category.length === 1 ? activeFilters.category[0] : null;
             document.querySelectorAll('.cat-pill').forEach(function (b) {
                 var on = b.dataset.cat === selected || (selected === null && b.dataset.cat === 'All');
-                b.classList.toggle('border-primary', on);
-                b.classList.toggle('text-primary', on);
-                b.classList.toggle('bg-primary/5', on);
+                b.classList.toggle('border-secondary', on);
+                b.classList.toggle('text-secondary', on);
+                b.classList.toggle('bg-secondary/5', on);
                 b.classList.toggle('border-outline-variant', !on);
                 b.classList.toggle('text-on-surface-variant', !on);
             });
@@ -481,7 +623,7 @@
         function resetFilters() {
             document.querySelectorAll('#filter-sheet input[type="checkbox"]').forEach(function (cb) { cb.checked = false; });
             document.querySelectorAll('#filter-sheet .f-opt').forEach(function (el) {
-                el.classList.remove('ring-2', 'ring-on-surface', 'ring-offset-2', 'bg-primary', 'text-on-primary', 'border-primary');
+                el.classList.remove('ring-2', 'ring-secondary', 'ring-offset-2', 'bg-secondary', 'text-on-secondary', 'border-secondary');
             });
             document.getElementById('price-min').value = '';
             document.getElementById('price-max').value = '';
@@ -512,7 +654,11 @@
                 var pmax = activeFilters.price.max !== null ? 'Rp ' + activeFilters.price.max.toLocaleString('id-ID') : '∞';
                 addChip(pmin + ' – ' + pmax, 'price', 'price');
             }
-            document.getElementById('active-chips').classList.toggle('hidden', countActive() === 0);
+            var ac = document.getElementById('active-chips');
+            var hasChips = countActive() > 0;
+            ac.classList.toggle('opacity-0', !hasChips);
+            ac.classList.toggle('pointer-events-none', !hasChips);
+            ac.classList.toggle('border-transparent', !hasChips);
         }
         function removeFilter(type, val) {
             if (type === 'category') {
@@ -521,11 +667,11 @@
                 });
             } else if (type === 'size') {
                 document.querySelectorAll('#filter-sheet .f-opt[data-type="size"]').forEach(function (b) {
-                    if (b.textContent.trim() === val) b.classList.remove('bg-primary', 'text-on-primary', 'border-primary', 'ring-2', 'ring-on-surface');
+                    if (b.textContent.trim() === val) b.classList.remove('bg-secondary', 'text-on-secondary', 'border-secondary', 'ring-2', 'ring-secondary');
                 });
             } else if (type === 'color') {
                 document.querySelectorAll('#filter-sheet .f-opt[data-type="color"]').forEach(function (b) {
-                    if (b.getAttribute('aria-label') === val) b.classList.remove('ring-2', 'ring-on-surface', 'ring-offset-2');
+                    if (b.getAttribute('aria-label') === val) b.classList.remove('ring-2', 'ring-secondary', 'ring-offset-2');
                 });
             } else if (type === 'price') {
                 document.getElementById('price-min').value = '';
@@ -576,6 +722,13 @@
             });
             var countEl = document.getElementById('result-count');
             if (countEl) countEl.textContent = shown;
+            var emptyEl = document.getElementById('product-empty');
+            if (emptyEl) {
+                emptyEl.classList.toggle('hidden', shown > 0);
+                emptyEl.classList.toggle('flex', shown === 0);
+            }
+            var loadMoreEl = document.getElementById('load-more-wrap');
+            if (loadMoreEl) loadMoreEl.classList.toggle('hidden', shown === 0);
         }
         function applySort() {
             var grid = document.getElementById('product-grid');
@@ -592,14 +745,14 @@
         }
         function toggleSel(el) {
             if (el.dataset.type === 'size') {
-                el.classList.toggle('bg-primary');
-                el.classList.toggle('text-on-primary');
-                el.classList.toggle('border-primary');
+                el.classList.toggle('bg-secondary');
+                el.classList.toggle('text-on-secondary');
+                el.classList.toggle('border-secondary');
                 el.classList.toggle('ring-2');
-                el.classList.toggle('ring-on-surface');
+                el.classList.toggle('ring-secondary');
             } else if (el.dataset.type === 'color') {
                 el.classList.toggle('ring-2');
-                el.classList.toggle('ring-on-surface');
+                el.classList.toggle('ring-secondary');
                 el.classList.toggle('ring-offset-2');
             }
         }
@@ -662,5 +815,13 @@
             updateAppliedLabel();
             syncCategoryBar();
         })();
+        document.querySelectorAll('.btn-gold').forEach(function (b) {
+            b.addEventListener('click', function () {
+                b.classList.remove('flashing');
+                void b.offsetWidth;
+                b.classList.add('flashing');
+                setTimeout(function () { b.classList.remove('flashing'); }, 600);
+            });
+        });
     </script>
 </body></html>
