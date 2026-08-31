@@ -24,7 +24,7 @@
                         "primary-fixed-dim": "#c8c6c5",
                         "surface-variant": "#e3e2e2",
                         "on-surface": "#1b1c1c",
-                        "secondary": "#795905",
+                        "secondary": "#8B1E3F",
                         "surface-dim": "#dbdad9",
                         "on-error": "#ffffff",
                         "primary": "#000000",
@@ -32,7 +32,7 @@
                         "tertiary-container": "#1a1c1a",
                         "error-container": "#ffdad6",
                         "on-tertiary": "#ffffff",
-                        "secondary-fixed": "#ffdf9f",
+                        "secondary-fixed": "#8B1E3F",
                         "on-primary": "#ffffff",
                         "surface-container-lowest": "#ffffff",
                         "error": "#ba1a1a",
@@ -43,20 +43,20 @@
                         "primary-fixed": "#e5e2e1",
                         "outline-variant": "#c4c7c7",
                         "surface-tint": "#5f5e5e",
-                        "secondary-fixed-dim": "#ebc168",
+                        "secondary-fixed-dim": "#8B1E3F",
                         "outline": "#747878",
                         "on-primary-fixed-variant": "#474646",
-                        "on-secondary-fixed-variant": "#5c4300",
+                        "on-secondary-fixed-variant": "#6D1428",
                         "on-tertiary-fixed": "#1a1c1a",
-                        "on-secondary-container": "#775804",
+                        "on-secondary-container": "#6D1428",
                         "inverse-on-surface": "#f2f0f0",
                         "tertiary-fixed-dim": "#c7c6c4",
                         "tertiary-fixed": "#e3e2df",
                         "surface-container-high": "#e9e8e7",
-                        "on-secondary-fixed": "#261a00",
+                        "on-secondary-fixed": "#6D1428",
                         "background": "#fbf9f9",
                         "surface": "#fbf9f9",
-                        "secondary-container": "#fdd177",
+                        "secondary-container": "#8B1E3F",
                         "on-surface-variant": "#444748",
                         "primary-container": "#1c1b1b",
                         "inverse-primary": "#c8c6c5",
@@ -136,7 +136,7 @@
         --chrome-text-faint: rgba(0,0,0,.45);
         --chrome-border: rgba(0,0,0,.1);
         --chrome-hover: rgba(0,0,0,.06);
-        --chrome-accent: #795905;
+        --chrome-accent: #8B1E3F;
     }
     html.theme-dark {
         --chrome-bg: #1c1b1b;
@@ -146,7 +146,7 @@
         --chrome-text-faint: rgba(255,255,255,.5);
         --chrome-border: rgba(255,255,255,.1);
         --chrome-hover: rgba(255,255,255,.1);
-        --chrome-accent: #ebc168;
+        --chrome-accent: #8B1E3F;
     }
 </style>
 <style>
@@ -173,7 +173,7 @@
     html.theme-dark .text-outline { color: #8a8781 !important; }
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
-    html.theme-dark .text-secondary { color: #ebc168 !important; }
+    html.theme-dark .text-secondary { color: #8B1E3F !important; }
     html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
     html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
@@ -187,7 +187,7 @@
     html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
     html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
     html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
-    html.theme-dark .hover\:text-secondary:hover { color: #ebc168 !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #8B1E3F !important; }
     html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
     html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
     html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
@@ -201,7 +201,27 @@
     html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
-  </head>
+  <style>
+  /* ===== RALIVA SEARCH: premium card + burgundy parity (home/shop/order-tracking/wishlist) ===== */
+  :root { --surface-ivory:#F8F6F2; --surface-warm:#F3F0EA; --border-soft:#E5E1DA; --text-muted:#777777; }
+  html.theme-dark { --surface-ivory:#1e1d1c; --surface-warm:#201f1e; --border-soft:rgba(255,255,255,.1); --text-muted:#b9b6b1; }
+  .atl-eyebrow { display:inline-flex; align-items:center; gap:.65rem; }
+  .atl-eyebrow::before { content:''; width:30px; height:1px; background:var(--chrome-accent); opacity:.7; }
+  .card-premium { box-shadow:0 1px 2px rgb(17 17 17 / .04),0 12px 32px -16px rgb(17 17 17 / .16); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; }
+  .card-premium:hover { transform:translateY(-3px); box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
+  html.theme-dark .card-premium { background-color:var(--surface-ivory); border-color:var(--border-soft); box-shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px -12px rgb(0 0 0 / .5); }
+  html.theme-dark .card-premium:hover { box-shadow:0 2px 4px rgb(0 0 0 / .4),0 20px 48px -20px rgb(0 0 0 / .7); border-color:rgba(139,30,63,.55); }
+  .premium-heading::before { content:''; display:inline-block; width:4px; height:.95em; margin-right:.65rem; background:#8B1E3F; border-radius:9999px; vertical-align:-.05em; }
+  .reveal-up { opacity:0; }
+  .reveal-up.in { animation: sectionRise .7s cubic-bezier(.22,1,.36,1) forwards; }
+  @keyframes sectionRise { from { opacity:0; transform:translateY(16px);} to { opacity:1; transform:none; } }
+  @media (prefers-reduced-motion: reduce) { .reveal-up { animation:none !important; opacity:1 !important; transform:none !important; } }
+  #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(139,30,30,.10); }
+  html.theme-dark #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(163,38,38,.16); }
+  .bn-active .material-symbols-outlined { color:#8B1E3F !important; }
+  html.theme-dark .bn-active .material-symbols-outlined { color:#8B1E3F !important; }
+</style>
+</head>
 <body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
 <header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
@@ -217,33 +237,41 @@
 </div>
 </header>
 <!-- Main Content -->
-<main class="pt-16 lg:max-w-screen-xl lg:mx-auto lg:w-full">
+<main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Search Bar Section -->
-<section class="py-lg px-container-margin border-b border-outline-variant">
-<form class="flex items-center gap-sm w-full max-w-2xl mx-auto">
+<section class="py-xl reveal-up">
+<div class="mx-auto max-w-[1400px]">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<form class="flex items-center gap-sm w-full">
 <div class="relative flex-grow">
 <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
 <input autofocus class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-xl pr-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" placeholder="{{ __('Search products, stores, categories...') }}" type="search"/>
 </div>
-<button class="bg-primary text-on-primary font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:opacity-90 transition-opacity rounded-full" type="submit">{{ __('SEARCH') }}</button>
+<button class="bg-secondary text-on-secondary font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:opacity-90 transition-opacity rounded-full" type="submit">{{ __('SEARCH') }}</button>
 </form>
+</div>
+</div>
 </section>
 <!-- Popular Searches -->
-<section class="py-lg px-container-margin border-b border-outline-variant">
-<h2 class="font-title-md text-title-md text-on-surface mb-md">{{ __('Popular Searches') }}</h2>
-<div class="flex flex-wrap gap-sm">
+<div class="mx-auto max-w-[1400px]">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Popular Searches') }}</h3>
+<div class="mt-md flex flex-wrap gap-sm">
 @foreach (['Linen Shirt', 'Silk Dress', 'Blazer', 'Tote Bag', 'Trousers', 'Knit Top'] as $tag)
 <a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ $tag }}</a>
 @endforeach
 </div>
-</section>
+</div>
+</div>
 <!-- Trending Now -->
-<section class="py-xl px-container-margin">
-<div class="flex justify-between items-center mb-md">
-<h2 class="font-title-md text-title-md text-on-surface">{{ __('Trending Now') }}</h2>
+<section class="py-xl reveal-up">
+<div class="mx-auto max-w-[1400px]">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="flex justify-between items-center mb-xs">
+<h2 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ __('Trending Now') }}</h2>
 <a href="{{ route('customer.shop') }}" class="font-label-caps text-label-caps text-secondary uppercase tracking-widest hover:opacity-80 transition-opacity">View All</a>
 </div>
-<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+<div class="mt-md grid grid-cols-2 md:grid-cols-4 gap-gutter">
 @foreach ([
                     ['brand' => 'Noiré Studio', 'name' => 'Tailored Linen Blazer', 'price' => '$245.00', 'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ'],
                     ['brand' => 'Lunara Fashion', 'name' => 'Structured Leather Tote', 'price' => '$380.00', 'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuDotrquQ9ru5aXlWl5XbgLhEMJq3WBfo5DDEAS3Z-F5LnAIv27Q3259la3QLZghjnF5R8udNJqY0Toq6SHw5JvN3PqANThsUOvwujXixkrq5zZBH5OW_D3QTRD3qObufW5Uz2-ahDe36xdtDHuA8SK2Ldhp4wpMReozYAnqkNj5ZG3A37LwDOS6aXDnCEg_MNh_j2C1VKegB7PNMCwMV-jwzYAwrhuqG1UCGjQoSl3A0QRKO-gFHlQ'],
@@ -263,9 +291,21 @@
 </a>
 @endforeach
 </div>
+</div>
+</div>
 </section>
 </main>
 <!-- BottomNavBar (Mobile Only) -->
 @include('customer._partials.bottom-nav')
 @include('customer._partials.drawer')
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var els = document.querySelectorAll('.reveal-up');
+  if (!('IntersectionObserver' in window)) { els.forEach(function(e){ e.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { threshold: 0.12 });
+  els.forEach(function(e){ io.observe(e); });
+});
+</script>
 </body></html>
