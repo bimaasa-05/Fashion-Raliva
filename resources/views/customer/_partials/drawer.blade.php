@@ -11,10 +11,10 @@
     #drawer-panel.open .drawer-sec:nth-of-type(2) { animation-delay: .09s; }
     #drawer-panel.open .drawer-sec:nth-of-type(3) { animation-delay: .14s; }
     :root {
-        --gold-wash: rgba(253,209,119,.45);
+        --gold-wash: rgba(139,30,30,.10);
     }
     html.theme-dark {
-        --gold-wash: rgba(235,193,104,.16);
+        --gold-wash: rgba(163,38,38,.16);
     }
     .drawer-link-active {
         background-color: var(--gold-wash);

@@ -208,6 +208,9 @@
   .atl-eyebrow { display:inline-flex; align-items:center; gap:.65rem; }
   .atl-eyebrow::before { content:''; width:30px; height:1px; background:var(--chrome-accent); opacity:.7; }
   html.theme-dark .premium-heading::before { background:#8B1E3F; }
+  /* ===== Drawer / sidebar burgundy — match other customer pages (rgba(139,30,30)) ===== */
+  #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(139,30,30,.10); }
+  html.theme-dark #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(163,38,38,.16); }
   /* ===== Drawer / chrome burgundy remap ===== */
   html.theme-dark .bg-chrome-burgundy { background-color:#8B1E3F !important; }
   html.theme-dark .text-chrome-burgundy { color:#8B1E3F !important; }

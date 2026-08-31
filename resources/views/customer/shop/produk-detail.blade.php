@@ -205,7 +205,7 @@
         --chrome-text-faint: rgba(0,0,0,.45);
         --chrome-border: rgba(0,0,0,.1);
         --chrome-hover: rgba(0,0,0,.06);
-        --chrome-accent: #8B1E1E;
+        --chrome-accent: #8B1E3F;
     }
     html.theme-dark {
         --chrome-bg: #1c1b1b;
@@ -215,7 +215,7 @@
         --chrome-text-faint: rgba(255,255,255,.5);
         --chrome-border: rgba(255,255,255,.1);
         --chrome-hover: rgba(255,255,255,.1);
-        --chrome-accent: #A32626;
+        --chrome-accent: #C76A8A;
     }
 </style>
 <style>
@@ -318,8 +318,8 @@
 </style>
 <style>
     /* ============ Product Detail: remap drawer + bottom-nav accent to burgundy (Register language) ============ */
-    #drawer-panel { --chrome-accent: #8B1E1E; --gold-wash: rgba(139,30,30,.10); }
-    html.theme-dark #drawer-panel { --chrome-accent: #A32626; --gold-wash: rgba(163,38,38,.16); }
+    #drawer-panel { --chrome-accent: #8B1E3F; --gold-wash: rgba(139,30,30,.10); }
+    html.theme-dark #drawer-panel { --chrome-accent: #C76A8A; --gold-wash: rgba(163,38,38,.16); }
     .bn-active .material-symbols-outlined { color: #8B1E1E !important; }
     html.theme-dark .bn-active .material-symbols-outlined { color: #A32626 !important; }
     .bn-active { color: #8B1E1E !important; }

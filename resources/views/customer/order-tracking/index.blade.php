@@ -131,7 +131,7 @@
         }
         .timeline-active-circle {
             border-color: var(--chrome-accent) !important;
-            box-shadow: 0 0 0 4px rgba(139,30,63,.10);
+            box-shadow: 0 0 0 4px rgba(139,30,30,.10);
         }
         html.theme-dark .timeline-active-circle { box-shadow: 0 0 0 4px rgba(109,20,40,.16); }
         .timeline-active-dot {
