@@ -14,6 +14,7 @@
                 ['route' => 'superadmin.moderasi-produk', 'icon' => 'inventory_2', 'text' => 'Moderasi Produk'],
                 ['route' => 'superadmin.kategori-produk', 'icon' => 'category', 'text' => 'Kategori Produk'],
                 ['route' => 'superadmin.produk', 'icon' => 'checkroom', 'text' => 'Data Produk'],
+                ['route' => 'superadmin.store-staff', 'icon' => 'manage_accounts', 'text' => 'Staff Toko'],
             ],
         ],
         [
@@ -58,6 +59,7 @@
                 ['route' => 'superadmin.laporan', 'icon' => 'bar_chart', 'text' => 'Laporan'],
                 ['route' => 'superadmin.peringkat', 'icon' => 'leaderboard', 'text' => 'Peringkat'],
                 ['route' => 'superadmin.riwayat-aktivitas', 'icon' => 'history', 'text' => 'Riwayat Aktivitas'],
+                ['route' => 'superadmin.ulasan-produk-toko', 'icon' => 'star_rate', 'text' => 'Ulasan Produk Toko'],
             ],
         ],
     ];

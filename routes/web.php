@@ -80,6 +80,8 @@ use App\Http\Controllers\SuperAdmin\PromoPlatformController;
 use App\Http\Controllers\SuperAdmin\RiwayatAktivitasController;
 use App\Http\Controllers\SuperAdmin\SaldoTokoController;
 use App\Http\Controllers\SuperAdmin\StokController as SaStokController;
+use App\Http\Controllers\SuperAdmin\StoreStaffController;
+use App\Http\Controllers\SuperAdmin\UlasanProdukTokoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -252,11 +254,19 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/komplain/{komplain}/eskalasi', [SaKomplainController::class, 'eskalasi'])->name('komplain.eskalasi');
     Route::post('/komplain/{komplain}/tutup', [SaKomplainController::class, 'tutup'])->name('komplain.tutup');
     Route::get('/pengiriman', [SaPengirimanController::class, 'index'])->name('pengiriman');
+    Route::put('/pengiriman/{pengiriman}/status', [SaPengirimanController::class, 'updateStatus'])->name('pengiriman.status');
     Route::get('/stok', [SaStokController::class, 'index'])->name('stok');
     Route::get('/produksi', [ProduksiController::class, 'index'])->name('produksi');
     Route::get('/gudang', [GudangController::class, 'index'])->name('gudang');
     Route::get('/saldo-toko', [SaldoTokoController::class, 'index'])->name('saldo-toko');
     Route::get('/produk', [ProdukController::class, 'index'])->name('produk');
+    Route::get('/ulasan-produk-toko', [UlasanProdukTokoController::class, 'index'])->name('ulasan-produk-toko');
+    Route::put('/ulasan-produk-toko/{review}/nonaktifkan', [UlasanProdukTokoController::class, 'nonaktifkan'])->name('ulasan-produk-toko.nonaktifkan');
+    Route::put('/ulasan-produk-toko/{review}/aktifkan', [UlasanProdukTokoController::class, 'aktifkan'])->name('ulasan-produk-toko.aktifkan');
+    Route::get('/store-staff', [StoreStaffController::class, 'index'])->name('store-staff');
+    Route::post('/store-staff', [StoreStaffController::class, 'store'])->name('store-staff.store');
+    Route::get('/store-staff/{staff}', [StoreStaffController::class, 'show'])->name('store-staff.show');
+    Route::put('/store-staff/{staff}', [StoreStaffController::class, 'update'])->name('store-staff.update');
 });
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->group(function () {
