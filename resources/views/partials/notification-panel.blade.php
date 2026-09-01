@@ -6,16 +6,22 @@
         ['icon' => 'local_shipping', 'html' => 'Tugas pengiriman: <span class="font-bold">3 paket</span> menunggu input resi.', 'time' => '2 jam lalu'],
     ];
     $lihatSemuaUrl = isset($lihatSemuaRoute) ? route($lihatSemuaRoute) : '#';
+    $unreadCount = $unread ?? 0;
+    $markReadUrl = isset($markReadRoute) ? route($markReadRoute) : '';
 @endphp
 <div class="relative" data-notification-container>
     <button type="button" data-notification-toggle class="relative text-on-surface hover:text-secondary transition-colors" aria-label="Notifikasi">
         <span class="material-symbols-outlined">notifications</span>
-        <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+        @if ($unreadCount > 0)
+            <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+        @endif
     </button>
     <div data-notification-menu class="hidden absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-[60] overflow-hidden">
         <div class="flex items-center justify-between px-4 py-3 border-b border-muted-border">
             <p class="font-label-sm text-sm text-on-surface uppercase tracking-wider">Notifikasi</p>
-            <button type="button" class="font-label-sm text-[10px] text-gold-accent uppercase hover:underline" onclick="showRalivaToast('Semua notifikasi ditandai sudah dibaca.', 'done_all')">Tandai Dibaca</button>
+            @if ($markReadUrl)
+                <button type="button" id="panel-mark-read" class="font-label-sm text-[10px] text-gold-accent uppercase hover:underline">Tandai Dibaca</button>
+            @endif
         </div>
         <ul class="max-h-80 overflow-y-auto">
             @foreach ($notificationItems as $item)
@@ -31,3 +37,24 @@
         <a href="{{ $lihatSemuaUrl }}" class="block text-center px-4 py-3 font-label-sm text-label-sm text-gold-accent uppercase tracking-widest hover:bg-surface-container-low transition-colors border-t border-muted-border">Lihat Semua Notifikasi</a>
     </div>
 </div>
+@if ($markReadUrl)
+<script>
+    document.getElementById('panel-mark-read')?.addEventListener('click', () => {
+        fetch('{{ $markReadUrl }}', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+        }).then((res) => {
+            if (!res.ok) return;
+            document.querySelectorAll('.notif-dot').forEach((d) => d.remove());
+            const badge = document.querySelector('[data-notification-container] .bg-error');
+            if (badge) badge.remove();
+            showRalivaToast('Semua notifikasi ditandai sudah dibaca.', 'done_all');
+        });
+    });
+</script>
+@endif

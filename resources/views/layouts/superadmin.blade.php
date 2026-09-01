@@ -1,7 +1,29 @@
+@php
+    $saNotifUnread = \App\Models\Notification::whereNull('dibaca_pada')->count();
+    $saNotifItems = \App\Models\Notification::with('user:user_id,nama_lengkap')
+        ->orderByDesc('created_at')
+        ->limit(5)
+        ->get()
+        ->map(fn ($n) => [
+            'icon' => match($n->tipe) {
+                'order' => 'shopping_cart',
+                'pembayaran' => 'payments',
+                'pengiriman' => 'local_shipping',
+                'komplain' => 'support_agent',
+                'wallet' => 'account_balance_wallet',
+                'promo' => 'local_offer',
+                default => 'settings',
+            },
+            'html' => '<span class="font-bold">' . e($n->user->nama_lengkap ?? '-') . '</span> — ' . $n->pesan,
+            'time' => $n->created_at->diffForHumans(),
+        ])
+        ->all();
+@endphp
 <!DOCTYPE html>
 <html class="light" lang="id">
 <head>
     <meta charset="utf-8" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>RALIVA - @yield('title', 'Super Admin')</title>
     @include('partials.theme-head')
@@ -42,7 +64,7 @@
                 <span class="material-symbols-outlined icon-moon">dark_mode</span>
                 <span class="material-symbols-outlined icon-sun hidden">light_mode</span>
             </button>
-            @include('partials.notification-panel')
+            @include('partials.notification-panel', ['items' => $saNotifItems, 'lihatSemuaRoute' => 'superadmin.notifikasi', 'unread' => $saNotifUnread, 'markReadRoute' => 'superadmin.notifikasi.tandai-dibaca'])
             @include('partials.profile-menu', ['compact' => true])
         </div>
     </header>
@@ -87,7 +109,7 @@
                     <span class="material-symbols-outlined icon-moon">dark_mode</span>
                     <span class="material-symbols-outlined icon-sun hidden">light_mode</span>
                 </button>
-                @include('partials.notification-panel')
+            @include('partials.notification-panel', ['items' => $saNotifItems, 'lihatSemuaRoute' => 'superadmin.notifikasi', 'unread' => $saNotifUnread, 'markReadRoute' => 'superadmin.notifikasi.tandai-dibaca'])
                 @include('partials.profile-menu')
             </div>
         </header>

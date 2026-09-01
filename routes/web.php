@@ -66,6 +66,7 @@ use App\Http\Controllers\SuperAdmin\LaporanController;
 use App\Http\Controllers\SuperAdmin\ManajemenPenggunaController;
 use App\Http\Controllers\SuperAdmin\ManajemenTokoController;
 use App\Http\Controllers\SuperAdmin\ModerasiProdukController;
+use App\Http\Controllers\SuperAdmin\NotifikasiController;
 use App\Http\Controllers\SuperAdmin\PajakBiayaController;
 use App\Http\Controllers\SuperAdmin\PengaturanSistemController;
 use App\Http\Controllers\SuperAdmin\PengembalianDanaController;
@@ -244,6 +245,8 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
     Route::get('/peringkat', [PeringkatController::class, 'index'])->name('peringkat');
     Route::get('/riwayat-aktivitas', [RiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
+    Route::post('/notifikasi/tandai-dibaca', [NotifikasiController::class, 'markRead'])->name('notifikasi.tandai-dibaca');
     Route::get('/pengaturan-sistem', [PengaturanSistemController::class, 'index'])->name('pengaturan-sistem');
     Route::put('/pengaturan-sistem', [PengaturanSistemController::class, 'updateSettings'])->name('pengaturan-sistem.update');
     Route::post('/pengaturan-sistem/legal', [PengaturanSistemController::class, 'updateLegal'])->name('pengaturan-sistem.legal');
