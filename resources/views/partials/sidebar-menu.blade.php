@@ -58,6 +58,7 @@
                 ['route' => 'superadmin.laporan', 'icon' => 'bar_chart', 'text' => 'Laporan'],
                 ['route' => 'superadmin.peringkat', 'icon' => 'leaderboard', 'text' => 'Peringkat'],
                 ['route' => 'superadmin.riwayat-aktivitas', 'icon' => 'history', 'text' => 'Riwayat Aktivitas'],
+                ['route' => 'superadmin.ulasan-produk-toko', 'icon' => 'star_rate', 'text' => 'Ulasan Produk Toko'],
             ],
         ],
     ];

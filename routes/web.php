@@ -80,6 +80,7 @@ use App\Http\Controllers\SuperAdmin\PromoPlatformController;
 use App\Http\Controllers\SuperAdmin\RiwayatAktivitasController;
 use App\Http\Controllers\SuperAdmin\SaldoTokoController;
 use App\Http\Controllers\SuperAdmin\StokController as SaStokController;
+use App\Http\Controllers\SuperAdmin\UlasanProdukTokoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -257,6 +258,9 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/gudang', [GudangController::class, 'index'])->name('gudang');
     Route::get('/saldo-toko', [SaldoTokoController::class, 'index'])->name('saldo-toko');
     Route::get('/produk', [ProdukController::class, 'index'])->name('produk');
+    Route::get('/ulasan-produk-toko', [UlasanProdukTokoController::class, 'index'])->name('ulasan-produk-toko');
+    Route::put('/ulasan-produk-toko/{review}/nonaktifkan', [UlasanProdukTokoController::class, 'nonaktifkan'])->name('ulasan-produk-toko.nonaktifkan');
+    Route::put('/ulasan-produk-toko/{review}/aktifkan', [UlasanProdukTokoController::class, 'aktifkan'])->name('ulasan-produk-toko.aktifkan');
 });
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->group(function () {
