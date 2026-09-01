@@ -27,7 +27,7 @@
                       "primary-fixed-dim": "#c8c6c5",
                       "surface-variant": "#e3e2e2",
                       "on-surface": "#1b1c1c",
-                      "secondary": "#795905",
+                      "secondary": "#8B1E3F",
                       "surface-dim": "#dbdad9",
                       "on-error": "#ffffff",
                       "primary": "#000000",
@@ -35,7 +35,7 @@
                       "tertiary-container": "#1a1c1a",
                       "error-container": "#ffdad6",
                       "on-tertiary": "#ffffff",
-                      "secondary-fixed": "#ffdf9f",
+                      "secondary-fixed": "#fbe2e9",
                       "on-primary": "#ffffff",
                       "surface-container-lowest": "#ffffff",
                       "error": "#ba1a1a",
@@ -46,20 +46,20 @@
                       "primary-fixed": "#e5e2e1",
                       "outline-variant": "#c4c7c7",
                       "surface-tint": "#5f5e5e",
-                      "secondary-fixed-dim": "#ebc168",
+                      "secondary-fixed-dim": "#f1c2cf",
                       "outline": "#747878",
                       "on-primary-fixed-variant": "#474646",
-                      "on-secondary-fixed-variant": "#5c4300",
+                      "on-secondary-fixed-variant": "#6D1428",
                       "on-tertiary-fixed": "#1a1c1a",
-                      "on-secondary-container": "#775804",
+                      "on-secondary-container": "#8B1E3F",
                       "inverse-on-surface": "#f2f0f0",
                       "tertiary-fixed-dim": "#c7c6c4",
                       "tertiary-fixed": "#e3e2df",
                       "surface-container-high": "#e9e8e7",
-                      "on-secondary-fixed": "#261a00",
+                      "on-secondary-fixed": "#5e0f23",
                       "background": "#fbf9f9",
                       "surface": "#fbf9f9",
-                      "secondary-container": "#fdd177",
+                      "secondary-container": "#fbe2e9",
                       "on-surface-variant": "#444748",
                       "primary-container": "#1c1b1b",
                       "inverse-primary": "#c8c6c5",
@@ -198,17 +198,21 @@
         --chrome-text-faint: rgba(0,0,0,.45);
         --chrome-border: rgba(0,0,0,.1);
         --chrome-hover: rgba(0,0,0,.06);
-        --chrome-accent: #795905;
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #F8F6F2;
+        --border-soft: #E5E1DA;
     }
     html.theme-dark {
-        --chrome-bg: #1c1b1b;
+        --chrome-bg: #1c1b1c;
         --chrome-bg-soft: rgba(28,27,27,.9);
         --chrome-text: #ffffff;
         --chrome-text-dim: rgba(255,255,255,.6);
         --chrome-text-faint: rgba(255,255,255,.5);
         --chrome-border: rgba(255,255,255,.1);
         --chrome-hover: rgba(255,255,255,.1);
-        --chrome-accent: #ebc168;
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #1e1d1c;
+        --border-soft: rgba(255,255,255,.1);
     }
 </style>
 <style>
@@ -235,7 +239,7 @@
     html.theme-dark .text-outline { color: #8a8781 !important; }
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
-    html.theme-dark .text-secondary { color: #ebc168 !important; }
+    html.theme-dark .text-secondary { color: #8B1E3F !important; }
     html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
     html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
@@ -249,7 +253,7 @@
     html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
     html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
     html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
-    html.theme-dark .hover\:text-secondary:hover { color: #ebc168 !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #8B1E3F !important; }
     html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
     html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
     html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
@@ -262,6 +266,51 @@
     html.theme-dark .group:hover .group-hover\:text-primary { color: #f2efec !important; }
     html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
+  </style>
+<style>
+  /* ===== Premium cards + burgundy accents (parity with home/account) ===== */
+  .card-premium { box-shadow:0 1px 2px rgb(17 17 17 / .04),0 12px 32px -16px rgb(17 17 17 / .16); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; }
+  .card-premium:hover { transform:translateY(-3px); box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
+  html.theme-dark .card-premium { background-color:var(--surface-ivory); border-color:var(--border-soft); box-shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px -12px rgb(0 0 0 / .5); }
+  html.theme-dark .card-premium:hover { box-shadow:0 2px 4px rgb(0 0 0 / .4),0 20px 48px -20px rgb(0 0 0 / .7); border-color:rgba(139,30,63,.55); }
+  .premium-heading { display:block; }
+  .premium-heading::before { content:''; display:inline-block; width:4px; height:.95em; margin-right:.65rem; background:#8B1E3F; border-radius:9999px; vertical-align:-.05em; }
+  .atl-eyebrow { display:inline-flex; align-items:center; gap:.65rem; }
+  .atl-eyebrow::before { content:''; width:30px; height:1px; background:var(--chrome-accent); opacity:.7; }
+  html.theme-dark .premium-heading::before { background:#8B1E3F; }
+  /* ===== Drawer / sidebar burgundy — match other customer pages (rgba(139,30,30)) ===== */
+  #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(139,30,30,.10); }
+  html.theme-dark #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(163,38,38,.16); }
+  /* ===== Drawer / chrome burgundy remap ===== */
+  html.theme-dark .bg-chrome-burgundy { background-color:#8B1E3F !important; }
+  html.theme-dark .text-chrome-burgundy { color:#8B1E3F !important; }
+  .border-burgundy { border-color:#8B1E3F !important; }
+  /* ===== Primary solid button (parity with Home SUBSCRIBE / SHOP COLLECTION) ===== */
+  .btn-gold {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--btn-gold-bg) !important;
+    color: var(--btn-gold-text) !important;
+  }
+  .btn-gold::after {
+    content: '';
+    position: absolute;
+    top: -10%;
+    bottom: -10%;
+    left: -80%;
+    width: 45%;
+    background: rgba(255,255,255,.55);
+    transform: skewX(-24deg);
+    pointer-events: none;
+  }
+  .btn-gold:hover::after { animation: authFlash 1.4s linear infinite; }
+  .btn-gold.flashing::after { animation: authFlash 1.4s cubic-bezier(.4,0,.2,1) 1; }
+  @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
+  :root           { --btn-gold-bg: #8B1E3F; --btn-gold-text: #ffffff; }
+  html.theme-dark { --btn-gold-bg: #6D1428; --btn-gold-text: #ffffff; }
+  .reveal-up { opacity:0; transform:translateY(12px); transition:opacity .5s ease,transform .5s ease; }
+  .reveal-up.is-visible { opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce) { .reveal-up { opacity:1; transform:none; transition:none; } }
 </style>
   </head>
 <body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased selection:bg-secondary-container selection:text-on-secondary-container pb-[calc(72px+env(safe-area-inset-bottom))] lg:pl-72">
@@ -274,57 +323,111 @@
 <div class="w-10"></div> <!-- Spacer for center alignment -->
 </header>
 <!-- Main Content -->
-<main class="flex-grow flex flex-col px-container-margin py-lg gap-sm max-w-2xl mx-auto w-full">
-<!-- Default Address Card (Home) -->
-<article class="bg-surface border border-outline-variant rounded-DEFAULT p-sm relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline">
-<div class="flex justify-between items-start mb-base">
-<div class="flex items-center gap-xs">
-<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">home</span>
-<h2 class="font-title-md text-title-md text-on-surface">{{ __('Home') }}</h2>
-<span class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded-sm ml-2">{{ __('Default') }}</span>
-</div>
-</div>
-<div class="font-body-sm text-body-sm text-on-surface-variant space-y-1 mb-md">
-<p class="font-medium text-on-surface">Jane Doe</p>
-<p>+1 (555) 123-4567</p>
-<p>123 Fashion Avenue, Suite 4B<br/>New York, NY 10001<br/>United States</p>
-</div>
-<div class="flex gap-sm border-t border-outline-variant pt-sm mt-auto">
-<button class="font-label-caps text-label-caps text-on-surface hover:text-secondary transition-colors uppercase tracking-wider flex-1 text-center py-2">{{ __('Edit') }}</button>
-<div class="w-px bg-outline-variant"></div>
-<button class="font-label-caps text-label-caps text-error hover:opacity-80 transition-opacity uppercase tracking-wider flex-1 text-center py-2">{{ __('Delete') }}</button>
-</div>
-</article>
-<!-- Address Card (Office) -->
-<article class="bg-surface border border-outline-variant rounded-DEFAULT p-sm relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline">
-<div class="flex justify-between items-start mb-base">
-<div class="flex items-center gap-xs">
-<span class="material-symbols-outlined text-on-surface-variant text-[20px]">business</span>
-<h2 class="font-title-md text-title-md text-on-surface">{{ __('Office') }}</h2>
-</div>
-</div>
-<div class="font-body-sm text-body-sm text-on-surface-variant space-y-1 mb-md">
-<p class="font-medium text-on-surface">Jane Doe</p>
-<p>+1 (555) 987-6543</p>
-<p>456 Corporate Blvd, Floor 12<br/>Los Angeles, CA 90001<br/>United States</p>
-</div>
-<div class="flex gap-sm border-t border-outline-variant pt-sm mt-auto">
-<button class="font-label-caps text-label-caps text-on-surface hover:text-secondary transition-colors uppercase tracking-wider flex-1 text-center py-2">{{ __('Edit') }}</button>
-<div class="w-px bg-outline-variant"></div>
-<button class="font-label-caps text-label-caps text-error hover:opacity-80 transition-opacity uppercase tracking-wider flex-1 text-center py-2">{{ __('Delete') }}</button>
-</div>
-<!-- Set as default action -->
-<button class="absolute top-sm right-sm font-label-sm text-label-sm text-on-surface-variant hover:text-secondary underline underline-offset-4 opacity-0 group-hover:opacity-100 transition-opacity">{{ __('Set Default') }}</button>
-</article>
-<!-- Add New Address Button (Stickyish context within main) -->
-<div class="mt-lg sticky bottom-[env(safe-area-inset-bottom)] pb-md bg-background/90 backdrop-blur-sm pt-4 z-10">
-<button class="w-full bg-primary text-on-primary font-label-caps text-label-caps py-4 rounded-DEFAULT hover:opacity-90 transition-opacity flex items-center justify-center gap-2 uppercase tracking-wider">
+<main class="pt-16 pb-[120px] w-full">
+<section class="py-xl reveal-up">
+<div class="mx-auto max-w-[1400px]">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">ADDRESS BOOK</p>
+<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('My Addresses') }}</h2>
+
+<!-- Empty State -->
+@if($addresses->isEmpty())
+<div class="flex flex-col items-center justify-center py-xl text-center">
+<span class="material-symbols-outlined text-6xl text-outline-variant mb-md">location_on</span>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-sm">{{ __('No addresses yet.') }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-md">{{ __('Add your first address to get started.') }}</p>
+<a href="{{ route('customer.address.create') }}" class="btn-gold inline-flex items-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest shadow-lg">
 <span class="material-symbols-outlined text-[20px]">add</span>
-                {{ __('Add New Address') }}
-            </button>
+{{ __('Add New Address') }}
+</a>
 </div>
+@else
+<div class="flex flex-col gap-sm">
+@foreach($addresses as $address)
+<article class="bg-surface border border-outline-variant rounded-DEFAULT p-sm relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline" data-address-id="{{ $address->address_id }}">
+<div class="flex justify-between items-start mb-base">
+<div class="flex items-center gap-xs">
+@if($address->label === 'Home')
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">home</span>
+@elseif($address->label === 'Office')
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">business</span>
+@else
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">location_on</span>
+@endif
+<h2 class="font-title-md text-title-md text-on-surface">{{ __($address->label) }}</h2>
+@if($address->is_default)
+<span class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded-sm ml-2">{{ __('Default') }}</span>
+@endif
+</div>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant space-y-1 mb-md">
+<p class="font-medium text-on-surface">{{ $address->nama_penerima }}</p>
+<p>{{ $address->nomor_telepon }}</p>
+<p>{{ $address->alamat }}<br/>{{ $address->kota }}, {{ $address->provinsi }} {{ $address->kode_pos }}<br/>{{ $address->negara }}</p>
+</div>
+<div class="flex gap-sm border-t border-outline-variant pt-sm mt-auto">
+<button type="button" data-edit-id="{{ $address->address_id }}" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-wider bg-transparent hover:bg-secondary/5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>{{ __('Edit') }}</button>
+<div class="w-px bg-outline-variant"></div>
+<form method="POST" action="{{ route('customer.address.destroy', $address) }}" class="flex-1 flex items-center justify-center" onsubmit="if(!confirm('{{ __('Are you sure you want to delete this address?') }}')) return false;">
+@csrf
+@method('DELETE')
+<button type="submit" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-full border border-error text-error font-label-caps text-label-caps uppercase tracking-wider bg-transparent hover:bg-error/5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>{{ __('Delete') }}
+</button>
+</form>
+</div>
+@if(! $address->is_default)
+<button type="button" data-set-default="{{ $address->address_id }}" class="absolute top-sm right-sm flex items-center gap-1 font-label-sm text-label-sm text-secondary border border-secondary bg-secondary/5 hover:bg-secondary/10 px-2.5 py-1 rounded-full lg:opacity-0 lg:group-hover:opacity-100 transition-all">{{ __('Set Default') }}</button>
+@endif
+</article>
+@endforeach
+</div>
+<div class="mt-lg flex justify-center">
+<a href="{{ route('customer.address.create') }}" class="btn-gold inline-flex items-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest shadow-lg">
+<span class="material-symbols-outlined text-[20px]">add</span>
+{{ __('Add New Address') }}
+</a>
+</div>
+@endif
+</div>
+</div>
+</section>
 </main>
+
 <!-- Bottom Navigation Bar -->
 @include('customer._partials.bottom-nav')
 @include('customer._partials.drawer')
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-edit-id]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const id = this.getAttribute('data-edit-id');
+            if (!id) return;
+            window.location.href = '/customer/address/' + encodeURIComponent(id) + '/edit';
+        });
+    });
+
+    document.querySelectorAll('[data-set-default]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const id = this.getAttribute('data-set-default');
+            if (!id) return;
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/customer/address/' + encodeURIComponent(id) + '/set-default';
+
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_token';
+            csrf.value = '{{ csrf_token() }}';
+
+            form.appendChild(csrf);
+            document.body.appendChild(form);
+            form.submit();
+        });
+    });
+});
+</script>
 </body></html>
