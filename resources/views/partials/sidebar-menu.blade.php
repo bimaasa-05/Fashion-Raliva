@@ -10,6 +10,7 @@
             'label' => 'Manajemen',
             'items' => [
                 ['route' => 'superadmin.manajemen-pengguna', 'icon' => 'group', 'text' => 'Data Pengguna'],
+                ['route' => 'superadmin.manajemen-role', 'icon' => 'shield', 'text' => 'Manajemen Role'],
                 ['route' => 'superadmin.manajemen-toko', 'icon' => 'storefront', 'text' => 'Data Toko'],
                 ['route' => 'superadmin.moderasi-produk', 'icon' => 'inventory_2', 'text' => 'Moderasi Produk'],
                 ['route' => 'superadmin.kategori-produk', 'icon' => 'category', 'text' => 'Kategori Produk'],
