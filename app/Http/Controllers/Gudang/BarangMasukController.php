@@ -41,6 +41,10 @@ class BarangMasukController extends Controller
 
     public function store(Request $request)
     {
+        if (! auth()->user()->hasPermission('warehouse.stock_in')) {
+            abort(403, 'Anda tidak memiliki izin (warehouse.stock_in) untuk melakukan tindakan ini.');
+        }
+
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {
