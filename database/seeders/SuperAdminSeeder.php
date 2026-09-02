@@ -17,6 +17,7 @@ class SuperAdminSeeder extends Seeder
                 'nama_lengkap' => 'Super Admin Raliva',
                 'password' => Hash::make('password'),
                 'role_id' => Role::where('nama_role', Role::SUPER_ADMIN)->value('role_id'),
+                'nomor_telepon' => '081100000000',
                 'email_verified_at' => now(),
                 'status' => User::STATUS_AKTIF,
             ]
