@@ -36,4 +36,16 @@ class WarehouseStaff extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
+
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'warehouse_staff_permissions', 'warehouse_staff_id', 'permission_id')
+            ->withPivot('warehouse_staff_permission_id', 'status')
+            ->withTimestamps();
+    }
+
+    public function warehouseStaffPermissions(): HasMany
+    {
+        return $this->hasMany(WarehouseStaffPermission::class, 'warehouse_staff_id', 'warehouse_staff_id');
+    }
 }

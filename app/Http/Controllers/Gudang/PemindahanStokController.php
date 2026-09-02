@@ -53,6 +53,10 @@ class PemindahanStokController extends Controller
 
     public function store(Request $request)
     {
+        if (! auth()->user()->hasPermission('warehouse.transfer')) {
+            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+        }
+
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {

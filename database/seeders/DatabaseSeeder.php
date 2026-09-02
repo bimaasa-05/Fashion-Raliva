@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             SuperAdminSeeder::class,
             UserSeeder::class,
             RalivaDemoSeeder::class,
+            WarehouseStaffPermissionSeeder::class,
         ]);
     }
 }
