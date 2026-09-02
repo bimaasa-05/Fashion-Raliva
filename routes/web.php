@@ -319,7 +319,14 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang'])->g
     Route::post('/pelanggan-request/konfirmasi', [GudangPelangganRequestController::class, 'konfirmasi'])->name('pelanggan-request.konfirmasi');
     Route::get('/notifikasi', [GudangNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [GudangProfilController::class, 'index'])->name('profil');
+    Route::post('/profil', [GudangProfilController::class, 'updateProfile'])->name('profil.update');
     Route::post('/ganti-gudang', [GantiGudangController::class, 'store'])->name('ganti');
+    Route::post('/barang-masuk', [GudangBarangMasukController::class, 'store'])->name('barang-masuk.store');
+    Route::post('/barang-keluar', [GudangBarangKeluarController::class, 'store'])->name('barang-keluar.store');
+    Route::post('/pemindahan', [GudangPemindahanStokController::class, 'store'])->name('pemindahan.store');
+    Route::post('/pemeriksaan', [GudangPemeriksaanStokController::class, 'store'])->name('pemeriksaan.store');
+    Route::post('/stok-rusak', [GudangStokRusakController::class, 'store'])->name('stok-rusak.store');
+    Route::post('/notifikasi/tandai-dibaca', [GudangNotifikasiController::class, 'markRead'])->name('notifikasi.tandai-dibaca');
 });
 
 Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->group(function () {
