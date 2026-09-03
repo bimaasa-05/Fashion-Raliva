@@ -310,7 +310,7 @@
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-secondary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
-<a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.address') }}">
+<a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.address.index') }}">
 <div class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors" data-icon="location_on">location_on</span>
 <span class="font-body-lg text-body-lg text-on-surface">{{ __('Addresses') }}</span>
