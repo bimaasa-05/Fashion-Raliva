@@ -10,45 +10,54 @@
 <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Katalog Produk Platform</h2>
-        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">
-            <span class="material-symbols-outlined text-[14px]">visibility</span> Mode Lihat
-        </span>
+        <div class="flex items-center gap-3 flex-wrap">
+            <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
+                <span class="material-symbols-outlined text-[18px]">tune</span>
+                Filter
+                <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
+            </button>
+            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">
+                <span class="material-symbols-outlined text-[14px]">visibility</span> Mode Lihat
+            </span>
+        </div>
     </div>
 
     <!-- Filters -->
-    <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
-        <div class="flex items-center gap-2 shrink-0">
-            <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-            <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+    <div data-filter-panel class="hidden md:block mb-6">
+        <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
+            <div class="flex items-center gap-2 shrink-0">
+                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+            </div>
+            <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
+            <div id="chip-group" class="flex flex-wrap gap-2">
+                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
+                <button type="button" data-chip="pending" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu ({{ $stats['pending'] }})</button>
+                <button type="button" data-chip="aktif" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Aktif ({{ $stats['aktif'] }})</button>
+                <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditolak ({{ $stats['ditolak'] }})</button>
+                <button type="button" data-chip="nonaktif" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Nonaktif ({{ $stats['nonaktif'] }})</button>
+                <button type="button" data-chip="draft" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Draft ({{ $stats['draft'] }})</button>
+                <button type="button" data-chip="arsip" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Arsip ({{ $stats['arsip'] }})</button>
+            </div>
         </div>
-        <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
-        <div id="chip-group" class="flex flex-wrap gap-2">
-            <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
-            <button type="button" data-chip="pending" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu ({{ $stats['pending'] }})</button>
-            <button type="button" data-chip="aktif" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Aktif ({{ $stats['aktif'] }})</button>
-            <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditolak ({{ $stats['ditolak'] }})</button>
-            <button type="button" data-chip="nonaktif" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Nonaktif ({{ $stats['nonaktif'] }})</button>
-            <button type="button" data-chip="draft" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Draft ({{ $stats['draft'] }})</button>
-            <button type="button" data-chip="arsip" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Arsip ({{ $stats['arsip'] }})</button>
-        </div>
-    </div>
 
-    <!-- Search + Result Count -->
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
-        <div class="relative flex-1">
-            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-            <input id="produk-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama produk, toko, atau kategori..." />
-            <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
-                <span class="material-symbols-outlined text-[20px]">close</span>
-            </button>
+        <!-- Search + Result Count -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div class="relative flex-1">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                <input id="produk-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama produk, toko, atau kategori..." />
+                <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+            <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span id="result-count">{{ $products->count() }}</span> produk
+            </p>
         </div>
-        <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-            <span id="result-count">{{ $products->count() }}</span> produk
-        </p>
     </div>
 
     <!-- Products Table -->
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto hidden md:block">
         <table class="w-full min-w-[850px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -99,6 +108,46 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Mobile: kartu per produk -->
+    <div class="md:hidden grid grid-cols-1 gap-gutter">
+        @forelse ($products as $produk)
+            @php
+                $statusLabel = match ($produk->status) {
+                    'aktif' => ['Disetujui', 'bg-secondary-container/20 text-secondary border-secondary/20'],
+                    'pending' => ['Menunggu', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                    'ditolak' => ['Ditolak', 'bg-error/10 text-error border-error/20'],
+                    'nonaktif' => ['Nonaktif', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                    'draft' => ['Draft', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                    'arsip' => ['Arsip', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                    default => [ucfirst($produk->status), 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                };
+            @endphp
+            <article data-table-row data-status="{{ $produk->status }}" data-search="{{ strtolower($produk->nama_produk.' '.($produk->store->nama_toko ?? '').' '.($produk->category->nama_kategori ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                <div class="flex items-start justify-between gap-3 mb-3">
+                    <div class="min-w-0">
+                        <p class="font-title-md text-title-md text-on-surface leading-tight">{{ $produk->nama_produk }}</p>
+                        <p class="text-on-surface-variant text-xs mt-0.5">{{ $produk->store->nama_toko ?? '-' }}</p>
+                        <span class="mt-1 inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ ucfirst($produk->tipe_produk) }}</span>
+                    </div>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $statusLabel[1] }} text-[10px] font-bold uppercase border shrink-0">{{ $statusLabel[0] }}</span>
+                </div>
+                <dl class="space-y-2 font-body-md text-sm">
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-on-surface-variant">Kategori</dt>
+                        <dd class="text-on-surface text-right">{{ $produk->category->nama_kategori ?? '-' }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-on-surface-variant">Harga</dt>
+                        <dd class="font-bold text-gold-accent text-right">Rp {{ number_format((float) $produk->harga_dasar, 0, ',', '.') }}</dd>
+                    </div>
+                </dl>
+            </article>
+        @empty
+            <p class="text-center text-on-surface-variant py-10">Belum ada produk terdaftar di platform.</p>
+        @endforelse
+        <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada produk yang cocok.</p>
+    </div>
 </section>
 @endsection
 
@@ -108,12 +157,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const scope = document.querySelector('[data-table-scope]');
     if (!scope) return;
 
-    const rows = Array.from(scope.querySelectorAll('[data-table-row]'));
+    const rows = Array.from(scope.querySelectorAll('tr[data-table-row], article[data-table-row]'));
     const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
     const searchInput = document.getElementById('produk-search');
     const clearBtn = document.getElementById('clear-search');
     const countEl = document.getElementById('result-count');
     const emptySearch = document.getElementById('empty-search');
+    const emptySearchMobile = document.getElementById('empty-search-mobile');
 
     const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
     const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
@@ -131,12 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
             row.classList.toggle('hidden', !show);
             if (show) {
                 visible++;
-                row.querySelector('.row-num').textContent = visible;
+                const num = row.querySelector('.row-num');
+                if (num) num.textContent = visible;
             }
         });
 
         countEl.textContent = visible;
         emptySearch.classList.toggle('hidden', visible > 0);
+        if (emptySearchMobile) emptySearchMobile.classList.toggle('hidden', visible > 0);
 
         if (rows.length === 0) {
             emptySearch.classList.add('hidden');

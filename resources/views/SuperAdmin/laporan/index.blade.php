@@ -86,7 +86,7 @@
     <div class="flex justify-between items-center mb-6">
         <h3 class="font-title-md text-on-surface uppercase tracking-wider premium-heading">Transaksi Terbaru</h3>
     </div>
-    <div class="border border-muted-border bg-surface-container-lowest rounded-lg overflow-x-auto card-premium">
+    <div class="border border-muted-border bg-surface-container-lowest rounded-lg overflow-x-auto hidden md:block card-premium">
         <table class="w-full text-left border-collapse premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low/50">
@@ -125,6 +125,43 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
+
+    <!-- Mobile: kartu transaksi terbaru -->
+    <div class="md:hidden grid grid-cols-1 gap-gutter">
+        @forelse($recentTransactions as $tx)
+            @php
+                $statusMap = [
+                    'dibayar' => ['Dibayar', 'bg-info/10 text-info'],
+                    'diproses' => ['Diproses', 'bg-secondary-container/20 text-secondary'],
+                    'dikirim' => ['Dikirim', 'bg-secondary-container/20 text-secondary'],
+                    'selesai' => ['Selesai', 'bg-success/10 text-success'],
+                ];
+                $st = $statusMap[$tx->status] ?? [$tx->status, 'bg-surface-container-high text-on-surface-variant'];
+            @endphp
+            <article class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                <div class="flex items-start justify-between gap-3 mb-3">
+                    <p class="font-mono text-sm text-on-surface leading-tight">{{ $tx->nomor_order }}</p>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $st[1] }} text-[10px] font-bold uppercase border shrink-0">{{ $st[0] }}</span>
+                </div>
+                <dl class="space-y-2 font-body-md text-sm">
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-on-surface-variant">Toko</dt>
+                        <dd class="text-on-surface text-right">{{ $tx->store->nama_toko ?? '-' }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-on-surface-variant">Tanggal</dt>
+                        <dd class="text-on-surface-variant text-xs text-right">{{ $tx->created_at ? \Carbon\Carbon::parse($tx->created_at)->locale('id')->translatedFormat('d M Y - H.i') : '-' }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-on-surface-variant">Jumlah</dt>
+                        <dd class="text-on-surface font-bold text-right">Rp {{ number_format((float)$tx->grand_total, 0, ',', '.') }}</dd>
+                    </div>
+                </dl>
+            </article>
+        @empty
+            <p class="text-center text-on-surface-variant py-10">Belum ada transaksi tercatat.</p>
+        @endforelse
     </div>
 </div>
 @endsection

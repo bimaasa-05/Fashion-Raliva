@@ -53,9 +53,9 @@
     <section class="rise rise-d1">
         <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-                <div>
+                <div class="flex items-center gap-3 flex-wrap">
                     <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Staff Toko</h2>
-                    <p class="text-xs text-on-surface-variant mt-1">Semua staff yang ditugaskan di seluruh toko.</p>
+                    <span class="text-xs text-on-surface-variant mt-0.5 w-full">Semua staff yang ditugaskan di seluruh toko.</span>
                 </div>
                 <button type="button" onclick="openModal('modal-tambah-staff')" class="py-2.5 px-5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center gap-2 shrink-0">
                     <span class="material-symbols-outlined text-[18px]">person_add</span>Tambah Staff
@@ -63,7 +63,14 @@
             </div>
 
             <!-- Filters -->
-            <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
+            <div class="md:hidden mb-6">
+                <button type="button" data-filter-toggle class="inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors w-full">
+                    <span class="material-symbols-outlined text-[18px]">tune</span>
+                    Filter
+                    <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
+                </button>
+            </div>
+            <div data-filter-panel class="hidden md:block flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
                 <div class="relative flex-1 min-w-[220px]">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                     <input type="text" id="searchInput" placeholder="Cari nama staff atau toko..." class="w-full bg-transparent border border-muted-border rounded-lg pl-10 pr-4 py-2.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" oninput="applyFilter()" />
@@ -91,7 +98,7 @@
             </div>
 
             <!-- Table -->
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto hidden md:block">
                 <table class="w-full min-w-[860px] font-body-md text-sm">
                     <thead>
                         <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -164,6 +171,67 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile: kartu per staff -->
+            <div class="md:hidden grid grid-cols-1 gap-gutter mb-6">
+                @forelse ($staff as $s)
+                    @php
+                        $u = $s->user;
+                        $nm = $u?->nama_lengkap ?? '-';
+                        $initial = collect(explode(' ', $nm))->map(fn ($w) => mb_substr($w, 0, 1))->slice(0, 2)->implode('');
+                        $rkey = $roleOf($s);
+                        $roleClass = match ($s->user?->role_id) {
+                            3 => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
+                            4 => 'bg-secondary-container/20 text-secondary border-secondary/20',
+                            5 => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
+                            default => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
+                        };
+                    @endphp
+                    <article class="staff-row bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium"
+                        data-id="{{ $s->store_staff_id }}"
+                        data-status="{{ $s->status }}"
+                        data-role="{{ $s->user?->role_id }}"
+                        data-store="{{ $s->store_id }}"
+                        data-search="{{ strtolower($nm . ' ' . ($u?->email ?? '') . ' ' . ($s->store->nama_toko ?? '')) }}">
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0 font-title-md text-xs text-on-surface">{{ $initial }}</div>
+                                <div class="min-w-0">
+                                    <p class="font-title-md text-title-md text-on-surface truncate">{{ $nm }}</p>
+                                    <p class="text-xs text-on-surface-variant truncate">{{ $u?->email ?? '-' }}</p>
+                                </div>
+                            </div>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $roleClass }} text-[9px] font-bold uppercase border shrink-0 whitespace-nowrap">{{ $rkey }}</span>
+                        </div>
+                        <dl class="space-y-2 font-body-md text-sm mb-4">
+                            <div class="flex justify-between gap-3">
+                                <dt class="text-on-surface-variant">Toko</dt>
+                                <dd class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-low border border-muted-border text-on-surface-variant text-[11px] text-right">{{ $s->store->nama_toko ?? '-' }}</dd>
+                            </div>
+                            <div class="flex justify-between gap-3">
+                                <dt class="text-on-surface-variant">Ditugaskan</dt>
+                                <dd class="text-on-surface text-right">{{ $s->tanggal_penugasan?->translatedFormat('d M Y') ?? '-' }}</dd>
+                            </div>
+                        </dl>
+                        <div class="flex items-center gap-gutter">
+                            <form method="POST" action="{{ route('superadmin.store-staff.update', $s->store_staff_id) }}" class="shrink-0">
+                                @csrf
+                                @method('PUT')
+                                <select name="status" onchange="this.form.submit()" class="bg-transparent border border-muted-border rounded-lg px-2 py-2 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ $s->status === 'aktif' ? 'text-secondary border-secondary/30' : 'text-error border-error/30' }}">
+                                    <option value="aktif" {{ $s->status === 'aktif' ? 'selected' : '' }}>Aktif</option>
+                                    <option value="nonaktif" {{ $s->status === 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                                </select>
+                            </form>
+                            <button type="button" onclick="openDetail({{ $s->store_staff_id }})" class="flex-1 min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">visibility</span>Detail
+                            </button>
+                        </div>
+                    </article>
+                @empty
+                    <p class="text-center text-on-surface-variant py-10">Belum ada staff toko.</p>
+                @endforelse
+                <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada staff yang cocok.</p>
             </div>
 
             <!-- Empty Search State -->
@@ -328,6 +396,8 @@
         });
 
         document.getElementById('empty-search').style.display = visible === 0 ? 'flex' : 'none';
+        const em = document.getElementById('empty-search-mobile');
+        if (em) em.style.display = visible === 0 ? 'block' : 'none';
         document.querySelector('[data-table-wrap]')?.closest('div')?.querySelector('table')?.closest('div')?.parentElement?.querySelector('.overflow-x-auto')?.style?.setProperty('display', visible === 0 ? 'none' : '');
 
         // Update count

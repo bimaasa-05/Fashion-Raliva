@@ -55,15 +55,20 @@
     <!-- Toolbar -->
     <section class="rise rise-d1">
         <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
                 <div>
                     <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Pengiriman</h2>
                     <p class="text-xs text-on-surface-variant mt-1">Semua pengiriman dari seluruh toko di platform.</p>
                 </div>
+                <button type="button" data-filter-toggle data-filter-target="#pengiriman-filter" class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">tune</span>
+                    Filter
+                    <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
+                </button>
             </div>
 
             <!-- Filters -->
-            <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
+            <div id="pengiriman-filter" data-filter-panel class="hidden md:block flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
                 <div class="relative flex-1 min-w-[220px]">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                     <input type="text" id="searchInput" placeholder="Cari nomor pesanan, toko, kurir, atau resi..." class="w-full bg-transparent border border-muted-border rounded-lg pl-10 pr-4 py-2.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" oninput="applyFilter()" />
@@ -82,7 +87,7 @@
             </div>
 
             <!-- Table -->
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto hidden md:block">
                 <table class="w-full min-w-[1000px] font-body-md text-sm">
                     <thead>
                         <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -146,6 +151,70 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile: kartu per pengiriman -->
+            <div id="card-grid" class="md:hidden grid grid-cols-1 gap-gutter">
+                @forelse($shipments as $s)
+                    @php
+                        $pelanggan = $s->order?->checkout?->user;
+                    @endphp
+                    <article data-status="{{ $s->status }}" data-search="{{ strtolower(($s->order->nomor_order ?? '').' '.($s->order->store->nama_toko ?? '').' '.($s->courier->nama_kurir ?? '').' '.($s->nomor_resi ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <div class="min-w-0">
+                                <p class="font-mono font-bold text-on-surface leading-tight">{{ $s->order->nomor_order ?? '-' }}</p>
+                                <p class="text-xs text-on-surface-variant mt-0.5">{{ $s->order->store->nama_toko ?? '-' }}</p>
+                            </div>
+                            <form method="POST" action="{{ route('superadmin.pengiriman.status', $s->shipment_id) }}" class="shrink-0">
+                                @csrf
+                                @method('PUT')
+                                <select name="status" onchange="if(confirm('Ubah status pengiriman ini?')) this.form.submit(); else this.value='{{ $s->status }}';" class="bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant', } }}">
+                                    <option value="pending" {{ $s->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="diproses" {{ $s->status === 'diproses' ? 'selected' : '' }}>Diproses</option>
+                                    <option value="dikirim" {{ $s->status === 'dikirim' ? 'selected' : '' }}>Dikirim</option>
+                                    <option value="diterima" {{ $s->status === 'diterima' ? 'selected' : '' }}>Diterima</option>
+                                    <option value="gagal" {{ $s->status === 'gagal' ? 'selected' : '' }}>Gagal</option>
+                                </select>
+                            </form>
+                        </div>
+
+                        <dl class="space-y-2 font-body-md text-sm mb-4">
+                            <div class="flex justify-between gap-3">
+                                <dt class="text-on-surface-variant">Kurir</dt>
+                                <dd class="text-on-surface text-right">{{ $s->courier->nama_kurir ?? '-' }}</dd>
+                            </div>
+                            <div class="flex justify-between gap-3">
+                                <dt class="text-on-surface-variant">No. Resi</dt>
+                                <dd class="font-mono text-on-surface-variant text-right text-xs">{{ $s->nomor_resi ?? '-' }}</dd>
+                            </div>
+                            <div class="flex justify-between gap-3">
+                                <dt class="text-on-surface-variant">Ongkir</dt>
+                                <dd class="text-on-surface text-right">Rp {{ number_format((float) $s->ongkir, 0, ',', '.') }}</dd>
+                            </div>
+                            <div class="flex justify-between gap-3">
+                                <dt class="text-on-surface-variant">Pelanggan</dt>
+                                <dd class="text-on-surface text-right">{{ $pelanggan->nama_lengkap ?? '-' }}</dd>
+                            </div>
+                        </dl>
+
+                        <button type="button" onclick="openDetail(this)" class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors"
+                            data-order="{{ $s->order->nomor_order ?? '-' }}"
+                            data-toko="{{ $s->order->store->nama_toko ?? '-' }}"
+                            data-kurir="{{ $s->courier->nama_kurir ?? '-' }}"
+                            data-resi="{{ $s->nomor_resi ?? '-' }}"
+                            data-ongkir="Rp {{ number_format((float) $s->ongkir, 0, ',', '.') }}"
+                            data-estimasi="{{ $s->estimasi_tiba ? \Carbon\Carbon::parse($s->estimasi_tiba)->locale('id')->translatedFormat('d M Y') : '-' }}"
+                            data-dikirim="{{ $s->dikirim_pada ? \Carbon\Carbon::parse($s->dikirim_pada)->locale('id')->translatedFormat('d M Y H:i') : '-' }}"
+                            data-diterima="{{ $s->diterima_pada ? \Carbon\Carbon::parse($s->diterima_pada)->locale('id')->translatedFormat('d M Y H:i') : '-' }}"
+                            data-status="{{ ucfirst($s->status) }}"
+                            data-pelanggan="{{ $pelanggan->nama_lengkap ?? '-' }}">
+                            <span class="material-symbols-outlined text-[16px]">visibility</span>Detail
+                        </button>
+                    </article>
+                @empty
+                    <p class="text-center text-on-surface-variant py-10">Belum ada data pengiriman.</p>
+                @endforelse
+                <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada pengiriman yang cocok.</p>
             </div>
 
             <!-- Empty Search State -->
@@ -238,19 +307,25 @@
         const search = document.getElementById('searchInput').value.toLowerCase().trim();
         const status = document.getElementById('filterStatus').value;
         const rows = document.querySelectorAll('#table-body tr[data-status]');
+        const cards = document.querySelectorAll('#card-grid article[data-status]');
         let visible = 0;
 
-        rows.forEach(row => {
-            const rowStatus = row.dataset.status;
-            const rowSearch = row.dataset.search;
+        const match = (el) => {
+            const rowStatus = el.dataset.status;
+            const rowSearch = el.dataset.search;
             let show = true;
             if (status && rowStatus !== status) show = false;
             if (search && !rowSearch.includes(search)) show = false;
-            row.style.display = show ? '' : 'none';
+            el.style.display = show ? '' : 'none';
             if (show) visible++;
-        });
+        };
+
+        rows.forEach(match);
+        cards.forEach(match);
 
         document.getElementById('empty-search').style.display = visible === 0 ? 'flex' : 'none';
+        const em = document.getElementById('empty-search-mobile');
+        if (em) em.style.display = visible === 0 ? 'block' : 'none';
     }
 
     function resetFilter() {

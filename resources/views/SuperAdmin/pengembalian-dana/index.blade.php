@@ -48,40 +48,49 @@
     </section>
 
     <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Daftar Pengembalian Dana</h2>
-
-        <!-- Filters -->
-        <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
-            <div class="flex items-center gap-2 shrink-0">
-                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
-            </div>
-            <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
-            <div id="chip-group" class="flex flex-wrap gap-2">
-                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
-                <button type="button" data-chip="requested" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu ({{ $stats['requested'] }})</button>
-                <button type="button" data-chip="disetujui" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Disetujui ({{ $stats['disetujui'] }})</button>
-                <button type="button" data-chip="selesai" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Selesai ({{ $stats['selesai'] }})</button>
-                <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditolak ({{ $stats['ditolak'] }})</button>
-            </div>
+        <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Pengembalian Dana</h2>
+            <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
+                <span class="material-symbols-outlined text-[18px]">tune</span>
+                Filter
+                <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
+            </button>
         </div>
 
-        <!-- Search + Result Count -->
-        <div class="mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
-            <div class="relative flex-1">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                <input id="refund-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari ID refund, nomor order, nama pelanggan, atau toko..." />
-                <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
-                    <span class="material-symbols-outlined text-[20px]">close</span>
-                </button>
+        <!-- Filters -->
+        <div data-filter-panel class="hidden md:block mb-6">
+            <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
+                <div class="flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+                </div>
+                <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
+                <div id="chip-group" class="flex flex-wrap gap-2">
+                    <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
+                    <button type="button" data-chip="requested" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu ({{ $stats['requested'] }})</button>
+                    <button type="button" data-chip="disetujui" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Disetujui ({{ $stats['disetujui'] }})</button>
+                    <button type="button" data-chip="selesai" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Selesai ({{ $stats['selesai'] }})</button>
+                    <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditolak ({{ $stats['ditolak'] }})</button>
+                </div>
             </div>
-            <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-                <span id="result-count">{{ $refunds->count() }}</span> refund
-            </p>
+
+            <!-- Search + Result Count -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div class="relative flex-1">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input id="refund-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari ID refund, nomor order, nama pelanggan, atau toko..." />
+                    <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                </div>
+                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                    <span id="result-count">{{ $refunds->count() }}</span> refund
+                </p>
+            </div>
         </div>
 
         <!-- Table -->
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto hidden md:block">
             <table class="w-full min-w-[950px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
@@ -152,6 +161,72 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Mobile: kartu per refund -->
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse ($refunds as $refund)
+                @php
+                    $badge = $badgeMap[$refund->status];
+                    $kode = 'REF-' . str_pad((string) $refund->refund_id, 10, '0', STR_PAD_LEFT);
+                @endphp
+                <article data-table-row data-status="{{ $refund->status }}" data-search="{{ strtolower($kode.' '.$refund->order?->nomor_order.' '.($refund->requester?->nama_lengkap ?? '').' '.($refund->order?->store?->nama_toko ?? '').' '.$refund->alasan) }}" data-id="{{ $refund->refund_id }}" data-kode="{{ $kode }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="min-w-0">
+                            <p class="font-mono font-bold text-on-surface leading-tight">{{ $kode }}</p>
+                            <span class="mt-1 inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border {{ $refund->tipe_refund === \App\Models\Refund::TIPE_FULL ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }}">{{ $refund->tipe_refund }}</span>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded {{ $badge['class'] }} text-[10px] font-bold uppercase shrink-0">{{ $badge['label'] }}</span>
+                    </div>
+
+                    <dl class="space-y-2 font-body-md text-sm mb-4">
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Pesanan</dt>
+                            <dd class="font-mono text-on-surface-variant text-right">{{ $refund->order?->nomor_order ?? '-' }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Pelanggan</dt>
+                            <dd class="text-on-surface text-right">{{ $refund->requester?->nama_lengkap ?? '-' }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Toko</dt>
+                            <dd class="text-on-surface text-right">{{ $refund->order?->store?->nama_toko ?? '-' }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Jumlah</dt>
+                            <dd class="font-bold text-gold-accent text-right whitespace-nowrap">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Diajukan</dt>
+                            <dd class="text-on-surface text-right">{{ $refund->diajukan_pada ? \Carbon\Carbon::parse($refund->diajukan_pada)->locale('id')->diffForHumans() : '-' }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3 items-start">
+                            <dt class="text-on-surface-variant shrink-0">Alasan</dt>
+                            <dd class="text-on-surface text-right">{{ \Illuminate\Support\Str::limit($refund->alasan, 60) }}</dd>
+                        </div>
+                    </dl>
+
+                    <div class="flex gap-gutter">
+                        @if ($refund->status === 'requested')
+                            <button type="button" onclick="openRejectRefund(this.closest('article'))" class="flex-1 min-h-11 inline-flex items-center justify-center gap-2 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Tolak</button>
+                            <form method="POST" action="{{ route('superadmin.pengembalian-dana.setujui', $refund->refund_id) }}" class="flex-1" onsubmit="return confirm('Setujui refund Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }} untuk pesanan {{ $refund->order?->nomor_order }}?');">
+                                @csrf
+                                <button type="submit" class="w-full min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Setujui</button>
+                            </form>
+                        @elseif ($refund->status === 'disetujui')
+                            <form method="POST" action="{{ route('superadmin.pengembalian-dana.selesaikan', $refund->refund_id) }}" class="flex-1" onsubmit="return confirm('Tandai refund {{ $kode }} sudah dikirim ke Customer?');">
+                                @csrf
+                                <button type="submit" class="w-full min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Selesaikan</button>
+                            </form>
+                        @else
+                            <span class="flex-1 text-center text-on-surface-variant text-xs uppercase py-3">&mdash;</span>
+                        @endif
+                    </div>
+                </article>
+            @empty
+                <p class="text-center text-on-surface-variant py-10">Tidak ada refund tercatat.</p>
+            @endforelse
+            <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada refund yang cocok.</p>
+        </div>
     </section>
 </div>
 
@@ -207,12 +282,13 @@
         const scope = document.querySelector('[data-table-scope]');
         if (!scope) return;
 
-        const rows = Array.from(scope.querySelectorAll('[data-table-row]'));
+        const rows = Array.from(scope.querySelectorAll('tr[data-table-row], article[data-table-row]'));
         const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
         const searchInput = document.getElementById('refund-search');
         const clearBtn = document.getElementById('clear-search');
         const countEl = document.getElementById('result-count');
         const emptySearch = document.getElementById('empty-search');
+        const emptySearchMobile = document.getElementById('empty-search-mobile');
 
         const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
         const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
@@ -230,12 +306,14 @@
                 row.classList.toggle('hidden', !show);
                 if (show) {
                     visible++;
-                    row.querySelector('.row-num').textContent = visible;
+                    const num = row.querySelector('.row-num');
+                    if (num) num.textContent = visible;
                 }
             });
 
             countEl.textContent = visible;
             emptySearch.classList.toggle('hidden', visible > 0);
+            if (emptySearchMobile) emptySearchMobile.classList.toggle('hidden', visible > 0);
         }
 
         chipBtns.forEach((btn) => {

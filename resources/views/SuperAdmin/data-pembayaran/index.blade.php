@@ -41,41 +41,50 @@
 
     <!-- Tabel -->
     <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Daftar Transaksi Pembayaran</h2>
-
-        <!-- Filters -->
-        <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
-            <div class="flex items-center gap-2 shrink-0">
-                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
-            </div>
-            <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
-            <div id="chip-group" class="flex flex-wrap gap-2">
-                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
-                <button type="button" data-chip="terverifikasi" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Terverifikasi ({{ $stats['terverifikasi'] }})</button>
-                <button type="button" data-chip="menunggu_verifikasi" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu ({{ $stats['menunggu_verifikasi'] }})</button>
-                <button type="button" data-chip="pending" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Pending ({{ $stats['pending'] }})</button>
-                <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditolak ({{ $stats['ditolak'] }})</button>
-                <button type="button" data-chip="kadaluarsa" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kadaluarsa ({{ $stats['kadaluarsa'] }})</button>
-            </div>
+        <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Transaksi Pembayaran</h2>
+            <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
+                <span class="material-symbols-outlined text-[18px]">tune</span>
+                Filter
+                <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
+            </button>
         </div>
 
-        <!-- Search + Result Count -->
-        <div class="mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
-            <div class="relative flex-1">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                <input id="pembayaran-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari ID pembayaran, nama pelanggan, toko, atau metode..." />
-                <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
-                    <span class="material-symbols-outlined text-[20px]">close</span>
-                </button>
+        <!-- Filters -->
+        <div data-filter-panel class="hidden md:block mb-6">
+            <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
+                <div class="flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+                </div>
+                <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
+                <div id="chip-group" class="flex flex-wrap gap-2">
+                    <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
+                    <button type="button" data-chip="terverifikasi" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Terverifikasi ({{ $stats['terverifikasi'] }})</button>
+                    <button type="button" data-chip="menunggu_verifikasi" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu ({{ $stats['menunggu_verifikasi'] }})</button>
+                    <button type="button" data-chip="pending" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Pending ({{ $stats['pending'] }})</button>
+                    <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditolak ({{ $stats['ditolak'] }})</button>
+                    <button type="button" data-chip="kadaluarsa" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kadaluarsa ({{ $stats['kadaluarsa'] }})</button>
+                </div>
             </div>
-            <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-                <span id="result-count">{{ $payments->count() }}</span> transaksi
-            </p>
+
+            <!-- Search + Result Count -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div class="relative flex-1">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input id="pembayaran-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari ID pembayaran, nama pelanggan, toko, atau metode..." />
+                    <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                </div>
+                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                    <span id="result-count">{{ $payments->count() }}</span> transaksi
+                </p>
+            </div>
         </div>
 
         <!-- Table -->
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto hidden md:block">
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
@@ -138,6 +147,59 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Mobile: kartu per transaksi -->
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse ($payments as $pay)
+                @php
+                    $statusMap = [
+                        'pending' => ['Pending', 'bg-surface-container-high text-on-surface'],
+                        'menunggu_verifikasi' => ['Menunggu Verifikasi', 'bg-surface-container-high text-on-surface'],
+                        'terverifikasi' => ['Terverifikasi', 'bg-success/10 text-success'],
+                        'ditolak' => ['Ditolak', 'bg-error/10 text-error'],
+                        'kadaluarsa' => ['Kadaluarsa', 'bg-error/10 text-error'],
+                    ];
+                    $st = $statusMap[$pay->status] ?? [ucfirst($pay->status), 'bg-surface-container-high text-on-surface'];
+                    $cust = $pay->checkout?->user;
+                    $tanggal = $pay->created_at ? Illuminate\Support\Carbon::parse($pay->created_at)->locale('id')->translatedFormat('d M Y • H.i') : '-';
+                @endphp
+                <article data-table-row data-status="{{ $pay->status }}" data-search="{{ strtolower('PAY-'.$pay->payment_id.' '.($cust->nama_lengkap ?? '').' '.($cust->email ?? '').' '.$pay->nama_toko.' '.($pay->paymentMethod->nama_metode ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="min-w-0">
+                            <p class="font-mono font-bold text-on-surface leading-tight">PAY-{{ $pay->payment_id }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $pay->paymentMethod->nama_metode ?? '-' }}</p>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded {{ $st[1] }} text-[10px] font-bold uppercase shrink-0">{{ $st[0] }}</span>
+                    </div>
+
+                    <dl class="space-y-2 font-body-md text-sm mb-4">
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Pelanggan</dt>
+                            <dd class="text-on-surface text-right">{{ $cust->nama_lengkap ?? '-' }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Toko</dt>
+                            <dd class="text-on-surface text-right">{{ $pay->nama_toko }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Jumlah</dt>
+                            <dd class="font-bold text-gold-accent text-right">Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Tanggal</dt>
+                            <dd class="text-on-surface text-right">{{ $tanggal }}</dd>
+                        </div>
+                    </dl>
+
+                    <button type="button" data-detail-open="detail-pembayaran" data-d-nomor="PAY-{{ $pay->payment_id }}" data-d-metode="{{ $pay->paymentMethod->nama_metode ?? '-' }}" data-d-pelanggan="{{ $cust->nama_lengkap ?? '-' }} ({{ $cust->email ?? '' }})" data-d-toko="{{ $pay->nama_toko }}" data-d-jumlah="Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}" data-d-status="{{ $st[0] }}" data-d-tanggal="{{ $tanggal }}" class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">visibility</span>Detail
+                    </button>
+                </article>
+            @empty
+                <p class="text-center text-on-surface-variant py-10">Belum ada transaksi pembayaran tercatat.</p>
+            @endforelse
+            <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada transaksi yang cocok.</p>
+        </div>
     </section>
 </div>
 
@@ -173,12 +235,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const scope = document.querySelector('[data-table-scope]');
     if (!scope) return;
 
-    const rows = Array.from(scope.querySelectorAll('[data-table-row]'));
+    const rows = Array.from(scope.querySelectorAll('tr[data-table-row]'));
+    const cards = Array.from(scope.querySelectorAll('article[data-table-row]'));
     const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
     const searchInput = document.getElementById('pembayaran-search');
     const clearBtn = document.getElementById('clear-search');
     const countEl = document.getElementById('result-count');
     const emptySearch = document.getElementById('empty-search');
+    const emptySearchMobile = document.getElementById('empty-search-mobile');
 
     const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
     const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
@@ -189,19 +253,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const term = searchInput.value.trim().toLowerCase();
         let visible = 0;
 
-        rows.forEach((row) => {
-            const matchStatus = activeStatus === 'semua' || row.getAttribute('data-status') === activeStatus;
-            const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
+        const each = (el) => {
+            const matchStatus = activeStatus === 'semua' || el.getAttribute('data-status') === activeStatus;
+            const matchSearch = !term || (el.getAttribute('data-search') || '').includes(term);
             const show = matchStatus && matchSearch;
-            row.classList.toggle('hidden', !show);
-            if (show) {
-                visible++;
-                row.querySelector('.row-num').textContent = visible;
+            el.classList.toggle('hidden', !show);
+            if (show) visible++;
+            return show;
+        };
+
+        rows.forEach((row) => {
+            if (each(row)) {
+                const num = row.querySelector('.row-num');
+                if (num) num.textContent = visible;
             }
         });
+        cards.forEach(each);
 
         countEl.textContent = visible;
         emptySearch.classList.toggle('hidden', visible > 0);
+        emptySearchMobile?.classList.toggle('hidden', visible > 0);
 
         if (rows.length === 0) {
             emptySearch.classList.add('hidden');

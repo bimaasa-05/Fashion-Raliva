@@ -48,40 +48,49 @@
     </section>
 
     <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Daftar Komplain</h2>
-
-        <!-- Filters -->
-        <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
-            <div class="flex items-center gap-2 shrink-0">
-                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
-            </div>
-            <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
-            <div id="chip-group" class="flex flex-wrap gap-2">
-                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
-                <button type="button" data-chip="open" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Terbuka ({{ $stats['open'] }})</button>
-                <button type="button" data-chip="diproses" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Diproses ({{ $stats['diproses'] }})</button>
-                <button type="button" data-chip="selesai" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Selesai ({{ $stats['selesai'] }})</button>
-                <button type="button" data-chip="ditutup" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditutup ({{ $stats['ditutup'] }})</button>
-            </div>
+        <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Komplain</h2>
+            <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
+                <span class="material-symbols-outlined text-[18px]">tune</span>
+                Filter
+                <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
+            </button>
         </div>
 
-        <!-- Search + Result Count -->
-        <div class="mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
-            <div class="relative flex-1">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                <input id="komplain-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari ID komplain, nama pelanggan, atau toko..." />
-                <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
-                    <span class="material-symbols-outlined text-[20px]">close</span>
-                </button>
+        <!-- Filters -->
+        <div data-filter-panel class="hidden md:block mb-6">
+            <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
+                <div class="flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+                </div>
+                <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
+                <div id="chip-group" class="flex flex-wrap gap-2">
+                    <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
+                    <button type="button" data-chip="open" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Terbuka ({{ $stats['open'] }})</button>
+                    <button type="button" data-chip="diproses" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Diproses ({{ $stats['diproses'] }})</button>
+                    <button type="button" data-chip="selesai" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Selesai ({{ $stats['selesai'] }})</button>
+                    <button type="button" data-chip="ditutup" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditutup ({{ $stats['ditutup'] }})</button>
+                </div>
             </div>
-            <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-                <span id="result-count">{{ $complaints->count() }}</span> komplain
-            </p>
+
+            <!-- Search + Result Count -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div class="relative flex-1">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input id="komplain-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari ID komplain, nama pelanggan, atau toko..." />
+                    <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                </div>
+                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                    <span id="result-count">{{ $complaints->count() }}</span> komplain
+                </p>
+            </div>
         </div>
 
         <!-- Table -->
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto hidden md:block">
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
@@ -161,6 +170,70 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Mobile: kartu per komplain -->
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse ($complaints as $c)
+                @php
+                    $badge = $badgeMap[$c->status] ?? ['label' => '-', 'class' => ''];
+                    $kode = 'KL-' . str_pad((string) $c->complaint_id, 10, '0', STR_PAD_LEFT);
+                @endphp
+                <article data-table-row data-status="{{ $c->status }}" data-search="{{ strtolower($kode.' '.($c->user->nama_lengkap ?? '').' '.($c->store->nama_toko ?? '').' '.($c->store->owner->nama_lengkap ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="min-w-0">
+                            <p class="font-title-md text-title-md text-on-surface leading-tight">{{ $c->subject }}</p>
+                            <p class="font-mono text-xs text-on-surface-variant mt-0.5">{{ $kode }}</p>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded {{ $badge['class'] }} text-[10px] font-bold uppercase shrink-0">{{ $badge['label'] }}</span>
+                    </div>
+
+                    <dl class="space-y-2 font-body-md text-sm mb-4">
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Toko</dt>
+                            <dd class="text-on-surface text-right">{{ $c->store->nama_toko }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Pemilik</dt>
+                            <dd class="text-on-surface text-right">{{ $c->store->owner->nama_lengkap ?? '-' }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Kategori</dt>
+                            <dd class="text-on-surface text-right">{{ $c->tipe_komplain }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Kirim</dt>
+                            <dd class="text-on-surface text-right">{{ $c->dibuat_pada ? \Carbon\Carbon::parse($c->dibuat_pada)->locale('id')->diffForHumans() : '-' }}</dd>
+                        </div>
+                    </dl>
+
+                    <div class="flex gap-gutter">
+                        <button type="button" onclick="openChatModal({{ $c->complaint_id }}, '{{ $kode }}', '{{ addslashes($c->subject) }}', {{ $c->eskalasi_oleh_sa ? 'true' : 'false' }})" class="flex-1 min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:opacity-80 transition-opacity btn-premium">
+                            <span class="material-symbols-outlined text-[16px]">chat</span>Buka
+                        </button>
+
+                        @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES]))
+                            @if (! $c->eskalasi_oleh_sa)
+                                <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" class="shrink-0">
+                                    @csrf
+                                    <button type="submit" title="Eskalasi" class="min-h-11 w-11 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent hover:text-on-gold-accent transition-colors rounded-lg">
+                                        <span class="material-symbols-outlined text-[18px]">emergency</span>
+                                    </button>
+                                </form>
+                            @endif
+                            <form method="POST" action="{{ route('superadmin.komplain.tutup', $c->complaint_id) }}" class="shrink-0">
+                                @csrf
+                                <button type="submit" title="Tutup Komplain" class="min-h-11 w-11 flex items-center justify-center border border-outline text-on-surface hover:bg-surface-container-high transition-colors rounded-lg">
+                                    <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                </article>
+            @empty
+                <p class="text-center text-on-surface-variant py-10">Tidak ada komplain tercatat.</p>
+            @endforelse
+            <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada komplain yang cocok.</p>
         </div>
     </section>
 </div>
@@ -307,12 +380,13 @@
         const scope = document.querySelector('[data-table-scope]');
         if (!scope) return;
 
-        const rows = Array.from(scope.querySelectorAll('[data-table-row]'));
+        const rows = Array.from(scope.querySelectorAll('tr[data-table-row], article[data-table-row]'));
         const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
         const searchInput = document.getElementById('komplain-search');
         const clearBtn = document.getElementById('clear-search');
         const countEl = document.getElementById('result-count');
         const emptySearch = document.getElementById('empty-search');
+        const emptySearchMobile = document.getElementById('empty-search-mobile');
 
         const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
         const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
@@ -330,12 +404,14 @@
                 row.classList.toggle('hidden', !show);
                 if (show) {
                     visible++;
-                    row.querySelector('.row-num').textContent = visible;
+                    const num = row.querySelector('.row-num');
+                    if (num) num.textContent = visible;
                 }
             });
 
             countEl.textContent = visible;
             emptySearch.classList.toggle('hidden', visible > 0);
+            if (emptySearchMobile) emptySearchMobile.classList.toggle('hidden', visible > 0);
         }
 
         chipBtns.forEach((btn) => {
