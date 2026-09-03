@@ -17,8 +17,12 @@
                 <p class="text-on-surface-variant text-xs">{{ $displayRole }}</p>
             </div>
         @endif
-        <div class="w-10 h-10 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-sm shrink-0 border border-gold-accent/30">
-            {{ $initials }}
+        <div class="w-10 h-10 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-sm shrink-0 border border-gold-accent/30 overflow-hidden">
+            @if ($user?->foto_profil_url)
+                <img src="{{ $user->foto_profil_url }}" alt="{{ $displayName }}" class="w-full h-full object-cover" />
+            @else
+                {{ $initials }}
+            @endif
         </div>
         <span class="material-symbols-outlined text-[20px] text-on-surface-variant transition-transform duration-300" data-profile-chevron>expand_more</span>
     </button>

@@ -22,6 +22,7 @@ class WarehouseStaffPermissionSeeder extends Seeder
             'warehouse.stock_adjust',
             'warehouse.transfer',
             'warehouse.damage',
+            'warehouse.stock_check',
         ];
 
         $permissionIds = Permission::whereIn('kode_permission', $defaultPermissions)

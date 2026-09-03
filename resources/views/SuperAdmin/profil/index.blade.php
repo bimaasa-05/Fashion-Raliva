@@ -89,8 +89,13 @@
                 @endphp
                 <div class="shrink-0 mx-auto lg:mx-0">
                     <div class="photo-upload-wrapper relative inline-block">
-                        <div id="hero-avatar" class="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gold-accent text-white flex items-center justify-center border-4 border-surface-container-lowest shadow-xl photo-preview font-bold text-3xl">
-                            <span id="hero-avatar-initial">{{ $sinit }}</span>
+                        <div id="hero-avatar" class="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gold-accent text-white flex items-center justify-center border-4 border-surface-container-lowest shadow-xl photo-preview font-bold text-3xl overflow-hidden">
+                            @if ($user->foto_profil_url)
+                                <img id="hero-avatar-img" src="{{ $user->foto_profil_url }}" class="w-full h-full object-cover" alt="{{ $user->nama_lengkap }}" />
+                                <span id="hero-avatar-initial" style="display:none">{{ $sinit }}</span>
+                            @else
+                                <span id="hero-avatar-initial">{{ $sinit }}</span>
+                            @endif
                         </div>
                         <label for="foto_profil" class="photo-upload-label absolute bottom-0 right-0 w-8 h-8 rounded-full bg-gold-accent text-on-primary flex items-center justify-center cursor-pointer border-3 border-surface-container-lowest shadow-lg hover:scale-105">
                             <span class="material-symbols-outlined text-[18px]">camera_alt</span>
