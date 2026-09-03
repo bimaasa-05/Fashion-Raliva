@@ -65,7 +65,7 @@ class OwnerSeeder extends Seeder
             $old->delete();
         }
 
-        $owner = User::where('email', 'owner@raliva.test')->firstOrFail();
+        $owner = User::where('email', 'o@gmail.com')->firstOrFail();
 
         // ---- TOKO ----
         $store = Store::updateOrCreate(
@@ -118,31 +118,48 @@ class OwnerSeeder extends Seeder
         $categories = Category::whereNotNull('parent_id')->where('status', 'aktif')->get()->keyBy('nama_kategori');
         $cat = fn (string $name) => ($categories[$name] ?? $categories->first())->category_id;
 
-        // ---- PRODUK ----
+        // ---- PRODUK LENGKAP (25 produk, varian, status sebar untuk demo approval) ----
         $seed = [
-            ['Trench Coat Signature', 'Jaket & Hoodie', 'KEM', [['S', 8], ['M', 12], ['L', 6]], 420000, 750000],
-            ['Oversized Linen Shirt', 'Kemeja', 'KMS', [['S', 20], ['M', 24], ['L', 14]], 180000, 289000],
-            ['Wide Leg Trousers', 'Celana', 'CLT', [['28', 10], ['30', 14], ['32', 8]], 175000, 295000],
-            ['Midi Dress Linen', 'Dress', 'DRS', [['S', 16], ['M', 18], ['L', 12]], 220000, 389000],
-            ['Knit Cardigan Rajut', 'Jaket & Hoodie', 'RDG', [['S', 10], ['M', 14], ['L', 9]], 185000, 299000],
-            ['Silk Scarf Premium', 'Aksesoris', 'SYL', [['One Size', 30]], 95000, 185000],
-            ['Basic T-Shirt Cotton', 'Kaos', 'KSL', [['S', 40], ['M', 50], ['L', 30]], 55000, 99000],
-            ['Relaxed Blazer', 'Jaket & Hoodie', 'BLZ', [['M', 12], ['L', 10]], 320000, 549000],
-            ['Pleated Skirt', 'Rok', 'RKT', [['S', 12], ['M', 10], ['L', 6]], 165000, 275000],
-            ['Leather Belt', 'Ikat Pinggang', 'IKT', [['85-105 cm', 25], ['90-110 cm', 22]], 110000, 199000],
+            ['Trench Coat Signature', 'Jaket & Hoodie', 'KEM', [['S', 8], ['M', 12], ['L', 6]], 420000, 750000, Product::STATUS_AKTIF],
+            ['Oversized Linen Shirt', 'Kemeja', 'KMS', [['S', 20], ['M', 24], ['L', 14]], 180000, 289000, Product::STATUS_AKTIF],
+            ['Wide Leg Trousers', 'Celana', 'CLT', [['28', 10], ['30', 14], ['32', 8]], 175000, 295000, Product::STATUS_AKTIF],
+            ['Midi Dress Linen', 'Dress', 'DRS', [['S', 16], ['M', 18], ['L', 12]], 220000, 389000, Product::STATUS_AKTIF],
+            ['Knit Cardigan Rajut', 'Jaket & Hoodie', 'RDG', [['S', 10], ['M', 14], ['L', 9]], 185000, 299000, Product::STATUS_AKTIF],
+            ['Silk Scarf Premium', 'Aksesoris', 'SYL', [['One Size', 30]], 95000, 185000, Product::STATUS_AKTIF],
+            ['Basic T-Shirt Cotton', 'Kaos', 'KSL', [['S', 40], ['M', 50], ['L', 30]], 55000, 99000, Product::STATUS_AKTIF],
+            ['Relaxed Blazer', 'Jaket & Hoodie', 'BLZ', [['M', 12], ['L', 10]], 320000, 549000, Product::STATUS_AKTIF],
+            ['Pleated Skirt', 'Rok', 'RKT', [['S', 12], ['M', 10], ['L', 6]], 165000, 275000, Product::STATUS_AKTIF],
+            ['Leather Belt', 'Ikat Pinggang', 'IKT', [['85-105 cm', 25], ['90-110 cm', 22]], 110000, 199000, Product::STATUS_AKTIF],
+            ['Floral Kimono Outer', 'Jaket & Hoodie', 'KMO', [['S', 12], ['M', 15], ['L', 10]], 195000, 329000, Product::STATUS_PENDING],
+            ['Cotton Oxford Shirt', 'Kemeja', 'KOX', [['M', 18], ['L', 16], ['XL', 12]], 165000, 259000, Product::STATUS_PENDING],
+            ['High Waist Jeans', 'Celana', 'JNS', [['27', 14], ['29', 16], ['31', 10]], 185000, 319000, Product::STATUS_PENDING],
+            ['Satin Slip Dress', 'Dress', 'SDR', [['S', 10], ['M', 12]], 210000, 369000, Product::STATUS_PENDING],
+            ['Denim Jacket Classic', 'Jaket & Hoodie', 'DJN', [['M', 8], ['L', 9], ['XL', 6]], 280000, 459000, Product::STATUS_DITOLAK],
+            ['Linen Short Pants', 'Celana', 'SHP', [['S', 15], ['M', 18]], 95000, 159000, Product::STATUS_DITOLAK],
+            ['Striped Polo Shirt', 'Kaos', 'PLS', [['S', 22], ['M', 25], ['L', 20]], 75000, 129000, Product::STATUS_NONAKTIF],
+            ['Wool Blend Coat', 'Jaket & Hoodie', 'WLC', [['M', 6], ['L', 5]], 480000, 799000, Product::STATUS_NONAKTIF],
+            ['A-Line Mini Dress', 'Dress', 'AMD', [['S', 14], ['M', 16]], 175000, 299000, Product::STATUS_AKTIF],
+            ['Cargo Pants Street', 'Celana', 'CRG', [['30', 12], ['32', 14], ['34', 10]], 165000, 279000, Product::STATUS_AKTIF],
+            ['Hoodie Fleece Basic', 'Jaket & Hoodie', 'HOD', [['S', 20], ['M', 22], ['L', 18], ['XL', 15]], 135000, 229000, Product::STATUS_AKTIF],
+            ['Pencil Skirt Office', 'Rok', 'PSK', [['S', 10], ['M', 12], ['L', 8]], 145000, 249000, Product::STATUS_AKTIF],
+            ['Canvas Tote Bag', 'Aksesoris', 'CTB', [['One Size', 40]], 65000, 119000, Product::STATUS_AKTIF],
+            ['Slim Fit Chinos', 'Celana', 'CHN', [['28', 12], ['30', 15], ['32', 13]], 155000, 269000, Product::STATUS_AKTIF],
+            ['Embroidered Blouse', 'Kemeja', 'EMB', [['S', 12], ['M', 14]], 185000, 315000, Product::STATUS_AKTIF],
         ];
 
         $products = [];
         foreach ($seed as $idx => $row) {
-            [$nama, $kategori, $prefix, $variants, $hpp, $harga] = $row;
+            [$nama, $kategori, $prefix, $variants, $hpp, $harga, $status] = $row;
+            $alasan = $status === Product::STATUS_DITOLAK ? 'Foto produk kurang jelas, mohon upload ulang dengan pencahayaan baik.' : null;
             $product = Product::updateOrCreate(
                 ['store_id' => $store->store_id, 'nama_produk' => $nama],
                 [
                     'category_id' => $cat($kategori),
-                    'deskripsi' => "$nama — produksi lokal Raliva, bahan premium.",
+                    'deskripsi' => "$nama — produksi lokal Raliva, bahan premium, jahitan tangan.",
                     'harga_dasar' => $harga,
                     'tipe_produk' => Product::TIPE_REGULAR,
-                    'status' => Product::STATUS_AKTIF,
+                    'status' => $status,
+                    'alasan_penolakan' => $alasan,
                 ]
             );
             foreach ($variants as $vi => [$warna, $stok]) {
