@@ -36,7 +36,17 @@ class PelangganRequestController extends Controller
                         ? $stokWh->get($variant?->product_variant_id) > 0
                         : false;
 
-                    if (! $stokTersedia) {
+                    $hasil = $order->status_ketersediaan;
+
+                    if ($hasil) {
+                        $statusKey = $hasil;
+                        $statusLabel = match ($hasil) {
+                            'tersedia' => 'Tersedia',
+                            'diteruskan' => 'Diteruskan',
+                            'tidak_tersedia' => 'Tidak Tersedia',
+                            default => 'Sudah Dicek',
+                        };
+                    } elseif (! $stokTersedia) {
                         $statusKey = 'kosong';
                         $statusLabel = 'Tidak Tersedia';
                     } else {
@@ -49,9 +59,15 @@ class PelangganRequestController extends Controller
                         'nomor_order' => $order->nomor_order,
                         'created_at' => $order->created_at,
                         'status_pesanan' => $order->status,
+                        'status_ketersediaan' => $order->status_ketersediaan,
+                        'catatan_gudang' => $order->catatan_gudang,
                         'pelanggan' => $order->checkout?->user?->nama_lengkap ?? 'Pelanggan',
                         'produk' => $variant?->product?->nama_produk ?? ($first?->nama_produk_snapshot ?? '-'),
                         'variant' => $variant,
+                        'bahan' => $variant && $variant->warna
+                            ? ($variant->warna.($variant->ukuran ? ' / '.$variant->ukuran : ''))
+                            : '—',
+                        'stok' => $variant ? (int) ($stokWh->get($variant->product_variant_id, 0)) : 0,
                         'hpp' => $variant?->harga ?? $first?->harga_snapshot ?? 0,
                         'total' => $order->grand_total,
                         'status_key' => $statusKey,
@@ -60,9 +76,10 @@ class PelangganRequestController extends Controller
                 });
 
             $counts = [
-                'menunggu' => $requests->count(),
+                'menunggu' => $requests->whereNull('status_ketersediaan')->count(),
                 'tersedia' => $requests->where('status_key', 'tersedia')->count(),
-                'kosong' => $requests->where('status_key', 'kosong')->count(),
+                'kosong' => $requests->whereIn('status_key', ['kosong', 'tidak_tersedia'])->count(),
+                'diteruskan' => $requests->where('status_key', 'diteruskan')->count(),
                 'total' => $requests->count(),
             ];
         }
@@ -71,8 +88,7 @@ class PelangganRequestController extends Controller
             'warehouses' => $warehouses,
             'warehouse' => $warehouse,
             'requests' => $requests,
-            'counts' => $counts ?? ['menunggu' => 0, 'tersedia' => 0, 'kosong' => 0, 'total' => 0],
-            'firstCheck' => $requests->firstWhere('status_key', '!=', 'menunggu'),
+            'counts' => $counts ?? ['menunggu' => 0, 'tersedia' => 0, 'kosong' => 0, 'diteruskan' => 0, 'total' => 0],
         ]);
     }
 
@@ -102,6 +118,12 @@ class PelangganRequestController extends Controller
             'diteruskan' => 'Diteruskan ke Produksi',
             'tidak_tersedia' => 'Tidak Tersedia — Bahan kosong',
         ];
+
+        $order->update([
+            'status_ketersediaan' => $data['hasil'],
+            'catatan_gudang' => $data['catatan'] ?? null,
+            'dicek_gudang_pada' => now(),
+        ]);
 
         ActivityLogger::log(
             'stock.request.confirm',
