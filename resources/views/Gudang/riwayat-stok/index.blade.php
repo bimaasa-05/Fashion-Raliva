@@ -59,6 +59,7 @@
             <table class="w-full min-w-[1000px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-center w-12">No.</th>
                         <th class="p-4 text-left">Waktu</th>
                         <th class="p-4 text-left">Produk</th>
                         <th class="p-4 text-left">Aktivitas</th>
@@ -76,8 +77,9 @@
                             $changeColor = in_array($m->tipe_pergerakan, ['masuk', 'mutasi_masuk', 'penyesuaian']) ? 'text-secondary' : 'text-error';
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors" data-row>
+                            <td class="p-4 text-center text-on-surface-variant">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
                             <td class="p-4 text-on-surface-variant whitespace-nowrap">{{ $m->created_at?->format('d M Y • H:i') ?? '-' }}</td>
-                            <td class="p-4"><span class="text-on-surface">{{ $m->productVariant->product->nama_produk ?? '-' }}</span></td>
+                            <td class="p-4"><span class="text-on-surface">{{ $m->productVariant?->product?->nama_produk ?? '-' }}</span></td>
                             <td class="p-4">
                                 <span class="inline-flex items-center gap-1.5 whitespace-nowrap text-on-surface">
                                     <span class="material-symbols-outlined text-[16px] {{ in_array($m->tipe_pergerakan, ['keluar', 'mutasi_keluar']) ? 'text-error' : ($m->tipe_pergerakan === 'penyesuaian' ? 'text-gold-accent' : 'text-on-surface-variant') }}">{{ $icon }}</span>
@@ -89,7 +91,7 @@
                             <td class="p-4 text-center text-on-surface whitespace-nowrap">{{ $m->creator->nama_lengkap ?? '-' }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="p-10 text-center text-on-surface-variant">Belum ada riwayat stok pada gudang ini.</td></tr>
+                        <tr><td colspan="7" class="p-10 text-center text-on-surface-variant">Belum ada riwayat stok pada gudang ini.</td></tr>
                     @endforelse
                 </tbody>
             </table>

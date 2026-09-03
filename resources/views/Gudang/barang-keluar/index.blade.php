@@ -56,6 +56,7 @@
             <table class="w-full min-w-[980px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-center w-12">No.</th>
                         <th class="p-4 text-left">Nomor</th>
                         <th class="p-4 text-center">Tujuan</th>
                         <th class="p-4 text-left">Produk</th>
@@ -73,6 +74,7 @@
                             $status = $m->sumber_tipe === 'stock_transfer' ? 'Dikirim' : 'Selesai';
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors" data-row>
+                            <td class="p-4 text-center text-on-surface-variant">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
                             <td class="p-4"><span class="font-bold text-on-surface">BK-{{ str_pad($m->stock_movement_id, 4, '0', STR_PAD_LEFT) }}</span><span class="block text-xs text-on-surface-variant mt-0.5">{{ $m->created_at?->format('d M Y • H:i') ?? '-' }}</span></td>
                             <td class="p-4 text-center">
                                 <span class="inline-flex items-center gap-1.5 text-on-surface whitespace-nowrap">
@@ -80,7 +82,7 @@
                                     {{ $tujuan }}
                                 </span>
                             </td>
-                            <td class="p-4 text-on-surface">{{ $m->productVariant->product->nama_produk ?? '-' }}</td>
+                            <td class="p-4 text-on-surface">{{ $m->productVariant?->product?->nama_produk ?? '-' }}</td>
                             <td class="p-4 text-center font-bold text-error">-{{ $m->jumlah }}</td>
                             <td class="p-4 text-center text-on-surface whitespace-nowrap">{{ $m->creator->nama_lengkap ?? '-' }}</td>
                             <td class="p-4 text-center text-on-surface-variant whitespace-nowrap">{{ $m->created_at?->format('d M Y') ?? '-' }}</td>
@@ -92,7 +94,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="8" class="p-10 text-center text-on-surface-variant">Belum ada catatan barang keluar pada gudang ini.</td></tr>
+                        <tr><td colspan="9" class="p-10 text-center text-on-surface-variant">Belum ada catatan barang keluar pada gudang ini.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -133,8 +135,8 @@
                 <div class="border border-muted-border rounded-lg divide-y divide-muted-border mb-6">
                     <div class="flex items-center justify-between gap-4 p-4">
                         <div>
-                            <p class="text-on-surface font-bold">{{ $m->productVariant->product->nama_produk ?? '-' }}</p>
-                            <p class="text-on-surface-variant text-xs mt-0.5">Variasi: {{ trim(($m->productVariant->warna ?? '').' '.($m->productVariant->ukuran ?? '')) ?: 'Assorted' }}</p>
+                            <p class="text-on-surface font-bold">{{ $m->productVariant?->product?->nama_produk ?? '-' }}</p>
+                            <p class="text-on-surface-variant text-xs mt-0.5">Variasi: {{ trim(($m->productVariant?->warna ?? '').' '.($m->productVariant?->ukuran ?? '')) ?: 'Assorted' }}</p>
                         </div>
                         <span class="font-bold text-error">-{{ $m->jumlah }} unit</span>
                     </div>
@@ -168,7 +170,13 @@
                     <select name="product_variant_id" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
                         <option value="">Pilih Produk</option>
                         @foreach ($products as $ws)
-                            <option value="{{ $ws->product_variant_id }}">{{ $ws->productVariant->product->nama_produk ?? '-' }} — {{ trim(($ws->productVariant->warna ?? '').' '.($ws->productVariant->ukuran ?? '')) ?: $ws->productVariant->sku }} (stok: {{ $ws->jumlah_stok }})</option>
+                            @php
+                                $pv = $ws->productVariant;
+                                $label = $pv?->product?->nama_produk ?? '-';
+                                $variantText = trim(($pv?->warna ?? '').' '.($pv?->ukuran ?? ''));
+                                $label .= ' — '.($variantText ?: ($pv?->sku ?? 'Variant #'.$ws->product_variant_id));
+                            @endphp
+                            <option value="{{ $ws->product_variant_id }}">{{ $label }} (stok: {{ $ws->jumlah_stok }})</option>
                         @endforeach
                     </select>
                 </div>

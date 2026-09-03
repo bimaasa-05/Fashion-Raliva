@@ -20,6 +20,7 @@ class PemeriksaanStokController extends Controller
         $warehouse = $this->activeWarehouse();
 
         $items = collect();
+        $history = collect();
         if ($warehouse) {
             $q = $request->query('q');
             $items = WarehouseStock::with(['productVariant.product.category'])
@@ -28,12 +29,20 @@ class PemeriksaanStokController extends Controller
                 ->orderBy('jumlah_stok')
                 ->paginate(15)
                 ->withQueryString();
+
+            $history = StockOpname::with(['productVariant.product', 'creator'])
+                ->where('warehouse_id', $warehouse->warehouse_id)
+                ->when($q, fn ($query) => $query->whereHas('productVariant.product', fn ($pq) => $pq->where('nama_produk', 'like', '%'.$q.'%')))
+                ->orderByDesc('created_at')
+                ->paginate(10)
+                ->withQueryString();
         }
 
         return view('Gudang.pemeriksaan.index', [
             'warehouses' => $warehouses,
             'warehouse' => $warehouse,
             'items' => $items,
+            'history' => $history,
             'products' => $warehouse ? $this->getProductsForWarehouse($warehouse) : collect(),
             'filters' => ['q' => $request->query('q')],
         ]);
@@ -41,6 +50,10 @@ class PemeriksaanStokController extends Controller
 
     public function store(Request $request)
     {
+        if (! auth()->user()->hasPermission('warehouse.stock_adjust')) {
+            abort(403, 'Anda tidak memiliki izin (warehouse.stock_adjust) untuk melakukan tindakan ini.');
+        }
+
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {

@@ -32,4 +32,9 @@ class Permission extends Model
     {
         return $this->hasMany(StoreStaffPermission::class, 'permission_id', 'permission_id');
     }
+
+    public function warehouseStaffPermissions(): HasMany
+    {
+        return $this->hasMany(WarehouseStaffPermission::class, 'permission_id', 'permission_id');
+    }
 }

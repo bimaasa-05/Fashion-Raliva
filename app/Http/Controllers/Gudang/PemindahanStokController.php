@@ -11,6 +11,7 @@ use App\Models\WarehouseStock;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class PemindahanStokController extends Controller
 {
@@ -53,6 +54,10 @@ class PemindahanStokController extends Controller
 
     public function store(Request $request)
     {
+        if (! auth()->user()->hasPermission('warehouse.transfer')) {
+            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+        }
+
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {
@@ -60,14 +65,20 @@ class PemindahanStokController extends Controller
         }
 
         $data = $request->validate([
-            'to_warehouse_id' => 'required|exists:warehouses,warehouse_id|different:'.$warehouse->warehouse_id,
+            'to_warehouse_id' => [
+                'required',
+                'different:'.$warehouse->warehouse_id,
+                Rule::exists('warehouses', 'warehouse_id')
+                    ->where('store_id', $warehouse->store_id)
+                    ->where('status', Warehouse::STATUS_AKTIF),
+            ],
             'product_variant_id' => 'required|exists:product_variants,product_variant_id',
             'jumlah' => 'required|integer|min:1',
             'catatan' => 'nullable|string|max:500',
         ], [
             'to_warehouse_id.required' => 'Gudang tujuan wajib dipilih.',
-            'to_warehouse_id.exists' => 'Gudang tujuan tidak valid.',
             'to_warehouse_id.different' => 'Gudang tujuan harus berbeda dari gudang asal.',
+            'to_warehouse_id.exists' => 'Gudang tujuan tidak valid atau bukan gudang aktif pada toko yang sama.',
             'product_variant_id.required' => 'Produk wajib dipilih.',
             'product_variant_id.exists' => 'Produk tidak valid.',
             'jumlah.required' => 'Jumlah wajib diisi.',

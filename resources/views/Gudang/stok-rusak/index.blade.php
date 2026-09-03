@@ -44,22 +44,26 @@
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-center w-12">No.</th>
                         <th class="p-4 text-left">Produk</th>
-                        <th class="p-4 text-center">SKU</th>
-                        <th class="p-4 text-center">Stok Tersedia</th>
-                        <th class="p-4 text-center">Kondisi</th>
-                        <th class="p-4 text-center">Status</th>
+                        <th class="p-4 text-center">Jumlah Rusak</th>
+                        <th class="p-4 text-left">Alasan</th>
+                        <th class="p-4 text-center">Petugas</th>
+                        <th class="p-4 text-center">Tanggal</th>
+                        <th class="p-4 text-center">Current Stok</th>
                         <th class="p-4 text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
                     @forelse ($items as $s)
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors" data-row>
-                            <td class="p-4 text-on-surface">{{ $s->productVariant->product->nama_produk ?? '-' }}</td>
-                            <td class="p-4 text-center text-on-surface-variant">{{ $s->productVariant->sku ?? '-' }}</td>
-                            <td class="p-4 text-center font-bold text-error">{{ $s->jumlah_stok }}</td>
-                            <td class="p-4 text-center text-on-surface-variant">Stok habis / rusak</td>
-                            <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Perlu Tindak Lanjut</span></td>
+                            <td class="p-4 text-center text-on-surface-variant">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
+                            <td class="p-4 text-on-surface">{{ $s->productVariant?->product?->nama_produk ?? '-' }}<span class="block text-xs text-on-surface-variant mt-0.5">{{ $s->productVariant?->sku ?? '' }}</span></td>
+                            <td class="p-4 text-center font-bold text-error">{{ $s->jumlah_rusak }} unit</td>
+                            <td class="p-4 text-on-surface-variant max-w-[220px]">{{ $s->alasan ?: '-' }}</td>
+                            <td class="p-4 text-center">{{ $s->creator?->nama_lengkap ?? '-' }}</td>
+                            <td class="p-4 text-center">{{ $s->created_at?->format('d M Y • H:i') ?? '-' }}</td>
+                            <td class="p-4 text-center text-on-surface-variant">{{ $s->productVariant?->warehouseStocks?->firstWhere('warehouse_id', $warehouse?->warehouse_id)?->jumlah_stok ?? '-' }}</td>
                             <td class="p-4 text-center">
                                 <button type="button" data-modal-open="sr-detail-{{ $loop->iteration }}" title="Lihat Detail" class="w-9 h-9 mx-auto rounded-lg border border-muted-border flex items-center justify-center text-on-surface-variant hover:text-gold-accent hover:border-gold-accent transition-colors">
                                     <span class="material-symbols-outlined text-[18px]">visibility</span>
@@ -67,7 +71,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="p-10 text-center text-on-surface-variant">Tidak ada stok rusak/bermasalah pada gudang ini. 🎉</td></tr>
+                        <tr><td colspan="8" class="p-10 text-center text-on-surface-variant">Tidak ada laporan stok rusak pada gudang ini. 🎉</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -87,18 +91,19 @@
             <div class="relative mx-auto mt-16 md:mt-24 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl p-6 max-h-[80vh] overflow-y-auto">
                 <div class="flex items-start justify-between gap-4 mb-6">
                     <div>
-                        <h3 class="font-title-md text-title-md text-on-surface">Detail Stok Bermasalah</h3>
-                        <p class="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mt-1">{{ $s->productVariant->product->nama_produk ?? '-' }}</p>
+                        <h3 class="font-title-md text-title-md text-on-surface">Detail Laporan Stok Rusak</h3>
+                        <p class="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mt-1">{{ $s->productVariant?->product?->nama_produk ?? '-' }} · {{ $s->productVariant?->sku ?? '' }}</p>
                     </div>
                     <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
                         <span class="material-symbols-outlined">close</span>
                     </button>
                 </div>
                 <dl class="space-y-4 font-body-md text-sm">
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Produk</dt><dd class="text-on-surface text-right">{{ $s->productVariant->product->nama_produk ?? '-' }}<span class="block text-xs text-on-surface-variant mt-0.5">{{ $s->productVariant->sku ?? '' }}</span></dd></div>
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Stok Tersedia</dt><dd class="text-error font-bold">{{ $s->jumlah_stok }} unit</dd></div>
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Minimum Stok</dt><dd class="text-on-surface">{{ $s->stok_minimum }}</dd></div>
-                    <div class="flex justify-between gap-4 items-start"><dt class="text-on-surface-variant">Kondisi</dt><dd><span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Perlu Tindak Lanjut</span></dd></div>
+                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Produk</dt><dd class="text-on-surface text-right">{{ $s->productVariant?->product?->nama_produk ?? '-' }}<span class="block text-xs text-on-surface-variant mt-0.5">{{ $s->productVariant?->warna ?? '' }} {{ $s->productVariant?->ukuran ?? '' }}</span></dd></div>
+                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Jumlah Rusak</dt><dd class="text-error font-bold">{{ $s->jumlah_rusak }} unit</dd></div>
+                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Alasan/Keterangan</dt><dd class="text-on-surface text-right max-w-[60%]">{{ $s->alasan ?: '-' }}</dd></div>
+                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Petugas</dt><dd class="text-on-surface">{{ $s->creator?->nama_lengkap ?? '-' }}</dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-on-surface-variant">Tanggal Laporan</dt><dd class="text-on-surface">{{ $s->created_at?->format('d M Y • H:i') ?? '-' }}</dd></div>
                 </dl>
                 <button type="button" data-modal-close class="w-full mt-6 py-3 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
             </div>
@@ -124,7 +129,13 @@
                     <select name="product_variant_id" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
                         <option value="">Pilih Produk</option>
                         @foreach ($products as $ws)
-                            <option value="{{ $ws->product_variant_id }}">{{ $ws->productVariant->product->nama_produk ?? '-' }} — {{ trim(($ws->productVariant->warna ?? '').' '.($ws->productVariant->ukuran ?? '')) ?: $ws->productVariant->sku }} (stok: {{ $ws->jumlah_stok }})</option>
+                            @php
+                                $pv = $ws->productVariant;
+                                $label = $pv?->product?->nama_produk ?? '-';
+                                $variantText = trim(($pv?->warna ?? '').' '.($pv?->ukuran ?? ''));
+                                $label .= ' — '.($variantText ?: ($pv?->sku ?? 'Variant #'.$ws->product_variant_id));
+                            @endphp
+                            <option value="{{ $ws->product_variant_id }}">{{ $label }} (stok: {{ $ws->jumlah_stok }})</option>
                         @endforeach
                     </select>
                 </div>

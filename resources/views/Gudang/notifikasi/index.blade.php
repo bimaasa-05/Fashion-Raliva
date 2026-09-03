@@ -47,6 +47,7 @@
         <ul id="notif-list" class="divide-y divide-muted-border">
             @forelse ($notifications as $item)
                 @php
+                    /** @var \App\Models\Notification $item */
                     $m = $meta[$item->tipe] ?? ['icon' => 'info', 'tone' => 'neutral', 'label' => 'Sistem'];
                     $unread = is_null($item->dibaca_pada);
                     $relTime = $item->created_at?->diffForHumans() ?? '-';
@@ -82,9 +83,12 @@
             <p class="text-on-surface-variant font-body-md text-sm max-w-sm">Tidak terdapat notifikasi pada kategori ini. Semua pekerjaan gudang sudah terpantau.</p>
         </div>
 
-        <div class="flex justify-center mt-8 pt-6 border-t border-muted-border">
-            <button type="button" onclick="showRalivaToast('Semua notifikasi sudah ditampilkan.', 'info')" class="px-5 py-2.5 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant hover:text-on-surface hover:border-gold-accent transition-colors">Muat Notifikasi Sebelumnya</button>
-        </div>
+        @if ($notifications->hasPages())
+            <div class="flex flex-wrap items-center justify-between gap-4 mt-8 pt-6 border-t border-muted-border">
+                <p class="font-label-sm text-xs text-on-surface-variant">Menampilkan {{ $notifications->firstItem() }}–{{ $notifications->lastItem() }} dari {{ $notifications->total() }} notifikasi</p>
+                <div class="flex items-center gap-1">{{ $notifications->withQueryString()->links() }}</div>
+            </div>
+        @endif
     </section>
 </div>
 @endsection
@@ -117,6 +121,10 @@
     });
 
     document.getElementById('mark-all-read')?.addEventListener('click', () => {
+        const btn = document.getElementById('mark-all-read');
+        const original = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Memproses…';
         fetch('{{ route('gudang.notifikasi.tandai-dibaca') }}', {
             method: 'POST',
             headers: {
@@ -124,6 +132,9 @@
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
             },
+        }).then((res) => {
+            if (!res.ok) throw new Error('Gagal menandai semua dibaca.');
+            return res.json();
         }).then(() => {
             notifList?.querySelectorAll('.notif-dot').forEach((dot) => dot.remove());
             notifList?.querySelectorAll('.notif-item').forEach((item) => {
@@ -132,6 +143,11 @@
             });
             updateUnreadCount();
             showRalivaToast('Semua notifikasi ditandai sudah dibaca.');
+        }).catch((err) => {
+            showRalivaToast(err.message || 'Gagal menandai semua dibaca.', 'error');
+        }).finally(() => {
+            btn.disabled = false;
+            btn.textContent = original;
         });
     });
 

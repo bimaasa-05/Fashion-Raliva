@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
             OwnerSeeder::class,
             PermintaanProduksiSeeder::class,
             AdminDemoSeeder::class,
+            RalivaDemoSeeder::class,
+            WarehouseStaffPermissionSeeder::class,
         ]);
     }
 }

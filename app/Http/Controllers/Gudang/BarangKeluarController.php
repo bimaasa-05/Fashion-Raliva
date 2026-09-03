@@ -41,6 +41,10 @@ class BarangKeluarController extends Controller
 
     public function store(Request $request)
     {
+        if (! auth()->user()->hasPermission('warehouse.stock_out')) {
+            abort(403, 'Anda tidak memiliki izin (warehouse.stock_out) untuk melakukan tindakan ini.');
+        }
+
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {

@@ -6,6 +6,10 @@
 @section('header-subtitle', 'Pantau persediaan dan aktivitas gudang Anda.')
 
 @section('content')
+@php
+    /** @var object{total_produk:int, total_stok:int, masuk_hari_ini:int, keluar_hari_ini:int, menipis:int, kritis:int, habis:int, rusak:int} $stats */
+    /** @var \App\Models\Warehouse|null $warehouse */
+@endphp
 <div data-skeleton class="space-y-6">
     <div class="h-[76px] bg-surface-container-high rounded-lg animate-pulse"></div>
     <div class="grid grid-cols-2 xl:grid-cols-3 gap-gutter">
@@ -196,6 +200,7 @@
                 <table class="w-full min-w-[750px] premium-table">
                     <thead>
                         <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                            <th class="p-4 text-center w-12">No.</th>
                             <th class="p-4 text-left">Produk</th>
                             <th class="p-4 text-center">SKU</th>
                             <th class="p-4 text-center">Stok</th>
@@ -206,7 +211,9 @@
                     </thead>
                     <tbody class="font-body-md text-sm">
                         @forelse ($lowStock as $item)
+                            @php /** @var object{nama_produk:string, sku:string, jumlah_stok:int, stok_minimum:int, status:string} $item */ @endphp
                             <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                                <td class="p-4 text-center text-on-surface-variant">{{ $loop->iteration }}</td>
                                 <td class="p-4 text-on-surface">{{ $item->nama_produk }}</td>
                                 <td class="p-4 text-center text-on-surface-variant">{{ $item->sku }}</td>
                                 <td class="p-4 text-center font-bold {{ $item->status === 'kritis' || $item->status === 'habis' ? 'text-error' : 'text-on-surface' }}">{{ $item->jumlah_stok }}</td>
@@ -223,7 +230,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="6" class="p-8 text-center text-on-surface-variant">Tidak ada produk dengan stok menipis.</td></tr>
+                            <tr><td colspan="7" class="p-8 text-center text-on-surface-variant">Tidak ada produk dengan stok menipis.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -235,6 +242,7 @@
             <ul class="flex flex-col gap-4 flex-grow">
                 @forelse ($recentActivity as $act)
                     @php
+                        /** @var object{tipe:string, jumlah:int, nama_produk:string, alasan:?string, created_at:?\Carbon\Carbon} $act */
                         $icon = match ($act->tipe) {
                             'masuk', 'mutasi_masuk' => 'archive',
                             'keluar', 'mutasi_keluar' => 'unarchive',

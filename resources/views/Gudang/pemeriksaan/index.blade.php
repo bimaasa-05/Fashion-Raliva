@@ -53,6 +53,7 @@
             <table class="w-full min-w-[980px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-center w-12">No.</th>
                         <th class="p-4 text-left">Produk</th>
                         <th class="p-4 text-center">Stok Sistem</th>
                         <th class="p-4 text-center">Stok Minimum</th>
@@ -67,10 +68,11 @@
                             $status = $s->jumlah_stok <= 0 ? 'Selisih' : ($s->jumlah_stok <= $s->stok_minimum ? 'Selisih' : 'Sesuai');
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors" data-row>
-                            <td class="p-4"><span class="text-on-surface">{{ $s->productVariant->product->nama_produk ?? '-' }}</span><span class="block text-xs text-on-surface-variant mt-0.5">{{ $s->productVariant->sku ?? '' }}</span></td>
+                            <td class="p-4 text-center text-on-surface-variant">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
+                            <td class="p-4"><span class="text-on-surface">{{ $s->productVariant?->product?->nama_produk ?? '-' }}</span><span class="block text-xs text-on-surface-variant mt-0.5">{{ $s->productVariant?->sku ?? '' }}</span></td>
                             <td class="p-4 text-center text-on-surface font-bold">{{ $s->jumlah_stok }}</td>
                             <td class="p-4 text-center text-on-surface-variant">{{ $s->stok_minimum }}</td>
-                            <td class="p-4 text-center text-on-surface-variant">{{ $s->productVariant->product->category->nama_kategori ?? '-' }}</td>
+                            <td class="p-4 text-center text-on-surface-variant">{{ $s->productVariant?->product?->category?->nama_kategori ?? '-' }}</td>
                             <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass[$status] }} text-[10px] font-bold uppercase border">{{ $status }}</span></td>
                             <td class="p-4 text-center">
                                 <button type="button" data-modal-open="ps-detail-{{ $loop->iteration }}" title="Periksa" class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface-variant hover:text-gold-accent hover:border-gold-accent transition-colors">
@@ -79,7 +81,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="p-10 text-center text-on-surface-variant">Belum ada stok untuk diperiksa pada gudang ini.</td></tr>
+                        <tr><td colspan="7" class="p-10 text-center text-on-surface-variant">Belum ada stok untuk diperiksa pada gudang ini.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -93,6 +95,53 @@
         @endif
     </section>
 
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 md:p-6 card-premium">
+        <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-[20px] text-gold-accent">history</span>
+            <h3 class="font-label-sm text-[12px] uppercase tracking-widest text-on-surface">Riwayat Pemeriksaan Stok</h3>
+        </div>
+
+        <div data-table-wrap class="overflow-x-auto">
+            <table class="w-full min-w-[900px] premium-table">
+                <thead>
+                    <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-center w-12">No.</th>
+                        <th class="p-4 text-center">Waktu</th>
+                        <th class="p-4 text-left">Produk</th>
+                        <th class="p-4 text-center">Stok Sistem</th>
+                        <th class="p-4 text-center">Stok Fisik</th>
+                        <th class="p-4 text-center">Selisih</th>
+                        <th class="p-4 text-left">Catatan</th>
+                        <th class="p-4 text-center">Petugas</th>
+                    </tr>
+                </thead>
+                <tbody class="font-body-md text-sm">
+                    @forelse ($history as $h)
+                        <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors" data-row>
+                            <td class="p-4 text-center text-on-surface-variant">{{ ($history->currentPage() - 1) * $history->perPage() + $loop->iteration }}</td>
+                            <td class="p-4 text-center">{{ $h->created_at?->format('d M Y • H:i') ?? '-' }}</td>
+                            <td class="p-4 text-on-surface">{{ $h->productVariant?->product?->nama_produk ?? '-' }}<span class="block text-xs text-on-surface-variant mt-0.5">{{ $h->productVariant?->sku ?? '' }}</span></td>
+                            <td class="p-4 text-center text-on-surface">{{ $h->stok_sistem }}</td>
+                            <td class="p-4 text-center text-on-surface">{{ $h->stok_fisik }}</td>
+                            <td class="p-4 text-center font-bold {{ $h->selisih > 0 ? 'text-secondary' : ($h->selisih < 0 ? 'text-error' : 'text-on-surface-variant') }}">{{ $h->selisih > 0 ? '+'.$h->selisih : $h->selisih }}</td>
+                            <td class="p-4 text-on-surface-variant max-w-[220px]">{{ $h->catatan ?: '-' }}</td>
+                            <td class="p-4 text-center">{{ $h->creator?->nama_lengkap ?? '-' }}</td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="8" class="p-10 text-center text-on-surface-variant">Belum ada riwayat pemeriksaan pada gudang ini.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        @if ($history->hasPages())
+            <div class="flex flex-wrap items-center justify-between gap-4 mt-6">
+                <p class="font-label-sm text-xs text-on-surface-variant">Menampilkan {{ $history->firstItem() }}–{{ $history->lastItem() }} dari {{ $history->total() }} pemeriksaan • {{ $warehouse->nama_gudang ?? '' }}</p>
+                <div class="flex items-center gap-1">{{ $history->withQueryString()->links() }}</div>
+            </div>
+        @endif
+    </section>
+
     @foreach ($items as $s)
         <div id="ps-detail-{{ $loop->iteration }}" data-modal class="fixed inset-0 z-[70] hidden">
             <div class="absolute inset-0 bg-black/50" data-modal-close></div>
@@ -100,7 +149,7 @@
                 <div class="flex items-start justify-between gap-4 mb-6">
                     <div>
                         <h3 class="font-title-md text-title-md text-on-surface">Periksa Stok</h3>
-                        <p class="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mt-1">{{ $s->productVariant->product->nama_produk ?? '-' }}</p>
+                        <p class="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mt-1">{{ $s->productVariant?->product?->nama_produk ?? '-' }}</p>
                     </div>
                     <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
                         <span class="material-symbols-outlined">close</span>
@@ -117,8 +166,8 @@
                     </div>
                 </div>
                 <dl class="space-y-4 font-body-md text-sm">
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">SKU</dt><dd class="text-on-surface">{{ $s->productVariant->sku ?? '-' }}</dd></div>
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Kategori</dt><dd class="text-on-surface">{{ $s->productVariant->product->category->nama_kategori ?? '-' }}</dd></div>
+                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">SKU</dt><dd class="text-on-surface">{{ $s->productVariant?->sku ?? '-' }}</dd></div>
+                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Kategori</dt><dd class="text-on-surface">{{ $s->productVariant?->product?->category?->nama_kategori ?? '-' }}</dd></div>
                     <div class="flex justify-between gap-4 items-start"><dt class="text-on-surface-variant">Catatan</dt><dd class="text-on-surface text-right">Stok tercatat sistem. Lakukan hitung fisik untuk menemukan selisih.</dd></div>
                 </dl>
                 <button type="button" data-modal-close class="w-full mt-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tutup</button>
@@ -145,7 +194,13 @@
                     <select name="product_variant_id" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
                         <option value="">Pilih Produk</option>
                         @foreach ($products as $ws)
-                            <option value="{{ $ws->product_variant_id }}">{{ $ws->productVariant->product->nama_produk ?? '-' }} — {{ trim(($ws->productVariant->warna ?? '').' '.($ws->productVariant->ukuran ?? '')) ?: $ws->productVariant->sku }}</option>
+                            @php
+                                $pv = $ws->productVariant;
+                                $label = $pv?->product?->nama_produk ?? '-';
+                                $variantText = trim(($pv?->warna ?? '').' '.($pv?->ukuran ?? ''));
+                                $label .= ' — '.($variantText ?: ($pv?->sku ?? 'Variant #'.$ws->product_variant_id));
+                            @endphp
+                            <option value="{{ $ws->product_variant_id }}">{{ $label }}</option>
                         @endforeach
                     </select>
                 </div>

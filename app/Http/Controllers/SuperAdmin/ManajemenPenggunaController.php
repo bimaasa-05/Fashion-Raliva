@@ -5,6 +5,8 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Role;
+use App\Models\Store;
+use App\Models\StoreStaff;
 use App\Models\User;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
@@ -257,6 +259,43 @@ class ManajemenPenggunaController extends Controller
             ['status' => $baru],
             sprintf('Mengubah status "%s" dari %s menjadi %s.', $user->nama_lengkap, $lama, $baru)
         );
+
+        if ($user->role && $user->role->nama_role === Role::OWNER) {
+            $tokoCount = Store::where('owner_id', $user->user_id)->count();
+
+            Store::where('owner_id', $user->user_id)
+                ->update(['status' => $baru]);
+
+            $staffUsers = User::whereHas('storeAssignments.store', fn ($q) => $q->where('owner_id', $user->user_id))
+                ->where('user_id', '!=', $user->user_id)
+                ->get();
+
+            StoreStaff::whereHas('store', fn ($q) => $q->where('owner_id', $user->user_id))
+                ->update(['status' => $baru]);
+
+            if ($staffUsers->isNotEmpty()) {
+                User::whereIn('user_id', $staffUsers->pluck('user_id'))
+                    ->update(['status' => $baru]);
+            }
+
+            $staffCount = $staffUsers->count();
+
+            if ($tokoCount > 0 || $staffCount > 0) {
+                ActivityLogger::log(
+                    'owner.cascade.update',
+                    User::class,
+                    $user->user_id,
+                    [],
+                    ['stores' => $tokoCount, 'staff' => $staffCount, 'status' => $baru],
+                    sprintf('Cascade %s: %d toko, %d staff turut di%s.', $user->nama_lengkap, $tokoCount, $staffCount, $baru === 'aktif' ? 'aktifkan' : 'nonaktifkan')
+                );
+            }
+
+            return back()->with('toast', [
+                'message' => 'Status "'.$user->nama_lengkap.'" berhasil diubah menjadi '.$baru.($staffCount > 0 ? ' (+'.$staffCount.' staff & '.$tokoCount.' toko turut di'.$baru.')' : '').'.',
+                'icon' => 'task_alt',
+            ]);
+        }
 
         return back()->with('toast', [
             'message' => 'Status "'.$user->nama_lengkap.'" berhasil diubah menjadi '.$baru.'.',

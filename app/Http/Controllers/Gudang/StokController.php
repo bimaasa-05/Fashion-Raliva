@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Gudang;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Product;
-use App\Models\ProductVariant;
 use App\Models\WarehouseStock;
 use Illuminate\Http\Request;
 
@@ -23,6 +23,7 @@ class StokController extends Controller
                 'warehouse' => null,
                 'products' => collect(),
                 'categories' => collect(),
+                'filters' => ['q' => null, 'kategori' => null, 'status' => null, 'sort' => 'terbaru'],
             ]);
         }
 
@@ -46,13 +47,13 @@ class StokController extends Controller
                     }]);
             },
         ])
-        ->whereHas('variants', function ($vq) use ($variantIds) {
-            $vq->whereIn('product_variant_id', $variantIds);
-        })
-        ->where('store_id', $warehouse->store_id);
+            ->whereHas('variants', function ($vq) use ($variantIds) {
+                $vq->whereIn('product_variant_id', $variantIds);
+            })
+            ->where('store_id', $warehouse->store_id);
 
         if ($q) {
-            $query->where('nama_produk', 'like', '%' . $q . '%');
+            $query->where('nama_produk', 'like', '%'.$q.'%');
         }
         if ($kategori) {
             $query->whereHas('category', fn ($cq) => $cq->where('nama_kategori', $kategori));
@@ -74,7 +75,7 @@ class StokController extends Controller
                 'sku' => $product->variants->first()?->sku ?? '-',
                 'hpp' => $product->variants->first()?->harga ?? $product->harga_dasar,
                 'harga_jual' => $product->harga_dasar,
-                'variasi' => $product->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', '),
+                'variasi' => $product->variants->map(fn ($v) => trim(($v->warna ?? '').' '.($v->ukuran ?? '')))->filter()->implode(', '),
                 'updated_at' => $product->variants->max(fn ($v) => $v->warehouseStocks->max('updated_at')),
             ];
         });
@@ -88,7 +89,7 @@ class StokController extends Controller
             ? $products->sortBy('total_stok')
             : ($sort === 'stok_besar' ? $products->sortByDesc('total_stok') : ($sort === 'nama' ? $products->sortBy('produk.nama_produk') : $products->sortByDesc('updated_at')));
 
-        $categories = \App\Models\Category::whereIn('category_id', $products->pluck('produk.category_id')->filter()->unique())->pluck('nama_kategori');
+        $categories = Category::whereIn('category_id', $products->pluck('produk.category_id')->filter()->unique())->pluck('nama_kategori');
 
         return view('Gudang.stok.index', [
             'warehouses' => $warehouses,
