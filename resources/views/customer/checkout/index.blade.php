@@ -578,16 +578,19 @@
             {{-- ========== DELIVERY ADDRESS ========== --}}
             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('DELIVERY ADDRESS') }}</p>
 
-            <div class="co-field">
-                <div class="co-icon">
+            <div class="flex items-start gap-md py-md">
+                <div class="co-icon mt-0.5">
                     <span class="material-symbols-outlined">location_on</span>
                 </div>
-                <span class="co-label">Jane Doe</span>
-                <div class="co-input-wrap">
-                    <span class="co-input" style="border-bottom: none; color: var(--text-muted);">123 Fashion Avenue, Suite 4B, Jakarta Selatan, DKI Jakarta 12190</span>
-                    <span class="co-helper">+62 812 3456 7890</span>
+                <div class="min-w-0 flex-1 flex flex-col gap-1">
+                    <p class="font-body-sm text-body-sm text-on-surface font-semibold">Jane Doe</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">123 Fashion Avenue, Suite 4B, Jakarta Selatan, DKI Jakarta 12190</p>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[16px]">call</span>
+                        +62 812 3456 7890
+                    </p>
                 </div>
-                <a href="{{ route('customer.address.index') }}" class="font-label-caps text-label-caps text-[var(--chrome-accent)] hover:underline underline-offset-2 flex-shrink-0">{{ __('Edit') }}</a>
+                <a href="{{ route('customer.address.index') }}" class="font-label-caps text-label-caps text-[var(--chrome-accent)] hover:underline underline-offset-2 shrink-0">{{ __('Edit') }}</a>
             </div>
 
             <hr class="co-divider"/>
