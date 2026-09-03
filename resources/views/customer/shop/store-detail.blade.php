@@ -1,13 +1,23 @@
 <!DOCTYPE html>
 
-<html lang="{{ app()->getLocale() }}"><head>
+<html class="light" lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Lunara Fashion - RALIVA</title>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>RALIVA - {{ __('Store') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
 <script id="tailwind-config">
         tailwind.config = {
           darkMode: "class",
@@ -22,7 +32,7 @@
                       "primary-fixed-dim": "#c8c6c5",
                       "surface-variant": "#e3e2e2",
                       "on-surface": "#1b1c1c",
-                      "secondary": "#795905",
+                      "secondary": "#8B1E3F",
                       "surface-dim": "#dbdad9",
                       "on-error": "#ffffff",
                       "primary": "#000000",
@@ -30,31 +40,31 @@
                       "tertiary-container": "#1a1c1a",
                       "error-container": "#ffdad6",
                       "on-tertiary": "#ffffff",
-                      "secondary-fixed": "#ffdf9f",
+                      "secondary-fixed": "#8B1E3F",
                       "on-primary": "#ffffff",
                       "surface-container-lowest": "#ffffff",
                       "error": "#ba1a1a",
                       "surface-container-highest": "#e3e2e2",
                       "inverse-surface": "#303031",
                       "surface-container": "#efeded",
-                      "tertiary": "#000000",
+                      "tertiary": "#1b1c1c",
                       "primary-fixed": "#e5e2e1",
                       "outline-variant": "#c4c7c7",
                       "surface-tint": "#5f5e5e",
-                      "secondary-fixed-dim": "#ebc168",
+                      "secondary-fixed-dim": "#8B1E3F",
                       "outline": "#747878",
                       "on-primary-fixed-variant": "#474646",
-                      "on-secondary-fixed-variant": "#5c4300",
+                      "on-secondary-fixed-variant": "#6D1428",
                       "on-tertiary-fixed": "#1a1c1a",
-                      "on-secondary-container": "#775804",
+                      "on-secondary-container": "#6D1428",
                       "inverse-on-surface": "#f2f0f0",
                       "tertiary-fixed-dim": "#c7c6c4",
                       "tertiary-fixed": "#e3e2df",
                       "surface-container-high": "#e9e8e7",
-                      "on-secondary-fixed": "#261a00",
+                      "on-secondary-fixed": "#6D1428",
                       "background": "#fbf9f9",
                       "surface": "#fbf9f9",
-                      "secondary-container": "#fdd177",
+                      "secondary-container": "#8B1E3F",
                       "on-surface-variant": "#444748",
                       "primary-container": "#1c1b1b",
                       "inverse-primary": "#c8c6c5",
@@ -205,17 +215,25 @@
         --chrome-text-faint: rgba(0,0,0,.45);
         --chrome-border: rgba(0,0,0,.1);
         --chrome-hover: rgba(0,0,0,.06);
-        --chrome-accent: #795905;
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #F8F6F2;
+        --surface-warm: #F3F0EA;
+        --border-soft: #E5E1DA;
+        --text-muted: #777777;
     }
     html.theme-dark {
         --chrome-bg: #1c1b1b;
-        --chrome-bg-soft: rgba(28,27,27,.9);
+        --chrome-bg-soft: rgba(28,27,27,.92);
         --chrome-text: #ffffff;
         --chrome-text-dim: rgba(255,255,255,.6);
         --chrome-text-faint: rgba(255,255,255,.5);
         --chrome-border: rgba(255,255,255,.1);
         --chrome-hover: rgba(255,255,255,.1);
-        --chrome-accent: #ebc168;
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #1e1d1c;
+        --surface-warm: #201f1e;
+        --border-soft: rgba(255,255,255,.1);
+        --text-muted: #b9b6b1;
     }
 </style>
 <style>
@@ -242,7 +260,7 @@
     html.theme-dark .text-outline { color: #8a8781 !important; }
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
-    html.theme-dark .text-secondary { color: #ebc168 !important; }
+    html.theme-dark .text-secondary { color: #8B1E3F !important; }
     html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
     html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
@@ -256,7 +274,7 @@
     html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
     html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
     html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
-    html.theme-dark .hover\:text-secondary:hover { color: #ebc168 !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #8B1E3F !important; }
     html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
     html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
     html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
@@ -269,28 +287,55 @@
     html.theme-dark .group:hover .group-hover\:text-primary { color: #f2efec !important; }
     html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
-</style>
+  </style>
+<style>
+    /* ===== Premium cards + burgundy accents (parity with account/address) ===== */
+    .card-premium { box-shadow:0 1px 2px rgb(17 17 17 / .04),0 12px 32px -16px rgb(17 17 17 / .16); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; }
+    .card-premium:hover { transform:translateY(-3px); box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
+    html.theme-dark .card-premium { background-color:var(--surface-ivory); border-color:var(--border-soft); box-shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px -12px rgb(0 0 0 / .5); }
+    html.theme-dark .card-premium:hover { box-shadow:0 2px 4px rgb(0 0 0 / .4),0 20px 48px -20px rgb(0 0 0 / .7); border-color:rgba(139,30,63,.55); }
+    .premium-heading { display:block; }
+    .premium-heading::before { content:''; display:inline-block; width:4px; height:.95em; margin-right:.65rem; background:#8B1E3F; border-radius:9999px; vertical-align:-.05em; }
+    .atl-eyebrow { display:inline-flex; align-items:center; gap:.65rem; }
+    .atl-eyebrow::before { content:''; width:30px; height:1px; background:var(--chrome-accent); opacity:.7; }
+    html.theme-dark .premium-heading::before { background:#8B1E3F; }
+    .reveal-up { opacity:0; transform:translateY(12px); transition:opacity .5s ease,transform .5s ease; }
+    .reveal-up.is-visible { opacity:1; transform:none; }
+    @media (prefers-reduced-motion: reduce) { .reveal-up { opacity:1; transform:none; transition:none; } }
+    /* ===== Primary solid button (burgundy + shimmer flash) ===== */
+    .btn-gold { position: relative; overflow: hidden; background-color: var(--btn-gold-bg) !important; color: var(--btn-gold-text) !important; }
+    .btn-gold::after { content:''; position:absolute; top:-10%; bottom:-10%; left:-80%; width:45%; background: rgba(255,255,255,.55); transform:skewX(-24deg); pointer-events:none; }
+    .btn-gold:hover::after { animation: authFlash 1.4s linear infinite; }
+    .btn-gold.flashing::after { animation: authFlash 1.4s cubic-bezier(.4,0,.2,1) 1; }
+    @keyframes authFlash { from { left:-80%; } to { left:135%; } }
+    :root           { --btn-gold-bg:#8B1E3F; --btn-gold-text:#ffffff; }
+    html.theme-dark { --btn-gold-bg:#6D1428; --btn-gold-text:#ffffff; }
+    /* ===== Drawer burgundy parity ===== */
+    #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(139,30,63,.10); }
+    html.theme-dark #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(163,38,63,.16); }
+  </style>
   </head>
-<body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased lg:pl-72">
-<!-- Top App Bar -->
-<header class="bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 border-b border-[var(--chrome-border)] sticky top-0 z-40">
-<a aria-label="Back" href="{{ url()->previous() }}" class="text-[var(--chrome-text)] hover:opacity-80 transition-opacity flex items-center justify-center p-2 -ml-2">
-<span class="material-symbols-outlined" data-icon="arrow_back" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[120px] lg:pl-72">
+<!-- TopAppBar -->
+<header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky z-40 border-b border-[var(--chrome-border)]">
+<a href="{{ route('customer.account') }}" aria-label="{{ __('Go back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
-<a aria-label="Search" href="{{ route('customer.search') }}" class="text-[var(--chrome-text)] hover:opacity-80 transition-opacity flex items-center justify-center p-2 -mr-2">
-<span class="material-symbols-outlined" data-icon="search" style="font-variation-settings: 'FILL' 0;">search</span>
-</a>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('STORE') }}</h1>
+<div class="w-10"></div> <!-- Spacer for centering -->
 </header>
-<!-- Main Content Canvas -->
-<main class="flex-grow pb-24 md:pb-lg w-full max-w-screen-xl mx-auto">
-<!-- Store Header Section -->
-<section class="px-container-margin py-lg flex flex-col items-center text-center border-b border-outline-variant bg-surface-bright">
-<div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant mb-md shadow-sm">
+<!-- Main Content -->
+<main class="pt-16 pb-[120px] w-full">
+<section class="py-xl reveal-up">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<!-- Store Header Section - centered -->
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-container-margin py-md md:py-lg shadow-sm card-premium text-center">
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs mx-auto max-w-xs">{{ __('STORE') }}</p>
+<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">Lunara Fashion</h2>
+<div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant mx-auto mb-md shadow-sm">
 <img alt="Lunara Fashion Logo" class="w-full h-full object-cover" data-alt="A refined, minimalist logo for 'Lunara Fashion'. The logo features elegant, thin-line serif typography in black against a pure white background. The style is high-end editorial, conveying luxury and sophisticated femininity. Soft, diffuse lighting highlights the crispness of the design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI74slTo7YmWoujdZO6hzYYQCAEkiOgSipcStQowpp7n4FDE2M7KDNQCRCchmHtdLRwdkXE_ngeYM2mVTXcdWL59a2HIZB6dtYUgIo3i5FU-CqWMfACDifUy9I4GoR0sbJf0JD6-uqF7DwJwmKxunT2RFbKH_CaEbhz9LLWYM0-9SgznAVzl4INwAta1qIaWmol1GgQv2mTSuClK5luG3I5T04rEShWfMtSHt0JO9SQTrtp7AmW8Y"/>
 </div>
-<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-xs">Lunara Fashion</h2>
-<div class="flex items-center gap-xs text-on-surface-variant font-label-sm text-label-sm mb-md">
+<div class="flex items-center gap-xs text-on-surface-variant font-label-sm text-label-sm mb-md justify-center">
 <span class="material-symbols-outlined text-secondary text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
 <span>{{ __('4.9 Rating') }}</span>
 <span class="px-2">•</span>
@@ -299,93 +344,104 @@
 <p class="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto mb-lg">
                 Modern feminine silhouettes designed for the contemporary woman. Curated elegance and effortless style.
             </p>
-<button class="bg-secondary text-on-secondary font-label-caps text-label-caps px-xl py-sm rounded-none tracking-widest hover:bg-opacity-90 transition-colors w-full md:w-auto min-w-[200px]">
+<button class="btn-gold font-label-caps text-label-caps px-xl py-sm rounded-none tracking-widest font-label-caps text-label-caps uppercase tracking-widest w-full md:w-auto min-w-[200px] mx-auto">
                 {{ __('FOLLOW STORE') }}
             </button>
-</section>
-<!-- Navigation Tabs -->
-<div class="sticky top-16 z-30 bg-surface/95 backdrop-blur-md border-b border-outline-variant">
-<nav class="flex px-container-margin w-full overflow-x-auto hide-scrollbar">
-<button class="py-sm px-md border-b-2 border-primary text-primary font-label-caps text-label-caps whitespace-nowrap">
-                    {{ __('PRODUCTS') }}
-                </button>
-<button class="py-sm px-md border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-caps text-label-caps whitespace-nowrap">
-                    {{ __('REVIEWS') }}
-                </button>
-<button class="py-sm px-md border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-caps text-label-caps whitespace-nowrap">
-                    {{ __('ABOUT') }}
-                </button>
-</nav>
+</div>
+<!-- Navigation Tabs (parity with shop/index category pill style) -->
+<div class="shop-toolbar flex flex-row items-center gap-sm md:gap-md px-container-margin py-md sticky top-16 lg:top-16 z-30 card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl shadow-sm flex items-center gap-sm md:gap-md min-w-0 overflow-x-auto hide-scrollbar">
+<button type="button" class="cat-pill shrink-0 px-md py-xs border border-[var(--chrome-accent)] text-[var(--chrome-accent)] font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('PRODUCTS') }}</button>
+<button type="button" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('REVIEWS') }}</button>
+<button type="button" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('ABOUT') }}</button>
 </div>
 <!-- Product Grid -->
-<section class="p-container-margin">
+<section class="pt-lg mt-lg reveal-up">
 <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
 <!-- Product Card 1 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="group flex flex-col cursor-pointer">
+<div class="group relative flex flex-col cursor-pointer">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col w-full">
 <div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
 <img alt="Pleated Silk Midi Dress" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A high-fashion editorial shot of a woman wearing a flowing, pleated silk midi dress in a soft ivory tone. The model is posed elegantly against a minimalist, textured beige studio backdrop. The lighting is soft and directional, creating gentle shadows that highlight the garment's fluid drape and premium fabric texture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwXTlTSVsiy5AZHhqQh1MgqLLVK4MB-SrxjlelWELFb6i8KGPNhED4FExnQ1On6jE827hjb842itYeDpn7S7tw2UI8OHLmcvzOIQjusnSbBsepHqK2R8YRQwY0nsQEWDGZdyEEUWXsSSotCfaGFX6QLGpSrhpA33f2FwnImbBAlato1v6p_5xZSRLw2ENMzoWBzF7IAHhf7z3M1e97Js-fu4ICWp1qjJCZVmeLnA9Jwy2JcFaeoTg"/>
-<a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</a>
 </div>
 <div class="flex flex-col gap-1">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
 <h3 class="font-body-sm text-body-sm font-semibold truncate">Pleated Silk Midi Dress</h3>
-<span class="font-body-sm text-body-sm mt-1">$245.00</span>
+<span class="font-body-sm text-body-sm text-secondary mt-1">$245.00</span>
 </div>
 </a>
-<!-- Product Card 2 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="group flex flex-col cursor-pointer">
-<div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
-<img alt="Structured Charcoal Blazer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A close-up editorial photograph focusing on a structured, tailored blazer in a muted charcoal grey. The garment is worn by a model, showing off the sharp shoulders and modern, minimalist lapel design. The background is a stark, bright white, emphasizing the clean lines and sophisticated tailoring of the piece." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVASjrbvqMDVMUE-4VSQoQPqHIiUufFkdiq_Y8L7NFX4aWn7u7rI8WvL5zpmpwiAIbEfwzPgzdwu1hA22bUnHDJxz5wYyYHWVcAV82899ylh1j1-6PqtxlbV4RBeDtXnfSrNUDLM2tyPuKfT-KF-BQl86qisNMHkxY-wF6tuEgNd0hrwuI0m-ui_3T5OQhhJInd1dX786_WX6sN9UotFNS32L3x8MEu-7n-xDiGDqvqBZN-NWLCMc"/>
-<a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface-variant hover:text-[var(--chrome-accent)] transition-colors flex items-center z-10">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </a>
+</div>
+<!-- Product Card 2 -->
+<div class="group relative flex flex-col cursor-pointer">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col w-full">
+<div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
+<img alt="Structured Charcoal Blazer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A close-up editorial photograph focusing on a structured, tailored blazer in a muted charcoal grey. The garment is worn by a model, showing off the sharp shoulders and modern, minimalist lapel design. The background is a stark, bright white, emphasizing the clean lines and sophisticated tailoring of the piece." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVASjrbvqMDVMUE-4VSQoQPqHIiUufFkdiq_Y8L7NFX4aWn7u7rI8WvL5zpmpwiAIbEfwzPgzdwu1hA22bUnHDJxz5wYyYHWVcAV82899ylh1j1-6PqtxlbV4RBeDtXnfSrNUDLM2tyPuKfT-KF-BQl86qisNMHkxY-wF6tuEgNd0hrwuI0m-ui_3T5OQhhJInd1dX786_WX6sN9UotFNS32L3x8MEu-7n-xDiGDqvqBZN-NWLCMc"/>
 </div>
 <div class="flex flex-col gap-1">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
 <h3 class="font-body-sm text-body-sm font-semibold truncate">Structured Charcoal Blazer</h3>
-<span class="font-body-sm text-body-sm mt-1">$310.00</span>
+<span class="font-body-sm text-body-sm text-secondary mt-1">$310.00</span>
 </div>
 </a>
-<!-- Product Card 3 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="group flex flex-col cursor-pointer">
-<div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
-<img alt="Wide-Leg Linen Trouser" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A stylized fashion image featuring a wide-leg linen trouser in a soft sage green. The model is standing in profile, illustrating the relaxed yet elegant fit of the pants. The setting is a minimalist interior with warm, natural sunlight casting long, artistic shadows across the floor, creating a serene, luxurious mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP2Eft0s3saJCK9YLiyH7YEPu7z2LxB1cc9QeyPbQVGwet9-CEp2QoXZmACnrpKKTy2kbye2RrZWgoOW6zx54cYhjCSaPFh8FZuMqiZwZaY6IRPhA6HbRzEMQ3yRCDoomRlqROX0biMNn7k5yzo6DCTNukoS8D98anIAWz6MgD18owlWpqrZJm0rape8bp9bLnq94DDAMeopNINJ9UYjMRANGMp8SiEBcm3OhzeZh0wcFUiR5OjxQ"/>
-<a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface-variant hover:text-[var(--chrome-accent)] transition-colors flex items-center z-10">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </a>
+</div>
+<!-- Product Card 3 -->
+<div class="group relative flex flex-col cursor-pointer">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col w-full">
+<div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
+<img alt="Wide-Leg Linen Trouser" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A stylized fashion image featuring a wide-leg linen trouser in a soft sage green. The model is standing in profile, illustrating the relaxed yet elegant fit of the pants. The setting is a minimalist interior with warm, natural sunlight casting long, artistic shadows across the floor, creating a serene, luxurious mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP2Eft0s3saJCK9YLiyH7YEPu7z2LxB1cc9QeyPbQVGwet9-CEp2QoXZmACnrpKKTy2kbye2RrZWgoOW6zx54cYhjCSaPFh8FZuMqiZwZaY6IRPhA6HbRzEMQ3yRCDoomRlqROX0biMNn7k5yzo6DCTNukoS8D98anIAWz6MgD18owlWpqrZJm0rape8bp9bLnq94DDAMeopNINJ9UYjMRANGMp8SiEBcm3OhzeZh0wcFUiR5OjxQ"/>
 </div>
 <div class="flex flex-col gap-1">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
 <h3 class="font-body-sm text-body-sm font-semibold truncate">Wide-Leg Linen Trouser</h3>
-<span class="font-body-sm text-body-sm mt-1">$185.00</span>
+<span class="font-body-sm text-body-sm text-secondary mt-1">$185.00</span>
 </div>
 </a>
-<!-- Product Card 4 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="group flex flex-col cursor-pointer">
-<div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
-<img alt="Ribbed Knit Top" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A premium fashion shot of a minimalist, ribbed knit top in a warm terracotta hue. The texture of the fine knit is highly detailed, shown on a model with simple, modern styling. The lighting is moody and dramatic, reminiscent of a high-end fashion magazine editorial, highlighting the subtle contours of the garment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWRAobFrskCQKCoX4nsaGtOO--FROG9mOy30DGnRwPRLqK9_pXDrHUmr0Jt9czXcRe5zbwketdXsxccYrU9BnsvlhlRCa-nMKgNgUaEK1fNn3C_VngpO37I5tzeYTiYoX69gbO_ITL750vyHQ5WrTveFKLqD2rqh_YeWF1AjQQMsbZAXGT2XBtoMJJ4d3N9ma0fS41M5tLqEbfAgLclVKPM6f58c_KUxV5hutF8VGYcmi90_1EGD8"/>
-<a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface-variant hover:text-[var(--chrome-accent)] transition-colors flex items-center z-10">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </a>
+</div>
+<!-- Product Card 4 -->
+<div class="group relative flex flex-col cursor-pointer">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col w-full">
+<div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
+<img alt="Ribbed Knit Top" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A premium fashion shot of a minimalist, ribbed knit top in a warm terracotta hue. The texture of the fine knit is highly detailed, shown on a model with simple, modern styling. The lighting is moody and dramatic, reminiscent of a high-end fashion magazine editorial, highlighting the subtle contours of the garment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWRAobFrskCQKCoX4nsaGtOO--FROG9mOy30DGnRwPRLqK9_pXDrHUmr0Jt9czXcRe5zbwketdXsxccYrU9BnsvlhlRCa-nMKgNgUaEK1fNn3C_VngpO37I5tzeYTiYoX69gbO_ITL750vyHQ5WrTveFKLqD2rqh_YeWF1AjQQMsbZAXGT2XBtoMJJ4d3N9ma0fS41M5tLqEbfAgLclVKPM6f58c_KUxV5hutF8VGYcmi90_1EGD8"/>
 </div>
 <div class="flex flex-col gap-1">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
 <h3 class="font-body-sm text-body-sm font-semibold truncate">Ribbed Knit Top</h3>
-<span class="font-body-sm text-body-sm mt-1">$120.00</span>
+<span class="font-body-sm text-body-sm text-secondary mt-1">$120.00</span>
 </div>
 </a>
+<a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface-variant hover:text-[var(--chrome-accent)] transition-colors flex items-center z-10">
+<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
+</a>
+</div>
 </div>
 <!-- Load More -->
 <div class="mt-xl flex justify-center">
-<button class="border border-primary text-primary bg-transparent font-label-caps text-label-caps px-xl py-sm hover:bg-surface-container-low transition-colors w-full md:w-auto">
+<button class="border border-[var(--chrome-accent)] text-[var(--chrome-accent)] bg-transparent font-label-caps text-label-caps px-xl py-sm hover:bg-surface-container-low transition-colors w-full md:w-auto rounded-lg">
                     {{ __('LOAD MORE') }}
                 </button>
 </div>
 </section>
+</div>
+</div>
+<div class="md:hidden h-24"></div>
 </main>
-<!-- Bottom Navigation Bar (Mobile Only) -->
-@include('customer._partials.bottom-nav')
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var els = document.querySelectorAll('.reveal-up');
+            if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('is-visible'); }); return; }
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); } });
+            }, { threshold: 0.1 });
+            els.forEach(function (e) { io.observe(e); });
+        });
+    </script>
 @include('customer._partials.drawer')
 </body></html>
