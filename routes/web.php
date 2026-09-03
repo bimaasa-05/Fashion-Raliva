@@ -350,6 +350,9 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::post('/pesanan/{order}/forward', [OwnerPesananController::class, 'forward'])->name('pesanan.forward');
     Route::get('/promo', [OwnerPromoController::class, 'index'])->name('promo');
     Route::post('/promo', [OwnerPromoController::class, 'store'])->name('promo.store');
+    Route::put('/promo/{promo}', [OwnerPromoController::class, 'update'])->name('promo.update');
+    Route::delete('/promo/{promo}', [OwnerPromoController::class, 'destroy'])->name('promo.destroy');
+    Route::post('/promo/{promo}/toggle', [OwnerPromoController::class, 'toggle'])->name('promo.toggle');
     Route::get('/ulasan', [UlasanController::class, 'index'])->name('ulasan');
     Route::get('/data-pelanggan', [DataPelangganController::class, 'index'])->name('data-pelanggan');
     Route::get('/saldo', [SaldoController::class, 'index'])->name('saldo');
