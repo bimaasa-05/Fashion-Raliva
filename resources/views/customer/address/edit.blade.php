@@ -3,7 +3,7 @@
 <html class="light" lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
-<title>RALIVA - {{ __('My Addresses') }}</title>
+<title>RALIVA - {{ __('Edit Address') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600&amp;display=swap" rel="stylesheet"/>
@@ -188,15 +188,6 @@
     body {
       min-height: max(884px, 100dvh);
     }
-    html, body, * {
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-    ::-webkit-scrollbar {
-      display: none;
-      width: 0;
-      height: 0;
-    }
   </style>
 <style>
         :root {
@@ -317,17 +308,7 @@
   @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
   :root           { --btn-gold-bg: #8B1E3F; --btn-gold-text: #ffffff; }
   html.theme-dark { --btn-gold-bg: #6D1428; --btn-gold-text: #ffffff; }
-  /* ============ ADDRESS TOOLBAR (mirrors customer/shop toolbar card style) ============ */
-  .address-action-btn {
-    min-height: 40px;
-    min-width: 40px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 9999px;
-    transition: color .2s ease, border-color .2s ease, background-color .2s ease;
-  }
-  .address-action-btn:hover { background-color: var(--chrome-hover); }
+  /* ===== Scroll reveal ===== */
   .reveal-up { opacity:0; transform:translateY(12px); transition:opacity .5s ease,transform .5s ease; }
   .reveal-up.is-visible { opacity:1; transform:none; }
   @media (prefers-reduced-motion: reduce) { .reveal-up { opacity:1; transform:none; transition:none; } }
@@ -336,129 +317,162 @@
 <body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased selection:bg-secondary-container selection:text-on-secondary-container pb-[calc(72px+env(safe-area-inset-bottom))] lg:pl-72">
 <!-- Top App Bar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky z-40 border-b border-[var(--chrome-border)]">
-<a aria-label="{{ __('Go back') }}" href="{{ auth()->check() ? route('customer.account') : route('login', ['redirect' => route('customer.account')]) }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+<a aria-label="{{ __('Go back') }}" href="{{ route('customer.address.index') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('MY ADDRESSES') }}</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('EDIT ADDRESS') }}</h1>
 <div class="w-10"></div> <!-- Spacer for center alignment -->
 </header>
 <!-- Main Content -->
-<main class="pt-16 pb-[132px] w-full">
+<main class="pt-16 pb-[120px] w-full">
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px]">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">ADDRESS BOOK</p>
-<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('My Addresses') }}</h2>
+<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('Edit Address') }}</h2>
 
-<!-- Empty State -->
-@if($addresses->isEmpty())
-<div class="flex flex-col items-center justify-center py-xl text-center">
-<span class="material-symbols-outlined text-6xl text-outline-variant mb-md">location_on</span>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-sm">{{ __('No addresses yet.') }}</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant mb-md">{{ __('Add your first address to get started.') }}</p>
-<a href="{{ route('customer.address.create') }}" class="btn-gold inline-flex items-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest shadow-lg">
-<span class="material-symbols-outlined text-[20px]">add</span>
-{{ __('Add New Address') }}
-</a>
-</div>
-@else
-<div class="flex flex-col gap-sm">
-@foreach($addresses as $address)
-<article class="bg-surface border border-outline-variant rounded-DEFAULT p-sm relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline" data-address-id="{{ $address->address_id }}">
-<div class="flex justify-between items-start mb-base">
-<div class="flex items-center gap-xs">
-@if($address->label === 'Home')
-<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">home</span>
-@elseif($address->label === 'Office')
-<span class="material-symbols-outlined text-on-surface-variant text-[20px]">business</span>
-@else
-<span class="material-symbols-outlined text-on-surface-variant text-[20px]">location_on</span>
-@endif
-<h2 class="font-title-md text-title-md text-on-surface">{{ __($address->label) }}</h2>
-@if($address->is_default)
-<span class="inline-flex items-center gap-1 bg-secondary/10 border border-secondary text-secondary font-label-sm text-label-sm font-semibold px-2 py-0.5 rounded-full ml-2 uppercase tracking-wider">
-<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>{{ __('Default') }}
-</span>
-@endif
-</div>
-</div>
-<div class="font-body-sm text-body-sm text-on-surface-variant space-y-1 mb-md">
-<p class="font-medium text-on-surface">{{ $address->nama_penerima }}</p>
-<p>{{ $address->nomor_telepon }}</p>
-<p>{{ $address->alamat }}<br/>{{ $address->kota }}, {{ $address->provinsi }} {{ $address->kode_pos }}<br/>{{ $address->negara }}</p>
-</div>
-<div class="flex gap-sm border-t border-outline-variant pt-sm mt-auto">
-<button type="button" data-edit-id="{{ $address->address_id }}" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-wider bg-transparent hover:bg-secondary/5 transition-colors">
-<span class="material-symbols-outlined text-[18px]">edit</span>{{ __('Edit') }}</button>
-<div class="w-px bg-outline-variant"></div>
-<form method="POST" action="{{ route('customer.address.destroy', $address) }}" class="flex-1 flex items-center justify-center" onsubmit="if(!confirm('{{ __('Are you sure you want to delete this address?') }}')) return false;">
+<form method="POST" action="{{ route('customer.address.update', $address) }}" class="space-y-md">
 @csrf
-@method('DELETE')
-<button type="submit" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-full border border-error text-error font-label-caps text-label-caps uppercase tracking-wider bg-transparent hover:bg-error/5 transition-colors">
-<span class="material-symbols-outlined text-[18px]">delete</span>{{ __('Delete') }}
+@method('PUT')
+<input type="hidden" name="address_id" value="{{ $address->address_id }}"/>
+<div class="space-y-md">
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('Label') }}</label>
+@php
+$labelIcons = ['Home' => 'home', 'Office' => 'business'];
+$selectedLabel = in_array($address->label, ['Home', 'Office', 'Other'], true) ? $address->label : 'Other';
+$selectedIcon = $labelIcons[$selectedLabel] ?? 'location_on';
+@endphp
+<div class="relative" id="label-dropdown-container">
+<input type="hidden" name="label" id="address_label" value="{{ $selectedLabel }}"/>
+<button type="button" id="label-trigger" onclick="toggleLabelMenu()" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none flex items-center justify-between gap-sm cursor-pointer hover:border-secondary transition-colors">
+<span id="label-trigger-label" class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">{{ $selectedIcon }}</span>
+<span>{{ __($selectedLabel) }}</span>
+</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" id="label-chevron">expand_more</span>
 </button>
+<div id="label-menu" class="absolute left-0 right-0 top-full mt-xs w-full bg-surface rounded-lg border border-outline-variant shadow-xl z-20 py-xs origin-top transition-all duration-200 ease-out invisible opacity-0 scale-95 -translate-y-1">
+<button type="button" data-label="Home" onclick="selectLabel(this)" class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors {{ $selectedLabel === 'Home' ? 'font-semibold' : '' }}">
+<span class="label-body flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">home</span>{{ __('Home') }}</span>
+<span class="material-symbols-outlined text-[18px] text-secondary label-check {{ $selectedLabel === 'Home' ? '' : 'invisible' }}">check</span>
+</button>
+<button type="button" data-label="Office" onclick="selectLabel(this)" class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors {{ $selectedLabel === 'Office' ? 'font-semibold' : '' }}">
+<span class="label-body flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">business</span>{{ __('Office') }}</span>
+<span class="material-symbols-outlined text-[18px] text-secondary label-check {{ $selectedLabel === 'Office' ? '' : 'invisible' }}">check</span>
+</button>
+<button type="button" data-label="Other" onclick="selectLabel(this)" class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors {{ $selectedLabel === 'Other' ? 'font-semibold' : '' }}">
+<span class="label-body flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">location_on</span>{{ __('Other') }}</span>
+<span class="material-symbols-outlined text-[18px] text-secondary label-check {{ $selectedLabel === 'Other' ? '' : 'invisible' }}">check</span>
+</button>
+</div>
+</div>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('Full Name') }}</label>
+<input type="text" name="nama_penerima" id="address_nama_penerima" required maxlength="150" value="{{ old('nama_penerima', $address->nama_penerima) }}" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none" placeholder="{{ __('John Doe') }}"/>
+@error('nama_penerima')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('Phone Number') }}</label>
+<input type="tel" name="nomor_telepon" id="address_nomor_telepon" required maxlength="30" value="{{ old('nomor_telepon', $address->nomor_telepon) }}" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none" placeholder="+62 812-3456-7890"/>
+@error('nomor_telepon')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('Address') }}</label>
+<textarea name="alamat" id="address_alamat" rows="3" required class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none resize-none" placeholder="{{ __('Jl. Contoh No. 123') }}">{{ old('alamat', $address->alamat) }}</textarea>
+@error('alamat')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('City') }}</label>
+<input type="text" name="kota" id="address_kota" required maxlength="100" value="{{ old('kota', $address->kota) }}" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none" placeholder="{{ __('Jakarta') }}"/>
+@error('kota')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('Province') }}</label>
+<input type="text" name="provinsi" id="address_provinsi" maxlength="100" value="{{ old('provinsi', $address->provinsi) }}" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none" placeholder="{{ __('DKI Jakarta') }}"/>
+@error('provinsi')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
+</div>
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('Postal Code') }}</label>
+<input type="text" name="kode_pos" id="address_kode_pos" maxlength="20" value="{{ old('kode_pos', $address->kode_pos) }}" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none" placeholder="12345"/>
+@error('kode_pos')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('Country') }}</label>
+<input type="text" name="negara" id="address_negara" maxlength="100" value="{{ old('negara', $address->negara) }}" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none"/>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<input type="checkbox" name="is_default" id="address_is_default" value="1" class="w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary" {{ $address->is_default ? 'checked' : '' }}/>
+<label for="address_is_default" class="font-body-sm text-on-surface-variant">{{ __('Set as default address') }}</label>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-sm pt-sm">
+<a href="{{ route('customer.address.index') }}" class="flex-1 flex items-center justify-center gap-2 py-3 rounded-full border border-outline-variant text-on-surface-variant font-label-caps text-label-caps uppercase tracking-widest hover:bg-surface-container-low hover:border-secondary hover:text-secondary transition-all duration-200">
+<span class="material-symbols-outlined text-[18px]">close</span>{{ __('Cancel') }}</a>
+<button type="submit" class="btn-gold flex-1 flex items-center justify-center gap-2 py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest shadow-lg">
+<span class="material-symbols-outlined text-[18px]">check</span>{{ __('Update Address') }}</button>
+</div>
 </form>
-</div>
-@if(! $address->is_default)
-<button type="button" data-set-default="{{ $address->address_id }}" class="absolute top-sm right-sm flex items-center gap-1 font-label-sm text-label-sm text-secondary border border-secondary bg-secondary/5 hover:bg-secondary/10 px-2.5 py-1 rounded-full lg:opacity-0 lg:group-hover:opacity-100 transition-all">{{ __('Set Default') }}</button>
-@endif
-</article>
-@endforeach
-</div>
-@endif
 </div>
 </div>
 </div>
 </section>
 </main>
 
-<!-- Mobile spacer for sticky action bar + bottom nav -->
-<div class="md:hidden h-28"></div>
-
-<!-- Fixed Bottom Toolbar (mirrors customer/shop toolbar card style) -->
-<div class="fixed bottom-0 left-0 right-0 lg:left-72 z-50 px-container-margin py-sm pb-safe">
-<div class="flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.18)]">
-<a href="{{ route('customer.address.create') }}" class="btn-gold flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
-<span class="material-symbols-outlined text-[20px]">add</span>
-<span class="truncate">{{ __('Add New Address') }}</span>
-</a>
-<a aria-label="{{ __('Add') }}" href="{{ route('customer.address.create') }}" class="address-action-btn relative border border-outline-variant hover:text-secondary hover:border-secondary transition-colors shrink-0">
-<span class="material-symbols-outlined text-[22px]">add</span>
-<span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">{{ $addresses->count() }}</span>
-</a>
-</div>
-</div>
 @include('customer._partials.drawer')
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('[data-edit-id]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            const id = this.getAttribute('data-edit-id');
-            if (!id) return;
-            window.location.href = '/customer/address/' + encodeURIComponent(id) + '/edit';
-        });
+function toggleLabelMenu() {
+    var menu = document.getElementById('label-menu');
+    if (menu.classList.contains('invisible')) {
+        menu.classList.remove('invisible', 'opacity-0', 'scale-95', '-translate-y-1');
+        document.getElementById('label-chevron').classList.add('rotate-180');
+    } else {
+        closeLabelMenu();
+    }
+}
+function closeLabelMenu() {
+    document.getElementById('label-menu').classList.add('invisible', 'opacity-0', 'scale-95', '-translate-y-1');
+    document.getElementById('label-chevron').classList.remove('rotate-180');
+}
+function selectLabel(btn) {
+    document.getElementById('address_label').value = btn.getAttribute('data-label');
+    var body = btn.querySelector('.label-body');
+    if (body) {
+        document.getElementById('label-trigger-label').innerHTML = body.innerHTML;
+    }
+    document.querySelectorAll('#label-menu [data-label]').forEach(function (b) {
+        var check = b.querySelector('.label-check');
+        if (b === btn) {
+            check.classList.remove('invisible');
+            b.classList.add('font-semibold');
+        } else {
+            check.classList.add('invisible');
+            b.classList.remove('font-semibold');
+        }
     });
-
-    document.querySelectorAll('[data-set-default]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            const id = this.getAttribute('data-set-default');
-            if (!id) return;
-
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/customer/address/' + encodeURIComponent(id) + '/set-default';
-
-            const csrf = document.createElement('input');
-            csrf.type = 'hidden';
-            csrf.name = '_token';
-            csrf.value = '{{ csrf_token() }}';
-
-            form.appendChild(csrf);
-            document.body.appendChild(form);
-            form.submit();
-        });
-    });
+    closeLabelMenu();
+}
+document.addEventListener('click', function (e) {
+    var container = document.getElementById('label-dropdown-container');
+    if (container && !container.contains(e.target)) closeLabelMenu();
 });
 </script>
 </body></html>
