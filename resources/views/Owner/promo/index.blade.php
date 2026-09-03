@@ -93,8 +93,17 @@
                         <div class="flex justify-between gap-3"><dt>Periode</dt><dd class="text-on-surface">{{ $promo->mulai_pada?->translatedFormat('d M Y') }} — {{ $promo->berakhir_pada?->translatedFormat('d M Y') }}</dd></div>
                     </dl>
 
-                    <div class="flex items-center gap-gutter pt-1 mt-auto">
-                        <button type="button" data-modal-open="modal-detail-promo-{{ $promo->promotion_id }}" class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Lihat Detail</button>
+                    <div class="flex items-center gap-2 pt-1 mt-auto">
+                        <button type="button" data-modal-open="modal-detail-promo-{{ $promo->promotion_id }}" class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Detail</button>
+                        <button type="button" data-modal-open="modal-edit-promo-{{ $promo->promotion_id }}" class="px-4 py-2.5 bg-gold-accent/10 border border-gold-accent/30 text-gold-accent rounded-lg text-xs font-bold hover:bg-gold-accent hover:text-white transition-colors">Edit</button>
+                        <form method="POST" action="{{ route('owner.promo.toggle', $promo) }}" class="inline">
+                            @csrf
+                            <button type="submit" class="px-3 py-2.5 {{ $promo->status==='aktif' ? 'bg-secondary text-white' : 'bg-surface-container-low border border-muted-border text-on-surface-variant' }} rounded-lg text-xs font-bold transition-colors" title="{{ $promo->status==='aktif' ? 'Nonaktifkan' : 'Aktifkan' }}">{{ $promo->status==='aktif' ? 'Aktif' : 'Off' }}</button>
+                        </form>
+                        <form method="POST" action="{{ route('owner.promo.destroy', $promo) }}" onsubmit="return confirm('Hapus promo {{ $promo->kode_promo }}?')" class="inline">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="w-9 h-9 rounded-lg bg-error/10 text-error border border-error/20 hover:bg-error hover:text-white flex items-center justify-center transition-colors" title="Hapus"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                        </form>
                     </div>
                 </article>
 
@@ -147,6 +156,75 @@
                         <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end">
                             <button type="button" data-modal-close class="py-2.5 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
                         </div>
+                    </div>
+                </div>
+                {{-- Modal Edit Promo --}}
+                <div id="modal-edit-promo-{{ $promo->promotion_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+                    <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+                        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+                            <div>
+                                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Edit Promo</h3>
+                                <p class="text-on-surface-variant font-body-md text-xs mt-1">{{ $promo->kode_promo }} — status manual, tidak auto off.</p>
+                            </div>
+                            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined">close</span></button>
+                        </div>
+                        <form method="POST" action="{{ route('owner.promo.update', $promo) }}" class="p-6 space-y-4">
+                            @csrf @method('PUT')
+                            <div>
+                                <label class="block raliva-label mb-2">Kode Promo</label>
+                                <input type="text" value="{{ $promo->kode_promo }}" disabled class="w-full bg-surface-container-low border border-muted-border rounded-lg px-3 py-2.5 text-sm text-on-surface-variant opacity-80 cursor-not-allowed" />
+                            </div>
+                            <div>
+                                <label class="block raliva-label mb-2">Nama Promo</label>
+                                <input name="nama_promo" type="text" value="{{ $promo->nama_promo }}" required class="raliva-input" />
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block raliva-label mb-2">Jenis Diskon</label>
+                                    <select name="tipe_diskon" class="raliva-select" required>
+                                        <option value="persen" {{ $promo->tipe_diskon==='persen' ? 'selected' : '' }}>Persen (%)</option>
+                                        <option value="nominal" {{ $promo->tipe_diskon==='nominal' ? 'selected' : '' }}>Nominal (Rp)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block raliva-label mb-2">Nilai Diskon</label>
+                                    <input name="nilai_diskon" type="number" value="{{ $promo->nilai_diskon }}" required class="raliva-input" />
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block raliva-label mb-2">Min. Pembelian</label>
+                                    <input name="minimal_pembelian" type="number" value="{{ $promo->minimal_pembelian }}" class="raliva-input" />
+                                </div>
+                                <div>
+                                    <label class="block raliva-label mb-2">Maks. Diskon</label>
+                                    <input name="maksimal_diskon" type="number" value="{{ $promo->maksimal_diskon }}" class="raliva-input" />
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block raliva-label mb-2">Mulai Pada</label>
+                                    <input name="mulai_pada" type="date" value="{{ $promo->mulai_pada?->format('Y-m-d') }}" required class="raliva-input" />
+                                </div>
+                                <div>
+                                    <label class="block raliva-label mb-2">Berakhir Pada</label>
+                                    <input name="berakhir_pada" type="date" value="{{ $promo->berakhir_pada?->format('Y-m-d') }}" required class="raliva-input" />
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block raliva-label mb-2">Status (manual)</label>
+                                <select name="status" class="raliva-select" required>
+                                    <option value="aktif" {{ $promo->status==='aktif' ? 'selected' : '' }}>Aktif</option>
+                                    <option value="nonaktif" {{ $promo->status==='nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                                </select>
+                                <p class="text-xs text-on-surface-variant mt-1">Tidak otomatis off by tanggal — Owner ubah manual.</p>
+                            </div>
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button type="button" data-modal-close class="py-2.5 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface">Batal</button>
+                                <button type="submit" class="py-2.5 px-6 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium">Simpan</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             @empty
