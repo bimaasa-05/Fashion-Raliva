@@ -61,6 +61,7 @@
                         <th class="p-4 text-center">Sumber</th>
                         <th class="p-4 text-left">Produk</th>
                         <th class="p-4 text-center">Jumlah</th>
+                        <th class="p-4 text-left">Catatan</th>
                         <th class="p-4 text-center">Tanggal</th>
                         <th class="p-4 text-center">Petugas</th>
                         <th class="p-4 text-center">Status</th>
@@ -84,6 +85,7 @@
                             </td>
                             <td class="p-4 text-on-surface">{{ $m->productVariant?->product?->nama_produk ?? '-' }}</td>
                             <td class="p-4 text-center font-bold text-secondary">+{{ $m->jumlah }}</td>
+                            <td class="p-4 text-on-surface-variant max-w-[220px]">{{ $m->alasan ?: '-' }}</td>
                             <td class="p-4 text-center text-on-surface-variant whitespace-nowrap">{{ $m->created_at?->format('d M Y • H:i') ?? '-' }}</td>
                             <td class="p-4 text-center text-on-surface">{{ $m->creator->nama_lengkap ?? '-' }}</td>
                             <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass[$status] }} text-[10px] font-bold uppercase border">{{ $status }}</span></td>
@@ -94,7 +96,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="9" class="p-10 text-center text-on-surface-variant">Belum ada catatan barang masuk pada gudang ini.</td></tr>
+                        <tr><td colspan="10" class="p-10 text-center text-on-surface-variant">Belum ada catatan barang masuk pada gudang ini.</td></tr>
                     @endforelse
                 </tbody>
             </table>
