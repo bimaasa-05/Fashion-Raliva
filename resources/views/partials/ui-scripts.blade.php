@@ -145,6 +145,19 @@
     document.querySelectorAll('[data-table-search]').forEach((input) => input.addEventListener('input', applyTableFilter));
     document.querySelectorAll('[data-table-filter]').forEach((select) => select.addEventListener('change', applyTableFilter));
 
+    // Filter panel collapsible pada layar mobile
+    document.querySelectorAll('[data-filter-toggle]').forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+            const panel = document.querySelector(toggle.getAttribute('data-filter-target')) || toggle.querySelector('~ [data-filter-panel]');
+            const scope = toggle.closest('[data-table-scope]');
+            const realPanel = scope ? scope.querySelector('[data-filter-panel]') : panel;
+            if (!realPanel) return;
+            realPanel.classList.toggle('hidden');
+            const chevron = toggle.querySelector('[data-filter-chevron]');
+            if (chevron) chevron.classList.toggle('rotate-180');
+        });
+    });
+
     document.querySelectorAll('[data-chip-group]').forEach((group) => {
         group.querySelectorAll('[data-chip]').forEach((chip) => {
             chip.addEventListener('click', () => {

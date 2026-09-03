@@ -31,25 +31,36 @@
     </section>
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 md:p-6 card-premium">
-        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 mb-6">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter & Pencarian</span>
-            </div>
-            <form method="GET" class="flex flex-col lg:flex-row lg:items-center gap-gutter">
-                <div class="relative flex-1 min-w-0">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                    <input type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Cari produk..." class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-10 pr-4 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent transition-colors" />
+        <div class="flex flex-col gap-4 mb-6">
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hidden md:block">Filter &amp; Pencarian</span>
                 </div>
-                <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Cari</button>
-                <button type="button" data-modal-open="modal-pemeriksaan" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
-                    <span class="material-symbols-outlined text-[16px]">add</span>
-                    Pemeriksaan Baru
-                </button>
-            </form>
+                <div class="flex items-center gap-2">
+                    <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors btn-premium">
+                        <span class="material-symbols-outlined text-[18px]" data-filter-icon>tune</span>
+                        Filter
+                        <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
+                    </button>
+                    <button type="button" data-modal-open="modal-pemeriksaan" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0 min-h-11">
+                        <span class="material-symbols-outlined text-[16px]">add</span>
+                        Periksa
+                    </button>
+                </div>
+            </div>
+            <div data-filter-panel class="hidden md:block bg-surface-container-low border border-muted-border rounded-lg p-4">
+                <form method="GET" class="flex flex-col sm:flex-row sm:items-center gap-gutter">
+                    <div class="relative flex-1 min-w-0">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
+                        <input type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Cari produk..." class="raliva-search" />
+                    </div>
+                    <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Cari</button>
+                </form>
+            </div>
         </div>
 
-        <div data-table-wrap class="overflow-x-auto">
+        <div data-table-wrap class="overflow-x-auto hidden md:block">
             <table class="w-full min-w-[980px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -87,6 +98,48 @@
             </table>
         </div>
 
+        {{-- Mobile: kartu per stok --}}
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse ($items as $s)
+                @php
+                    $statusM = $s->jumlah_stok <= 0 ? 'Selisih' : ($s->jumlah_stok <= $s->stok_minimum ? 'Selisih' : 'Sesuai');
+                @endphp
+                <article class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="min-w-0">
+                            <p class="font-bold text-on-surface leading-tight">{{ $s->productVariant?->product?->nama_produk ?? '-' }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $s->productVariant?->sku ?? '' }}</p>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $badgeClass[$statusM] }} text-[10px] font-bold uppercase border shrink-0">{{ $statusM }}</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-gutter mb-4">
+                        <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
+                            <p class="raliva-label">Stok Sistem</p>
+                            <p class="font-title-md text-lg text-on-surface leading-tight">{{ $s->jumlah_stok }}</p>
+                        </div>
+                        <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
+                            <p class="raliva-label">Min. Stok</p>
+                            <p class="font-title-md text-lg text-on-surface leading-tight">{{ $s->stok_minimum }}</p>
+                        </div>
+                    </div>
+
+                    <dl class="space-y-2 font-body-md text-sm mb-4">
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Kategori</dt>
+                            <dd class="text-on-surface text-right">{{ $s->productVariant?->product?->category?->nama_kategori ?? '-' }}</dd>
+                        </div>
+                    </dl>
+
+                    <button type="button" data-modal-open="ps-detail-{{ $loop->iteration }}" class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">fact_check</span>Periksa
+                    </button>
+                </article>
+            @empty
+                <p class="text-center text-on-surface-variant py-10">Belum ada stok untuk diperiksa pada gudang ini.</p>
+            @endforelse
+        </div>
+
         @if ($items->hasPages())
             <div class="flex flex-wrap items-center justify-between gap-4 mt-6">
                 <p class="font-label-sm text-xs text-on-surface-variant">Menampilkan {{ $items->firstItem() }}–{{ $items->lastItem() }} dari {{ $items->total() }} stok • {{ $warehouse->nama_gudang ?? '' }}</p>
@@ -101,7 +154,7 @@
             <h3 class="font-label-sm text-[12px] uppercase tracking-widest text-on-surface">Riwayat Pemeriksaan Stok</h3>
         </div>
 
-        <div data-table-wrap class="overflow-x-auto">
+        <div data-table-wrap class="overflow-x-auto hidden md:block">
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -132,6 +185,49 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        {{-- Mobile: kartu per riwayat --}}
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse ($history as $h)
+                <article class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="min-w-0">
+                            <p class="font-bold text-on-surface leading-tight">{{ $h->productVariant?->product?->nama_produk ?? '-' }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $h->productVariant?->sku ?? '' }}</p>
+                        </div>
+                        <span class="text-xs text-on-surface-variant shrink-0 text-right">{{ $h->created_at?->format('d M Y • H:i') ?? '-' }}</span>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-gutter mb-4">
+                        <div class="bg-surface-container-low border border-muted-border rounded-lg p-3 text-center">
+                            <p class="raliva-label">Sistem</p>
+                            <p class="font-title-md text-lg text-on-surface leading-tight">{{ $h->stok_sistem }}</p>
+                        </div>
+                        <div class="bg-surface-container-low border border-muted-border rounded-lg p-3 text-center">
+                            <p class="raliva-label">Fisik</p>
+                            <p class="font-title-md text-lg text-on-surface leading-tight">{{ $h->stok_fisik }}</p>
+                        </div>
+                        <div class="bg-surface-container-low border border-muted-border rounded-lg p-3 text-center">
+                            <p class="raliva-label">Selisih</p>
+                            <p class="font-title-md text-lg leading-tight {{ $h->selisih > 0 ? 'text-secondary' : ($h->selisih < 0 ? 'text-error' : 'text-on-surface-variant') }}">{{ $h->selisih > 0 ? '+'.$h->selisih : $h->selisih }}</p>
+                        </div>
+                    </div>
+
+                    <dl class="space-y-2 font-body-md text-sm">
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Catatan</dt>
+                            <dd class="text-on-surface text-right">{{ $h->catatan ?: '-' }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Petugas</dt>
+                            <dd class="text-on-surface text-right">{{ $h->creator?->nama_lengkap ?? '-' }}</dd>
+                        </div>
+                    </dl>
+                </article>
+            @empty
+                <p class="text-center text-on-surface-variant py-10">Belum ada riwayat pemeriksaan pada gudang ini.</p>
+            @endforelse
         </div>
 
         @if ($history->hasPages())

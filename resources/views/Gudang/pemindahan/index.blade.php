@@ -31,27 +31,41 @@
 
 <div data-real class="hidden space-y-section-gap" data-table-scope>
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 md:p-6 card-premium">
-        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 mb-6">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter & Pencarian</span>
+        <div class="flex flex-col gap-4 mb-6">
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hidden md:block">Filter &amp; Pencarian</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors btn-premium">
+                        <span class="material-symbols-outlined text-[18px]" data-filter-icon>tune</span>
+                        Filter
+                        <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
+                    </button>
+                    <button type="button" data-modal-open="modal-pemindahan" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0 min-h-11">
+                        <span class="material-symbols-outlined text-[16px]">add</span>
+                        Buat
+                    </button>
+                </div>
             </div>
-            <form method="GET" class="flex flex-col lg:flex-row lg:items-center gap-gutter">
-                <select name="status" aria-label="Filter status" class="bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent lg:max-w-[220px]">
-                    <option value="">Semua Status</option>
-                    @foreach ($statusLabel as $key => $label)
-                        <option value="{{ $key }}" {{ ($filters['status'] ?? '') === $key ? 'selected' : '' }}>{{ $label }}</option>
-                    @endforeach
-                </select>
-                <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Terapkan</button>
-                <button type="button" data-modal-open="modal-pemindahan" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0 ml-auto">
-                    <span class="material-symbols-outlined text-[16px]">add</span>
-                    Buat Pemindahan
-                </button>
-            </form>
+            <div data-filter-panel class="hidden md:block bg-surface-container-low border border-muted-border rounded-lg p-4">
+                <form method="GET" class="flex flex-col lg:flex-row lg:items-center gap-gutter">
+                    <div class="flex flex-col gap-2 lg:max-w-[220px] lg:flex-1">
+                        <label class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Status</label>
+                        <select name="status" aria-label="Filter status" class="raliva-select">
+                            <option value="">Semua Status</option>
+                            @foreach ($statusLabel as $key => $label)
+                                <option value="{{ $key }}" {{ ($filters['status'] ?? '') === $key ? 'selected' : '' }}>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Terapkan</button>
+                </form>
+            </div>
         </div>
 
-        <div data-table-wrap class="overflow-x-auto">
+        <div data-table-wrap class="overflow-x-auto hidden md:block">
             <table class="w-full min-w-[980px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -98,6 +112,49 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        {{-- Mobile: kartu per pemindahan --}}
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse ($transfers as $t)
+                @php
+                    $firstItemM = $t->items->first();
+                    $statusM = $statusLabel[$t->status] ?? $t->status;
+                @endphp
+                <article class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="min-w-0">
+                            <p class="font-bold text-on-surface leading-tight">PM-{{ str_pad($t->stock_transfer_id, 4, '0', STR_PAD_LEFT) }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $t->diminta_pada?->format('d M Y • H:i') ?? '-' }}</p>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $badgeClass[$t->status] ?? 'bg-surface-container-high text-on-surface-variant border-outline-variant' }} text-[10px] font-bold uppercase border shrink-0">{{ $statusM }}</span>
+                    </div>
+
+                    <div class="flex items-center gap-2 text-sm mb-4">
+                        <span class="text-on-surface">{{ $t->fromWarehouse->nama_gudang ?? '-' }}</span>
+                        <span class="material-symbols-outlined text-[16px] text-gold-accent">east</span>
+                        <span class="text-on-surface">{{ $t->toWarehouse->nama_gudang ?? '-' }}</span>
+                    </div>
+
+                    <div class="bg-surface-container-low border border-muted-border rounded-lg p-3 mb-4 flex items-center justify-between gap-3">
+                        <span class="text-on-surface font-bold text-sm">{{ $firstItemM->productVariant?->product?->nama_produk ?? '-' }}</span>
+                        <span class="font-bold text-gold-accent shrink-0">{{ $t->items->sum('jumlah') }} unit</span>
+                    </div>
+
+                    <dl class="space-y-2 font-body-md text-sm mb-4">
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Petugas</dt>
+                            <dd class="text-on-surface text-right">{{ $t->requester->nama_lengkap ?? '-' }}</dd>
+                        </div>
+                    </dl>
+
+                    <button type="button" data-modal-open="pm-detail-{{ $loop->iteration }}" class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">visibility</span>Lihat Detail
+                    </button>
+                </article>
+            @empty
+                <p class="text-center text-on-surface-variant py-10">Belum ada pemindahan stok pada gudang ini.</p>
+            @endforelse
         </div>
 
         @if ($transfers->hasPages())
