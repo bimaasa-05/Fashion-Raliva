@@ -56,6 +56,7 @@
             <table class="w-full min-w-[980px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-center w-12">No.</th>
                         <th class="p-4 text-left">Nomor</th>
                         <th class="p-4 text-center">Tujuan</th>
                         <th class="p-4 text-left">Produk</th>
@@ -73,6 +74,7 @@
                             $status = $m->sumber_tipe === 'stock_transfer' ? 'Dikirim' : 'Selesai';
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors" data-row>
+                            <td class="p-4 text-center text-on-surface-variant">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
                             <td class="p-4"><span class="font-bold text-on-surface">BK-{{ str_pad($m->stock_movement_id, 4, '0', STR_PAD_LEFT) }}</span><span class="block text-xs text-on-surface-variant mt-0.5">{{ $m->created_at?->format('d M Y • H:i') ?? '-' }}</span></td>
                             <td class="p-4 text-center">
                                 <span class="inline-flex items-center gap-1.5 text-on-surface whitespace-nowrap">
@@ -92,7 +94,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="8" class="p-10 text-center text-on-surface-variant">Belum ada catatan barang keluar pada gudang ini.</td></tr>
+                        <tr><td colspan="9" class="p-10 text-center text-on-surface-variant">Belum ada catatan barang keluar pada gudang ini.</td></tr>
                     @endforelse
                 </tbody>
             </table>

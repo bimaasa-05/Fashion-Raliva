@@ -320,6 +320,7 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang'])->g
     Route::get('/notifikasi', [GudangNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [GudangProfilController::class, 'index'])->name('profil');
     Route::post('/profil', [GudangProfilController::class, 'updateProfile'])->name('profil.update');
+    Route::match(['put', 'post'], '/profil/password', [GudangProfilController::class, 'updatePassword'])->name('profil.password');
     Route::post('/ganti-gudang', [GantiGudangController::class, 'store'])->name('ganti');
     Route::post('/barang-masuk', [GudangBarangMasukController::class, 'store'])->name('barang-masuk.store')->middleware('permission:warehouse.stock_in');
     Route::post('/barang-keluar', [GudangBarangKeluarController::class, 'store'])->name('barang-keluar.store')->middleware('permission:warehouse.stock_out');

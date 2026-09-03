@@ -54,6 +54,7 @@
             <table class="w-full min-w-[1000px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-xs font-medium">
+                        <th class="p-4 text-center w-12">No.</th>
                         <th class="p-4 text-left">Produk</th>
                         <th class="p-4 text-center">SKU</th>
                         <th class="p-4 text-center">Variasi</th>
@@ -79,6 +80,7 @@
                             ][$statusKey];
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors" data-row data-status="{{ $statusKey }}">
+                            <td class="p-4 text-center text-on-surface-variant">{{ $loop->iteration }}</td>
                             <td class="p-4 text-on-surface">{{ $row->produk->nama_produk }}</td>
                             <td class="p-4 text-center text-on-surface-variant">{{ $row->sku }}</td>
                             <td class="p-4 text-center text-on-surface-variant">{{ $row->variasi ?: '-' }}</td>
@@ -100,7 +102,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="10" class="p-10 text-center text-on-surface-variant">Belum ada data stok pada gudang ini.</td></tr>
+                        <tr><td colspan="11" class="p-10 text-center text-on-surface-variant">Belum ada data stok pada gudang ini.</td></tr>
                     @endforelse
                 </tbody>
             </table>

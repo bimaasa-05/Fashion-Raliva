@@ -100,6 +100,35 @@
         </section>
     </div>
 
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 md:p-6 card-premium">
+        <div class="flex items-center gap-2 mb-6">
+            <span class="material-symbols-outlined text-[20px] text-gold-accent">password</span>
+            <h3 class="font-label-sm text-[12px] uppercase tracking-widest text-on-surface">Ganti Password</h3>
+        </div>
+        <form action="{{ route('gudang.profil.password') }}" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-gutter items-end">
+            @csrf
+            <div>
+                <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Password Lama</label>
+                <input type="password" name="password_lama" required autocomplete="current-password" placeholder="••••••••" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent" />
+            </div>
+            <div>
+                <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Password Baru</label>
+                <input type="password" name="password_baru" required minlength="8" autocomplete="new-password" placeholder="Minimal 8 karakter" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent" />
+            </div>
+            <div>
+                <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Konfirmasi Password Baru</label>
+                <input type="password" name="password_baru_confirmation" required autocomplete="new-password" placeholder="Ulangi password baru" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent" />
+            </div>
+            <div class="md:col-span-3 flex flex-col sm:flex-row sm:justify-end items-start gap-3">
+                <p class="text-xs text-on-surface-variant flex items-center gap-1.5 mr-auto">
+                    <span class="material-symbols-outlined text-[16px] text-gold-accent">info</span>
+                    Gunakan minimal 8 karakter dengan kombinasi huruf dan angka.
+                </p>
+                <button type="submit" class="px-6 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Perbarui Password</button>
+            </div>
+        </form>
+    </section>
+
     <div id="modal-edit-profil" data-modal class="fixed inset-0 z-[70] hidden">
         <div class="absolute inset-0 bg-black/50" data-modal-close></div>
         <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
