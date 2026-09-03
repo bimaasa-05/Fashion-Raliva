@@ -518,6 +518,14 @@
                                     <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No reviews yet. Be the first to review this product.') }}</p>
                                     </article>
 @endforelse
+                                @if ($reviewCount > 3)
+                                <div class="px-container-margin md:px-[64px] py-md flex justify-center">
+                                    <a href="{{ route('customer.shop.produk-riviews', $product->product_id) }}" class="inline-flex items-center gap-sm font-label-caps text-label-caps uppercase tracking-widest text-secondary hover:text-primary transition-colors">
+                                        <span>{{ __('Lihat selengkapnya') }}</span>
+                                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                    </a>
+                                </div>
+                                @endif
                                 </section>
                             </div>
                         </section>

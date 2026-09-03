@@ -239,6 +239,18 @@
         border-color: #3a3937;
         background-color: #201f1e;
     }
+    /* ============ LOAD MORE SPINNER ============ */
+    .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(139,30,63,.35);
+        border-top-color: #8B1E3F;
+        border-radius: 50%;
+        animation: spin .7s linear infinite;
+        display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #load-more-btn:disabled { cursor: not-allowed; opacity: .7; }
 </style>
 <style>
     /* ============ Shop: remap drawer + bottom-nav accent to burgundy (Register language) ============ */
@@ -356,7 +368,7 @@
     <div class="shop-category-nav flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar">
         <button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-pill shrink-0 px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('All') }}</button>
 @php
-    $parentCats = $products->getCollection()
+    $parentCats = $products
         ->map(fn ($p) => $p->category?->parent?->nama_kategori ?? $p->category?->nama_kategori)
         ->filter()
         ->unique()
@@ -408,7 +420,7 @@
 <button id="clear-all" class="font-label-sm text-label-sm text-secondary underline hover:opacity-80 transition-opacity shrink-0" onclick="clearAll()" type="button">{{ __('Clear all') }}</button>
 </div>
 <!-- Shop Content Container -->
-<div class="mx-auto max-w-[1400px] px-container-margin py-xl">
+<div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <!-- Shop Header -->
 <div class="flex items-center justify-between gap-md mb-md flex-wrap">
@@ -450,10 +462,11 @@
 </div>
 @endforelse
 </div>
-<div id="load-more-wrap" class="flex justify-center py-xl mt-md">
-@if ($products->hasPages())
-{{ $products->links() }}
-@endif
+<div id="load-more-wrap" class="flex justify-center py-xl mt-md" data-total="{{ $totalProducts }}">
+<button id="load-more-btn" class="border border-[var(--chrome-accent)] text-[var(--chrome-accent)] bg-transparent font-label-caps text-label-caps px-xl py-sm hover:bg-surface-container-low transition-colors w-full md:w-auto rounded-lg flex items-center justify-center gap-2 uppercase tracking-widest" type="button" onclick="loadMoreProducts()" style="display:none;">
+<span class="spinner" style="display:none;"></span>
+<span id="load-more-txt">Load More</span>
+</button>
 </div>
 </div>
 </div>
@@ -520,6 +533,7 @@
     <script>
         var activeFilters = { category: [], size: [], color: [], price: { min: null, max: null } };
         var currentSort = 'Newest';
+        var revealedCount = 6;
 
         function openFilter() {
             document.getElementById('filter-sheet').classList.remove('translate-y-full');
@@ -680,7 +694,7 @@
         function applyGridFilter() {
             var cards = document.querySelectorAll('#product-grid > a');
             var shown = 0;
-            cards.forEach(function (card) {
+            cards.forEach(function (card, idx) {
                 var cat = (card.getAttribute('data-category') || '').split(' ');
                 var sizes = (card.getAttribute('data-size') || '').split(' ');
                 var colors = (card.getAttribute('data-color') || '').split(' ');
@@ -691,8 +705,9 @@
                 if (activeFilters.color.length && !activeFilters.color.some(function (c) { return colors.indexOf(c) >= 0; })) ok = false;
                 if (activeFilters.price.min !== null && price < activeFilters.price.min) ok = false;
                 if (activeFilters.price.max !== null && price > activeFilters.price.max) ok = false;
-                card.style.display = ok ? '' : 'none';
-                if (ok) shown++;
+                var visible = ok && idx < revealedCount;
+                card.style.display = visible ? '' : 'none';
+                if (visible) shown++;
             });
             var countEl = document.getElementById('result-count');
             if (countEl) countEl.textContent = shown;
@@ -701,8 +716,48 @@
                 emptyEl.classList.toggle('hidden', shown > 0);
                 emptyEl.classList.toggle('flex', shown === 0);
             }
-            var loadMoreEl = document.getElementById('load-more-wrap');
-            if (loadMoreEl) loadMoreEl.classList.toggle('hidden', shown === 0);
+            updateLoadMoreButton();
+        }
+        function updateLoadMoreButton() {
+            var wrap = document.getElementById('load-more-wrap');
+            var btn = document.getElementById('load-more-btn');
+            if (!wrap || !btn) return;
+            var total = parseInt(wrap.getAttribute('data-total') || '0', 10);
+            var hiddenCount = 0;
+            document.querySelectorAll('#product-grid > a').forEach(function (c, idx) {
+                if (idx >= revealedCount) hiddenCount++;
+            });
+            var show = total > 6 && hiddenCount > 0 && !btn.hasAttribute('disabled');
+            btn.style.display = show ? 'inline-flex' : 'none';
+            wrap.classList.toggle('hidden', shownCount() === 0);
+        }
+        function shownCount() {
+            var n = 0;
+            document.querySelectorAll('#product-grid > a').forEach(function (c) {
+                if (c.style.display !== 'none') n++;
+            });
+            return n;
+        }
+        function loadMoreProducts() {
+            var btn = document.getElementById('load-more-btn');
+            if (!btn || btn.hasAttribute('disabled')) return;
+            btn.setAttribute('disabled', 'disabled');
+            var spinner = btn.querySelector('.spinner');
+            var txt = document.getElementById('load-more-txt');
+            if (txt) txt.textContent = 'Loading';
+            if (spinner) spinner.style.display = 'inline-block';
+            if (btn.classList) btn.classList.add('flashing');
+            setTimeout(function () {
+                var wrap = document.getElementById('load-more-wrap');
+                var total = wrap ? parseInt(wrap.getAttribute('data-total') || '0', 10) : 0;
+                revealedCount += 6;
+                if (txt) txt.textContent = 'Load More';
+                if (spinner) spinner.style.display = 'none';
+                if (btn.classList) btn.classList.remove('flashing');
+                btn.removeAttribute('disabled');
+                applyGridFilter();
+                applySort();
+            }, 650);
         }
         function applySort() {
             var grid = document.getElementById('product-grid');
@@ -766,24 +821,8 @@
             }
         });
         (function initShop() {
-            var productData = [
-                { category: 'Women', size: 'S M L', color: 'Beige Brown', price: 329000, created: 4, popular: 2 },
-                { category: 'Women', size: 'S M', color: 'Brown', price: 579000, created: 3, popular: 4 },
-                { category: 'Women', size: 'XS S M', color: 'Beige', price: 380000, created: 2, popular: 3 },
-                { category: 'Men', size: 'M L XL', color: 'White', price: 299000, created: 1, popular: 1 }
-            ];
-            var cards = document.querySelectorAll('#product-grid > a');
-            cards.forEach(function (card, i) {
-                var d = productData[i];
-                if (!d) return;
-                card.setAttribute('data-category', d.category);
-                card.setAttribute('data-size', d.size);
-                card.setAttribute('data-color', d.color);
-                card.setAttribute('data-price', d.price);
-                card.setAttribute('data-created', d.created);
-                card.setAttribute('data-popular', d.popular);
-            });
             applySort();
+            applyGridFilter();
             renderChips();
             updateBadge();
             updateAppliedLabel();
