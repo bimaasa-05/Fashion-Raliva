@@ -64,7 +64,11 @@
                 data-status="{{ $product->status }}"
                 data-reason="{{ $product->alasan_penolakan }}"
                 data-tipe="{{ ucfirst($product->tipe_produk) }}"
-                data-variants="{{ $product->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}">
+                data-variants="{{ $product->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}"
+                data-slot-total="{{ $product->slot_total }}"
+                data-slot-used="{{ $product->slot_used }}"
+                data-slot-available="{{ $product->slot_available }}"
+                data-slot-full="{{ $product->slot_full ? '1' : '0' }}">
                 <div class="relative w-full aspect-[3/4] bg-surface-container-low mb-element-gap overflow-hidden rounded-lg">
                     @if ($product->images->first())
                         <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ asset($product->images->first()->file_gambar) }}" alt="{{ $product->nama_produk }}" />
@@ -78,7 +82,7 @@
                         <div class="absolute bottom-2 left-2 right-2 px-2 py-1 bg-error/90 text-on-error text-[9px] font-bold uppercase tracking-widest rounded text-center">Ditolak • Lihat Alasan</div>
                     @endif
                 </div>
-                <div class="flex flex-col flex-grow"><span class="font-label-sm text-label-sm text-on-surface-variant mb-1">{{ strtoupper($product->store->nama_toko ?? '-') }}</span><h3 class="font-body-md text-body-md text-on-surface leading-tight mb-1 truncate">{{ $product->nama_produk }}</h3><div class="font-body-md text-body-md text-on-surface mt-auto">Rp {{ number_format($product->harga_dasar, 0, ',', '.') }}</div><span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant mt-2">{{ ucfirst($product->tipe_produk) }}</span></div>
+                <div class="flex flex-col flex-grow"><span class="font-label-sm text-label-sm text-on-surface-variant mb-1">{{ strtoupper($product->store->nama_toko ?? '-') }}</span><h3 class="font-body-md text-body-md text-on-surface leading-tight mb-1 truncate">{{ $product->nama_produk }}</h3><div class="font-body-md text-body-md text-on-surface mt-auto">Rp {{ number_format($product->harga_dasar, 0, ',', '.') }}</div><div class="flex items-center gap-1.5 flex-wrap mt-2"><span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ ucfirst($product->tipe_produk) }}</span>@if ($product->status === \App\Models\Product::STATUS_PENDING)<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ $product->slot_full ? 'bg-error/10 text-error border-error/30' : 'bg-success/10 text-success border-success/20' }}">{{ $product->slot_full ? 'Kuota Penuh' : 'Slot ' . $product->slot_available . '/' . $product->slot_total }}</span>@endif</div></div>
             </div>
         @empty
             <p id="moderasi-kosong" class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-16">Belum ada produk pada status ini.</p>
@@ -124,10 +128,24 @@
             reasonBox.classList.add('hidden');
         }
 
+        const slotBox = document.getElementById('mod-slot-box');
+        const slotFull = String(d.slotFull) === '1';
+        if (d.status === 'pending' && d.slotTotal !== undefined) {
+            slotBox.classList.remove('hidden');
+            const el = document.getElementById('mod-slot');
+            el.textContent = slotFull
+                ? 'Kuota penuh (' + d.slotUsed + '/' + d.slotTotal + ') — pemilik toko harus menambah slot.'
+                : d.slotAvailable + '/' + d.slotTotal + ' slot tersisa.';
+            el.className = 'font-body-md text-body-md ' + (slotFull ? 'text-error' : 'text-success');
+        } else {
+            slotBox.classList.add('hidden');
+        }
+
         const canDecide = d.status === 'pending';
         document.getElementById('mod-action-reject').classList.toggle('hidden', !canDecide);
-        document.getElementById('mod-action-approve').classList.toggle('hidden', !canDecide);
-        document.getElementById('mod-action-note').classList.toggle('hidden', canDecide);
+        document.getElementById('mod-action-approve').classList.toggle('hidden', !canDecide || slotFull);
+        document.getElementById('mod-action-note').classList.toggle('hidden', canDecide && !slotFull);
+        document.getElementById('mod-action-slotfull').classList.toggle('hidden', !(canDecide && slotFull));
         document.getElementById('approve-product-form').action = productActionUrls.setujui(d.id);
 
         document.getElementById('mod-reject-store').textContent = d.store;
@@ -198,6 +216,7 @@
                     <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Tipe Produk</span><span id="mod-tipe" class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">-</span></div>
                     <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Kategori</span><span id="mod-category" class="font-body-md text-body-md text-on-surface">-</span></div>
                     <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Varian (Warna & Ukuran)</span><span id="mod-variants" class="font-body-md text-body-md text-on-surface">-</span></div>
+                    <div id="mod-slot-box"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Kuota Slot Toko</span><span id="mod-slot" class="font-body-md text-body-md text-on-surface">-</span></div>
                     <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Deskripsi</span><p id="mod-desc" class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-sm">-</p></div>
                 </div>
             </div>
@@ -205,6 +224,7 @@
 
         <div class="shrink-0 border-t border-muted-border px-6 py-4 bg-surface/95 backdrop-blur flex gap-3">
             <p id="mod-action-note" class="hidden flex-1 self-center text-xs text-on-surface-variant italic">Keputusan sudah diambil untuk produk ini.</p>
+            <p id="mod-action-slotfull" class="hidden flex-1 self-center text-xs text-error font-semibold">Kuota slot toko penuh — setujui hanya setelah slot ditambah.</p>
             <button id="mod-action-reject" type="button" onclick="openRejectModal()" class="hidden flex-1 py-3 bg-transparent border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-widest hover:bg-error/10 transition-colors rounded-lg">Tolak</button>
             <form id="approve-product-form" method="POST" action="" onsubmit="closeDetailModal()">
                 @csrf

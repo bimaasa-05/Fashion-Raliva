@@ -89,6 +89,7 @@ use App\Http\Controllers\SuperAdmin\ProfilController;
 use App\Http\Controllers\SuperAdmin\PromoPlatformController;
 use App\Http\Controllers\SuperAdmin\RiwayatAktivitasController;
 use App\Http\Controllers\SuperAdmin\SaldoTokoController;
+use App\Http\Controllers\SuperAdmin\SlotProdukController;
 use App\Http\Controllers\SuperAdmin\StokController as SaStokController;
 use App\Http\Controllers\SuperAdmin\StoreStaffController;
 use App\Http\Controllers\SuperAdmin\UlasanProdukTokoController;
@@ -281,6 +282,13 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/store-staff', [StoreStaffController::class, 'store'])->name('store-staff.store');
     Route::get('/store-staff/{staff}', [StoreStaffController::class, 'show'])->name('store-staff.show');
     Route::put('/store-staff/{staff}', [StoreStaffController::class, 'update'])->name('store-staff.update');
+    Route::get('/slot-produk', [SlotProdukController::class, 'index'])->name('slot-produk');
+    Route::post('/slot-produk/toko/{store}/kuota', [SlotProdukController::class, 'updateQuota'])->name('slot-produk.kuota');
+    Route::post('/slot-produk/toko/{store}/tambah', [SlotProdukController::class, 'grantManual'])->name('slot-produk.tambah-manual');
+    Route::post('/slot-produk/paket', [SlotProdukController::class, 'storePackage'])->name('slot-produk.paket.store');
+    Route::post('/slot-produk/paket/{paket}/toggle', [SlotProdukController::class, 'togglePackage'])->name('slot-produk.paket.toggle');
+    Route::post('/slot-produk/permintaan/{rmt}/setujui', [SlotProdukController::class, 'approvePurchase'])->name('slot-produk.permintaan.setujui');
+    Route::post('/slot-produk/permintaan/{rmt}/tolak', [SlotProdukController::class, 'rejectPurchase'])->name('slot-produk.permintaan.tolak');
 });
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->group(function () {
