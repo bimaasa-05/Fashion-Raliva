@@ -12,6 +12,12 @@ class DataTokoController extends Controller
     public function index()
     {
         $store = OwnerContext::currentStore();
+
+        if (! $store) {
+            return redirect()->route('owner.pengajuan-toko')
+                ->with('info', 'Silakan ajukan pembuatan toko terlebih dahulu.');
+        }
+
         $rating = $store ? (float) Review::where('store_id', $store->store_id)->avg('rating') : 0;
         $reviewCount = $store ? Review::where('store_id', $store->store_id)->count() : 0;
 
