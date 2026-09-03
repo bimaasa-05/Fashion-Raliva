@@ -50,10 +50,10 @@
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">check_circle</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Request</span>
-            <span class="raliva-figure text-[26px] text-on-surface">{{ $counts['total'] ?? 0 }}</span>
-            <span class="font-label-sm text-[11px] text-on-surface-variant">pesanan menunggu</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">receipt_long</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Diteruskan</span>
+            <span class="raliva-figure text-[26px] text-on-surface">{{ $counts['diteruskan'] ?? 0 }}</span>
+            <span class="font-label-sm text-[11px] text-on-surface-variant">diteruskan ke produksi</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">local_shipping</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Tidak Tersedia</span>
@@ -129,22 +129,36 @@
                             <td class="py-3.5 px-4 text-center">
                                 @if ($skey === 'tersedia')
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Tersedia</span>
-                                @elseif ($skey === 'kosong')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Kosong</span>
+                                @elseif ($skey === 'diteruskan')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Diteruskan</span>
+                                @elseif ($skey === 'tidak_tersedia' || $skey === 'kosong')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Tidak Tersedia</span>
                                 @else
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Menunggu</span>
                                 @endif
                             </td>
                             <td class="py-3.5 px-4 text-right">
-                                @if ($skey === 'kosong' || $skey === 'tersedia')
-                                    @if ($firstCheck && $row->order_id === $firstCheck->order_id)
-                                        <button type="button" data-modal-open="modal-cek-request" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Cek Stok</button>
-                                    @else
-                                        <button type="button" onclick="showRalivaToast('Hanya request pertama yang bisa dikonfirmasi.', 'info')" class="text-xs font-semibold text-on-surface-variant hover:text-gold-accent transition-colors whitespace-nowrap">Detail</button>
-                                    @endif
-                                @else
-                                    <button type="button" onclick="showRalivaToast('Detail request dibuka.', 'visibility')" class="text-xs font-semibold text-on-surface-variant hover:text-gold-accent transition-colors whitespace-nowrap">Detail</button>
-                                @endif
+                                @php
+                                    $dicek = ! is_null($row->status_ketersediaan);
+                                    $bahanAtr = str_replace(['"', "\n"], ['&quot;', ' '], $bahan);
+                                    $produkAtr = str_replace(['"', "\n"], ['&quot;', ' '], $row->produk);
+                                    $catatanAtr = str_replace(['"', "\n"], ['&quot;', ' '], $row->catatan_gudang ?? '');
+                                @endphp
+                                <button type="button"
+                                    data-detail-open="modal-cek-request"
+                                    data-d-nomor="{{ $row->nomor_order }}"
+                                    data-d-produk="{{ $produkAtr }}"
+                                    data-d-bahan="{{ $bahanAtr }}"
+                                    data-d-hpp="{{ number_format($row->hpp, 0, ',', '.') }}"
+                                    data-d-total="{{ number_format($row->total, 0, ',', '.') }}"
+                                    data-d-stok="{{ $row->stok }}"
+                                    data-d-catatan="{{ $catatanAtr }}"
+                                    data-order-id="{{ $row->order_id }}"
+                                    data-result="{{ $row->status_ketersediaan ?? '' }}"
+                                    data-locked="{{ $dicek ? '1' : '0' }}"
+                                    class="text-xs font-semibold whitespace-nowrap {{ $dicek ? 'text-on-surface-variant hover:text-gold-accent transition-colors' : 'text-gold-accent hover:underline' }}">
+                                    {{ $dicek ? 'Detail' : 'Cek Stok' }}
+                                </button>
                             </td>
                         </tr>
                     @empty
@@ -173,20 +187,10 @@
 <div id="modal-cek-request" data-modal class="fixed inset-0 z-[70] hidden">
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
     <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
-        @php
-            $fc = $firstCheck;
-            $fcVariant = $fc?->variant;
-            $fcBahan = $fcVariant?->warna ? (($fcVariant->warna) . ($fcVariant->ukuran ? ' / ' . $fcVariant->ukuran : '')) : '-';
-            $fcStok = $fcVariant && $warehouse
-                ? \App\Models\WarehouseStock::where('warehouse_id', $warehouse->warehouse_id)
-                    ->where('product_variant_id', $fcVariant->product_variant_id)
-                    ->value('jumlah_stok')
-                : 0;
-        @endphp
         <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div>
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading">Konfirmasi Ketersediaan</h3>
-                <p class="text-on-surface-variant font-body-md text-xs mt-1">{{ $fc->nomor_order ?? '-' }} — {{ $fc->produk ?? '-' }} • {{ $fcBahan }} @if ($fcVariant) ({{ $fcStok ?? 0 }} unit) @endif</p>
+                <p class="text-on-surface-variant font-body-md text-xs mt-1"><span data-slot="nomor">-</span> — <span data-slot="produk">-</span> • <span data-slot="bahan">-</span> <span class="stok-hint">(<span data-slot="stok">0</span> unit)</span></p>
             </div>
             <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
                 <span class="material-symbols-outlined">close</span>
@@ -194,11 +198,11 @@
         </div>
         <form action="{{ route('gudang.pelanggan-request.konfirmasi') }}" method="POST" class="p-6 space-y-5">
             @csrf
-            <input type="hidden" name="order_id" value="{{ $fc->order_id ?? '' }}" />
+            <input type="hidden" name="order_id" id="cek-order-id" value="" />
             <div>
                 <label class="block raliva-label mb-2">Hasil Pengecekan</label>
-                <select name="hasil" class="raliva-select" required>
-                    <option value="tersedia" selected>Tersedia — Siap diproses</option>
+                <select name="hasil" id="cek-hasil" class="raliva-select" required>
+                    <option value="tersedia">Tersedia — Siap diproses</option>
                     <option value="diteruskan">Diteruskan ke Produksi (bahan perlu produksi)</option>
                     <option value="tidak_tersedia">Tidak Tersedia — Bahan kosong</option>
                 </select>
@@ -210,18 +214,18 @@
             <div class="grid grid-cols-2 gap-gutter">
                 <div class="bg-surface-container-low border border-muted-border rounded-lg p-3 text-center">
                     <p class="raliva-label">Bahan / Varian</p>
-                    <p class="font-title-md text-sm text-on-surface mt-1">{{ $fcBahan }}</p>
-                    <p class="text-xs text-secondary font-bold mt-1">{{ $fcStok ?? 0 }} unit tersedia</p>
+                    <p class="font-title-md text-sm text-on-surface mt-1" data-slot="bahan">-</p>
+                    <p class="text-xs text-secondary font-bold mt-1"><span data-slot="stok">0</span> unit tersedia</p>
                 </div>
                 <div class="bg-surface-container-low border border-muted-border rounded-lg p-3 text-center">
                     <p class="raliva-label">Modal (HPP)</p>
-                    <p class="font-title-md text-sm text-on-surface mt-1">Rp {{ number_format($fc->hpp ?? 0, 0, ',', '.') }}</p>
-                    <p class="text-xs text-gold-accent font-bold mt-1">Total Rp {{ number_format($fc->total ?? 0, 0, ',', '.') }}</p>
+                    <p class="font-title-md text-sm text-on-surface mt-1">Rp <span data-slot="hpp">0</span></p>
+                    <p class="text-xs text-gold-accent font-bold mt-1">Total Rp <span data-slot="total">0</span></p>
                 </div>
             </div>
             <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
+                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+                <button type="submit" id="cek-submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-[16px]">check_circle</span>Konfirmasi
                 </button>
             </div>
@@ -229,3 +233,28 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    const modal = document.getElementById('modal-cek-request');
+    if (!modal) return;
+    const inputOrder = document.getElementById('cek-order-id');
+    const selectHasil = document.getElementById('cek-hasil');
+    const textareaCatatan = document.getElementById('cek-catatan');
+    const submitBtn = document.getElementById('cek-submit');
+
+    document.querySelectorAll('[data-detail-open="modal-cek-request"]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            inputOrder.value = btn.dataset.orderId || '';
+            selectHasil.value = btn.dataset.result || 'tersedia';
+            textareaCatatan.value = btn.dataset.catatan || '';
+            const locked = btn.dataset.locked === '1';
+            selectHasil.disabled = locked;
+            textareaCatatan.readOnly = locked;
+            submitBtn.classList.toggle('hidden', locked);
+        });
+    });
+})();
+</script>
+@endpush
