@@ -82,7 +82,7 @@
             {{ __('Home') }}
             <span class="material-symbols-outlined drawer-chevron text-[20px] text-[var(--chrome-text-faint)] ml-auto">chevron_right</span>
         </a>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.shop') || request()->routeIs('customer.shop.produk-detail') || request()->routeIs('customer.shop.store-detail') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.shop') }}">
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.shop') || request()->routeIs('customer.shop.produk-detail') || request()->routeIs('customer.shop.store') || request()->routeIs('customer.shop.store.riviews') || request()->routeIs('customer.shop.store.about') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.shop') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">shopping_bag</span>
             {{ __('Shop') }}
             <span class="material-symbols-outlined drawer-chevron text-[20px] text-[var(--chrome-text-faint)] ml-auto">chevron_right</span>
