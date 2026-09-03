@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Support\OwnerContext;
@@ -18,17 +19,25 @@ class ProdukController extends Controller
         $query = Product::with(['category', 'variants'])
             ->where('store_id', $storeId);
 
+        if ($q = trim((string) $request->input('q'))) {
+            $query->where(function ($qq) use ($q) {
+                $qq->where('nama_produk', 'like', "%{$q}%")
+                   ->orWhereHas('variants', fn($v) => $v->where('sku', 'like', "%{$q}%"));
+            });
+        }
         if ($kat = $request->input('kategori')) {
             $katLabel = \Illuminate\Support\Str::title($kat);
             $query->whereHas('category', fn($q) => $q->where('nama_kategori', $katLabel));
         }
         if ($status = $request->input('status-produk')) {
-            if (in_array($status, ['aktif', 'nonaktif'])) {
+            if (in_array($status, ['aktif', 'nonaktif', 'pending', 'ditolak', 'draft', 'arsip'])) {
                 $query->where('status', $status);
             }
         }
 
         $products = $query->latest()->paginate(12)->withQueryString();
+
+        $categories = Category::where('status', 'aktif')->orderBy('nama_kategori')->pluck('nama_kategori');
 
         // terjual per produk (dari order item via variant)
         $ids = $products->pluck('product_id')->all();
@@ -51,12 +60,12 @@ class ProdukController extends Controller
         $usedSlot = (int) ($slotAgg->used ?? 0);
 
         $counts = [
-            'total' => $usedSlot,
+            'total' => Product::where('store_id', $storeId)->count(),
             'aktif' => Product::where('store_id', $storeId)->where('status', 'aktif')->count(),
             'nonaktif' => Product::where('store_id', $storeId)->where('status', 'nonaktif')->count(),
             'varian' => \App\Models\ProductVariant::whereHas('product', fn($q) => $q->where('store_id', $storeId))->count(),
         ];
 
-        return view('Owner.produk.index', compact('products', 'counts', 'totalSlot', 'usedSlot'));
+        return view('Owner.produk.index', compact('products', 'counts', 'totalSlot', 'usedSlot', 'categories'));
     }
 }
