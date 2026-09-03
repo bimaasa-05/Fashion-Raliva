@@ -94,6 +94,10 @@ class PelangganRequestController extends Controller
 
     public function konfirmasi(Request $request)
     {
+        if (! auth()->user()->hasPermission('warehouse.stock_check')) {
+            abort(403, 'Anda tidak memiliki izin (warehouse.stock_check) untuk melakukan tindakan ini.');
+        }
+
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {
