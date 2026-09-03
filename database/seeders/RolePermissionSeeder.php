@@ -56,7 +56,7 @@ class RolePermissionSeeder extends Seeder
                 'shipment.view',
                 'warehouse.view', 'warehouse.stock_in', 'warehouse.stock_out',
                 'warehouse.stock_adjust', 'warehouse.transfer',
-                'warehouse.damage',
+                'warehouse.damage', 'warehouse.stock_check',
                 'production.view',
             ],
 
