@@ -26,16 +26,16 @@
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-5 card-premium">
         <div class="flex items-center gap-4">
             <div class="w-14 h-14 rounded-xl overflow-hidden border border-outline-variant shrink-0 bg-surface-container-high flex items-center justify-center">
-                <img src="{{ asset('images/logo.svg') }}" alt="Logo Raliva Atelier Jakarta" class="w-full h-full object-cover" />
+                <img src="{{ asset('images/logo.svg') }}" alt="Logo {{ $store?->nama_toko ?? 'Toko' }}" class="w-full h-full object-cover" />
             </div>
             <div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <p class="raliva-figure text-xl text-on-surface">Raliva Atelier Jakarta</p>
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">
-                        <span class="material-symbols-outlined fill text-[12px]">verified</span>Terverifikasi
+                    <p class="raliva-figure text-xl text-on-surface">{{ $store?->nama_toko ?? 'Toko' }}</p>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full {{ $store?->status === 'aktif' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }} text-[10px] font-bold uppercase border">
+                        <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : 'schedule' }}</span>{{ $store?->status === 'aktif' ? 'Terverifikasi' : ucfirst($store?->status ?? 'Menunggu') }}
                     </span>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Jl. Kemang Raya No. 21, Jakarta Selatan • Aktif sejak Mar 2024</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">{{ $store?->alamat ?? '-' }} • {{ $store ? 'Aktif sejak ' . optional($store->created_at)->translatedFormat('M Y') : 'Belum ada toko' }}</p>
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-gutter self-start md:self-auto">
