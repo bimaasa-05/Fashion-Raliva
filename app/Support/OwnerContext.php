@@ -17,7 +17,7 @@ class OwnerContext
             return $user;
         }
 
-        return static::fallbackOwner();
+        return null;
     }
 
     public static function fallbackOwner(): ?User
