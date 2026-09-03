@@ -261,18 +261,24 @@
 <!-- Store Header Section - centered -->
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-container-margin py-md md:py-lg shadow-sm card-premium text-center">
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs mx-auto max-w-xs">{{ __('STORE') }}</p>
-<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">Lunara Fashion</h2>
+<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ $store->nama_toko }}</h2>
 <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant mx-auto mb-md shadow-sm">
-<img alt="Lunara Fashion Logo" class="w-full h-full object-cover" data-alt="A refined, minimalist logo for 'Lunara Fashion'. The logo features elegant, thin-line serif typography in black against a pure white background. The style is high-end editorial, conveying luxury and sophisticated femininity. Soft, diffuse lighting highlights the crispness of the design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI74slTo7YmWoujdZO6hzYYQCAEkiOgSipcStQowpp7n4FDE2M7KDNQCRCchmHtdLRwdkXE_ngeYM2mVTXcdWL59a2HIZB6dtYUgIo3i5FU-CqWMfACDifUy9I4GoR0sbJf0JD6-uqF7DwJwmKxunT2RFbKH_CaEbhz9LLWYM0-9SgznAVzl4INwAta1qIaWmol1GgQv2mTSuClK5luG3I5T04rEShWfMtSHt0JO9SQTrtp7AmW8Y"/>
+@if ($store->logo)
+<img alt="{{ $store->nama_toko }} Logo" class="w-full h-full object-cover" src="{{ filter_var($store->logo, FILTER_VALIDATE_URL) ? $store->logo : asset($store->logo) }}"/>
+@else
+<div class="w-full h-full flex items-center justify-center bg-surface-container-high text-on-surface font-headline-xl">
+<span class="material-symbols-outlined text-[48px]">storefront</span>
+</div>
+@endif
 </div>
 <div class="flex items-center gap-xs text-on-surface-variant font-label-sm text-label-sm mb-md justify-center">
 <span class="material-symbols-outlined text-secondary text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span>{{ __('4.9 Rating') }}</span>
+<span>{{ $averageRating ? number_format($averageRating, 1) : __('No rating yet') }}</span>
 <span class="px-2">•</span>
-<span>Jakarta</span>
+<span>{{ $reviewCount }} {{ __('Reviews') }}</span>
 </div>
 <p class="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto mb-lg">
-                Modern feminine silhouettes designed for the contemporary woman. Curated elegance and effortless style.
+                {{ $store->deskripsi }}
             </p>
 <button class="btn-gold font-label-caps text-label-caps px-xl py-sm rounded-none tracking-widest font-label-caps text-label-caps uppercase tracking-widest w-full md:w-auto min-w-[200px] mx-auto">
                 {{ __('FOLLOW STORE') }}
@@ -280,9 +286,9 @@
 </div>
 <!-- Navigation Tabs (About active) -->
 <div class="shop-toolbar flex flex-row items-center gap-sm md:gap-md px-container-margin py-md sticky top-16 lg:top-16 z-30 card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl shadow-sm flex items-center gap-sm md:gap-md min-w-0 overflow-x-auto hide-scrollbar">
-<a href="{{ route('customer.shop.store', $id ?? 1) }}" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('PRODUCTS') }}</a>
-<a href="{{ route('customer.shop.store.riviews', $id ?? 1) }}" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('REVIEWS') }}</a>
-<a href="{{ route('customer.shop.store.about', $id ?? 1) }}" class="cat-pill shrink-0 px-md py-xs border border-[var(--chrome-accent)] text-[var(--chrome-accent)] font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('ABOUT') }}</a>
+<a href="{{ route('customer.shop.store', $store->store_id) }}" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('PRODUCTS') }}</a>
+<a href="{{ route('customer.shop.store.riviews', $store->store_id) }}" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('REVIEWS') }}</a>
+<a href="{{ route('customer.shop.store.about', $store->store_id) }}" class="cat-pill shrink-0 px-md py-xs border border-[var(--chrome-accent)] text-[var(--chrome-accent)] font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('ABOUT') }}</a>
 </div>
 <!-- Store About -->
 <section class="pt-lg mt-lg reveal-up">
@@ -290,7 +296,7 @@
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-lg">{{ __('About This Store') }}</h2>
 <!-- Story -->
 <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed mb-xl">
-            Lunara Fashion is a Jakarta-based womenswear label founded in 2016. We create modern feminine silhouettes that blend timeless tailoring with an effortless, contemporary edge. Every piece is designed in-house and produced in small batches with carefully sourced fabrics, so you can wear something distinctive, season after season.
+            {{ $store->deskripsi }}
         </p>
 <!-- Info grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
@@ -300,7 +306,7 @@
 <span class="material-symbols-outlined text-[22px]">location_on</span>
 <div class="min-w-0">
 <p class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __('Location') }}</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">SCBD, Jakarta Selatan, Indonesia</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ $store->alamat ?: __('Address not set') }}</p>
 </div>
 </div>
 </div>
@@ -310,8 +316,7 @@
 <span class="material-symbols-outlined text-[22px]">mail</span>
 <div class="min-w-0">
 <p class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __('Contact') }}</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">hello@lunarafashion.id</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant">+62 21 5020 1010</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ $store->nomor_telepon ?: __('Phone not set') }}</p>
 </div>
 </div>
 </div>
@@ -332,7 +337,7 @@
 <span class="material-symbols-outlined text-[22px]">storefront</span>
 <div class="min-w-0">
 <p class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __('Established') }}</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">2016 · {{ __('Jakarta, Indonesia') }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ $store->created_at?->format('Y') ?: __('—') }} · {{ __('Indonesia') }}</p>
 </div>
 </div>
 </div>

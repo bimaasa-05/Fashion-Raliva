@@ -256,18 +256,24 @@
 <!-- Store Header Section - centered -->
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-container-margin py-md md:py-lg shadow-sm card-premium text-center">
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs mx-auto max-w-xs">{{ __('STORE') }}</p>
-<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">Lunara Fashion</h2>
+<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ $store->nama_toko }}</h2>
 <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant mx-auto mb-md shadow-sm">
-<img alt="Lunara Fashion Logo" class="w-full h-full object-cover" data-alt="A refined, minimalist logo for 'Lunara Fashion'. The logo features elegant, thin-line serif typography in black against a pure white background. The style is high-end editorial, conveying luxury and sophisticated femininity. Soft, diffuse lighting highlights the crispness of the design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI74slTo7YmWoujdZO6hzYYQCAEkiOgSipcStQowpp7n4FDE2M7KDNQCRCchmHtdLRwdkXE_ngeYM2mVTXcdWL59a2HIZB6dtYUgIo3i5FU-CqWMfACDifUy9I4GoR0sbJf0JD6-uqF7DwJwmKxunT2RFbKH_CaEbhz9LLWYM0-9SgznAVzl4INwAta1qIaWmol1GgQv2mTSuClK5luG3I5T04rEShWfMtSHt0JO9SQTrtp7AmW8Y"/>
+@if ($store->logo)
+<img alt="{{ $store->nama_toko }} Logo" class="w-full h-full object-cover" src="{{ filter_var($store->logo, FILTER_VALIDATE_URL) ? $store->logo : asset($store->logo) }}"/>
+@else
+<div class="w-full h-full flex items-center justify-center bg-surface-container-high text-on-surface font-headline-xl">
+<span class="material-symbols-outlined text-[48px]">storefront</span>
+</div>
+@endif
 </div>
 <div class="flex items-center gap-xs text-on-surface-variant font-label-sm text-label-sm mb-md justify-center">
 <span class="material-symbols-outlined text-secondary text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span>{{ __('4.9 Rating') }}</span>
+<span>{{ $averageRating ? number_format($averageRating, 1) : __('No rating yet') }}</span>
 <span class="px-2">•</span>
-<span>Jakarta</span>
+<span>{{ $reviewCount }} {{ __('Reviews') }}</span>
 </div>
 <p class="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto mb-lg">
-                Modern feminine silhouettes designed for the contemporary woman. Curated elegance and effortless style.
+                {{ $store->deskripsi }}
             </p>
 <button class="btn-gold font-label-caps text-label-caps px-xl py-sm rounded-none tracking-widest font-label-caps text-label-caps uppercase tracking-widest w-full md:w-auto min-w-[200px] mx-auto">
                 {{ __('FOLLOW STORE') }}
@@ -275,79 +281,36 @@
 </div>
 <!-- Navigation Tabs (Produk active) -->
 <div class="shop-toolbar flex flex-row items-center gap-sm md:gap-md px-container-margin py-md sticky top-16 lg:top-16 z-30 card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl shadow-sm flex items-center gap-sm md:gap-md min-w-0 overflow-x-auto hide-scrollbar">
-<a href="{{ route('customer.shop.store', $id ?? 1) }}" class="cat-pill shrink-0 px-md py-xs border border-[var(--chrome-accent)] text-[var(--chrome-accent)] font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('PRODUCTS') }}</a>
-<a href="{{ route('customer.shop.store.riviews', $id ?? 1) }}" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('REVIEWS') }}</a>
-<a href="{{ route('customer.shop.store.about', $id ?? 1) }}" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('ABOUT') }}</a>
+<a href="{{ route('customer.shop.store', $store->store_id) }}" class="cat-pill shrink-0 px-md py-xs border border-[var(--chrome-accent)] text-[var(--chrome-accent)] font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('PRODUCTS') }}</a>
+<a href="{{ route('customer.shop.store.riviews', $store->store_id) }}" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('REVIEWS') }}</a>
+<a href="{{ route('customer.shop.store.about', $store->store_id) }}" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('ABOUT') }}</a>
 </div>
 <!-- Product Grid -->
 <section class="pt-lg mt-lg reveal-up">
 <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
-<!-- Product Card 1 -->
+@forelse ($products as $p)
+@php $pImg = $p->images->first()?->file_gambar; $pMin = $p->variants->min('harga') ?? $p->harga_dasar; @endphp
 <div class="group relative flex flex-col cursor-pointer">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col w-full">
+<a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col w-full">
 <div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
-<img alt="Pleated Silk Midi Dress" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A high-fashion editorial shot of a woman wearing a flowing, pleated silk midi dress in a soft ivory tone. The model is posed elegantly against a minimalist, textured beige studio backdrop. The lighting is soft and directional, creating gentle shadows that highlight the garment's fluid drape and premium fabric texture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwXTlTSVsiy5AZHhqQh1MgqLLVK4MB-SrxjlelWELFb6i8KGPNhED4FExnQ1On6jE827hjb842itYeDpn7S7tw2UI8OHLmcvzOIQjusnSbBsepHqK2R8YRQwY0nsQEWDGZdyEEUWXsSSotCfaGFX6QLGpSrhpA33f2FwnImbBAlato1v6p_5xZSRLw2ENMzoWBzF7IAHhf7z3M1e97Js-fu4ICWp1qjJCZVmeLnA9Jwy2JcFaeoTg"/>
+<img alt="{{ $p->nama_produk }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" src="{{ $pImg ? (filter_var($pImg, FILTER_VALIDATE_URL) ? $pImg : asset($pImg)) : 'https://picsum.photos/seed/store'.$p->product_id.'/900/1200' }}"/>
 </div>
 <div class="flex flex-col gap-1">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
-<h3 class="font-body-sm text-body-sm font-semibold truncate">Pleated Silk Midi Dress</h3>
-<span class="font-body-sm text-body-sm text-secondary mt-1">$245.00</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $store->nama_toko }}</span>
+<h3 class="font-body-sm text-body-sm font-semibold truncate">{{ $p->nama_produk }}</h3>
+<span class="font-body-sm text-body-sm text-secondary mt-1">Rp {{ number_format($pMin, 0, ',', '.') }}</span>
 </div>
 </a>
 <a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface-variant hover:text-[var(--chrome-accent)] transition-colors flex items-center z-10">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </a>
 </div>
-<!-- Product Card 2 -->
-<div class="group relative flex flex-col cursor-pointer">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col w-full">
-<div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
-<img alt="Structured Charcoal Blazer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A close-up editorial photograph focusing on a structured, tailored blazer in a muted charcoal grey. The garment is worn by a model, showing off the sharp shoulders and modern, minimalist lapel design. The background is a stark, bright white, emphasizing the clean lines and sophisticated tailoring of the piece." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVASjrbvqMDVMUE-4VSQoQPqHIiUufFkdiq_Y8L7NFX4aWn7u7rI8WvL5zpmpwiAIbEfwzPgzdwu1hA22bUnHDJxz5wYyYHWVcAV82899ylh1j1-6PqtxlbV4RBeDtXnfSrNUDLM2tyPuKfT-KF-BQl86qisNMHkxY-wF6tuEgNd0hrwuI0m-ui_3T5OQhhJInd1dX786_WX6sN9UotFNS32L3x8MEu-7n-xDiGDqvqBZN-NWLCMc"/>
+@empty
+<div class="col-span-full text-center py-xl">
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No products in this store yet.') }}</p>
 </div>
-<div class="flex flex-col gap-1">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
-<h3 class="font-body-sm text-body-sm font-semibold truncate">Structured Charcoal Blazer</h3>
-<span class="font-body-sm text-body-sm text-secondary mt-1">$310.00</span>
-</div>
-</a>
-<a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface-variant hover:text-[var(--chrome-accent)] transition-colors flex items-center z-10">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</a>
-</div>
-<!-- Product Card 3 -->
-<div class="group relative flex flex-col cursor-pointer">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col w-full">
-<div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
-<img alt="Wide-Leg Linen Trouser" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A stylized fashion image featuring a wide-leg linen trouser in a soft sage green. The model is standing in profile, illustrating the relaxed yet elegant fit of the pants. The setting is a minimalist interior with warm, natural sunlight casting long, artistic shadows across the floor, creating a serene, luxurious mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP2Eft0s3saJCK9YLiyH7YEPu7z2LxB1cc9QeyPbQVGwet9-CEp2QoXZmACnrpKKTy2kbye2RrZWgoOW6zx54cYhjCSaPFh8FZuMqiZwZaY6IRPhA6HbRzEMQ3yRCDoomRlqROX0biMNn7k5yzo6DCTNukoS8D98anIAWz6MgD18owlWpqrZJm0rape8bp9bLnq94DDAMeopNINJ9UYjMRANGMp8SiEBcm3OhzeZh0wcFUiR5OjxQ"/>
-</div>
-<div class="flex flex-col gap-1">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
-<h3 class="font-body-sm text-body-sm font-semibold truncate">Wide-Leg Linen Trouser</h3>
-<span class="font-body-sm text-body-sm text-secondary mt-1">$185.00</span>
-</div>
-</a>
-<a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface-variant hover:text-[var(--chrome-accent)] transition-colors flex items-center z-10">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</a>
-</div>
-<!-- Product Card 4 -->
-<div class="group relative flex flex-col cursor-pointer">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col w-full">
-<div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
-<img alt="Ribbed Knit Top" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" data-alt="A premium fashion shot of a minimalist, ribbed knit top in a warm terracotta hue. The texture of the fine knit is highly detailed, shown on a model with simple, modern styling. The lighting is moody and dramatic, reminiscent of a high-end fashion magazine editorial, highlighting the subtle contours of the garment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWRAobFrskCQKCoX4nsaGtOO--FROG9mOy30DGnRwPRLqK9_pXDrHUmr0Jt9czXcRe5zbwketdXsxccYrU9BnsvlhlRCa-nMKgNgUaEK1fNn3C_VngpO37I5tzeYTiYoX69gbO_ITL750vyHQ5WrTveFKLqD2rqh_YeWF1AjQQMsbZAXGT2XBtoMJJ4d3N9ma0fS41M5tLqEbfAgLclVKPM6f58c_KUxV5hutF8VGYcmi90_1EGD8"/>
-</div>
-<div class="flex flex-col gap-1">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
-<h3 class="font-body-sm text-body-sm font-semibold truncate">Ribbed Knit Top</h3>
-<span class="font-body-sm text-body-sm text-secondary mt-1">$120.00</span>
-</div>
-</a>
-<a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface-variant hover:text-[var(--chrome-accent)] transition-colors flex items-center z-10">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</a>
-</div>
-</div>
-<!-- Load More -->
+@endforelse
+</div><!-- Load More -->
 <div class="mt-xl flex justify-center">
 <button class="border border-[var(--chrome-accent)] text-[var(--chrome-accent)] bg-transparent font-label-caps text-label-caps px-xl py-sm hover:bg-surface-container-low transition-colors w-full md:w-auto rounded-lg">
                     {{ __('LOAD MORE') }}

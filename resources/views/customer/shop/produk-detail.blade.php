@@ -373,12 +373,15 @@
             <div class="lg:flex lg:items-start lg:gap-xl">
                 <!-- Product Gallery (left) -->
                 <section class="relative w-full aspect-[3/4] md:aspect-[4/5] lg:w-[42%] lg:shrink-0 lg:aspect-auto lg:h-[calc(100vh-8rem)] lg:sticky lg:top-24 lg:self-start bg-surface-variant overflow-hidden snap-x snap-mandatory flex overflow-x-auto hide-scrollbar">
+@forelse ($product->images as $img)
                     <div class="min-w-full snap-start relative">
-                        <img class="w-full h-full object-cover" data-alt="A high-fashion editorial shot of a crisp white oversized linen shirt worn by a model in a minimalist, sunlit studio. The lighting is soft and natural, casting delicate shadows that emphasize the texture and drape of the breathable linen fabric. The aesthetic is clean, luxurious, and modern, with a neutral soft ivory background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB60zlPtMN4DNcfKmNtNvMLaGtiKfbUV1jwb0QK8OA5iaHO4UH7XENx8hMwhaE5yT5LrfK8UMcwLCPExcTdn6andqBGPBlLUnx50TloBkou9GTUxw3G_AUUXNsW0tW-nac6qgCMlCN5DNx-MS9SaBZyxtqnHsrZoA5wWOTWt35qMllqNd3QRmPFzPPUS0OYj9jK2fpGsyo_-h8LA0wGcj5Ox9jJzKViCJecEiEYn63RRtnGwLNRA44"/>
+                        <img class="w-full h-full object-cover" alt="{{ $product->nama_produk }}" src="{{ filter_var($img->file_gambar, FILTER_VALIDATE_URL) ? $img->file_gambar : asset($img->file_gambar) }}"/>
                         </div>
+@empty
                     <div class="min-w-full snap-start relative">
-                        <img class="w-full h-full object-cover" data-alt="Close-up detail shot of the oversized white linen shirt, focusing on the collar, buttons, and fabric weave. The image highlights the premium quality and effortless elegance of the garment. Natural lighting creates a sophisticated, minimalist mood, consistent with a high-end luxury fashion catalog." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5hkBUk8qjajx4Fs6RcYyo91ZEngPiYmbd4X1xjBR-1fRqEFsTUr3wJO9ILTg25nmWSo1ZwRtuMoHAH8BFNB_kPlvgOmAGOKVLwSO5vgy0InA79cDfZAFfH6-i_efcu1--rpyxDrlBXOfbgFC0qZSHx-tEMf7gLErcRFXJ5jIb527IzIUXgYjwJoOcwqGXsFxx4Rmttv2pWKce_alMda2737sk-d7imVOjnHulwFk6JxBuryI-ssU"/>
+                        <img class="w-full h-full object-cover" alt="{{ $product->nama_produk }}" src="https://picsum.photos/seed/product/900/1200"/>
                         </div>
+@endforelse
                     <div class="absolute bottom-md left-1/2 -translate-x-1/2 flex gap-2 z-10">
                         <div class="w-2 h-2 rounded-full bg-on-surface"></div>
                         <div class="w-2 h-2 rounded-full bg-outline-variant"></div>
@@ -388,27 +391,21 @@
                     <section class="py-xl reveal-up">
                         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-container-margin md:px-[64px] py-md md:py-lg shadow-sm card-premium">
                             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('PRODUCT DETAILS') }}</p>
-                            <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('Oversized Linen Shirt') }}</h2>
+                            <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ $product->nama_produk }}</h2>
                             <div class="flex items-center gap-xs mb-sm">
                                 <div class="flex text-secondary-fixed-dim">
                                     <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
                                     </div>
-                                <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('4.8 (124 reviews)') }}</span>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">{{ number_format($averageRating ?: 0, 1) }} ({{ $reviewCount }} {{ __('reviews') }})</span>
                                 </div>
-                            <p class="font-title-md text-title-md text-on-surface mb-lg">Rp 289.000</p>
+                            <p class="font-title-md text-title-md text-on-surface mb-lg">Rp {{ number_format($product->variants->min('harga') ?? $product->harga_dasar, 0, ',', '.') }}</p>
                             <!-- Color Selection -->
                             <div class="mb-lg">
-                                <p class="font-label-caps text-label-caps text-on-surface mb-sm">{{ __('COLOR: WHITE') }}</p>
+                                <p class="font-label-caps text-label-caps text-on-surface mb-sm">{{ __('COLOR') }}: {{ strtoupper($product->variants->first()->warna ?? __('N/A')) }}</p>
                                 <div class="flex gap-sm">
-                                    <button aria-label="{{ __('Select White') }}" class="w-8 h-8 rounded-full border border-on-surface p-[2px]">
-                                        <span class="block w-full h-full rounded-full bg-[#FFFFFF] border border-outline-variant"></span>
-                                        </button>
-                                    <button aria-label="{{ __('Select Black') }}" class="w-8 h-8 rounded-full border border-transparent p-[2px]">
-                                        <span class="block w-full h-full rounded-full bg-[#111111]"></span>
-                                        </button>
-                                    <button aria-label="{{ __('Select Beige') }}" class="w-8 h-8 rounded-full border border-transparent p-[2px]">
-                                        <span class="block w-full h-full rounded-full bg-[#E5DCC5]"></span>
-                                        </button>
+@foreach ($product->variants->pluck('warna')->unique() as $color)
+<span class="font-label-sm text-label-sm text-on-surface-variant mr-sm">{{ $color }}</span>
+@endforeach
                                     </div>
                                 </div>
                             <!-- Size Selection -->
@@ -418,10 +415,9 @@
                                     <button class="font-label-sm text-label-sm text-on-surface-variant underline decoration-1 underline-offset-4">{{ __('Size Guide') }}</button>
                                     </div>
                                 <div class="grid grid-cols-4 gap-gutter">
-                                    <button class="h-12 border border-outline-variant flex items-center justify-center font-body-sm text-body-sm text-on-surface hover:border-on-surface transition-colors">S</button>
-                                    <button class="h-12 border border-secondary bg-secondary/5 flex items-center justify-center font-body-sm text-body-sm text-secondary font-semibold">M</button>
-                                    <button class="h-12 border border-outline-variant flex items-center justify-center font-body-sm text-body-sm text-on-surface hover:border-on-surface transition-colors">L</button>
-                                    <button class="h-12 border border-outline-variant flex items-center justify-center font-body-sm text-body-sm text-on-surface hover:border-on-surface transition-colors">XL</button>
+@foreach ($product->variants->pluck('ukuran')->unique() as $size)
+                                    <button class="h-12 border border-outline-variant flex items-center justify-center font-body-sm text-body-sm text-on-surface hover:border-on-surface transition-colors">{{ $size }}</button>
+@endforeach
                                     </div>
                                 </div>
                             <!-- Desktop Actions -->
@@ -443,7 +439,7 @@
                                         </summary>
                                     <div class="px-container-margin md:px-[64px] pb-sm">
                                         <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-                                            An effortlessly chic oversized shirt crafted from premium, breathable linen. Featuring a classic collar, button-down front, and dropped shoulders for a relaxed silhouette. Perfect for layering over swimwear or tucking into tailored trousers for a sophisticated summer look.
+                                            {{ $product->deskripsi }}
                                             </p>
                                         </div>
                                     </details>
@@ -480,25 +476,26 @@
                             <section class="border-t border-outline-variant">
                                 <div class="flex items-center justify-between px-container-margin md:px-[64px] pt-md pb-sm">
                                     <h2 class="font-title-md text-title-md text-on-surface">{{ __('Buyer Reviews') }}</h2>
-                                    <span class="font-label-sm text-label-sm text-on-surface-variant inline-flex items-center gap-xs">4.8 <span class="material-symbols-outlined text-[14px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span> {{ __('(124)') }}</span>
+                                    <span class="font-label-sm text-label-sm text-on-surface-variant inline-flex items-center gap-xs">{{ number_format($averageRating ?: 0, 1) }} <span class="material-symbols-outlined text-[14px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span> ({{ $reviewCount }})</span>
                                     </div>
-                                <!-- Review 1 -->
+@forelse ($reviews as $ri => $review)
+                                <!-- Review -->
                                 <article class="px-container-margin md:px-[64px] py-md border-b border-outline-variant">
                                     <div class="flex items-start justify-between gap-md">
                                         <div class="flex items-center gap-sm min-w-0">
-                                            <div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-caps text-label-caps shrink-0">SM</div>
+                                            <div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-caps text-label-caps shrink-0">{{ mb_substr($review->user?->nama_lengkap ?? 'U', 0, 2) }}</div>
                                             <div class="min-w-0">
-                                                <p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Sarah M.</p>
-                                                <p class="font-label-sm text-label-sm text-on-surface-variant truncate">May 30, 2026 · {{ __('Verified Purchase') }}</p>
+                                                <p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $review->user?->nama_lengkap ?? __('Customer') }}</p>
+                                                <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $review->created_at?->format('M d, Y') }} · {{ __('Verified Purchase') }}</p>
                                                 </div>
                                             </div>
                                         <div class="relative shrink-0">
-                                            <button aria-label="{{ __('More options') }}" class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant" onclick="toggleReviewMenu(event, 'rv-menu-1')" type="button">
+                                            <button aria-label="{{ __('More options') }}" class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant" onclick="toggleReviewMenu(event, 'rv-menu-{{ $ri }}')" type="button">
                                                 <span class="material-symbols-outlined text-[18px]">more_vert</span>
                                                 </button>
-                                            <div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT shadow-xl overflow-hidden" id="rv-menu-1">
-                                                <button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="translateReview('rv-text-1', this)" type="button">
-                                                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant">translate</span><span class="rv-label" data-state="b" data-a="{{ __('See original') }}" data-b="{{ __('Translate') }}">{{ __('Translate') }}</span>
+                                            <div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT shadow-xl overflow-hidden" id="rv-menu-{{ $ri }}">
+                                                <button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="toggleReviewMenu(event, 'rv-menu-{{ $ri }}')" type="button">
+                                                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant">translate</span>{{ __('Translate') }}
                                                     </button>
                                                 <button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-error hover:bg-surface-container-low transition-colors text-left" onclick="openReport()" type="button">
                                                     <span class="material-symbols-outlined text-[18px]">flag</span>{{ __('Report review') }}
@@ -508,91 +505,19 @@
                                         </div>
                                     <div class="flex items-center gap-xs mt-xs">
                                         <div class="flex text-secondary-fixed-dim">
-                                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+@for ($s = 1; $s <= 5; $s++)
+@php $filled = $review->rating >= $s; @endphp
+                                            <span class="material-symbols-outlined text-[16px]" style="{{ $filled ? "font-variation-settings: 'FILL' 1;" : '' }}">{{ $filled ? 'star' : 'star_border' }}</span>
+@endfor
                                             </div>
                                         </div>
-                                    <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm" data-state="original" data-original="The linen quality is exceptional - breathable yet structured. The oversized cut drapes beautifully and the white stays crisp after washing. Worth every rupiah." data-translated="Kualitas linen-nya luar biasa - adem tapi tetap terstruktur. Potongan oversized-nya jatuhnya bagus banget dan warna putihnya tetap cerah setelah dicuci. Sepadunya!" id="rv-text-1">
-                                        The linen quality is exceptional - breathable yet structured. The oversized cut drapes beautifully and the white stays crisp after washing. Worth every rupiah.
-                                        </p>
+                                    <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm">{{ $review->ulasan }}</p>
                                     </article>
-                                <!-- Review 2 -->
-                                <article class="px-container-margin md:px-[64px] py-md border-b border-outline-variant">
-                                    <div class="flex items-start justify-between gap-md">
-                                        <div class="flex items-center gap-sm min-w-0">
-                                            <div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-caps text-label-caps shrink-0">DK</div>
-                                            <div class="min-w-0">
-                                                <p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Dewi K.</p>
-                                                <p class="font-label-sm text-label-sm text-on-surface-variant truncate">May 21, 2026 · {{ __('Verified Purchase') }}</p>
-                                                </div>
-                                            </div>
-                                        <div class="relative shrink-0">
-                                            <button aria-label="{{ __('More options') }}" class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant" onclick="toggleReviewMenu(event, 'rv-menu-2')" type="button">
-                                                <span class="material-symbols-outlined text-[18px]">more_vert</span>
-                                                </button>
-                                            <div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT shadow-xl overflow-hidden" id="rv-menu-2">
-                                                <button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="translateReview('rv-text-2', this)" type="button">
-                                                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant">translate</span><span class="rv-label" data-state="b" data-a="{{ __('See original') }}" data-b="{{ __('Translate') }}">{{ __('Translate') }}</span>
-                                                    </button>
-                                                <button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-error hover:bg-surface-container-low transition-colors text-left" onclick="openReport()" type="button">
-                                                    <span class="material-symbols-outlined text-[18px]">flag</span>{{ __('Report review') }}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <div class="flex items-center gap-xs mt-xs">
-                                        <div class="flex text-secondary-fixed-dim">
-                                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[16px]">star_border</span>
-                                            </div>
-                                        </div>
-                                    <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm" data-state="original" data-original="Bahannya adem dan tidak nerawang, cocok untuk cuaca Jakarta. Ukurannya sesuai dengan panduan ukuran dan pengirimannya cepat. Recommended!" data-translated="The fabric is cool and not see-through, perfect for Jakarta weather. The size matches the size guide and delivery was fast. Recommended!" id="rv-text-2">
-                                        Bahannya adem dan tidak nerawang, cocok untuk cuaca Jakarta. Ukurannya sesuai dengan panduan ukuran dan pengirimannya cepat. Recommended!
-                                        </p>
+@empty
+                                <article class="px-container-margin md:px-[64px] py-md text-center">
+                                    <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No reviews yet. Be the first to review this product.') }}</p>
                                     </article>
-                                <!-- Review 3 -->
-                                <article class="px-container-margin md:px-[64px] py-md border-b border-outline-variant">
-                                    <div class="flex items-start justify-between gap-md">
-                                        <div class="flex items-center gap-sm min-w-0">
-                                            <div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-caps text-label-caps shrink-0">AR</div>
-                                            <div class="min-w-0">
-                                                <p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Amanda R.</p>
-                                                <p class="font-label-sm text-label-sm text-on-surface-variant truncate">May 12, 2026 · {{ __('Verified Purchase') }}</p>
-                                                </div>
-                                            </div>
-                                        <div class="relative shrink-0">
-                                            <button aria-label="{{ __('More options') }}" class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant" onclick="toggleReviewMenu(event, 'rv-menu-3')" type="button">
-                                                <span class="material-symbols-outlined text-[18px]">more_vert</span>
-                                                </button>
-                                            <div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT shadow-xl overflow-hidden" id="rv-menu-3">
-                                                <button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="translateReview('rv-text-3', this)" type="button">
-                                                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant">translate</span><span class="rv-label" data-state="b" data-a="{{ __('See original') }}" data-b="{{ __('Translate') }}">{{ __('Translate') }}</span>
-                                                    </button>
-                                                <button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-error hover:bg-surface-container-low transition-colors text-left" onclick="openReport()" type="button">
-                                                    <span class="material-symbols-outlined text-[18px]">flag</span>{{ __('Report review') }}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <div class="flex items-center gap-xs mt-xs">
-                                        <div class="flex text-secondary-fixed-dim">
-                                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                                            </div>
-                                        </div>
-                                    <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm" data-state="original" data-original="An elegant minimalist shirt that pairs with everything in my closet. The sleeves run slightly long but that is the intended oversized look." data-translated="Kemeja minimalis yang elegan dan mudah dipadukan dengan semua baju di lemari saya. Lengannya agak panjang tapi memang itu gaya oversized yang dimaksudkan." id="rv-text-3">
-                                        An elegant minimalist shirt that pairs with everything in my closet. The sleeves run slightly long but that is the intended oversized look.
-                                        </p>
-                                    </article>
+@endforelse
                                 </section>
                             </div>
                         </section>
@@ -602,48 +527,27 @@
                 <section class="py-xl border-t border-outline-variant">
                     <h2 class="font-headline-md text-headline-md text-center text-on-surface mb-lg">{{ __('You May Also Like') }}</h2>
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-gutter px-container-margin pb-sm">
-                        <!-- Card 1 -->
-                        <a href="{{ route('customer.shop.produk-detail', 1) }}" class="block group cursor-pointer">
+@forelse ($relatedProducts as $rp)
+@php $rpImage = $rp->images->first()?->file_gambar; $rpMin = $rp->variants->min('harga') ?? $rp->harga_dasar; @endphp
+                        <!-- Related -->
+                        <a href="{{ route('customer.shop.produk-detail', $rp->product_id) }}" class="block group cursor-pointer">
                             <div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant overflow-hidden">
-                                <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" data-alt="A minimalist fashion editorial image of tailored wide-leg trousers in a soft beige tone, styled cleanly against a light, neutral background, reflecting premium quality and modern elegance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4IYXT8zx75qRHmyTLk9xkyFXQ2aqGro0exB1cwe11WPpyS4_FUyQA7qq8cxx_mFM3PPrNwyPQcZ-_wI0J8kAwOnv5OPd8VFDvqKFUJDKt9UwsYXTBwCIVxPjpYG2Tc4O-GOg6_Sx5cjoPIKUP4Xa4HwLQKlAk6lcw-xaN7sm1Ad78waPAEVlkv60tLR_o8Ap-HQ14icz3DI2UgdsVBjVQiozmTytcTh9-KT1npkU4xDEEJGQTJro"/>
+                                <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" alt="{{ $rp->nama_produk }}" src="{{ $rpImage ? (filter_var($rpImage, FILTER_VALIDATE_URL) ? $rpImage : asset($rpImage)) : 'https://picsum.photos/seed/related/900/1200' }}"/>
                                 <button type="button" aria-label="{{ __('Add to wishlist') }}" data-url="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" onclick="goWishlist(this)" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
                                     <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
                                     </button>
                                 </div>
                             <div class="space-y-1">
-                                <p class="font-label-sm text-label-sm text-on-surface-variant">RALIVA</p>
-                                <p class="font-body-sm text-body-sm text-on-surface font-medium truncate">Tailored Wide Leg Trousers</p>
-                                <p class="font-body-sm text-body-sm text-on-surface">Rp 349.000</p>
-                                </div>
-                            </a>
-                        <!-- Card 2 -->
-                        <a href="{{ route('customer.shop.produk-detail', 1) }}" class="block group cursor-pointer">
-                            <div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant overflow-hidden">
-                                <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" data-alt="A chic, minimalist editorial shot of a ribbed knit tank top in black, draped elegantly on a hanger against a pristine white background. The focus is on the texture and modern silhouette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBSCYHpJJ10PR1rv62xsiSUHcgECc8Yl7gxPOJqlAhXqjJGHnlXSe3G3OT0zZOpoO6zdOywN_zGJ312gSUWGyrERx3QJH1sib9jdTkpcPR1UGz6uHG3aBCzTk7nRRLeHq2PxVj1WHkGQGh3Vuk2k_lfNftY_XKOXombF0_TGRpWMQudl33iPubHVACr4ZiMJFHeHt5rU1xGcveNoDt2q3Et_j-G22OqOzW2MDW8EobpXOmXTWjw3M"/>
-                                <button type="button" aria-label="{{ __('Add to wishlist') }}" data-url="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" onclick="goWishlist(this)" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
-                                    <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-                                    </button>
-                                </div>
-                            <div class="space-y-1">
-                                <p class="font-label-sm text-label-sm text-on-surface-variant">RALIVA</p>
-                                <p class="font-body-sm text-body-sm text-on-surface font-medium truncate">Ribbed Knit Tank</p>
-                                <p class="font-body-sm text-body-sm text-on-surface">Rp 149.000</p>
-                                </div>
-                            </a>
-                        <!-- Card 3 -->
-                        <a href="{{ route('customer.shop.produk-detail', 1) }}" class="block group cursor-pointer">
-                            <div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant overflow-hidden">
-                                <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" data-alt="A sophisticated editorial photograph of a minimalist leather tote bag in deep brown, placed thoughtfully on a smooth stone surface with soft, diffused lighting typical of luxury fashion campaigns." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1cthY8K2JPKLNpkQV3JBRI6w4KRyg6mQeqgXctAcetZp_v6EdYIOJjePq8SWVSrQa2JsuHIHIjEMmjJ5PJF-s2QDQm4sbvggtYfBOhWZFYXxH9UkXED66ErqitL29o75HKKd40LGYNnkEMndKxfJ4L-7z-rbdPVecIV7fdOrMA_mrvmKu5Y8cgTTHi3JY3AyfNe_NyppH-jBZSnRZdg5g_HhxOs5QixseLjNAx7O8kEcjJiOq07Q"/>
-                                <button type="button" aria-label="{{ __('Add to wishlist') }}" data-url="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" onclick="goWishlist(this)" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
-                                    <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-                                    </button>
-                                </div>
-                            <div class="space-y-1">
-                                <p class="font-label-sm text-label-sm text-on-surface-variant">RALIVA</p>
-                                <p class="font-body-sm text-body-sm text-on-surface font-medium truncate">Minimalist Leather Tote</p>
-                                <p class="font-body-sm text-body-sm text-on-surface">Rp 599.000</p>
+                                <p class="font-label-sm text-label-sm text-on-surface-variant">{{ $rp->store?->nama_toko ?? __('RALIVA') }}</p>
+                                <p class="font-body-sm text-body-sm text-on-surface font-medium truncate">{{ $rp->nama_produk }}</p>
+                                <p class="font-body-sm text-body-sm text-on-surface">Rp {{ number_format($rpMin, 0, ',', '.') }}</p>
                             </div>
                         </a>
+@empty
+                        <div class="col-span-full text-center py-xl">
+                            <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No related products yet.') }}</p>
+                        </div>
+@endforelse
                     </div>
                 </section>
             </div>

@@ -270,18 +270,24 @@
 <!-- Store Header Section - centered -->
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-container-margin py-md md:py-lg shadow-sm card-premium text-center">
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs mx-auto max-w-xs">{{ __('STORE') }}</p>
-<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">Lunara Fashion</h2>
+<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ $store->nama_toko }}</h2>
 <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant mx-auto mb-md shadow-sm">
-<img alt="Lunara Fashion Logo" class="w-full h-full object-cover" data-alt="A refined, minimalist logo for 'Lunara Fashion'. The logo features elegant, thin-line serif typography in black against a pure white background. The style is high-end editorial, conveying luxury and sophisticated femininity. Soft, diffuse lighting highlights the crispness of the design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI74slTo7YmWoujdZO6hzYYQCAEkiOgSipcStQowpp7n4FDE2M7KDNQCRCchmHtdLRwdkXE_ngeYM2mVTXcdWL59a2HIZB6dtYUgIo3i5FU-CqWMfACDifUy9I4GoR0sbJf0JD6-uqF7DwJwmKxunT2RFbKH_CaEbhz9LLWYM0-9SgznAVzl4INwAta1qIaWmol1GgQv2mTSuClK5luG3I5T04rEShWfMtSHt0JO9SQTrtp7AmW8Y"/>
+@if ($store->logo)
+<img alt="{{ $store->nama_toko }} Logo" class="w-full h-full object-cover" src="{{ filter_var($store->logo, FILTER_VALIDATE_URL) ? $store->logo : asset($store->logo) }}"/>
+@else
+<div class="w-full h-full flex items-center justify-center bg-surface-container-high text-on-surface font-headline-xl">
+<span class="material-symbols-outlined text-[48px]">storefront</span>
+</div>
+@endif
 </div>
 <div class="flex items-center gap-xs text-on-surface-variant font-label-sm text-label-sm mb-md justify-center">
 <span class="material-symbols-outlined text-secondary text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span>{{ __('4.9 Rating') }}</span>
+<span>{{ $averageRating ? number_format($averageRating, 1) : __('No rating yet') }}</span>
 <span class="px-2">•</span>
-<span>Jakarta</span>
+<span>{{ $reviewCount }} {{ __('Reviews') }}</span>
 </div>
 <p class="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto mb-lg">
-                Modern feminine silhouettes designed for the contemporary woman. Curated elegance and effortless style.
+                {{ $store->deskripsi }}
             </p>
 <button class="btn-gold font-label-caps text-label-caps px-xl py-sm rounded-none tracking-widest font-label-caps text-label-caps uppercase tracking-widest w-full md:w-auto min-w-[200px] mx-auto">
                 {{ __('FOLLOW STORE') }}
@@ -289,9 +295,9 @@
 </div>
 <!-- Navigation Tabs (Reviews active) -->
 <div class="shop-toolbar flex flex-row items-center gap-sm md:gap-md px-container-margin py-md sticky top-16 lg:top-16 z-30 card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl shadow-sm flex items-center gap-sm md:gap-md min-w-0 overflow-x-auto hide-scrollbar">
-<a href="{{ route('customer.shop.store', $id ?? 1) }}" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('PRODUCTS') }}</a>
-<a href="{{ route('customer.shop.store.riviews', $id ?? 1) }}" class="cat-pill shrink-0 px-md py-xs border border-[var(--chrome-accent)] text-[var(--chrome-accent)] font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('REVIEWS') }}</a>
-<a href="{{ route('customer.shop.store.about', $id ?? 1) }}" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('ABOUT') }}</a>
+<a href="{{ route('customer.shop.store', $store->store_id) }}" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('PRODUCTS') }}</a>
+<a href="{{ route('customer.shop.store.riviews', $store->store_id) }}" class="cat-pill shrink-0 px-md py-xs border border-[var(--chrome-accent)] text-[var(--chrome-accent)] font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('REVIEWS') }}</a>
+<a href="{{ route('customer.shop.store.about', $store->store_id) }}" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('ABOUT') }}</a>
 </div>
 <!-- Store Reviews -->
 <section class="pt-lg mt-lg reveal-up">
@@ -299,64 +305,50 @@
 <!-- Rating summary -->
 <div class="flex flex-col md:flex-row md:items-center gap-md md:gap-lg border-b border-outline-variant pb-lg mb-lg">
 <div class="text-center md:text-left shrink-0">
-<p class="font-display-lg text-display-lg text-on-surface leading-none">4.9</p>
+<p class="font-display-lg text-display-lg text-on-surface leading-none">{{ $averageRating ? number_format($averageRating, 1) : '0.0' }}</p>
 <div class="flex text-secondary-fixed-dim justify-center md:justify-start mt-sm">
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+@for ($i = 1; $i <= 5; $i++)
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">{{ $i <= ($averageRating ? round($averageRating) : 0) ? 'star' : 'star_border' }}</span>
+@endfor
 </div>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Based on 128 reviews') }}</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Based on :count reviews', ['count' => $reviewCount]) }}</p>
 </div>
 <div class="hidden md:block w-px bg-outline-variant h-16"></div>
 <div class="space-y-sm flex-1 max-w-md mx-auto md:mx-0 w-full">
-<!-- Rating bars -->
+@php $dist = [5=>0,4=>0,3=>0,2=>0,1=>0]; foreach ($reviews as $r) { $d = (int)$r->rating; if (isset($dist[$d])) { $dist[$d]++; } } @endphp
+@for ($rc = 5; $rc >= 1; $rc--)
+@php $cnt = $dist[$rc] ?? 0; $pct = $reviewCount > 0 ? round($cnt / $reviewCount * 100) : 0; @endphp
 <div class="flex items-center gap-sm">
-<span class="font-label-sm text-label-sm text-on-surface-variant w-8 shrink-0">5</span>
-<div class="flex-1 h-2 rounded-full bg-surface-variant overflow-hidden"><div class="h-full bg-secondary-fixed-dim" style="width:86%"></div></div>
-<span class="font-label-sm text-label-sm text-on-surface-variant w-10 text-right shrink-0">110</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant w-8 shrink-0">{{ $rc }}</span>
+<div class="flex-1 h-2 rounded-full bg-surface-variant overflow-hidden"><div class="h-full bg-secondary-fixed-dim" style="width:{{ $pct }}%"></div></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant w-10 text-right shrink-0">{{ $cnt }}</span>
 </div>
-<div class="flex items-center gap-sm">
-<span class="font-label-sm text-label-sm text-on-surface-variant w-8 shrink-0">4</span>
-<div class="flex-1 h-2 rounded-full bg-surface-variant overflow-hidden"><div class="h-full bg-secondary-fixed-dim" style="width:8%"></div></div>
-<span class="font-label-sm text-label-sm text-on-surface-variant w-10 text-right shrink-0">10</span>
-</div>
-<div class="flex items-center gap-sm">
-<span class="font-label-sm text-label-sm text-on-surface-variant w-8 shrink-0">3</span>
-<div class="flex-1 h-2 rounded-full bg-surface-variant overflow-hidden"><div class="h-full bg-secondary-fixed-dim" style="width:3%"></div></div>
-<span class="font-label-sm text-label-sm text-on-surface-variant w-10 text-right shrink-0">4</span>
-</div>
-<div class="flex items-center gap-sm">
-<span class="font-label-sm text-label-sm text-on-surface-variant w-8 shrink-0">2</span>
-<div class="flex-1 h-2 rounded-full bg-surface-variant overflow-hidden"><div class="h-full bg-secondary-fixed-dim" style="width:1%"></div></div>
-<span class="font-label-sm text-label-sm text-on-surface-variant w-10 text-right shrink-0">2</span>
-</div>
-<div class="flex items-center gap-sm">
-<span class="font-label-sm text-label-sm text-on-surface-variant w-8 shrink-0">1</span>
-<div class="flex-1 h-2 rounded-full bg-surface-variant overflow-hidden"><div class="h-full bg-secondary-fixed-dim" style="width:2%"></div></div>
-<span class="font-label-sm text-label-sm text-on-surface-variant w-10 text-right shrink-0">2</span>
-</div>
+@endfor
 </div>
 </div>
 <!-- Review list -->
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('Store Reviews') }}</h2>
-<!-- Review 1 -->
+@forelse ($reviews as $ri => $review)
+@php $u = $review->user; $initials = $u ? collect(explode(' ', trim($u->nama_lengkap ?? '')))->filter()->map(fn($w) => mb_substr($w, 0, 1))->take(2)->implode('') : 'U'; $rating = (int)$review->rating; @endphp
 <article class="border-b border-outline-variant py-md">
 <div class="flex items-start justify-between gap-md">
 <div class="flex items-center gap-sm min-w-0">
-<div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-caps text-label-caps shrink-0">RT</div>
+@if ($u && $u->foto_profil)
+<img src="{{ filter_var($u->foto_profil, FILTER_VALIDATE_URL) ? $u->foto_profil : asset($u->foto_profil) }}" alt="{{ $u->nama_lengkap }}" class="w-9 h-9 rounded-full object-cover shrink-0"/>
+@else
+<div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-caps text-label-caps shrink-0">{{ $initials }}</div>
+@endif
 <div class="min-w-0">
-<p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Rizka T.</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant truncate">Aug 12, 2026 · {{ __('Verified Purchase') }}</p>
+<p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $u->nama_lengkap ?? __('Anonymous') }}</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $review->created_at?->format('M d, Y') }} @if (true)· {{ __('Verified Purchase') }}@endif</p>
 </div>
 </div>
 <div class="relative shrink-0">
-<button aria-label="{{ __('More options') }}" class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant" onclick="toggleReviewMenu(event, 'rv-menu-1')" type="button">
+<button aria-label="{{ __('More options') }}" class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant" onclick="toggleReviewMenu(event, 'rv-menu-{{ $ri }}')" type="button">
 <span class="material-symbols-outlined text-[18px]">more_vert</span>
 </button>
-<div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT shadow-xl overflow-hidden" id="rv-menu-1">
-<button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="translateReview('rv-text-1', this)" type="button">
+<div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT shadow-xl overflow-hidden" id="rv-menu-{{ $ri }}">
+<button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="translateReview('rv-text-{{ $ri }}', this)" type="button">
 <span class="material-symbols-outlined text-[18px] text-on-surface-variant">translate</span><span class="rv-label" data-state="b" data-a="{{ __('See original') }}" data-b="{{ __('Translate') }}">{{ __('Translate') }}</span>
 </button>
 <button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-error hover:bg-surface-container-low transition-colors text-left" onclick="openReport()" type="button">
@@ -367,97 +359,28 @@
 </div>
 <div class="flex items-center gap-xs mt-xs">
 <div class="flex text-secondary-fixed-dim">
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+@for ($i = 1; $i <= 5; $i++)
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">{{ $i <= $rating ? 'star' : 'star_border' }}</span>
+@endfor
 </div>
 </div>
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm" data-state="original" data-original="Belanja di sini selalu nyaman. Kualitas produk konsisten dan pengemasannya rapi banget, pastinya bakal belanja lagi." data-translated="Shopping here is always comfortable. Product quality is consistent and the packaging is very neat, definitely will shop again." id="rv-text-1">
-Belanja di sini selalu nyaman. Kualitas produk konsisten dan pengemasannya rapi banget, pastinya bakal belanja lagi.
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm" data-state="original" data-original="{{ $review->ulasan }}" data-translated="{{ $review->ulasan }}" id="rv-text-{{ $ri }}">
+{{ $review->ulasan }}
 </p>
 </article>
-<!-- Review 2 -->
-<article class="border-b border-outline-variant py-md">
-<div class="flex items-start justify-between gap-md">
-<div class="flex items-center gap-sm min-w-0">
-<div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-caps text-label-caps shrink-0">AN</div>
-<div class="min-w-0">
-<p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Ayu N.</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant truncate">Aug 03, 2026 · {{ __('Verified Purchase') }}</p>
+@empty
+<div class="text-center py-xl">
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No reviews for this store yet.') }}</p>
 </div>
-</div>
-<div class="relative shrink-0">
-<button aria-label="{{ __('More options') }}" class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant" onclick="toggleReviewMenu(event, 'rv-menu-2')" type="button">
-<span class="material-symbols-outlined text-[18px]">more_vert</span>
-</button>
-<div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT shadow-xl overflow-hidden" id="rv-menu-2">
-<button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="translateReview('rv-text-2', this)" type="button">
-<span class="material-symbols-outlined text-[18px] text-on-surface-variant">translate</span><span class="rv-label" data-state="b" data-a="{{ __('See original') }}" data-b="{{ __('Translate') }}">{{ __('Translate') }}</span>
-</button>
-<button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-error hover:bg-surface-container-low transition-colors text-left" onclick="openReport()" type="button">
-<span class="material-symbols-outlined text-[18px]">flag</span>{{ __('Report review') }}
-</button>
-</div>
-</div>
-</div>
-<div class="flex items-center gap-xs mt-xs">
-<div class="flex text-secondary-fixed-dim">
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]">star_border</span>
-</div>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm" data-state="original" data-original="The collection is elegant and the quality is what you pay for. Delivery to Bali took about 5 days, very reasonable." data-translated="Koleksinya elegan dan kualitasnya sesuai dengan harga. Pengiriman ke Bali butuh sekitar 5 hari, sangat masuk akal." id="rv-text-2">
-The collection is elegant and the quality is what you pay for. Delivery to Bali took about 5 days, very reasonable.
-</p>
-</article>
-<!-- Review 3 -->
-<article class="border-b border-outline-variant py-md">
-<div class="flex items-start justify-between gap-md">
-<div class="flex items-center gap-sm min-w-0">
-<div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-caps text-label-caps shrink-0">SR</div>
-<div class="min-w-0">
-<p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Salsa R.</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant truncate">Jul 27, 2026 · {{ __('Verified Purchase') }}</p>
-</div>
-</div>
-<div class="relative shrink-0">
-<button aria-label="{{ __('More options') }}" class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant" onclick="toggleReviewMenu(event, 'rv-menu-3')" type="button">
-<span class="material-symbols-outlined text-[18px]">more_vert</span>
-</button>
-<div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT shadow-xl overflow-hidden" id="rv-menu-3">
-<button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="translateReview('rv-text-3', this)" type="button">
-<span class="material-symbols-outlined text-[18px] text-on-surface-variant">translate</span><span class="rv-label" data-state="b" data-a="{{ __('See original') }}" data-b="{{ __('Translate') }}">{{ __('Translate') }}</span>
-</button>
-<button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-error hover:bg-surface-container-low transition-colors text-left" onclick="openReport()" type="button">
-<span class="material-symbols-outlined text-[18px]">flag</span>{{ __('Report review') }}
-</button>
-</div>
-</div>
-</div>
-<div class="flex items-center gap-xs mt-xs">
-<div class="flex text-secondary-fixed-dim">
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm" data-state="original" data-original="Dress-nya jatuhnya cantik dan modelnya sesuai foto. Respon seller juga cepat. Totally recommended!" data-translated="The dress drapes beautifully and matches the photos. The seller also responds quickly. Totally recommended!" id="rv-text-3">
-Dress-nya jatuhnya cantik dan modelnya sesuai foto. Respon seller juga cepat. Totally recommended!
-</p>
-</article>
+@endforelse
+@if ($reviews->count())
 <!-- Load more reviews -->
 <div class="mt-xl flex justify-center">
 <button class="border border-[var(--chrome-accent)] text-[var(--chrome-accent)] bg-transparent font-label-caps text-label-caps px-xl py-sm hover:bg-surface-container-low transition-colors w-full md:w-auto rounded-lg">
-                {{ __('VIEW ALL REVIEWS') }}
-            </button>
+                    {{ __('VIEW ALL REVIEWS') }}
+                </button>
 </div>
+@endif
 </div>
 </section>
 </div>
