@@ -14,12 +14,13 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
-    {{-- Ringkasan Status --}}
+    {{-- Ringkasan Status — tambah icon watermark agar tidak polos --}}
     <section data-reveal-group class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-gutter">
-        @foreach ([['Semua', $counts['semua'], 'on-surface'], ['Baru', $counts['baru'], 'gold-accent'], ['Diproses', $counts['diproses'], 'secondary'], ['Dikirim', $counts['dikirim'], 'on-surface'], ['Selesai', $counts['selesai'], 'secondary'], ['Dibatalkan', $counts['dibatalkan'], 'error']] as $stat)
-            <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-1 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">{{ $stat[0] }}</span>
-                <span class="raliva-figure text-2xl text-{{ $stat[2] }}">{{ $stat[1] }}</span>
+        @foreach ([['Semua', $counts['semua'], 'on-surface', 'inventory_2'], ['Baru', $counts['baru'], 'gold-accent', 'shopping_cart'], ['Diproses', $counts['diproses'], 'secondary', 'precision_manufacturing'], ['Dikirim', $counts['dikirim'], 'on-surface', 'local_shipping'], ['Selesai', $counts['selesai'], 'secondary', 'task_alt'], ['Dibatalkan', $counts['dibatalkan'], 'error', 'cancel']] as $stat)
+            <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
+                <span class="material-symbols-outlined absolute -right-1 -bottom-1 text-[64px] text-gold-accent/[0.07] pointer-events-none select-none">{{ $stat[3] }}</span>
+                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider relative z-10">{{ $stat[0] }}</span>
+                <span class="raliva-figure text-2xl text-{{ $stat[2] }} relative z-10">{{ $stat[1] }}</span>
             </div>
         @endforeach
     </section>
@@ -96,9 +97,10 @@
                         <tr data-table-row data-status="{{ $key }}" class="border-b border-muted-border last:border-0">
                             <td class="py-3.5 px-4">
                                 <p class="font-bold text-on-surface">{{ $o->nomor_order }}</p>
-                                <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->created_at?->translatedFormat('d M, H:i') }}</p>
+                                <p class="text-xs text-on-surface-variant mt-0.5">#{{ $o->order_id }}</p>
+                                <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->nomor_order }}</p>
                             </td>
-                            <td class="py-3.5 px-4 text-on-surface">{{ $customer?->name ?? 'Customer' }}</td>
+                            <td class="py-3.5 px-4 text-on-surface">{{ $customer?->nama_lengkap ?? 'Customer' }}</td>
                             <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $itemCount }} produk</td>
                             <td class="py-3.5 px-4 font-bold text-gold-accent whitespace-nowrap">{{ 'Rp ' . number_format($o->grand_total, 0, ',', '.') }}</td>
                             <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $o->checkout?->paymentMethod?->nama_metode ?? '-' }}</td>
@@ -157,24 +159,24 @@
             <ol class="space-y-0">
                 @php
                     $steps = [
-                        ['Pesanan Diterima', $oKey !== 'baru' || $o->status === 'pending_payment'],
-                        ['Pembayaran Terverifikasi', in_array($o->status, ['dibayar','diproses','dikirim','selesai'])],
-                        ['Diproses / Dikemas', in_array($o->status, ['diproses','dikirim','selesai'])],
-                        ['Dikirim', in_array($o->status, ['dikirim','selesai'])],
-                        ['Selesai', $o->status === 'selesai'],
+                        ['Verifikasi Pembayaran', 'payments', in_array($o->status, ['dibayar','diproses','dikirim','selesai'])],
+                        ['Pesanan Diterima', 'fact_check', $oKey !== 'baru' || $o->status === 'pending_payment'],
+                        ['Diproses / Dikemas', 'inventory_2', in_array($o->status, ['diproses','dikirim','selesai'])],
+                        ['Dikirim', 'local_shipping', in_array($o->status, ['dikirim','selesai'])],
+                        ['Selesai', 'task_alt', $o->status === 'selesai'],
                     ];
                 @endphp
                 @foreach ($steps as $i => $step)
                     <li class="relative flex gap-4 pb-6 last:pb-0">
                         @if (! $loop->last)
-                            <span class="absolute left-[13px] top-7 bottom-0 w-[2px] {{ $step[1] ? 'bg-gold-accent/50' : 'bg-muted-border' }}"></span>
+                            <span class="absolute left-[13px] top-7 bottom-0 w-[2px] {{ $step[2] ? 'bg-gold-accent/50' : 'bg-muted-border' }}"></span>
                         @endif
-                        <span class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 z-10 {{ $step[1] ? 'bg-deep-onyx text-on-primary ring-4 ring-surface-container-lowest' : 'border-2 border-outline-variant bg-surface-container-lowest text-transparent' }}">
-                            <span class="material-symbols-outlined fill text-[14px]">{{ $step[1] ? 'check' : 'radio_button_unchecked' }}</span>
+                        <span class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 z-10 {{ $step[2] ? 'bg-gold-accent text-white ring-4 ring-surface-container-lowest shadow-sm' : 'border-2 border-outline-variant bg-surface-container-lowest text-transparent' }}">
+                            <span class="material-symbols-outlined text-[16px] {{ $step[2] ? 'fill' : '' }}">{{ $step[2] ? $step[1] : 'radio_button_unchecked' }}</span>
                         </span>
                         <div class="pt-0.5">
-                            <p class="font-title-md text-sm {{ $step[1] ? 'text-on-surface' : 'text-on-surface-variant' }}">{{ $step[0] }}</p>
-                            @if ($i === 0 && $o->created_at)
+                            <p class="font-title-md text-sm {{ $step[2] ? 'text-on-surface' : 'text-on-surface-variant' }}">{{ $step[0] }}</p>
+                            @if ($i === 1 && $o->created_at)
                                 <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->created_at->translatedFormat('d M, H:i') }}</p>
                             @endif
                         </div>
