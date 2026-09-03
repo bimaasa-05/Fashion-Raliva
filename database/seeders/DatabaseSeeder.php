@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             WalletSeeder::class,
             GudangDemoSeeder::class,
             OwnerSeeder::class,
+            PermintaanProduksiSeeder::class,
             AdminDemoSeeder::class,
         ]);
     }
