@@ -36,7 +36,17 @@ class Order extends Model
         'total_ongkir',
         'grand_total',
         'status',
+        'status_ketersediaan',
+        'catatan_gudang',
+        'dicek_gudang_pada',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'dicek_gudang_pada' => 'datetime',
+        ];
+    }
 
     public function checkout(): BelongsTo
     {
