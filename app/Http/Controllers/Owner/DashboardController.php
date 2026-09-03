@@ -21,6 +21,12 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $store = OwnerContext::currentStore();
+
+        if (! $store) {
+            return redirect()->route('owner.pengajuan-toko')
+                ->with('info', 'Silakan ajukan pembuatan toko terlebih dahulu.');
+        }
+
         $storeId = $store?->store_id;
 
         $paidStatuses = [
@@ -189,7 +195,7 @@ class DashboardController extends Controller
                     'label' => $group === 'day'
                         ? Carbon::parse($row->label)->translatedFormat('D')
                         : $row->label,
-                    'penjualan' => (float) $row->penjalan,
+                    'penjualan' => (float) $row->penjualan,
                     'pesanan' => (int) $row->pesanan,
                 ];
             })
