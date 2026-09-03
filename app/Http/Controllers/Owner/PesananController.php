@@ -44,10 +44,10 @@ class PesananController extends Controller
         $counts = [
             'semua' => Order::where('store_id', $storeId)->count(),
             'baru' => Order::where('store_id', $storeId)->whereIn('status', self::STATUS_MAP['baru'])->count(),
-            'diproses' => Order::where('store_id', $storeId)->where('status', 'diproses')->count(),
-            'dikirim' => Order::where('store_id', $storeId)->where('status', 'dikirim')->count(),
-            'selesai' => Order::where('store_id', $storeId)->where('status', 'selesai')->count(),
-            'dibatalkan' => Order::where('store_id', $storeId)->where('status', 'dibatalkan')->count(),
+            'diproses' => Order::where('store_id', $storeId)->where('status', Order::STATUS_DIPROSES)->count(),
+            'dikirim' => Order::where('store_id', $storeId)->where('status', Order::STATUS_DIKIRIM)->count(),
+            'selesai' => Order::where('store_id', $storeId)->where('status', Order::STATUS_SELESAI)->count(),
+            'dibatalkan' => Order::where('store_id', $storeId)->where('status', Order::STATUS_DIBATALKAN)->count(),
         ];
 
         return view('Owner.pesanan.index', compact('orders', 'counts', 'status', 'period'));

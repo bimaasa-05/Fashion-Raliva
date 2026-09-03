@@ -11,10 +11,19 @@
         <div class="relative h-28 md:h-32 bg-gradient-to-r from-gold-accent/25 via-gold-accent/10 to-transparent">
             <span class="material-symbols-outlined absolute right-8 -bottom-6 text-[110px] text-gold-accent/15 pointer-events-none select-none" aria-hidden="true">storefront</span>
         </div>
+        @php
+            $anama = $user->nama_lengkap ?? 'Admin';
+            $aw = preg_split('/\s+/', trim($anama));
+            $ai = '';
+            if(!empty($aw[0])) $ai .= mb_substr($aw[0],0,1);
+            if(isset($aw[1])) $ai .= mb_substr($aw[1],0,1);
+            elseif(mb_strlen($aw[0]??'')>1) $ai .= mb_substr($aw[0],1,1);
+            $ainit = strtoupper(mb_substr($ai,0,2)) ?: '?';
+        @endphp
         <div class="px-6 md:px-8 pb-6">
             <div class="flex flex-col sm:flex-row sm:items-end gap-4 -mt-12">
-                <div class="w-24 h-24 rounded-xl ring-4 ring-surface-container-lowest overflow-hidden bg-surface-container-high shadow-xl shrink-0 mx-auto sm:mx-0">
-                    <img alt="Foto Profil" class="w-full h-full object-cover" src="{{ $user->foto_profil ? (str_starts_with($user->foto_profil, 'http') ? $user->foto_profil : asset('storage/'.$user->foto_profil)) : asset('images/avatar.svg') }}" />
+                <div class="w-24 h-24 rounded-xl ring-4 ring-surface-container-lowest bg-gold-accent text-white flex items-center justify-center font-bold text-2xl shrink-0 mx-auto sm:mx-0 border border-gold-accent/30">
+                    {{ $ainit }}
                 </div>
                 <div class="text-center sm:text-left flex-grow pb-1 min-w-0">
                     <div class="flex items-center gap-3 justify-center sm:justify-start flex-wrap">

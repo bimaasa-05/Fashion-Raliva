@@ -68,7 +68,9 @@
                     <tr class="border-b border-muted-border text-left">
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Karyawan</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Role</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Ditugaskan di</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">
+                            <span class="inline-flex items-center gap-1">Ditugaskan di <span class="material-symbols-outlined text-[14px] text-gold-accent cursor-help" title="Asal: tabel store_staff (store_id ↔ user_id) + tanggal_penugasan. Owner single-store: semua baris = toko {{ $storeName }} (OwnerContext::firstStoreId).">help</span></span>
+                        </th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Bergabung</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Aksi</th>
@@ -98,7 +100,7 @@
                             </td>
                             <td class="py-3.5 px-4">
                                 <div class="flex flex-wrap gap-1.5 max-w-[240px]">
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-low border border-muted-border text-on-surface-variant text-[11px] whitespace-nowrap">{{ $storeName }}</span>
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-surface-container-low border border-muted-border text-on-surface-variant text-[11px] whitespace-nowrap" title="store_staff.store_id={{ $s->store_id }} • user_id={{ $s->user_id }} • tgl={{ $s->tanggal_penugasan }} • status={{ $s->status }}">{{ $storeName }}</span>
                                 </div>
                             </td>
                             <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ optional(\Carbon\Carbon::parse($s->tanggal_penugasan))->translatedFormat('M Y') }}</td>

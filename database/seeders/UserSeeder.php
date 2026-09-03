@@ -14,10 +14,10 @@ class UserSeeder extends Seeder
         $roles = Role::pluck('role_id', 'nama_role');
 
         $owner = User::updateOrCreate(
-            ['email' => 'owner@raliva.test'],
+            ['email' => 'o@gmail.com'],
             [
                 'nama_lengkap' => 'Bima Prasetya',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('123'),
                 'role_id' => $roles[Role::OWNER],
                 'nomor_telepon' => '081234567890',
                 'email_verified_at' => now(),
@@ -31,10 +31,10 @@ class UserSeeder extends Seeder
         // (jalankan: php artisan db:seed --class=OwnerSeeder).
 
         $admin = User::updateOrCreate(
-            ['email' => 'admin@raliva.test'],
+            ['email' => 'a@gmail.com'],
             [
                 'nama_lengkap' => 'Sinta Maharani',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('123'),
                 'role_id' => $roles[Role::ADMIN],
                 'nomor_telepon' => '081234567891',
                 'email_verified_at' => now(),
@@ -46,10 +46,10 @@ class UserSeeder extends Seeder
         // (karena membutuhkan store yang baru dibuat di sana).
 
         $gudang = User::updateOrCreate(
-            ['email' => 'gudang@raliva.test'],
+            ['email' => 'g@gmail.com'],
             [
                 'nama_lengkap' => 'Andi Pratama',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('123'),
                 'role_id' => $roles[Role::GUDANG],
                 'nomor_telepon' => '081234567892',
                 'email_verified_at' => now(),
@@ -57,34 +57,8 @@ class UserSeeder extends Seeder
             ]
         );
 
-        // Tambahan user Gudang
         User::updateOrCreate(
-            ['email' => 'gudang2@raliva.test'],
-            [
-                'nama_lengkap' => 'Doni Santoso',
-                'password' => Hash::make('password'),
-                'role_id' => $roles[Role::GUDANG],
-                'nomor_telepon' => '081234567895',
-                'email_verified_at' => now(),
-                'status' => User::STATUS_AKTIF,
-            ]
-        );
-        User::updateOrCreate(
-            ['email' => 'gudang3@raliva.test'],
-            [
-                'nama_lengkap' => 'Eka Prasetyo',
-                'password' => Hash::make('password'),
-                'role_id' => $roles[Role::GUDANG],
-                'nomor_telepon' => '081234567896',
-                'email_verified_at' => now(),
-                'status' => User::STATUS_AKTIF,
-            ]
-        );
-
-        $warehouse = null; // warehouse dibuat di OwnerSeeder / GudangDemoSeeder
-
-        User::updateOrCreate(
-            ['email' => 'produksi@raliva.test'],
+            ['email' => 'p@gmail.com'],
             [
                 'nama_lengkap' => 'Rini Kusuma',
                 'password' => Hash::make('password'),
@@ -96,17 +70,6 @@ class UserSeeder extends Seeder
         );
 
         // Tambahan user Produksi
-        User::updateOrCreate(
-            ['email' => 'produksi2@raliva.test'],
-            [
-                'nama_lengkap' => 'Siti Rahayu',
-                'password' => Hash::make('password'),
-                'role_id' => $roles[Role::PRODUKSI],
-                'nomor_telepon' => '081234567897',
-                'email_verified_at' => now(),
-                'status' => User::STATUS_AKTIF,
-            ]
-        );
 
         User::updateOrCreate(
             ['email' => 'customer@raliva.test'],
@@ -152,19 +115,6 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'role_id' => $roles[Role::OWNER],
                 'nomor_telepon' => '081234567900',
-                'email_verified_at' => now(),
-                'status' => User::STATUS_AKTIF,
-            ]
-        );
-
-        // Tambahan Admin
-        User::updateOrCreate(
-            ['email' => 'admin2@raliva.test'],
-            [
-                'nama_lengkap' => 'Agus Setiawan',
-                'password' => Hash::make('password'),
-                'role_id' => $roles[Role::ADMIN],
-                'nomor_telepon' => '081234567901',
                 'email_verified_at' => now(),
                 'status' => User::STATUS_AKTIF,
             ]

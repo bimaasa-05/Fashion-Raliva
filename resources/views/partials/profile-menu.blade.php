@@ -2,7 +2,12 @@
     $user = Auth::user();
     $displayName = $user?->nama_lengkap ?? ($name ?? 'Rizky Pratama');
     $displayRole = $user?->role?->nama_role ?? ($role ?? 'Super Admin');
-    $photo = $user?->foto_profil_url ?? 'https://lh3.googleusercontent.com/aida-public/AB6AXuAuUf094pPsvMlxNz9CEzztLZIPfB4q2FE_6HM73O8sFoIt42FkBx43D1cxFlylMdSolVSJZNCBDrc8ttYGcVUIYXcsS0AUGBhcZYBAFGqcAXzmuJyVyjyJY6CXvyxdr0Zwzlwi2Tw3Djm9F2wtwaOLZklTUYLsRg7NCbF9hgI1uCTcTdgGi-0zShSJMzVkR1HYp_C02xOHHVWnGLI4_rrhbWQnSlrZ2VpmUbZL0Gc18YDjNwDrrkAcPg';
+    $words = preg_split('/\s+/', trim($displayName));
+    $init = '';
+    if (!empty($words[0])) $init .= mb_substr($words[0], 0, 1);
+    if (isset($words[1])) $init .= mb_substr($words[1], 0, 1);
+    elseif (mb_strlen($words[0] ?? '') > 1) $init .= mb_substr($words[0], 1, 1);
+    $initials = strtoupper(mb_substr($init, 0, 2)) ?: '?';
 @endphp
 <div class="relative" data-profile-container>
     <button type="button" data-profile-toggle class="flex items-center gap-3 hover:opacity-80 transition-opacity" aria-label="Menu profil">
@@ -12,8 +17,8 @@
                 <p class="text-on-surface-variant text-xs">{{ $displayRole }}</p>
             </div>
         @endif
-        <div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden shrink-0">
-            <img alt="Foto Profil" class="w-full h-full object-cover" src="{{ $photo }}" />
+        <div class="w-10 h-10 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-sm shrink-0 border border-gold-accent/30">
+            {{ $initials }}
         </div>
         <span class="material-symbols-outlined text-[20px] text-on-surface-variant transition-transform duration-300" data-profile-chevron>expand_more</span>
     </button>

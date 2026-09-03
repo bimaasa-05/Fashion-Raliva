@@ -329,6 +329,9 @@
     #sidebar.sidebar-collapsed nav a > .material-symbols-outlined:first-child { margin-right: 0; }
     #sidebar.sidebar-collapsed .sidebar-collapse-btn { justify-content: center; }
     #sidebar.sidebar-collapsed .sidebar-collapse-btn .icon-chevron { transform: rotate(180deg); }
+    /* Sidebar profile — collapsed: center avatar, hide card chrome */
+    #sidebar.sidebar-collapsed .sidebar-profile { justify-content: center; padding: 10px 0; margin-left: 0; margin-right: 0; background: transparent !important; border-color: transparent !important; box-shadow: none !important; }
+    #sidebar.sidebar-collapsed .sidebar-profile .w-11 { width: 2.75rem; height: 2.75rem; font-size: 13px; border-width: 2px; }
 
     /* Overlay modal tidak boleh terbawa margin flow (mis. dari parent space-y-*) */
     [data-modal] { margin: 0 !important; }

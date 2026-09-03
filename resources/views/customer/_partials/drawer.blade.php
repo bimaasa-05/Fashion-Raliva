@@ -48,13 +48,18 @@
 </div>
 <div class="drawer-sec px-md py-sm border-b border-[var(--chrome-border)] shrink-0">
     @if(auth()->check())
+        @php
+            $dname = auth()->user()->nama_lengkap ?? 'Customer';
+            $dw = preg_split('/\s+/', trim($dname));
+            $di = '';
+            if(!empty($dw[0])) $di .= mb_substr($dw[0],0,1);
+            if(isset($dw[1])) $di .= mb_substr($dw[1],0,1);
+            elseif(mb_strlen($dw[0]??'')>1) $di .= mb_substr($dw[0],1,1);
+            $dinit = strtoupper(mb_substr($di,0,2)) ?: '?';
+        @endphp
         <a href="{{ route('customer.account') }}" class="flex items-center gap-sm group">
-            <span class="w-12 h-12 rounded-full bg-[var(--gold-wash)] flex items-center justify-center ring-2 ring-[var(--gold-wash)] shrink-0 overflow-hidden">
-                @if(auth()->user()->foto_profil_url)
-                    <img src="{{ auth()->user()->foto_profil_url }}" alt="{{ auth()->user()->nama_lengkap }}" class="w-full h-full object-cover"/>
-                @else
-                    <span class="material-symbols-outlined text-[24px] text-[var(--chrome-accent)]">person</span>
-                @endif
+            <span class="w-12 h-12 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-sm shrink-0 border border-gold-accent/30">
+                {{ $dinit }}
             </span>
             <span class="flex flex-col min-w-0">
                 <span class="font-title-md text-title-md truncate text-[var(--chrome-text)]">{{ auth()->user()->nama_lengkap ?? 'Customer' }}</span>

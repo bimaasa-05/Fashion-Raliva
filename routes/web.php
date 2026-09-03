@@ -105,8 +105,8 @@ Route::post('/login', [LoginController::class, 'store']);
 Route::get('/register', [RegisterController::class, 'create'])->name('register');
 Route::post('/register', [RegisterController::class, 'store']);
 Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->middleware('auth');
-Route::get('/forgot-password', fn () => view('customer.auth.forgot-password'))->name('password.request');
-Route::get('/reset-password', fn () => view('customer.auth.reset-password'))->name('password.reset');
+Route::get('/forgot-password', fn() => view('customer.auth.forgot-password'))->name('password.request');
+Route::get('/reset-password', fn() => view('customer.auth.reset-password'))->name('password.reset');
 
 // customer
 Route::prefix('customer')->name('customer.')->group(function () {
@@ -146,6 +146,8 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('/account', function () {
             return view('customer.account.index');
         })->name('account');
+
+        Route::post('/account', [ProfileController::class, 'update'])->name('account.update');
 
         Route::get('/account/edit', function () {
             return view('customer.account.edit');
@@ -343,6 +345,9 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::post('/pesanan/{order}/forward', [OwnerPesananController::class, 'forward'])->name('pesanan.forward');
     Route::get('/promo', [OwnerPromoController::class, 'index'])->name('promo');
     Route::post('/promo', [OwnerPromoController::class, 'store'])->name('promo.store');
+    Route::put('/promo/{promo}', [OwnerPromoController::class, 'update'])->name('promo.update');
+    Route::delete('/promo/{promo}', [OwnerPromoController::class, 'destroy'])->name('promo.destroy');
+    Route::post('/promo/{promo}/toggle', [OwnerPromoController::class, 'toggle'])->name('promo.toggle');
     Route::get('/ulasan', [UlasanController::class, 'index'])->name('ulasan');
     Route::get('/data-pelanggan', [DataPelangganController::class, 'index'])->name('data-pelanggan');
     Route::get('/saldo', [SaldoController::class, 'index'])->name('saldo');

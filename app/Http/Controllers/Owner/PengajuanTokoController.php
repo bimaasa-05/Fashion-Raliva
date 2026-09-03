@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Store;
 use App\Models\StoreDocument;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
@@ -22,9 +23,38 @@ class PengajuanTokoController extends Controller
 
     public function store(Request $request)
     {
+        $user = $request->user();
         $store = OwnerContext::currentStore();
+
         if (! $store) {
-            return back()->with('error', 'Anda belum memiliki toko untuk mengajukan dokumen.');
+            $validatedStore = $request->validate([
+                'nama_toko' => ['required', 'string', 'max:150'],
+                'alamat' => ['required', 'string', 'max:500'],
+                'nomor_telepon' => ['required', 'string', 'max:20'],
+                'deskripsi' => ['nullable', 'string', 'max:1000'],
+            ]);
+
+            $store = Store::create([
+                'owner_id' => $user->user_id,
+                'nama_toko' => $validatedStore['nama_toko'],
+                'alamat' => $validatedStore['alamat'],
+                'nomor_telepon' => $validatedStore['nomor_telepon'],
+                'deskripsi' => $validatedStore['deskripsi'] ?? null,
+                'status' => Store::STATUS_PENDING,
+            ]);
+        } elseif ($store->status === Store::STATUS_DITOLAK) {
+            // Izinkan perbaikan data toko saat ditolak -> reset ke pending
+            $validatedStore = $request->validate([
+                'nama_toko' => ['sometimes', 'string', 'max:150'],
+                'alamat' => ['sometimes', 'string', 'max:500'],
+                'nomor_telepon' => ['sometimes', 'string', 'max:20'],
+                'deskripsi' => ['nullable', 'string', 'max:1000'],
+            ]);
+            if (!empty($validatedStore)) {
+                $store->update(array_merge($validatedStore, ['status' => Store::STATUS_PENDING, 'alasan_penolakan' => null]));
+            } else {
+                $store->update(['status' => Store::STATUS_PENDING, 'alasan_penolakan' => null]);
+            }
         }
 
         $jenisList = ['ktp', 'npwp', 'foto_depan', 'siu'];

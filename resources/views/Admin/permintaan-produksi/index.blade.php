@@ -13,19 +13,19 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter mb-2">
             <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Total Ajuan</p>
-                <p class="font-title-md text-title-md text-on-surface mt-1">2</p>
+                <p class="font-title-md text-title-md text-on-surface mt-1">{{ $stats['total_ajuan'] }}</p>
             </div>
             <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Diproduksi</p>
-                <p class="font-title-md text-title-md text-secondary mt-1">1</p>
+                <p class="font-title-md text-title-md text-secondary mt-1">{{ $stats['diproses'] }}</p>
             </div>
             <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Selesai</p>
-                <p class="font-title-md text-title-md text-gold-accent mt-1">1</p>
+                <p class="font-title-md text-title-md text-gold-accent mt-1">{{ $stats['selesai'] }}</p>
             </div>
             <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Unit Diminta</p>
-                <p class="font-title-md text-title-md text-on-surface mt-1">80</p>
+                <p class="font-title-md text-title-md text-on-surface mt-1">{{ number_format((float) $stats['unit_diminta'], 0, ',', '.') }}</p>
             </div>
         </div>
     </section>
@@ -59,20 +59,21 @@
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
-                    <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                        <td class="p-4 font-mono text-on-surface">PRD-1042</td>
-                        <td class="p-4 text-on-surface">Straight Fit Pants</td>
-                        <td class="p-4 text-center text-on-surface">50</td>
-                        <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Diproduksi</span></td>
-                        <td class="p-4 text-on-surface-variant">19 Agu 2026</td>
-                    </tr>
-                    <tr class="hover:bg-surface-container-low transition-colors">
-                        <td class="p-4 font-mono text-on-surface">PRD-1038</td>
-                        <td class="p-4 text-on-surface">Oversized Linen Shirt</td>
-                        <td class="p-4 text-center text-on-surface">30</td>
-                        <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Selesai</span></td>
-                        <td class="p-4 text-on-surface-variant">02 Agu 2026</td>
-                    </tr>
+                    @forelse ($history as $item)
+                        @php
+                            $namaProduk = collect($item->items)->map(fn ($i) => $i->productVariant?->product?->nama_produk ?? '-')->first() ?? '-';
+                            $jumlah = collect($item->items)->sum('jumlah_diminta');
+                        @endphp
+                        <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                            <td class="p-4 font-mono text-on-surface">{{ $item->nomor_produksi }}</td>
+                            <td class="p-4 text-on-surface">{{ $namaProduk }}</td>
+                            <td class="p-4 text-center text-on-surface">{{ $jumlah }}</td>
+                            <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">{{ ucfirst($item->status) }}</span></td>
+                            <td class="p-4 text-on-surface-variant">{{ optional($item->dimulai_pada)->translatedFormat('d M Y') ?? '-' }}</td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="5" class="p-6 text-center text-on-surface-variant text-sm">Belum ada riwayat produksi.</td></tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

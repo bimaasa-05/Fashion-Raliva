@@ -51,34 +51,33 @@
             </div>
         </div>
 
-        {{-- Toolbar: 1 baris rapi — search kiri, filter kanan --}}
+        {{-- Toolbar: search kiri, filter kanan — realtime JS (debounce) + fallback server GET --}}
         <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
             <div class="relative flex-1 min-w-[220px]">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                <input type="text" placeholder="Cari nama produk atau SKU..." data-table-search class="raliva-search" />
+                <input type="text" placeholder="Cari nama produk atau SKU..." data-table-search value="{{ request('q') }}" class="raliva-search" />
             </div>
             <div class="flex flex-wrap items-center gap-3 lg:justify-end">
                 <select data-table-filter="kategori" class="raliva-select lg:w-44">
                     <option value="">Semua Kategori</option>
-                    <option value="Kemeja">Kemeja</option>
-                    <option value="Kaos">Kaos</option>
-                    <option value="Celana">Celana</option>
-                    <option value="Jaket & Hoodie">Jaket & Hoodie</option>
-                    <option value="Dress">Dress</option>
-                    <option value="Rok">Rok</option>
-                    <option value="Aksesoris">Aksesoris</option>
-                    <option value="Ikat Pinggang">Ikat Pinggang</option>
+                    @foreach(($categories ?? collect()) as $catName)
+                        <option value="{{ $catName }}" {{ request('kategori')===$catName ? 'selected' : '' }}>{{ $catName }}</option>
+                    @endforeach
                 </select>
                 <select data-table-filter="status-produk" class="raliva-select lg:w-44">
                     <option value="">Semua Status</option>
-                    <option value="aktif">Aktif</option>
-                    <option value="nonaktif">Nonaktif</option>
+                    <option value="aktif" {{ request('status-produk')==='aktif' ? 'selected' : '' }}>Aktif</option>
+                    <option value="pending" {{ request('status-produk')==='pending' ? 'selected' : '' }}>Menunggu</option>
+                    <option value="ditolak" {{ request('status-produk')==='ditolak' ? 'selected' : '' }}>Ditolak</option>
+                    <option value="nonaktif" {{ request('status-produk')==='nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                    <option value="draft" {{ request('status-produk')==='draft' ? 'selected' : '' }}>Draft</option>
+                    <option value="arsip" {{ request('status-produk')==='arsip' ? 'selected' : '' }}>Arsip</option>
                 </select>
                 <button type="button" data-filter-reset class="py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Reset</button>
             </div>
         </div>
 
-        <div data-table-wrap class="overflow-x-auto">
+        <div data-table-wrap class="overflow-x-auto min-h-[380px]">
             <table class="premium-table w-full min-w-[900px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
@@ -115,10 +114,14 @@
                             <td class="py-3.5 px-4 text-center">
                                 @if ($p->status === 'aktif')
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aktif</span>
+                                @elseif ($p->status === 'pending')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Menunggu</span>
+                                @elseif ($p->status === 'ditolak')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Ditolak</span>
                                 @elseif ($p->status === 'habis')
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Habis</span>
                                 @else
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Nonaktif</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ ucfirst($p->status) }}</span>
                                 @endif
                             </td>
                             <td class="py-3.5 px-4 text-right">
@@ -141,7 +144,7 @@
             </table>
         </div>
 
-        <div data-empty-state class="hidden flex-col items-center py-12 text-center gap-3">
+        <div data-empty-state class="hidden flex-col items-center justify-center py-12 min-h-[260px] text-center gap-3">
             <div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center">
                 <span class="material-symbols-outlined text-[28px] text-on-surface-variant">search_off</span>
             </div>

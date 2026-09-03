@@ -9,9 +9,14 @@
 <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Customer</h2>
-        <div class="relative md:w-72">
-            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-            <input data-table-search class="raliva-search" placeholder="Cari nama atau email..." type="text" />
+        <div class="flex items-center gap-3">
+            <div class="relative md:w-72">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                <input data-table-search class="raliva-search" placeholder="Cari nama atau email..." type="text" />
+            </div>
+            <button type="button" data-modal-open="modal-tambah-customer" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
+                <span class="material-symbols-outlined text-[18px]">add</span> Tambah Customer
+            </button>
         </div>
     </div>
 
@@ -46,6 +51,51 @@
     </div>
     <div class="mt-4">{{ $customers->links() }}</div>
 </section>
+@endsection
+
+{{-- Modal Tambah Customer --}}
+<div id="modal-tambah-customer" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <form method="POST" action="{{ route('admin.customer.store') }}" class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+        @csrf
+        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <p class="raliva-label text-gold-accent">Tambah Customer</p>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">Customer Offline</h3>
+                <p class="text-xs text-on-surface-variant mt-0.5">Dapat dipakai untuk pesanan offline/langsung.</p>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div>
+                <label class="raliva-label" for="tc-nama">Nama Lengkap <span class="text-error">*</span></label>
+                <input id="tc-nama" name="nama_lengkap" required class="raliva-input" placeholder="Misal: Sari Dewi" />
+            </div>
+            <div>
+                <label class="raliva-label" for="tc-email">Email <span class="text-error">*</span></label>
+                <input id="tc-email" name="email" type="email" required class="raliva-input" placeholder="email@domain.com" />
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                <div>
+                    <label class="raliva-label" for="tc-telepon">No. Telepon</label>
+                    <input id="tc-telepon" name="nomor_telepon" type="text" class="raliva-input" placeholder="Opsional" />
+                </div>
+                <div>
+                    <label class="raliva-label" for="tc-password">Password <span class="text-error">*</span></label>
+                    <input id="tc-password" name="password" type="password" required minlength="8" class="raliva-input" placeholder="Minimal 8 karakter" />
+                </div>
+            </div>
+            <div>
+                <label class="raliva-label" for="tc-konfirmasi">Konfirmasi Password <span class="text-error">*</span></label>
+                <input id="tc-konfirmasi" name="password_confirmation" type="password" required minlength="8" class="raliva-input" placeholder="Ulangi password" />
+            </div>
+        </div>
+        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end gap-3">
+            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+            <button type="submit" class="px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Simpan Customer</button>
+        </div>
+    </form>
+</div>
 @endsection
 
 @foreach ($customers as $c)

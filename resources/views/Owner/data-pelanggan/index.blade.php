@@ -28,33 +28,33 @@
         </div>
 
         @if ($top3->count() >= 3)
-        {{-- Podium lengkap (3 besar) --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 items-end gap-gutter md:gap-4">
+        {{-- Podium lengkap (3 besar) — perhalus gap & bayangan agar tidak sakit mata --}}
+        <div class="grid grid-cols-1 md:grid-cols-3 items-end gap-5 md:gap-6 lg:gap-8 md:px-4">
             {{-- #2 Kiri --}}
-            <div class="order-2 md:order-1 bg-surface-container-low border border-muted-border rounded-xl p-5 flex flex-col items-center text-center md:mb-8">
-                <div class="w-16 h-16 rounded-full bg-surface-container-high border-2 border-outline-variant flex items-center justify-center font-title-md text-lg text-on-surface">{{ $top3[1]->initials }}</div>
-                <p class="font-title-md text-sm text-on-surface mt-3">{{ $top3[1]->name }}</p>
+            <div class="order-2 md:order-1 bg-surface-container-lowest border border-muted-border/60 rounded-2xl p-5 flex flex-col items-center text-center md:mb-10 shadow-sm hover:shadow-md transition-shadow">
+                <div class="w-16 h-16 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center font-bold text-lg text-on-surface shadow-sm">{{ $top3[1]->initials }}</div>
+                <p class="font-title-md text-sm text-on-surface mt-3 truncate max-w-[140px]">{{ $top3[1]->name }}</p>
                 <p class="text-gold-accent font-bold text-sm mt-1">Rp {{ number_format($top3[1]->total_belanja, 0, ',', '.') }}</p>
                 <p class="text-xs text-on-surface-variant mt-0.5">{{ $top3[1]->jumlah_order }} pesanan</p>
-                <span class="mt-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase">#2</span>
+                <span class="mt-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-surface-variant text-[10px] font-bold uppercase">#2</span>
             </div>
 
-            {{-- #1 Tengah (tinggi) --}}
-            <div class="order-1 md:order-2 bg-deep-onyx text-on-primary rounded-xl p-6 flex flex-col items-center text-center md:-mt-4 shadow-xl relative overflow-hidden">
-                <span class="material-symbols-outlined absolute -right-4 -top-4 text-[120px] text-on-primary/5 pointer-events-none select-none" aria-hidden="true">military_tech</span>
-                <div class="w-20 h-20 rounded-full bg-gold-accent text-deep-onyx flex items-center justify-center font-bold text-xl relative z-10">{{ $top3[0]->initials }}</div>
-                <p class="raliva-figure text-[20px] text-on-primary mt-3 relative z-10">{{ $top3[0]->name }}</p>
-                <p class="text-inverse-on-surface/70 text-xs mt-1 relative z-10">{{ $top3[0]->jumlah_order }} pesanan</p>
-                <span class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent text-deep-onyx text-xs font-bold relative z-10"><span class="material-symbols-outlined text-[16px]">payments</span>Rp {{ number_format($top3[0]->total_belanja, 0, ',', '.') }}</span>
+            {{-- #1 Tengah (hero) — lebih tenang, tidak terlalu kontras --}}
+            <div class="order-1 md:order-2 bg-deep-onyx text-on-primary rounded-2xl p-6 md:p-7 flex flex-col items-center text-center md:-mt-2 shadow-2xl ring-1 ring-gold-accent/20 relative overflow-hidden">
+                <span class="material-symbols-outlined absolute -right-2 -top-2 text-[100px] text-on-primary/[0.04] pointer-events-none select-none" aria-hidden="true">military_tech</span>
+                <div class="w-20 h-20 rounded-full bg-gold-accent text-deep-onyx flex items-center justify-center font-bold text-xl relative z-10 ring-4 ring-gold-accent/20 border-2 border-white/10">{{ $top3[0]->initials }}</div>
+                <p class="raliva-figure text-[20px] text-on-primary mt-3 relative z-10 truncate max-w-[160px]">{{ $top3[0]->name }}</p>
+                <p class="text-on-primary/70 text-xs mt-1 relative z-10">{{ $top3[0]->jumlah_order }} pesanan • Peringkat 1</p>
+                <span class="mt-4 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gold-accent text-deep-onyx text-xs font-bold relative z-10 shadow-md"><span class="material-symbols-outlined text-[16px]">payments</span>Rp {{ number_format($top3[0]->total_belanja, 0, ',', '.') }}</span>
             </div>
 
             {{-- #3 Kanan --}}
-            <div class="order-3 bg-surface-container-low border border-muted-border rounded-xl p-5 flex flex-col items-center text-center md:mb-4">
-                <div class="w-16 h-16 rounded-full bg-surface-container-high border-2 border-outline-variant flex items-center justify-center font-title-md text-lg text-on-surface">{{ $top3[2]->initials }}</div>
-                <p class="font-title-md text-sm text-on-surface mt-3">{{ $top3[2]->name }}</p>
+            <div class="order-3 bg-surface-container-lowest border border-muted-border/60 rounded-2xl p-5 flex flex-col items-center text-center md:mb-6 shadow-sm hover:shadow-md transition-shadow">
+                <div class="w-16 h-16 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center font-bold text-lg text-on-surface shadow-sm">{{ $top3[2]->initials }}</div>
+                <p class="font-title-md text-sm text-on-surface mt-3 truncate max-w-[140px]">{{ $top3[2]->name }}</p>
                 <p class="text-gold-accent font-bold text-sm mt-1">Rp {{ number_format($top3[2]->total_belanja, 0, ',', '.') }}</p>
                 <p class="text-xs text-on-surface-variant mt-0.5">{{ $top3[2]->jumlah_order }} pesanan</p>
-                <span class="mt-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase">#3</span>
+                <span class="mt-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-surface-variant text-[10px] font-bold uppercase">#3</span>
             </div>
         </div>
         @else

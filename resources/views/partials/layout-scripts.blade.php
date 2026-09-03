@@ -194,5 +194,24 @@
         a.addEventListener('mouseenter', () => showMenuTip(a));
         a.addEventListener('mouseleave', hideMenuTip);
     });
+    // Sidebar profile avatar — tooltip when collapsed (dropleft/dropright)
+    document.querySelectorAll('.sidebar-profile').forEach((card) => {
+        const nameEl = card.querySelector('[data-sidebar-text] h4');
+        if (!nameEl) return;
+        card.addEventListener('mouseenter', () => {
+            if (!sidebar?.classList.contains('sidebar-collapsed') || !isDesktop()) return;
+            if (!menuTipEl) {
+                menuTipEl = document.createElement('div');
+                menuTipEl.id = 'sidebar-tip-global';
+                document.body.appendChild(menuTipEl);
+            }
+            menuTipEl.textContent = nameEl.textContent.trim();
+            const r = card.querySelector('.w-11, .w-10')?.getBoundingClientRect() || card.getBoundingClientRect();
+            menuTipEl.style.top = Math.round(r.top + r.height / 2) + 'px';
+            menuTipEl.style.left = Math.round(r.right + 12) + 'px';
+            requestAnimationFrame(() => menuTipEl.classList.add('visible'));
+        });
+        card.addEventListener('mouseleave', hideMenuTip);
+    });
     sidebar?.querySelector('.sidebar-scroll')?.addEventListener('scroll', hideMenuTip, { passive: true });
 </script>

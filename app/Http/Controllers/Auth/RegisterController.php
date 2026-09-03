@@ -45,13 +45,12 @@ class RegisterController extends Controller
             'status' => User::STATUS_AKTIF,
         ]);
 
-        Auth::login($user);
-
         if ($roleName === Role::OWNER) {
-            return redirect()->route('owner.pengajuan-toko')
-                ->with('success', 'Pendaftaran berhasil. Ajukan toko Anda untuk verifikasi.');
+            return redirect()->route('login')
+                ->with('success', 'Pendaftaran berhasil. Silakan login untuk mengajukan toko.');
         }
 
-        return redirect()->route('customer.home');
+        return redirect()->route('login')
+            ->with('success', 'Pendaftaran berhasil. Silakan login.');
     }
 }

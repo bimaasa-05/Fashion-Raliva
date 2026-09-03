@@ -95,7 +95,7 @@
                             </div>
                         </div>
                         <div class="flex gap-gutter lg:justify-end">
-                            <button type="button" onclick="showRalivaToast('Detail produksi {{ $pr->nomor_produksi }} (read-only).', 'visibility')" class="flex-1 lg:flex-none py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Lihat Detail</button>
+                            <button type="button" data-modal-open="modal-produksi-{{ $pr->production_order_id }}" class="flex-1 lg:flex-none py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Lihat Detail</button>
                         </div>
                     </div>
                 </article>
@@ -105,6 +105,57 @@
         </div>
     </section>
 </div>
+
+{{-- Modal Detail Produksi --}}
+@foreach ($orders as $pr)
+<div id="modal-produksi-{{ $pr->production_order_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <p class="raliva-label text-gold-accent">Detail Produksi</p>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $pr->nomor_produksi }}</h3>
+                <p class="text-xs text-on-surface-variant mt-0.5">PIC Gudang: {{ $pr->targetWarehouse?->nama_gudang ?? '—' }} • Prioritas {{ ucfirst($pr->prioritas ?? '-') }}</p>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-surface-container-low rounded-lg p-3">
+                    <p class="text-[10px] uppercase text-on-surface-variant">Status</p>
+                    <p class="font-bold text-on-surface capitalize">{{ $pr->status }}</p>
+                </div>
+                <div class="bg-surface-container-low rounded-lg p-3">
+                    <p class="text-[10px] uppercase text-on-surface-variant">Total Item</p>
+                    <p class="font-bold text-on-surface">{{ $pr->items->sum('jumlah_diminta') ?: 0 }} pcs</p>
+                </div>
+            </div>
+            <div>
+                <p class="text-[10px] uppercase text-on-surface-variant mb-2">Daftar Item</p>
+                <ul class="space-y-1.5">
+                    @foreach ($pr->items as $it)
+                    <li class="flex items-center justify-between text-sm bg-surface-container-low rounded-lg px-3 py-2">
+                        <span class="text-on-surface">{{ $it->productVariant?->product?->nama_produk ?? '-' }}</span>
+                        <span class="text-on-surface-variant">{{ $it->jumlah_diminta }} pcs</span>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+            @if ($pr->catatan)
+            <div class="bg-surface-container-low border border-muted-border rounded-lg p-4">
+                <p class="text-[10px] uppercase text-on-surface-variant mb-1">Catatan</p>
+                <p class="font-body-md text-sm text-on-surface">{{ $pr->catatan }}</p>
+            </div>
+            @endif
+        </div>
+        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end">
+            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+        </div>
+    </div>
+</div>
+@endforeach
 
 {{-- Modal Buat Permintaan Produksi --}}
 

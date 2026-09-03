@@ -19,16 +19,19 @@
         <div class="relative h-28 md:h-32 bg-gradient-to-r from-gold-accent/25 via-gold-accent/10 to-transparent">
             <span class="material-symbols-outlined absolute right-8 -bottom-6 text-[110px] text-gold-accent/15 pointer-events-none select-none" aria-hidden="true">warehouse</span>
         </div>
+        @php
+            $gnama = $user->nama_lengkap ?? 'Gudang';
+            $gw = preg_split('/\s+/', trim($gnama));
+            $gi = '';
+            if(!empty($gw[0])) $gi .= mb_substr($gw[0],0,1);
+            if(isset($gw[1])) $gi .= mb_substr($gw[1],0,1);
+            elseif(mb_strlen($gw[0]??'')>1) $gi .= mb_substr($gw[0],1,1);
+            $ginit = strtoupper(mb_substr($gi,0,2)) ?: '?';
+        @endphp
         <div class="px-6 md:px-8 pb-6">
             <div class="flex flex-col sm:flex-row sm:items-end gap-4 -mt-12">
-                <div class="w-24 h-24 rounded-2xl ring-4 ring-surface-container-lowest overflow-hidden bg-surface-container-high shadow-xl shrink-0 mx-auto sm:mx-0">
-                    @if ($user->foto_profil_url)
-                        <img alt="Foto Profil {{ $user->nama_lengkap }}" class="w-full h-full object-cover" src="{{ $user->foto_profil_url }}" />
-                    @else
-                        <div class="w-full h-full flex items-center justify-center bg-gold-accent/10 text-gold-accent">
-                            <span class="material-symbols-outlined text-[40px]">person</span>
-                        </div>
-                    @endif
+                <div class="w-24 h-24 rounded-2xl ring-4 ring-surface-container-lowest bg-gold-accent text-white flex items-center justify-center font-bold text-2xl shrink-0 mx-auto sm:mx-0 border border-gold-accent/30">
+                    {{ $ginit }}
                 </div>
                 <div class="flex-grow text-center sm:text-left pb-1 min-w-0">
                     <div class="flex items-center gap-3 justify-center sm:justify-start flex-wrap">
