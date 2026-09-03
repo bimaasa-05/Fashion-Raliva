@@ -240,8 +240,8 @@
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Search Bar Section -->
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <form class="flex items-center gap-sm w-full">
 <div class="relative flex-grow">
 <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
@@ -253,8 +253,8 @@
 </div>
 </section>
 <!-- Popular Searches -->
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Popular Searches') }}</h3>
 <div class="mt-md flex flex-wrap gap-sm">
 @foreach (['Linen Shirt', 'Silk Dress', 'Blazer', 'Tote Bag', 'Trousers', 'Knit Top'] as $tag)
@@ -265,8 +265,8 @@
 </div>
 <!-- Trending Now -->
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="flex justify-between items-center mb-xs">
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ __('Trending Now') }}</h2>
 <a href="{{ route('customer.shop') }}" class="font-label-caps text-label-caps text-secondary uppercase tracking-widest hover:opacity-80 transition-opacity">View All</a>

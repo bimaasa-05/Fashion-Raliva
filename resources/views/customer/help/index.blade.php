@@ -234,8 +234,8 @@
 <main class="pt-16 pb-xl w-full">
 <!-- Hero + Search + Categories -->
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="max-w-3xl mx-auto text-center">
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">SUPPORT</p>
 <h2 class="premium-heading font-headline-lg text-headline-lg text-on-surface mb-sm">{{ __('How can we help?') }}</h2>
@@ -268,8 +268,8 @@
 </div>
 </section>
 <!-- FAQ -->
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('Frequently Asked Questions') }}</h2>
 <div class="flex flex-col gap-sm">
 <details class="group bg-surface-container-low rounded-lg border border-outline-variant px-md">
@@ -332,8 +332,8 @@
 </div>
 <!-- Contact Support -->
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('Still Need Help?') }}</h2>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
 <button class="flex items-center gap-sm p-md border border-outline-variant rounded-lg bg-surface hover:border-secondary transition-colors text-left" type="button">

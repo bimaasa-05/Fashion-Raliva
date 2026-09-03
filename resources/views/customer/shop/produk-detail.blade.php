@@ -389,7 +389,7 @@
                     </section>
                 <div class="lg:flex-1 lg:min-w-0">
                     <section class="py-xl reveal-up">
-                        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-container-margin md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+                        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
                             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('PRODUCT DETAILS') }}</p>
                             <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ $product->nama_produk }}</h2>
                             <div class="flex items-center gap-xs mb-sm">

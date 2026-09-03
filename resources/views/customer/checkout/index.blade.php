@@ -564,34 +564,51 @@
 <main class="pt-16 pb-[72px] w-full overflow-x-hidden">
 
     {{-- Outer wrapper: same as account/index, address/edit --}}
-    <div class="mx-auto max-w-[1400px]">
+    <div class="mx-auto max-w-[1400px] px-container-margin">
 
         {{-- Page Title Card --}}
-        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium mb-lg md:mb-xl text-center md:text-left reveal-up">
+        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium mb-lg md:mb-xl text-center md:text-left reveal-up">
             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('ORDER') }}</p>
             <h2 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ __('Checkout') }}</h2>
         </div>
 
         {{-- Form Card: ONE card contains all sections --}}
-        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-container-margin md:px-[64px] py-md md:py-lg shadow-sm card-premium reveal-up">
+        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
 
             {{-- ========== DELIVERY ADDRESS ========== --}}
             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('DELIVERY ADDRESS') }}</p>
 
+            @if($address)
             <div class="flex items-start gap-md py-md">
                 <div class="co-icon mt-0.5">
                     <span class="material-symbols-outlined">location_on</span>
                 </div>
                 <div class="min-w-0 flex-1 flex flex-col gap-1">
-                    <p class="font-body-sm text-body-sm text-on-surface font-semibold">Jane Doe</p>
-                    <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">123 Fashion Avenue, Suite 4B, Jakarta Selatan, DKI Jakarta 12190</p>
+                    <p class="font-body-sm text-body-sm text-on-surface font-semibold">{{ $address->nama_penerima }}</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">{{ trim(implode(', ', array_filter([
+                        $address->alamat,
+                        $address->kota,
+                        $address->provinsi,
+                        $address->kode_pos,
+                    ]))) }}</p>
                     <p class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-[16px]">call</span>
-                        +62 812 3456 7890
+                        {{ $address->nomor_telepon }}
                     </p>
                 </div>
                 <a href="{{ route('customer.address.index') }}" class="font-label-caps text-label-caps text-[var(--chrome-accent)] hover:underline underline-offset-2 shrink-0">{{ __('Edit') }}</a>
             </div>
+            @else
+            <div class="flex flex-col items-center justify-center py-lg text-center gap-1">
+                <span class="material-symbols-outlined text-5xl text-outline-variant mb-xs">location_off</span>
+                <p class="font-body-md text-body-md text-on-surface-variant">{{ __('Anda belum memiliki alamat pengiriman.') }}</p>
+                <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">{{ __('Tambahkan alamat terlebih dahulu untuk melanjutkan checkout.') }}</p>
+                <a href="{{ route('customer.address.create') }}" class="btn-gold inline-flex items-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest shadow-lg">
+                    <span class="material-symbols-outlined text-[20px]">add</span>
+                    {{ __('Tambah Alamat') }}
+                </a>
+            </div>
+            @endif
 
             <hr class="co-divider"/>
 
@@ -720,9 +737,6 @@
         </a>
     </div>
 </div>
-
-{{-- Bottom Nav (mobile) --}}
-@include('customer._partials.bottom-nav')
 
 {{-- Drawer --}}
 @include('customer._partials.drawer')

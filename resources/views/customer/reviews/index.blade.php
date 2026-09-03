@@ -280,8 +280,8 @@
 <!-- Main Content -->
 <main class="flex-grow pt-md pb-8 lg:pb-12 w-full overflow-x-hidden">
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-container-margin md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('REVIEWS') }}</p>
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('My Reviews') }}</h2>
 

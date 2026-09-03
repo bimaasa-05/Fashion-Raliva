@@ -241,7 +241,7 @@
 <main class="pt-16 pb-[120px] w-full">
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1600px] px-container-margin">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-container-margin md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('REVIEWS') }}</p>
 <form>
 <!-- Product Summary -->

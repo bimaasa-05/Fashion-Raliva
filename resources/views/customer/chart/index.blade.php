@@ -22,7 +22,7 @@
                         "primary-fixed-dim": "#c8c6c5",
                         "surface-variant": "#e3e2e2",
                         "on-surface": "#1b1c1c",
-                        "secondary": "#795905",
+                        "secondary": "#8B1E3F",
                         "surface-dim": "#dbdad9",
                         "on-error": "#ffffff",
                         "primary": "#000000",
@@ -41,7 +41,7 @@
                         "primary-fixed": "#e5e2e1",
                         "outline-variant": "#c4c7c7",
                         "surface-tint": "#5f5e5e",
-                        "secondary-fixed-dim": "#ebc168",
+                        "secondary-fixed-dim": "#8B1E3F",
                         "outline": "#747878",
                         "on-primary-fixed-variant": "#474646",
                         "on-secondary-fixed-variant": "#5c4300",
@@ -108,35 +108,6 @@
         body { -webkit-tap-highlight-color: transparent; }
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
         .pt-safe { padding-top: env(safe-area-inset-top); }
-        /* Custom Checkbox */
-        .checkbox-custom {
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            border: 1px solid #111111;
-            border-radius: 0;
-            background-color: transparent;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .checkbox-custom:checked {
-            background-color: #111111;
-        }
-        .checkbox-custom:checked::after {
-            content: '';
-            width: 4px;
-            height: 8px;
-            border: solid white;
-            border-width: 0 1.5px 1.5px 0;
-            transform: rotate(45deg);
-            margin-bottom: 2px;
-        }
-        html.theme-dark .checkbox-custom { border-color: #e6e4e1; }
-        html.theme-dark .checkbox-custom:checked { background-color: #f2efec; }
-        html.theme-dark .checkbox-custom:checked::after { border-color: #1b1a19; }
     </style>
 <style>
     body {
@@ -152,7 +123,11 @@
         --chrome-text-faint: rgba(0,0,0,.45);
         --chrome-border: rgba(0,0,0,.1);
         --chrome-hover: rgba(0,0,0,.06);
-        --chrome-accent: #795905;
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #F8F6F2;
+        --surface-warm: #F3F0EA;
+        --border-soft: #E5E1DA;
+        --text-muted: #777777;
     }
     html.theme-dark {
         --chrome-bg: #1c1b1b;
@@ -162,7 +137,11 @@
         --chrome-text-faint: rgba(255,255,255,.5);
         --chrome-border: rgba(255,255,255,.1);
         --chrome-hover: rgba(255,255,255,.1);
-        --chrome-accent: #ebc168;
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #1e1d1c;
+        --surface-warm: #201f1e;
+        --border-soft: #3a3937;
+        --text-muted: #b9b6b1;
     }
 </style>
 <style>
@@ -189,7 +168,7 @@
     html.theme-dark .text-outline { color: #8a8781 !important; }
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
-    html.theme-dark .text-secondary { color: #ebc168 !important; }
+    html.theme-dark .text-secondary { color: #8B1E3F !important; }
     html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
     html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
@@ -203,7 +182,7 @@
     html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
     html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
     html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
-    html.theme-dark .hover\:text-secondary:hover { color: #ebc168 !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #8B1E3F !important; }
     html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
     html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
     html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
@@ -216,6 +195,60 @@
     html.theme-dark .group:hover .group-hover\:text-primary { color: #f2efec !important; }
     html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
+</style>
+<style>
+    /* ============ BURGUNDY PARITY (wishlist/checkout) ============ */
+    /* Scoped burgundy accent for the shared drawer + bottom-nav partials */
+    #drawer-panel { --chrome-accent: #8B1E3F; --gold-wash: rgba(139,30,63,.10); }
+    html.theme-dark #drawer-panel { --chrome-accent: #8B1E3F; --gold-wash: rgba(163,38,63,.16); }
+    .bn-active .material-symbols-outlined { color: #8B1E3F !important; }
+    html.theme-dark .bn-active .material-symbols-outlined { color: #8B1E3F !important; }
+    .bn-active { color: #8B1E3F !important; }
+    html.theme-dark .bn-active { color: #8B1E3F !important; }
+
+    /* Atelier Eyebrow */
+    .atl-eyebrow { display: inline-flex; align-items: center; gap: .65rem; }
+    .atl-eyebrow::before { content: ''; width: 30px; height: 1px; background: var(--chrome-accent); opacity: .7; }
+
+    /* Button (burgundy) */
+    .btn-gold {
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        background-color: var(--btn-gold-bg) !important;
+        color: var(--btn-gold-text) !important;
+    }
+    .btn-gold > * { position: relative; z-index: 2; }
+    .btn-gold::after {
+        content: '';
+        position: absolute;
+        top: -10%;
+        bottom: -10%;
+        left: -80%;
+        width: 45%;
+        background: rgba(255,255,255,.55);
+        transform: skewX(-24deg);
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0;
+    }
+    .btn-gold:hover::after, .btn-gold.flashing::after { opacity: 1; animation: authFlash 1.4s linear infinite; }
+    .btn-gold.flashing::after { animation: authFlash 1.4s cubic-bezier(.4,0,.2,1) 1; }
+    @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
+    :root           { --btn-gold-bg: #8B1E3F; --btn-gold-text: #ffffff; }
+    html.theme-dark { --btn-gold-bg: #6D1428; --btn-gold-text: #ffffff; }
+    .btn-gold:hover { box-shadow: 0 0 0 1px rgba(139,30,63,.35), 0 8px 22px -8px rgba(139,30,63,.45); }
+
+    /* Premium Card + Heading (burgundy accent) */
+    .card-premium {
+        background-color: var(--surface-ivory);
+        border: 1px solid var(--border-soft);
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 2px rgba(17,17,17,.04), 0 8px 24px -12px rgba(17,17,17,.12);
+        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    .card-premium:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(17,17,17,.06), 0 18px 40px -16px rgba(17,17,17,.18); border-color: rgba(139,30,63,.45); }
+    html.theme-dark .card-premium { background-color: var(--surface-ivory); border-color: var(--border-soft); box-shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5); }
 </style>
   </head>
 <body class="bg-background text-on-background min-h-screen flex flex-col font-body-lg lg:pl-72">
@@ -238,29 +271,24 @@
 <section class="mt-md mb-lg lg:flex-1 lg:min-w-0 lg:mb-0">
 <!-- Store Header -->
 <div class="px-container-margin py-sm border-b border-surface-variant flex items-center gap-sm bg-surface-bright">
-<input checked="" class="checkbox-custom" type="checkbox"/>
 <div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-on-surface-variant text-lg">storefront</span>
-<h2 class="font-label-caps text-label-caps text-primary tracking-widest uppercase">LUNARA FASHION</h2>
+<span class="material-symbols-outlined text-secondary text-lg">storefront</span>
+<h2 class="atl-eyebrow font-label-caps text-label-caps text-[var(--chrome-accent)] tracking-widest uppercase">LUNARA FASHION</h2>
 </div>
 </div>
 <!-- Cart Items -->
-<div class="flex flex-col">
+<div class="flex flex-col gap-md">
 <!-- Item 1 -->
-<div class="px-container-margin py-md flex gap-md border-b border-surface-variant bg-surface relative">
-<!-- Item Checkbox -->
-<div class="flex items-center absolute left-container-margin top-1/2 -translate-y-1/2 z-10 h-full">
-<input checked="" class="checkbox-custom" type="checkbox"/>
-</div>
+<div class="card-premium p-md md:p-lg flex gap-md relative">
 <!-- Item Image -->
-<div class="w-24 h-32 ml-8 bg-surface-container-high shrink-0">
-<img class="w-full h-full object-cover grayscale opacity-90" data-alt="A detailed, high-end editorial product shot of an oversized linen shirt in pristine white. The shirt is displayed flat against a minimalist light ivory background. The lighting is soft and natural, emphasizing the texture and drape of the high-quality linen fabric. Clean aesthetic, luxury fashion, light mode, highly curated." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWiUZJp3vyEgKEFlkXYr8uYhmrhd7nc1O76xK1pykK3gv9yZPwpTziMompgTYrsm4pqLGic8maeveknCfmWhiXg6t-TYd4oUUS88SA88hvpuO1oqPwrtzdSK5uxE2dGRAk7ddwVMhlRVWnGVY69afdnijuhxIyk42pjZO5l_6OlXgzNMT7LSAhnhSw3Fv_dyryq875ZFnw76t_UZNNfMrZxV1bzNbmZ7tZuZbvZp7ZkLIOYbtdfEg"/>
+<div class="w-24 h-32 bg-surface-container-high rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A detailed, high-end editorial product shot of an oversized linen shirt in pristine white. The shirt is displayed flat against a minimalist light ivory background. The lighting is soft and natural, emphasizing the texture and drape of the high-quality linen fabric. Clean aesthetic, luxury fashion, light mode, highly curated." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWiUZJp3vyEgKEFlkXYr8uYhmrhd7nc1O76xK1pykK3gv9yZPwpTziMompgTYrsm4pqLGic8maeveknCfmWhiXg6t-TYd4oUUS88SA88hvpuO1oqPwrtzdSK5uxE2dGRAk7ddwVMhlRVWnGVY69afdnijuhxIyk42pjZO5l_6OlXgzNMT7LSAhnhSw3Fv_dyryq875ZFnw76t_UZNNfMrZxV1bzNbmZ7tZuZbvZp7ZkLIOYbtdfEg"/>
 </div>
 <!-- Item Details -->
 <div class="flex-1 flex flex-col justify-between py-xs">
 <div class="flex justify-between items-start">
 <div>
-<h3 class="font-body-sm text-body-sm font-semibold text-primary">Oversized Linen Shirt</h3>
+<h3 class="font-body-sm text-body-sm font-semibold text-[var(--chrome-accent)]">Oversized Linen Shirt</h3>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-1">White / M</p>
 </div>
 <button class="text-on-surface-variant hover:text-error transition-colors p-1 -mr-1 -mt-1">
@@ -268,14 +296,14 @@
 </button>
 </div>
 <div class="flex justify-between items-end mt-sm">
-<p class="font-body-sm text-body-sm text-primary">Rp 289.000</p>
+<p class="font-body-sm text-body-sm text-[var(--chrome-accent)]">Rp 289.000</p>
 <!-- Quantity Selector -->
 <div class="flex items-center border border-outline-variant h-8">
-<button class="w-8 h-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors">
+<button class="w-8 h-full flex items-center justify-center text-on-surface-variant hover:text-secondary transition-colors">
 <span class="material-symbols-outlined text-sm">remove</span>
 </button>
 <span class="font-body-sm text-body-sm w-8 text-center">1</span>
-<button class="w-8 h-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors">
+<button class="w-8 h-full flex items-center justify-center text-on-surface-variant hover:text-secondary transition-colors">
 <span class="material-symbols-outlined text-sm">add</span>
 </button>
 </div>
@@ -283,20 +311,16 @@
 </div>
 </div>
 <!-- Item 2 -->
-<div class="px-container-margin py-md flex gap-md border-b border-surface-variant bg-surface relative">
-<!-- Item Checkbox -->
-<div class="flex items-center absolute left-container-margin top-1/2 -translate-y-1/2 z-10 h-full">
-<input checked="" class="checkbox-custom" type="checkbox"/>
-</div>
+<div class="card-premium p-md md:p-lg flex gap-md relative">
 <!-- Item Image -->
-<div class="w-24 h-32 ml-8 bg-surface-container-high shrink-0">
-<img class="w-full h-full object-cover grayscale opacity-90" data-alt="A premium fashion photography detail shot of straight fit tailored pants in deep black. The pants are meticulously styled and folded to show the clean lines and premium fabric finish against a stark, bright minimalist backdrop. The aesthetic is modern, editorial, and monochromatic, fitting a luxury light-mode UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAifLjZGvt9ItjMEmycs9r7iWxS1B4ilgBtNEE8z5ED0-tdWVGttqEFxXDC860crhxjF5PTSWvJN8rygjldElc_sw1wJQKGFMlcFGvYZ514clTvV3a4ofWHJWF7jhOOqw2d0VpqzT14vr8WZmtCSUC7NsgEDjNARgZ3R8I49iXCd4J0Rkq3r8nOvV5o_Qe4hff0IQJ0bo2dZOCZbVOm8ixnqmW339MD28IxcYUo5rNFsfuGF2aW0Jw"/>
+<div class="w-24 h-32 bg-surface-container-high rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A premium fashion photography detail shot of straight fit tailored pants in deep black. The pants are meticulously styled and folded to show the clean lines and premium fabric finish against a stark, bright minimalist backdrop. The aesthetic is modern, editorial, and monochromatic, fitting a luxury light-mode UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAifLjZGvt9ItjMEmycs9r7iWxS1B4ilgBtNEE8z5ED0-tdWVGttqEFxXDC860crhxjF5PTSWvJN8rygjldElc_sw1wJQKGFMlcFGvYZ514clTvV3a4ofWHJWF7jhOOqw2d0VpqzT14vr8WZmtCSUC7NsgEDjNARgZ3R8I49iXCd4J0Rkq3r8nOvV5o_Qe4hff0IQJ0bo2dZOCZbVOm8ixnqmW339MD28IxcYUo5rNFsfuGF2aW0Jw"/>
 </div>
 <!-- Item Details -->
 <div class="flex-1 flex flex-col justify-between py-xs">
 <div class="flex justify-between items-start">
 <div>
-<h3 class="font-body-sm text-body-sm font-semibold text-primary">Straight Fit Pants</h3>
+<h3 class="font-body-sm text-body-sm font-semibold text-[var(--chrome-accent)]">Straight Fit Pants</h3>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Black / M</p>
 </div>
 <button class="text-on-surface-variant hover:text-error transition-colors p-1 -mr-1 -mt-1">
@@ -304,14 +328,14 @@
 </button>
 </div>
 <div class="flex justify-between items-end mt-sm">
-<p class="font-body-sm text-body-sm text-primary">Rp 329.000</p>
+<p class="font-body-sm text-body-sm text-[var(--chrome-accent)]">Rp 329.000</p>
 <!-- Quantity Selector -->
 <div class="flex items-center border border-outline-variant h-8">
-<button class="w-8 h-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors">
+<button class="w-8 h-full flex items-center justify-center text-on-surface-variant hover:text-secondary transition-colors">
 <span class="material-symbols-outlined text-sm">remove</span>
 </button>
 <span class="font-body-sm text-body-sm w-8 text-center">1</span>
-<button class="w-8 h-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors">
+<button class="w-8 h-full flex items-center justify-center text-on-surface-variant hover:text-secondary transition-colors">
 <span class="material-symbols-outlined text-sm">add</span>
 </button>
 </div>
@@ -321,24 +345,24 @@
 </div>
 </section>
 <!-- Order Summary & Checkout Section -->
-<section class="bg-surface-container-low px-container-margin py-lg mt-xl lg:mt-md lg:w-[360px] lg:shrink-0 lg:sticky lg:top-20 lg:self-start lg:border lg:border-outline-variant lg:rounded-lg">
-<h2 class="font-label-caps text-label-caps text-primary tracking-widest uppercase mb-md">{{ __('Order Summary') }}</h2>
+<section class="card-premium p-md md:p-lg mt-xl lg:mt-md lg:w-[360px] lg:shrink-0 lg:sticky lg:top-20 lg:self-start">
+<h2 class="atl-eyebrow font-label-caps text-label-caps text-[var(--chrome-accent)] tracking-widest uppercase mb-md">{{ __('Order Summary') }}</h2>
 <div class="space-y-sm mb-lg">
 <div class="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
 <span>{{ __('Subtotal (2 items)') }}</span>
-<span class="text-primary">Rp 618.000</span>
+<span class="text-[var(--chrome-accent)]">Rp 618.000</span>
 </div>
 <div class="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
 <span>{{ __('Estimated Shipping') }}</span>
-<span class="text-primary">Rp 18.000</span>
+<span class="text-[var(--chrome-accent)]">Rp 18.000</span>
 </div>
 <div class="w-full h-px bg-outline-variant my-sm"></div>
-<div class="flex justify-between font-title-md text-title-md text-primary">
+<div class="flex justify-between font-title-md text-title-md text-[var(--chrome-accent)]">
 <span>Total</span>
 <span>Rp 636.000</span>
 </div>
 </div>
-<a href="{{ route('customer.checkout') }}" class="w-full bg-primary text-on-primary font-label-caps text-label-caps h-14 flex items-center justify-center hover:opacity-90 transition-opacity uppercase tracking-widest">
+<a href="{{ route('customer.checkout') }}" class="btn-gold w-full font-label-caps text-label-caps h-14 flex items-center justify-center rounded-lg uppercase tracking-widest">
                 {{ __('Checkout') }}
             </a>
 </section>

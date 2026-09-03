@@ -268,7 +268,7 @@
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <!-- product context card -->
-<a href="{{ route('customer.shop.produk-detail', $product->product_id) }}" class="block bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-container-margin py-md md:py-lg shadow-sm card-premium hover:border-[var(--chrome-accent)] transition-colors">
+<a href="{{ route('customer.shop.produk-detail', $product->product_id) }}" class="block bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium hover:border-[var(--chrome-accent)] transition-colors">
 <div class="flex items-center gap-md">
 @php $pImg = $product->images->first()?->file_gambar; @endphp
 <div class="w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden border border-outline-variant shrink-0 bg-surface-container-high">
@@ -296,7 +296,7 @@
 </a>
 
 <section class="pt-lg mt-lg reveal-up">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-container-margin md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <!-- Rating summary -->
 <div class="flex flex-col md:flex-row md:items-center gap-md md:gap-lg border-b border-outline-variant pb-lg mb-lg">
 <div class="text-center md:text-left shrink-0">

@@ -556,10 +556,10 @@
 <main class="pt-16 pb-[72px] w-full overflow-x-hidden">
 
     {{-- Outer wrapper: same as account/index, address/edit, reviews/edit --}}
-    <div class="mx-auto max-w-[1400px]">
+    <div class="mx-auto max-w-[1400px] px-container-margin">
 
         {{-- ONE card: bg-surface-container-lowest (matches reviews/edit, address/edit) --}}
-        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-container-margin md:px-[64px] py-md md:py-lg shadow-sm card-premium reveal-up">
+        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
 
             {{-- Section label + heading (compact, same style as reviews/edit section headers) --}}
             <p class="font-label-caps text-label-caps text-[var(--chrome-accent)] uppercase tracking-widest mb-xs">{{ __('MY PROFILE') }}</p>
