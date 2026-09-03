@@ -242,16 +242,16 @@
 <!-- Main Content Canvas -->
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Page Title -->
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium mb-lg md:mb-xl text-center md:text-left">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium mb-lg md:mb-xl text-center md:text-left">
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">MY PROFILE</p>
 <h2 class="premium-heading font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">{{ __('ACCOUNT') }}</h2>
 </div>
 </div>
 <!-- Profile Header -->
 @auth
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium flex flex-col items-center md:flex-row md:items-start gap-md">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex flex-col items-center md:flex-row md:items-start gap-md">
 <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant flex-shrink-0 bg-surface-container-high flex items-center justify-center">
 @if(Auth::user()->foto_profil_url)
 <img src="{{ Auth::user()->foto_profil_url }}" alt="{{ Auth::user()->nama_lengkap }}" class="w-full h-full object-cover"/>
@@ -272,8 +272,8 @@
 </div>
 @else
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium flex flex-col items-center md:flex-row md:items-start gap-md">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex flex-col items-center md:flex-row md:items-start gap-md">
 <div class="w-24 h-24 rounded-full border border-outline-variant flex-shrink-0 bg-surface-container-high flex items-center justify-center">
 <span class="material-symbols-outlined text-[44px] text-on-surface-variant">person</span>
 </div>
@@ -294,8 +294,8 @@
 @endif
 <!-- Menu List -->
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px]">
-<nav class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium flex flex-col">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<nav class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex flex-col">
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.order-tracking') }}">
 <div class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors" data-icon="local_mall">local_mall</span>
