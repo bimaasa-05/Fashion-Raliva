@@ -64,32 +64,47 @@
     </section>
 
     {{-- Tabel Request --}}
-    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-3 flex-wrap w-full lg:w-auto">
-                <div class="relative flex-1 min-w-[220px]">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                    <input type="text" placeholder="Cari pelanggan atau produk..." data-table-search class="raliva-search" />
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 md:p-6 card-premium" data-table-scope>
+        <div class="flex flex-col gap-4 mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Gudang cek ketersediaan, bukan kelola pelanggan langsung.</span>
                 </div>
-                <select data-table-filter="jenis" class="raliva-select">
-                    <option value="">Semua Jenis</option>
-                    <option value="custom">Custom</option>
-                    <option value="tetap">Produk Tetap</option>
-                </select>
-                <select data-table-filter="status-request" class="raliva-select">
-                    <option value="">Semua Status</option>
-                    <option value="cek">Menunggu Cek</option>
-                    <option value="tersedia">Tersedia</option>
-                    <option value="produksi">Diteruskan Produksi</option>
-                    <option value="siap">Siap Ambil/Kirim</option>
-                    <option value="selesai">Selesai</option>
-                    <option value="kosong">Tidak Tersedia</option>
-                </select>
+                <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 self-start sm:self-auto px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors btn-premium">
+                    <span class="material-symbols-outlined text-[18px]" data-filter-icon>tune</span>
+                    Filter
+                    <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
+                </button>
             </div>
-            <span class="font-label-sm text-[11px] text-on-surface-variant">Gudang cek ketersediaan, bukan kelola pelanggan langsung.</span>
+            <div data-filter-panel class="hidden md:block bg-surface-container-low border border-muted-border rounded-lg p-4">
+                <div class="flex items-center gap-2 mb-3 md:hidden">
+                    <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter &amp; Pencarian</span>
+                </div>
+                <div class="flex flex-col lg:flex-row lg:items-center gap-gutter">
+                    <div class="relative flex-1 min-w-[220px]">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
+                        <input type="text" placeholder="Cari pelanggan atau produk..." data-table-search class="raliva-search" />
+                    </div>
+                    <select data-table-filter="jenis" class="raliva-select">
+                        <option value="">Semua Jenis</option>
+                        <option value="custom">Custom</option>
+                        <option value="tetap">Produk Tetap</option>
+                    </select>
+                    <select data-table-filter="status-request" class="raliva-select">
+                        <option value="">Semua Status</option>
+                        <option value="cek">Menunggu Cek</option>
+                        <option value="tersedia">Tersedia</option>
+                        <option value="produksi">Diteruskan Produksi</option>
+                        <option value="siap">Siap Ambil/Kirim</option>
+                        <option value="selesai">Selesai</option>
+                        <option value="kosong">Tidak Tersedia</option>
+                    </select>
+                </div>
+            </div>
         </div>
 
-        <div data-table-wrap class="overflow-x-auto">
+        <div data-table-wrap class="overflow-x-auto hidden md:block">
             <table class="premium-table w-full min-w-[1100px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
@@ -166,6 +181,87 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        {{-- Mobile: kartu per request --}}
+        <div class="md:hidden grid grid-cols-1 gap-gutter" data-mobile-list>
+            @forelse ($requests as $row)
+                @php
+                    $skeyM = $row->status_key;
+                    $jkeyM = $skeyM === 'kosong' ? 'tetap' : 'custom';
+                    $jenisM = $jkeyM === 'custom' ? 'Custom' : 'Produk Tetap';
+                    $bahanM = $row->variant?->warna ? (($row->variant->warna) . ($row->variant->ukuran ? ' / ' . $row->variant->ukuran : '')) : '—';
+                    $dicekM = ! is_null($row->status_ketersediaan);
+                    $bahanAtrM = str_replace(['"', "\n"], ['&quot;', ' '], $bahanM);
+                    $produkAtrM = str_replace(['"', "\n"], ['&quot;', ' '], $row->produk);
+                    $catatanAtrM = str_replace(['"', "\n"], ['&quot;', ' '], $row->catatan_gudang ?? '');
+                    $statusClassM = [
+                        'tersedia' => 'bg-secondary-container/20 text-secondary border-secondary/20',
+                        'diteruskan' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
+                        'tidak_tersedia' => 'bg-error/10 text-error border-error/20',
+                        'kosong' => 'bg-error/10 text-error border-error/20',
+                        'menunggu' => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
+                        'cek' => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
+                    ][$skeyM] ?? 'bg-surface-container-high text-on-surface-variant border-outline-variant';
+                @endphp
+                <article data-table-row data-jenis="{{ $jkeyM }}" data-status-request="{{ $skeyM }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="min-w-0">
+                            <p class="font-bold text-on-surface leading-tight">{{ $row->nomor_order }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $row->created_at?->format('d M Y') ?? '-' }}</p>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $statusClassM }} text-[10px] font-bold uppercase border shrink-0">{{ $row->status_label }}</span>
+                    </div>
+
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full {{ $jkeyM === 'custom' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }} text-[10px] font-bold uppercase border">{{ $jenisM }}</span>
+                        <span class="text-on-surface-variant text-xs">•</span>
+                        <span class="text-on-surface-variant text-xs truncate">{{ $row->pelanggan }}</span>
+                    </div>
+
+                    <p class="font-bold text-on-surface leading-tight mb-2">{{ $row->produk }}</p>
+
+                    <dl class="space-y-2 font-body-md text-sm mb-4">
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Bahan</dt>
+                            <dd class="text-on-surface text-right">{{ $bahanM }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Modal (HPP)</dt>
+                            <dd class="text-on-surface-variant text-right font-bold">Rp {{ number_format($row->hpp, 0, ',', '.') }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Total</dt>
+                            <dd class="text-gold-accent text-right font-bold">Rp {{ number_format($row->total, 0, ',', '.') }}</dd>
+                        </div>
+                        @if (! $dicekM)
+                            <div class="flex justify-between gap-3">
+                                <dt class="text-on-surface-variant">Stok Tersedia</dt>
+                                <dd class="{{ $row->stok > 0 ? 'text-secondary' : 'text-error' }} text-right font-bold">{{ $row->stok }} unit</dd>
+                            </div>
+                        @endif
+                    </dl>
+
+                    <button type="button"
+                        data-detail-open="modal-cek-request"
+                        data-d-nomor="{{ $row->nomor_order }}"
+                        data-d-produk="{{ $produkAtrM }}"
+                        data-d-bahan="{{ $bahanAtrM }}"
+                        data-d-hpp="{{ number_format($row->hpp, 0, ',', '.') }}"
+                        data-d-total="{{ number_format($row->total, 0, ',', '.') }}"
+                        data-d-stok="{{ $row->stok }}"
+                        data-d-catatan="{{ $catatanAtrM }}"
+                        data-order-id="{{ $row->order_id }}"
+                        data-result="{{ $row->status_ketersediaan ?? '' }}"
+                        data-locked="{{ $dicekM ? '1' : '0' }}"
+                        class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border font-label-sm text-xs uppercase tracking-wider transition-colors {{ $dicekM ? 'border-muted-border text-on-surface-variant hover:border-gold-accent hover:text-gold-accent' : 'bg-deep-onyx text-on-primary btn-premium' }}">
+                        <span class="material-symbols-outlined text-[18px]">{{ $dicekM ? 'visibility' : 'fact_check' }}</span>
+                        {{ $dicekM ? 'Detail' : 'Cek Stok' }}
+                    </button>
+                </article>
+            @empty
+                <p class="text-center text-on-surface-variant py-10">Belum ada pesanan yang menunggu pemenuhan gudang.</p>
+            @endforelse
         </div>
 
         <div data-empty-state class="hidden flex-col items-center py-12 text-center gap-3">

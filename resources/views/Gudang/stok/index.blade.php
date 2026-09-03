@@ -14,43 +14,52 @@
 
 <div data-real class="hidden space-y-section-gap" data-table-scope>
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 md:p-6 card-premium">
-        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 mb-6">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter & Pencarian</span>
+        <div class="flex flex-col gap-4 mb-6">
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hidden md:block">Filter &amp; Pencarian</span>
+                </div>
+                <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors btn-premium">
+                    <span class="material-symbols-outlined text-[18px]" data-filter-icon>tune</span>
+                    Filter
+                    <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
+                </button>
             </div>
-            <form method="GET" class="flex flex-col lg:flex-row lg:items-center gap-gutter">
-                <div class="relative flex-1 min-w-0">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                    <input type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Cari produk, SKU..." class="raliva-search" />
-                </div>
-                <div class="flex flex-wrap gap-gutter">
-                    <select name="kategori" aria-label="Filter kategori" class="raliva-select">
-                        <option value="">Semua Kategori</option>
-                        @foreach ($categories as $cat)
-                            <option value="{{ $cat }}" {{ ($filters['kategori'] ?? '') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
-                        @endforeach
-                    </select>
-                    <select name="status" aria-label="Filter status stok" class="raliva-select">
-                        <option value="">Semua Status</option>
-                        <option value="aman" {{ ($filters['status'] ?? '') === 'aman' ? 'selected' : '' }}>Aman</option>
-                        <option value="menipis" {{ ($filters['status'] ?? '') === 'menipis' ? 'selected' : '' }}>Menipis</option>
-                        <option value="kritis" {{ ($filters['status'] ?? '') === 'kritis' ? 'selected' : '' }}>Kritis</option>
-                        <option value="habis" {{ ($filters['status'] ?? '') === 'habis' ? 'selected' : '' }}>Habis</option>
-                    </select>
-                    <select name="sort" aria-label="Urutkan" class="raliva-select">
-                        <option value="terbaru" {{ ($filters['sort'] ?? 'terbaru') === 'terbaru' ? 'selected' : '' }}>Terbaru</option>
-                        <option value="nama" {{ ($filters['sort'] ?? '') === 'nama' ? 'selected' : '' }}>Nama A-Z</option>
-                        <option value="stok_kecil" {{ ($filters['sort'] ?? '') === 'stok_kecil' ? 'selected' : '' }}>Stok Terkecil</option>
-                        <option value="stok_besar" {{ ($filters['sort'] ?? '') === 'stok_besar' ? 'selected' : '' }}>Stok Terbanyak</option>
-                    </select>
-                    <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Terapkan</button>
-                    <a href="{{ route('gudang.stok') }}" class="px-3 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface-variant hover:text-on-surface hover:border-gold-accent transition-colors">Reset</a>
-                </div>
-            </form>
+            <div data-filter-panel class="hidden md:block bg-surface-container-low border border-muted-border rounded-lg p-4">
+                <form method="GET" class="flex flex-col lg:flex-row lg:items-center gap-gutter">
+                    <div class="relative flex-1 min-w-0">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
+                        <input type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Cari produk, SKU..." class="raliva-search" />
+                    </div>
+                    <div class="flex flex-wrap gap-gutter">
+                        <select name="kategori" aria-label="Filter kategori" class="raliva-select">
+                            <option value="">Semua Kategori</option>
+                            @foreach ($categories as $cat)
+                                <option value="{{ $cat }}" {{ ($filters['kategori'] ?? '') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                            @endforeach
+                        </select>
+                        <select name="status" aria-label="Filter status stok" class="raliva-select">
+                            <option value="">Semua Status</option>
+                            <option value="aman" {{ ($filters['status'] ?? '') === 'aman' ? 'selected' : '' }}>Aman</option>
+                            <option value="menipis" {{ ($filters['status'] ?? '') === 'menipis' ? 'selected' : '' }}>Menipis</option>
+                            <option value="kritis" {{ ($filters['status'] ?? '') === 'kritis' ? 'selected' : '' }}>Kritis</option>
+                            <option value="habis" {{ ($filters['status'] ?? '') === 'habis' ? 'selected' : '' }}>Habis</option>
+                        </select>
+                        <select name="sort" aria-label="Urutkan" class="raliva-select">
+                            <option value="terbaru" {{ ($filters['sort'] ?? 'terbaru') === 'terbaru' ? 'selected' : '' }}>Terbaru</option>
+                            <option value="nama" {{ ($filters['sort'] ?? '') === 'nama' ? 'selected' : '' }}>Nama A-Z</option>
+                            <option value="stok_kecil" {{ ($filters['sort'] ?? '') === 'stok_kecil' ? 'selected' : '' }}>Stok Terkecil</option>
+                            <option value="stok_besar" {{ ($filters['sort'] ?? '') === 'stok_besar' ? 'selected' : '' }}>Stok Terbanyak</option>
+                        </select>
+                        <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Terapkan</button>
+                        <a href="{{ route('gudang.stok') }}" class="px-3 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface-variant hover:text-on-surface hover:border-gold-accent transition-colors">Reset</a>
+                    </div>
+                </form>
+            </div>
         </div>
 
-        <div data-table-wrap class="overflow-x-auto">
+        <div data-table-wrap class="overflow-x-auto hidden md:block">
             <table class="w-full min-w-[1000px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-xs font-medium">
@@ -106,6 +115,72 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        {{-- Mobile: kartu per produk --}}
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse ($products as $row)
+                @php
+                    $statusKey = $row->status;
+                    $stockClassM = in_array($statusKey, ['kritis', 'habis']) ? 'text-error' : ($statusKey === 'menipis' ? 'text-gold-accent' : 'text-on-surface');
+                    $badgeClassM = [
+                        'aman' => 'bg-secondary-container/20 text-secondary border-secondary/20',
+                        'menipis' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
+                        'kritis' => 'bg-error/10 text-error border-error/20',
+                        'habis' => 'bg-error text-on-error border-error',
+                    ][$statusKey];
+                @endphp
+                <article class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="min-w-0">
+                            <p class="font-bold text-on-surface leading-tight">{{ $row->produk->nama_produk }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">SKU {{ $row->sku }}</p>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $badgeClassM }} text-[10px] font-bold uppercase border shrink-0">{{ ucfirst($statusKey) }}</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-gutter mb-4">
+                        <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
+                            <p class="raliva-label">Stok Tersedia</p>
+                            <p class="font-title-md text-lg {{ $stockClassM }} leading-tight">{{ $row->total_stok }} <span class="text-[11px] text-on-surface-variant font-normal">unit</span></p>
+                        </div>
+                        <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
+                            <p class="raliva-label">Min. Stok</p>
+                            <p class="font-title-md text-lg text-on-surface leading-tight">{{ $row->stok_minimum }}</p>
+                        </div>
+                    </div>
+
+                    <dl class="space-y-2 font-body-md text-sm mb-4">
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Variasi</dt>
+                            <dd class="text-on-surface text-right">{{ $row->variasi ?: '-' }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">HPP</dt>
+                            <dd class="text-on-surface text-right">Rp {{ number_format($row->hpp, 0, ',', '.') }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Harga Jual</dt>
+                            <dd class="text-gold-accent text-right font-bold">Rp {{ number_format($row->harga_jual, 0, ',', '.') }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Diperbarui</dt>
+                            <dd class="text-on-surface text-right">{{ $row->updated_at ? \Carbon\Carbon::parse($row->updated_at)->format('d M Y') : '-' }}</dd>
+                        </div>
+                    </dl>
+
+                    <div class="grid grid-cols-2 gap-gutter">
+                        <button type="button" data-modal-open="stok-detail-{{ $loop->iteration }}" class="min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
+                            <span class="material-symbols-outlined text-[18px]">visibility</span>Detail
+                        </button>
+                        <a href="{{ route('gudang.riwayat-stok') }}" class="min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
+                            <span class="material-symbols-outlined text-[18px]">history</span>Riwayat
+                        </a>
+                    </div>
+                </article>
+            @empty
+                <p class="text-center text-on-surface-variant py-10">Belum ada data stok pada gudang ini.</p>
+            @endforelse
         </div>
 
         <div class="flex flex-wrap items-center justify-between gap-4 mt-6">

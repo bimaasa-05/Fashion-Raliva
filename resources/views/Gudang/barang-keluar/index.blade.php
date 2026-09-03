@@ -34,25 +34,36 @@
 
 <div data-real class="hidden space-y-section-gap" data-table-scope>
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 md:p-6 card-premium">
-        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 mb-6">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter & Pencarian</span>
-            </div>
-            <form method="GET" class="flex flex-col lg:flex-row lg:items-center gap-gutter">
-                <div class="relative flex-1 min-w-0">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                    <input type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Cari produk..." class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-10 pr-4 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent transition-colors" />
+        <div class="flex flex-col gap-4 mb-6">
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hidden md:block">Filter &amp; Pencarian</span>
                 </div>
-                <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Cari</button>
-                <button type="button" data-modal-open="modal-barang-keluar" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
-                    <span class="material-symbols-outlined text-[16px]">add</span>
-                    Catat Barang Keluar
-                </button>
-            </form>
+                <div class="flex items-center gap-2">
+                    <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors btn-premium">
+                        <span class="material-symbols-outlined text-[18px]" data-filter-icon>tune</span>
+                        Filter
+                        <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
+                    </button>
+                    <button type="button" data-modal-open="modal-barang-keluar" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0 min-h-11">
+                        <span class="material-symbols-outlined text-[16px]">add</span>
+                        Catat
+                    </button>
+                </div>
+            </div>
+            <div data-filter-panel class="hidden md:block bg-surface-container-low border border-muted-border rounded-lg p-4">
+                <form method="GET" class="flex flex-col sm:flex-row sm:items-center gap-gutter">
+                    <div class="relative flex-1 min-w-0">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
+                        <input type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Cari produk..." class="raliva-search" />
+                    </div>
+                    <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Cari</button>
+                </form>
+            </div>
         </div>
 
-        <div data-table-wrap class="overflow-x-auto">
+        <div data-table-wrap class="overflow-x-auto hidden md:block">
             <table class="w-full min-w-[980px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -100,6 +111,52 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        {{-- Mobile: kartu per transaksi --}}
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse ($items as $m)
+                @php
+                    $tujuanM = $sumberLabel[$m->sumber_tipe] ?? 'Manual';
+                    $statusM = $m->sumber_tipe === 'stock_transfer' ? 'Dikirim' : 'Selesai';
+                @endphp
+                <article class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="min-w-0">
+                            <p class="font-bold text-on-surface leading-tight">BK-{{ str_pad($m->stock_movement_id, 4, '0', STR_PAD_LEFT) }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $m->created_at?->format('d M Y • H:i') ?? '-' }}</p>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $badgeClass[$statusM] }} text-[10px] font-bold uppercase border shrink-0">{{ $statusM }}</span>
+                    </div>
+
+                    <p class="font-bold text-on-surface leading-tight mb-3">{{ $m->productVariant?->product?->nama_produk ?? '-' }}</p>
+
+                    <div class="flex items-center justify-between gap-3 mb-4">
+                        <span class="inline-flex items-center gap-1.5 text-on-surface text-sm">
+                            <span class="material-symbols-outlined text-[16px] text-on-surface-variant">{{ $sumberIcon[$m->sumber_tipe] ?? 'edit_note' }}</span>
+                            {{ $tujuanM }}
+                        </span>
+                        <span class="font-bold text-error">-{{ $m->jumlah }} unit</span>
+                    </div>
+
+                    <dl class="space-y-2 font-body-md text-sm mb-4">
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Catatan</dt>
+                            <dd class="text-on-surface text-right">{{ $m->alasan ?: '-' }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Petugas</dt>
+                            <dd class="text-on-surface text-right">{{ $m->creator->nama_lengkap ?? '-' }}</dd>
+                        </div>
+                    </dl>
+
+                    <button type="button" data-modal-open="bk-detail-{{ $loop->iteration }}" class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">visibility</span>Lihat Detail
+                    </button>
+                </article>
+            @empty
+                <p class="text-center text-on-surface-variant py-10">Belum ada catatan barang keluar pada gudang ini.</p>
+            @endforelse
         </div>
 
         @if ($items->hasPages())

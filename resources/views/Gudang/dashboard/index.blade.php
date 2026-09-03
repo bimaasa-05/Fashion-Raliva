@@ -196,7 +196,7 @@
                 <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Stok Menipis</h2>
                 <a href="{{ route('gudang.stok') }}" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline self-start sm:self-auto">Lihat Semua Stok</a>
             </div>
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto hidden md:block">
                 <table class="w-full min-w-[750px] premium-table">
                     <thead>
                         <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -234,6 +234,43 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            {{-- Mobile: kartu per produk stok menipis --}}
+            <div class="md:hidden grid grid-cols-1 gap-gutter">
+                @forelse ($lowStock as $item)
+                    @php /** @var object{nama_produk:string, sku:string, jumlah_stok:int, stok_minimum:int, status:string} $item */ @endphp
+                    <article class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <div class="min-w-0">
+                                <p class="font-bold text-on-surface leading-tight">{{ $item->nama_produk }}</p>
+                                <p class="text-xs text-on-surface-variant mt-0.5">{{ $item->sku }}</p>
+                            </div>
+                            @if ($item->status === 'kritis' || $item->status === 'habis')
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20 shrink-0">{{ $item->status === 'habis' ? 'Habis' : 'Kritis' }}</span>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30 shrink-0">Menipis</span>
+                            @endif
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-gutter mb-4">
+                            <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
+                                <p class="raliva-label">Stok</p>
+                                <p class="font-title-md text-lg leading-tight {{ $item->status === 'kritis' || $item->status === 'habis' ? 'text-error' : 'text-on-surface' }}">{{ $item->jumlah_stok }}</p>
+                            </div>
+                            <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
+                                <p class="raliva-label">Minimum Stok</p>
+                                <p class="font-title-md text-lg text-on-surface leading-tight">{{ $item->stok_minimum }}</p>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="showRalivaToast('Permintaan restock untuk {{ $item->nama_produk }} dikirim ke Admin Toko.', 'local_shipping')" class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest btn-premium">
+                            <span class="material-symbols-outlined text-[18px]">local_shipping</span>Ajukan Restock
+                        </button>
+                    </article>
+                @empty
+                    <p class="text-center text-on-surface-variant py-10">Tidak ada produk dengan stok menipis.</p>
+                @endforelse
             </div>
         </section>
 
