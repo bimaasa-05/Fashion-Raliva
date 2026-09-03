@@ -23,8 +23,8 @@ class AdminProfilController extends Controller
         $user = Auth::user();
 
         $data = $request->validate([
-            'nama_lengkap' => 'required|string|max:120',
-            'email' => 'required|email|max:120|unique:users,email,' . $user->user_id . ',user_id',
+            'nama_lengkap' => 'required|string|max:150',
+            'email' => 'required|email|max:150|unique:users,email,' . $user->user_id . ',user_id',
             'nomor_telepon' => 'nullable|string|max:20',
         ]);
 
@@ -38,7 +38,7 @@ class AdminProfilController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'foto_profil' => 'required|image|max:2048',
+            'foto_profil' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         if ($user->foto_profil && !str_starts_with($user->foto_profil, 'http')) {
