@@ -55,6 +55,7 @@
             <table class="w-full min-w-[980px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-center w-12">No.</th>
                         <th class="p-4 text-left">Nomor</th>
                         <th class="p-4 text-left">Rute Gudang</th>
                         <th class="p-4 text-left">Produk</th>
@@ -72,6 +73,7 @@
                             $status = $statusLabel[$t->status] ?? $t->status;
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors" data-row>
+                            <td class="p-4 text-center text-on-surface-variant">{{ ($transfers->currentPage() - 1) * $transfers->perPage() + $loop->iteration }}</td>
                             <td class="p-4"><span class="font-bold text-on-surface">PM-{{ str_pad($t->stock_transfer_id, 4, '0', STR_PAD_LEFT) }}</span></td>
                             <td class="p-4">
                                 <div class="flex items-center gap-2 text-sm whitespace-nowrap">
@@ -92,7 +94,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="8" class="p-10 text-center text-on-surface-variant">Belum ada pemindahan stok pada gudang ini.</td></tr>
+                        <tr><td colspan="9" class="p-10 text-center text-on-surface-variant">Belum ada pemindahan stok pada gudang ini.</td></tr>
                     @endforelse
                 </tbody>
             </table>

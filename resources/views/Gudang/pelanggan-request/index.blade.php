@@ -93,6 +93,7 @@
             <table class="premium-table w-full min-w-[1100px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">No.</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Request</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Pelanggan</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Jenis / Produk</th>
@@ -112,6 +113,7 @@
                             $bahan = $row->variant?->warna ? (($row->variant->warna) . ($row->variant->ukuran ? ' / ' . $row->variant->ukuran : '')) : '—';
                         @endphp
                         <tr data-table-row data-jenis="{{ $jkey }}" data-status-request="{{ $skey }}" class="border-b border-muted-border last:border-0 align-top">
+                            <td class="py-3.5 px-4 text-on-surface-variant">{{ $loop->iteration }}</td>
                             <td class="py-3.5 px-4">
                                 <p class="font-bold text-on-surface">{{ $row->nomor_order }}</p>
                                 <p class="text-xs text-on-surface-variant mt-0.5">{{ $row->created_at?->format('d M Y') ?? '-' }}</p>
@@ -146,7 +148,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="8" class="p-10 text-center text-on-surface-variant">Belum ada pesanan yang menunggu pemenuhan gudang.</td></tr>
+                        <tr><td colspan="9" class="p-10 text-center text-on-surface-variant">Belum ada pesanan yang menunggu pemenuhan gudang.</td></tr>
                     @endforelse
                 </tbody>
             </table>
