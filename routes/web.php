@@ -105,8 +105,8 @@ Route::post('/login', [LoginController::class, 'store']);
 Route::get('/register', [RegisterController::class, 'create'])->name('register');
 Route::post('/register', [RegisterController::class, 'store']);
 Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->middleware('auth');
-Route::get('/forgot-password', fn() => view('customer.auth.forgot-password'))->name('password.request');
-Route::get('/reset-password', fn() => view('customer.auth.reset-password'))->name('password.reset');
+Route::get('/forgot-password', fn () => view('customer.auth.forgot-password'))->name('password.request');
+Route::get('/reset-password', fn () => view('customer.auth.reset-password'))->name('password.reset');
 
 // customer
 Route::prefix('customer')->name('customer.')->group(function () {
@@ -318,7 +318,7 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang'])->g
     Route::get('/stok-rusak', [GudangStokRusakController::class, 'index'])->name('stok-rusak');
     Route::get('/riwayat-stok', [GudangRiwayatStokController::class, 'index'])->name('riwayat-stok');
     Route::get('/pelanggan-request', [GudangPelangganRequestController::class, 'index'])->name('pelanggan-request');
-    Route::post('/pelanggan-request/konfirmasi', [GudangPelangganRequestController::class, 'konfirmasi'])->name('pelanggan-request.konfirmasi');
+    Route::post('/pelanggan-request/konfirmasi', [GudangPelangganRequestController::class, 'konfirmasi'])->name('pelanggan-request.konfirmasi')->middleware('permission:warehouse.stock_check');
     Route::get('/notifikasi', [GudangNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [GudangProfilController::class, 'index'])->name('profil');
     Route::post('/profil', [GudangProfilController::class, 'updateProfile'])->name('profil.update');
