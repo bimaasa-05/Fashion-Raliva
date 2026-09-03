@@ -355,20 +355,20 @@
 </section>
 <!-- Categories -->
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium flex items-center justify-center gap-sm md:gap-md overflow-x-auto no-scrollbar">
-<button type="button" data-cat="All" onclick="selectHomeCategory(null)" class="home-cat-pill shrink-0 px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('Semua') }}</button>
-<button type="button" data-cat="Women" onclick="selectHomeCategory('Women')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Women') }}</button>
-<button type="button" data-cat="Men" onclick="selectHomeCategory('Men')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Men') }}</button>
-<button type="button" data-cat="Accessories" onclick="selectHomeCategory('Accessories')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Accessories') }}</button>
-<button type="button" data-cat="Shoes" onclick="selectHomeCategory('Shoes')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Shoes') }}</button>
-<button type="button" data-cat="Bags" onclick="selectHomeCategory('Bags')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Bags') }}</button>
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium grid grid-cols-3 gap-sm md:flex md:items-center md:justify-center md:gap-md">
+<button type="button" data-cat="All" onclick="selectHomeCategory(null)" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('Semua') }}</button>
+<button type="button" data-cat="Women" onclick="selectHomeCategory('Women')" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Women') }}</button>
+<button type="button" data-cat="Men" onclick="selectHomeCategory('Men')" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Men') }}</button>
+<button type="button" data-cat="Accessories" onclick="selectHomeCategory('Accessories')" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Accessories') }}</button>
+<button type="button" data-cat="Shoes" onclick="selectHomeCategory('Shoes')" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Shoes') }}</button>
+<button type="button" data-cat="Bags" onclick="selectHomeCategory('Bags')" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Bags') }}</button>
 </div>
 </div>
 </section>
 <!-- New Arrivals -->
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="atl-eyebrow mb-xs">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('New Arrivals') }}</span>
 </div>
@@ -441,13 +441,13 @@
 
 <!-- Featured Stores -->
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="atl-eyebrow mb-xs">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Featured Stores') }}</span>
 </div>
 <h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Maisions We Love') }}</h3>
-<div class="flex overflow-x-auto no-scrollbar lg:grid lg:grid-cols-4 lg:overflow-visible pl-container-margin pr-container-margin gap-md pb-xs mt-md snap-x snap-mandatory">
+<div class="flex overflow-x-auto no-scrollbar lg:grid lg:grid-cols-4 lg:overflow-visible gap-md pb-xs mt-md snap-x snap-mandatory">
 <!-- Store 1 -->
 <a href="{{ route('customer.shop.store', 1) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
@@ -486,8 +486,8 @@
 </section>
 <!-- Newsletter -->
 
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium flex flex-col items-center text-center">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex flex-col items-center text-center">
 <div class="atl-eyebrow mb-xs justify-center">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Newsletter') }}</span>
 </div>
@@ -503,7 +503,7 @@
 </main>
 <!-- Footer -->
 <footer class="mx-auto max-w-[1400px] py-xl md:pb-xl pb-32 reveal-up" style="background-color: var(--surface-ivory);">
-<div class="px-xl md:px-[64px]">
+<div class="px-container-margin md:px-[64px]">
 <div class="grid grid-cols-1 md:grid-cols-12 gap-xl mb-xl">
 <div class="md:col-span-6">
 <h4 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] mb-md">RALIVA</h4>
