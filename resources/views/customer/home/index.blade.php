@@ -356,7 +356,7 @@
 <!-- Categories -->
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium flex items-center gap-sm md:gap-md overflow-x-auto no-scrollbar">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium flex items-center justify-center gap-sm md:gap-md overflow-x-auto no-scrollbar">
 <button type="button" data-cat="All" onclick="selectHomeCategory(null)" class="home-cat-pill shrink-0 px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('Semua') }}</button>
 <button type="button" data-cat="Women" onclick="selectHomeCategory('Women')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Women') }}</button>
 <button type="button" data-cat="Men" onclick="selectHomeCategory('Men')" class="home-cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Men') }}</button>
@@ -449,7 +449,7 @@
 <h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Maisions We Love') }}</h3>
 <div class="flex overflow-x-auto no-scrollbar lg:grid lg:grid-cols-4 lg:overflow-visible pl-container-margin pr-container-margin gap-md pb-xs mt-md snap-x snap-mandatory">
 <!-- Store 1 -->
-<a href="{{ route('customer.shop.store-detail', 1) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
+<a href="{{ route('customer.shop.store', 1) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
 <img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Lunara Fashion boutique exterior." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATiKrXBx3vVfoNsTu1_JuFvfVqHhF9A63yLIFGC0hF5MVVUZB6Nu-eyjEa5IxqGiEpPzawhFtGfTAatsc-_9Pwi9D9AsVEO7TOOEszevnRdatfxPYIK7ZAvB0-Aa3R8CSQPOhV3EN9w5_S8sCYYX8NCMlAs_gD3RYhAkt91QyBdC8bmQs-v4yGHXrAH2KKGIPWNoi7jJqivQtsOliueGluswaKxAgwLxl1rh_aTfA_gB_LTeqw8oU"/>
 </div>
@@ -457,7 +457,7 @@
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Modern feminine silhouettes.') }}</p>
 </a>
 <!-- Store 2 -->
-<a href="{{ route('customer.shop.store-detail', 2) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
+<a href="{{ route('customer.shop.store', 2) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
 <img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Noiré Studio interior." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGwknduyLPGxjMRvTx7tN4JeGs-9IICVVEqumRS28Y9jTBxPfkTa9uV98aPjekXCG1uLxayAYmBwFZIIf73qfeWOcTQ6jI97GOQBVdIzBaAZhTlYEO8RKF_NsqCMXssspqoctKzP8RpOHtJI_bw-qZI1QF_fn1OH80mwa6ht1vSJY8vkFSZq_OBTROdz1TubDt_Y_Ax7quip7t8HNO7TkKNnLYOEFLbmjlpYvis2wIP6LJwYtpaNo"/>
 </div>
@@ -465,7 +465,7 @@
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Tailored, stark minimalism.') }}</p>
 </a>
 <!-- Store 3 -->
-<a href="{{ route('customer.shop.store-detail', 3) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
+<a href="{{ route('customer.shop.store', 3) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
 <img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Kayana Apparel lifestyle shot." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSCazvaWZuccedNS2ILQbkHUJlNvuZ7i1_N2EHvjuBbo7CLD3CW8iHh-xOfNuHEsio3RxsEYKR2jEnuEUUOg9R7Xza1li0VetG6_yfhRrJs3dSULL6lG6fVDPX4qijbhNAokLUQ8tn673XhAZ-l8Vx3WZDIaxtdNLAHriglRfoPt6xRPff_qYINXAgslwYqW_xSQsAbEn2mjrBLNDh6NTT4t86gs2BbXDST-ewDyDYcbA5FZIEMUM"/>
 </div>
@@ -473,7 +473,7 @@
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Organic textures and flow.') }}</p>
 </a>
 <!-- Store 4 -->
-<a href="{{ route('customer.shop.store-detail', 4) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
+<a href="{{ route('customer.shop.store', 4) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
 <img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Maëva House still-life." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBces6Xx741Ae5cYEDlbS_pgcHXZ9vEiOAGb5jvlBttKDyIRgUl6PUSDzKjI9nXu8X8Zb-RxuuplZY4dbVXDDBRqOVusLCAlczBCFDMM9qeGCl18jyL9AKeYbo_KYUolJQ-tUyLZ6kLqZFaQ2yKWY0Gs6ucQPlMm57RTWXBipH9At2Nbp1nWNEZDCqkafxCVNpFOE3MSCOi3nOPMbtk9_6tU4iBkCexkl7qGGFlVexn74kqDcVgzRc"/>
 </div>
