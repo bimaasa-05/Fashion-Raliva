@@ -362,6 +362,16 @@
     </form>
 </div>
 @endauth
+@if(session('success'))
+<div class="mb-md rounded-DEFAULT border border-secondary bg-secondary-container/10 px-md py-sm font-body-sm text-body-sm text-secondary">
+{{ session('success') }}
+</div>
+@endif
+@if(session('info'))
+<div class="mb-md rounded-DEFAULT border border-outline-variant bg-surface-container-low px-md py-sm font-body-sm text-body-sm text-on-surface-variant">
+{{ session('info') }}
+</div>
+@endif
 @if($errors->any())
 <div class="mb-md rounded-DEFAULT border border-error bg-error-container px-md py-sm font-body-sm text-body-sm text-error">
 {{ $errors->first() }}
