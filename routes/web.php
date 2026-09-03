@@ -22,6 +22,7 @@ use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\Gudang\BarangKeluarController as GudangBarangKeluarController;
 use App\Http\Controllers\Gudang\BarangMasukController as GudangBarangMasukController;
 use App\Http\Controllers\Gudang\DashboardController as GudangDashboardController;
+
 use App\Http\Controllers\Gudang\GantiGudangController;
 use App\Http\Controllers\Gudang\NotifikasiController as GudangNotifikasiController;
 use App\Http\Controllers\Gudang\PelangganRequestController as GudangPelangganRequestController;
@@ -279,7 +280,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->grou
     Route::post('/verifikasi-pembayaran/{pembayaran}/setujui', [VerifikasiPembayaranController::class, 'setujui'])->name('verifikasi-pembayaran.setujui');
     Route::post('/verifikasi-pembayaran/{pembayaran}/tolak', [VerifikasiPembayaranController::class, 'tolak'])->name('verifikasi-pembayaran.tolak');
     Route::get('/customer', [DataCustomerController::class, 'index'])->name('customer');
-    Route::post('/customer', [DataCustomerController::class, 'store'])->name('customer.store');
     Route::get('/produk', [DataProdukController::class, 'index'])->name('produk');
     Route::post('/produk', [DataProdukController::class, 'store'])->name('produk.store');
     Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier');
@@ -338,8 +338,7 @@ Route::post('/gudang/ganti', [GantiGudangController::class, 'store'])
     ->name('gudang.ganti')
     ->middleware(['auth', 'role:Gudang']);
 
-Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->group(function () 
-{
+Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->group(function () {
     Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/data-toko', [DataTokoController::class, 'index'])->name('data-toko');
     Route::put('/data-toko', [DataTokoController::class, 'update'])->name('data-toko.update');
@@ -363,12 +362,8 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/laporan/export', [OwnerLaporanController::class, 'export'])->name('laporan.export');
     Route::get('/notifikasi', [OwnerNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [OwnerProfilController::class, 'index'])->name('profil');
-    Route::post('/profil', [OwnerProfilController::class, 'update'])->name('profil.update');
-    Route::post('/profil/password', [OwnerProfilController::class, 'updatePassword'])->name('profil.password');
-    Route::post('/profil/foto', [OwnerProfilController::class, 'updatePhoto'])->name('profil.foto');
     Route::get('/komplain', [OwnerKomplainController::class, 'index'])->name('komplain');
     Route::get('/pengiriman', [OwnerPengirimanController::class, 'index'])->name('pengiriman');
-    Route::get('/pengembalian-dana', [OwnerPengembalianDanaController::class, 'index'])->name('pengembalian-dana');
     Route::get('/produksi', [OwnerProduksiController::class, 'index'])->name('produksi');
     Route::get('/gudang', [OwnerGudangController::class, 'index'])->name('gudang');
     Route::get('/moderasi-produk', [OwnerModerasiProdukController::class, 'index'])->name('moderasi-produk');
