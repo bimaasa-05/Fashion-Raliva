@@ -22,11 +22,14 @@ class StokRusakController extends Controller
         $items = collect();
         if ($warehouse) {
             $q = $request->query('q');
-            $items = WarehouseStock::with(['productVariant.product.category'])
+            $items = StockDamage::with([
+                'productVariant.product.category',
+                'productVariant.warehouseStocks' => fn ($query) => $query->where('warehouse_id', $warehouse->warehouse_id),
+                'creator',
+            ])
                 ->where('warehouse_id', $warehouse->warehouse_id)
-                ->where('jumlah_stok', '<=', 0)
                 ->when($q, fn ($query) => $query->whereHas('productVariant.product', fn ($pq) => $pq->where('nama_produk', 'like', '%'.$q.'%')))
-                ->orderBy('jumlah_stok')
+                ->orderByDesc('created_at')
                 ->paginate(15)
                 ->withQueryString();
         }
