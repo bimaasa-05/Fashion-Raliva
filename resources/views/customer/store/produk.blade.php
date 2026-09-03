@@ -285,9 +285,22 @@
 <a href="{{ route('customer.shop.store.riviews', $store->store_id) }}" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('REVIEWS') }}</a>
 <a href="{{ route('customer.shop.store.about', $store->store_id) }}" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">{{ __('ABOUT') }}</a>
 </div>
+<style>
+    .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(139,30,63,.35);
+        border-top-color: #8B1E3F;
+        border-radius: 50%;
+        animation: spin .7s linear infinite;
+        display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #load-more-btn:disabled { cursor: not-allowed; opacity: .7; }
+</style>
 <!-- Product Grid -->
 <section class="pt-lg mt-lg reveal-up">
-<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+<div id="product-grid" class="grid grid-cols-2 md:grid-cols-4 gap-gutter" data-total="{{ $totalProducts ?? $products->count() }}">
 @forelse ($products as $p)
 @php $pImg = $p->images->first()?->file_gambar; $pMin = $p->variants->min('harga') ?? $p->harga_dasar; @endphp
 <div class="group relative flex flex-col cursor-pointer">
@@ -312,16 +325,17 @@
 @endforelse
 </div><!-- Load More -->
 <div class="mt-xl flex justify-center">
-<button class="border border-[var(--chrome-accent)] text-[var(--chrome-accent)] bg-transparent font-label-caps text-label-caps px-xl py-sm hover:bg-surface-container-low transition-colors w-full md:w-auto rounded-lg">
-                    {{ __('LOAD MORE') }}
-                </button>
+<button id="load-more-btn" class="border border-[var(--chrome-accent)] text-[var(--chrome-accent)] bg-transparent font-label-caps text-label-caps px-xl py-sm hover:bg-surface-container-low transition-colors w-full md:w-auto rounded-lg flex items-center justify-center gap-2 uppercase tracking-widest" type="button" onclick="loadMoreProducts()" style="display:none;">
+<span class="spinner" style="display:none;"></span>
+<span id="load-more-txt">{{ __('LOAD MORE') }}</span>
+</button>
 </div>
 </section>
 </div>
 </section>
 <div class="md:hidden h-24"></div>
 </main>
-<script>
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
             var els = document.querySelectorAll('.reveal-up');
             if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('is-visible'); }); return; }
@@ -330,6 +344,37 @@
             }, { threshold: 0.1 });
             els.forEach(function (e) { io.observe(e); });
         });
+        (function () {
+            var PAGE = 6;
+            var revealedCount = PAGE;
+            var grid = document.getElementById('product-grid');
+            var btn = document.getElementById('load-more-btn');
+            if (!grid || !btn) return;
+            var total = parseInt(grid.getAttribute('data-total') || '0', 10);
+            var cards = Array.prototype.slice.call(grid.children);
+            function refresh() {
+                cards.forEach(function (c, idx) {
+                    c.style.display = idx < revealedCount ? '' : 'none';
+                });
+                btn.style.display = (total > PAGE && revealedCount < cards.length) ? 'inline-flex' : 'none';
+            }
+            refresh();
+            window.loadMoreProducts = function () {
+                if (btn.hasAttribute('disabled')) return;
+                btn.setAttribute('disabled', 'disabled');
+                var spinner = btn.querySelector('.spinner');
+                var txt = document.getElementById('load-more-txt');
+                if (spinner) spinner.style.display = 'inline-block';
+                if (txt) txt.textContent = 'Loading';
+                setTimeout(function () {
+                    revealedCount += PAGE;
+                    if (spinner) spinner.style.display = 'none';
+                    if (txt) txt.textContent = 'LOAD MORE';
+                    btn.removeAttribute('disabled');
+                    refresh();
+                }, 650);
+            };
+        })();
     </script>
 @include('customer._partials.drawer')
 </body></html>
