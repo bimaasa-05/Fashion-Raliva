@@ -20,19 +20,19 @@
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Stok</h2>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter mb-8">
-            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
+            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden"><span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">inventory_2</span>
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Varian Terdata</p>
                 <p class="font-title-md text-title-md text-on-surface mt-1">{{ $stocks->total() ?? $stocks->count() }}</p>
             </div>
-            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
+            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden"><span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">check_circle</span>
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Total Unit</p>
                 <p class="font-title-md text-title-md text-gold-accent mt-1">{{ number_format($stocks->sum('jumlah_stok'), 0, ',', '.') }}</p>
             </div>
-            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
+            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden"><span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">warning</span>
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Stok Menipis</p>
                 <p class="font-title-md text-title-md text-error mt-1">{{ $stocks->filter(fn($w) => $w->jumlah_stok <= ($w->stok_minimum ?: 5))->count() }}</p>
             </div>
-            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
+            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden"><span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">category</span>
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Gudang Terlibat</p>
                 <p class="font-title-md text-title-md text-on-surface mt-1">{{ $stocks->pluck('warehouse_id')->unique()->count() }}</p>
             </div>
