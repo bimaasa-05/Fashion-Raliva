@@ -73,6 +73,23 @@
                     </div>
                 </div>
 
+                <!-- Slot Awal Toko Baru (default global) -->
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 bg-surface-container-low border border-muted-border rounded-lg p-4">
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-[20px] text-gold-accent mt-0.5">workspace_premium</span>
+                        <div>
+                            <p class="font-bold text-on-surface">Slot Awal Toko Baru</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">Kuota gratis otomatis untuk toko yang baru disetujui. Saat ini <span class="font-bold text-on-surface">{{ number_format($slotAwalDefault) }} slot</span>. Kuota toko yang sudah ada tidak terpengaruh.</p>
+                        </div>
+                    </div>
+                    <form method="POST" action="{{ route('superadmin.slot-produk.default') }}" class="flex items-center gap-2">
+                        @csrf
+                        @method('PUT')
+                        <input type="number" name="slot_awal" min="0" max="100000" value="{{ $slotAwalDefault }}" required class="w-28 bg-transparent border border-muted-border rounded-lg px-3 py-2 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" aria-label="Jumlah slot awal" />
+                        <button type="submit" class="py-2 px-4 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium whitespace-nowrap">Simpan</button>
+                    </form>
+                </div>
+
                 <!-- Filters -->
                 <div class="md:hidden mb-6">
                     <button type="button" data-filter-toggle class="inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors w-full">
@@ -132,9 +149,6 @@
                                     </td>
                                     <td class="py-3.5 px-4 text-right">
                                         <div class="flex items-center justify-end gap-1">
-                                            <button type="button" onclick="openKuotaModal({{ $store->store_id }}, '{{ addslashes($store->nama_toko) }}', {{ $s['free_quota'] }})" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
-                                                <span class="material-symbols-outlined text-[15px]">tune</span>Kuota
-                                            </button>
                                             <button type="button" onclick="openTambahModal({{ $store->store_id }}, '{{ addslashes($store->nama_toko) }}')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-deep-onyx text-on-primary text-xs font-semibold hover:bg-black transition-colors btn-premium">
                                                 <span class="material-symbols-outlined text-[15px]">add</span>Tambah
                                             </button>
@@ -172,10 +186,7 @@
                                 </div>
                                 <div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden"><div class="h-full bg-gold-accent rounded-full" style="width: {{ min(100, $s['progress']) }}%"></div></div>
                             </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <button type="button" onclick="openKuotaModal({{ $store->store_id }}, '{{ addslashes($store->nama_toko) }}', {{ $s['free_quota'] }})" class="min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
-                                    <span class="material-symbols-outlined text-[16px]">tune</span>Atur Kuota
-                                </button>
+                            <div class="grid grid-cols-1 gap-2">
                                 <button type="button" onclick="openTambahModal({{ $store->store_id }}, '{{ addslashes($store->nama_toko) }}')" class="min-h-11 inline-flex items-center justify-center gap-2 rounded-lg bg-deep-onyx text-on-primary text-xs font-semibold hover:bg-black transition-colors btn-premium">
                                     <span class="material-symbols-outlined text-[16px]">add</span>Tambah Slot
                                 </button>
@@ -311,32 +322,6 @@
     @endif
 </div>
 
-<!-- Kuota Modal -->
-<div id="modal-kuota" class="fixed inset-0 z-[70] hidden">
-    <div class="absolute inset-0 bg-black/50" onclick="closeModal('modal-kuota')"></div>
-    <div class="relative mx-auto w-full max-w-md mt-[10vh] bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[80vh] overflow-y-auto">
-        <div class="flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-            <div>
-                <p class="raliva-label text-gold-accent">Atur Kuota Gratis</p>
-                <h3 id="kuota-toko-nama" class="font-title-md text-title-md text-on-surface premium-heading mt-1">-</h3>
-            </div>
-            <button type="button" onclick="closeModal('modal-kuota')" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <form id="kuota-form" method="POST" action="" class="p-6 space-y-5">
-            @csrf
-            <div>
-                <label class="block raliva-label mb-2">Kuota Gratis (jumlah slot bawaan toko)</label>
-                <input type="number" id="kuota-input" name="kuota_gratis" min="0" max="100000" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
-                <p class="text-xs text-on-surface-variant mt-2">Menetapkan ulang kuota gratis toko. Slot hasil pembelian/tambahan manual tidak terpengaruh.</p>
-            </div>
-            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                <button type="button" onclick="closeModal('modal-kuota')" class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[16px]">save</span>Simpan Kuota</button>
-            </div>
-        </form>
-    </div>
-</div>
-
 <!-- Tambah Manual Modal -->
 <div id="modal-tambah" class="fixed inset-0 z-[70] hidden">
     <div class="absolute inset-0 bg-black/50" onclick="closeModal('modal-tambah')"></div>
@@ -449,12 +434,6 @@
         }
     });
 
-    function openKuotaModal(id, nama, free) {
-        document.getElementById('kuota-toko-nama').textContent = nama;
-        document.getElementById('kuota-input').value = free;
-        document.getElementById('kuota-form').action = '{{ route('superadmin.slot-produk.kuota', ':id:') }}'.replace(':id:', id);
-        openModal('modal-kuota');
-    }
     function openTambahModal(id, nama) {
         document.getElementById('tambah-toko-nama').textContent = nama;
         document.getElementById('tambah-form').action = '{{ route('superadmin.slot-produk.tambah-manual', ':id:') }}'.replace(':id:', id);
