@@ -41,25 +41,25 @@
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Cek</span>
             <span class="raliva-figure text-[26px] text-gold-accent">{{ $counts['menunggu'] ?? 0 }}</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">perlu pengecekan stok/bahan</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">pending_actions</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">pending_actions</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Tersedia</span>
             <span class="raliva-figure text-[26px] text-secondary">{{ $counts['tersedia'] ?? 0 }}</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">siap konfirmasi</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">check_circle</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">check_circle</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Request</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $counts['total'] ?? 0 }}</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">pesanan menunggu</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">receipt_long</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">receipt_long</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Tidak Tersedia</span>
             <span class="raliva-figure text-[26px] text-error">{{ $counts['kosong'] ?? 0 }}</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">bahan/stok kosong</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">block</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">block</span>
         </div>
     </section>
 
