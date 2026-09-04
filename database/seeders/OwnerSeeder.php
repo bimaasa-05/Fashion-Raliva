@@ -116,7 +116,7 @@ class OwnerSeeder extends Seeder
 
         // ---- KATEGORI (anak) ----
         $categories = Category::whereNotNull('parent_id')->where('status', 'aktif')->get()->keyBy('nama_kategori');
-        $cat = fn (string $name) => ($categories[$name] ?? $categories->first())->category_id;
+        $cat = fn(string $name) => ($categories[$name] ?? $categories->first())->category_id;
 
         // ---- PRODUK LENGKAP (25 produk, varian, status sebar untuk demo approval) ----
         $seed = [
@@ -130,21 +130,6 @@ class OwnerSeeder extends Seeder
             ['Relaxed Blazer', 'Jaket & Hoodie', 'BLZ', [['M', 12], ['L', 10]], 320000, 549000, Product::STATUS_AKTIF],
             ['Pleated Skirt', 'Rok', 'RKT', [['S', 12], ['M', 10], ['L', 6]], 165000, 275000, Product::STATUS_AKTIF],
             ['Leather Belt', 'Ikat Pinggang', 'IKT', [['85-105 cm', 25], ['90-110 cm', 22]], 110000, 199000, Product::STATUS_AKTIF],
-            ['Floral Kimono Outer', 'Jaket & Hoodie', 'KMO', [['S', 12], ['M', 15], ['L', 10]], 195000, 329000, Product::STATUS_PENDING],
-            ['Cotton Oxford Shirt', 'Kemeja', 'KOX', [['M', 18], ['L', 16], ['XL', 12]], 165000, 259000, Product::STATUS_PENDING],
-            ['High Waist Jeans', 'Celana', 'JNS', [['27', 14], ['29', 16], ['31', 10]], 185000, 319000, Product::STATUS_PENDING],
-            ['Satin Slip Dress', 'Dress', 'SDR', [['S', 10], ['M', 12]], 210000, 369000, Product::STATUS_PENDING],
-            ['Denim Jacket Classic', 'Jaket & Hoodie', 'DJN', [['M', 8], ['L', 9], ['XL', 6]], 280000, 459000, Product::STATUS_DITOLAK],
-            ['Linen Short Pants', 'Celana', 'SHP', [['S', 15], ['M', 18]], 95000, 159000, Product::STATUS_DITOLAK],
-            ['Striped Polo Shirt', 'Kaos', 'PLS', [['S', 22], ['M', 25], ['L', 20]], 75000, 129000, Product::STATUS_NONAKTIF],
-            ['Wool Blend Coat', 'Jaket & Hoodie', 'WLC', [['M', 6], ['L', 5]], 480000, 799000, Product::STATUS_NONAKTIF],
-            ['A-Line Mini Dress', 'Dress', 'AMD', [['S', 14], ['M', 16]], 175000, 299000, Product::STATUS_AKTIF],
-            ['Cargo Pants Street', 'Celana', 'CRG', [['30', 12], ['32', 14], ['34', 10]], 165000, 279000, Product::STATUS_AKTIF],
-            ['Hoodie Fleece Basic', 'Jaket & Hoodie', 'HOD', [['S', 20], ['M', 22], ['L', 18], ['XL', 15]], 135000, 229000, Product::STATUS_AKTIF],
-            ['Pencil Skirt Office', 'Rok', 'PSK', [['S', 10], ['M', 12], ['L', 8]], 145000, 249000, Product::STATUS_AKTIF],
-            ['Canvas Tote Bag', 'Aksesoris', 'CTB', [['One Size', 40]], 65000, 119000, Product::STATUS_AKTIF],
-            ['Slim Fit Chinos', 'Celana', 'CHN', [['28', 12], ['30', 15], ['32', 13]], 155000, 269000, Product::STATUS_AKTIF],
-            ['Embroidered Blouse', 'Kemeja', 'EMB', [['S', 12], ['M', 14]], 185000, 315000, Product::STATUS_AKTIF],
         ];
 
         $products = [];
@@ -164,7 +149,7 @@ class OwnerSeeder extends Seeder
             );
             foreach ($variants as $vi => [$warna, $stok]) {
                 ProductVariant::updateOrCreate(
-                    ['product_id' => $product->product_id, 'sku' => $prefix.'-'.str_pad($idx + 1, 3, '0').'-'.($vi + 1)],
+                    ['product_id' => $product->product_id, 'sku' => $prefix . '-' . str_pad($idx + 1, 3, '0') . '-' . ($vi + 1)],
                     ['warna' => $warna, 'ukuran' => null, 'harga' => $harga, 'status' => 'aktif']
                 );
             }
@@ -211,12 +196,12 @@ class OwnerSeeder extends Seeder
                     'nama_lengkap' => $cname,
                     'password' => Hash::make('password'),
                     'role_id' => Role::where('nama_role', 'Customer')->value('role_id'),
-                    'nomor_telepon' => '08120000'.str_pad($ci + 1, 3, '0'),
+                    'nomor_telepon' => '08120000' . str_pad($ci + 1, 3, '0'),
                     'status' => User::STATUS_AKTIF,
                 ]
             );
             for ($o = 0; $o < $orderCount; $o++) {
-                $variant = ProductVariant::whereHas('product', fn ($q) => $q->where('store_id', $store->store_id))->skip(($si) % 10)->first()
+                $variant = ProductVariant::whereHas('product', fn($q) => $q->where('store_id', $store->store_id))->skip(($si) % 10)->first()
                     ?? ProductVariant::first();
                 $qty = rand(1, 3);
                 $harga = (float) ($variant->harga ?? 100000);
@@ -234,7 +219,7 @@ class OwnerSeeder extends Seeder
                 $order = Order::create([
                     'checkout_id' => $checkout->checkout_id,
                     'store_id' => $store->store_id,
-                    'nomor_order' => 'RLV-'.$store->store_id.'-'.str_pad($si + 1, 4, '0').strtoupper(Str::random(2)),
+                    'nomor_order' => 'RLV-' . $store->store_id . '-' . str_pad($si + 1, 4, '0') . strtoupper(Str::random(2)),
                     'subtotal' => $subtotal,
                     'total_diskon' => 0,
                     'total_pajak' => 0,
@@ -260,7 +245,7 @@ class OwnerSeeder extends Seeder
 
         // ---- ULASAN ----
         $reviewProducts = collect($products)->take(4);
-        $reviewCustomers = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Customer'))->take(4)->get();
+        $reviewCustomers = User::whereHas('role', fn($q) => $q->where('nama_role', 'Customer'))->take(4)->get();
         $reviews = [
             ['Trench Coat-nya premium banget, jahitannya rapi!', 5],
             ['Ukurannya pas, bahannya adem.', 4],
@@ -272,7 +257,7 @@ class OwnerSeeder extends Seeder
             if (! $cust) {
                 continue;
             }
-            $orderItem = OrderItem::whereHas('productVariant.product', fn ($q) => $q->where('product_id', $prod->product_id))->first();
+            $orderItem = OrderItem::whereHas('productVariant.product', fn($q) => $q->where('product_id', $prod->product_id))->first();
             Review::updateOrCreate(
                 ['store_id' => $store->store_id, 'product_id' => $prod->product_id, 'user_id' => $cust->user_id],
                 [
@@ -333,12 +318,12 @@ class OwnerSeeder extends Seeder
         foreach (['ktp', 'npwp', 'foto_depan', 'siu'] as $jenis) {
             StoreDocument::updateOrCreate(
                 ['store_id' => $store->store_id, 'jenis' => $jenis],
-                ['path' => 'store-documents/'.$store->store_id.'/'.$jenis.'.pdf', 'status' => 'terverifikasi', 'catatan' => null]
+                ['path' => 'store-documents/' . $store->store_id . '/' . $jenis . '.pdf', 'status' => 'terverifikasi', 'catatan' => null]
             );
         }
 
         // ---- KOMPLAIN (demo) ----
-        $custForComplaint = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Customer'))->first();
+        $custForComplaint = User::whereHas('role', fn($q) => $q->where('nama_role', 'Customer'))->first();
         $orderForComplaint = Order::where('store_id', $store->store_id)->first();
         $complaintsSeed = [
             ['Barang rusak', 'Kemeja item diterima sobek di bagian lengan.', 'baru'],
@@ -388,7 +373,7 @@ class OwnerSeeder extends Seeder
             }
         }
 
-        $this->command?->info('OwnerSeeder selesai: toko #'.$store->store_id.', '.Product::where('store_id', $store->store_id)->count().' produk, '.Order::where('store_id', $store->store_id)->count().' pesanan, '.Promotion::where('store_id', $store->store_id)->count().' promo.');
+        $this->command?->info('OwnerSeeder selesai: toko #' . $store->store_id . ', ' . Product::where('store_id', $store->store_id)->count() . ' produk, ' . Order::where('store_id', $store->store_id)->count() . ' pesanan, ' . Promotion::where('store_id', $store->store_id)->count() . ' promo.');
     }
 
     private function defaultOperationalHours(): array
