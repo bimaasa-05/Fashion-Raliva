@@ -14,7 +14,9 @@ use App\Http\Controllers\Admin\ProfilController as AdminProfilController;
 use App\Http\Controllers\Admin\PromoController;
 use App\Http\Controllers\Admin\RiwayatAktivitasController as AdminRiwayatAktivitasController;
 use App\Http\Controllers\Admin\StokController;
+use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\VerifikasiPembayaranController;
+use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Gudang\BarangKeluarController as GudangBarangKeluarController;
@@ -30,6 +32,7 @@ use App\Http\Controllers\Gudang\RiwayatStokController as GudangRiwayatStokContro
 use App\Http\Controllers\Gudang\StokController as GudangStokController;
 use App\Http\Controllers\Gudang\StokRusakController as GudangStokRusakController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboardController;
+use App\Http\Controllers\Owner\DataBankController as OwnerDataBankController;
 use App\Http\Controllers\Owner\DataPelangganController;
 use App\Http\Controllers\Owner\DataTokoController;
 use App\Http\Controllers\Owner\GudangController as OwnerGudangController;
@@ -147,7 +150,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
             return view('customer.account.index');
         })->name('account');
 
-        Route::post('/account', [ProfileController::class, 'update'])->name('account.update');
+        Route::post('/account', [CustomerProfileController::class, 'update'])->name('account.update');
 
         Route::get('/account/edit', function () {
             return view('customer.account.edit');
@@ -286,24 +289,41 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/dashboard', [DashboardOperasionalController::class, 'index'])->name('dashboard');
     Route::get('/pesanan', [AdminDataPesananController::class, 'index'])->name('pesanan');
+    Route::post('/pesanan', [AdminDataPesananController::class, 'store'])->name('pesanan.store');
     Route::post('/pesanan/{pesanan}/proses', [AdminDataPesananController::class, 'proses'])->name('pesanan.proses');
     Route::post('/pesanan/{pesanan}/batalkan', [AdminDataPesananController::class, 'batalkan'])->name('pesanan.batalkan');
     Route::get('/verifikasi-pembayaran', [VerifikasiPembayaranController::class, 'index'])->name('verifikasi-pembayaran');
     Route::post('/verifikasi-pembayaran/{pembayaran}/setujui', [VerifikasiPembayaranController::class, 'setujui'])->name('verifikasi-pembayaran.setujui');
     Route::post('/verifikasi-pembayaran/{pembayaran}/tolak', [VerifikasiPembayaranController::class, 'tolak'])->name('verifikasi-pembayaran.tolak');
     Route::get('/customer', [DataCustomerController::class, 'index'])->name('customer');
+    Route::post('/customer', [DataCustomerController::class, 'store'])->name('customer.store');
     Route::get('/produk', [DataProdukController::class, 'index'])->name('produk');
-    Route::get('/supplier', fn () => view('Admin.supplier.supplier'))->name('supplier');
+    Route::post('/produk', [DataProdukController::class, 'store'])->name('produk.store');
+    Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier');
+    Route::post('/supplier', [SupplierController::class, 'store'])->name('supplier.store');
+    Route::put('/supplier/{supplier}', [SupplierController::class, 'update'])->name('supplier.update');
+    Route::delete('/supplier/{supplier}', [SupplierController::class, 'destroy'])->name('supplier.destroy');
     Route::get('/stok', [StokController::class, 'index'])->name('stok');
+    Route::put('/stok/{warehouseStock}', [StokController::class, 'update'])->name('stok.update');
     Route::get('/pengiriman', [PengirimanController::class, 'index'])->name('pengiriman');
     Route::post('/pengiriman/{pesanan}/resi', [PengirimanController::class, 'simpanResi'])->name('pengiriman.resi');
     Route::post('/pengiriman/{pengiriman}/kirim', [PengirimanController::class, 'kirim'])->name('pengiriman.kirim');
     Route::get('/pengembalian-dana', [AdminPengembalianDanaController::class, 'index'])->name('pengembalian-dana');
+    Route::post('/pengembalian-dana/{refund}/setujui', [AdminPengembalianDanaController::class, 'setujui'])->name('pengembalian-dana.setujui');
+    Route::post('/pengembalian-dana/{refund}/tolak', [AdminPengembalianDanaController::class, 'tolak'])->name('pengembalian-dana.tolak');
+    Route::post('/pengembalian-dana/{refund}/eskalasi', [AdminPengembalianDanaController::class, 'eskalasi'])->name('pengembalian-dana.eskalasi');
     Route::get('/komplain', [KomplainController::class, 'index'])->name('komplain');
+    Route::post('/komplain/{komplain}/balas', [KomplainController::class, 'balas'])->name('komplain.balas');
+    Route::post('/komplain/{komplain}/eskalasi', [KomplainController::class, 'eskalasi'])->name('komplain.eskalasi');
     Route::get('/promo', [PromoController::class, 'index'])->name('promo');
+    Route::post('/promo/{promotion}/toggle', [PromoController::class, 'toggle'])->name('promo.toggle');
     Route::get('/permintaan-produksi', [PermintaanProduksiController::class, 'index'])->name('permintaan-produksi');
     Route::get('/koordinasi-gudang', [KoordinasiGudangController::class, 'index'])->name('koordinasi-gudang');
+    Route::post('/koordinasi-gudang/kirim', [KoordinasiGudangController::class, 'kirim'])->name('koordinasi-gudang.kirim');
     Route::get('/profil', [AdminProfilController::class, 'index'])->name('profil');
+    Route::put('/profil', [AdminProfilController::class, 'update'])->name('profil.update');
+    Route::post('/profil/foto', [AdminProfilController::class, 'updatePhoto'])->name('profil.foto');
+    Route::put('/profil/password', [AdminProfilController::class, 'updatePassword'])->name('profil.password');
     Route::get('/laporan', [AdminLaporanController::class, 'index'])->name('laporan');
     Route::get('/riwayat-aktivitas', [AdminRiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
 });
@@ -336,11 +356,16 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/data-toko', [DataTokoController::class, 'index'])->name('data-toko');
     Route::put('/data-toko', [DataTokoController::class, 'update'])->name('data-toko.update');
+    Route::get('/data-bank', [OwnerDataBankController::class, 'index'])->name('data-bank');
+    Route::post('/data-bank', [OwnerDataBankController::class, 'store'])->name('data-bank.store');
+    Route::put('/data-bank/{bankAccount}', [OwnerDataBankController::class, 'update'])->name('data-bank.update');
+    Route::delete('/data-bank/{bankAccount}', [OwnerDataBankController::class, 'destroy'])->name('data-bank.destroy');
     Route::get('/pengajuan-toko', [PengajuanTokoController::class, 'index'])->name('pengajuan-toko');
     Route::post('/pengajuan-toko', [PengajuanTokoController::class, 'store'])->name('pengajuan-toko.store');
     Route::get('/pengaturan-toko', [PengaturanTokoController::class, 'index'])->name('pengaturan-toko');
     Route::get('/produk', [OwnerProdukController::class, 'index'])->name('produk');
     Route::get('/kelola-slot', [KelolaSlotController::class, 'index'])->name('kelola-slot');
+    Route::post('/kelola-slot', [KelolaSlotController::class, 'store'])->name('kelola-slot.request');
     Route::get('/pesanan', [OwnerPesananController::class, 'index'])->name('pesanan');
     Route::post('/pesanan/{order}/forward', [OwnerPesananController::class, 'forward'])->name('pesanan.forward');
     Route::get('/promo', [OwnerPromoController::class, 'index'])->name('promo');
@@ -350,9 +375,11 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::post('/promo/{promo}/toggle', [OwnerPromoController::class, 'toggle'])->name('promo.toggle');
     Route::get('/ulasan', [UlasanController::class, 'index'])->name('ulasan');
     Route::get('/data-pelanggan', [DataPelangganController::class, 'index'])->name('data-pelanggan');
-    Route::get('/saldo', [SaldoController::class, 'index'])->name('saldo');
-    Route::post('/saldo/pengeluaran', [SaldoController::class, 'storePengeluaran'])->name('keuangan.pengeluaran.store');
-    Route::post('/saldo/pencairan', [SaldoController::class, 'storePencairan'])->name('keuangan.pencairan.store');
+    Route::get('/saldo', fn() => redirect()->route('owner.keuangan'))->name('saldo');
+    Route::get('/keuangan', [SaldoController::class, 'index'])->name('keuangan');
+    Route::post('/keuangan/pengeluaran', [SaldoController::class, 'storePengeluaran'])->name('keuangan.pengeluaran.store');
+    Route::post('/keuangan/pemasukan', [SaldoController::class, 'storePemasukan'])->name('keuangan.pemasukan.store');
+    Route::post('/keuangan/pencairan', [SaldoController::class, 'storePencairan'])->name('keuangan.pencairan.store');
     Route::get('/karyawan', [KaryawanController::class, 'index'])->name('karyawan');
     Route::post('/karyawan', [KaryawanController::class, 'store'])->name('karyawan.store');
     Route::put('/karyawan/{storeStaff}', [KaryawanController::class, 'update'])->name('karyawan.update');
@@ -364,11 +391,23 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/moderasi-produk', [OwnerModerasiProdukController::class, 'index'])->name('moderasi-produk');
     Route::get('/paket-slot', [OwnerPaketSlotController::class, 'index'])->name('paket-slot');
     Route::get('/pencairan-dana', [OwnerPencairanDanaController::class, 'index'])->name('pencairan-dana');
+    Route::post('/pencairan-dana', [OwnerPencairanDanaController::class, 'store'])->name('pencairan-dana.store');
     Route::get('/pengembalian-dana', [OwnerPengembalianDanaController::class, 'index'])->name('pengembalian-dana');
     Route::get('/pengiriman', [OwnerPengirimanController::class, 'index'])->name('pengiriman');
     Route::get('/produksi', [OwnerProduksiController::class, 'index'])->name('produksi');
     Route::get('/notifikasi', [OwnerNotifikasiController::class, 'index'])->name('notifikasi');
+    Route::post('/notifikasi/tandai-dibaca', function (Illuminate\Http\Request $request) {
+        \App\Models\Notification::where('user_id', auth()->id())->whereNull('dibaca_pada')->update(['dibaca_pada' => now()]);
+        return back()->with('success', 'Notifikasi ditandai dibaca.');
+    })->name('notifikasi.tandai-dibaca');
     Route::get('/profil', [OwnerProfilController::class, 'index'])->name('profil');
+    Route::put('/profil', [OwnerProfilController::class, 'update'])->name('profil.update');
+    Route::put('/profil/password', [OwnerProfilController::class, 'updatePassword'])->name('profil.password');
+    Route::post('/profil/foto', [OwnerProfilController::class, 'updatePhoto'])->name('profil.foto');
+    Route::put('/pengaturan-toko', [DataTokoController::class, 'update'])->name('pengaturan-toko.update');
+    Route::post('/pengembalian-dana/{refund}/setujui', [OwnerPengembalianDanaController::class, 'setujui'])->name('pengembalian-dana.setujui');
+    Route::post('/pengembalian-dana/{refund}/tolak', [OwnerPengembalianDanaController::class, 'tolak'])->name('pengembalian-dana.tolak');
+    Route::post('/pengembalian-dana/{refund}/selesaikan', [OwnerPengembalianDanaController::class, 'selesaikan'])->name('pengembalian-dana.selesaikan');
 });
 
 Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi'])->group(function () {
