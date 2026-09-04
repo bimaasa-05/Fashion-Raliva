@@ -27,7 +27,6 @@ class Store extends Model
         'deskripsi',
         'alamat',
         'nomor_telepon',
-        'operational_hours',
         'status',
         'alasan_penolakan',
     ];
@@ -111,8 +110,6 @@ class Store extends Model
 
     protected function casts(): array
     {
-        return [
-            'operational_hours' => 'array',
-        ];
+        return [];
     }
 }
