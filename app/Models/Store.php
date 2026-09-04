@@ -104,6 +104,11 @@ class Store extends Model
         return $this->hasMany(Review::class, 'store_id', 'store_id');
     }
 
+    public function documents(): HasMany
+    {
+        return $this->hasMany(StoreDocument::class, 'store_id', 'store_id');
+    }
+
     public function productionOrders(): HasMany
     {
         return $this->hasMany(ProductionOrder::class, 'store_id', 'store_id');
