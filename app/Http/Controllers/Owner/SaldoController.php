@@ -18,23 +18,29 @@ class SaldoController extends Controller
         $user = $request->user();
         $store = $user->ownedStores()->first();
 
-        // Jika Owner belum punya toko / wallet, tampilkan halaman kosong yang ramah.
-        if (! $store || ! $store->wallet) {
-            return view('Owner.saldo.index', [
+        if (! $store) {
+            return view('Owner.keuangan.index', [
                 'wallet' => null,
                 'mutations' => collect(),
                 'withdrawals' => collect(),
                 'refunds' => collect(),
-                'summary' => [
-                    'pemasukan' => 0,
-                    'pengeluaran' => 0,
-                    'bersih' => 0,
-                ],
+                'summary' => ['pemasukan' => 0, 'pengeluaran' => 0, 'bersih' => 0],
                 'chart' => collect(),
+                'store' => null,
+                'bankAccounts' => collect(),
+                'expenses' => collect(),
+                'margin' => ['revenue'=>0,'gross'=>0,'ebitda'=>0,'ebit'=>0,'ebt'=>0,'net'=>0],
+                'totalDicairkan' => 0,
+                'fmt' => fn($v)=>'Rp '.number_format($v,0,',','.'),
             ]);
         }
 
+        // Auto-create wallet jika belum ada (agar keuangan selalu tampil, tidak nunggu transaksi)
         $wallet = $store->wallet;
+        if (! $wallet) {
+            $wallet = \App\Models\Wallet::create(['store_id'=>$store->store_id,'saldo_tersedia'=>0,'saldo_tertahan'=>0]);
+            $store->setRelation('wallet', $wallet);
+        }
 
         $bankAccounts = $store->bankAccounts()->with('bank')->get();
 
@@ -118,10 +124,11 @@ class SaldoController extends Controller
             'net' => $netProfit,
         ];
 
-        return view('Owner.saldo.index', compact(
+        $fmt = fn($v) => 'Rp '.number_format($v,0,',','.');
+        return view('Owner.keuangan.index', compact(
             'wallet', 'bankAccounts', 'totalDicairkan',
             'mutations', 'withdrawals', 'refunds', 'summary', 'chart',
-            'expenses', 'margin'
+            'expenses', 'margin', 'store', 'fmt'
         ));
     }
 
@@ -148,7 +155,33 @@ class SaldoController extends Controller
             'tanggal' => $validated['tanggal'],
         ]);
 
-        return redirect()->route('owner.saldo')->with('success', 'Pengeluaran berhasil dicatat.');
+        return redirect()->route('owner.keuangan')->with('success', 'Pengeluaran berhasil dicatat.');
+    }
+
+    public function storePemasukan(Request $request)
+    {
+        $user = $request->user();
+        $store = $user->ownedStores()->first();
+        if (! $store) return back()->with('error', 'Toko tidak ditemukan.');
+        $validated = $request->validate([
+            'sumber' => ['required', 'string', 'max:150'],
+            'nominal' => ['required', 'numeric', 'min:1'],
+            'tanggal' => ['required', 'date', 'before_or_equal:today'],
+        ]);
+        $wallet = $store->wallet;
+        if (! $wallet) {
+            $wallet = \App\Models\Wallet::create(['store_id'=>$store->store_id,'saldo_tersedia'=>0,'saldo_tertahan'=>0]);
+        }
+        $wallet->increment('saldo_tersedia', $validated['nominal']);
+        \App\Models\WalletTransaction::create([
+            'wallet_id' => $wallet->wallet_id,
+            'jenis_transaksi' => 'pemasukan',
+            'jumlah' => $validated['nominal'],
+            'saldo_sebelum' => (float) $wallet->saldo_tersedia - (float) $validated['nominal'],
+            'saldo_sesudah' => (float) $wallet->saldo_tersedia,
+            'keterangan' => 'Pemasukan: '.$validated['sumber'],
+        ]);
+        return redirect()->route('owner.keuangan')->with('success', 'Pemasukan berhasil dicatat.');
     }
 
     public function storePencairan(Request $request)
@@ -197,7 +230,6 @@ class SaldoController extends Controller
             ]);
         });
 
-        return redirect()->route('owner.saldo', ['#pencairan'])
-            ->with('success', 'Permintaan pencairan berhasil diajukan.');
+        return redirect()->route('owner.keuangan')->with('success', 'Permintaan pencairan berhasil diajukan.');
     }
 }
