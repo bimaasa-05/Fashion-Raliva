@@ -29,6 +29,9 @@ class Withdrawal extends Model
         'ditinjau_pada',
         'alasan_penolakan',
         'dibayar_pada',
+        'file_bukti',
+        'deskripsi_bukti',
+        'bukti_diupload_pada',
     ];
 
     protected function casts(): array
@@ -37,6 +40,7 @@ class Withdrawal extends Model
             'diajukan_pada' => 'datetime',
             'ditinjau_pada' => 'datetime',
             'dibayar_pada' => 'datetime',
+            'bukti_diupload_pada' => 'datetime',
         ];
     }
 
