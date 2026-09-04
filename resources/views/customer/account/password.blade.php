@@ -24,7 +24,7 @@
                         "primary-fixed-dim": "#c8c6c5",
                         "surface-variant": "#e3e2e2",
                         "on-surface": "#1b1c1c",
-                        "secondary": "#795905",
+                        "secondary": "#8B1E3F",
                         "surface-dim": "#dbdad9",
                         "on-error": "#ffffff",
                         "primary": "#000000",
@@ -128,7 +128,11 @@
         --chrome-text-faint: rgba(0,0,0,.45);
         --chrome-border: rgba(0,0,0,.1);
         --chrome-hover: rgba(0,0,0,.06);
-        --chrome-accent: #795905;
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #F8F6F2;
+        --surface-warm: #F3F0EA;
+        --border-soft: #E5E1DA;
+        --text-muted: #777777;
     }
     html.theme-dark {
         --chrome-bg: #1c1b1b;
@@ -138,7 +142,11 @@
         --chrome-text-faint: rgba(255,255,255,.5);
         --chrome-border: rgba(255,255,255,.1);
         --chrome-hover: rgba(255,255,255,.1);
-        --chrome-accent: #ebc168;
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #1e1d1c;
+        --surface-warm: #201f1e;
+        --border-soft: rgba(255,255,255,.1);
+        --text-muted: #b9b6b1;
     }
 </style>
 <style>
@@ -192,6 +200,30 @@
     html.theme-dark .group:hover .group-hover\:text-primary { color: #f2efec !important; }
     html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
+    /* ===== Premium cards + burgundy accents (same as account/edit, address/edit, reviews/edit) ===== */
+    .card-premium { box-shadow:0 1px 2px rgb(17 17 17 / .04),0 12px 32px -16px rgb(17 17 17 / .16); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; }
+    .card-premium:hover { transform:translateY(-3px); box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
+    html.theme-dark .card-premium { background-color:var(--surface-ivory); border-color:var(--border-soft); box-shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px -12px rgb(0 0 0 / .5); }
+    html.theme-dark .card-premium:hover { box-shadow:0 2px 4px rgb(0 0 0 / .4),0 20px 48px -20px rgb(0 0 0 / .7); border-color:rgba(139,30,63,.55); }
+    .premium-heading { display:block; }
+    .premium-heading::before { content:''; display:inline-block; width:4px; height:.95em; margin-right:.65rem; background:#8B1E3F; border-radius:9999px; vertical-align:-.05em; }
+    .atl-eyebrow { display:inline-flex; align-items:center; gap:.65rem; }
+    .atl-eyebrow::before { content:''; width:30px; height:1px; background:var(--chrome-accent); opacity:.7; }
+    html.theme-dark .premium-heading::before { background:#8B1E3F; }
+    .reveal-up { opacity:0; transform:translateY(12px); transition:opacity .5s ease,transform .5s ease; }
+    .reveal-up.is-visible { opacity:1; transform:none; }
+    @media (prefers-reduced-motion: reduce) { .reveal-up { opacity:1; transform:none; transition:none; } }
+    /* ===== Primary solid button (burgundy + shimmer flash) ===== */
+    .btn-gold { position: relative; overflow: hidden; background-color: var(--btn-gold-bg) !important; color: var(--btn-gold-text) !important; }
+    .btn-gold::after { content:''; position:absolute; top:-10%; bottom:-10%; left:-80%; width:45%; background: rgba(255,255,255,.55); transform:skewX(-24deg); pointer-events:none; }
+    .btn-gold:hover::after { animation: authFlash 1.4s linear infinite; }
+    .btn-gold.flashing::after { animation: authFlash 1.4s cubic-bezier(.4,0,.2,1) 1; }
+    @keyframes authFlash { from { left:-80%; } to { left:135%; } }
+    :root           { --btn-gold-bg:#8B1E3F; --btn-gold-text:#ffffff; }
+    html.theme-dark { --btn-gold-bg:#6D1428; --btn-gold-text:#ffffff; }
+    /* ===== Drawer burgundy parity ===== */
+    #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(139,30,63,.10); }
+    html.theme-dark #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(163,38,63,.16); }
 </style>
   </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg lg:pl-72">
@@ -204,15 +236,24 @@
 <div class="w-10"></div> <!-- Spacer for centering -->
 </header>
 <!-- Main Content -->
-<main class="pt-16 pb-40 px-container-margin max-w-2xl mx-auto w-full">
-<form>
-<section class="py-lg">
-<div class="flex flex-col gap-md">
+<main class="pt-24 pb-40">
+    <div class="mx-auto max-w-[1400px] px-container-margin">
+
+        {{-- ONE card: bg-surface-container-lowest (same as account/edit, address/edit, reviews/edit) --}}
+        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+
+            {{-- Section label + heading --}}
+            <p class="font-label-caps text-label-caps text-[var(--chrome-accent)] uppercase tracking-widest mb-xs">{{ __('ACCOUNT SECURITY') }}</p>
+            <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md md:mb-lg">{{ __('Change Password') }}</h2>
+
+            <form id="password-form">
+            <section>
+            <div class="flex flex-col gap-md">
 <!-- Current Password -->
 <div>
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="current-password">{{ __('Current Password') }}</label>
 <div class="relative">
-<input autocomplete="current-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="current-password" placeholder="{{ __('Enter your current password') }}" type="password"/>
+<input autocomplete="current-password" class="w-full bg-surface border border-outline-variant rounded-lg pl-md pr-xl py-2.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors" id="current-password" placeholder="{{ __('Enter your current password') }}" type="password"/>
 <span aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 cursor-pointer text-on-surface-variant hover:text-on-surface transition-colors flex" role="button" tabindex="0">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </span>
@@ -222,7 +263,7 @@
 <div>
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="new-password">{{ __('New Password') }}</label>
 <div class="relative">
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="new-password" placeholder="{{ __('Enter a new password') }}" type="password"/>
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-lg pl-md pr-xl py-2.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors" id="new-password" placeholder="{{ __('Enter a new password') }}" type="password"/>
 <span aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 cursor-pointer text-on-surface-variant hover:text-on-surface transition-colors flex" role="button" tabindex="0">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </span>
@@ -233,7 +274,7 @@
 <div>
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="confirm-password">{{ __('Confirm New Password') }}</label>
 <div class="relative">
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="confirm-password" placeholder="{{ __('Re-enter your new password') }}" type="password"/>
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-lg pl-md pr-xl py-2.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors" id="confirm-password" placeholder="{{ __('Re-enter your new password') }}" type="password"/>
 <span aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 cursor-pointer text-on-surface-variant hover:text-on-surface transition-colors flex" role="button" tabindex="0">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </span>
@@ -243,19 +284,19 @@
 </section>
 <!-- Password Requirements -->
 <section class="pb-lg">
-<div class="bg-surface-container-low border border-outline-variant rounded-DEFAULT p-md">
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-md">
 <h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-sm">{{ __('Password Requirements') }}</h2>
 <ul class="flex flex-col gap-xs">
 <li class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-[18px]" data-icon="check_circle" style="color: #795905;">check_circle</span>
+<span class="material-symbols-outlined text-[18px] text-secondary" data-icon="check_circle">check_circle</span>
 <span class="font-body-sm text-body-sm text-on-surface">{{ __('At least 8 characters long') }}</span>
 </li>
 <li class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-[18px]" data-icon="check_circle" style="color: #795905;">check_circle</span>
+<span class="material-symbols-outlined text-[18px] text-secondary" data-icon="check_circle">check_circle</span>
 <span class="font-body-sm text-body-sm text-on-surface">{{ __('Contains at least 1 uppercase letter') }}</span>
 </li>
 <li class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-[18px]" data-icon="check_circle" style="color: #795905;">check_circle</span>
+<span class="material-symbols-outlined text-[18px] text-secondary" data-icon="check_circle">check_circle</span>
 <span class="font-body-sm text-body-sm text-on-surface">{{ __('Contains at least 1 number') }}</span>
 </li>
 <li class="flex items-center gap-sm">
@@ -274,13 +315,38 @@
             </p>
 </div>
 </section>
-</form>
+
+            {{-- ========== ACTION BUTTONS ========== --}}
+            <div class="mt-lg flex flex-col sm:flex-row gap-sm pt-sm border-t border-[var(--border-soft)]">
+                <a href="{{ route('customer.account') }}" class="flex-1 flex items-center justify-center gap-2 py-3 rounded-full border border-outline-variant text-on-surface-variant font-label-caps text-label-caps uppercase tracking-widest hover:bg-surface-container-low hover:border-secondary hover:text-secondary transition-all duration-200">
+                    <span class="material-symbols-outlined text-[18px]">close</span>{{ __('Cancel') }}</a>
+                <button type="submit" form="password-form" class="btn-gold flex-1 flex items-center justify-center gap-2 py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest shadow-lg">
+                    <span class="material-symbols-outlined text-[18px]">lock</span>{{ __('Update Password') }}</button>
+            </div>
+
+            </form>
+        </div>
+
+    </div>
 </main>
-<!-- Fixed Bottom Action Bar -->
-<div class="fixed bottom-0 inset-x-0 lg:left-72 bg-surface border-t border-outline-variant px-container-margin py-md z-50 max-w-2xl mx-auto">
-<a href="{{ route('customer.account') }}" class="w-full bg-primary text-on-primary font-label-caps text-label-caps h-14 flex items-center justify-center hover:opacity-90 transition-opacity uppercase tracking-widest">
-            {{ __('Update Password') }}
-        </a>
-</div>
+@include('customer._partials.bottom-nav')
 @include('customer._partials.drawer')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var els = document.querySelectorAll('.reveal-up');
+        if (!('IntersectionObserver' in window)) {
+            els.forEach(function (e) { e.classList.add('is-visible'); });
+            return;
+        }
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                if (en.isIntersecting) {
+                    en.target.classList.add('is-visible');
+                    io.unobserve(en.target);
+                }
+            });
+        }, { threshold: 0.08 });
+        els.forEach(function (e) { io.observe(e); });
+    });
+</script>
 </body></html>

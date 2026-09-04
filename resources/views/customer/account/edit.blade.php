@@ -226,6 +226,14 @@
     /* ===== Drawer burgundy parity ===== */
     #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(139,30,63,.10); }
     html.theme-dark #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(163,38,63,.16); }
+    /* ===== Gender custom dropdown (boxed, matches standard inputs) ===== */
+    .shop-sort-trigger { min-height: 40px; }
+    .shop-action-btn-style {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+    }
 </style>
 </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg min-h-screen flex flex-col pb-[72px] lg:pl-72">
@@ -327,11 +335,28 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
                     {{-- Gender --}}
                     <div>
-                        <label for="gender" class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('Gender') }}</label>
-                        <select id="gender" name="gender" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none">
-                            <option value="female" {{ old('gender', Auth::user()->gender) === 'female' ? 'selected' : '' }}>{{ __('Female') }}</option>
-                            <option value="male" {{ old('gender', Auth::user()->gender) === 'male' ? 'selected' : '' }}>{{ __('Male') }}</option>
-                        </select>
+                        <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('Gender') }}</span>
+                        <input type="hidden" name="gender" id="gender-value" value="{{ old('gender', Auth::user()->gender) ?? 'female' }}"/>
+                        <div class="relative shop-sort-trigger" id="gender-menu-container">
+                            <button type="button" class="shop-action-btn-style w-full justify-between bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none hover:text-secondary" onclick="toggleGenderMenu()" aria-haspopup="listbox" aria-expanded="false" id="gender-trigger">
+                                <span class="flex items-center gap-sm">
+                                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant" id="gender-icon">{{ old('gender', Auth::user()->gender) === 'male' ? 'male' : 'female' }}</span>
+                                    <span id="gender-label" class="font-body-lg text-body-lg">{{ old('gender', Auth::user()->gender) === 'male' ? __('Male') : __('Female') }}</span>
+                                </span>
+                                <span class="material-symbols-outlined text-[18px] transition-transform duration-200" data-icon="expand_more" id="gender-chevron">expand_more</span>
+                            </button>
+                            <div id="gender-menu" class="absolute left-0 top-full mt-xs w-full bg-surface rounded-lg border border-outline-variant shadow-xl z-20 py-xs origin-top-left transition-all duration-200 ease-out invisible opacity-0 scale-95 -translate-y-1" role="listbox">
+                                <p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest px-md pt-xs pb-sm">{{ __('Gender') }}</p>
+                                <button type="button" class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-gender="female" onclick="selectGender('female')" role="option">
+                                    <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">female</span>{{ __('Female') }}</span>
+                                    <span class="material-symbols-outlined text-[18px] text-secondary gender-check {{ old('gender', Auth::user()->gender) === 'male' ? 'invisible' : '' }}">check</span>
+                                </button>
+                                <button type="button" class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors" data-gender="male" onclick="selectGender('male')" role="option">
+                                    <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">male</span>{{ __('Male') }}</span>
+                                    <span class="material-symbols-outlined text-[18px] text-secondary gender-check {{ old('gender', Auth::user()->gender) === 'male' ? '' : 'invisible' }}">check</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     {{-- Date of Birth --}}
@@ -451,6 +476,55 @@
             });
         }, { threshold: 0.08 });
         els.forEach(function (e) { io.observe(e); });
+    });
+</script>
+
+<script>
+    var genderLabels = { female: '{{ __("Female") }}', male: '{{ __("Male") }}' };
+    var genderIcons = { female: 'female', male: 'male' };
+
+    function toggleGenderMenu() {
+        var menu = document.getElementById('gender-menu');
+        var chevron = document.getElementById('gender-chevron');
+        var trigger = document.getElementById('gender-trigger');
+        var open = !menu.classList.contains('invisible');
+        if (open) {
+            closeGenderMenu();
+        } else {
+            menu.classList.remove('invisible', 'opacity-0', 'scale-95', '-translate-y-1');
+            chevron.classList.add('rotate-180');
+            if (trigger) trigger.setAttribute('aria-expanded', 'true');
+        }
+    }
+    function closeGenderMenu() {
+        var menu = document.getElementById('gender-menu');
+        menu.classList.add('invisible', 'opacity-0', 'scale-95', '-translate-y-1');
+        document.getElementById('gender-chevron').classList.remove('rotate-180');
+        var trigger = document.getElementById('gender-trigger');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    }
+    function selectGender(value) {
+        document.getElementById('gender-value').value = value;
+        document.getElementById('gender-label').textContent = genderLabels[value];
+        document.getElementById('gender-icon').textContent = genderIcons[value];
+        document.querySelectorAll('#gender-menu [data-gender]').forEach(function (btn) {
+            var check = btn.querySelector('.gender-check');
+            if (btn.dataset.gender === value) check.classList.remove('invisible');
+            else check.classList.add('invisible');
+        });
+        closeGenderMenu();
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        var container = document.getElementById('gender-menu-container');
+        document.addEventListener('click', function (e) {
+            if (container && !container.contains(e.target)) closeGenderMenu();
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeGenderMenu();
+            if ((e.key === 'ArrowDown' || e.key === 'Enter') && e.target === document.getElementById('gender-trigger')) {
+                toggleGenderMenu();
+            }
+        });
     });
 </script>
 
