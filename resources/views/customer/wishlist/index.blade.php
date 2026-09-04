@@ -309,9 +309,9 @@
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Saved Items') }}</span>
 </div>
 <h2 class="premium-heading font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">{{ __('My Wishlist') }}</h2>
-<p class="mt-2 inline-flex items-center gap-xs font-label-sm text-label-sm text-secondary rounded-full bg-secondary/5 px-sm py-xs">
+ <p class="mt-2 inline-flex items-center gap-xs font-label-sm text-label-sm text-secondary rounded-full bg-secondary/5 px-sm py-xs">
 <span class="material-symbols-outlined text-[16px]" data-icon="checkroom">checkroom</span>
-4 {{ __('items saved') }}
+<span id="wishlist-count">{{ $items->count() }}</span> {{ __('items saved') }}
 </p>
 </div>
 <span class="material-symbols-outlined text-secondary text-[30px] shrink-0" data-icon="favorite" data-weight="fill">favorite</span>
@@ -322,35 +322,84 @@
 <!-- Wishlist Grid (wrapped in Super-Admin style premium card, aksen Burgundy) -->
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
-<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
-@foreach ([
-                    ['brand' => 'Noiré Studio', 'name' => 'Tailored Linen Blazer', 'price' => '$245.00', 'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ'],
-                    ['brand' => 'Lunara Fashion', 'name' => 'Structured Leather Tote', 'price' => '$380.00', 'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuDotrquQ9ru5aXlWl5XbgLhEMJq3WBfo5DDEAS3Z-F5LnAIv27Q3259la3QLZghjnF5R8udNJqY0Toq6SHw5JvN3PqANThsUOvwujXixkrq5zZBH5OW_D3QTRD3qObufW5Uz2-ahDe36xdtDHuA8SK2Ldhp4wpMReozYAnqkNj5ZG3A37LwDOS6aXDnCEg_MNh_j2C1VKegB7PNMCwMV-jwzYAwrhuqG1UCGjQoSl3A0QRKO-gFHlQ'],
-                    ['brand' => 'Maëva House', 'name' => 'Silk Slip Dress', 'price' => '$195.00', 'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuBrQWexD2Xms4d7-qplQNqqTI4EebkIxaCqpOssP3jfxkcDDAjBvE4kuCEgO-j-Yd-Vfxm6sW-zOaQShx89-kFo0JwvaQ9DnVYjw0ZeHlwNYQaWtigNJNUb1P2E3VS7jVbvb2gfkn5AgK0_pHzGjUiSO2kjiDWXbTKy2tRqRQq5I2md_UYdyHQR_axy07aFn3BeoVctJgri9jLNSSEizCJoXGSF5I0rX6QAaqkzanalXeH6sTmuLnA'],
-                    ['brand' => 'Kayana Apparel', 'name' => 'Geometric Gold Hoops', 'price' => '$85.00', 'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuAXqNhNFWMr-Gm8_uwAVgBbqtzcNdb5MAfQUsG_3GJbmE0gm167f27WLQY44QclgDSw7N_b2k0qpe9HdTKZlExYsZl6FJUCnKft0foIHP3pp3uFUAxnwrYM3o7ap46wCmmnSGAbNN-gDM_Kptg0bVNG6ghZhp7r3PeQ66ZD2yhgIMKhB9sSycHTa8yXBJ3fTbNvx2tH5SUu76da_WcZ3bJW7JeJmVuEnVOdIHENcwQB0a1sOCp-u_s'],
-                ] as $product)
-<div class="flex flex-col group cursor-pointer">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter" id="wishlist-grid">
+@forelse ($items as $item)
+@php
+    $p = $item->product;
+    $img = $p?->images->first()?->file_gambar ?? '';
+    $minPrice = $p?->variants->min('harga') ?? $p?->harga_dasar ?? 0;
+    $brand = $p?->store?->nama_toko ?? __('RALIVA');
+@endphp
+<div class="flex flex-col group" data-wishlist-item data-product-id="{{ $p?->product_id }}">
+<a href="{{ $p ? route('customer.shop.produk-detail', $p->product_id) : '#' }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden rounded-lg">
-<img loading="lazy" decoding="async" alt="{{ $product['name'] }}" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" src="{{ $product['img'] }}"/>
-<span role="button" tabindex="0" aria-label="{{ __('Remove from wishlist') }}" class="absolute top-2 right-2 p-2 rounded-full bg-black/15 backdrop-blur-sm text-white hover:bg-black/30 hover:text-secondary transition-colors flex items-center">
+<img loading="lazy" decoding="async" alt="{{ $p?->nama_produk ?? '' }}" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" src="{{ $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/product/900/1200' }}"/>
+<button type="button" aria-label="{{ __('Remove from wishlist') }}" data-wishlist-remove data-product-id="{{ $p?->product_id }}" class="absolute top-2 right-2 p-2 rounded-full bg-black/15 backdrop-blur-sm text-white hover:bg-black/30 hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite" data-weight="fill">favorite</span>
-</span>
+</button>
 </div>
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $product['brand'] }}</span>
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">{{ $product['name'] }}</h3>
-<span class="font-body-sm text-body-sm text-on-surface mt-1">{{ $product['price'] }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $brand }}</span>
+<h3 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">{{ $p?->nama_produk ?? '' }}</h3>
+<span class="font-body-sm text-body-sm text-on-surface mt-1">{{ $minPrice ? 'Rp ' . number_format($minPrice, 0, ',', '.') : '' }}</span>
 </a>
-<a href="{{ route('customer.chart') }}" class="btn-gold mt-sm font-label-caps text-label-caps px-xs py-xs lg:px-md uppercase tracking-widest transition-colors flex items-center justify-center gap-xs">
+<a href="{{ $p ? route('customer.shop.produk-detail', $p->product_id) : '#' }}" class="btn-gold mt-sm font-label-caps text-label-caps px-xs py-xs lg:px-md uppercase tracking-widest transition-colors flex items-center justify-center gap-xs">
 <span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
-{{ __('ADD TO CART') }}
+{{ __('VIEW PRODUCT') }}
 </a>
 </div>
-@endforeach
+@empty
+<div class="col-span-full flex flex-col items-center justify-center text-center py-2xl gap-md">
+<span class="material-symbols-outlined text-[72px] text-on-surface-variant/40" data-icon="favorite_border">favorite_border</span>
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('Wishlist Anda masih kosong.') }}</p>
+<a href="{{ route('customer.shop') }}" class="btn-gold mt-sm font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest transition-colors">{{ __('EXPLORE PRODUCTS') }}</a>
+</div>
+@endforelse
 </div>
 </div>
 </div>
 </main>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var grid = document.getElementById('wishlist-grid');
+        if (!grid) return;
+
+        grid.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-wishlist-remove]');
+            if (!btn) return;
+
+            var productId = btn.getAttribute('data-product-id');
+            var csrf = '{{ csrf_token() }}';
+            var url = '{{ route("customer.wishlist.destroy", 0) }}'.replace('/0', '/' + productId);
+
+            fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': csrf,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                if (data.status === 'removed') {
+                    var card = btn.closest('[data-wishlist-item]');
+                    if (card) card.remove();
+                    var countEl = document.getElementById('wishlist-count');
+                    if (countEl) countEl.textContent = data.count;
+
+                    if (grid.querySelectorAll('[data-wishlist-item]').length === 0) {
+                        grid.innerHTML = '<div class="col-span-full flex flex-col items-center justify-center text-center py-2xl gap-md">' +
+                            '<span class="material-symbols-outlined text-[72px] text-on-surface-variant/40" data-icon="favorite_border">favorite_border</span>' +
+                            '<p class="font-body-lg text-body-lg text-on-surface-variant">{{ __("Wishlist Anda masih kosong.") }}</p>' +
+                            '<a href="{{ route("customer.shop") }}" class="btn-gold mt-sm font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest transition-colors">{{ __("EXPLORE PRODUCTS") }}</a>' +
+                            '</div>';
+                    }
+                }
+            })
+            .catch(function () {});
+        });
+    });
+</script>
 <script>
     /* Subtle scroll reveal (parity home) */
     (function () {

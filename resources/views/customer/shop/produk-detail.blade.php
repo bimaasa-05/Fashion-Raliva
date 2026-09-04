@@ -359,9 +359,9 @@
         <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">RALIVA</h1>
         <div class="w-10"></div> <!-- Spacer for centering -->
         <div class="flex gap-xs">
-            <a aria-label="Wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="p-2 hover:opacity-70 transition-all duration-200 flex">
+            <button type="button" data-wishlist-toggle data-product-id="{{ $product->product_id }}" aria-label="Wishlist" class="p-2 hover:opacity-70 transition-all duration-200 flex">
                 <span class="material-symbols-outlined text-[24px]">favorite_border</span>
-                </a>
+                </button>
             <a aria-label="Cart" href="{{ route('customer.chart') }}" class="relative p-2 hover:opacity-70 transition-all duration-200 flex">
                 <span class="material-symbols-outlined text-[24px]">shopping_cart</span>
                 <span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
@@ -422,7 +422,7 @@
                                 </div>
                             <!-- Desktop Actions -->
                             <div class="hidden lg:flex gap-sm mt-xl">
-                                <a href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="flex-1 h-12 border border-secondary text-secondary bg-transparent font-label-caps text-label-caps tracking-widest hover:bg-secondary/5 transition-colors flex items-center justify-center">
+                                <a href="{{ route('customer.chart') }}" class="flex-1 h-12 border border-secondary text-secondary bg-transparent font-label-caps text-label-caps tracking-widest hover:bg-secondary/5 transition-colors flex items-center justify-center">
                                     {{ __('ADD TO CART') }}
                                     </a>
                                 <a href="{{ route('customer.checkout') }}" class="btn-gold flex-1 h-12 font-label-caps text-label-caps tracking-widest flex items-center justify-center">
@@ -541,9 +541,9 @@
                         <a href="{{ route('customer.shop.produk-detail', $rp->product_id) }}" class="block group cursor-pointer">
                             <div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant overflow-hidden">
                                 <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" alt="{{ $rp->nama_produk }}" src="{{ $rpImage ? (filter_var($rpImage, FILTER_VALIDATE_URL) ? $rpImage : asset($rpImage)) : 'https://picsum.photos/seed/related/900/1200' }}"/>
-                                <button type="button" aria-label="{{ __('Add to wishlist') }}" data-url="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" onclick="goWishlist(this)" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
-                                    <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-                                    </button>
+<button type="button" data-wishlist-toggle data-product-id="{{ $rp->product_id }}" aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
+<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
+</button>
                                 </div>
                             <div class="space-y-1">
                                 <p class="font-label-sm text-label-sm text-on-surface-variant">{{ $rp->store?->nama_toko ?? __('RALIVA') }}</p>

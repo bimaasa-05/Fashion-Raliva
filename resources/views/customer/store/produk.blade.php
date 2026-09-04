@@ -314,9 +314,9 @@
 <span class="font-body-sm text-body-sm text-secondary mt-1">Rp {{ number_format($pMin, 0, ',', '.') }}</span>
 </div>
 </a>
-<a aria-label="Add to wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="absolute top-2 right-2 p-2 text-on-surface-variant hover:text-[var(--chrome-accent)] transition-colors flex items-center z-10">
+<button type="button" data-wishlist-toggle data-product-id="{{ $p->product_id }}" aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface-variant hover:text-[var(--chrome-accent)] transition-colors flex items-center z-10">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</a>
+</button>
 </div>
 @empty
 <div class="col-span-full text-center py-xl">

@@ -155,3 +155,4 @@
         }
         applyThemeIcon();
     </script>
+@include('customer._partials.wishlist-script')
