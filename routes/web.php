@@ -214,6 +214,8 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/manajemen-toko/{toko}/tolak', [ManajemenTokoController::class, 'tolak'])->name('manajemen-toko.tolak');
     Route::post('/manajemen-toko/{toko}/tangguhkan', [ManajemenTokoController::class, 'tangguhkan'])->name('manajemen-toko.tangguhkan');
     Route::post('/manajemen-toko/{toko}/aktifkan', [ManajemenTokoController::class, 'aktifkan'])->name('manajemen-toko.aktifkan');
+    Route::post('/manajemen-toko/{toko}/dokumen/{dokumen}/setujui', [ManajemenTokoController::class, 'verifikasiDokumen'])->name('manajemen-toko.dokumen.setujui');
+    Route::post('/manajemen-toko/{toko}/dokumen/{dokumen}/tolak', [ManajemenTokoController::class, 'tolakDokumen'])->name('manajemen-toko.dokumen.tolak');
     Route::get('/moderasi-produk', [ModerasiProdukController::class, 'index'])->name('moderasi-produk');
     Route::post('/moderasi-produk/{produk}/setujui', [ModerasiProdukController::class, 'setujui'])->name('moderasi-produk.setujui');
     Route::post('/moderasi-produk/{produk}/tolak', [ModerasiProdukController::class, 'tolak'])->name('moderasi-produk.tolak');
