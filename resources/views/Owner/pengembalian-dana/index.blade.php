@@ -1,5 +1,5 @@
 @php
-    $tab = $request->query('tab', 'pengajuan');
+    $tab = $activeTab ?? 'pengajuan';
     $tabs = [
         'pengajuan' => 'Pengajuan',
         'disetujui' => 'Disetujui',
@@ -101,8 +101,8 @@
                         </div>
                     </form>
                 </div>
+                @endif
                 @endforeach
-            @endforeach
         </div>
         @endif
     </section>
