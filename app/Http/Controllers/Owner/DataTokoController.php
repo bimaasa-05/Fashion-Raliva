@@ -37,10 +37,6 @@ class DataTokoController extends Controller
             'alamat' => ['required', 'string', 'max:500'],
             'nomor_telepon' => ['required', 'string', 'max:20'],
             'email' => ['required', 'email', 'max:150'],
-            'operational_hours' => ['nullable', 'array'],
-            'operational_hours.*.buka' => ['nullable', 'boolean'],
-            'operational_hours.*.mulai' => ['nullable', 'string', 'max:5'],
-            'operational_hours.*.selesai' => ['nullable', 'string', 'max:5'],
         ]);
 
         $store->update([
@@ -48,7 +44,6 @@ class DataTokoController extends Controller
             'deskripsi' => $validated['deskripsi'],
             'alamat' => $validated['alamat'],
             'nomor_telepon' => $validated['nomor_telepon'],
-            'operational_hours' => $validated['operational_hours'] ?? $store->operational_hours,
         ]);
 
         // Email ada di tabel users, bukan stores.
