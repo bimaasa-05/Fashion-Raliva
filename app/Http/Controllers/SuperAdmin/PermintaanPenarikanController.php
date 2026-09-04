@@ -146,7 +146,22 @@ class PermintaanPenarikanController extends Controller
             ]);
         }
 
-        DB::transaction(function () use ($penarikan) {
+        $data = $request->validate([
+            'file_bukti' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+            'deskripsi_bukti' => ['nullable', 'string', 'max:1000'],
+        ], [
+            'file_bukti.required' => 'Bukti transfer wajib dilampirkan.',
+            'file_bukti.mimes' => 'Bukti transfer harus berupa JPG, PNG, atau PDF.',
+            'file_bukti.max' => 'Ukuran bukti transfer maksimal 5 MB.',
+            'deskripsi_bukti.max' => 'Deskripsi bukti maksimal 1000 karakter.',
+        ]);
+
+        $path = $request->file('file_bukti')->store(
+            'bukti-penarikan/'.$penarikan->withdrawal_id,
+            'public'
+        );
+
+        DB::transaction(function () use ($penarikan, $path, $data) {
             $wallet = $penarikan->wallet()->lockForUpdate()->firstOrFail();
             $saldoSebelum = (float) $wallet->saldo_tertahan;
 
@@ -165,6 +180,9 @@ class PermintaanPenarikanController extends Controller
             $penarikan->update([
                 'status' => Withdrawal::STATUS_DIBAYAR,
                 'dibayar_pada' => now(),
+                'file_bukti' => $path,
+                'deskripsi_bukti' => $data['deskripsi_bukti'] ?? null,
+                'bukti_diupload_pada' => now(),
             ]);
         });
 
