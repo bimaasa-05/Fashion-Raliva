@@ -373,6 +373,9 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/paket-slot', [OwnerPaketSlotController::class, 'index'])->name('paket-slot');
     Route::get('/pencairan-dana', [OwnerPencairanDanaController::class, 'index'])->name('pencairan-dana');
     Route::get('/pengembalian-dana', [OwnerPengembalianDanaController::class, 'index'])->name('pengembalian-dana');
+    Route::post('/pengembalian-dana/{refund}/setujui', [OwnerPengembalianDanaController::class, 'setujui'])->name('pengembalian-dana.setujui');
+    Route::post('/pengembalian-dana/{refund}/tolak', [OwnerPengembalianDanaController::class, 'tolak'])->name('pengembalian-dana.tolak');
+    Route::post('/pengembalian-dana/{refund}/selesaikan', [OwnerPengembalianDanaController::class, 'selesaikan'])->name('pengembalian-dana.selesaikan');
     Route::get('/pengiriman', [OwnerPengirimanController::class, 'index'])->name('pengiriman');
     Route::get('/produksi', [OwnerProduksiController::class, 'index'])->name('produksi');
     Route::get('/notifikasi', [OwnerNotifikasiController::class, 'index'])->name('notifikasi');
