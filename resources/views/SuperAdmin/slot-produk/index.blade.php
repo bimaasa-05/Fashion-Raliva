@@ -64,7 +64,7 @@
 
     @if ($section === 'kuota')
         <!-- KUOTA TOKO -->
-        <section class="rise rise-d1">
+        <section class="rise rise-d1" data-table-scope>
             <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
                     <div>
