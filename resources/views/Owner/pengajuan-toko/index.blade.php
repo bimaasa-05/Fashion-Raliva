@@ -28,15 +28,13 @@
         $hasStore = $store !== null;
         $hasDocs = $documents->isNotEmpty();
         $docsCount = $documents->count();
-        $allVerified = $docsCount === 4 && $documents->every(fn($d) => $d->status === 'terverifikasi');
-        $allDocsUploaded = $docsCount === 4;
         $storeStatus = $store?->status;
         $isAktif = $storeStatus === 'aktif';
         $isPending = $storeStatus === 'pending';
         $isDitolak = $storeStatus === 'ditolak';
         $step1Done = $hasStore;
-        $step2Done = $hasStore && $allDocsUploaded;
-        $step3Done = $hasStore && $allVerified;
+        $step2Done = $hasStore && $hasDocs;
+        $step3Done = $isPending || $isAktif;
         $step4Done = $isAktif;
         $statusTitle = $isAktif ? 'Toko Telah Disetujui' : ($isDitolak ? 'Pengajuan Ditolak' : ($hasStore ? 'Pengajuan Diproses' : 'Belum Mengajukan Toko'));
         $statusLine = $hasStore
@@ -65,9 +63,9 @@
             </div>
         </div>
 
-        {{-- Timeline Real --}}
-        <div class="mt-10 overflow-x-auto pb-2">
-            <ol class="flex min-w-[640px] items-start">
+        {{-- Timeline Real — center --}}
+        <div class="mt-10 overflow-x-auto pb-2 flex justify-center">
+            <ol class="flex min-w-[640px] max-w-3xl w-full items-center justify-center">
                 @php
                     $steps = [
                         ['Pengajuan Dikirim', $hasStore ? optional($store->created_at)->translatedFormat('d M Y') : '-', $step1Done],
@@ -77,15 +75,15 @@
                     ];
                 @endphp
                 @foreach ($steps as $step)
-                    <li class="flex-1 relative {{ $loop->last ? '' : 'pr-6' }}">
+                    <li class="flex-1 relative flex flex-col items-center text-center">
                         @if (! $loop->last)
-                            <span class="absolute top-[22px] left-[44px] right-0 h-[3px] {{ $step[2] ? 'bg-gold-accent/60' : 'bg-outline-variant' }} rounded-full"></span>
+                            <span class="absolute top-[22px] left-1/2 ml-[22px] right-0 h-[3px] {{ $step[2] ? 'bg-gold-accent/60' : 'bg-outline-variant' }} rounded-full"></span>
                         @endif
-                        <div class="relative z-10 flex flex-col items-start gap-3">
+                        <div class="relative z-10 flex flex-col items-center gap-3">
                             <span class="w-11 h-11 rounded-full {{ $step[2] ? 'bg-deep-onyx text-on-primary' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant' }} flex items-center justify-center ring-4 ring-surface-container-lowest">
                                 <span class="material-symbols-outlined {{ $step[2] ? 'fill' : '' }} text-[20px]">{{ $step[2] ? 'check' : 'schedule' }}</span>
                             </span>
-                            <div class="pl-0.5">
+                            <div>
                                 <p class="font-title-md text-sm {{ $step[2] ? 'text-on-surface' : 'text-on-surface-variant' }} leading-tight">{{ $step[0] }}</p>
                                 <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant mt-1">{{ $step[1] }}</p>
                             </div>
