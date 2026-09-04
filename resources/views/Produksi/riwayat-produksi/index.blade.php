@@ -22,25 +22,25 @@
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Produksi (Agu)</span>
             <span class="raliva-figure text-[26px] text-on-surface">32</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">batch selesai</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">history</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">history</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Waktu Rata-rata</span>
             <span class="raliva-figure text-[26px] text-on-surface">6,2<span class="text-[16px] font-normal"> hari</span></span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">per batch</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">timer</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">timer</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Kelayakan Rata-rata</span>
             <span class="raliva-figure text-[26px] text-secondary">96%</span>
             <span class="font-label-sm text-[11px] text-secondary">layak jual</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">verified</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">verified</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Defect Rate</span>
             <span class="raliva-figure text-[26px] text-error">3,8%</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">dari total output</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">percent</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">percent</span>
         </div>
     </section>
 
