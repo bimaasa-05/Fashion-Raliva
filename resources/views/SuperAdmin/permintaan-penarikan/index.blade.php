@@ -114,7 +114,7 @@
                         <th class="p-6">Detail Pengajuan</th>
                         <th class="p-6">Info Bank</th>
                         <th class="p-6 text-center">Status</th>
-                        <th class="p-6">Dibayar</th>
+                        <th class="p-6 text-center">Dibayar</th>
                         <th class="p-6 text-right">Aksi</th>
                     </tr>
                 </thead>
@@ -148,7 +148,19 @@
                             <td class="p-6 text-center">
                                 <span class="inline-flex items-center px-2 py-1 rounded {{ $badge['class'] }} text-xs uppercase">{{ $badge['label'] }}</span>
                             </td>
-                            <td class="p-6 text-on-surface-variant text-xs">{{ $w->dibayar_pada ? \Carbon\Carbon::parse($w->dibayar_pada)->locale('id')->diffForHumans() : '-' }}</td>
+                            <td class="p-6 text-center">
+                                @if ($w->dibayar_pada)
+                                    <p class="text-on-surface-variant text-xs">{{ \Carbon\Carbon::parse($w->dibayar_pada)->locale('id')->diffForHumans() }}</p>
+                                @else
+                                    <span class="text-on-surface-variant text-xs">-</span>
+                                @endif
+                                @if ($w->file_bukti)
+                                    <a href="{{ asset('storage/' . $w->file_bukti) }}" target="_blank" rel="noopener"
+                                        class="mt-1 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-secondary hover:underline">
+                                        <span class="material-symbols-outlined text-[13px]">visibility</span>Lihat Bukti
+                                    </a>
+                                @endif
+                            </td>
                             <td class="p-6 text-right">
                                 @if ($w->status === 'pending')
                                     <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
@@ -222,7 +234,15 @@
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">Dibayar</dt>
-                            <dd class="text-on-surface text-right">{{ $w->dibayar_pada ? \Carbon\Carbon::parse($w->dibayar_pada)->locale('id')->diffForHumans() : '-' }}</dd>
+                            <dd class="text-on-surface text-right">
+                                {{ $w->dibayar_pada ? \Carbon\Carbon::parse($w->dibayar_pada)->locale('id')->diffForHumans() : '-' }}
+                                @if ($w->file_bukti)
+                                    <a href="{{ asset('storage/' . $w->file_bukti) }}" target="_blank" rel="noopener"
+                                        class="mt-1 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-secondary hover:underline">
+                                        <span class="material-symbols-outlined text-[13px]">visibility</span>Lihat Bukti
+                                    </a>
+                                @endif
+                            </dd>
                         </div>
                     </dl>
 
@@ -253,7 +273,7 @@
 
 <!-- Dialogs -->
 <div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="paid-dialog">
-    <form method="POST" action="" id="paid-form" onsubmit="hideDialog('paid-dialog')">
+    <form method="POST" action="" id="paid-form" enctype="multipart/form-data" onsubmit="hideDialog('paid-dialog')">
         @csrf
         <div class="bg-surface-container-lowest border border-gold-accent/25 p-6 max-w-md w-full shadow-2xl rounded-xl">
             <div class="w-14 h-14 rounded-full bg-secondary-container/30 border border-secondary/25 flex items-center justify-center mx-auto mb-4">
@@ -261,6 +281,19 @@
             </div>
             <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4 text-center">Tandai Sudah Dibayar</h3>
             <p class="font-body-md text-body-md text-on-surface-variant mb-2 text-center">Konfirmasikan bahwa dana sebesar <span id="paid-nominal" class="font-title-md text-gold-accent">-</span> untuk <span id="paid-toko" class="font-bold text-on-surface">-</span> telah dikirim ke rekening tujuan.</p>
+            <div class="mt-5 space-y-4">
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Bukti Transfer <span class="text-error">*</span></label>
+                    <input type="file" name="file_bukti" required accept=".jpg,.jpeg,.png,.pdf"
+                        class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
+                    <p class="text-on-surface-variant text-[11px] mt-2 inline-flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">info</span>Wajib dilampirkan sebagai bukti transparansi (JPG, PNG, atau PDF, maks 5MB).</p>
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Deskripsi / No. Referensi (opsional)</label>
+                    <input type="text" name="deskripsi_bukti" maxlength="1000" placeholder="Contoh: Transfer BCA dari rekening platform Raliva"
+                        class="w-full border border-muted-border bg-surface-container-low p-3 font-body-md text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
+                </div>
+            </div>
             <div class="flex justify-end gap-4 mt-6">
                 <button type="button" class="border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase hover:bg-surface-container transition-colors" onclick="hideDialog('paid-dialog')">Batal</button>
                 <button type="submit" class="bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase hover:opacity-90 transition-opacity btn-premium">Ya, Sudah Dibayar</button>
