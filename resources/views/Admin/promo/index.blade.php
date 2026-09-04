@@ -20,15 +20,15 @@
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Promo</h2>
         <div class="grid grid-cols-2 lg:grid-cols-3 gap-gutter mb-8">
-            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
+            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden"><span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">local_offer</span>
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Total Promo</p>
                 <p class="font-title-md text-title-md text-on-surface mt-1">{{ $promos->total() ?? $promos->count() }}</p>
             </div>
-            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
+            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden"><span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">check_circle</span>
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Aktif</p>
                 <p class="font-title-md text-title-md text-secondary mt-1">{{ $promos->where('status', 'aktif')->count() }}</p>
             </div>
-            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
+            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden"><span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">schedule</span>
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Non-aktif</p>
                 <p class="font-title-md text-title-md text-on-surface-variant mt-1">{{ $promos->where('status', '!=', 'aktif')->count() }}</p>
             </div>
