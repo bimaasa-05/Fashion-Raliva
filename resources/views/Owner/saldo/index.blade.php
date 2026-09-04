@@ -53,14 +53,14 @@
             </div>
 
             <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col relative overflow-hidden">
-                <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
+                <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
                 <p class="raliva-label relative">Saldo Tertunda</p>
                 <p class="raliva-figure text-[26px] mt-4 text-on-surface relative">{{ $fmt($wallet->saldo_tertahan) }}</p>
                 <p class="text-on-surface-variant font-body-md text-xs mt-auto pt-6 relative">Dana dilepas otomatis menjadi saldo tersedia H+2 setelah pesanan selesai.</p>
             </div>
 
             <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col relative overflow-hidden">
-                <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">savings</span>
+                <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">savings</span>
                 <p class="raliva-label relative">Total Dicairkan</p>
                 <p class="raliva-figure text-[26px] mt-4 text-secondary relative">{{ $fmt($totalDicairkan) }}</p>
                 <div class="flex items-center justify-between mt-auto pt-6 relative gap-gutter flex-wrap">
