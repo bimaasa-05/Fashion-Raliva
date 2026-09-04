@@ -54,7 +54,7 @@
 
     <section class="space-y-gutter">
         <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Mutasi Terbaru</h2>
-        <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
+        <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg hidden md:block card-premium">
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -91,8 +91,46 @@
                             <td colspan="8" class="p-8 text-center text-on-surface-variant">Belum ada mutasi tercatat.</td>
                         </tr>
                     @endforelse
-                </tbody>
-            </table>
+            </tbody>
+        </table>
+        </div>
+
+        <!-- Mobile: kartu mutasi terbaru -->
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse($transactions as $tx)
+                @php
+                    $isPositive = in_array($tx->jenis_transaksi, ['penjualan_masuk', 'komisi_masuk', 'penyesuaian']);
+                @endphp
+                <article class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="min-w-0">
+                            <p class="font-title-md text-title-md text-on-surface truncate">{{ $tx->wallet->store->nama_toko ?? '-' }}</p>
+                            <p class="text-on-surface-variant text-xs uppercase mt-0.5">{{ str_replace('_', ' ', $tx->jenis_transaksi) }}</p>
+                        </div>
+                        <p class="font-bold whitespace-nowrap {{ $isPositive ? 'text-secondary' : 'text-error' }}">{{ $isPositive ? '+' : '-' }} Rp {{ number_format(abs((float)$tx->jumlah), 0, ',', '.') }}</p>
+                    </div>
+                    <dl class="space-y-2 font-body-md text-sm">
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Keterangan</dt>
+                            <dd class="text-on-surface text-right">{{ $tx->keterangan ?? '-' }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Saldo Sebelum</dt>
+                            <dd class="text-on-surface-variant text-right">Rp {{ number_format((float)$tx->saldo_sebelum, 0, ',', '.') }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Saldo Sesudah</dt>
+                            <dd class="text-on-surface text-right">Rp {{ number_format((float)$tx->saldo_sesudah, 0, ',', '.') }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Waktu</dt>
+                            <dd class="text-on-surface text-right">{{ $tx->created_at ? \Carbon\Carbon::parse($tx->created_at)->locale('id')->diffForHumans() : '-' }}</dd>
+                        </div>
+                    </dl>
+                </article>
+            @empty
+                <p class="text-center text-on-surface-variant py-10">Belum ada mutasi tercatat.</p>
+            @endforelse
         </div>
     </section>
 </div>

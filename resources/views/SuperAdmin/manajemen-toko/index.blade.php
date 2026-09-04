@@ -78,6 +78,7 @@
                 data-desc="{{ $store->deskripsi }}"
                 data-reason="{{ $store->alasan_penolakan }}"
                 data-phone="{{ $store->nomor_telepon ?? '-' }}"
+                data-dokumen='{{ $item->dokumen->map(fn ($d) => ["id" => $d->store_document_id, "jenis" => $d->jenis, "status" => $d->status, "path" => $d->path, "catatan" => $d->catatan])->toJson() }}'
                 onclick="openStoreModal(this)"
                 class="toko-card group bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden cursor-pointer card-premium">
                 <div class="h-1 w-full {{ $isSuspended || $store->status === \App\Models\Store::STATUS_DITOLAK
@@ -156,12 +157,15 @@
     };
 
     let activeCard = null;
+    let activeDocPaths = [];
 
     const actionUrls = {
         setujui: (id) => '{{ route('superadmin.manajemen-toko.setujui', ':id:') }}'.replace(':id:', id),
         tolak: (id) => '{{ route('superadmin.manajemen-toko.tolak', ':id:') }}'.replace(':id:', id),
         tangguhkan: (id) => '{{ route('superadmin.manajemen-toko.tangguhkan', ':id:') }}'.replace(':id:', id),
-        aktifkan: (id) => '{{ route('superadmin.manajemen-toko.aktifkan', ':id:') }}'.replace(':id:', id)
+        aktifkan: (id) => '{{ route('superadmin.manajemen-toko.aktifkan', ':id:') }}'.replace(':id:', id),
+        dokumenSetujui: (sid, did) => '{{ route('superadmin.manajemen-toko.dokumen.setujui', [':sid:', ':did:']) }}'.replace(':sid:', sid).replace(':did:', did),
+        dokumenTolak: (sid, did) => '{{ route('superadmin.manajemen-toko.dokumen.tolak', [':sid:', ':did:']) }}'.replace(':sid:', sid).replace(':did:', did)
     };
 
     function openStoreModal(card) {
@@ -184,6 +188,8 @@
         document.getElementById('info-joined').textContent = d.joined;
         document.getElementById('info-verification').textContent = meta.verification;
         document.getElementById('info-phone').textContent = d.phone || '-';
+
+        renderStoreDocs(d.id, JSON.parse(d.dokumen || '[]'));
 
         const reasonBox = document.getElementById('reject-reason-box');
         if (d.status === 'ditolak' && d.reason) {
@@ -248,8 +254,98 @@
         modal.classList.remove('flex');
     }
 
+    const docMeta = {
+        ktp: { label: 'KTP / Identitas Owner', icon: 'description' },
+        npwp: { label: 'NPWP Toko', icon: 'receipt_long' },
+        foto_depan: { label: 'Foto Depan Toko', icon: 'storefront' },
+        siu: { label: 'Surat Izin Usaha (NIB)', icon: 'gavel' }
+    };
+
+    function previewUrl(path) {
+        return '{{ asset('storage') }}' + '/' + path;
+    }
+
+    function renderStoreDocs(storeId, docs = []) {
+        const container = document.getElementById('store-docs-list');
+        const allBtn = document.getElementById('btn-open-all-docs');
+        const ordered = ['ktp', 'npwp', 'foto_depan', 'siu'];
+        activeDocPaths = [];
+        if (!docs || docs.length === 0) {
+            container.innerHTML = '<div class="bg-surface-container-low border border-muted-border rounded-lg p-4 text-sm text-on-surface-variant">Belum ada dokumen diunggah.</div>';
+            allBtn.classList.add('hidden');
+            return;
+        }
+        const present = docs.reduce((acc, d) => { acc[d.jenis] = d; return acc; }, {});
+        let html = '';
+        ordered.forEach(function (jenis) {
+            const d = present[jenis];
+            if (!d) return;
+            activeDocPaths.push(d.path);
+            const meta = docMeta[jenis] || { label: jenis, icon: 'description' };
+            const verified = d.status === 'terverifikasi';
+            const rejected = d.status === 'ditolak';
+            const badgeClass = verified ? 'bg-secondary-container/20 text-secondary border-secondary/20'
+                : (rejected ? 'bg-error/10 text-error border-error/20'
+                   : 'bg-surface-container-high text-on-surface-variant border-outline-variant');
+            const badgeIcon = verified ? 'check_circle' : (rejected ? 'cancel' : 'schedule');
+            const badgeLabel = verified ? 'Terverifikasi' : (rejected ? 'Ditolak' : 'Menunggu');
+            const catatan = rejected && d.catatan ? '<p class="text-xs text-on-surface-variant mt-2">' + d.catatan + '</p>' : '';
+            const metaLabelSafe = meta.label.replace(/'/g, "\\'");
+            const actions = verified ? ''
+                : '<div class="flex gap-2">'
+                    + '<form method="POST" action="' + actionUrls.dokumenSetujui(storeId, d.id) + '">@csrf<button type="submit" class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-secondary/40 text-secondary hover:bg-secondary/10">Setujui</button></form>'
+                    + '<button type="button" onclick="openDocRejectModal(\'' + storeId + '\',' + d.id + ',\'' + metaLabelSafe + '\')" class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-error/40 text-error hover:bg-error/10">Tolak</button>'
+                    + '</div>';
+            html += '<div class="bg-surface-container-low border border-muted-border rounded-lg p-4">'
+                + '<div class="flex items-start gap-3">'
+                + '<div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[18px]">' + meta.icon + '</span></div>'
+                + '<div class="min-w-0 flex-1">'
+                + '<span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Dokumen</span>'
+                + '<span class="font-title-md text-title-md text-on-surface block truncate">' + meta.label + '</span>'
+                + catatan
+                + '</div>'
+                + '<span class="inline-flex shrink-0 items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border ' + badgeClass + '"><span class="material-symbols-outlined fill text-[12px]">' + badgeIcon + '</span>' + badgeLabel + '</span>'
+                + '</div>'
+                + '<div class="flex items-center justify-between mt-4 pt-3 border-t border-muted-border">'
+                + '<a href="' + previewUrl(d.path) + '" target="_blank" rel="noopener" class="text-[11px] font-bold uppercase tracking-wider text-gold-accent inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span>Lihat</a>'
+                + actions
+                + '</div>'
+                + '</div>';
+        });
+        container.innerHTML = html || '<div class="bg-surface-container-low border border-muted-border rounded-lg p-4 text-sm text-on-surface-variant">Belum ada dokumen diunggah.</div>';
+        if (activeDocPaths.length > 0) {
+            allBtn.classList.remove('hidden');
+            allBtn.classList.add('inline-flex');
+        } else {
+            allBtn.classList.add('hidden');
+            allBtn.classList.remove('inline-flex');
+        }
+    }
+
+    function openAllDocs() {
+        if (activeDocPaths.length === 0) return;
+        activeDocPaths.forEach(function (path) {
+            window.open(previewUrl(path), '_blank', 'noopener');
+        });
+    }
+
+    function openDocRejectModal(storeId, docId, label) {
+        document.getElementById('doc-reject-name').textContent = label;
+        document.getElementById('doc-reject-form').action = actionUrls.dokumenTolak(storeId, docId);
+        document.getElementById('doc-reject-alasan-input').value = '';
+        const modal = document.getElementById('doc-reject-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeDocRejectModal() {
+        const modal = document.getElementById('doc-reject-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
     document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') { closeStoreModal(); closeRejectModal(); }
+        if (event.key === 'Escape') { closeStoreModal(); closeRejectModal(); closeDocRejectModal(); }
     });
 </script>
 @endpush
@@ -336,6 +432,18 @@
                     </div>
                 </div>
             </section>
+
+            <section>
+                <div class="flex items-center justify-between mb-4 gap-3">
+                    <h4 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Dokumen Toko</h4>
+                    <button id="btn-open-all-docs" type="button" onclick="openAllDocs()" class="hidden items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-gold-accent/40 text-gold-accent hover:bg-gold-accent/10 transition-colors">
+                        <span class="material-symbols-outlined text-[14px]">folder_open</span>Lihat Semua Sertifikat
+                    </button>
+                </div>
+                <div id="store-docs-list" class="grid sm:grid-cols-2 gap-gutter">
+                    <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 text-sm text-on-surface-variant">Belum ada dokumen.</div>
+                </div>
+            </section>
         </div>
 
         <div class="shrink-0 border-t border-muted-border bg-surface/95 backdrop-blur px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -367,6 +475,26 @@
                 <textarea required minlength="10" maxlength="1000" name="alasan" id="reject-alasan-input" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-6 min-h-[120px] resize-none" placeholder="Misal: Dokumen izin usaha belum lengkap... (minimal 10 karakter)"></textarea>
                 <div class="flex justify-end gap-3">
                     <button type="button" class="px-4 py-2.5 text-on-surface-variant font-label-sm text-[11px] uppercase tracking-wider hover:text-on-surface transition-colors" onclick="closeRejectModal()">Batal</button>
+                    <button type="submit" class="px-6 py-2.5 bg-error text-on-error font-label-sm text-[11px] uppercase tracking-wider rounded-lg hover:opacity-90 transition-opacity btn-premium">Konfirmasi Penolakan</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div aria-labelledby="doc-reject-title" aria-modal="true" role="dialog" class="fixed inset-0 z-[120] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="doc-reject-modal" onclick="if (event.target === this) closeDocRejectModal()">
+    <form id="doc-reject-form" method="POST" action="" onsubmit="closeDocRejectModal(); closeStoreModal()">
+        @csrf
+        <div class="relative z-10 bg-surface-container-lowest w-full max-w-md border border-muted-border rounded-xl shadow-2xl overflow-hidden">
+            <div class="p-8">
+                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
+                    <span class="material-symbols-outlined text-error text-[28px]">gpp_bad</span>
+                </div>
+                <h3 class="font-display-lg text-headline-lg-mobile text-center mb-2" id="doc-reject-title">Tolak Dokumen</h3>
+                <p class="text-on-surface-variant text-sm text-center mb-6">Berikan alasan penolakan untuk <span id="doc-reject-name" class="font-bold text-on-surface">-</span>. Pesan ini akan dikirim ke pemilik toko.</p>
+                <textarea required minlength="3" maxlength="1000" name="alasan" id="doc-reject-alasan-input" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-6 min-h-[120px] resize-none" placeholder="Alasan penolakan dokumen... (minimal 3 karakter)"></textarea>
+                <div class="flex justify-end gap-3">
+                    <button type="button" class="px-4 py-2.5 text-on-surface-variant font-label-sm text-[11px] uppercase tracking-wider hover:text-on-surface transition-colors" onclick="closeDocRejectModal()">Batal</button>
                     <button type="submit" class="px-6 py-2.5 bg-error text-on-error font-label-sm text-[11px] uppercase tracking-wider rounded-lg hover:opacity-90 transition-opacity btn-premium">Konfirmasi Penolakan</button>
                 </div>
             </div>

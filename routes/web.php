@@ -92,6 +92,7 @@ use App\Http\Controllers\SuperAdmin\ProfilController;
 use App\Http\Controllers\SuperAdmin\PromoPlatformController;
 use App\Http\Controllers\SuperAdmin\RiwayatAktivitasController;
 use App\Http\Controllers\SuperAdmin\SaldoTokoController;
+use App\Http\Controllers\SuperAdmin\SlotProdukController;
 use App\Http\Controllers\SuperAdmin\StokController as SaStokController;
 use App\Http\Controllers\SuperAdmin\StoreStaffController;
 use App\Http\Controllers\SuperAdmin\UlasanProdukTokoController;
@@ -108,8 +109,8 @@ Route::post('/login', [LoginController::class, 'store']);
 Route::get('/register', [RegisterController::class, 'create'])->name('register');
 Route::post('/register', [RegisterController::class, 'store']);
 Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->middleware('auth');
-Route::get('/forgot-password', fn() => view('customer.auth.forgot-password'))->name('password.request');
-Route::get('/reset-password', fn() => view('customer.auth.reset-password'))->name('password.reset');
+Route::get('/forgot-password', fn () => view('customer.auth.forgot-password'))->name('password.request');
+Route::get('/reset-password', fn () => view('customer.auth.reset-password'))->name('password.reset');
 
 // customer
 Route::prefix('customer')->name('customer.')->group(function () {
@@ -216,6 +217,8 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/manajemen-toko/{toko}/tolak', [ManajemenTokoController::class, 'tolak'])->name('manajemen-toko.tolak');
     Route::post('/manajemen-toko/{toko}/tangguhkan', [ManajemenTokoController::class, 'tangguhkan'])->name('manajemen-toko.tangguhkan');
     Route::post('/manajemen-toko/{toko}/aktifkan', [ManajemenTokoController::class, 'aktifkan'])->name('manajemen-toko.aktifkan');
+    Route::post('/manajemen-toko/{toko}/dokumen/{dokumen}/setujui', [ManajemenTokoController::class, 'verifikasiDokumen'])->name('manajemen-toko.dokumen.setujui');
+    Route::post('/manajemen-toko/{toko}/dokumen/{dokumen}/tolak', [ManajemenTokoController::class, 'tolakDokumen'])->name('manajemen-toko.dokumen.tolak');
     Route::get('/moderasi-produk', [ModerasiProdukController::class, 'index'])->name('moderasi-produk');
     Route::post('/moderasi-produk/{produk}/setujui', [ModerasiProdukController::class, 'setujui'])->name('moderasi-produk.setujui');
     Route::post('/moderasi-produk/{produk}/tolak', [ModerasiProdukController::class, 'tolak'])->name('moderasi-produk.tolak');
@@ -284,6 +287,13 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/store-staff', [StoreStaffController::class, 'store'])->name('store-staff.store');
     Route::get('/store-staff/{staff}', [StoreStaffController::class, 'show'])->name('store-staff.show');
     Route::put('/store-staff/{staff}', [StoreStaffController::class, 'update'])->name('store-staff.update');
+    Route::get('/slot-produk', [SlotProdukController::class, 'index'])->name('slot-produk');
+    Route::post('/slot-produk/toko/{store}/kuota', [SlotProdukController::class, 'updateQuota'])->name('slot-produk.kuota');
+    Route::post('/slot-produk/toko/{store}/tambah', [SlotProdukController::class, 'grantManual'])->name('slot-produk.tambah-manual');
+    Route::post('/slot-produk/paket', [SlotProdukController::class, 'storePackage'])->name('slot-produk.paket.store');
+    Route::post('/slot-produk/paket/{paket}/toggle', [SlotProdukController::class, 'togglePackage'])->name('slot-produk.paket.toggle');
+    Route::post('/slot-produk/permintaan/{rmt}/setujui', [SlotProdukController::class, 'approvePurchase'])->name('slot-produk.permintaan.setujui');
+    Route::post('/slot-produk/permintaan/{rmt}/tolak', [SlotProdukController::class, 'rejectPurchase'])->name('slot-produk.permintaan.tolak');
 });
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->group(function () {
@@ -338,7 +348,7 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang'])->g
     Route::get('/stok-rusak', [GudangStokRusakController::class, 'index'])->name('stok-rusak');
     Route::get('/riwayat-stok', [GudangRiwayatStokController::class, 'index'])->name('riwayat-stok');
     Route::get('/pelanggan-request', [GudangPelangganRequestController::class, 'index'])->name('pelanggan-request');
-    Route::post('/pelanggan-request/konfirmasi', [GudangPelangganRequestController::class, 'konfirmasi'])->name('pelanggan-request.konfirmasi');
+    Route::post('/pelanggan-request/konfirmasi', [GudangPelangganRequestController::class, 'konfirmasi'])->name('pelanggan-request.konfirmasi')->middleware('permission:warehouse.stock_check');
     Route::get('/notifikasi', [GudangNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [GudangProfilController::class, 'index'])->name('profil');
     Route::post('/profil', [GudangProfilController::class, 'updateProfile'])->name('profil.update');
@@ -393,6 +403,9 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/pencairan-dana', [OwnerPencairanDanaController::class, 'index'])->name('pencairan-dana');
     Route::post('/pencairan-dana', [OwnerPencairanDanaController::class, 'store'])->name('pencairan-dana.store');
     Route::get('/pengembalian-dana', [OwnerPengembalianDanaController::class, 'index'])->name('pengembalian-dana');
+    Route::post('/pengembalian-dana/{refund}/setujui', [OwnerPengembalianDanaController::class, 'setujui'])->name('pengembalian-dana.setujui');
+    Route::post('/pengembalian-dana/{refund}/tolak', [OwnerPengembalianDanaController::class, 'tolak'])->name('pengembalian-dana.tolak');
+    Route::post('/pengembalian-dana/{refund}/selesaikan', [OwnerPengembalianDanaController::class, 'selesaikan'])->name('pengembalian-dana.selesaikan');
     Route::get('/pengiriman', [OwnerPengirimanController::class, 'index'])->name('pengiriman');
     Route::get('/produksi', [OwnerProduksiController::class, 'index'])->name('produksi');
     Route::get('/notifikasi', [OwnerNotifikasiController::class, 'index'])->name('notifikasi');

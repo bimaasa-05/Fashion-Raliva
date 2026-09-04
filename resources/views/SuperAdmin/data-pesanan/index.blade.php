@@ -10,43 +10,52 @@
 @section('content')
 <!-- Orders Management -->
 <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-    <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Data Pesanan</h2>
-
-    <!-- Filters -->
-    <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
-        <div class="flex items-center gap-2 shrink-0">
-            <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-            <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
-        </div>
-        <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
-        <div id="chip-group" class="flex flex-wrap gap-2">
-            <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua Pesanan</button>
-            <button type="button" data-chip="pending_payment" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu</button>
-            <button type="button" data-chip="dibayar" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Dibayar</button>
-            <button type="button" data-chip="diproses" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Diproses</button>
-            <button type="button" data-chip="dikirim" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Dikirim</button>
-            <button type="button" data-chip="selesai" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Selesai</button>
-            <button type="button" data-chip="dibatalkan" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Dibatalkan</button>
-            <button type="button" data-chip="refund" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Refund</button>
-        </div>
+    <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
+        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Data Pesanan</h2>
+        <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
+            <span class="material-symbols-outlined text-[18px]">tune</span>
+            Filter
+            <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
+        </button>
     </div>
 
-    <!-- Search + Result Count -->
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
-        <div class="relative flex-1">
-            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-            <input id="order-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nomor order, nama pelanggan, atau email..." />
-            <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
-                <span class="material-symbols-outlined text-[20px]">close</span>
-            </button>
+    <!-- Filters -->
+    <div data-filter-panel class="hidden md:block mb-6">
+        <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
+            <div class="flex items-center gap-2 shrink-0">
+                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+            </div>
+            <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
+            <div id="chip-group" class="flex flex-wrap gap-2">
+                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua Pesanan</button>
+                <button type="button" data-chip="pending_payment" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu</button>
+                <button type="button" data-chip="dibayar" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Dibayar</button>
+                <button type="button" data-chip="diproses" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Diproses</button>
+                <button type="button" data-chip="dikirim" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Dikirim</button>
+                <button type="button" data-chip="selesai" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Selesai</button>
+                <button type="button" data-chip="dibatalkan" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Dibatalkan</button>
+                <button type="button" data-chip="refund" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Refund</button>
+            </div>
         </div>
-        <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-            <span id="result-count">{{ $orders->count() }}</span> pesanan
-        </p>
+
+        <!-- Search + Result Count -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div class="relative flex-1">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                <input id="order-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nomor order, nama pelanggan, atau email..." />
+                <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+            <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span id="result-count">{{ $orders->count() }}</span> pesanan
+            </p>
+        </div>
     </div>
 
     <!-- Orders Table -->
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto hidden md:block">
         <table class="w-full min-w-full bg-surface-container-lowest rounded-lg overflow-hidden premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
@@ -125,6 +134,60 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Mobile: kartu per pesanan -->
+    <div class="md:hidden grid grid-cols-1 gap-gutter">
+        @forelse ($orders as $order)
+            @php
+                $statusMap = [
+                    'pending_payment' => ['Menunggu', 'bg-surface-container-high text-on-surface'],
+                    'dibayar' => ['Dibayar', 'bg-info/10 text-info'],
+                    'diproses' => ['Diproses', 'bg-surface-container-high text-on-surface'],
+                    'dikirim' => ['Dikirim', 'bg-surface-container-high text-on-surface'],
+                    'selesai' => ['Selesai', 'bg-success/10 text-success'],
+                    'dibatalkan' => ['Dibatalkan', 'bg-error/10 text-error'],
+                    'refund' => ['Refund', 'bg-error/10 text-error'],
+                ];
+                $st = $statusMap[$order->status] ?? [ucfirst($order->status), 'bg-surface-container-high text-on-surface'];
+                $pelanggan = $order->checkout?->user;
+            @endphp
+            <article data-table-row data-status="{{ $order->status }}" data-search="{{ strtolower($order->nomor_order.' '.($pelanggan->nama_lengkap ?? '').' '.($pelanggan->email ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                <div class="flex items-start justify-between gap-3 mb-3">
+                    <div class="min-w-0">
+                        <p class="font-mono font-bold text-on-surface leading-tight">{{ $order->nomor_order }}</p>
+                        <p class="text-xs text-on-surface-variant mt-0.5">{{ $order->waktu_relatif }}</p>
+                    </div>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded {{ $st[1] }} text-[10px] font-bold uppercase shrink-0">{{ $st[0] }}</span>
+                </div>
+
+                <dl class="space-y-2 font-body-md text-sm mb-4">
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-on-surface-variant">Toko</dt>
+                        <dd class="text-on-surface text-right">{{ $order->store->nama_toko ?? '-' }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-on-surface-variant">Pelanggan</dt>
+                        <dd class="text-on-surface text-right">{{ $pelanggan->nama_lengkap ?? '-' }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-on-surface-variant">Produk</dt>
+                        <dd class="text-on-surface text-right">{{ $order->jumlah_produk }} produk</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-on-surface-variant">Total</dt>
+                        <dd class="font-bold text-gold-accent text-right">Rp {{ number_format((float) $order->grand_total, 0, ',', '.') }}</dd>
+                    </div>
+                </dl>
+
+                <button type="button" data-detail-open="detail-pesanan" data-d-nomor="{{ $order->nomor_order }}" data-d-toko="{{ $order->store->nama_toko ?? '-' }}" data-d-produk="{{ $order->jumlah_produk }} produk" data-d-pelanggan="{{ $pelanggan->nama_lengkap ?? '-' }} ({{ $pelanggan->email ?? '' }})" data-d-total="Rp {{ number_format((float) $order->grand_total, 0, ',', '.') }}" data-d-status="{{ $st[0] }}" data-d-waktu="{{ $order->waktu_relatif }}" data-d-subtotal="Rp {{ number_format((float) $order->subtotal, 0, ',', '.') }}" data-d-diskon="Rp {{ number_format((float) $order->total_diskon, 0, ',', '.') }}" data-d-pajak="Rp {{ number_format((float) $order->total_pajak, 0, ',', '.') }}" data-d-layanan="Rp {{ number_format((float) $order->biaya_layanan, 0, ',', '.') }}" data-d-ongkir="Rp {{ number_format((float) $order->total_ongkir, 0, ',', '.') }}" class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">visibility</span>Detail
+                </button>
+            </article>
+        @empty
+            <p class="text-center text-on-surface-variant py-10">Belum ada pesanan tercatat.</p>
+        @endforelse
+        <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada pesanan yang cocok.</p>
+    </div>
 </section>
 
 <div id="detail-pesanan" data-modal class="fixed inset-0 z-[70] hidden">
@@ -163,12 +226,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const scope = document.querySelector('[data-table-scope]');
     if (!scope) return;
 
-    const rows = Array.from(scope.querySelectorAll('[data-table-row]'));
+    const rows = Array.from(scope.querySelectorAll('tr[data-table-row]'));
+    const cards = Array.from(scope.querySelectorAll('article[data-table-row]'));
     const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
     const searchInput = document.getElementById('order-search');
     const clearBtn = document.getElementById('clear-search');
     const countEl = document.getElementById('result-count');
     const emptySearch = document.getElementById('empty-search');
+    const emptySearchMobile = document.getElementById('empty-search-mobile');
 
     const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
     const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
@@ -179,19 +244,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const term = searchInput.value.trim().toLowerCase();
         let visible = 0;
 
-        rows.forEach((row, i) => {
-            const matchStatus = activeStatus === 'semua' || row.getAttribute('data-status') === activeStatus;
-            const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
+        const each = (el) => {
+            const matchStatus = activeStatus === 'semua' || el.getAttribute('data-status') === activeStatus;
+            const matchSearch = !term || (el.getAttribute('data-search') || '').includes(term);
             const show = matchStatus && matchSearch;
-            row.classList.toggle('hidden', !show);
-            if (show) {
-                visible++;
-                row.querySelector('.row-num').textContent = visible;
+            el.classList.toggle('hidden', !show);
+            if (show) visible++;
+            return show;
+        };
+
+        rows.forEach((row) => {
+            if (each(row)) {
+                const num = row.querySelector('.row-num');
+                if (num) num.textContent = visible;
             }
         });
+        cards.forEach(each);
 
         countEl.textContent = visible;
         emptySearch.classList.toggle('hidden', visible > 0);
+        emptySearchMobile?.classList.toggle('hidden', visible > 0);
 
         if (rows.length === 0) {
             emptySearch.classList.add('hidden');

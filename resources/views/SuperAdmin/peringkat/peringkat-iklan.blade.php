@@ -88,7 +88,7 @@
                 <span class="material-symbols-outlined text-[16px]">add</span> Daftarkan Slot Iklan
             </button>
         </div>
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto hidden md:block">
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -141,6 +141,52 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- Mobile: kartu peringkat -->
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse($slots as $slot)
+                @php
+                    $statusMap = [
+                        'aktif' => ['Aktif', 'bg-secondary-container/20 text-secondary border-secondary/20'],
+                        'nonaktif' => ['Nonaktif', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                        'ditunda' => ['Ditunda', 'bg-error/10 text-error border-error/20'],
+                    ];
+                    $st = $statusMap[$slot->status] ?? [$slot->status, 'bg-surface-container-high text-on-surface-variant'];
+                    $rank = 0;
+                    foreach ($slots as $k => $item) { if ($item->slot_id === $slot->slot_id) { $rank = $k + 1; break; } }
+                @endphp
+                <article class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    <div class="flex items-center justify-between gap-3 mb-3">
+                        <div class="flex items-center gap-3">
+                            <span class="inline-flex w-9 h-9 rounded-full {{ $rank <= 3 ? ($rank === 1 ? 'bg-gold-accent text-deep-onyx' : 'bg-surface-container-high border border-outline-variant text-on-surface') : 'bg-surface-container-high border border-outline-variant text-on-surface' }} items-center justify-center font-bold shrink-0">{{ $rank }}</span>
+                            <div class="min-w-0">
+                                <p class="font-title-md text-title-md text-on-surface truncate">{{ $slot->product->nama_produk ?? '-' }}</p>
+                                <p class="text-on-surface-variant text-xs truncate">{{ $slot->store->nama_toko ?? '-' }}</p>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full {{ $st[1] }} text-[10px] font-bold uppercase border shrink-0">{{ $st[0] }}</span>
+                    </div>
+                    <dl class="space-y-2 font-body-md text-sm mb-4">
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Bayaran (Bid)</dt>
+                            <dd class="font-bold {{ $rank === 1 ? 'text-gold-accent' : 'text-on-surface' }} text-right">Rp {{ number_format((float)$slot->nominal_bid, 0, ',', '.') }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Periode</dt>
+                            <dd class="text-on-surface-variant text-xs text-right whitespace-nowrap">{{ \Carbon\Carbon::parse($slot->tanggal_mulai)->locale('id')->translatedFormat('d M') }} – {{ \Carbon\Carbon::parse($slot->tanggal_selesai)->locale('id')->translatedFormat('d M Y') }}</dd>
+                        </div>
+                    </dl>
+                    <form action="{{ route('superadmin.peringkat-iklan.hapus', $slot) }}" method="POST" onsubmit="return confirm('Hapus slot iklan ini?')">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="w-full min-h-11 inline-flex items-center justify-center gap-2 border border-error/30 rounded-lg text-[11px] font-label-sm uppercase tracking-wider text-error hover:bg-error/10 transition-colors">
+                            <span class="material-symbols-outlined text-[16px]">delete</span>Hapus
+                        </button>
+                    </form>
+                </article>
+            @empty
+                <p class="text-center text-on-surface-variant py-10">Belum ada slot iklan terdaftar.</p>
+            @endforelse
         </div>
     </section>
 

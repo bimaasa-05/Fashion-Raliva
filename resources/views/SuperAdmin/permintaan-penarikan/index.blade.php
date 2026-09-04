@@ -63,40 +63,49 @@
     </section>
 
     <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Daftar Pengajuan Pencairan</h2>
-
-        <!-- Filters -->
-        <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
-            <div class="flex items-center gap-2 shrink-0">
-                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
-            </div>
-            <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
-            <div id="chip-group" class="flex flex-wrap gap-2">
-                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
-                <button type="button" data-chip="pending" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu ({{ $stats['pending'] }})</button>
-                <button type="button" data-chip="disetujui" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Disetujui ({{ $stats['disetujui'] }})</button>
-                <button type="button" data-chip="dibayar" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Dibayar ({{ $stats['dibayar'] }})</button>
-                <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditolak ({{ $stats['ditolak'] }})</button>
-            </div>
+        <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Pengajuan Pencairan</h2>
+            <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
+                <span class="material-symbols-outlined text-[18px]">tune</span>
+                Filter
+                <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
+            </button>
         </div>
 
-        <!-- Search + Result Count -->
-        <div class="mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
-            <div class="relative flex-1">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                <input id="penarikan-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama toko, nama pemilik, atau bank..." />
-                <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
-                    <span class="material-symbols-outlined text-[20px]">close</span>
-                </button>
+        <!-- Filters -->
+        <div data-filter-panel class="hidden md:block mb-6">
+            <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
+                <div class="flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+                </div>
+                <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
+                <div id="chip-group" class="flex flex-wrap gap-2">
+                    <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
+                    <button type="button" data-chip="pending" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu ({{ $stats['pending'] }})</button>
+                    <button type="button" data-chip="disetujui" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Disetujui ({{ $stats['disetujui'] }})</button>
+                    <button type="button" data-chip="dibayar" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Dibayar ({{ $stats['dibayar'] }})</button>
+                    <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditolak ({{ $stats['ditolak'] }})</button>
+                </div>
             </div>
-            <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-                <span id="result-count">{{ $withdrawals->count() }}</span> pengajuan
-            </p>
+
+            <!-- Search + Result Count -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div class="relative flex-1">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input id="penarikan-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama toko, nama pemilik, atau bank..." />
+                    <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                </div>
+                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                    <span id="result-count">{{ $withdrawals->count() }}</span> pengajuan
+                </p>
+            </div>
         </div>
 
         <!-- Table -->
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto hidden md:block">
             <table class="w-full min-w-[850px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
@@ -173,6 +182,71 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Mobile: kartu per pengajuan -->
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse ($withdrawals as $w)
+                @php
+                    $badge = $badgeMap[$w->status];
+                    $initial = strtoupper(substr(collect(preg_split('/\s+/', trim($w->store->nama_toko ?? '')))->map(fn ($k) => mb_substr($k, 0, 1))->implode(''), 0, 2));
+                @endphp
+                <article data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store->nama_toko ?? '').' '.($w->store->owner->nama_lengkap ?? '').' '.($w->bankAccount?->bank?->nama_bank ?? '')) }}" data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store->nama_toko }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center font-label-sm shrink-0">{{ $initial }}</div>
+                            <div class="min-w-0">
+                                <p class="font-title-md text-title-md text-primary truncate">{{ $w->store->nama_toko }}</p>
+                                <p class="text-on-surface-variant truncate">{{ $w->store->owner->nama_lengkap ?? '-' }}</p>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded {{ $badge['class'] }} text-[10px] font-bold uppercase shrink-0">{{ $badge['label'] }}</span>
+                    </div>
+
+                    <dl class="space-y-2 font-body-md text-sm mb-4">
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Jumlah</dt>
+                            <dd class="font-title-md text-gold-accent text-right">Rp {{ number_format((float) $w->jumlah, 0, ',', '.') }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Diajukan</dt>
+                            <dd class="text-on-surface text-right">{{ $w->diajukan_pada?->translatedFormat('d M Y') }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Bank</dt>
+                            <dd class="text-on-surface text-right">{{ $w->bankAccount?->bank?->nama_bank ?? '-' }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Rekening</dt>
+                            <dd class="font-mono text-on-surface-variant text-right">**** **** {{ substr($w->bankAccount?->nomor_rekening ?? '', -4) }}</dd>
+                        </div>
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-on-surface-variant">Dibayar</dt>
+                            <dd class="text-on-surface text-right">{{ $w->dibayar_pada ? \Carbon\Carbon::parse($w->dibayar_pada)->locale('id')->diffForHumans() : '-' }}</dd>
+                        </div>
+                    </dl>
+
+                    @if ($w->status === 'pending')
+                        <div class="flex gap-gutter">
+                            <button type="button" onclick="openRejectDialog(this.closest('article'))" class="flex-1 min-h-11 inline-flex items-center justify-center gap-2 border border-outline text-on-surface hover:bg-error hover:text-on-error hover:border-error transition-colors rounded-lg">
+                                <span class="material-symbols-outlined text-[16px]">close</span>Tolak
+                            </button>
+                            <button type="button" onclick="openApproveDialog(this.closest('article'))" class="flex-1 min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary hover:opacity-80 transition-opacity rounded-lg btn-premium">
+                                <span class="material-symbols-outlined text-[16px]">check</span>Setujui
+                            </button>
+                        </div>
+                    @elseif ($w->status === 'disetujui')
+                        <button type="button" onclick="openPaidDialog(this.closest('article'))" class="w-full min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:opacity-80 transition-opacity btn-premium">
+                            <span class="material-symbols-outlined text-[16px]">local_atm</span>Tandai Dibayar
+                        </button>
+                    @else
+                        <span class="block text-center text-on-surface-variant text-xs uppercase py-3">&mdash;</span>
+                    @endif
+                </article>
+            @empty
+                <p class="text-center text-on-surface-variant py-10">Tidak ada pengajuan pencairan tercatat.</p>
+            @endforelse
+            <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada pengajuan yang cocok.</p>
         </div>
     </section>
 </div>
@@ -287,12 +361,13 @@
         const scope = document.querySelector('[data-table-scope]');
         if (!scope) return;
 
-        const rows = Array.from(scope.querySelectorAll('[data-table-row]'));
+        const rows = Array.from(scope.querySelectorAll('tr[data-table-row], article[data-table-row]'));
         const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
         const searchInput = document.getElementById('penarikan-search');
         const clearBtn = document.getElementById('clear-search');
         const countEl = document.getElementById('result-count');
         const emptySearch = document.getElementById('empty-search');
+        const emptySearchMobile = document.getElementById('empty-search-mobile');
 
         const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
         const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
@@ -310,12 +385,14 @@
                 row.classList.toggle('hidden', !show);
                 if (show) {
                     visible++;
-                    row.querySelector('.row-num').textContent = visible;
+                    const num = row.querySelector('.row-num');
+                    if (num) num.textContent = visible;
                 }
             });
 
             countEl.textContent = visible;
             emptySearch.classList.toggle('hidden', visible > 0);
+            if (emptySearchMobile) emptySearchMobile.classList.toggle('hidden', visible > 0);
         }
 
         chipBtns.forEach((btn) => {
