@@ -328,6 +328,7 @@
     #sidebar.sidebar-collapsed nav a { justify-content: center; gap: 0; padding-left: 0; padding-right: 0; margin-right: 0; }
     #sidebar.sidebar-collapsed nav a > .material-symbols-outlined:first-child { margin-right: 0; }
     #sidebar.sidebar-collapsed .sidebar-collapse-btn { justify-content: center; }
+    html { scrollbar-gutter: stable; }
     #sidebar.sidebar-collapsed .sidebar-collapse-btn .icon-chevron { transform: rotate(180deg); }
     /* Sidebar profile — collapsed: center avatar, hide card chrome */
     #sidebar.sidebar-collapsed .sidebar-profile { justify-content: center; padding: 10px 0; margin-left: 0; margin-right: 0; background: transparent !important; border-color: transparent !important; box-shadow: none !important; }

@@ -31,7 +31,9 @@
         [
             'label' => 'Keuangan',
             'items' => [
-                ['route' => 'owner.saldo', 'icon' => 'account_balance_wallet', 'text' => 'Keuangan'],
+                ['route' => 'owner.keuangan', 'icon' => 'account_balance_wallet', 'text' => 'Keuangan'],
+                ['route' => 'owner.data-bank', 'icon' => 'account_balance', 'text' => 'Data Bank'],
+                ['route' => 'owner.pencairan-dana', 'icon' => 'payments', 'text' => 'Pencairan Dana'],
             ],
         ],
         [

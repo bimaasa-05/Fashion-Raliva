@@ -14,25 +14,25 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Transaksi</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">payments</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['semua'] }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">semua status</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Verifikasi</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary">{{ $stats['menunggu_verifikasi'] + $stats['pending'] }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">perlu ditinjau</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Berhasil</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">check_circle</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">check_circle</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['terverifikasi'] }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">terverifikasi</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Gagal / Dibatalkan</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">cancel</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">cancel</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-error">{{ $stats['ditolak'] + $stats['kadaluarsa'] }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">ditolak / kadaluarsa</span>
             </div>

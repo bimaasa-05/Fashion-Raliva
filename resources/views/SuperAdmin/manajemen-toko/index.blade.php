@@ -292,17 +292,17 @@
                 <div class="relative overflow-hidden bg-surface-container-low border border-muted-border rounded-lg p-4 text-center">
                     <span class="block font-headline-lg-mobile text-headline-lg-mobile text-on-surface" id="stat-products">-</span>
                     <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-1">Produk Aktif</span>
-                    <span class="material-symbols-outlined absolute -right-2 -bottom-3 text-[44px] text-gold-accent/10 pointer-events-none select-none">checkroom</span>
+                    <span class="material-symbols-outlined absolute -right-2 -bottom-3 text-[44px] text-gold-accent/15 fill pointer-events-none select-none">checkroom</span>
                 </div>
                 <div class="relative overflow-hidden bg-surface-container-low border border-muted-border rounded-lg p-4 text-center">
                     <span class="block font-headline-lg-mobile text-headline-lg-mobile text-on-surface" id="stat-orders">-</span>
                     <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-1">Total Pesanan</span>
-                    <span class="material-symbols-outlined absolute -right-2 -bottom-3 text-[44px] text-gold-accent/10 pointer-events-none select-none">shopping_bag</span>
+                    <span class="material-symbols-outlined absolute -right-2 -bottom-3 text-[44px] text-gold-accent/15 fill pointer-events-none select-none">shopping_bag</span>
                 </div>
                 <div class="relative overflow-hidden bg-surface-container-low border border-muted-border rounded-lg p-4 text-center">
                     <span class="block font-headline-lg-mobile text-headline-lg-mobile text-on-surface flex items-center justify-center gap-1"><span id="stat-rating">-</span><span class="material-symbols-outlined text-[18px] filled text-secondary">star</span></span>
                     <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-1">Rating Toko</span>
-                    <span class="material-symbols-outlined absolute -right-2 -bottom-3 text-[44px] text-gold-accent/10 pointer-events-none select-none">reviews</span>
+                    <span class="material-symbols-outlined absolute -right-2 -bottom-3 text-[44px] text-gold-accent/15 fill pointer-events-none select-none">reviews</span>
                 </div>
             </div>
 

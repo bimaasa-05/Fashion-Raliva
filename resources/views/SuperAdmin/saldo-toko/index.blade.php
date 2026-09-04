@@ -13,17 +13,17 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
             <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Saldo Tersedia</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp {{ number_format($totalTersedia, 0, ',', '.') }}</span>
             </div>
             <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Saldo Tertahan</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">lock</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">lock</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Rp {{ number_format($totalTertahan, 0, ',', '.') }}</span>
             </div>
             <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Jumlah Toko</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">storefront</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">storefront</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $jumlahToko }}</span>
             </div>
         </div>
