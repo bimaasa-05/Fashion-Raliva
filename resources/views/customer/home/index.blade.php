@@ -384,7 +384,7 @@
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Tailored Linen Blazer</h4>
 <span class="font-body-sm text-body-sm text-on-surface">$245.00</span>
 </a>
-<button type="button" aria-label="{{ __('Add to wishlist') }}" data-wishlist-toggle data-product-id="1" class="absolute top-2 right-2 p-2 rounded-full bg-black/15 backdrop-blur-sm text-white hover:bg-black/30 hover:text-secondary transition-colors flex items-center">
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-wishlist-toggle data-product-id="1" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
 </div>
@@ -398,7 +398,7 @@
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Structured Leather Tote</h4>
 <span class="font-body-sm text-body-sm text-on-surface">$380.00</span>
 </a>
-<button type="button" aria-label="{{ __('Add to wishlist') }}" data-wishlist-toggle data-product-id="2" class="absolute top-2 right-2 p-2 rounded-full bg-black/15 backdrop-blur-sm text-white hover:bg-black/30 hover:text-secondary transition-colors flex items-center">
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-wishlist-toggle data-product-id="2" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
 </div>
@@ -412,7 +412,7 @@
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Silk Slip Dress</h4>
 <span class="font-body-sm text-body-sm text-on-surface">$195.00</span>
 </a>
-<button type="button" aria-label="{{ __('Add to wishlist') }}" data-wishlist-toggle data-product-id="3" class="absolute top-2 right-2 p-2 rounded-full bg-black/15 backdrop-blur-sm text-white hover:bg-black/30 hover:text-secondary transition-colors flex items-center">
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-wishlist-toggle data-product-id="3" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
 </div>
@@ -426,7 +426,7 @@
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Geometric Gold Hoops</h4>
 <span class="font-body-sm text-body-sm text-on-surface">$85.00</span>
 </a>
-<button type="button" aria-label="{{ __('Add to wishlist') }}" data-wishlist-toggle data-product-id="4" class="absolute top-2 right-2 p-2 rounded-full bg-black/15 backdrop-blur-sm text-white hover:bg-black/30 hover:text-secondary transition-colors flex items-center">
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-wishlist-toggle data-product-id="4" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
 </div>

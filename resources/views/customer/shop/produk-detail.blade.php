@@ -359,8 +359,9 @@
         <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">RALIVA</h1>
         <div class="w-10"></div> <!-- Spacer for centering -->
         <div class="flex gap-xs">
-            <button type="button" data-wishlist-toggle data-product-id="{{ $product->product_id }}" aria-label="Wishlist" class="p-2 hover:opacity-70 transition-all duration-200 flex">
-                <span class="material-symbols-outlined text-[24px]">favorite_border</span>
+            @php $isWl = in_array($product->product_id, $wishlistedIds, true); @endphp
+            <button type="button" data-wishlist-toggle data-product-id="{{ $product->product_id }}" aria-label="Wishlist" class="p-2 hover:opacity-70 transition-all duration-200 flex{{ $isWl ? ' wishlisted-active' : '' }}">
+                <span class="material-symbols-outlined text-[24px]">favorite{{ $isWl ? '' : '_border' }}</span>
                 </button>
             <a aria-label="Cart" href="{{ route('customer.chart') }}" class="relative p-2 hover:opacity-70 transition-all duration-200 flex">
                 <span class="material-symbols-outlined text-[24px]">shopping_cart</span>
@@ -541,8 +542,9 @@
                         <a href="{{ route('customer.shop.produk-detail', $rp->product_id) }}" class="block group cursor-pointer">
                             <div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant overflow-hidden">
                                 <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" alt="{{ $rp->nama_produk }}" src="{{ $rpImage ? (filter_var($rpImage, FILTER_VALIDATE_URL) ? $rpImage : asset($rpImage)) : 'https://picsum.photos/seed/related/900/1200' }}"/>
-<button type="button" data-wishlist-toggle data-product-id="{{ $rp->product_id }}" aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
+@php $rpWl = in_array($rp->product_id, $wishlistedIds, true); @endphp
+<button type="button" data-wishlist-toggle data-product-id="{{ $rp->product_id }}" aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center{{ $rpWl ? ' wishlisted-active' : '' }}">
+<span class="material-symbols-outlined" data-icon="favorite{{ $rpWl ? '' : '_border' }}"@if($rpWl) data-weight="fill"@endif>favorite{{ $rpWl ? '' : '_border' }}</span>
 </button>
                                 </div>
                             <div class="space-y-1">

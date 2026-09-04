@@ -314,8 +314,9 @@
 <span class="font-body-sm text-body-sm text-secondary mt-1">Rp {{ number_format($pMin, 0, ',', '.') }}</span>
 </div>
 </a>
-<button type="button" data-wishlist-toggle data-product-id="{{ $p->product_id }}" aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface-variant hover:text-[var(--chrome-accent)] transition-colors flex items-center z-10">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
+@php $isWl = in_array($p->product_id, $wishlistedIds, true); @endphp
+<button type="button" data-wishlist-toggle data-product-id="{{ $p->product_id }}" aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center z-10{{ $isWl ? ' wishlisted-active' : '' }}">
+<span class="material-symbols-outlined" data-icon="favorite{{ $isWl ? '' : '_border' }}"@if($isWl) data-weight="fill"@endif>favorite{{ $isWl ? '' : '_border' }}</span>
 </button>
 </div>
 @empty
