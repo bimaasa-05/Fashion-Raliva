@@ -7,6 +7,7 @@ use App\Models\Complaint;
 use App\Models\ComplaintMessage;
 use App\Models\Notification;
 use App\Models\User;
+use App\Support\AdminContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,9 @@ class KomplainController extends Controller
 {
     public function index()
     {
+        $storeIds = AdminContext::assignedStoreIds();
         $complaints = Complaint::with(['user', 'order', 'messages.sender'])
+            ->whereHas('order', fn($q) => $q->whereIn('store_id', $storeIds))
             ->orderByRaw("CASE status WHEN 'open' THEN 0 WHEN 'diproses' THEN 1 WHEN 'escalated' THEN 2 ELSE 3 END")
             ->orderByDesc('dibuat_pada')
             ->paginate(12);
@@ -25,6 +28,10 @@ class KomplainController extends Controller
 
     public function balas(Request $request, Complaint $complaint): RedirectResponse
     {
+        if (! in_array($complaint->order?->store_id, AdminContext::assignedStoreIds())) {
+            abort(403);
+        }
+
         $request->validate([
             'pesan' => 'required|string|min:3',
         ]);
@@ -45,6 +52,10 @@ class KomplainController extends Controller
 
     public function eskalasi(Request $request, Complaint $complaint): RedirectResponse
     {
+        if (! in_array($complaint->order?->store_id, AdminContext::assignedStoreIds())) {
+            abort(403);
+        }
+
         if ($complaint->status === Complaint::STATUS_SELESAI || $complaint->status === Complaint::STATUS_DITUTUP) {
             return back()->with('error', 'Komplain sudah ditutup.');
         }
