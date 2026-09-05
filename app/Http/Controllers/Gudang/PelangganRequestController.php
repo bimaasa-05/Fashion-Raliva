@@ -45,8 +45,12 @@ class PelangganRequestController extends Controller
                             'stok' => $stok,
                             'tersedia' => $stok > 0,
                             'harga' => $variant?->harga ?? $item->harga_snapshot ?? 0,
+                            'catatan_custom' => $item->catatan_custom,
                         ];
                     });
+
+                    $tipeOrder = $order->tipe_order ?? Order::TIPE_PRODUK_TETAP;
+                    $jenisLabel = $tipeOrder === Order::TIPE_CUSTOM ? 'Custom' : 'Produk Tetap';
 
                     $satuTersedia = $listBahan->contains(fn ($b) => $b->tersedia);
                     $semuaTersedia = $listBahan->isNotEmpty() && $listBahan->every(fn ($b) => $b->tersedia);
@@ -85,6 +89,8 @@ class PelangganRequestController extends Controller
                         'catatan_gudang' => $order->catatan_gudang,
                         'pelanggan' => $order->checkout?->user?->nama_lengkap ?? 'Pelanggan',
                         'produk' => $listBahan->isNotEmpty() ? $listBahan->first()->nama_produk : '-',
+                        'tipe_order' => $tipeOrder,
+                        'jenis_label' => $jenisLabel,
                         'list_bahan' => $listBahan,
                         'total_stok' => $totalStok,
                         'hpp' => $hpp,
