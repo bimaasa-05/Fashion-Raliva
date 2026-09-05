@@ -334,6 +334,14 @@
     #sidebar.sidebar-collapsed .sidebar-profile { justify-content: center; padding: 10px 0; margin-left: 0; margin-right: 0; background: transparent !important; border-color: transparent !important; box-shadow: none !important; }
     #sidebar.sidebar-collapsed .sidebar-profile .w-11 { width: 2.75rem; height: 2.75rem; font-size: 13px; border-width: 2px; }
 
+    /* Leaderboard global fix — seragam 3 card bawah (Status Pesanan, Komplain, Pesanan Masuk) tanpa ubah HTML */
+    div.grid.lg\:grid-cols-3 { align-items: stretch !important; }
+    div.grid.lg\:grid-cols-3 > section { display: flex; flex-direction: column; }
+    div.grid.lg\:grid-cols-3 > section ul.premium-scroll { flex: 1; min-height: 240px; }
+    div.grid.lg\:grid-cols-3 > section ul li.p-4 { min-height: 68px; align-items: flex-start !important; gap: 12px; padding-top: 14px; padding-bottom: 14px; }
+    div.grid.lg\:grid-cols-3 > section ul li.p-4 .min-w-0 { flex: 1 1 0%; min-width: 0; }
+    div.grid.lg\:grid-cols-3 > section ul li.p-4 .min-w-0 p:first-child { white-space: normal; word-break: break-word; line-height: 1.35; }
+
     /* Overlay modal tidak boleh terbawa margin flow (mis. dari parent space-y-*) */
     [data-modal] { margin: 0 !important; }
 </style>
