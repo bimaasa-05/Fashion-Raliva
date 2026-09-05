@@ -30,8 +30,15 @@
         @endphp
         <div class="px-6 md:px-8 pb-6">
             <div class="flex flex-col sm:flex-row sm:items-end gap-4 -mt-12">
-                <div class="w-24 h-24 rounded-2xl ring-4 ring-surface-container-lowest bg-gold-accent text-white flex items-center justify-center font-bold text-2xl shrink-0 mx-auto sm:mx-0 border border-gold-accent/30">
-                    {{ $ginit }}
+                @php
+                    $gFoto = $user->foto_profil_url;
+                @endphp
+                <div class="w-24 h-24 rounded-2xl ring-4 ring-surface-container-lowest bg-gold-accent text-white flex items-center justify-center font-bold text-2xl shrink-0 mx-auto sm:mx-0 border border-gold-accent/30 overflow-hidden">
+                    @if ($gFoto)
+                        <img src="{{ $gFoto }}" alt="{{ $gnama }}" class="w-full h-full object-cover" />
+                    @else
+                        {{ $ginit }}
+                    @endif
                 </div>
                 <div class="flex-grow text-center sm:text-left pb-1 min-w-0">
                     <div class="flex items-center gap-3 justify-center sm:justify-start flex-wrap">
