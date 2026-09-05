@@ -521,7 +521,14 @@ class RalivaDemoSeeder extends Seeder
                 'total_ongkir' => 0,
                 'grand_total' => $subtotal,
                 'status' => $requestStatuses[$r % count($requestStatuses)],
+                'tipe_order' => ($r % 2 === 0) ? Order::TIPE_CUSTOM : Order::TIPE_PRODUK_TETAP,
             ]);
+
+            $catatanCustom = match (true) {
+                $r % 2 !== 0 => [],
+                $r === 0 => ['Bordir nama "RANGGA" di tengah punggung, font kait emas ukuran 6 mm.'],
+                default => ['Tambah satu baris tulisan "Anniversary #5" di belakang bawah, warna abu.'],
+            };
 
             OrderItem::create([
                 'order_id' => $order->order_id,
@@ -532,6 +539,7 @@ class RalivaDemoSeeder extends Seeder
                 'subtotal' => $subtotal,
                 'diskon' => 0,
                 'total' => $subtotal,
+                'catatan_custom' => $catatanCustom[0] ?? null,
             ]);
 
             $variant2 = $allVariants->skip(($r + 2) % $allVariants->count())->first();
@@ -556,6 +564,7 @@ class RalivaDemoSeeder extends Seeder
                     'subtotal' => $subtotal2,
                     'diskon' => 0,
                     'total' => $subtotal2,
+                    'catatan_custom' => $catatanCustom[1] ?? null,
                 ]);
             }
 
