@@ -22,20 +22,32 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
-    {{-- Identitas Toko --}}
-    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-5 card-premium">
+    @if(! $store)
+        <div class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-4 flex items-start gap-3">
+            <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
+            <div>
+                <p class="font-bold text-sm text-on-surface">Belum punya toko</p>
+                <p class="text-sm text-on-surface-variant mt-1">Anda belum memiliki toko. Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk melihat dashboard, produk, dan pesanan. Jelajahi dulu halaman dashboard untuk mengenal fiturnya.</p>
+            </div>
+        </div>
+    @endif
+    {{-- Identitas Toko — selalu tampil, placeholder jika belum punya toko --}}
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-5 card-premium {{ ! $store ? 'opacity-60 pointer-events-none' : '' }}">
         <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-xl overflow-hidden border border-outline-variant shrink-0 bg-surface-container-high flex items-center justify-center">
+            <div class="w-14 h-14 rounded-xl overflow-hidden border border-outline-variant shrink-0 bg-surface-container-high flex items-center justify-center {{ ! $store ? 'grayscale' : '' }}">
                 <img src="{{ asset('images/logo.svg') }}" alt="Logo {{ $store?->nama_toko ?? 'Toko' }}" class="w-full h-full object-cover" />
             </div>
             <div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <p class="raliva-figure text-xl text-on-surface">{{ $store?->nama_toko ?? 'Toko' }}</p>
+                    <p class="raliva-figure text-xl {{ ! $store ? 'text-on-surface-variant' : 'text-on-surface' }}">{{ $store?->nama_toko ?? 'Belum punya toko' }}</p>
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full {{ $store?->status === 'aktif' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }} text-[10px] font-bold uppercase border">
-                        <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : 'schedule' }}</span>{{ $store?->status === 'aktif' ? 'Terverifikasi' : ucfirst($store?->status ?? 'Menunggu') }}
+                        <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : 'schedule' }}</span>{{ $store ? ucfirst($store->status) : 'Menunggu' }}
                     </span>
+                    @if(! $store)
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[10px] font-bold uppercase"><span class="material-symbols-outlined text-[12px]">lock</span>Ajukan dulu</span>
+                    @endif
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">{{ $store?->alamat ?? '-' }} • {{ $store ? 'Aktif sejak ' . optional($store->created_at)->translatedFormat('M Y') : 'Belum ada toko' }}</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">{{ $store?->alamat ?? 'Ajukan toko di Pengajuan Toko untuk mengaktifkan' }} • {{ $store ? 'Aktif sejak ' . optional($store->created_at)->translatedFormat('M Y') : 'Belum ada toko' }}</p>
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-gutter self-start md:self-auto">

@@ -34,7 +34,7 @@
         $isDitolak = $storeStatus === 'ditolak';
         $step1Done = $hasStore;
         $step2Done = $hasStore && $hasDocs;
-        $step3Done = $isPending || $isAktif;
+        $step3Done = $isAktif;
         $step4Done = $isAktif;
         $statusTitle = $isAktif ? 'Toko Telah Disetujui' : ($isDitolak ? 'Pengajuan Ditolak' : ($hasStore ? 'Pengajuan Diproses' : 'Belum Mengajukan Toko'));
         $statusLine = $hasStore

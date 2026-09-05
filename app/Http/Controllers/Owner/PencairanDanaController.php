@@ -12,14 +12,20 @@ class PencairanDanaController extends Controller
     public function index(Request $request)
     {
         $store = OwnerContext::currentStore();
-        if (! $store || ! $store->wallet) {
+        if (! $store) {
+            $wallet = new \App\Models\Wallet(['saldo_tersedia'=>0,'saldo_tertahan'=>0]);
             return view('Owner.pencairan-dana.index', [
-                'wallet' => null,
+                'wallet' => $wallet,
                 'withdrawals' => collect(),
                 'bankAccounts' => collect(),
+                'store' => null,
             ]);
         }
         $wallet = $store->wallet;
+        if (! $wallet) {
+            $wallet = \App\Models\Wallet::create(['store_id'=>$store->store_id,'saldo_tersedia'=>0,'saldo_tertahan'=>0]);
+            $store->setRelation('wallet', $wallet);
+        }
         $bankAccounts = $store->bankAccounts()->with('bank')->get();
         $withdrawals = $wallet->withdrawals()->with('bankAccount.bank')->orderByDesc('diajukan_pada')->paginate(10);
 

@@ -16,6 +16,15 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
+    @if(! \App\Support\OwnerContext::currentStore())
+        <div class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
+            <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
+            <div>
+                <p class="font-bold text-sm">Belum punya toko</p>
+                <p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk akses fitur ini.</p>
+            </div>
+        </div>
+    @endif
     {{-- Podium Top Leader --}}
     @if ($top3->count() >= 1)
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 md:p-8 card-premium">
@@ -27,52 +36,31 @@
             <span class="material-symbols-outlined text-[40px] text-gold-accent/20">workspace_premium</span>
         </div>
 
-        @if ($top3->count() >= 3)
-        {{-- Podium lengkap (3 besar) — perhalus gap & bayangan agar tidak sakit mata --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 items-end gap-5 md:gap-6 lg:gap-8 md:px-4">
-            {{-- #2 Kiri --}}
-            <div class="order-2 md:order-1 bg-surface-container-lowest border border-muted-border/60 rounded-2xl p-5 flex flex-col items-center text-center md:mb-10 shadow-sm hover:shadow-md transition-shadow">
-                <div class="w-16 h-16 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center font-bold text-lg text-on-surface shadow-sm">{{ $top3[1]->initials }}</div>
-                <p class="font-title-md text-sm text-on-surface mt-3 truncate max-w-[140px]">{{ $top3[1]->name }}</p>
-                <p class="text-gold-accent font-bold text-sm mt-1">Rp {{ number_format($top3[1]->total_belanja, 0, ',', '.') }}</p>
-                <p class="text-xs text-on-surface-variant mt-0.5">{{ $top3[1]->jumlah_order }} pesanan</p>
-                <span class="mt-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-surface-variant text-[10px] font-bold uppercase">#2</span>
-            </div>
-
-            {{-- #1 Tengah (hero) — lebih tenang, tidak terlalu kontras --}}
-            <div class="order-1 md:order-2 bg-deep-onyx text-on-primary rounded-2xl p-6 md:p-7 flex flex-col items-center text-center md:-mt-2 shadow-2xl ring-1 ring-gold-accent/20 relative overflow-hidden">
-                <span class="material-symbols-outlined absolute -right-2 -top-2 text-[100px] text-on-primary/[0.04] pointer-events-none select-none" aria-hidden="true">military_tech</span>
-                <div class="w-20 h-20 rounded-full bg-gold-accent text-deep-onyx flex items-center justify-center font-bold text-xl relative z-10 ring-4 ring-gold-accent/20 border-2 border-white/10">{{ $top3[0]->initials }}</div>
-                <p class="raliva-figure text-[20px] text-on-primary mt-3 relative z-10 truncate max-w-[160px]">{{ $top3[0]->name }}</p>
-                <p class="text-on-primary/70 text-xs mt-1 relative z-10">{{ $top3[0]->jumlah_order }} pesanan • Peringkat 1</p>
-                <span class="mt-4 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gold-accent text-deep-onyx text-xs font-bold relative z-10 shadow-md"><span class="material-symbols-outlined text-[16px]">payments</span>Rp {{ number_format($top3[0]->total_belanja, 0, ',', '.') }}</span>
-            </div>
-
-            {{-- #3 Kanan --}}
-            <div class="order-3 bg-surface-container-lowest border border-muted-border/60 rounded-2xl p-5 flex flex-col items-center text-center md:mb-6 shadow-sm hover:shadow-md transition-shadow">
-                <div class="w-16 h-16 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center font-bold text-lg text-on-surface shadow-sm">{{ $top3[2]->initials }}</div>
-                <p class="font-title-md text-sm text-on-surface mt-3 truncate max-w-[140px]">{{ $top3[2]->name }}</p>
-                <p class="text-gold-accent font-bold text-sm mt-1">Rp {{ number_format($top3[2]->total_belanja, 0, ',', '.') }}</p>
-                <p class="text-xs text-on-surface-variant mt-0.5">{{ $top3[2]->jumlah_order }} pesanan</p>
-                <span class="mt-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high border border-outline-variant text-on-surface-variant text-[10px] font-bold uppercase">#3</span>
-            </div>
-        </div>
-        @else
-        {{-- 1–2 pelanggan: tampilkan apa adanya (bukan single hero) --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
-            @foreach ($top3 as $i => $c)
-            <div class="bg-surface-container-low border {{ $i === 0 ? 'border-gold-accent/40' : 'border-muted-border' }} rounded-xl p-5 flex items-center gap-4">
-                <div class="w-14 h-14 rounded-full {{ $i === 0 ? 'bg-gold-accent text-deep-onyx' : 'bg-surface-container-high border-2 border-outline-variant text-on-surface' }} flex items-center justify-center font-bold text-lg shrink-0">{{ $c->initials }}</div>
-                <div class="min-w-0">
-                    <p class="font-title-md text-sm text-on-surface truncate">{{ $c->name }}</p>
-                    <p class="text-gold-accent font-bold text-sm mt-0.5">Rp {{ number_format($c->total_belanja, 0, ',', '.') }}</p>
-                    <p class="text-xs text-on-surface-variant mt-0.5">{{ $c->jumlah_order }} pesanan</p>
+        {{-- Podium Flat — kardus --}}
+        <style>
+            .podium { position: relative; border:2px solid rgba(0,0,0,0.12); box-shadow: 0 8px 24px rgba(0,0,0,0.12); display:flex; align-items:center; justify-content:center; }
+        </style>
+        <div class="flex items-end justify-center gap-3 md:gap-6 pt-6 pb-4">
+            @php $maxBelanja = $top3->max('total_belanja') ?: 1; @endphp
+            @foreach($top3->sortByDesc('total_belanja')->values() as $idx => $c)
+                @php
+                    $rank = $idx + 1;
+                    $isTop = $rank === 1;
+                    $isSecond = $rank === 2;
+                    $h = $isTop ? 'h-[160px] md:h-[190px]' : ($isSecond ? 'h-[115px] md:h-[145px]' : 'h-[90px] md:h-[115px]');
+                    $frontBg = $isTop ? 'bg-gold-accent' : ($isSecond ? 'bg-[#9CA3AF]' : 'bg-[#B45309]');
+                @endphp
+                <div class="flex-1 max-w-[150px] flex flex-col items-center {{ $isTop ? 'order-2' : ($isSecond ? 'order-1' : 'order-3') }}">
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-full {{ $isTop ? 'bg-gold-accent text-white ring-4 ring-gold-accent/20' : 'bg-surface-container-high border border-outline-variant text-on-surface' }} flex items-center justify-center font-bold text-sm shadow-md">{{ $c->initials }}</div>
+                    <p class="font-bold text-xs md:text-sm mt-2 truncate max-w-[110px] text-center">{{ $c->name }}</p>
+                    <p class="text-[10px] text-on-surface-variant">{{ $c->jumlah_order }} pesanan</p>
+                    <p class="font-bold text-[11px] text-gold-accent mt-1">Rp {{ number_format($c->total_belanja,0,',','.') }}</p>
+                    <div class="podium w-full {{ $h }} mt-3 {{ $frontBg }} text-white rounded-xl flex flex-col items-center justify-center ring-2 {{ $isTop ? 'ring-gold-accent/30' : 'ring-black/5' }} shadow-lg">
+                        <span class="{{ $isTop ? 'text-3xl md:text-4xl' : 'text-2xl md:text-3xl' }} font-black drop-shadow-lg">#{{ $rank }}</span>
+                    </div>
                 </div>
-                <span class="ml-auto inline-flex items-center px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase shrink-0">#{{ $i + 1 }}</span>
-            </div>
             @endforeach
         </div>
-        @endif
     </section>
     @else
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 md:p-8 card-premium text-center">
@@ -246,4 +234,33 @@
     </div>
 </div>
 @endforeach
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  if (!document.querySelector('[data-real]')) return;
+  // Check if no store banner exists (means no store)
+  const noStore = document.body.innerHTML.includes('Belum punya toko');
+  if (!noStore) return;
+  // Disable all primary action buttons except Ajukan Toko
+  document.querySelectorAll('[data-modal-open], button[type="submit"], a[href*="pengajuan-toko"]:not([href*="ajukan"])').forEach(el=>{
+    // Keep Ajukan Toko enabled
+    if (el.textContent.includes('Ajukan Toko') || el.getAttribute('data-modal-open')?.includes('modal-tambah')) {
+      // For tambah buttons, disable if no store
+      el.setAttribute('disabled','');
+      el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
+      el.title = 'Ajukan toko dulu';
+    }
+  });
+  // More generic: disable all buttons in data-real except those inside pengajuan
+  document.querySelectorAll('[data-real] button, [data-real] a.btn-premium').forEach(el=>{
+    if (el.closest('[data-modal]')) return;
+    if (el.textContent.trim().includes('Ajukan')) return;
+    el.setAttribute('disabled','');
+    el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
+  });
+});
+</script>
+@endpush
+
 @endsection

@@ -29,7 +29,7 @@ class LaporanController extends Controller
 
         // status counts for admin
         $pesananBaru = $storeId ? Order::whereIn('store_id', $storeIds)->whereIn('status', ['pending_payment','dibayar'])->count() : 0;
-        $menungguVerifikasi = $storeId ? \App\Models\Payment::whereHas('checkout.order', fn($q)=>$q->whereIn('store_id',$storeIds))->where('status','menunggu_verifikasi')->count() : 0;
+        $menungguVerifikasi = $storeId ? \App\Models\Payment::whereHas('checkout.orders', fn($q)=>$q->whereIn('store_id',$storeIds))->where('status','menunggu_verifikasi')->count() : 0;
 
         // per toko breakdown for admin with multiple stores
         $perToko = collect();

@@ -22,11 +22,6 @@ class DashboardController extends Controller
     {
         $store = OwnerContext::currentStore();
 
-        if (! $store) {
-            return redirect()->route('owner.pengajuan-toko')
-                ->with('info', 'Silakan ajukan pembuatan toko terlebih dahulu.');
-        }
-
         $storeId = $store?->store_id;
 
         $paidStatuses = [
