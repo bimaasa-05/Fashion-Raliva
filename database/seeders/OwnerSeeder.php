@@ -76,7 +76,6 @@ class OwnerSeeder extends Seeder
                 'alamat' => 'Jl. Kemang Raya No. 21, Jakarta Selatan',
                 'nomor_telepon' => '0215551234',
                 'status' => Store::STATUS_AKTIF,
-                'operational_hours' => $this->defaultOperationalHours(),
             ]
         );
 
