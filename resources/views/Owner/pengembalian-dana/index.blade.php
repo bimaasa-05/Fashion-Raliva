@@ -17,6 +17,15 @@
 
 @section('content')
 <div class="space-y-section-gap">
+    @if(! \App\Support\OwnerContext::currentStore())
+        <div class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
+            <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
+            <div>
+                <p class="font-bold text-sm">Belum punya toko</p>
+                <p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk akses pengembalian dana.</p>
+            </div>
+        </div>
+    @endif
     @if (session('success') || session('error'))
         <div class="space-y-gutter">
             @if (session('success'))
@@ -107,4 +116,18 @@
         @endif
     </section>
 </div>
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const noStore = document.body.innerHTML.includes('Belum punya toko');
+  if (!noStore) return;
+  document.querySelectorAll('[data-real] button, [data-real] a.btn-premium').forEach(el=>{
+    if (el.closest('[data-modal]')) return;
+    if (el.textContent.trim().includes('Ajukan')) return;
+    el.setAttribute('disabled','');
+    el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
+  });
+});
+</script>
+@endpush
 @endsection
