@@ -223,16 +223,17 @@
 </style>
 </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72">
+@php $cartCount = auth()->check() ? \App\Http\Controllers\Customer\CartController::countForUser(auth()->id()) : 0; @endphp
 <!-- TopAppBar -->
 <header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
-<a href="{{ url()->previous() }}" aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
+<a href="{{ route('customer.shop') }}" data-go-back aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
 <div class="flex items-center gap-sm">
 <a href="{{ route('customer.chart') }}" aria-label="Cart" class="relative hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
-<span class="absolute -top-1 -right-1 bg-secondary text-on-secondary text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+<span class="cart-badge absolute -top-1 -right-1 bg-secondary text-on-secondary text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
 </a>
 </div>
 </header>
@@ -306,6 +307,20 @@ document.addEventListener('DOMContentLoaded', function(){
     entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
   }, { threshold: 0.12 });
   els.forEach(function(e){ io.observe(e); });
+});
+</script>
+<script>
+/* Arrow back = kembali ke halaman customer sebelumnya */
+document.addEventListener('click', function (e) {
+    var back = e.target.closest('[data-go-back]');
+    if (!back) return;
+    e.preventDefault();
+    var ref = document.referrer;
+    if (ref && ref.indexOf(window.location.origin) === 0) {
+        window.history.back();
+    } else {
+        window.location.href = back.getAttribute('href');
+    }
 });
 </script>
 </body></html>

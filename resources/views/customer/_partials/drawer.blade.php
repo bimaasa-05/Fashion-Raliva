@@ -156,3 +156,4 @@
         applyThemeIcon();
     </script>
 @include('customer._partials.wishlist-script')
+@include('customer._partials.cart-script')

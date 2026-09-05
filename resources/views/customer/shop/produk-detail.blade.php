@@ -324,6 +324,55 @@
         border-color: #3a3937;
         background-color: #201f1e;
     }
+    /* ============ PRODUCT DETAIL: COLOR SWATCHES + SIZE PILLS ============ */
+    .swatch {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 9999px;
+        border: 1px solid var(--border-soft);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-family: 'Manrope', sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        transition: box-shadow .2s ease, border-color .2s ease, transform .2s ease;
+    }
+    .swatch:hover { transform: translateY(-2px); border-color: #8B1E3F; }
+    .swatch-selected {
+        border-color: #8B1E3F;
+        box-shadow: 0 0 0 2px var(--chrome-bg), 0 0 0 4px #8B1E3F;
+    }
+    .size-pill {
+        min-width: 3rem;
+        height: 3rem;
+        padding: 0 1.25rem;
+        border-radius: 9999px;
+        border: 1px solid var(--border-soft);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-family: 'Manrope', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--on-surface);
+        background: transparent;
+        transition: border-color .2s ease, color .2s ease, background-color .2s ease, transform .2s ease;
+    }
+    .size-pill:hover { border-color: #8B1E3F; color: #8B1E3F; }
+    .size-pill-selected {
+        border-color: #8B1E3F !important;
+        color: #8B1E3F !important;
+        background: rgba(139,30,63,.07);
+        font-weight: 700;
+    }
+    html.theme-dark .swatch-selected { box-shadow: 0 0 0 2px #1e1d1c, 0 0 0 4px #8B1E3F; }
+    html.theme-dark .size-pill { color: #e6e4e1; }
+    html.theme-dark .size-pill-selected { background: rgba(139,30,63,.18); }
 </style>
 <style>
     /* ============ Product Detail: remap drawer + bottom-nav accent to burgundy (Register language) ============ */
@@ -353,7 +402,7 @@
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[120px] lg:pl-72">
     <!-- Header (Custom TopAppBar for Product Details) -->
     <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full lg:w-auto px-container-margin h-16 fixed lg:left-72 lg:right-0 z-40 border-b border-[var(--chrome-border)]">
-        <a aria-label="Go back" href="{{ url()->previous() }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+        <a aria-label="Go back" href="{{ route('customer.shop') }}" data-go-back class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
             <span class="material-symbols-outlined text-[24px]">arrow_back</span>
             </a>
         <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">RALIVA</h1>
@@ -390,7 +439,19 @@
                     </section>
                 <div class="lg:flex-1 lg:min-w-0">
                     <section class="py-xl reveal-up">
-                        @php $allVariants = $product->variants; $colors = $allVariants->pluck('warna')->unique()->values(); $sizes = $allVariants->pluck('ukuran')->unique()->values(); @endphp
+                        @php
+                        $allVariants = $product->variants;
+                        $colors = $allVariants->pluck('warna')->unique()->values();
+                        $sizes = $allVariants->pluck('ukuran')->unique()->values();
+                        $colorHexMap = [
+                            'white' => '#f5f5f5', 'black' => '#1b1b1b', 'beige' => '#e6d3b3',
+                            'ivory' => '#f6f1e7', 'muted sand' => '#cfc0a8', 'charcoal' => '#3a3a3a',
+                            'warm sand' => '#cfc1a6', 'taupe' => '#8b7d6b', 'blush' => '#f4c2c2',
+                            'sand' => '#d8c7ad', 'grey' => '#8f9396', 'gray' => '#8f9396',
+                            'navy' => '#1f2a44', 'brown' => '#7a5636', 'green' => '#5c6b4a',
+                            'blue' => '#2f5f8f', 'red' => '#b03a3a', 'cream' => '#f3e9d8',
+                        ];
+                    @endphp
                         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium" data-variants="{{ $allVariants->map(fn($v) => ['id' => $v->product_variant_id, 'warna' => $v->warna, 'ukuran' => $v->ukuran, 'harga' => (float)$v->harga])->toJson(JSON_UNESCAPED_UNICODE) }}">
                             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('PRODUCT DETAILS') }}</p>
                             <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ $product->nama_produk }}</h2>
@@ -404,9 +465,10 @@
                             <!-- Color Selection -->
                             <div class="mb-lg">
                                 <p class="font-label-caps text-label-caps text-on-surface mb-sm">{{ __('COLOR') }}: <span id="pd-color-label">{{ strtoupper($colors->first() ?? __('N/A')) }}</span></p>
-                                <div class="flex flex-wrap gap-sm">
+                                <div class="flex flex-wrap items-center gap-md">
 @foreach ($colors as $color)
-<button type="button" data-color-btn data-color="{{ $color }}" class="font-label-sm text-label-sm text-on-surface-variant px-md py-xs border border-outline-variant rounded hover:border-on-surface transition-colors{{ $loop->first ? ' border-secondary text-secondary' : '' }}">{{ $color }}</button>
+@php $hex = $colorHexMap[strtolower($color)] ?? ''; @endphp
+<button type="button" data-color-btn data-color="{{ $color }}" aria-label="{{ $color }}" title="{{ $color }}" class="swatch{{ $loop->first ? ' swatch-selected' : '' }}" style="{{ $hex ? 'background-color:' . $hex . ';' : 'background-color:var(--surface-container-high);' }}">{{ $hex ? '' : mb_substr($color, 0, 1) }}</button>
 @endforeach
                                     </div>
                                 </div>
@@ -416,24 +478,11 @@
                                     <p class="font-label-caps text-label-caps text-on-surface">{{ __('SIZE') }}</p>
                                     <button class="font-label-sm text-label-sm text-on-surface-variant underline decoration-1 underline-offset-4">{{ __('Size Guide') }}</button>
                                     </div>
-                                <div class="grid grid-cols-4 gap-gutter">
+                                <div class="flex flex-wrap gap-md">
 @foreach ($sizes as $size)
-<button type="button" data-size-btn data-size="{{ $size }}" class="h-12 border border-outline-variant flex items-center justify-center font-body-sm text-body-sm text-on-surface hover:border-on-surface transition-colors{{ $loop->first ? ' border-secondary text-secondary' : '' }}">{{ $size }}</button>
+<button type="button" data-size-btn data-size="{{ $size }}" class="size-pill{{ $loop->first ? ' size-pill-selected' : '' }}">{{ $size }}</button>
 @endforeach
                                     </div>
-                                </div>
-                            <!-- Desktop Actions -->
-                            <div class="hidden lg:flex items-stretch gap-sm mt-xl">
-                                @php $isWl = in_array($product->product_id, $wishlistedIds, true); @endphp
-                                <button type="button" data-wishlist-toggle data-product-id="{{ $product->product_id }}" aria-label="Wishlist" class="shrink-0 w-12 h-12 border border-outline-variant rounded flex items-center justify-center hover:border-secondary hover:text-secondary transition-colors{{ $isWl ? ' wishlisted-active text-secondary border-secondary' : '' }}">
-                                    <span class="material-symbols-outlined text-[24px]">favorite{{ $isWl ? '' : '_border' }}</span>
-                                </button>
-                                <button type="button" data-cart-add data-variant-id="" class="flex-1 h-12 border border-secondary text-secondary bg-transparent font-label-caps text-label-caps tracking-widest hover:bg-secondary/5 transition-colors flex items-center justify-center">
-                                    {{ __('ADD TO CART') }}
-                                    </button>
-                                <a href="{{ route('customer.checkout') }}" class="btn-gold flex-1 h-12 font-label-caps text-label-caps tracking-widest flex items-center justify-center">
-                                    {{ __('BUY NOW') }}
-                                    </a>
                                 </div>
                             <!-- Accordions -->
                             <section class="border-t border-outline-variant">
@@ -640,17 +689,11 @@
 
                 colorBtns.forEach(function (b) {
                     var active = b.getAttribute('data-color') === selectedColor;
-                    b.classList.toggle('border-secondary', active);
-                    b.classList.toggle('text-secondary', active);
-                    b.classList.toggle('text-on-surface-variant', !active);
-                    b.classList.toggle('border-outline-variant', !active);
+                    b.classList.toggle('swatch-selected', active);
                 });
                 sizeBtns.forEach(function (b) {
                     var active = b.getAttribute('data-size') === selectedSize;
-                    b.classList.toggle('border-secondary', active);
-                    b.classList.toggle('text-secondary', active);
-                    b.classList.toggle('text-on-surface', !active);
-                    b.classList.toggle('border-outline-variant', !active);
+                    b.classList.toggle('size-pill-selected', active);
                 });
 
                 var variantId = match ? String(match.id) : '';
@@ -737,6 +780,20 @@
                 entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); } });
             }, { threshold: 0.1 });
             els.forEach(function (e) { io.observe(e); });
+        });
+    </script>
+    <script>
+        /* Arrow back = kembali ke halaman customer sebelumnya */
+        document.addEventListener('click', function (e) {
+            var back = e.target.closest('[data-go-back]');
+            if (!back) return;
+            e.preventDefault();
+            var ref = document.referrer;
+            if (ref && ref.indexOf(window.location.origin) === 0) {
+                window.history.back();
+            } else {
+                window.location.href = back.getAttribute('href');
+            }
         });
     </script>
     @include('customer._partials.drawer')

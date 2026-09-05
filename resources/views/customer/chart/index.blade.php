@@ -254,121 +254,102 @@
 <body class="bg-background text-on-background min-h-screen flex flex-col font-body-lg lg:pl-72">
 <!-- TopAppBar (Small Center Aligned) -->
 <header class="bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 pt-safe border-b border-[var(--chrome-border)] sticky top-0 z-40">
-<a href="{{ url()->previous() }}" class="w-10 h-10 flex items-center justify-center -ml-2 hover:opacity-80 transition-opacity">
+<a href="{{ route('customer.shop') }}" data-go-back class="w-10 h-10 flex items-center justify-center -ml-2 hover:opacity-80 transition-opacity">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back_ios_new</span>
 </a>
 <div class="flex-1 flex justify-center">
-<h1 class="font-title-md text-title-md uppercase text-[var(--chrome-accent)]">{{ __('CART (2)') }}</h1>
+<h1 id="cart-title" class="font-title-md text-title-md uppercase text-[var(--chrome-accent)]">{{ __('CART') }} ({{ $count }})</h1>
 </div>
 <button class="w-10 h-10 flex items-center justify-center -mr-2 text-on-surface hover:opacity-80 transition-opacity">
 <!-- Empty trailing icon space to balance header -->
 </button>
 </header>
 <!-- Main Content Canvas -->
-<main class="flex-1 overflow-y-auto pb-32 lg:pb-lg w-full">
-<div class="lg:max-w-screen-xl lg:mx-auto lg:px-md lg:flex lg:items-start lg:gap-xl">
-<!-- Multi-store grouping -->
-<section class="mt-md mb-lg lg:flex-1 lg:min-w-0 lg:mb-0">
-<!-- Store Header -->
-<div class="px-container-margin py-sm border-b border-surface-variant flex items-center gap-sm bg-surface-bright">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-secondary text-lg">storefront</span>
-<h2 class="atl-eyebrow font-label-caps text-label-caps text-[var(--chrome-accent)] tracking-widest uppercase">LUNARA FASHION</h2>
+<main class="flex-1 overflow-y-auto pb-36 lg:pb-28 w-full">
+<div class="lg:max-w-screen-xl lg:mx-auto lg:px-md">
+
+<!-- Empty state -->
+<div id="cart-empty" class="{{ $items->count() ? 'hidden' : '' }} flex flex-col items-center justify-center text-center gap-md py-2xl px-container-margin">
+<span class="material-symbols-outlined text-[72px] text-on-surface-variant/40" data-icon="shopping_bag">shopping_bag</span>
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('Keranjang kamu masih kosong.') }}</p>
+<a href="{{ route('customer.shop') }}" class="btn-gold mt-sm font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest transition-colors">{{ __('START SHOPPING') }}</a>
 </div>
-</div>
-<!-- Cart Items -->
-<div class="flex flex-col gap-md">
-<!-- Item 1 -->
-<div class="card-premium p-md md:p-lg flex gap-md relative">
+
+<div id="cart-content" class="{{ $items->count() ? '' : 'hidden' }} w-full">
+<!-- Cart Items (single shared div) -->
+<div class="flex flex-col gap-md px-container-margin pt-md pb-xs">
+@foreach ($items as $i)
+@php
+    $pv = $i->productVariant;
+    $pr = $pv?->product;
+    $img = $pr?->images->first()?->file_gambar ?? '';
+    $name = $pr?->nama_produk ?? __('Produk');
+    $color = $pv?->warna ?? '';
+    $size = $pv?->ukuran ?? '';
+    $itemTotal = $i->quantity * $i->harga_snapshot;
+    $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/cart/900/1200';
+@endphp
+<div class="card-premium p-md md:p-lg flex gap-md relative" data-cart-row data-item-id="{{ $i->cart_item_id }}">
 <!-- Item Image -->
 <div class="w-24 h-32 bg-surface-container-high rounded-lg overflow-hidden shrink-0">
-<img class="w-full h-full object-cover" data-alt="A detailed, high-end editorial product shot of an oversized linen shirt in pristine white. The shirt is displayed flat against a minimalist light ivory background. The lighting is soft and natural, emphasizing the texture and drape of the high-quality linen fabric. Clean aesthetic, luxury fashion, light mode, highly curated." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWiUZJp3vyEgKEFlkXYr8uYhmrhd7nc1O76xK1pykK3gv9yZPwpTziMompgTYrsm4pqLGic8maeveknCfmWhiXg6t-TYd4oUUS88SA88hvpuO1oqPwrtzdSK5uxE2dGRAk7ddwVMhlRVWnGVY69afdnijuhxIyk42pjZO5l_6OlXgzNMT7LSAhnhSw3Fv_dyryq875ZFnw76t_UZNNfMrZxV1bzNbmZ7tZuZbvZp7ZkLIOYbtdfEg"/>
+<img class="w-full h-full object-cover" loading="lazy" decoding="async" alt="{{ $name }}" src="{{ $imgUrl }}"/>
 </div>
 <!-- Item Details -->
 <div class="flex-1 flex flex-col justify-between py-xs">
 <div class="flex justify-between items-start">
 <div>
-<h3 class="font-body-sm text-body-sm font-semibold text-[var(--chrome-accent)]">Oversized Linen Shirt</h3>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">White / M</p>
+<h3 class="font-body-sm text-body-sm font-semibold text-[var(--chrome-accent)]">{{ $name }}</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">{{ trim($color . ' / ' . $size, ' /') }}</p>
 </div>
-<button class="text-on-surface-variant hover:text-error transition-colors p-1 -mr-1 -mt-1">
+<button type="button" data-cart-remove data-item-id="{{ $i->cart_item_id }}" class="text-on-surface-variant hover:text-error transition-colors p-1 -mr-1 -mt-1">
 <span class="material-symbols-outlined text-lg">close</span>
 </button>
 </div>
 <div class="flex justify-between items-end mt-sm">
-<p class="font-body-sm text-body-sm text-[var(--chrome-accent)]">Rp 289.000</p>
+<p class="font-body-sm text-body-sm text-[var(--chrome-accent)]" data-item-total>{{ 'Rp ' . number_format($itemTotal, 0, ',', '.') }}</p>
 <!-- Quantity Selector -->
-<div class="flex items-center border border-outline-variant h-8">
-<button class="w-8 h-full flex items-center justify-center text-on-surface-variant hover:text-secondary transition-colors">
+<div class="flex items-center border border-outline-variant h-8 qty-wrap">
+<button type="button" data-cart-dec data-item-id="{{ $i->cart_item_id }}" class="w-8 h-full flex items-center justify-center text-on-surface-variant hover:text-secondary transition-colors">
 <span class="material-symbols-outlined text-sm">remove</span>
 </button>
-<span class="font-body-sm text-body-sm w-8 text-center">1</span>
-<button class="w-8 h-full flex items-center justify-center text-on-surface-variant hover:text-secondary transition-colors">
+<span class="qty-value font-body-sm text-body-sm w-8 text-center">{{ $i->quantity }}</span>
+<button type="button" data-cart-inc data-item-id="{{ $i->cart_item_id }}" class="w-8 h-full flex items-center justify-center text-on-surface-variant hover:text-secondary transition-colors">
 <span class="material-symbols-outlined text-sm">add</span>
 </button>
 </div>
 </div>
 </div>
 </div>
-<!-- Item 2 -->
-<div class="card-premium p-md md:p-lg flex gap-md relative">
-<!-- Item Image -->
-<div class="w-24 h-32 bg-surface-container-high rounded-lg overflow-hidden shrink-0">
-<img class="w-full h-full object-cover" data-alt="A premium fashion photography detail shot of straight fit tailored pants in deep black. The pants are meticulously styled and folded to show the clean lines and premium fabric finish against a stark, bright minimalist backdrop. The aesthetic is modern, editorial, and monochromatic, fitting a luxury light-mode UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAifLjZGvt9ItjMEmycs9r7iWxS1B4ilgBtNEE8z5ED0-tdWVGttqEFxXDC860crhxjF5PTSWvJN8rygjldElc_sw1wJQKGFMlcFGvYZ514clTvV3a4ofWHJWF7jhOOqw2d0VpqzT14vr8WZmtCSUC7NsgEDjNARgZ3R8I49iXCd4J0Rkq3r8nOvV5o_Qe4hff0IQJ0bo2dZOCZbVOm8ixnqmW339MD28IxcYUo5rNFsfuGF2aW0Jw"/>
-</div>
-<!-- Item Details -->
-<div class="flex-1 flex flex-col justify-between py-xs">
-<div class="flex justify-between items-start">
-<div>
-<h3 class="font-body-sm text-body-sm font-semibold text-[var(--chrome-accent)]">Straight Fit Pants</h3>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Black / M</p>
-</div>
-<button class="text-on-surface-variant hover:text-error transition-colors p-1 -mr-1 -mt-1">
-<span class="material-symbols-outlined text-lg">close</span>
-</button>
-</div>
-<div class="flex justify-between items-end mt-sm">
-<p class="font-body-sm text-body-sm text-[var(--chrome-accent)]">Rp 329.000</p>
-<!-- Quantity Selector -->
-<div class="flex items-center border border-outline-variant h-8">
-<button class="w-8 h-full flex items-center justify-center text-on-surface-variant hover:text-secondary transition-colors">
-<span class="material-symbols-outlined text-sm">remove</span>
-</button>
-<span class="font-body-sm text-body-sm w-8 text-center">1</span>
-<button class="w-8 h-full flex items-center justify-center text-on-surface-variant hover:text-secondary transition-colors">
-<span class="material-symbols-outlined text-sm">add</span>
-</button>
+@endforeach
 </div>
 </div>
-</div>
-</div>
-</div>
-</section>
-<!-- Order Summary & Checkout Section -->
-<section class="card-premium p-md md:p-lg mt-xl lg:mt-md lg:w-[360px] lg:shrink-0 lg:sticky lg:top-20 lg:self-start">
-<h2 class="atl-eyebrow font-label-caps text-label-caps text-[var(--chrome-accent)] tracking-widest uppercase mb-md">{{ __('Order Summary') }}</h2>
-<div class="space-y-sm mb-lg">
-<div class="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
-<span>{{ __('Subtotal (2 items)') }}</span>
-<span class="text-[var(--chrome-accent)]">Rp 618.000</span>
-</div>
-<div class="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
-<span>{{ __('Estimated Shipping') }}</span>
-<span class="text-[var(--chrome-accent)]">Rp 18.000</span>
-</div>
-<div class="w-full h-px bg-outline-variant my-sm"></div>
-<div class="flex justify-between font-title-md text-title-md text-[var(--chrome-accent)]">
-<span>Total</span>
-<span>Rp 636.000</span>
-</div>
-</div>
-<a href="{{ route('customer.checkout') }}" class="btn-gold w-full font-label-caps text-label-caps h-14 flex items-center justify-center rounded-lg uppercase tracking-widest">
-                {{ __('Checkout') }}
-            </a>
-</section>
 </div>
 </main>
-<!-- BottomNavBar (Label Icon) -->
-@include('customer._partials.bottom-nav')
+<!-- Sticky Bottom Toolbar: Order Summary + Checkout -->
+<div id="cart-footer" class="{{ $items->count() ? '' : 'hidden' }} fixed bottom-0 inset-x-0 lg:left-72 z-50 px-container-margin py-sm pb-safe">
+<div class="card-premium flex items-center gap-sm md:gap-md bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.18)]">
+<div class="flex-1 min-w-0 leading-tight">
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ __('Subtotal') }}</p>
+<p id="cart-total" class="font-title-md text-title-md text-[var(--chrome-accent)] truncate">{{ 'Rp ' . number_format($total, 0, ',', '.') }}</p>
+</div>
+<a href="{{ route('customer.checkout') }}" class="btn-gold shrink-0 font-label-caps text-label-caps h-14 px-xl flex items-center justify-center rounded-lg uppercase tracking-widest">
+{{ __('Checkout') }}
+</a>
+</div>
+</div>
 @include('customer._partials.drawer')
+<script>
+/* Arrow back = kembali ke halaman customer sebelumnya */
+document.addEventListener('click', function (e) {
+    var back = e.target.closest('[data-go-back]');
+    if (!back) return;
+    e.preventDefault();
+    var ref = document.referrer;
+    if (ref && ref.indexOf(window.location.origin) === 0) {
+        window.history.back();
+    } else {
+        window.location.href = back.getAttribute('href');
+    }
+});
+</script>
 </body></html>
