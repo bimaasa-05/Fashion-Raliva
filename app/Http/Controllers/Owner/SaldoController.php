@@ -19,8 +19,9 @@ class SaldoController extends Controller
         $store = $user->ownedStores()->first();
 
         if (! $store) {
+            $wallet = new \App\Models\Wallet(['saldo_tersedia'=>0,'saldo_tertahan'=>0]);
             return view('Owner.keuangan.index', [
-                'wallet' => null,
+                'wallet' => $wallet,
                 'mutations' => collect(),
                 'withdrawals' => collect(),
                 'refunds' => collect(),
