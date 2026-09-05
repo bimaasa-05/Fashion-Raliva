@@ -62,6 +62,9 @@ class PermissionSeeder extends Seeder
             ['kode_permission' => 'warehouse.damage', 'nama_permission' => 'Laporan stok rusak', 'deskripsi' => 'Melaporkan dan mencatat stok rusak/kerusakan.'],
             ['kode_permission' => 'warehouse.stock_check', 'nama_permission' => 'Cek ketersediaan bahan', 'deskripsi' => 'Memeriksa dan mengonfirmasi ketersediaan bahan untuk permintaan pelanggan.'],
 
+            // Modul Supplier
+            ['kode_permission' => 'supplier.view', 'nama_permission' => 'Melihat supplier', 'deskripsi' => 'Melihat daftar dan data supplier untuk kebutuhan stok.'],
+
             // Modul Produksi
             ['kode_permission' => 'production.view', 'nama_permission' => 'Melihat production order', 'deskripsi' => 'Melihat production order sesuai scope.'],
             ['kode_permission' => 'production.process', 'nama_permission' => 'Memproses produksi', 'deskripsi' => 'Memproses dan melaporkan hasil produksi.'],
