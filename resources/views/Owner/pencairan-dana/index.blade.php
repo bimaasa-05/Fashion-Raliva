@@ -6,12 +6,21 @@
 
 @section('content')
 <div data-real class="space-y-section-gap">
+    @if(! \App\Support\OwnerContext::currentStore())
+        <div class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
+            <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
+            <div>
+                <p class="font-bold text-sm">Belum punya toko</p>
+                <p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk akses fitur ini.</p>
+            </div>
+        </div>
+    @endif
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <p class="raliva-label text-gold-accent">Saldo Tersedia</p>
                 <p class="raliva-figure text-[28px] mt-1">Rp {{ number_format($wallet?->saldo_tersedia ?? 0,0,',','.') }}</p>
-                <p class="text-xs text-on-surface-variant mt-1">{{ $store->nama_toko ?? '-' }} • {{ $bankAccounts->count() }} rekening</p>
+                <p class="text-xs text-on-surface-variant mt-1">{{ $store?->nama_toko ?? '-' }} • {{ $bankAccounts->count() }} rekening</p>
             </div>
             <button type="button" data-modal-open="modal-cair" class="px-6 py-3 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Ajukan Pencairan</button>
         </div>
@@ -43,7 +52,11 @@
                 </tbody>
             </table>
         </div>
-        <div class="mt-6">{{ $withdrawals->links() }}</div>
+        <div class="mt-6">
+            @if($withdrawals instanceof \Illuminate\Pagination\AbstractPaginator)
+                {{ $withdrawals->links() }}
+            @endif
+        </div>
     </section>
 </div>
 
@@ -63,7 +76,7 @@
                 <select name="bank_account_id" required class="raliva-select">
                     <option value="">Pilih rekening</option>
                     @foreach($bankAccounts as $ba)
-                        <option value="{{ $ba->store_bank_account_id }}">{{ $ba->bank->nama_bank }} • {{ $ba->nomor_rekening }} ({{ $ba->atas_nama }})</option>
+                        <option value="{{ $ba->store_bank_account_id }}">{{ $ba->bank->nama_bank }} • {{ $ba->nomor_rekening }} ({{ $ba->nama_pemilik }})</option>
                     @endforeach
                 </select>
             </div>
@@ -78,4 +91,33 @@
         </form>
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  if (!document.querySelector('[data-real]')) return;
+  // Check if no store banner exists (means no store)
+  const noStore = document.body.innerHTML.includes('Belum punya toko');
+  if (!noStore) return;
+  // Disable all primary action buttons except Ajukan Toko
+  document.querySelectorAll('[data-modal-open], button[type="submit"], a[href*="pengajuan-toko"]:not([href*="ajukan"])').forEach(el=>{
+    // Keep Ajukan Toko enabled
+    if (el.textContent.includes('Ajukan Toko') || el.getAttribute('data-modal-open')?.includes('modal-tambah')) {
+      // For tambah buttons, disable if no store
+      el.setAttribute('disabled','');
+      el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
+      el.title = 'Ajukan toko dulu';
+    }
+  });
+  // More generic: disable all buttons in data-real except those inside pengajuan
+  document.querySelectorAll('[data-real] button, [data-real] a.btn-premium').forEach(el=>{
+    if (el.closest('[data-modal]')) return;
+    if (el.textContent.trim().includes('Ajukan')) return;
+    el.setAttribute('disabled','');
+    el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
+  });
+});
+</script>
+@endpush
+
 @endsection
