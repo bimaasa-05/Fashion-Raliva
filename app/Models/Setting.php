@@ -16,6 +16,8 @@ class Setting extends Model
 
     public const MIN_PENCAIRAN = 'min_pencairan';
 
+    public const SLOT_AWAL_DEFAULT = 'slot_awal_default';
+
     public const NAMA_PLATFORM = 'nama_platform';
 
     public const EMAIL_SUPPORT = 'email_support';

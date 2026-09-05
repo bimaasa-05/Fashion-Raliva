@@ -90,6 +90,10 @@
 
     const updateThemeIcons = () => {
         const isDark = document.documentElement.classList.contains('dark');
+        document.querySelectorAll('.theme-toggle [data-theme-icon]').forEach((el) => {
+            el.textContent = isDark ? 'dark_mode' : 'light_mode';
+            el.setAttribute('data-icon', isDark ? 'dark_mode' : 'light_mode');
+        });
         document.querySelectorAll('.theme-toggle .icon-moon').forEach((el) => el.classList.toggle('hidden', isDark));
         document.querySelectorAll('.theme-toggle .icon-sun').forEach((el) => el.classList.toggle('hidden', !isDark));
     };

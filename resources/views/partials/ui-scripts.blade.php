@@ -148,13 +148,21 @@
     // Filter panel collapsible pada layar mobile
     document.querySelectorAll('[data-filter-toggle]').forEach((toggle) => {
         toggle.addEventListener('click', () => {
-            const panel = document.querySelector(toggle.getAttribute('data-filter-target')) || toggle.querySelector('~ [data-filter-panel]');
             const scope = toggle.closest('[data-table-scope]');
-            const realPanel = scope ? scope.querySelector('[data-filter-panel]') : panel;
-            if (!realPanel) return;
-            realPanel.classList.toggle('hidden');
-            const chevron = toggle.querySelector('[data-filter-chevron]');
-            if (chevron) chevron.classList.toggle('rotate-180');
+            const target = toggle.getAttribute('data-filter-target');
+            let panel = null;
+            if (target) {
+                panel = document.querySelector(target);
+            } else if (scope) {
+                panel = scope.querySelector('[data-filter-panel]');
+            } else {
+                panel = toggle.querySelector('~ [data-filter-panel]')
+                    || toggle.parentElement?.querySelector('~ [data-filter-panel]')
+                    || null;
+            }
+            if (!panel) return;
+            panel.classList.toggle('hidden');
+            toggle.querySelector('[data-filter-chevron]')?.classList.toggle('rotate-180');
         });
     });
 

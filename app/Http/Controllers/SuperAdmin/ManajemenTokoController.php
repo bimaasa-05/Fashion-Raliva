@@ -5,9 +5,11 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\Review;
+use App\Models\Setting;
 use App\Models\Store;
 use App\Models\StoreDocument;
 use App\Support\ActivityLogger;
+use App\Support\SlotService;
 use Illuminate\Http\Request;
 
 class ManajemenTokoController extends Controller
@@ -77,6 +79,14 @@ class ManajemenTokoController extends Controller
             'status' => Store::STATUS_AKTIF,
             'alasan_penolakan' => null,
         ]);
+
+        if (SlotService::freeQuota($toko->store_id) === 0) {
+            $slotAwal = (int) Setting::get(Setting::SLOT_AWAL_DEFAULT, '5');
+
+            if ($slotAwal > 0) {
+                SlotService::setFreeQuota($toko->store_id, $slotAwal);
+            }
+        }
 
         ActivityLogger::log(
             'store.approve',
