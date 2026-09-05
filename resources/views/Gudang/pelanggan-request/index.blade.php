@@ -93,7 +93,7 @@
                     <select data-table-filter="jenis" class="raliva-select">
                         <option value="">Semua Jenis</option>
                         <option value="custom">Custom</option>
-                        <option value="tetap">Produk Tetap</option>
+                        <option value="produk_tetap">Produk Tetap</option>
                     </select>
                     <select data-table-filter="status-request" class="raliva-select">
                         <option value="">Semua Status</option>
@@ -109,56 +109,67 @@
         </div>
 
         <div data-table-wrap class="overflow-x-auto hidden md:block">
-            <table class="premium-table w-full min-w-[1100px] font-body-md text-sm">
+            <table class="premium-table w-full min-w-[1100px]">
                 <thead>
-                    <tr class="border-b border-muted-border text-left">
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">No.</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Request</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Pelanggan</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Jenis / Produk</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Bahan Pilihan</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Modal (HPP)</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Total</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Aksi</th>
+                    <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-center w-12">No.</th>
+                        <th class="p-4 text-left">Request</th>
+                        <th class="p-4 text-left">Pelanggan</th>
+                        <th class="p-4 text-left">Jenis / Produk</th>
+                        <th class="p-4 text-left">Bahan Pilihan</th>
+                        <th class="p-4 text-right">Modal (HPP)</th>
+                        <th class="p-4 text-right">Total</th>
+                        <th class="p-4 text-center">Status</th>
+                        <th class="p-4 text-right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="font-body-md text-sm">
                     @forelse ($requests as $row)
 @php
                         $skey = $row->status_key;
-                        $jkey = in_array($skey, ['kosong', 'tidak_tersedia']) ? 'tetap' : 'custom';
-                        $jenis = $jkey === 'custom' ? 'Custom' : 'Produk Tetap';
+                        $jkey = $row->tipe_order;
+                        $jenis = $row->jenis_label;
                         $itemsAtr = json_encode($row->list_bahan->map(fn ($b) => [
                             'produk' => $b->nama_produk,
                             'bahan' => $b->bahan,
                             'stok' => $b->stok,
                             'tersedia' => $b->tersedia,
+                            'catatan_custom' => $b->catatan_custom,
                         ])->values()->all(), JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP);
                     @endphp
-                        <tr data-table-row data-jenis="{{ $jkey }}" data-status-request="{{ $skey }}" class="border-b border-muted-border last:border-0 align-top">
-                            <td class="py-3.5 px-4 text-on-surface-variant">{{ $loop->iteration }}</td>
-                            <td class="py-3.5 px-4">
+                        <tr data-table-row data-jenis="{{ $jkey }}" data-status-request="{{ $skey }}" class="border-b border-muted-border last:border-0 hover:bg-surface-container-low transition-colors">
+                            <td class="p-4 text-center text-on-surface-variant">{{ $loop->iteration }}</td>
+                            <td class="p-4">
                                 <p class="font-bold text-on-surface">{{ $row->nomor_order }}</p>
                                 <p class="text-xs text-on-surface-variant mt-0.5">{{ $row->created_at?->format('d M Y') ?? '-' }}</p>
                             </td>
-                            <td class="py-3.5 px-4 text-on-surface whitespace-nowrap">{{ $row->pelanggan }}</td>
-                            <td class="py-3.5 px-4">
+                            <td class="p-4 text-on-surface whitespace-nowrap">{{ $row->pelanggan }}</td>
+                            <td class="p-4">
                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full {{ $jkey === 'custom' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }} text-[10px] font-bold uppercase border mb-1">{{ $jenis }}</span>
                                 <p class="font-bold text-on-surface leading-tight">{{ $row->produk }}</p>
                             </td>
-                            <td class="py-3.5 px-4 max-w-[260px]">
-                                <div class="flex flex-wrap gap-1.5">
+                            <td class="p-4 max-w-[300px]">
+                                <div class="flex flex-wrap gap-1.5 mb-1.5">
                                     @forelse ($row->list_bahan as $b)
                                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-bold {{ $b->tersedia ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-error/10 text-error border-error/20' }}">{{ $b->bahan }} <span>{{ $b->stok }} unit</span></span>
                                     @empty
                                         <span class="text-on-surface-variant">—</span>
                                     @endforelse
                                 </div>
+                                @if ($jkey === 'custom' && $row->list_bahan->contains(fn ($b) => ! empty($b->catatan_custom)))
+                                    @foreach ($row->list_bahan as $b)
+                                        @if (! empty($b->catatan_custom))
+                                            <p class="text-[10px] text-gold-accent leading-snug mt-1.5 flex items-start gap-1">
+                                                <span class="material-symbols-outlined text-[13px] shrink-0 mt-px">brush</span>
+                                                <span class="truncate" title="{{ $b->catatan_custom }}">Custom: {{ $b->catatan_custom }}</span>
+                                            </p>
+                                        @endif
+                                    @endforeach
+                                @endif
                             </td>
-                            <td class="py-3.5 px-4 text-right font-bold text-on-surface-variant whitespace-nowrap">Rp {{ number_format($row->hpp, 0, ',', '.') }}</td>
-                            <td class="py-3.5 px-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format($row->total, 0, ',', '.') }}</td>
-                            <td class="py-3.5 px-4 text-center">
+                            <td class="p-4 text-right font-bold text-on-surface-variant whitespace-nowrap">Rp {{ number_format($row->hpp, 0, ',', '.') }}</td>
+                            <td class="p-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format($row->total, 0, ',', '.') }}</td>
+                            <td class="p-4 text-center">
                                 @if ($skey === 'tersedia')
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Tersedia</span>
                                 @elseif ($skey === 'diteruskan')
@@ -169,7 +180,7 @@
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Menunggu</span>
                                 @endif
                             </td>
-                            <td class="py-3.5 px-4 text-right">
+                            <td class="p-4 text-right">
                                 @php
                                     $dicek = ! is_null($row->status_ketersediaan);
                                     $produkAtr = str_replace(['"', "\n"], ['&quot;', ' '], $row->produk);
@@ -203,14 +214,15 @@
             @forelse ($requests as $row)
                 @php
                     $skeyM = $row->status_key;
-                    $jkeyM = in_array($skeyM, ['kosong', 'tidak_tersedia']) ? 'tetap' : 'custom';
-                    $jenisM = $jkeyM === 'custom' ? 'Custom' : 'Produk Tetap';
+                    $jkeyM = $row->tipe_order;
+                    $jenisM = $row->jenis_label;
                     $dicekM = ! is_null($row->status_ketersediaan);
                     $itemsAtrM = json_encode($row->list_bahan->map(fn ($b) => [
                         'produk' => $b->nama_produk,
                         'bahan' => $b->bahan,
                         'stok' => $b->stok,
                         'tersedia' => $b->tersedia,
+                        'catatan_custom' => $b->catatan_custom,
                     ])->values()->all(), JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP);
                     $produkAtrM = str_replace(['"', "\n"], ['&quot;', ' '], $row->produk);
                     $catatanAtrM = str_replace(['"', "\n"], ['&quot;', ' '], $row->catatan_gudang ?? '');
@@ -251,6 +263,16 @@
                                         <span class="text-on-surface-variant text-sm">—</span>
                                     @endforelse
                                 </div>
+                                @if ($jkeyM === 'custom' && $row->list_bahan->contains(fn ($b) => ! empty($b->catatan_custom)))
+                                    @foreach ($row->list_bahan as $b)
+                                        @if (! empty($b->catatan_custom))
+                                            <p class="text-[10px] text-gold-accent leading-snug mt-2 flex items-start gap-1 justify-end text-right">
+                                                <span class="material-symbols-outlined text-[13px] shrink-0 mt-px">brush</span>
+                                                <span>Custom: {{ $b->catatan_custom }}</span>
+                                            </p>
+                                        @endif
+                                    @endforeach
+                                @endif
                             </dd>
                         </div>
                         <div class="flex justify-between gap-3">
@@ -387,17 +409,26 @@
             if (listBahan) listBahan.innerHTML = '';
             if (slotJumlah) slotJumlah.textContent = items.length;
 
-            (items.length ? items : [{ produk: btn.dataset.dProduk || '-', bahan: '-', stok: 0, tersedia: false }]).forEach((it) => {
+            (items.length ? items : [{ produk: btn.dataset.dProduk || '-', bahan: '-', stok: 0, tersedia: false, catatan_custom: '' }]).forEach((it) => {
                 if (!listBahan) return;
                 const li = document.createElement('li');
                 li.className = 'flex items-center justify-between gap-2';
+                const meta = document.createElement('div');
+                meta.className = 'min-w-0';
                 const name = document.createElement('span');
-                name.className = 'text-xs text-on-surface leading-tight';
+                name.className = 'block text-xs text-on-surface leading-tight truncate';
                 name.textContent = it.bahan && it.bahan !== '—' ? it.bahan : (it.produk || '-');
+                meta.appendChild(name);
+                if (it.catatan_custom) {
+                    const cust = document.createElement('span');
+                    cust.className = 'block text-[10px] text-gold-accent leading-snug mt-0.5 truncate';
+                    cust.textContent = it.catatan_custom;
+                    meta.appendChild(cust);
+                }
                 const badge = document.createElement('span');
                 badge.className = 'inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full border text-[10px] font-bold shrink-0 ' + (it.tersedia ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-error/10 text-error border-error/20');
                 badge.textContent = it.stok + ' unit';
-                li.appendChild(name);
+                li.appendChild(meta);
                 li.appendChild(badge);
                 listBahan.appendChild(li);
             });
