@@ -25,6 +25,10 @@ class Order extends Model
 
     public const STATUS_REFUND = 'refund';
 
+    public const TIPE_PRODUK_TETAP = 'produk_tetap';
+
+    public const TIPE_CUSTOM = 'custom';
+
     protected $fillable = [
         'checkout_id',
         'store_id',
@@ -36,6 +40,7 @@ class Order extends Model
         'total_ongkir',
         'grand_total',
         'status',
+        'tipe_order',
         'status_ketersediaan',
         'catatan_gudang',
         'dicek_gudang_pada',
@@ -46,6 +51,16 @@ class Order extends Model
         return [
             'dicek_gudang_pada' => 'datetime',
         ];
+    }
+
+    public function isCustom(): bool
+    {
+        return $this->tipe_order === self::TIPE_CUSTOM;
+    }
+
+    public function tipeOrderLabel(): string
+    {
+        return $this->isCustom() ? 'Custom' : 'Produk Tetap';
     }
 
     public function checkout(): BelongsTo
