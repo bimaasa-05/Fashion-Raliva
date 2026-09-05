@@ -84,9 +84,9 @@ class RalivaDemoSeeder extends Seeder
         Supplier::query()->delete();
         Store::query()->delete();
 
-        // Nonaktifkan user lama dari user Seeder (kecuali Super Admin)
+        // Nonaktifkan user lama dari user Seeder (kecuali akun utama seeder)
         User::where('role_id', '!=', Role::where('nama_role', Role::SUPER_ADMIN)->value('role_id'))
-            ->where('email', '!=', 'superadmin@raliva.test')
+            ->whereNotIn('email', ['superadmin@raliva.test', 'sa@gmail.com', 'o@gmail.com', 'a@gmail.com', 'p@gmail.com', 'g@gmail.com', 'c@gmail.com', 'owner@raliva.test', 'admin@raliva.test', 'produksi@raliva.test', 'gudang@raliva.test'])
             ->update(['status' => User::STATUS_NONAKTIF]);
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1');

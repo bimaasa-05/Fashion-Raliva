@@ -17,7 +17,7 @@
 <div data-real class="hidden space-y-section-gap">
     <section class="rise relative bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden card-premium">
         <div class="relative h-28 md:h-32 bg-gradient-to-r from-gold-accent/25 via-gold-accent/10 to-transparent">
-            <span class="material-symbols-outlined absolute right-8 -bottom-6 text-[110px] text-gold-accent/15 pointer-events-none select-none" aria-hidden="true">warehouse</span>
+            <span class="material-symbols-outlined absolute right-8 -bottom-6 text-[110px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">warehouse</span>
         </div>
         @php
             $gnama = $user->nama_lengkap ?? 'Gudang';

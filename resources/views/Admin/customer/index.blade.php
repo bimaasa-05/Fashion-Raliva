@@ -6,7 +6,31 @@
 @section('header-subtitle', 'Data customer yang berhubungan dengan toko dan riwayat pesanannya.')
 
 @section('content')
-<section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+
+    <section data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter mb-6">
+        <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">groups</span>
+            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Total Customer</span>
+            <span class="raliva-figure text-[26px] text-on-surface relative">{{ $customers->total() ?? 0 }}</span>
+        </div>
+        <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">person_add</span>
+            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Baru Bulan Ini</span>
+            <span class="raliva-figure text-[26px] text-secondary relative">{{ $customers->where('created_at', '>=', now()->startOfMonth())->count() }}</span>
+        </div>
+        <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">repeat</span>
+            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Repeat</span>
+            <span class="raliva-figure text-[26px] text-on-surface relative">{{ $customers->filter(fn($c)=>($c->total_pesanan??0)>=2)->count() }}</span>
+        </div>
+        <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
+            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Avg Belanja</span>
+            <span class="raliva-figure text-[26px] text-gold-accent relative">Rp {{ number_format($customers->avg('orders_sum_grand_total') ?? 0,0,',','.') }}</span>
+        </div>
+    </section>
+
+    <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Customer</h2>
         <div class="flex items-center gap-3">
@@ -51,7 +75,6 @@
     </div>
     <div class="mt-4">{{ $customers->links() }}</div>
 </section>
-@endsection
 
 {{-- Modal Tambah Customer --}}
 <div id="modal-tambah-customer" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
@@ -96,7 +119,6 @@
         </div>
     </form>
 </div>
-@endsection
 
 @foreach ($customers as $c)
 @php
@@ -172,3 +194,4 @@
     </div>
 </div>
 @endforeach
+@endsection

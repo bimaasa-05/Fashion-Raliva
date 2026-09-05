@@ -11,19 +11,19 @@
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Produksi</h2>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter mb-2">
-            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
+            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden"><span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">assignment</span>
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Total Ajuan</p>
                 <p class="font-title-md text-title-md text-on-surface mt-1">{{ $stats['total_ajuan'] }}</p>
             </div>
-            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
+            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden"><span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Diproduksi</p>
                 <p class="font-title-md text-title-md text-secondary mt-1">{{ $stats['diproses'] }}</p>
             </div>
-            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
+            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden"><span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">task_alt</span>
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Selesai</p>
                 <p class="font-title-md text-title-md text-gold-accent mt-1">{{ $stats['selesai'] }}</p>
             </div>
-            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low">
+            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden"><span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">inventory_2</span>
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Unit Diminta</p>
                 <p class="font-title-md text-title-md text-on-surface mt-1">{{ number_format((float) $stats['unit_diminta'], 0, ',', '.') }}</p>
             </div>

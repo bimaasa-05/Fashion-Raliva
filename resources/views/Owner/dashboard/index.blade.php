@@ -58,37 +58,37 @@
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Penjualan Hari Ini</span>
                 <span class="raliva-figure text-[26px] text-on-surface">{{ 'Rp ' . number_format($penjualanHariIni, 0, ',', '.') }}</span>
                 <span class="font-label-sm text-[11px] text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">trending_up</span>penjualan hari ini</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">payments</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pesanan Baru</span>
                 <span class="raliva-figure text-[26px] text-on-surface">{{ $pesananBaru }}</span>
                 <span class="font-label-sm text-[11px] text-on-surface-variant">menunggu konfirmasi</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Produk Aktif</span>
                 <span class="raliva-figure text-[26px] text-on-surface">{{ $produkAktif }}</span>
                 <span class="font-label-sm text-[11px] text-on-surface-variant">dari 200 slot paket</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">checkroom</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">checkroom</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Saldo Tersedia</span>
                 <span class="raliva-figure text-[26px] text-secondary">{{ 'Rp ' . number_format($saldoTersedia, 0, ',', '.') }}</span>
                 <span class="font-label-sm text-[11px] text-on-surface-variant">+ {{ 'Rp ' . number_format($saldoTertahan, 0, ',', '.') }} tertunda</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Produk Pending</span>
                 <span class="raliva-figure text-[26px] text-gold-accent">{{ $produkPending }}</span>
                 <span class="font-label-sm text-[11px] text-on-surface-variant">menunggu moderasi</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">warning</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">warning</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Komplain Terbuka</span>
                 <span class="raliva-figure text-[26px] text-error">{{ $komplainTerbuka }}</span>
                 <span class="font-label-sm text-[11px] text-on-surface-variant">butuh respons Anda</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">support_agent</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">support_agent</span>
             </div>
         </div>
     </section>

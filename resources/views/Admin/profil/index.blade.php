@@ -9,7 +9,7 @@
 <div class="space-y-section-gap max-w-4xl">
     <section class="relative bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium">
         <div class="relative h-28 md:h-32 bg-gradient-to-r from-gold-accent/25 via-gold-accent/10 to-transparent">
-            <span class="material-symbols-outlined absolute right-8 -bottom-6 text-[110px] text-gold-accent/15 pointer-events-none select-none" aria-hidden="true">storefront</span>
+            <span class="material-symbols-outlined absolute right-8 -bottom-6 text-[110px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">storefront</span>
         </div>
         @php
             $anama = $user->nama_lengkap ?? 'Admin';

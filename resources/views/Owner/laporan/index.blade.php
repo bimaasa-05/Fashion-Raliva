@@ -20,13 +20,14 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
-    {{-- Ringkasan Periode --}}
+    {{-- Ringkasan Periode — besarin & tebalkan icon (visible white/dark) --}}
     <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
         @foreach ([['Pendapatan Bersih', 'Rp '.number_format($pendapatan,0,',','.'), 'trending_up', 'secondary', 'total order selesai'], ['Pesanan Selesai', $pesananSelesai, 'shopping_bag', 'on-surface', 'akumulasi'], ['Nilai Refund', 'Rp '.number_format($refund,0,',','.'), 'money_off', 'error', 'refund selesai'], ['Dana Dicairkan', 'Rp '.number_format($dicairkan,0,',','.'), 'payments', 'on-surface', 'withdrawal selesai']] as $stat)
-            <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-1 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">{{ $stat[0] }}</span>
-                <span class="raliva-figure text-2xl text-{{ $stat[3] }}">{{ $stat[1] }}</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">{{ $stat[2] }}</span>{{ $stat[4] }}</span>
+            <div data-reveal class="bg-surface-container-lowest p-5 md:p-6 border border-muted-border rounded-xl flex flex-col gap-1.5 relative overflow-hidden card-premium">
+                <span class="material-symbols-outlined absolute -right-2 -bottom-3 text-[80px] text-gold-accent/15 fill pointer-events-none select-none fill" aria-hidden="true">{{ $stat[2] }}</span>
+                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider relative">{{ $stat[0] }}</span>
+                <span class="raliva-figure text-[26px] md:text-[28px] text-{{ $stat[3] }} relative">{{ $stat[1] }}</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant flex items-center gap-1.5 relative"><span class="material-symbols-outlined text-[18px] fill text-gold-accent">{{ $stat[2] }}</span>{{ $stat[4] }}</span>
             </div>
         @endforeach
     </section>

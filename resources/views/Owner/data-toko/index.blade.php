@@ -92,48 +92,10 @@
             </section>
         </div>
 
-        {{-- Jam Operasional --}}
-        <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-            <div class="flex items-center justify-between gap-4 mb-6">
-                <div>
-                    <h2 class="font-title-md text-title-md mb-1 text-on-surface premium-heading">Jam Operasional</h2>
-                    <p class="text-xs text-on-surface-variant">Atur hari buka dan jam operasional toko Anda.</p>
-                </div>
-            </div>
-            @php
-                $days = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
-                $hours = $store?->operational_hours ?? [];
-            @endphp
-            <div class="space-y-3">
-                @foreach ($days as $day)
-                    @php
-                        $h = $hours[$day] ?? ['buka' => true, 'mulai' => '09:00', 'selesai' => '21:00'];
-                        $buka = $h['buka'] ?? true;
-                        $mulai = $h['mulai'] ?? '09:00';
-                        $selesai = $h['selesai'] ?? '21:00';
-                    @endphp
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-3 border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low">
-                        <div class="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-44 shrink-0">
-                            <span class="font-title-md text-sm text-on-surface">{{ $day }}</span>
-                            <label class="inline-flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" name="operational_hours[{{ $day }}][buka]" value="1" {{ $buka ? 'checked' : '' }} class="peer sr-only">
-                                <span class="relative inline-flex w-11 h-6 bg-surface-container-high border border-outline-variant rounded-full peer-checked:bg-gold-accent peer-checked:border-gold-accent transition-colors duration-200 after:absolute after:left-0.5 after:top-0.5 after:w-5 after:h-5 after:bg-white rounded-full after:transition-transform peer-checked:after:translate-x-5"></span>
-                                <span class="text-xs text-on-surface-variant">{{ $buka ? 'Buka' : 'Tutup' }}</span>
-                            </label>
-                        </div>
-                        <div class="flex items-center gap-2 w-full sm:w-auto {{ $buka ? '' : 'opacity-40 pointer-events-none' }}">
-                            <input type="time" name="operational_hours[{{ $day }}][mulai]" value="{{ $mulai }}" class="raliva-input !py-2 !px-3 text-sm w-full sm:w-32" />
-                            <span class="text-on-surface-variant text-sm">—</span>
-                            <input type="time" name="operational_hours[{{ $day }}][selesai]" value="{{ $selesai }}" class="raliva-input !py-2 !px-3 text-sm w-full sm:w-32" />
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-            <p class="text-xs text-on-surface-variant mt-5 flex items-start gap-2">
-                <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">info</span>
-                Perubahan nama toko atau alamat akan memicu verifikasi ulang oleh Super Admin sebelum diterapkan.
-            </p>
-        </section>
+        <p class="text-xs text-on-surface-variant flex items-start gap-2">
+            <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">info</span>
+            Toko buka 24 jam — siapa pun boleh memesan kapan pun. Perubahan nama atau alamat akan diverifikasi Super Admin.
+        </p>
 
         <div data-reveal class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter sticky bottom-20 md:bottom-4 z-30">
             <button type="button" data-modal-open="modal-atur-ulang" class="py-3 px-6 bg-surface-container-lowest border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors shadow-sm">Atur Ulang</button>

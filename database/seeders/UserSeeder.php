@@ -61,7 +61,7 @@ class UserSeeder extends Seeder
             ['email' => 'p@gmail.com'],
             [
                 'nama_lengkap' => 'Rini Kusuma',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('123'),
                 'role_id' => $roles[Role::PRODUKSI],
                 'nomor_telepon' => '081234567893',
                 'email_verified_at' => now(),
@@ -69,52 +69,14 @@ class UserSeeder extends Seeder
             ]
         );
 
-        // Tambahan user Produksi
-
+        // c@gmail.com — Customer utama sesuai request (password 123)
         User::updateOrCreate(
-            ['email' => 'customer@raliva.test'],
+            ['email' => 'c@gmail.com'],
             [
-                'nama_lengkap' => 'Jane Doe',
-                'password' => Hash::make('password'),
+                'nama_lengkap' => 'Customer Raliva',
+                'password' => Hash::make('123'),
                 'role_id' => $roles[Role::CUSTOMER],
                 'nomor_telepon' => '081234567894',
-                'email_verified_at' => now(),
-                'status' => User::STATUS_AKTIF,
-            ]
-        );
-
-        // Tambahan user Customer
-        User::updateOrCreate(
-            ['email' => 'customer2@raliva.test'],
-            [
-                'nama_lengkap' => 'Budi Santoso',
-                'password' => Hash::make('password'),
-                'role_id' => $roles[Role::CUSTOMER],
-                'nomor_telepon' => '081234567898',
-                'email_verified_at' => now(),
-                'status' => User::STATUS_AKTIF,
-            ]
-        );
-        User::updateOrCreate(
-            ['email' => 'customer3@raliva.test'],
-            [
-                'nama_lengkap' => 'Dewi Lestari',
-                'password' => Hash::make('password'),
-                'role_id' => $roles[Role::CUSTOMER],
-                'nomor_telepon' => '081234567899',
-                'email_verified_at' => now(),
-                'status' => User::STATUS_AKTIF,
-            ]
-        );
-
-        // Tambahan Owner
-        User::updateOrCreate(
-            ['email' => 'owner2@raliva.test'],
-            [
-                'nama_lengkap' => 'Rina Wijaya',
-                'password' => Hash::make('password'),
-                'role_id' => $roles[Role::OWNER],
-                'nomor_telepon' => '081234567900',
                 'email_verified_at' => now(),
                 'status' => User::STATUS_AKTIF,
             ]

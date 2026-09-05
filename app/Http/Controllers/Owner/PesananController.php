@@ -60,11 +60,11 @@ class PesananController extends Controller
         }
 
         // Teruskan pesanan ke Admin Produksi untuk diproses.
-        if (! in_array($order->status, ['baru', 'dibayar'])) {
+        if (! in_array($order->status, [Order::STATUS_PENDING_PAYMENT, Order::STATUS_DIBAYAR])) {
             return back()->with('error', 'Pesanan sudah diproses atau tidak dapat diteruskan.');
         }
 
-        $order->update(['status' => 'diproses']);
+        $order->update(['status' => Order::STATUS_DIPROSES]);
 
         return back()->with('success', 'Pesanan ' . $order->nomor_order . ' diteruskan ke Admin Produksi.');
     }

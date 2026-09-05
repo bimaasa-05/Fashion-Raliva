@@ -23,25 +23,25 @@
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Selesai (Agu)</span>
             <span class="raliva-figure text-[26px] text-on-surface">236</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">unit layak</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">task_alt</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">task_alt</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Siap Serah ke Gudang</span>
             <span class="raliva-figure text-[26px] text-gold-accent">3</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">menunggu penyerahan</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">local_shipping</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">local_shipping</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Sudah Diserahkan</span>
             <span class="raliva-figure text-[26px] text-secondary">28</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">batch bulan ini</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">warehouse</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">warehouse</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Rata Waktu Produksi</span>
             <span class="raliva-figure text-[26px] text-on-surface">6,2<span class="text-[16px] font-normal"> hari</span></span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">per batch</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">timer</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">timer</span>
         </div>
     </section>
 

@@ -129,7 +129,7 @@
         ['route' => 'owner.dashboard', 'icon' => 'space_dashboard', 'label' => 'Beranda'],
         ['route' => 'owner.pesanan', 'icon' => 'shopping_bag', 'label' => 'Pesanan'],
         ['route' => 'owner.data-pelanggan', 'icon' => 'groups', 'label' => 'Pelanggan'],
-        ['route' => 'owner.saldo', 'icon' => 'account_balance_wallet', 'label' => 'Saldo'],
+        ['route' => 'owner.keuangan', 'icon' => 'account_balance_wallet', 'label' => 'Keuangan'],
         ['route' => 'owner.profil', 'icon' => 'person', 'label' => 'Profil'],
     ]])
 

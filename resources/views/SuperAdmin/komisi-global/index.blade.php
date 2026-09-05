@@ -100,25 +100,25 @@
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Estimasi Komisi</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp {{ number_format($stats['estimasi_komisi'] / 1000, 0, ',', '.') }}JT</span>
                 <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-secondary">trending_{{ $stats['persen_komisi'] >= 0 ? 'up' : 'down' }}"></span>{{ $stats['persen_komisi'] >= 0 ? '+' : '' }}{{ $stats['persen_komisi'] }}% vs bulan lalu</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">payments</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
             </div>
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Transaksi Berkomisi</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ number_format($stats['transaksi'], 0, ',', '.') }}</span>
                 <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-secondary">trending_{{ $stats['persen_transaksi'] >= 0 ? 'up' : 'down' }}"></span>{{ $stats['persen_transaksi'] >= 0 ? '+' : '' }}{{ $stats['persen_transaksi'] }}% vs bulan lalu</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
             </div>
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Toko Terdampak</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['toko'] }}</span>
                 <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-on-surface-variant">storefront</span>aktif bulan ini</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">storefront</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">storefront</span>
             </div>
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Perubahan Tarif</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['perubahan'] }}×</span>
                 <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant">sepanjang masa</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">history</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">history</span>
             </div>
         </div>
     </section>

@@ -31,6 +31,7 @@ class User extends Authenticatable
         'nomor_telepon',
         'foto_profil',
         'status',
+        'email_verified_at',
     ];
 
     protected $hidden = [

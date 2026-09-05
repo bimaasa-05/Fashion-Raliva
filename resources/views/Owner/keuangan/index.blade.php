@@ -32,9 +32,10 @@
             <p class="text-on-surface-variant font-body-md text-sm mt-1">Data keuangan akan muncul setelah ada transaksi pada toko ini.</p>
         </div>
     @else
-    {{-- Tab Switcher --}}
+    {{-- Tab Switcher: Ringkasan | Pemasukan | Pengeluaran --}}
     <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 overflow-x-auto max-w-full">
         <button type="button" data-saldo-tab="ringkasan" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">Ringkasan</button>
+        <button type="button" data-saldo-tab="pemasukan" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pemasukan</button>
         <button type="button" data-saldo-tab="pengeluaran" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pengeluaran</button>
     </div>
 
@@ -48,7 +49,7 @@
                 <p class="raliva-figure text-[34px] md:text-[42px] mt-4 relative">{{ $fmt($wallet->saldo_tersedia) }}</p>
                 <div class="flex items-center justify-between mt-auto pt-6 relative gap-gutter flex-wrap">
                     <p class="font-body-md text-xs text-inverse-on-surface/60">Siap dicairkan kapan saja</p>
-                    <a href="#pencairan" class="py-2.5 px-5 bg-gold-accent text-[#111] text-xs font-semibold rounded btn-premium shrink-0">Cairkan</a>
+                    <a href="{{ route('owner.pencairan-dana') }}" class="py-2.5 px-5 bg-gold-accent text-[#111] text-xs font-semibold rounded btn-premium shrink-0">Cairkan</a>
                 </div>
             </div>
 
@@ -65,7 +66,7 @@
                 <p class="raliva-figure text-[26px] mt-4 text-secondary relative">{{ $fmt($totalDicairkan) }}</p>
                 <div class="flex items-center justify-between mt-auto pt-6 relative gap-gutter flex-wrap">
                     <p class="font-body-md text-xs text-on-surface-variant">{{ $withdrawals->count() }} pencairan tercatat</p>
-                    <a href="#pencairan" class="py-2.5 px-5 border border-muted-border text-xs font-semibold rounded-lg hover:border-gold-accent transition-colors shrink-0">Riwayat</a>
+                    <a href="{{ route('owner.pencairan-dana') }}" class="py-2.5 px-5 border border-muted-border text-xs font-semibold rounded-lg hover:border-gold-accent transition-colors shrink-0">Riwayat</a>
                 </div>
             </div>
         </section>
@@ -81,31 +82,37 @@
             </div>
             <div data-reveal-group class="grid grid-cols-2 md:grid-cols-5 gap-gutter">
                 <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Total Omzet</span>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Total Omzet <span class="normal-case text-[9px] italic text-gold-accent/70">Revenue</span></span>
                     <span class="raliva-figure text-[20px] text-on-surface">{{ $fmt($margin['revenue']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Semua pendapatan kotor</span>
+                    <span class="text-[10px] text-on-surface-variant">Uang Masuk Dari Pelanggan</span>
+                    <span class="text-[9px] italic text-gold-accent/70 mt-1">Cross Margin — Produk kita menguntungkan?</span>
                 </div>
                 <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Kotor</span>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Kotor <span class="normal-case text-[9px] italic text-gold-accent/70">Gross Profit</span></span>
                     <span class="raliva-figure text-[20px] text-secondary">{{ $fmt($margin['gross']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Setelah potong HPP barang</span>
+                    <span class="text-[10px] text-on-surface-variant">Setelah Bayar Supplier/HPP</span>
+                    <span class="text-[9px] italic text-gold-accent/70 mt-1">Gross Margin — Setelah HPP</span>
                 </div>
                 <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Operasional</span>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Operasional <span class="normal-case text-[9px] italic text-gold-accent/70">EBITDA</span></span>
                     <span class="raliva-figure text-[20px] text-on-surface">{{ $fmt($margin['ebitda']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Setelah biaya operasional</span>
+                    <span class="text-[10px] text-on-surface-variant">Setelah Bayar Operasional</span>
+                    <span class="text-[9px] italic text-gold-accent/70 mt-1">EBITDA Margin — Operasional Sehat?</span>
                 </div>
                 <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Sebelum Pajak</span>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Sebelum Pajak <span class="normal-case text-[9px] italic text-gold-accent/70">EBT</span></span>
                     <span class="raliva-figure text-[20px] text-on-surface">{{ $fmt($margin['ebt']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Setelah biaya pendanaan</span>
+                    <span class="text-[10px] text-on-surface-variant">Setelah Bayar Bank/Bunga</span>
+                    <span class="text-[9px] italic text-gold-accent/70 mt-1">EBT Margin — Setelah Utang Masih Untung?</span>
                 </div>
                 <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Bersih</span>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Bersih <span class="normal-case text-[9px] italic text-gold-accent/70">Net Profit</span></span>
                     <span class="raliva-figure text-[20px] text-gold-accent">{{ $fmt($margin['net']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Uang riil di kantong</span>
+                    <span class="text-[10px] text-on-surface-variant">Setelah Bayar Negara (Pajak) — Hak ShareHolder</span>
+                    <span class="text-[9px] italic text-gold-accent/70 mt-1">Net Profit Margin — Untuk Shareholder</span>
                 </div>
             </div>
+            <p class="text-[10px] text-on-surface-variant/70 italic mt-3 text-center">5 Lapis Cerita Keuangan: Revenue → Gross → EBITDA → EBIT (D&A) → EBT → Net Profit → ShareHolder</p>
         </section>
 
         {{-- Grafik Tren Saldo + Info --}}
@@ -173,6 +180,49 @@
             <div class="flex items-center justify-between pt-6 mt-2 border-t border-muted-border">
                 <p class="text-xs text-on-surface-variant">Menampilkan {{ $mutations->count() }} dari {{ $mutations->total() }} mutasi</p>
                 {{ $mutations->links() }}
+            </div>
+        </section>
+    </div>
+
+        {{-- ============ PANEL: PEMASUKAN ============ --}}
+    <div data-saldo-panel="pemasukan" class="hidden space-y-section-gap">
+        <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Catat Pemasukan (Investor / Modal)</h2>
+            <form method="POST" action="{{ route('owner.keuangan.pemasukan.store') }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                @csrf
+                <div>
+                    <label class="block raliva-label mb-2">Sumber Dana</label>
+                    <input name="sumber" type="text" required placeholder="cth. Investor A / Modal Pribadi" class="raliva-input" />
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">Nominal (Rp)</label>
+                    <input name="nominal" type="number" min="1" required placeholder="5000000" class="raliva-input" />
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block raliva-label mb-2">Tanggal</label>
+                    <input name="tanggal" type="date" required value="{{ date('Y-m-d') }}" class="raliva-input" />
+                </div>
+                <div class="md:col-span-2 flex justify-end">
+                    <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[16px]">add</span>Catat Pemasukan
+                    </button>
+                </div>
+            </form>
+            <div class="mt-8">
+                <h3 class="font-title-md text-sm mb-4">Riwayat Pemasukan</h3>
+                <div class="space-y-2">
+                    @forelse($mutations->whereIn('jenis_transaksi', ['penjualan_masuk','komisi_masuk','pemasukan']) as $m)
+                        <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg border border-muted-border">
+                            <div>
+                                <p class="text-sm text-on-surface">{{ $m->keterangan ?? $m->jenis_transaksi }}</p>
+                                <p class="text-xs text-on-surface-variant">{{ $m->created_at?->translatedFormat('d M Y H:i') }}</p>
+                            </div>
+                            <span class="text-sm font-bold text-secondary">+ Rp {{ number_format($m->jumlah,0,',','.') }}</span>
+                        </div>
+                    @empty
+                        <p class="text-sm text-on-surface-variant text-center py-4">Belum ada pemasukan tercatat.</p>
+                    @endforelse
+                </div>
             </div>
         </section>
     </div>
