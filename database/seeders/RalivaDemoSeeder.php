@@ -188,7 +188,6 @@ class RalivaDemoSeeder extends Seeder
                 'alamat' => 'Jl. Kemang Raya No. 21, Jakarta Selatan',
                 'nomor_telepon' => '0215551234',
                 'status' => Store::STATUS_AKTIF,
-                'operational_hours' => $this->defaultOperationalHours(),
             ]
         );
 
@@ -534,6 +533,31 @@ class RalivaDemoSeeder extends Seeder
                 'diskon' => 0,
                 'total' => $subtotal,
             ]);
+
+            $variant2 = $allVariants->skip(($r + 2) % $allVariants->count())->first();
+            if ($variant2 && $variant2->product_variant_id !== $variant->product_variant_id) {
+                $qty2 = 1;
+                $harga2 = (float) $variant2->harga;
+                $subtotal2 = $harga2 * $qty2;
+
+                $order->subtotal += $subtotal2;
+                $order->grand_total += $subtotal2;
+                $order->saveQuietly();
+                $checkout->subtotal += $subtotal2;
+                $checkout->grand_total += $subtotal2;
+                $checkout->saveQuietly();
+
+                OrderItem::create([
+                    'order_id' => $order->order_id,
+                    'product_variant_id' => $variant2->product_variant_id,
+                    'nama_produk_snapshot' => $variant2->product->nama_produk ?? 'Produk',
+                    'harga_snapshot' => $harga2,
+                    'quantity' => $qty2,
+                    'subtotal' => $subtotal2,
+                    'diskon' => 0,
+                    'total' => $subtotal2,
+                ]);
+            }
 
             $allOrderIds[] = $order->order_id;
         }
