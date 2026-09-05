@@ -30,11 +30,28 @@ class PelangganRequestController extends Controller
                 ->orderByDesc('created_at')
                 ->get()
                 ->map(function ($order) use ($stokWh) {
-                    $first = $order->items->first();
-                    $variant = $first?->productVariant;
-                    $stokTersedia = $stokWh->has($variant?->product_variant_id)
-                        ? $stokWh->get($variant?->product_variant_id) > 0
-                        : false;
+                    $items = $order->items;
+
+                    $listBahan = $items->map(function ($item) use ($stokWh) {
+                        $variant = $item->productVariant;
+                        $stok = $variant ? (int) $stokWh->get($variant->product_variant_id, 0) : 0;
+
+                        return (object) [
+                            'nama_produk' => $variant?->product?->nama_produk ?? ($item->nama_produk_snapshot ?? '-'),
+                            'variant' => $variant,
+                            'bahan' => $variant && $variant->warna
+                                ? ($variant->warna.($variant->ukuran ? ' / '.$variant->ukuran : ''))
+                                : '—',
+                            'stok' => $stok,
+                            'tersedia' => $stok > 0,
+                            'harga' => $variant?->harga ?? $item->harga_snapshot ?? 0,
+                        ];
+                    });
+
+                    $satuTersedia = $listBahan->contains(fn ($b) => $b->tersedia);
+                    $semuaTersedia = $listBahan->isNotEmpty() && $listBahan->every(fn ($b) => $b->tersedia);
+                    $totalStok = $listBahan->sum('stok');
+                    $hpp = $listBahan->sum('harga');
 
                     $hasil = $order->status_ketersediaan;
 
@@ -46,9 +63,14 @@ class PelangganRequestController extends Controller
                             'tidak_tersedia' => 'Tidak Tersedia',
                             default => 'Sudah Dicek',
                         };
-                    } elseif (! $stokTersedia) {
-                        $statusKey = 'kosong';
-                        $statusLabel = 'Tidak Tersedia';
+                    } elseif (! $semuaTersedia) {
+                        if ($listBahan->isEmpty() || (! $satuTersedia)) {
+                            $statusKey = 'kosong';
+                            $statusLabel = 'Tidak Tersedia';
+                        } else {
+                            $statusKey = 'sebagian';
+                            $statusLabel = 'Sebagian Tersedia';
+                        }
                     } else {
                         $statusKey = 'tersedia';
                         $statusLabel = 'Tersedia';
@@ -62,13 +84,10 @@ class PelangganRequestController extends Controller
                         'status_ketersediaan' => $order->status_ketersediaan,
                         'catatan_gudang' => $order->catatan_gudang,
                         'pelanggan' => $order->checkout?->user?->nama_lengkap ?? 'Pelanggan',
-                        'produk' => $variant?->product?->nama_produk ?? ($first?->nama_produk_snapshot ?? '-'),
-                        'variant' => $variant,
-                        'bahan' => $variant && $variant->warna
-                            ? ($variant->warna.($variant->ukuran ? ' / '.$variant->ukuran : ''))
-                            : '—',
-                        'stok' => $variant ? (int) ($stokWh->get($variant->product_variant_id, 0)) : 0,
-                        'hpp' => $variant?->harga ?? $first?->harga_snapshot ?? 0,
+                        'produk' => $listBahan->isNotEmpty() ? $listBahan->first()->nama_produk : '-',
+                        'list_bahan' => $listBahan,
+                        'total_stok' => $totalStok,
+                        'hpp' => $hpp,
                         'total' => $order->grand_total,
                         'status_key' => $statusKey,
                         'status_label' => $statusLabel,
@@ -78,6 +97,7 @@ class PelangganRequestController extends Controller
             $counts = [
                 'menunggu' => $requests->whereNull('status_ketersediaan')->count(),
                 'tersedia' => $requests->where('status_key', 'tersedia')->count(),
+                'sebagian' => $requests->where('status_key', 'sebagian')->count(),
                 'kosong' => $requests->whereIn('status_key', ['kosong', 'tidak_tersedia'])->count(),
                 'diteruskan' => $requests->where('status_key', 'diteruskan')->count(),
                 'total' => $requests->count(),
@@ -88,7 +108,7 @@ class PelangganRequestController extends Controller
             'warehouses' => $warehouses,
             'warehouse' => $warehouse,
             'requests' => $requests,
-            'counts' => $counts ?? ['menunggu' => 0, 'tersedia' => 0, 'kosong' => 0, 'diteruskan' => 0, 'total' => 0],
+            'counts' => $counts ?? ['menunggu' => 0, 'tersedia' => 0, 'sebagian' => 0, 'kosong' => 0, 'diteruskan' => 0, 'total' => 0],
         ]);
     }
 
