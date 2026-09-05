@@ -25,14 +25,21 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
-    @if (! $wallet)
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-12 text-center card-premium">
-            <span class="material-symbols-outlined text-[48px] text-on-surface-variant">account_balance_wallet</span>
-            <p class="mt-4 font-title-md text-title-md text-on-surface">Belum ada dompet toko</p>
-            <p class="text-on-surface-variant font-body-md text-sm mt-1">Data keuangan akan muncul setelah ada transaksi pada toko ini.</p>
+    @if (! isset($store) || ! $store)
+        <div class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
+            <span class="material-symbols-outlined text-gold-accent mt-0.5">info</span>
+            <div>
+                <p class="font-bold text-sm text-on-surface">Belum punya toko</p>
+                <p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk mulai kelola keuangan. Data di bawah ini contoh 0.</p>
+            </div>
         </div>
-    @else
-    {{-- Tab Switcher: Ringkasan | Pemasukan | Pengeluaran --}}
+    @elseif (! $wallet)
+        <div class="bg-surface-container-lowest border border-gold-accent/30 rounded-lg p-4 flex items-start gap-3">
+            <span class="material-symbols-outlined text-gold-accent">account_balance_wallet</span>
+            <p class="text-sm text-on-surface-variant">Dompet akan dibuat otomatis saat transaksi pertama. Keuangan tetap bisa dicatat manual (Pemasukan/Pengeluaran).</p>
+        </div>
+    @endif
+    {{-- Tab Switcher: Ringkasan | Pemasukan | Pengeluaran — selalu tampil --}}
     <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 overflow-x-auto max-w-full">
         <button type="button" data-saldo-tab="ringkasan" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">Ringkasan</button>
         <button type="button" data-saldo-tab="pemasukan" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pemasukan</button>
@@ -178,8 +185,10 @@
                 </table>
             </div>
             <div class="flex items-center justify-between pt-6 mt-2 border-t border-muted-border">
-                <p class="text-xs text-on-surface-variant">Menampilkan {{ $mutations->count() }} dari {{ $mutations->total() }} mutasi</p>
-                {{ $mutations->links() }}
+                <p class="text-xs text-on-surface-variant">Menampilkan {{ $mutations->count() }} dari {{ $mutations instanceof \Illuminate\Pagination\AbstractPaginator ? $mutations->total() : $mutations->count() }} mutasi</p>
+                @if($mutations instanceof \Illuminate\Pagination\AbstractPaginator)
+                    {{ $mutations->links() }}
+                @endif
             </div>
         </section>
     </div>
@@ -211,7 +220,8 @@
             <div class="mt-8">
                 <h3 class="font-title-md text-sm mb-4">Riwayat Pemasukan</h3>
                 <div class="space-y-2">
-                    @forelse($mutations->whereIn('jenis_transaksi', ['penjualan_masuk','komisi_masuk','pemasukan']) as $m)
+                    @php $mutCol = $mutations instanceof \Illuminate\Pagination\AbstractPaginator ? $mutations->getCollection() : $mutations; @endphp
+                    @forelse($mutCol->whereIn('jenis_transaksi', ['penjualan_masuk','komisi_masuk','pemasukan']) as $m)
                         <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg border border-muted-border">
                             <div>
                                 <p class="text-sm text-on-surface">{{ $m->keterangan ?? $m->jenis_transaksi }}</p>
@@ -291,7 +301,6 @@
         </section>
     </div>
 
-@endif
 </div>
 @endsection
 
