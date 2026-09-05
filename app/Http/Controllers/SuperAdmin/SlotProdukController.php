@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\ProductSlotPackage;
+use App\Models\Setting;
 use App\Models\SlotGrant;
 use App\Models\SlotPurchaseRequest;
 use App\Models\Store;
@@ -45,6 +46,8 @@ class SlotProdukController extends Controller
             ->limit(50)
             ->get();
 
+        $slotAwalDefault = (int) Setting::get(Setting::SLOT_AWAL_DEFAULT, '5');
+
         return view('SuperAdmin.slot-produk.index', compact(
             'section',
             'stores',
@@ -52,34 +55,45 @@ class SlotProdukController extends Controller
             'packages',
             'purchaseRequests',
             'pendingCount',
-            'grantLog'
+            'grantLog',
+            'slotAwalDefault'
         ));
     }
 
-    public function updateQuota(Request $request, Store $store)
+    public function updateDefault(Request $request)
     {
         $data = $request->validate([
-            'kuota_gratis' => 'required|integer|min:0|max:100000',
+            'slot_awal' => 'required|integer|min:0|max:100000',
         ], [
-            'kuota_gratis.required' => 'Kuota gratis wajib diisi.',
-            'kuota_gratis.integer' => 'Kuota gratis harus berupa angka.',
-            'kuota_gratis.min' => 'Kuota gratis tidak boleh negatif.',
+            'slot_awal.required' => 'Jumlah slot awal wajib diisi.',
+            'slot_awal.integer' => 'Jumlah slot awal harus berupa angka.',
+            'slot_awal.min' => 'Jumlah slot awal tidak boleh negatif.',
+            'slot_awal.max' => 'Jumlah slot awal terlalu besar.',
         ]);
 
-        $lama = SlotService::freeQuota($store->store_id);
-        SlotService::setFreeQuota($store->store_id, (int) $data['kuota_gratis']);
+        $nilaiBaru = (int) $data['slot_awal'];
+        $nilaiLama = (int) Setting::get(Setting::SLOT_AWAL_DEFAULT, '5');
+
+        if ($nilaiBaru === $nilaiLama) {
+            return back()->with('toast', [
+                'message' => sprintf('Tidak ada perubahan — slot awal toko baru sudah %d.', $nilaiBaru),
+                'icon' => 'info',
+            ]);
+        }
+
+        Setting::set(Setting::SLOT_AWAL_DEFAULT, (string) $nilaiBaru);
 
         ActivityLogger::log(
-            'slot.quota.set',
-            Store::class,
-            $store->store_id,
-            ['kuota_gratis' => $lama],
-            ['kuota_gratis' => (int) $data['kuota_gratis']],
-            sprintf('Menetapkan kuota gratis "%s" untuk toko "%s".', $data['kuota_gratis'], $store->nama_toko)
+            'setting.slot.default',
+            Setting::class,
+            null,
+            ['nilai' => (string) $nilaiLama],
+            ['nilai' => (string) $nilaiBaru],
+            sprintf('Mengubah slot awal toko baru dari %d menjadi %d slot.', $nilaiLama, $nilaiBaru)
         );
 
         return back()->with('toast', [
-            'message' => sprintf('Kuota gratis toko "%s" diatur menjadi %d slot.', $store->nama_toko, (int) $data['kuota_gratis']),
+            'message' => sprintf('Slot awal toko baru diatur menjadi %d slot.', $nilaiBaru),
             'icon' => 'task_alt',
         ]);
     }

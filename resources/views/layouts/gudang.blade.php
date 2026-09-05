@@ -16,8 +16,7 @@
         <span class="font-display-lg text-headline-md tracking-widest text-on-surface">RALIVA</span>
         <div class="flex items-center gap-2">
             <button type="button" class="theme-toggle text-on-surface hover:opacity-80 transition-opacity" aria-label="Ganti tema">
-                <span class="material-symbols-outlined icon-moon">dark_mode</span>
-                <span class="material-symbols-outlined icon-sun hidden">light_mode</span>
+                <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
             </button>
             @php
                 $user = Auth::user();
@@ -108,8 +107,7 @@
             </div>
             <div class="flex items-center gap-6">
                 <button type="button" class="theme-toggle text-on-surface hover:text-secondary transition-colors" aria-label="Ganti tema">
-                    <span class="material-symbols-outlined icon-moon">dark_mode</span>
-                    <span class="material-symbols-outlined icon-sun hidden">light_mode</span>
+                    <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
                 </button>
                 @include('partials.notification-panel', ['items' => $notifications, 'lihatSemuaRoute' => 'gudang.notifikasi'])
                 @include('partials.profile-menu', ['name' => $user?->nama_lengkap ?? 'User', 'role' => $user?->role?->nama_role ?? 'Gudang', 'profilRoute' => 'gudang.profil', 'showPengaturan' => false])

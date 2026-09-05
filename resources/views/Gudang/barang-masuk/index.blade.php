@@ -17,12 +17,14 @@
         'production_result' => 'Produksi',
         'stock_transfer' => 'Gudang Lain',
         'order_item' => 'Pesanan',
+        'supplier' => 'Supplier',
         'manual' => 'Manual',
     ];
     $sumberIcon = [
         'production_result' => 'precision_manufacturing',
         'stock_transfer' => 'warehouse',
         'order_item' => 'shopping_bag',
+        'supplier' => 'local_shipping',
         'manual' => 'edit_note',
     ];
 @endphp
@@ -58,6 +60,14 @@
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                         <input type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Cari produk..." class="raliva-search" />
                     </div>
+                    <div class="min-w-[180px]">
+                        <select name="supplier_id" class="raliva-select">
+                            <option value="">Semua Supplier</option>
+                            @foreach ($suppliers as $supplier)
+                                <option value="{{ $supplier->supplier_id }}" @selected((string) ($filters['supplier_id'] ?? '') === (string) $supplier->supplier_id)>{{ $supplier->nama_supplier }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Cari</button>
                 </form>
             </div>
@@ -89,9 +99,14 @@
                             <td class="p-4 text-center text-on-surface-variant">{{ ($items->currentPage() - 1) * $items->perPage() + $loop->iteration }}</td>
                             <td class="p-4"><span class="font-bold text-on-surface">BM-{{ str_pad($m->stock_movement_id, 4, '0', STR_PAD_LEFT) }}</span><span class="block text-xs text-on-surface-variant mt-0.5">Ref: {{ $m->sumber_tipe }}{{ $m->sumber_id ? ' #'.$m->sumber_id : '' }}</span></td>
                             <td class="p-4 text-center">
-                                <span class="inline-flex items-center gap-1.5 text-on-surface">
-                                    <span class="material-symbols-outlined text-[16px] text-on-surface-variant">{{ $sumberIcon[$m->sumber_tipe] ?? 'edit_note' }}</span>
-                                    {{ $sumber }}
+                                <span class="inline-flex flex-col items-center gap-0.5">
+                                    <span class="inline-flex items-center gap-1.5 text-on-surface">
+                                        <span class="material-symbols-outlined text-[16px] text-on-surface-variant">{{ $sumberIcon[$m->sumber_tipe] ?? 'edit_note' }}</span>
+                                        {{ $sumber }}
+                                    </span>
+                                    @if ($m->sumber_tipe === 'supplier')
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary border border-secondary/20 text-[10px] font-bold">{{ $m->supplier?->nama_supplier ?? 'Supplier #'.$m->sumber_id }}</span>
+                                    @endif
                                 </span>
                             </td>
                             <td class="p-4 text-on-surface">{{ $m->productVariant?->product?->nama_produk ?? '-' }}</td>
@@ -139,6 +154,13 @@
                         <span class="font-bold text-secondary">+{{ $m->jumlah }} unit</span>
                     </div>
 
+                    @if ($m->sumber_tipe === 'supplier')
+                        <div class="flex justify-between gap-3 font-body-md text-sm mb-4">
+                            <dt class="text-on-surface-variant">Supplier</dt>
+                            <dd class="text-on-surface text-right">{{ $m->supplier?->nama_supplier ?? 'Supplier #'.$m->sumber_id }}</dd>
+                        </div>
+                    @endif
+
                     <dl class="space-y-2 font-body-md text-sm mb-4">
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">Catatan</dt>
@@ -184,6 +206,9 @@
                 <dl class="space-y-4 font-body-md text-sm">
                     <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Produk</dt><dd class="text-on-surface text-right">{{ $m->productVariant?->product?->nama_produk ?? '-' }}</dd></div>
                     <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Jumlah</dt><dd class="text-secondary font-bold">+{{ $m->jumlah }} unit</dd></div>
+                    @if ($m->sumber_tipe === 'supplier')
+                        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Supplier</dt><dd class="text-on-surface text-right">{{ $m->supplier?->nama_supplier ?? 'Supplier #'.$m->sumber_id }}</dd></div>
+                    @endif
                     <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Tanggal &amp; Waktu</dt><dd class="text-on-surface">{{ $m->created_at?->format('d M Y H:i') ?? '-' }}</dd></div>
                     <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Petugas</dt><dd class="text-on-surface">{{ $m->creator->nama_lengkap ?? '-' }}</dd></div>
                     <div class="flex justify-between gap-4 items-start"><dt class="text-on-surface-variant">Catatan</dt><dd class="text-on-surface text-right">{{ $m->alasan ?: '-' }}</dd></div>
@@ -207,6 +232,15 @@
             </div>
             <form action="{{ route('gudang.barang-masuk.store') }}" method="POST" class="p-6 space-y-5">
                 @csrf
+                <div>
+                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Supplier <span class="text-gold-accent">*</span></label>
+                    <select name="supplier_id" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
+                        <option value="">Pilih Supplier</option>
+                        @foreach ($suppliers as $supplier)
+                            <option value="{{ $supplier->supplier_id }}">{{ $supplier->nama_supplier }}@if($supplier->kota) — {{ $supplier->kota }}@endif</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div>
                     <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Produk</label>
                     <select name="product_variant_id" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">

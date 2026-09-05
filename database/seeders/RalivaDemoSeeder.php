@@ -188,7 +188,6 @@ class RalivaDemoSeeder extends Seeder
                 'alamat' => 'Jl. Kemang Raya No. 21, Jakarta Selatan',
                 'nomor_telepon' => '0215551234',
                 'status' => Store::STATUS_AKTIF,
-                'operational_hours' => $this->defaultOperationalHours(),
             ]
         );
 
@@ -522,7 +521,14 @@ class RalivaDemoSeeder extends Seeder
                 'total_ongkir' => 0,
                 'grand_total' => $subtotal,
                 'status' => $requestStatuses[$r % count($requestStatuses)],
+                'tipe_order' => ($r % 2 === 0) ? Order::TIPE_CUSTOM : Order::TIPE_PRODUK_TETAP,
             ]);
+
+            $catatanCustom = match (true) {
+                $r % 2 !== 0 => [],
+                $r === 0 => ['Bordir nama "RANGGA" di tengah punggung, font kait emas ukuran 6 mm.'],
+                default => ['Tambah satu baris tulisan "Anniversary #5" di belakang bawah, warna abu.'],
+            };
 
             OrderItem::create([
                 'order_id' => $order->order_id,
@@ -533,7 +539,34 @@ class RalivaDemoSeeder extends Seeder
                 'subtotal' => $subtotal,
                 'diskon' => 0,
                 'total' => $subtotal,
+                'catatan_custom' => $catatanCustom[0] ?? null,
             ]);
+
+            $variant2 = $allVariants->skip(($r + 2) % $allVariants->count())->first();
+            if ($variant2 && $variant2->product_variant_id !== $variant->product_variant_id) {
+                $qty2 = 1;
+                $harga2 = (float) $variant2->harga;
+                $subtotal2 = $harga2 * $qty2;
+
+                $order->subtotal += $subtotal2;
+                $order->grand_total += $subtotal2;
+                $order->saveQuietly();
+                $checkout->subtotal += $subtotal2;
+                $checkout->grand_total += $subtotal2;
+                $checkout->saveQuietly();
+
+                OrderItem::create([
+                    'order_id' => $order->order_id,
+                    'product_variant_id' => $variant2->product_variant_id,
+                    'nama_produk_snapshot' => $variant2->product->nama_produk ?? 'Produk',
+                    'harga_snapshot' => $harga2,
+                    'quantity' => $qty2,
+                    'subtotal' => $subtotal2,
+                    'diskon' => 0,
+                    'total' => $subtotal2,
+                    'catatan_custom' => $catatanCustom[1] ?? null,
+                ]);
+            }
 
             $allOrderIds[] = $order->order_id;
         }

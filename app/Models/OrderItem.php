@@ -20,6 +20,7 @@ class OrderItem extends Model
         'subtotal',
         'diskon',
         'total',
+        'catatan_custom',
     ];
 
     public function order(): BelongsTo

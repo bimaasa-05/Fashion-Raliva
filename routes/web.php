@@ -288,7 +288,7 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/store-staff/{staff}', [StoreStaffController::class, 'show'])->name('store-staff.show');
     Route::put('/store-staff/{staff}', [StoreStaffController::class, 'update'])->name('store-staff.update');
     Route::get('/slot-produk', [SlotProdukController::class, 'index'])->name('slot-produk');
-    Route::post('/slot-produk/toko/{store}/kuota', [SlotProdukController::class, 'updateQuota'])->name('slot-produk.kuota');
+    Route::put('/slot-produk/default', [SlotProdukController::class, 'updateDefault'])->name('slot-produk.default');
     Route::post('/slot-produk/toko/{store}/tambah', [SlotProdukController::class, 'grantManual'])->name('slot-produk.tambah-manual');
     Route::post('/slot-produk/paket', [SlotProdukController::class, 'storePackage'])->name('slot-produk.paket.store');
     Route::post('/slot-produk/paket/{paket}/toggle', [SlotProdukController::class, 'togglePackage'])->name('slot-produk.paket.toggle');

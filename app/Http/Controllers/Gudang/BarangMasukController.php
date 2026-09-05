@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Gudang;
 
 use App\Http\Controllers\Controller;
 use App\Models\StockMovement;
+use App\Models\Supplier;
 use App\Models\WarehouseStock;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
@@ -21,10 +22,12 @@ class BarangMasukController extends Controller
         $items = collect();
         if ($warehouse) {
             $q = $request->query('q');
-            $items = StockMovement::with(['productVariant.product', 'creator'])
+            $supplierId = $request->query('supplier_id');
+            $items = StockMovement::with(['productVariant.product', 'creator', 'supplier'])
                 ->where('warehouse_id', $warehouse->warehouse_id)
                 ->whereIn('tipe_pergerakan', [StockMovement::TIPE_MASUK, StockMovement::TIPE_MUTASI_MASUK])
                 ->when($q, fn ($query) => $query->whereHas('productVariant.product', fn ($pq) => $pq->where('nama_produk', 'like', '%'.$q.'%')))
+                ->when($supplierId, fn ($query) => $query->where('sumber_tipe', StockMovement::SUMBER_SUPPLIER)->where('sumber_id', $supplierId))
                 ->orderByDesc('created_at')
                 ->paginate(15)
                 ->withQueryString();
@@ -35,7 +38,8 @@ class BarangMasukController extends Controller
             'warehouse' => $warehouse,
             'items' => $items,
             'products' => $warehouse ? $this->getProductsForWarehouse($warehouse) : collect(),
-            'filters' => ['q' => $request->query('q')],
+            'suppliers' => Supplier::orderBy('nama_supplier')->get(),
+            'filters' => ['q' => $request->query('q'), 'supplier_id' => $request->query('supplier_id')],
         ]);
     }
 
@@ -53,11 +57,14 @@ class BarangMasukController extends Controller
 
         $data = $request->validate([
             'product_variant_id' => 'required|exists:product_variants,product_variant_id',
+            'supplier_id' => 'required|exists:suppliers,supplier_id',
             'jumlah' => 'required|integer|min:1',
             'alasan' => 'nullable|string|max:500',
         ], [
             'product_variant_id.required' => 'Produk wajib dipilih.',
             'product_variant_id.exists' => 'Produk tidak valid.',
+            'supplier_id.required' => 'Supplier wajib dipilih.',
+            'supplier_id.exists' => 'Supplier tidak valid.',
             'jumlah.required' => 'Jumlah wajib diisi.',
             'jumlah.integer' => 'Jumlah harus berupa angka.',
             'jumlah.min' => 'Jumlah minimal 1.',
@@ -74,8 +81,9 @@ class BarangMasukController extends Controller
                 'product_variant_id' => $data['product_variant_id'],
                 'tipe_pergerakan' => StockMovement::TIPE_MASUK,
                 'jumlah' => $data['jumlah'],
-                'sumber_tipe' => StockMovement::SUMBER_MANUAL,
-                'alasan' => $data['alasan'] ?? 'Barang masuk manual',
+                'sumber_tipe' => StockMovement::SUMBER_SUPPLIER,
+                'sumber_id' => $data['supplier_id'],
+                'alasan' => $data['alasan'] ?? 'Barang masuk dari supplier',
                 'dibuat_oleh' => auth()->id(),
             ]);
         });
@@ -85,7 +93,7 @@ class BarangMasukController extends Controller
             WarehouseStock::class,
             $warehouse->warehouse_id,
             null,
-            ['product_variant_id' => $data['product_variant_id'], 'jumlah' => $data['jumlah']],
+            ['product_variant_id' => $data['product_variant_id'], 'supplier_id' => $data['supplier_id'], 'jumlah' => $data['jumlah']],
             sprintf('Barang masuk %d unit ke gudang "%s".', $data['jumlah'], $warehouse->nama_gudang)
         );
 
