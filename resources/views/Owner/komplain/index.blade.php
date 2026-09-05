@@ -21,6 +21,15 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
+    @if(! \App\Support\OwnerContext::currentStore())
+        <div class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
+            <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
+            <div>
+                <p class="font-bold text-sm">Belum punya toko</p>
+                <p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk akses fitur ini.</p>
+            </div>
+        </div>
+    @endif
     {{-- Ringkasan --}}
     <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
@@ -154,6 +163,35 @@
     </div>
 </div>
 @endforeach
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  if (!document.querySelector('[data-real]')) return;
+  // Check if no store banner exists (means no store)
+  const noStore = document.body.innerHTML.includes('Belum punya toko');
+  if (!noStore) return;
+  // Disable all primary action buttons except Ajukan Toko
+  document.querySelectorAll('[data-modal-open], button[type="submit"], a[href*="pengajuan-toko"]:not([href*="ajukan"])').forEach(el=>{
+    // Keep Ajukan Toko enabled
+    if (el.textContent.includes('Ajukan Toko') || el.getAttribute('data-modal-open')?.includes('modal-tambah')) {
+      // For tambah buttons, disable if no store
+      el.setAttribute('disabled','');
+      el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
+      el.title = 'Ajukan toko dulu';
+    }
+  });
+  // More generic: disable all buttons in data-real except those inside pengajuan
+  document.querySelectorAll('[data-real] button, [data-real] a.btn-premium').forEach(el=>{
+    if (el.closest('[data-modal]')) return;
+    if (el.textContent.trim().includes('Ajukan')) return;
+    el.setAttribute('disabled','');
+    el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
+  });
+});
+</script>
+@endpush
+
 @endsection
 
 @push('scripts')
