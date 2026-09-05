@@ -352,7 +352,7 @@
   </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[120px] lg:pl-72">
     <!-- Header (Custom TopAppBar for Product Details) -->
-    <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 fixed z-40 border-b border-[var(--chrome-border)]">
+    <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full lg:w-auto px-container-margin h-16 fixed lg:left-72 lg:right-0 z-40 border-b border-[var(--chrome-border)]">
         <a aria-label="Go back" href="{{ url()->previous() }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
             <span class="material-symbols-outlined text-[24px]">arrow_back</span>
             </a>
@@ -365,7 +365,7 @@
                 </button>
             <a aria-label="Cart" href="{{ route('customer.chart') }}" class="relative p-2 hover:opacity-70 transition-all duration-200 flex">
                 <span class="material-symbols-outlined text-[24px]">shopping_cart</span>
-                <span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+                <span class="cart-badge absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
                 </a>
             </div>
         </header>
@@ -390,7 +390,8 @@
                     </section>
                 <div class="lg:flex-1 lg:min-w-0">
                     <section class="py-xl reveal-up">
-                        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
+                        @php $allVariants = $product->variants; $colors = $allVariants->pluck('warna')->unique()->values(); $sizes = $allVariants->pluck('ukuran')->unique()->values(); @endphp
+                        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium" data-variants="{{ $allVariants->map(fn($v) => ['id' => $v->product_variant_id, 'warna' => $v->warna, 'ukuran' => $v->ukuran, 'harga' => (float)$v->harga])->toJson(JSON_UNESCAPED_UNICODE) }}">
                             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('PRODUCT DETAILS') }}</p>
                             <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ $product->nama_produk }}</h2>
                             <div class="flex items-center gap-xs mb-sm">
@@ -399,13 +400,13 @@
                                     </div>
                                 <span class="font-label-sm text-label-sm text-on-surface-variant">{{ number_format($averageRating ?: 0, 1) }} ({{ $reviewCount }} {{ __('reviews') }})</span>
                                 </div>
-                            <p class="font-title-md text-title-md text-on-surface mb-lg">Rp {{ number_format($product->variants->min('harga') ?? $product->harga_dasar, 0, ',', '.') }}</p>
+                            <p id="pd-price" class="font-title-md text-title-md text-on-surface mb-lg">Rp {{ number_format($product->variants->min('harga') ?? $product->harga_dasar, 0, ',', '.') }}</p>
                             <!-- Color Selection -->
                             <div class="mb-lg">
-                                <p class="font-label-caps text-label-caps text-on-surface mb-sm">{{ __('COLOR') }}: {{ strtoupper($product->variants->first()->warna ?? __('N/A')) }}</p>
-                                <div class="flex gap-sm">
-@foreach ($product->variants->pluck('warna')->unique() as $color)
-<span class="font-label-sm text-label-sm text-on-surface-variant mr-sm">{{ $color }}</span>
+                                <p class="font-label-caps text-label-caps text-on-surface mb-sm">{{ __('COLOR') }}: <span id="pd-color-label">{{ strtoupper($colors->first() ?? __('N/A')) }}</span></p>
+                                <div class="flex flex-wrap gap-sm">
+@foreach ($colors as $color)
+<button type="button" data-color-btn data-color="{{ $color }}" class="font-label-sm text-label-sm text-on-surface-variant px-md py-xs border border-outline-variant rounded hover:border-on-surface transition-colors{{ $loop->first ? ' border-secondary text-secondary' : '' }}">{{ $color }}</button>
 @endforeach
                                     </div>
                                 </div>
@@ -416,16 +417,20 @@
                                     <button class="font-label-sm text-label-sm text-on-surface-variant underline decoration-1 underline-offset-4">{{ __('Size Guide') }}</button>
                                     </div>
                                 <div class="grid grid-cols-4 gap-gutter">
-@foreach ($product->variants->pluck('ukuran')->unique() as $size)
-                                    <button class="h-12 border border-outline-variant flex items-center justify-center font-body-sm text-body-sm text-on-surface hover:border-on-surface transition-colors">{{ $size }}</button>
+@foreach ($sizes as $size)
+<button type="button" data-size-btn data-size="{{ $size }}" class="h-12 border border-outline-variant flex items-center justify-center font-body-sm text-body-sm text-on-surface hover:border-on-surface transition-colors{{ $loop->first ? ' border-secondary text-secondary' : '' }}">{{ $size }}</button>
 @endforeach
                                     </div>
                                 </div>
                             <!-- Desktop Actions -->
-                            <div class="hidden lg:flex gap-sm mt-xl">
-                                <a href="{{ route('customer.chart') }}" class="flex-1 h-12 border border-secondary text-secondary bg-transparent font-label-caps text-label-caps tracking-widest hover:bg-secondary/5 transition-colors flex items-center justify-center">
+                            <div class="hidden lg:flex items-stretch gap-sm mt-xl">
+                                @php $isWl = in_array($product->product_id, $wishlistedIds, true); @endphp
+                                <button type="button" data-wishlist-toggle data-product-id="{{ $product->product_id }}" aria-label="Wishlist" class="shrink-0 w-12 h-12 border border-outline-variant rounded flex items-center justify-center hover:border-secondary hover:text-secondary transition-colors{{ $isWl ? ' wishlisted-active text-secondary border-secondary' : '' }}">
+                                    <span class="material-symbols-outlined text-[24px]">favorite{{ $isWl ? '' : '_border' }}</span>
+                                </button>
+                                <button type="button" data-cart-add data-variant-id="" class="flex-1 h-12 border border-secondary text-secondary bg-transparent font-label-caps text-label-caps tracking-widest hover:bg-secondary/5 transition-colors flex items-center justify-center">
                                     {{ __('ADD TO CART') }}
-                                    </a>
+                                    </button>
                                 <a href="{{ route('customer.checkout') }}" class="btn-gold flex-1 h-12 font-label-caps text-label-caps tracking-widest flex items-center justify-center">
                                     {{ __('BUY NOW') }}
                                     </a>
@@ -565,10 +570,10 @@
     <!-- Mobile Sticky Bottom Action Bar -->
     <div class="fixed bottom-0 left-0 right-0 lg:left-72 z-50 px-container-margin py-sm pb-safe">
         <div class="flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.18)]">
-            <a href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-widest transition-colors hover:bg-secondary/5">
+            <button type="button" data-cart-add data-variant-id="" class="flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-widest transition-colors hover:bg-secondary/5">
                 <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
                 <span class="truncate">{{ __('CART') }}</span>
-                </a>
+                </button>
             <a href="{{ route('customer.checkout') }}" class="btn-gold flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
                 <span class="material-symbols-outlined text-[20px]">attach_money</span>
                 <span class="truncate">{{ __('BUY') }}</span>
@@ -609,6 +614,68 @@
             </div>
         </div>
     <script>
+        /* ==== VARIANT SELECTION for Add to Cart ==== */
+        (function () {
+            var card = document.querySelector('[data-variants]');
+            if (!card) return;
+            var variants = JSON.parse(card.getAttribute('data-variants') || '[]');
+            var colorBtns = Array.prototype.slice.call(document.querySelectorAll('[data-color-btn]'));
+            var sizeBtns = Array.prototype.slice.call(document.querySelectorAll('[data-size-btn]'));
+            var priceEl = document.getElementById('pd-price');
+            var colorLabel = document.getElementById('pd-color-label');
+            var addBtns = Array.prototype.slice.call(document.querySelectorAll('[data-cart-add]'));
+
+            var selectedColor = colorBtns.length ? colorBtns[0].getAttribute('data-color') : null;
+            var selectedSize = sizeBtns.length ? sizeBtns[0].getAttribute('data-size') : null;
+
+            function rupiah(n) {
+                n = Math.round(Number(n) || 0);
+                return 'Rp ' + n.toLocaleString('id-ID');
+            }
+
+            function applySelection() {
+                var match = variants.find(function (v) {
+                    return v.warna === selectedColor && v.ukuran === selectedSize;
+                });
+
+                colorBtns.forEach(function (b) {
+                    var active = b.getAttribute('data-color') === selectedColor;
+                    b.classList.toggle('border-secondary', active);
+                    b.classList.toggle('text-secondary', active);
+                    b.classList.toggle('text-on-surface-variant', !active);
+                    b.classList.toggle('border-outline-variant', !active);
+                });
+                sizeBtns.forEach(function (b) {
+                    var active = b.getAttribute('data-size') === selectedSize;
+                    b.classList.toggle('border-secondary', active);
+                    b.classList.toggle('text-secondary', active);
+                    b.classList.toggle('text-on-surface', !active);
+                    b.classList.toggle('border-outline-variant', !active);
+                });
+
+                var variantId = match ? String(match.id) : '';
+                addBtns.forEach(function (b) { b.setAttribute('data-variant-id', variantId); });
+
+                if (colorLabel && selectedColor) colorLabel.textContent = selectedColor.toUpperCase();
+                if (priceEl && match) priceEl.textContent = rupiah(match.harga);
+            }
+
+            colorBtns.forEach(function (b) {
+                b.addEventListener('click', function () {
+                    selectedColor = b.getAttribute('data-color');
+                    applySelection();
+                });
+            });
+            sizeBtns.forEach(function (b) {
+                b.addEventListener('click', function () {
+                    selectedSize = b.getAttribute('data-size');
+                    applySelection();
+                });
+            });
+
+            applySelection();
+        })();
+
         function toggleReviewMenu(e, id) {
             e.stopPropagation();
             document.querySelectorAll('[id^="rv-menu-"]').forEach(function (m) {
