@@ -6,6 +6,15 @@
 
 @section('content')
 <div class="space-y-section-gap">
+    @if(! \App\Support\OwnerContext::currentStore())
+        <div class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
+            <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
+            <div>
+                <p class="font-bold text-sm">Belum punya toko</p>
+                <p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk kelola rekening bank.</p>
+            </div>
+        </div>
+    @endif
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
             <h2 class="font-title-md text-title-md premium-heading">Rekening Bank Toko</h2>
@@ -155,4 +164,18 @@
     </form>
 </div>
 @endforeach
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const noStore = document.body.innerHTML.includes('Belum punya toko');
+  if (!noStore) return;
+  document.querySelectorAll('[data-real] button, [data-real] a.btn-premium').forEach(el=>{
+    if (el.closest('[data-modal]')) return;
+    if (el.textContent.trim().includes('Ajukan')) return;
+    el.setAttribute('disabled','');
+    el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
+  });
+});
+</script>
+@endpush
 @endsection
