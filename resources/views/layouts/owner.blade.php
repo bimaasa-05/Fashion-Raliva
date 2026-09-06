@@ -24,8 +24,7 @@
         <span class="font-display-lg text-headline-md tracking-widest text-on-surface">RALIVA</span>
         <div class="flex items-center gap-2">
             <button type="button" class="theme-toggle text-on-surface hover:opacity-80 transition-opacity" aria-label="Ganti tema">
-                <span class="material-symbols-outlined icon-moon">dark_mode</span>
-                <span class="material-symbols-outlined icon-sun hidden">light_mode</span>
+                <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
             </button>
             @include('partials.notification-panel', ['items' => [
                 ['icon' => 'shopping_bag', 'html' => 'Pesanan baru <span class="font-bold">#RLV-2093</span> menunggu konfirmasi.', 'time' => '5 menit lalu'],
@@ -33,15 +32,16 @@
                 ['icon' => 'payments', 'html' => 'Pencairan dana <span class="font-bold">WD-0092</span> berhasil diproses.', 'time' => '1 jam lalu'],
                 ['icon' => 'star', 'html' => 'Ulasan baru <span class="font-bold">5 bintang</span> untuk Trench Coat Signature.', 'time' => '2 jam lalu'],
             ], 'lihatSemuaRoute' => 'owner.notifikasi'])
-            @include('partials.profile-menu', ['compact' => true, 'name' => 'Bima Prasetya', 'role' => 'Owner', 'profilRoute' => 'owner.profil', 'pengaturanRoute' => 'owner.pengaturan-toko'])
+            @php $ownerHeaderUser = Auth::user(); @endphp
+            @include('partials.profile-menu', ['compact' => true, 'name' => $ownerHeaderUser?->nama_lengkap ?? 'Owner', 'role' => $ownerHeaderUser?->role?->nama_role ?? 'Owner', 'profilRoute' => 'owner.profil', 'pengaturanRoute' => 'owner.pengaturan-toko'])
         </div>
     </header>
 
     <!-- Side Navigation Drawer -->
-    <aside id="sidebar" class="flex fixed md:sticky top-0 left-0 z-50 flex-col h-screen pt-section-gap pb-[88px] md:pb-section-gap px-container-margin w-72 border-r border-sidebar-border bg-sidebar -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
-        <div class="sidebar-head mb-12 flex items-center justify-between gap-3">
+    <aside id="sidebar" class="flex fixed md:sticky top-0 left-0 z-50 flex-col h-screen pt-4 pb-[88px] md:pb-section-gap px-container-margin w-72 border-r border-sidebar-border bg-sidebar -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+        <div class="sidebar-head flex items-center justify-between gap-3 pt-1 pb-3">
             <div class="flex items-center gap-3 min-w-0">
-                <img src="{{ asset('images/logo.svg') }}" alt="Logo Raliva" class="w-11 h-11 rounded-xl shrink-0" />
+                <img src="{{ asset('images/logo-raliva.png') }}" alt="Logo Raliva" class="w-11 h-11 rounded-xl shrink-0" />
                 <div data-sidebar-text>
                     <span class="font-display-lg text-title-md text-on-sidebar tracking-widest block leading-tight">RALIVA</span>
                     <span class="text-gold-accent/80 font-label-sm text-[10px] uppercase tracking-wider">Owner</span>
@@ -50,6 +50,27 @@
             <button type="button" id="sidebar-collapse" aria-expanded="true" aria-label="Perkecil menu sidebar" class="sidebar-collapse-btn hidden md:inline-flex w-8 h-8 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-gold-accent/70 hover:text-gold-accent items-center justify-center transition-colors shrink-0">
                 <span class="material-symbols-outlined icon-chevron text-[18px] transition-transform duration-300">chevron_left</span>
             </button>
+        </div>
+        {{-- Lane pembatas brand vs profile --}}
+        <div class="h-px bg-sidebar-border/70 mx-2 my-2 shrink-0" aria-hidden="true"></div>
+        {{-- Sidebar Profile — optimize: card-like, terpisah jelas dari brand --}}
+        <div class="sidebar-profile flex items-center gap-3 px-4 py-3.5 mx-2 rounded-xl bg-surface-container-low border border-sidebar-border/60 shadow-sm shrink-0">
+            @php
+                $sbUser = Auth::user();
+                $sbName = $sbUser?->nama_lengkap ?? 'Owner';
+                $sbRole = $sbUser?->role?->nama_role ?? 'Owner';
+                $w = preg_split('/\s+/', trim($sbName));
+                $ii = '';
+                if (!empty($w[0])) $ii .= mb_substr($w[0], 0, 1);
+                if (isset($w[1])) $ii .= mb_substr($w[1], 0, 1);
+                elseif (mb_strlen($w[0] ?? '') > 1) $ii .= mb_substr($w[0], 1, 1);
+                $init = strtoupper(mb_substr($ii, 0, 2)) ?: '?';
+            @endphp
+            <div class="w-11 h-11 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-[15px] shrink-0 border-2 border-white shadow-sm ring-1 ring-gold-accent/20">{{ $init }}</div>
+            <div class="min-w-0 flex-1" data-sidebar-text>
+                <h4 class="text-[13px] font-bold text-on-sidebar truncate leading-tight">{{ $sbName }}</h4>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-gold-accent text-white text-[10px] font-bold uppercase tracking-wider truncate shadow-sm mt-1">{{ $sbRole }}</span>
+            </div>
         </div>
         <nav class="sidebar-scroll flex-1 overflow-y-auto">
             @include('partials.sidebar-menu-owner')
@@ -74,8 +95,7 @@
             </div>
             <div class="flex items-center gap-6">
                 <button type="button" class="theme-toggle text-on-surface hover:text-secondary transition-colors" aria-label="Ganti tema">
-                    <span class="material-symbols-outlined icon-moon">dark_mode</span>
-                    <span class="material-symbols-outlined icon-sun hidden">light_mode</span>
+                    <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
                 </button>
                 @include('partials.notification-panel', ['items' => [
                     ['icon' => 'shopping_bag', 'html' => 'Pesanan baru <span class="font-bold">#RLV-2093</span> menunggu konfirmasi.', 'time' => '5 menit lalu'],
@@ -83,7 +103,8 @@
                     ['icon' => 'payments', 'html' => 'Pencairan dana <span class="font-bold">WD-0092</span> berhasil diproses.', 'time' => '1 jam lalu'],
                     ['icon' => 'star', 'html' => 'Ulasan baru <span class="font-bold">5 bintang</span> untuk Trench Coat Signature.', 'time' => '2 jam lalu'],
                 ], 'lihatSemuaRoute' => 'owner.notifikasi'])
-                @include('partials.profile-menu', ['name' => 'Bima Prasetya', 'role' => 'Owner', 'profilRoute' => 'owner.profil', 'pengaturanRoute' => 'owner.pengaturan-toko'])
+                @php $ownerDesktopUser = Auth::user(); @endphp
+                @include('partials.profile-menu', ['name' => $ownerDesktopUser?->nama_lengkap ?? 'Owner', 'role' => $ownerDesktopUser?->role?->nama_role ?? 'Owner', 'profilRoute' => 'owner.profil', 'pengaturanRoute' => 'owner.pengaturan-toko'])
             </div>
         </header>
 
@@ -98,7 +119,7 @@
             <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Ringkasan performa dan aktivitas toko Anda.')</p>
         </div>
 
-        <div class="px-container-margin pt-8 pb-section-gap flex flex-col gap-section-gap max-w-7xl mx-auto w-full">
+        <div class="px-container-margin pt-8 pb-section-gap flex flex-col gap-section-gap max-w-[1500px] mx-auto w-full">
             @yield('content')
         </div>
     </main>
@@ -108,7 +129,7 @@
         ['route' => 'owner.dashboard', 'icon' => 'space_dashboard', 'label' => 'Beranda'],
         ['route' => 'owner.pesanan', 'icon' => 'shopping_bag', 'label' => 'Pesanan'],
         ['route' => 'owner.data-pelanggan', 'icon' => 'groups', 'label' => 'Pelanggan'],
-        ['route' => 'owner.saldo', 'icon' => 'account_balance_wallet', 'label' => 'Saldo'],
+        ['route' => 'owner.keuangan', 'icon' => 'account_balance_wallet', 'label' => 'Keuangan'],
         ['route' => 'owner.profil', 'icon' => 'person', 'label' => 'Profil'],
     ]])
 
@@ -146,18 +167,29 @@
             document.body.style.overflow = '';
         };
 
+        // Kunci scroll tanpa menggeser layout (kompensasi lebar scrollbar)
+        const lockScroll = () => {
+            const sbw = window.innerWidth - document.documentElement.clientWidth;
+            if (sbw > 0) document.body.style.paddingRight = sbw + 'px';
+            document.body.style.overflow = 'hidden';
+        };
+        const unlockScroll = () => {
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        };
+
         document.querySelectorAll('[data-modal-open]').forEach((btn) => {
             btn.addEventListener('click', () => {
                 const modal = document.getElementById(btn.getAttribute('data-modal-open'));
                 modal?.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
+                lockScroll();
             });
         });
 
         document.querySelectorAll('[data-modal-close]').forEach((el) => {
             el.addEventListener('click', () => {
                 el.closest('[data-modal]')?.classList.add('hidden');
-                document.body.style.overflow = '';
+                unlockScroll();
             });
         });
 
@@ -168,7 +200,7 @@
                 drawer?.classList.remove('translate-x-full');
                 overlay?.classList.remove('hidden');
                 requestAnimationFrame(() => overlay?.classList.remove('opacity-0'));
-                document.body.style.overflow = 'hidden';
+                lockScroll();
             });
         });
 
@@ -178,7 +210,7 @@
                 const overlay = document.getElementById('drawer-overlay');
                 overlay?.classList.add('opacity-0');
                 if (overlay) setTimeout(() => overlay.classList.add('hidden'), 300);
-                document.body.style.overflow = '';
+                unlockScroll();
             });
         });
 
@@ -204,7 +236,7 @@
                 e.preventDefault();
                 window.showRalivaToast(form.getAttribute('data-toast-message'));
                 form.closest('[data-modal]')?.classList.add('hidden');
-                document.body.style.overflow = '';
+                unlockScroll();
                 form.reset();
             });
         });
@@ -231,15 +263,24 @@
                     row.classList.toggle('hidden', !show);
                     if (show) visible++;
                 });
-                scope.querySelector('[data-table-wrap]')?.classList.toggle('hidden', false);
+                // simetri karyawan: wrap tetap terlihat (min-h anchor), pagination tidak hilang total
+                scope.querySelector('[data-table-wrap]')?.classList.remove('hidden');
                 const empty = scope.querySelector('[data-empty-state]');
                 empty?.classList.toggle('hidden', visible > 0);
                 empty?.classList.toggle('flex', visible === 0);
-                scope.querySelector('[data-pagination]')?.classList.toggle('hidden', visible === 0);
+                const pg = scope.querySelector('[data-pagination]');
+                if (pg) {
+                    pg.classList.remove('hidden');
+                    pg.classList.toggle('opacity-40', visible === 0);
+                    pg.classList.toggle('pointer-events-none', visible === 0);
+                }
             });
         };
 
-        document.querySelectorAll('[data-table-search]').forEach((input) => input.addEventListener('input', applyTableFilter));
+        // debounce untuk realtime tanpa kedip
+        const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
+        const debouncedFilter = debounce(applyTableFilter, 180);
+        document.querySelectorAll('[data-table-search]').forEach((input) => input.addEventListener('input', debouncedFilter));
         document.querySelectorAll('[data-table-filter]').forEach((select) => select.addEventListener('change', applyTableFilter));
 
         document.querySelectorAll('[data-filter-reset]').forEach((btn) => {

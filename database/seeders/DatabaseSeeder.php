@@ -20,6 +20,13 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ProductSeeder::class,
             ReviewSeeder::class,
+            WalletSeeder::class,
+            GudangDemoSeeder::class,
+            OwnerSeeder::class,
+            PermintaanProduksiSeeder::class,
+            AdminDemoSeeder::class,
+            RalivaDemoSeeder::class,
+            WarehouseStaffPermissionSeeder::class,
         ]);
     }
 }

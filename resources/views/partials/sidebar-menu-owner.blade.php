@@ -11,7 +11,6 @@
             'items' => [
                 ['route' => 'owner.data-toko', 'icon' => 'storefront', 'text' => 'Data Toko'],
                 ['route' => 'owner.pengajuan-toko', 'icon' => 'fact_check', 'text' => 'Pengajuan Toko'],
-                ['route' => 'owner.kelola-slot', 'icon' => 'storage', 'text' => 'Kelola Slot'],
             ],
         ],
         [
@@ -32,7 +31,9 @@
         [
             'label' => 'Keuangan',
             'items' => [
-                ['route' => 'owner.saldo', 'icon' => 'account_balance_wallet', 'text' => 'Saldo Toko'],
+                ['route' => 'owner.keuangan', 'icon' => 'account_balance_wallet', 'text' => 'Keuangan'],
+                ['route' => 'owner.data-bank', 'icon' => 'account_balance', 'text' => 'Data Bank'],
+                ['route' => 'owner.pencairan-dana', 'icon' => 'payments', 'text' => 'Pencairan Dana'],
             ],
         ],
         [

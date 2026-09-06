@@ -23,13 +23,13 @@
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Defect (Agu)</span>
             <span class="raliva-figure text-[26px] text-error">12</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">unit produksi cacat</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">report</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">report</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Rasio Defect</span>
             <span class="raliva-figure text-[26px] text-error">4,8<span class="text-[16px] font-normal">%</span></span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">dari 248 unit diperiksa</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">percent</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">percent</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-3 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Tingkat Kelayakan</span>
@@ -37,13 +37,13 @@
             <div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
                 <div class="progress-fill h-full rounded-full" data-progress="95"></div>
             </div>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">verified</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">verified</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Perlu Tindakan</span>
             <span class="raliva-figure text-[26px] text-gold-accent">5</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">menunggu keputusan</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">pending_actions</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">pending_actions</span>
         </div>
     </section>
 

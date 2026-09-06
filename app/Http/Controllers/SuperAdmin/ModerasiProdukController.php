@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\Product;
 use App\Support\ActivityLogger;
+use App\Support\SlotService;
 use Illuminate\Http\Request;
 
 class ModerasiProdukController extends Controller
@@ -31,6 +32,20 @@ class ModerasiProdukController extends Controller
             ->orderByDesc('updated_at')
             ->get();
 
+        $products->each(function (Product $produk) {
+            if ($produk->store) {
+                $produk->slot_total = SlotService::totalQuota($produk->store_id);
+                $produk->slot_used = SlotService::usedSlots($produk->store_id);
+                $produk->slot_available = SlotService::availableSlots($produk->store_id);
+                $produk->slot_full = $produk->slot_available < 1;
+            } else {
+                $produk->slot_total = 0;
+                $produk->slot_used = 0;
+                $produk->slot_available = 0;
+                $produk->slot_full = false;
+            }
+        });
+
         return view('SuperAdmin.moderasi-produk.index', [
             'products' => $products,
             'stats' => $stats,
@@ -44,6 +59,19 @@ class ModerasiProdukController extends Controller
             return back()->with('toast', [
                 'message' => 'Hanya produk berstatus pending yang dapat disetujui.',
                 'icon' => 'gpp_maybe',
+            ]);
+        }
+
+        $store = $produk->store;
+        $storeId = $store->store_id ?? 0;
+
+        if ($storeId > 0 && ! SlotService::canAdd($storeId)) {
+            $total = SlotService::totalQuota($storeId);
+            $used = SlotService::usedSlots($storeId);
+
+            return back()->with('toast', [
+                'message' => sprintf('Kuota slot produk toko "%s" sudah penuh (%d/%d). Pemilik toko harus menambah slot terlebih dahulu.', $store->nama_toko ?? '-', $used, $total),
+                'icon' => 'error',
             ]);
         }
 

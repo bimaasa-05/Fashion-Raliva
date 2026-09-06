@@ -195,6 +195,27 @@
     document.querySelectorAll('[data-table-search]').forEach((input) => input.addEventListener('input', applyTableFilter));
     document.querySelectorAll('[data-table-filter]').forEach((select) => select.addEventListener('change', applyTableFilter));
 
+    // Filter panel collapsible pada layar mobile
+    document.querySelectorAll('[data-filter-toggle]').forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+            const scope = toggle.closest('[data-table-scope]');
+            const target = toggle.getAttribute('data-filter-target');
+            let panel = null;
+            if (target) {
+                panel = document.querySelector(target);
+            } else if (scope) {
+                panel = scope.querySelector('[data-filter-panel]');
+            } else {
+                panel = toggle.querySelector('~ [data-filter-panel]')
+                    || toggle.parentElement?.querySelector('~ [data-filter-panel]')
+                    || null;
+            }
+            if (!panel) return;
+            panel.classList.toggle('hidden');
+            toggle.querySelector('[data-filter-chevron]')?.classList.toggle('rotate-180');
+        });
+    });
+
     document.querySelectorAll('[data-chip-group]').forEach((group) => {
         group.querySelectorAll('[data-chip]').forEach((chip) => {
             chip.addEventListener('click', () => {

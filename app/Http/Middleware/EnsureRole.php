@@ -18,10 +18,12 @@ class EnsureRole
         $userRole = Auth::user()->role?->nama_role;
 
         if ($userRole !== $role) {
+            // Different role than the authenticated user: show an "Akses Ditolak"
+            // page with a button back to their own dashboard and a back button,
+            // instead of silently bouncing them elsewhere.
             return response()->view('errors.access-denied', [
-                'message' => 'Akses Anda ditolak. Anda tidak memiliki izin untuk membuka halaman ini.',
                 'homeRoute' => $this->homeRouteFor($userRole),
-            ], 404);
+            ], 403);
         }
 
         return $next($request);

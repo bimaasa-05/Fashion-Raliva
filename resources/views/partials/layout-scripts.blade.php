@@ -90,6 +90,10 @@
 
     const updateThemeIcons = () => {
         const isDark = document.documentElement.classList.contains('dark');
+        document.querySelectorAll('.theme-toggle [data-theme-icon]').forEach((el) => {
+            el.textContent = isDark ? 'dark_mode' : 'light_mode';
+            el.setAttribute('data-icon', isDark ? 'dark_mode' : 'light_mode');
+        });
         document.querySelectorAll('.theme-toggle .icon-moon').forEach((el) => el.classList.toggle('hidden', isDark));
         document.querySelectorAll('.theme-toggle .icon-sun').forEach((el) => el.classList.toggle('hidden', !isDark));
     };
@@ -193,6 +197,25 @@
     document.querySelectorAll('#sidebar nav a').forEach((a) => {
         a.addEventListener('mouseenter', () => showMenuTip(a));
         a.addEventListener('mouseleave', hideMenuTip);
+    });
+    // Sidebar profile avatar — tooltip when collapsed (dropleft/dropright)
+    document.querySelectorAll('.sidebar-profile').forEach((card) => {
+        const nameEl = card.querySelector('[data-sidebar-text] h4');
+        if (!nameEl) return;
+        card.addEventListener('mouseenter', () => {
+            if (!sidebar?.classList.contains('sidebar-collapsed') || !isDesktop()) return;
+            if (!menuTipEl) {
+                menuTipEl = document.createElement('div');
+                menuTipEl.id = 'sidebar-tip-global';
+                document.body.appendChild(menuTipEl);
+            }
+            menuTipEl.textContent = nameEl.textContent.trim();
+            const r = card.querySelector('.w-11, .w-10')?.getBoundingClientRect() || card.getBoundingClientRect();
+            menuTipEl.style.top = Math.round(r.top + r.height / 2) + 'px';
+            menuTipEl.style.left = Math.round(r.right + 12) + 'px';
+            requestAnimationFrame(() => menuTipEl.classList.add('visible'));
+        });
+        card.addEventListener('mouseleave', hideMenuTip);
     });
     sidebar?.querySelector('.sidebar-scroll')?.addEventListener('scroll', hideMenuTip, { passive: true });
 </script>

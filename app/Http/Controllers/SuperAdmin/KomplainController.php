@@ -13,21 +13,8 @@ class KomplainController extends Controller
 {
     public function index(Request $request)
     {
-        $status = $request->query('status', 'semua');
-
-        $stats = [
-            'terbuka' => Complaint::where('status', Complaint::STATUS_OPEN)->count(),
-            'diproses' => Complaint::where('status', Complaint::STATUS_DIPROSES)->count(),
-            'selesai' => Complaint::where('status', Complaint::STATUS_SELESAI)->count(),
-            'ditutup' => Complaint::where('status', Complaint::STATUS_DITUTUP)->count(),
-        ];
-
         $complaints = Complaint::query()
             ->with(['user:user_id,nama_lengkap', 'store:store_id,nama_toko,owner_id'])
-            ->when(
-                in_array($status, [Complaint::STATUS_OPEN, Complaint::STATUS_DIPROSES, Complaint::STATUS_SELESAI, Complaint::STATUS_DITUTUP], true),
-                fn ($query) => $query->where('status', $status)
-            )
             ->orderByRaw("CASE status WHEN 'open' THEN 0 WHEN 'diproses' THEN 1 ELSE 2 END")
             ->orderByDesc('dibuat_pada')
             ->get()
@@ -39,10 +26,17 @@ class KomplainController extends Controller
                 return $complaint;
             });
 
+        $stats = [
+            'semua' => $complaints->count(),
+            'open' => $complaints->where('status', Complaint::STATUS_OPEN)->count(),
+            'diproses' => $complaints->where('status', Complaint::STATUS_DIPROSES)->count(),
+            'selesai' => $complaints->where('status', Complaint::STATUS_SELESAI)->count(),
+            'ditutup' => $complaints->where('status', Complaint::STATUS_DITUTUP)->count(),
+        ];
+
         return view('SuperAdmin.komplain.index', [
             'complaints' => $complaints,
             'stats' => $stats,
-            'activeStatus' => $status,
         ]);
     }
 

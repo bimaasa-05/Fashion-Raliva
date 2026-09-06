@@ -1,4 +1,4 @@
-@extends('layouts.produksi')
+it @extends('layouts.produksi')
 
 @section('title', 'Profil')
 
@@ -14,18 +14,28 @@
     </div>
 </div>
 
+@php
+        $puser = Auth::user();
+        $pnama = $puser?->nama_lengkap ?? 'Produksi';
+        $pw = preg_split('/\s+/', trim($pnama));
+        $pi = '';
+        if(!empty($pw[0])) $pi .= mb_substr($pw[0],0,1);
+        if(isset($pw[1])) $pi .= mb_substr($pw[1],0,1);
+        elseif(mb_strlen($pw[0]??'')>1) $pi .= mb_substr($pw[0],1,1);
+        $pinit = strtoupper(mb_substr($pi,0,2)) ?: '?';
+    @endphp
 <div data-real class="hidden space-y-section-gap">
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex flex-col sm:flex-row sm:items-center gap-6">
-            <div class="w-20 h-20 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden shrink-0 mx-auto sm:mx-0">
-                <img alt="Foto Profil Rini Kusuma" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuUf094pPsvMlxNz9CEzztLZIPfB4q2FE_6HM73O8sFoIt42FkBx43D1cxFlylMdSolVSJZNCBDrc8ttYGcVUIYXcsS0AUGBhcZYBAFGqcAXzmuJyVyjyJY6CXvyxdr0Zwzlwi2Tw3Djm9F2wtwaOLZklTUYLsRg7NCbF9hgI1uCTcTdgGi-0zShSJMzVkR1HYp_C02xOHHVWnGLI4_rrhbWQnSlrZ2VpmUbZL0Gc18YDjNwDrrkAcPg" />
+            <div class="w-20 h-20 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-xl shrink-0 mx-auto sm:mx-0 border border-gold-accent/30">
+                {{ $pinit }}
             </div>
             <div class="flex-1 text-center sm:text-left">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3 justify-center sm:justify-start">
-                    <h2 class="raliva-figure text-[26px] text-on-surface">Rini Kusuma</h2>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 raliva-label text-[10px] w-fit mx-auto sm:mx-0">Staf Produksi</span>
+                    <h2 class="raliva-figure text-[26px] text-on-surface">{{ $puser->nama_lengkap ?? '-' }}</h2>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 raliva-label text-[10px] w-fit mx-auto sm:mx-0">{{ $puser->role->nama_role ?? 'Staf Produksi' }}</span>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm mt-1">rini.kusuma@raliva.id • +62 812-7788-9911</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-1">{{ $puser->email ?? '-' }} • {{ $puser->nomor_telepon ?? '-' }}</p>
             </div>
             <button type="button" data-modal-open="modal-edit-profil" class="px-5 py-2.5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium shrink-0">Edit Profil</button>
         </div>
@@ -35,9 +45,9 @@
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Informasi Akun</h2>
             <dl class="space-y-5 font-body-md text-sm">
-                <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Nama Lengkap</dt><dd class="text-on-surface font-bold text-right">Rini Kusuma</dd></div>
-                <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Email</dt><dd class="text-on-surface text-right break-all">rini.kusuma@raliva.id</dd></div>
-                <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Nomor HP</dt><dd class="text-on-surface text-right">+62 812-7788-9911</dd></div>
+                <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Nama Lengkap</dt><dd class="text-on-surface font-bold text-right">{{ $puser->nama_lengkap ?? '-' }}</dd></div>
+                <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Email</dt><dd class="text-on-surface text-right break-all">{{ $puser->email ?? '-' }}</dd></div>
+                <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Nomor HP</dt><dd class="text-on-surface text-right">{{ $puser->nomor_telepon ?? '-' }}</dd></div>
                 <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Role</dt><dd><span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Produksi</span></dd></div>
                 <div class="flex justify-between gap-4 items-start"><dt class="text-on-surface-variant shrink-0">Status Akun</dt><dd><span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>Aktif</span></dd></div>
             </dl>

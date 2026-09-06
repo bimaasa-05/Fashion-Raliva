@@ -50,4 +50,9 @@ class StoreStaff extends Model
     {
         return $this->hasMany(StoreStaffPermission::class, 'store_staff_id', 'store_staff_id');
     }
+
+    public function warehouseStaffPermissions(): HasMany
+    {
+        return $this->hasMany(WarehouseStaffPermission::class, 'warehouse_staff_id', 'warehouse_staff_id');
+    }
 }

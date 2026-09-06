@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Order;
 
 class User extends Authenticatable
 {
@@ -29,6 +31,7 @@ class User extends Authenticatable
         'nomor_telepon',
         'foto_profil',
         'status',
+        'email_verified_at',
     ];
 
     protected $hidden = [
@@ -70,6 +73,31 @@ class User extends Authenticatable
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class, 'role_id', 'role_id');
+    }
+
+    /**
+     * Cek apakah user memiliki permission tertentu berdasarkan tabel
+     * role_permissions. Super Admin dianggap memiliki seluruh permission.
+     *
+     * @param string $kode Kode permission, mis. 'warehouse.stock_in'
+     */
+    public function hasPermission(string $kode): bool
+    {
+        $role = $this->role;
+
+        if (! $role) {
+            return false;
+        }
+
+        // Super Admin memiliki seluruh permission platform.
+        if ($role->nama_role === Role::SUPER_ADMIN) {
+            return true;
+        }
+
+        return $role->permissions()
+            ->where('kode_permission', $kode)
+            ->where('permissions.status', 'aktif')
+            ->exists();
     }
 
     public function ownedStores(): HasMany
@@ -114,6 +142,11 @@ class User extends Authenticatable
     public function cart(): HasOne
     {
         return $this->hasOne(Cart::class, 'user_id', 'user_id');
+    }
+
+    public function orders(): HasManyThrough
+    {
+        return $this->hasManyThrough(Order::class, Checkout::class, 'user_id', 'checkout_id', 'user_id', 'checkout_id');
     }
 
     public function checkouts(): HasMany

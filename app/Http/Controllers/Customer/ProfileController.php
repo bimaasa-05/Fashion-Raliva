@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class ProfileController extends Controller
@@ -17,7 +15,7 @@ class ProfileController extends Controller
 
         $data = $request->validate([
             'nama_lengkap' => 'required|string|max:150',
-            'email' => 'required|email|max:150|unique:users,email,' . $user->user_id . ',user_id',
+            'email' => 'required|email|max:150|unique:users,email,'.$user->user_id.',user_id',
             'nomor_telepon' => 'nullable|string|max:30',
             'foto_profil' => 'nullable|image|max:2048',
         ], [
@@ -53,10 +51,10 @@ class ProfileController extends Controller
             }
 
             $file = $request->file('foto_profil');
-            $filename = 'customer-' . $user->user_id . '-' . Str::random(20) . '.' . $file->getClientOriginalExtension();
+            $filename = 'customer-'.$user->user_id.'-'.Str::random(20).'.'.$file->getClientOriginalExtension();
             $file->move($destDir, $filename);
 
-            $data['foto_profil'] = 'profil/' . $filename;
+            $data['foto_profil'] = 'profil/'.$filename;
         }
 
         $user->update($data);

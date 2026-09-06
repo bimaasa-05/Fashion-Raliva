@@ -250,6 +250,7 @@
 </div>
 <!-- Profile Header -->
 @auth
+<<<<<<< HEAD
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex flex-col items-center md:flex-row md:items-start gap-md">
 <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant flex-shrink-0 bg-surface-container-high flex items-center justify-center">
@@ -258,6 +259,20 @@
 @else
 <span class="material-symbols-outlined text-[44px] text-on-surface-variant">person</span>
 @endif
+=======
+@php
+  $cnama = Auth::user()->nama_lengkap ?? 'Customer';
+  $cw = preg_split('/\s+/', trim($cnama));
+  $ci = '';
+  if(!empty($cw[0])) $ci .= mb_substr($cw[0],0,1);
+  if(isset($cw[1])) $ci .= mb_substr($cw[1],0,1);
+  elseif(mb_strlen($cw[0]??'')>1) $ci .= mb_substr($cw[0],1,1);
+  $cinit = strtoupper(mb_substr($ci,0,2)) ?: '?';
+@endphp
+<section class="flex flex-col items-center md:flex-row md:items-start gap-md mb-xl bg-surface-container-low rounded-lg p-md">
+<div class="w-24 h-24 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-2xl shrink-0 border border-gold-accent/30">
+{{ $cinit }}
+>>>>>>> 2b09555281b997789a03982a1f3357cb46141e24
 </div>
 <div class="flex flex-col items-center md:items-start justify-center flex-grow">
 <h3 class="font-title-md text-title-md text-on-surface mb-1">{{ Auth::user()->nama_lengkap }}</h3>

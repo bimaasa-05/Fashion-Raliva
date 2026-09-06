@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Warehouse extends Model
@@ -32,7 +33,7 @@ class Warehouse extends Model
         return $this->hasMany(WarehouseStaff::class, 'warehouse_id', 'warehouse_id');
     }
 
-    public function staff(): BelongsToMany
+    public function staff(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(User::class, 'warehouse_staff', 'warehouse_id', 'user_id')
             ->withPivot('warehouse_staff_id', 'tanggal_penugasan', 'status')

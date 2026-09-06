@@ -14,7 +14,7 @@ class ProfilController extends Controller
 {
     public function index()
     {
-        $user = User::with('role')->firstWhere('user_id', 1);
+        $user = User::with('role')->findOrFail(Auth::id());
 
         return view('SuperAdmin.profil.index', [
             'user' => $user,
@@ -23,7 +23,7 @@ class ProfilController extends Controller
 
     public function updateProfile(Request $request)
     {
-        $user = User::firstWhere('user_id', 1);
+        $user = User::findOrFail(Auth::id());
 
         $data = $request->validate([
             'nama_lengkap' => 'required|string|max:150',
@@ -59,11 +59,11 @@ class ProfilController extends Controller
             }
 
             $file = $request->file('foto_profil');
-            $filename = 'superadmin-' . $user->user_id . '-' . Str::random(20) . '.' . $file->getClientOriginalExtension();
+            $filename = 'superadmin-'.$user->user_id.'-'.Str::random(20).'.'.$file->getClientOriginalExtension();
             $file->move($destDir, $filename);
 
             // Simpan path relatif di database: profil/namafile.jpg
-            $data['foto_profil'] = 'profil/' . $filename;
+            $data['foto_profil'] = 'profil/'.$filename;
         }
 
         $user->update($data);
@@ -88,7 +88,7 @@ class ProfilController extends Controller
 
     public function updatePassword(Request $request)
     {
-        $user = User::firstWhere('user_id', 1);
+        $user = User::findOrFail(Auth::id());
 
         $data = $request->validate([
             'password_lama' => 'required',

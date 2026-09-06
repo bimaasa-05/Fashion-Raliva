@@ -601,18 +601,14 @@
                 if (password !== confirm) { setError('confirm-error', true); valid = false; }
                 if (!terms) { setError('terms-error', true); valid = false; }
             } else {
-                ['brand-name-error', 'owner-name-error', 'owner-email-error', 'owner-email-taken-error', 'owner-category-error', 'owner-password-error', 'owner-confirm-error', 'owner-terms-error'].forEach(function (id) { setError(id, false); });
-                var brand = val('brand-name');
+                ['owner-name-error', 'owner-email-error', 'owner-email-taken-error', 'owner-password-error', 'owner-confirm-error', 'owner-terms-error'].forEach(function (id) { setError(id, false); });
                 var oname = val('owner-name');
                 var oemail = val('owner-email');
-                var category = val('owner-category');
                 var opw = document.getElementById('owner-password').value;
                 var oconfirm = document.getElementById('owner-confirm').value;
                 var oterms = chk('owner-terms');
-                if (!brand) { setError('brand-name-error', true); valid = false; }
                 if (!oname) { setError('owner-name-error', true); valid = false; }
                 if (!oemail || !/^\S+@\S+\.\S+$/.test(oemail)) { setError('owner-email-error', true); valid = false; }
-                if (!category) { setError('owner-category-error', true); valid = false; }
                 if (opw.length < 8) { setError('owner-password-error', true); valid = false; }
                 if (opw !== oconfirm) { setError('owner-confirm-error', true); valid = false; }
                 if (!oterms) { setError('owner-terms-error', true); valid = false; }

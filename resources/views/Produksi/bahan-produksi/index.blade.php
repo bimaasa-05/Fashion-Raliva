@@ -32,13 +32,13 @@
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Jenis Bahan</span>
             <span class="raliva-figure text-[26px] text-on-surface">18</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">bahan tercatat</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">inventory</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">inventory</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Stok Menipis</span>
             <span class="raliva-figure text-[26px] text-error">2</span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">perlu isi ulang</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">warning</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">warning</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-3 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pemakaian Bulan Ini</span>
@@ -46,13 +46,13 @@
             <div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
                 <div class="progress-fill h-full rounded-full" data-progress-mode="quota" data-progress="64"></div>
             </div>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">straighten</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">straighten</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Nilai Stok Bahan</span>
             <span class="raliva-figure text-[26px] text-gold-accent">Rp 18,4<span class="text-[14px] font-normal">jt</span></span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">estimasi persediaan</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">savings</span>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">savings</span>
         </div>
     </section>
 

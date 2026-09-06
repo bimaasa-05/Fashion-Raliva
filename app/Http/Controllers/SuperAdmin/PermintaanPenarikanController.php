@@ -14,28 +14,25 @@ class PermintaanPenarikanController extends Controller
 {
     public function index(Request $request)
     {
-        $status = $request->query('status', 'semua');
-
-        $stats = [
-            'menunggu' => Withdrawal::where('status', Withdrawal::STATUS_PENDING)->count(),
-            'nominal_menunggu' => (float) Withdrawal::where('status', Withdrawal::STATUS_PENDING)->sum('jumlah'),
-            'total_semua' => (float) Withdrawal::whereIn('status', [Withdrawal::STATUS_DISETUJUI, Withdrawal::STATUS_DIBAYAR])->sum('jumlah'),
-        ];
-
         $withdrawals = Withdrawal::query()
             ->with(['store.owner:user_id,nama_lengkap', 'wallet', 'bankAccount.bank'])
-            ->when(
-                in_array($status, [Withdrawal::STATUS_PENDING, Withdrawal::STATUS_DISETUJUI, Withdrawal::STATUS_DITOLAK, Withdrawal::STATUS_DIBAYAR], true),
-                fn ($query) => $query->where('status', $status)
-            )
             ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'disetujui' THEN 1 WHEN 'dibayar' THEN 2 ELSE 3 END")
             ->orderByDesc('diajukan_pada')
             ->get();
 
+        $stats = [
+            'semua' => $withdrawals->count(),
+            'pending' => $withdrawals->where('status', Withdrawal::STATUS_PENDING)->count(),
+            'nominal_menunggu' => (float) $withdrawals->where('status', Withdrawal::STATUS_PENDING)->sum('jumlah'),
+            'disetujui' => $withdrawals->where('status', Withdrawal::STATUS_DISETUJUI)->count(),
+            'dibayar' => $withdrawals->where('status', Withdrawal::STATUS_DIBAYAR)->count(),
+            'ditolak' => $withdrawals->where('status', Withdrawal::STATUS_DITOLAK)->count(),
+            'total_semua' => (float) $withdrawals->whereIn('status', [Withdrawal::STATUS_DISETUJUI, Withdrawal::STATUS_DIBAYAR])->sum('jumlah'),
+        ];
+
         return view('SuperAdmin.permintaan-penarikan.index', [
             'withdrawals' => $withdrawals,
             'stats' => $stats,
-            'activeStatus' => $status,
         ]);
     }
 
@@ -149,7 +146,22 @@ class PermintaanPenarikanController extends Controller
             ]);
         }
 
-        DB::transaction(function () use ($penarikan) {
+        $data = $request->validate([
+            'file_bukti' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+            'deskripsi_bukti' => ['nullable', 'string', 'max:1000'],
+        ], [
+            'file_bukti.required' => 'Bukti transfer wajib dilampirkan.',
+            'file_bukti.mimes' => 'Bukti transfer harus berupa JPG, PNG, atau PDF.',
+            'file_bukti.max' => 'Ukuran bukti transfer maksimal 5 MB.',
+            'deskripsi_bukti.max' => 'Deskripsi bukti maksimal 1000 karakter.',
+        ]);
+
+        $path = $request->file('file_bukti')->store(
+            'bukti-penarikan/'.$penarikan->withdrawal_id,
+            'public'
+        );
+
+        DB::transaction(function () use ($penarikan, $path, $data) {
             $wallet = $penarikan->wallet()->lockForUpdate()->firstOrFail();
             $saldoSebelum = (float) $wallet->saldo_tertahan;
 
@@ -168,6 +180,9 @@ class PermintaanPenarikanController extends Controller
             $penarikan->update([
                 'status' => Withdrawal::STATUS_DIBAYAR,
                 'dibayar_pada' => now(),
+                'file_bukti' => $path,
+                'deskripsi_bukti' => $data['deskripsi_bukti'] ?? null,
+                'bukti_diupload_pada' => now(),
             ]);
         });
 

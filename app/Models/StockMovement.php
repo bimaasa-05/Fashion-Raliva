@@ -27,6 +27,8 @@ class StockMovement extends Model
 
     public const SUMBER_ORDER_ITEM = 'order_item';
 
+    public const SUMBER_SUPPLIER = 'supplier';
+
     public const SUMBER_MANUAL = 'manual';
 
     protected $fillable = [
@@ -53,5 +55,10 @@ class StockMovement extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'dibuat_oleh', 'user_id');
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class, 'sumber_id', 'supplier_id');
     }
 }

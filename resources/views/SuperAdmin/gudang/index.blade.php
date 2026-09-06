@@ -3,53 +3,203 @@
 @section('title', 'Gudang')
 
 @section('header-title', 'Gudang')
-@section('header-badge', 'Lihat')
-@section('header-subtitle', 'Pantau operasional pemenuhan pesanan gudang dari seluruh toko.')
+@section('header-badge', 'Pantau')
+@section('header-subtitle', 'Pantau data gudang dari seluruh toko di platform.')
+
+@php
+    $statusBadgeMap = [
+        'aktif' => ['label' => 'Aktif', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
+        'nonaktif' => ['label' => 'Nonaktif', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+    ];
+@endphp
 
 @section('content')
-<section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+<section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Monitor Operasional Gudang</h2>
-        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">
-            <span class="material-symbols-outlined text-[14px]">visibility</span> Mode Pantau
-        </span>
+        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Monitor Gudang Platform</h2>
+        <div class="flex items-center gap-3 flex-wrap">
+            <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
+                <span class="material-symbols-outlined text-[18px]">tune</span>
+                Filter
+                <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
+            </button>
+            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">
+                <span class="material-symbols-outlined text-[14px]">visibility</span> Mode Pantau
+            </span>
+        </div>
     </div>
 
-    <div class="overflow-x-auto">
+    <!-- Filters -->
+    <div data-filter-panel class="hidden md:block mb-6">
+        <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
+            <div class="flex items-center gap-2 shrink-0">
+                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+            </div>
+            <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
+            <div id="chip-group" class="flex flex-wrap gap-2">
+                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
+                <button type="button" data-chip="aktif" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Aktif ({{ $stats['aktif'] }})</button>
+                <button type="button" data-chip="nonaktif" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Nonaktif ({{ $stats['nonaktif'] }})</button>
+            </div>
+        </div>
+
+        <!-- Search + Result Count -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div class="relative flex-1">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                <input id="gudang-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama gudang, toko, atau alamat..." />
+                <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+            <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span id="result-count">{{ $warehouses->count() }}</span> gudang
+            </p>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto hidden md:block">
         <table class="w-full min-w-[850px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                    <th class="p-4 text-left">ID Pesanan</th>
+                    <th class="p-4 text-center w-12">No.</th>
+                    <th class="p-4 text-left">Nama Gudang</th>
                     <th class="p-4 text-left">Toko</th>
-                    <th class="p-4 text-left">Barang</th>
-                    <th class="p-4 text-center">Status Gudang</th>
-                    <th class="p-4 text-left">Diperbarui</th>
+                    <th class="p-4 text-left">Alamat</th>
+                    <th class="p-4 text-center">Total Item</th>
+                    <th class="p-4 text-center">Status</th>
                 </tr>
             </thead>
             <tbody class="font-body-md text-sm">
-                <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                    <td class="p-4 font-mono text-on-surface">#RLV-2077</td>
-                    <td class="p-4 text-on-surface">LUNARA Fashion</td>
-                    <td class="p-4 text-on-surface">Oversized Linen Shirt (M)</td>
-                    <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Disiapkan</span></td>
-                    <td class="p-4 text-on-surface-variant">Hari ini, 08.45</td>
-                </tr>
-                <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                    <td class="p-4 font-mono text-on-surface">#RLV-2074</td>
-                    <td class="p-4 text-on-surface">Velvet Closet</td>
-                    <td class="p-4 text-on-surface">Velvet Midi Dress (S)</td>
-                    <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-primary-fixed-dim text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Diambil Kurir</span></td>
-                    <td class="p-4 text-on-surface-variant">Kemarin, 17.20</td>
-                </tr>
-                <tr class="hover:bg-surface-container-low transition-colors">
-                    <td class="p-4 font-mono text-on-surface">#RLV-2070</td>
-                    <td class="p-4 text-on-surface">KAYANA Apparel</td>
-                    <td class="p-4 text-on-surface">Denim Jacket Vintage (L)</td>
-                    <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Stok Kosong</span></td>
-                    <td class="p-4 text-on-surface-variant">19 Agu 2026</td>
+                @forelse($warehouses as $wh)
+                    @php $badge = $statusBadgeMap[$wh->status] ?? ['label' => $wh->status, 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant']; @endphp
+                    <tr data-table-row data-status="{{ $wh->status }}" data-search="{{ strtolower($wh->nama_gudang.' '.($wh->store->nama_toko ?? '').' '.($wh->alamat ?? '')) }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                        <td class="p-4 text-center text-on-surface-variant font-mono row-num"></td>
+                        <td class="p-4 text-on-surface font-bold">{{ $wh->nama_gudang }}</td>
+                        <td class="p-4 text-on-surface">{{ $wh->store->nama_toko ?? '-' }}</td>
+                        <td class="p-4 text-on-surface-variant text-xs">{{ Str::limit($wh->alamat, 40) }}</td>
+                        <td class="p-4 text-center text-on-surface">{{ $wh->stocks_count }}</td>
+                        <td class="p-4 text-center">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full {{ $badge['class'] }} text-[10px] font-bold uppercase border">{{ $badge['label'] }}</span>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="p-8 text-center text-on-surface-variant">Belum ada data gudang.</td>
+                    </tr>
+                @endforelse
+                <tr id="empty-search" class="hidden">
+                    <td colspan="6" class="p-8 text-center">
+                        <div class="flex flex-col items-center gap-2">
+                            <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
+                            <p class="text-on-surface-variant font-body-md text-sm">Tidak ada data gudang yang cocok.</p>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>
     </div>
+
+    <!-- Mobile: kartu per gudang -->
+    <div class="md:hidden grid grid-cols-1 gap-gutter">
+        @forelse($warehouses as $wh)
+            @php $badge = $statusBadgeMap[$wh->status] ?? ['label' => $wh->status, 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant']; @endphp
+            <article data-table-row data-status="{{ $wh->status }}" data-search="{{ strtolower($wh->nama_gudang.' '.($wh->store->nama_toko ?? '').' '.($wh->alamat ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                <div class="flex items-start justify-between gap-3 mb-3">
+                    <div class="min-w-0">
+                        <p class="font-title-md text-title-md text-on-surface leading-tight">{{ $wh->nama_gudang }}</p>
+                        <p class="text-on-surface-variant text-xs mt-0.5">{{ $wh->store->nama_toko ?? '-' }}</p>
+                    </div>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $badge['class'] }} text-[10px] font-bold uppercase border shrink-0">{{ $badge['label'] }}</span>
+                </div>
+                <dl class="space-y-2 font-body-md text-sm">
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-on-surface-variant">Alamat</dt>
+                        <dd class="text-on-surface text-right">{{ Str::limit($wh->alamat, 40) }}</dd>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-on-surface-variant">Total Item</dt>
+                        <dd class="text-on-surface text-right">{{ $wh->stocks_count }}</dd>
+                    </div>
+                </dl>
+            </article>
+        @empty
+            <p class="text-center text-on-surface-variant py-10">Belum ada data gudang.</p>
+        @endforelse
+        <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada data gudang yang cocok.</p>
+    </div>
 </section>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const scope = document.querySelector('[data-table-scope]');
+        if (!scope) return;
+
+        const rows = Array.from(scope.querySelectorAll('tr[data-table-row], article[data-table-row]'));
+        const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
+        const searchInput = document.getElementById('gudang-search');
+        const clearBtn = document.getElementById('clear-search');
+        const countEl = document.getElementById('result-count');
+        const emptySearch = document.getElementById('empty-search');
+        const emptySearchMobile = document.getElementById('empty-search-mobile');
+
+        const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
+        const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
+
+        let activeStatus = 'semua';
+
+        function applyFilter() {
+            const term = searchInput.value.trim().toLowerCase();
+            let visible = 0;
+
+            rows.forEach((row) => {
+                const matchStatus = activeStatus === 'semua' || row.getAttribute('data-status') === activeStatus;
+                const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
+                const show = matchStatus && matchSearch;
+                row.classList.toggle('hidden', !show);
+                if (show) {
+                    visible++;
+                    const num = row.querySelector('.row-num');
+                    if (num) num.textContent = visible;
+                }
+            });
+
+            countEl.textContent = visible;
+            emptySearch.classList.toggle('hidden', visible > 0);
+            if (emptySearchMobile) emptySearchMobile.classList.toggle('hidden', visible > 0);
+        }
+
+        chipBtns.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                chipBtns.forEach((b) => {
+                    b.classList.remove(...activeClasses);
+                    b.classList.add(...idleClasses, 'hover:bg-surface-container-high');
+                });
+                btn.classList.remove(...idleClasses, 'hover:bg-surface-container-high');
+                btn.classList.add(...activeClasses);
+                activeStatus = btn.getAttribute('data-chip');
+                applyFilter();
+            });
+        });
+
+        let debounce;
+        searchInput.addEventListener('input', () => {
+            clearBtn.classList.toggle('opacity-0', !searchInput.value);
+            clearTimeout(debounce);
+            debounce = setTimeout(applyFilter, 200);
+        });
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearBtn.classList.add('opacity-0');
+            applyFilter();
+        });
+
+        applyFilter();
+    });
+</script>
+@endpush

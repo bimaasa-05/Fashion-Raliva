@@ -5,8 +5,11 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\Review;
+use App\Models\Setting;
 use App\Models\Store;
+use App\Models\StoreDocument;
 use App\Support\ActivityLogger;
+use App\Support\SlotService;
 use Illuminate\Http\Request;
 
 class ManajemenTokoController extends Controller
@@ -32,6 +35,7 @@ class ManajemenTokoController extends Controller
         $stores = Store::query()
             ->with('owner:user_id,nama_lengkap,email')
             ->withCount(['products', 'orders'])
+            ->with('documents')
             ->when($status !== 'semua', fn ($query) => $query->where('status', $status))
             ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'aktif' THEN 1 WHEN 'nonaktif' THEN 2 ELSE 3 END")
             ->orderByDesc('created_at')
@@ -47,6 +51,7 @@ class ManajemenTokoController extends Controller
                     'orders_count' => $store->orders_count,
                     'rating' => $ratings->get($store->store_id),
                     'deskripsi' => $store->deskripsi,
+                    'dokumen' => $store->documents,
                 ];
             });
 
@@ -74,6 +79,14 @@ class ManajemenTokoController extends Controller
             'status' => Store::STATUS_AKTIF,
             'alasan_penolakan' => null,
         ]);
+
+        if (SlotService::freeQuota($toko->store_id) === 0) {
+            $slotAwal = (int) Setting::get(Setting::SLOT_AWAL_DEFAULT, '5');
+
+            if ($slotAwal > 0) {
+                SlotService::setFreeQuota($toko->store_id, $slotAwal);
+            }
+        }
 
         ActivityLogger::log(
             'store.approve',
@@ -210,6 +223,108 @@ class ManajemenTokoController extends Controller
             'message' => sprintf('Toko %s diaktifkan kembali.', $toko->nama_toko),
             'icon' => 'task_alt',
         ]);
+    }
+
+    public function verifikasiDokumen(Request $request, Store $toko, StoreDocument $dokumen)
+    {
+        if ($dokumen->store_id !== $toko->store_id) {
+            abort(404);
+        }
+
+        if ($dokumen->status === 'terverifikasi') {
+            return back()->with('toast', [
+                'message' => sprintf('Dokumen %s sudah terverifikasi.', $this->jenisLabel($dokumen->jenis)),
+                'icon' => 'info',
+            ]);
+        }
+
+        $lama = $dokumen->only(['status', 'catatan']);
+
+        $dokumen->update([
+            'status' => 'terverifikasi',
+            'catatan' => null,
+        ]);
+
+        ActivityLogger::log(
+            'store.document.approve',
+            StoreDocument::class,
+            $dokumen->store_document_id,
+            $lama,
+            ['status' => 'terverifikasi', 'catatan' => null],
+            sprintf('Menyetujui dokumen %s toko "%s".', $this->jenisLabel($dokumen->jenis), $toko->nama_toko)
+        );
+
+        Notification::create([
+            'user_id' => $toko->owner_id,
+            'tipe' => Notification::TIPE_SISTEM,
+            'judul' => 'Dokumen Disetujui',
+            'pesan' => sprintf('Dokumen %s toko "%s" disetujui oleh Super Admin.', $this->jenisLabel($dokumen->jenis), $toko->nama_toko),
+        ]);
+
+        return back()->with('toast', [
+            'message' => sprintf('Dokumen %s disetujui.', $this->jenisLabel($dokumen->jenis)),
+            'icon' => 'task_alt',
+        ]);
+    }
+
+    public function tolakDokumen(Request $request, Store $toko, StoreDocument $dokumen)
+    {
+        if ($dokumen->store_id !== $toko->store_id) {
+            abort(404);
+        }
+
+        if ($dokumen->status === 'terverifikasi') {
+            return back()->with('toast', [
+                'message' => sprintf('Dokumen %s sudah terverifikasi, tidak dapat ditolak.', $this->jenisLabel($dokumen->jenis)),
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
+        $data = $request->validate([
+            'alasan' => 'required|string|min:3|max:1000',
+        ], [
+            'alasan.required' => 'Alasan penolakan wajib diisi.',
+            'alasan.min' => 'Alasan penolakan minimal 3 karakter.',
+        ]);
+
+        $lama = $dokumen->only(['status', 'catatan']);
+
+        $dokumen->update([
+            'status' => 'ditolak',
+            'catatan' => $data['alasan'],
+        ]);
+
+        ActivityLogger::log(
+            'store.document.reject',
+            StoreDocument::class,
+            $dokumen->store_document_id,
+            $lama,
+            ['status' => 'ditolak', 'catatan' => $data['alasan']],
+            sprintf('Menolak dokumen %s toko "%s" dengan alasan: %s', $this->jenisLabel($dokumen->jenis), $toko->nama_toko, $data['alasan'])
+        );
+
+        Notification::create([
+            'user_id' => $toko->owner_id,
+            'tipe' => Notification::TIPE_SISTEM,
+            'judul' => 'Dokumen Ditolak',
+            'pesan' => sprintf('Dokumen %s toko "%s" ditolak. Alasan: %s', $this->jenisLabel($dokumen->jenis), $toko->nama_toko, $data['alasan']),
+        ]);
+
+        return back()->with('toast', [
+            'message' => sprintf('Dokumen %s ditolak.', $this->jenisLabel($dokumen->jenis)),
+            'icon' => 'block',
+        ]);
+    }
+
+    private static function jenisLabel(string $jenis): string
+    {
+        return match ($jenis) {
+            'ktp' => 'KTP / Identitas Owner',
+            'npwp' => 'NPWP Toko',
+            'foto_depan' => 'Foto Depan Toko',
+            'siu' => 'Surat Izin Usaha (NIB)',
+            default => ucfirst($jenis),
+        };
     }
 
     private static function initials(string $nama): string

@@ -78,13 +78,23 @@
                     </div>
                 </div>
 
+                @php
+                    $snama = $user->nama_lengkap ?? 'Super Admin';
+                    $sw = preg_split('/\s+/', trim($snama));
+                    $si = '';
+                    if(!empty($sw[0])) $si .= mb_substr($sw[0],0,1);
+                    if(isset($sw[1])) $si .= mb_substr($sw[1],0,1);
+                    elseif(mb_strlen($sw[0]??'')>1) $si .= mb_substr($sw[0],1,1);
+                    $sinit = strtoupper(mb_substr($si,0,2)) ?: '?';
+                @endphp
                 <div class="shrink-0 mx-auto lg:mx-0">
                     <div class="photo-upload-wrapper relative inline-block">
-                        <div id="hero-avatar" class="w-28 h-28 md:w-32 md:h-32 rounded-full bg-secondary-container flex items-center justify-center border-4 border-surface-container-lowest shadow-xl overflow-hidden photo-preview">
+                        <div id="hero-avatar" class="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gold-accent text-white flex items-center justify-center border-4 border-surface-container-lowest shadow-xl photo-preview font-bold text-3xl overflow-hidden">
                             @if ($user->foto_profil_url)
                                 <img id="hero-avatar-img" src="{{ $user->foto_profil_url }}" class="w-full h-full object-cover" alt="{{ $user->nama_lengkap }}" />
+                                <span id="hero-avatar-initial" style="display:none">{{ $sinit }}</span>
                             @else
-                                <span id="hero-avatar-initial" class="font-display-lg text-display-lg text-secondary">{{ strtoupper(mb_substr($user->nama_lengkap, 0, 2)) }}</span>
+                                <span id="hero-avatar-initial">{{ $sinit }}</span>
                             @endif
                         </div>
                         <label for="foto_profil" class="photo-upload-label absolute bottom-0 right-0 w-8 h-8 rounded-full bg-gold-accent text-on-primary flex items-center justify-center cursor-pointer border-3 border-surface-container-lowest shadow-lg hover:scale-105">

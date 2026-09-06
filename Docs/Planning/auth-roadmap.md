@@ -14,6 +14,9 @@ Planning document for authentication features deferred to a later phase.
 - Session: standard single Laravel session per browser. To test multiple roles at
   once, use incognito / a separate browser profile (logging in a new role in another
   tab overwrites the shared session).
+- **Rate limiting (added):** `POST /login` and `POST /register` are now throttled
+  with `throttle:5,1` (max 5 attempts per 1 minute per IP). Protects against
+  brute-force / credential stuffing on the unified auth forms.
 
 ## Phase B — Deferred (pending)
 ### 1. Forgot Password — Gmail OTP flow
