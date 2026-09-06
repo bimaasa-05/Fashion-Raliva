@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\Store;
+use Illuminate\Support\Facades\Auth;
 
 class ShopController extends Controller
 {
@@ -24,10 +25,14 @@ class ShopController extends Controller
                 'variants' => fn ($q) => $q->where('status', 'aktif'),
             ])
             ->latest()
-            ->paginate(12)
-            ->withQueryString();
+            ->get();
 
-        return view('customer.shop.index', compact('products'));
+        $totalProducts = $products->count();
+
+        $wishlistedIds = $this->wishlistedIds();
+        $cartCount = \App\Http\Controllers\Customer\CartController::countForUser(Auth::id());
+
+        return view('customer.shop.index', compact('products', 'totalProducts', 'wishlistedIds', 'cartCount'));
     }
 
     /**
@@ -56,6 +61,7 @@ class ShopController extends Controller
 
         $averageRating = $reviews->avg('rating');
         $reviewCount = $reviews->count();
+        $reviews = $reviews->take(3);
 
         $relatedProducts = Product::query()
             ->where('product_id', '!=', $product->product_id)
@@ -71,7 +77,39 @@ class ShopController extends Controller
             ->take(6)
             ->get();
 
-        return view('customer.shop.produk-detail', compact('product', 'reviews', 'averageRating', 'reviewCount', 'relatedProducts'));
+        $wishlistedIds = $this->wishlistedIds();
+        $cartCount = \App\Http\Controllers\Customer\CartController::countForUser(Auth::id());
+
+        return view('customer.shop.produk-detail', compact('product', 'reviews', 'averageRating', 'reviewCount', 'relatedProducts', 'wishlistedIds', 'cartCount'));
+    }
+
+    /**
+     * Halaman selengkapnya ulasan (riviews) untuk satu produk aktif.
+     */
+    public function produkRiviews(int $id)
+    {
+        $product = Product::query()
+            ->where('product_id', $id)
+            ->where('status', Product::STATUS_AKTIF)
+            ->whereHas('store', fn ($q) => $q->where('status', Store::STATUS_AKTIF))
+            ->with([
+                'store:store_id,nama_toko,logo',
+                'category:category_id,nama_kategori',
+                'images' => fn ($q) => $q->orderBy('urutan'),
+            ])
+            ->firstOrFail();
+
+        $reviews = Review::query()
+            ->where('product_id', $product->product_id)
+            ->where('status', Review::STATUS_AKTIF)
+            ->with('user:user_id,nama_lengkap,foto_profil')
+            ->latest()
+            ->get();
+
+        $averageRating = $reviews->avg('rating');
+        $reviewCount = $reviews->count();
+
+        return view('customer.shop.produk-riviews', compact('product', 'reviews', 'averageRating', 'reviewCount'));
     }
 
     /**
@@ -95,7 +133,11 @@ class ShopController extends Controller
         $reviewCount = $reviews->count();
         $averageRating = $reviews->avg('rating');
 
-        return view('customer.store.produk', compact('store', 'products', 'reviewCount', 'averageRating'));
+        $totalProducts = $products->count();
+
+        $wishlistedIds = $this->wishlistedIds();
+
+        return view('customer.store.produk', compact('store', 'products', 'reviewCount', 'averageRating', 'totalProducts', 'wishlistedIds'));
     }
 
     /**
@@ -139,5 +181,17 @@ class ShopController extends Controller
         return Store::where('store_id', $id)
             ->where('status', Store::STATUS_AKTIF)
             ->firstOrFail();
+    }
+
+    /**
+     * Daftar product_id milik user yang sudah di-wishlist.
+     */
+    protected function wishlistedIds(): array
+    {
+        if (!Auth::check()) {
+            return [];
+        }
+
+        return Auth::user()->wishlist?->items()->pluck('product_id')->all() ?? [];
     }
 }
