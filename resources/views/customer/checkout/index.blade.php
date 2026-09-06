@@ -256,8 +256,15 @@
         margin: 1.25rem 0;
     }
     /* Item scroller utility */
-    .co-scroll::-webkit-scrollbar { display: none; }
-    .co-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    .co-scroll {
+        overflow-x: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--chrome-accent) transparent;
+        padding-bottom: 0.875rem;
+    }
+    .co-scroll::-webkit-scrollbar { height: 5px; }
+    .co-scroll::-webkit-scrollbar-track { background: transparent; }
+    .co-scroll::-webkit-scrollbar-thumb { background: var(--chrome-accent); border-radius: 999px; }
     .co-field {
         display: flex;
         align-items: center;
@@ -615,27 +622,29 @@
             {{-- ========== ORDER ITEMS ========== --}}
             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('ORDER ITEMS') }}</p>
 
-            <div class="flex gap-sm overflow-x-auto pb-sm co-scroll">
+            <div class="flex gap-sm overflow-x-auto co-scroll">
+@forelse ($items as $i)
+@php
+    $pv = $i->productVariant;
+    $pr = $pv?->product;
+    $img = $pr?->images->first()?->file_gambar ?? '';
+    $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/checkout/600/800';
+@endphp
                 <div class="flex-shrink-0 w-64 flex items-center gap-sm bg-surface-container border border-[var(--border-soft)] rounded-xl p-sm">
                     <div class="flex-shrink-0 w-16 h-20 bg-surface-container-high rounded-lg overflow-hidden">
-                        <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4G81Gtat5BKzpijwKFnCEhnYyz8ZuXSv5z9_-yaV3L6pPWN-ZLMlKk9D8CfOxlwW2h6_XSvZwA7lQs70AN-q2tlMInMu3xk9wRY7JFzyBFLosxtY9SDjAPSFJ29WFtFv3L3jRAaaKHH53OR30tGk1y6zfjcPJGmZSls-Dzh_ZeiqfLEGhkyh5MobBab8pFvyHdKJ2z2pMdKjElHU1812vN10nL0Bqqb04HqRY_Xvz-PZ9w_qEJOg"/>
+                        <img class="w-full h-full object-cover" loading="lazy" alt="{{ $pr?->nama_produk ?? __('Produk') }}" src="{{ $imgUrl }}"/>
                     </div>
                     <div class="min-w-0 flex-1">
-                        <p class="font-body-sm text-body-sm text-on-surface font-semibold truncate">Oversized Linen Shirt</p>
-                        <p class="font-label-sm text-label-sm text-on-surface-variant truncate">Ivory · M</p>
-                        <p class="font-body-sm text-body-sm text-on-surface mt-xs">Rp 289.000</p>
+                        <p class="font-body-sm text-body-sm text-on-surface font-semibold truncate">{{ $pr?->nama_produk ?? __('Produk') }}</p>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ trim(($pv?->warna ?? '') . ' · ' . ($pv?->ukuran ?? ''), ' ·') }}</p>
+                        <p class="font-body-sm text-body-sm text-on-surface mt-xs">Rp {{ number_format((float)$i->harga_snapshot, 0, ',', '.') }} <span class="text-on-surface-variant">×{{ $i->quantity }}</span></p>
                     </div>
                 </div>
-                <div class="flex-shrink-0 w-64 flex items-center gap-sm bg-surface-container border border-[var(--border-soft)] rounded-xl p-sm">
-                    <div class="flex-shrink-0 w-16 h-20 bg-surface-container-high rounded-lg overflow-hidden">
-                        <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYD6gQ9MzXtJCmq7ifPSDGi9tdMZoHxGUeIA_ZxbwzAb0BrMgldkXslIC5mq53UYgJAVDJnKm1WXR5OdHGr00iFE0HHrfb45MKIEXmGtafzdl5VzVYKkZ4jt2emMmDEANdFL1lx_1DlPkkbxfZpN42dtgm72-WjHKu59ktKb2LkwQ_Hd-Rba4IfJJjqZHJUOBA6rB6RebtR36JFk-HARhgfgNjIsxqk0PW3Xrdij1s5VE02H9JBhI"/>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="font-body-sm text-body-sm text-on-surface font-semibold truncate">Ribbed Knit Tank</p>
-                        <p class="font-label-sm text-label-sm text-on-surface-variant truncate">Terracotta · S</p>
-                        <p class="font-body-sm text-body-sm text-on-surface mt-xs">Rp 312.000</p>
-                    </div>
+@empty
+                <div class="flex-shrink-0 w-full flex items-center justify-center py-lg text-center">
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Keranjang masih kosong.') }}</p>
                 </div>
+@endforelse
             </div>
 
             <hr class="co-divider"/>
@@ -643,58 +652,41 @@
             {{-- ========== SHIPPING METHOD ========== --}}
             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('SHIPPING METHOD') }}</p>
 
-            <div class="co-ship-option">
-                <div class="flex items-center gap-sm">
-                    <div class="w-4 h-4 rounded-full border border-secondary flex items-center justify-center"></div>
-                    <div>
-                        <p class="font-body-sm text-body-sm font-semibold">{{ __('Regular Delivery') }}</p>
-                        <p class="font-label-sm text-label-sm text-on-surface-variant">3-5 Business Days</p>
-                    </div>
-                </div>
-                <span class="font-body-sm text-body-sm">{{ __('Free') }}</span>
-            </div>
-            <div class="co-ship-option selected">
+            @foreach ($shippingOptions as $opt)
+@php $selectedShip = (int)$opt['ongkir'] === (int)$shipping; @endphp
+            <div class="co-ship-option{{ $selectedShip ? ' selected' : '' }}" data-shipping-ongkir="{{ $opt['ongkir'] }}">
                 <div class="flex items-center gap-sm">
                     <div class="w-4 h-4 rounded-full border-2 border-secondary flex items-center justify-center">
-                        <div class="w-2 h-2 rounded-full bg-secondary"></div>
+                        @if($selectedShip)<div class="w-2 h-2 rounded-full bg-secondary"></div>@endif
                     </div>
                     <div>
-                        <p class="font-body-sm text-body-sm font-semibold">{{ __('Express Delivery') }}</p>
-                        <p class="font-label-sm text-label-sm text-on-surface-variant">{{ __('1-2 Business Days') }}</p>
+                        <p class="font-body-sm text-body-sm font-semibold">{{ __($opt['nama']) }}</p>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant">{{ __($opt['estimasi']) }}</p>
                     </div>
                 </div>
-                <span class="font-body-sm text-body-sm">Rp 35.000</span>
+                <span class="font-body-sm text-body-sm">{{ $opt['ongkir'] > 0 ? 'Rp ' . number_format((float)$opt['ongkir'], 0, ',', '.') : __('Free') }}</span>
             </div>
+@endforeach
 
             <hr class="co-divider"/>
 
             {{-- ========== PAYMENT METHOD ========== --}}
             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('PAYMENT METHOD') }}</p>
 
+            @php
+    $payIcons = [
+        \App\Models\PaymentMethod::KODE_QRIS => 'qr_code_2',
+        \App\Models\PaymentMethod::KODE_EWALLET => 'account_balance_wallet',
+        \App\Models\PaymentMethod::KODE_BANK_TRANSFER => 'account_balance',
+    ];
+@endphp
             <div class="co-payment-grid">
-                <button class="co-payment-btn" type="button">
-                    <span class="material-symbols-outlined">account_balance</span>
-                    {{ __('Bank Transfer') }}
+@foreach ($paymentMethods as $pm)
+                <button class="co-payment-btn{{ $loop->first ? ' selected' : '' }}" type="button" data-payment-method data-payment-id="{{ $pm->payment_method_id }}">
+                    <span class="material-symbols-outlined">{{ $payIcons[$pm->kode_metode] ?? 'payments' }}</span>
+                    {{ __($pm->nama_metode) }}
                 </button>
-                <button class="co-payment-btn selected" type="button">
-                    <span class="material-symbols-outlined">credit_card</span>
-                    {{ __('Credit Card') }}
-                </button>
-                <button class="co-payment-btn" type="button">
-                    <span class="material-symbols-outlined">account_balance_wallet</span>
-                    {{ __('E-Wallet') }}
-                </button>
-            </div>
-
-            <div class="mt-sm p-md border border-[var(--border-soft)] rounded-xl bg-surface">
-                <div class="flex justify-between items-center mb-sm">
-                    <div class="flex items-center gap-xs">
-                        <span class="material-symbols-outlined text-[20px] text-[var(--text-muted)]">credit_card</span>
-                        <span class="font-body-sm text-body-sm">**** **** **** 4242</span>
-                    </div>
-                    <span class="material-symbols-outlined text-[20px] text-[var(--chrome-accent)]">check_circle</span>
-                </div>
-                <button class="font-label-caps text-label-caps text-[var(--text-muted)] hover:text-[var(--chrome-accent)] underline" type="button">{{ __('Change Card') }}</button>
+@endforeach
             </div>
 
             <hr class="co-divider"/>
@@ -704,19 +696,19 @@
 
             <div class="co-summary-row">
                 <span>Subtotal</span>
-                <span>Rp 601.000</span>
+                <span id="co-subtotal" data-subtotal="{{ $subtotal }}">Rp {{ number_format((float)$subtotal, 0, ',', '.') }}</span>
             </div>
             <div class="co-summary-row">
                 <span>Shipping</span>
-                <span>Rp 35.000</span>
+                <span id="co-shipping">Rp {{ number_format((float)$shipping, 0, ',', '.') }}</span>
             </div>
             <div class="co-summary-row">
                 <span>Tax</span>
-                <span>Rp 0</span>
+                <span>Rp {{ number_format((float)$tax, 0, ',', '.') }}</span>
             </div>
             <div class="co-summary-row total">
                 <span>Total Payment</span>
-                <span>Rp 636.000</span>
+                <span id="co-total">Rp {{ number_format((float)$total, 0, ',', '.') }}</span>
             </div>
 
         </div>
@@ -729,7 +721,7 @@
     <div class="co-bottom-bar-card card-premium flex items-center gap-sm md:gap-md bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.18)]">
         <div class="summary flex-1 min-w-0">
             <p>{{ __('Total Payment') }}</p>
-            <p>Rp 636.000</p>
+            <p id="co-total-bottom">Rp {{ number_format((float)$total, 0, ',', '.') }}</p>
         </div>
         <a href="{{ route('customer.order-tracking') }}" class="btn-place shrink-0">
             <span class="material-symbols-outlined">check</span>
@@ -757,6 +749,41 @@
             });
         }, { threshold: 0.08 });
         els.forEach(function (e) { io.observe(e); });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        function rupiah(n) {
+            n = Math.round(Number(n) || 0);
+            return 'Rp ' + n.toLocaleString('id-ID');
+        }
+
+        var subtotalEl = document.getElementById('co-subtotal');
+        var subtotal = subtotalEl ? (parseFloat(subtotalEl.getAttribute('data-subtotal')) || 0) : 0;
+
+        function refreshTotal(ongkir) {
+            var total = subtotal + (parseFloat(ongkir) || 0);
+            var shipEl = document.getElementById('co-shipping');
+            var totalEls = document.querySelectorAll('#co-total, #co-total-bottom');
+            if (shipEl) shipEl.textContent = rupiah(ongkir);
+            totalEls.forEach(function (t) { t.textContent = rupiah(total); });
+        }
+
+        document.querySelectorAll('.co-ship-option').forEach(function (opt) {
+            opt.addEventListener('click', function () {
+                document.querySelectorAll('.co-ship-option').forEach(function (o) { o.classList.remove('selected'); });
+                opt.classList.add('selected');
+                refreshTotal(opt.getAttribute('data-shipping-ongkir'));
+            });
+        });
+
+        document.querySelectorAll('[data-payment-method]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('[data-payment-method]').forEach(function (b) { b.classList.remove('selected'); });
+                btn.classList.add('selected');
+            });
+        });
     });
 </script>
 
