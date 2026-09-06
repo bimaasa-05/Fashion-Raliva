@@ -254,7 +254,7 @@
 <body class="bg-background text-on-background min-h-screen flex flex-col font-body-lg lg:pl-72">
 <!-- TopAppBar (Small Center Aligned) -->
 <header class="bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 pt-safe border-b border-[var(--chrome-border)] sticky top-0 z-40">
-<a href="{{ route('customer.shop') }}" data-go-back class="w-10 h-10 flex items-center justify-center -ml-2 hover:opacity-80 transition-opacity">
+<a href="{{ route('customer.shop') }}" class="w-10 h-10 flex items-center justify-center -ml-2 hover:opacity-80 transition-opacity">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back_ios_new</span>
 </a>
 <div class="flex-1 flex justify-center">
@@ -338,18 +338,4 @@
 </div>
 </div>
 @include('customer._partials.drawer')
-<script>
-/* Arrow back = kembali ke halaman customer sebelumnya */
-document.addEventListener('click', function (e) {
-    var back = e.target.closest('[data-go-back]');
-    if (!back) return;
-    e.preventDefault();
-    var ref = document.referrer;
-    if (ref && ref.indexOf(window.location.origin) === 0) {
-        window.history.back();
-    } else {
-        window.location.href = back.getAttribute('href');
-    }
-});
-</script>
 </body></html>
