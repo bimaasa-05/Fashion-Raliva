@@ -73,6 +73,14 @@ class ManajemenTokoController extends Controller
             ]);
         }
 
+        $hasValidDoc = StoreDocument::where('store_id', $toko->store_id)->where('status', '!=', 'ditolak')->exists();
+        if (! $hasValidDoc) {
+            return back()->with('toast', [
+                'message' => 'Minimal 1 dokumen valid diperlukan sebelum menyetujui toko.',
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
         $lama = $toko->only(['status', 'alasan_penolakan']);
 
         $toko->update([

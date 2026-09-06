@@ -32,9 +32,10 @@
         $isAktif = $storeStatus === 'aktif';
         $isPending = $storeStatus === 'pending';
         $isDitolak = $storeStatus === 'ditolak';
+        $isNonaktif = $storeStatus === 'nonaktif';
         $step1Done = $hasStore;
         $step2Done = $hasStore && $hasDocs;
-        $step3Done = $isAktif;
+        $step3Done = $isPending || $isAktif || $isDitolak || $isNonaktif;
         $step4Done = $isAktif;
         $statusTitle = $isAktif ? 'Toko Telah Disetujui' : ($isDitolak ? 'Pengajuan Ditolak' : ($hasStore ? 'Pengajuan Diproses' : 'Belum Mengajukan Toko'));
         $statusLine = $hasStore
@@ -75,17 +76,18 @@
                     ];
                 @endphp
                 @foreach ($steps as $step)
+                    @php $isErrorStep = $isDitolak && $step[0] === 'Review Super Admin'; @endphp
                     <li class="flex-1 relative flex flex-col items-center text-center">
                         @if (! $loop->last)
-                            <span class="absolute top-[22px] left-1/2 ml-[22px] right-0 h-[3px] {{ $step[2] ? 'bg-gold-accent/60' : 'bg-outline-variant' }} rounded-full"></span>
+                            <span class="absolute top-[22px] left-1/2 ml-[22px] right-0 h-[3px] {{ $isErrorStep ? 'bg-error/40' : ($step[2] ? 'bg-gold-accent/60' : 'bg-outline-variant') }} rounded-full"></span>
                         @endif
                         <div class="relative z-10 flex flex-col items-center gap-3">
-                            <span class="w-11 h-11 rounded-full {{ $step[2] ? 'bg-deep-onyx text-on-primary' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant' }} flex items-center justify-center ring-4 ring-surface-container-lowest">
-                                <span class="material-symbols-outlined {{ $step[2] ? 'fill' : '' }} text-[20px]">{{ $step[2] ? 'check' : 'schedule' }}</span>
+                            <span class="w-11 h-11 rounded-full {{ $isErrorStep ? 'bg-error text-white' : ($step[2] ? 'bg-deep-onyx text-on-primary' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant') }} flex items-center justify-center ring-4 ring-surface-container-lowest">
+                                <span class="material-symbols-outlined {{ $step[2] || $isErrorStep ? 'fill' : '' }} text-[20px]">{{ $isErrorStep ? 'block' : ($step[2] ? 'check' : 'schedule') }}</span>
                             </span>
                             <div>
-                                <p class="font-title-md text-sm {{ $step[2] ? 'text-on-surface' : 'text-on-surface-variant' }} leading-tight">{{ $step[0] }}</p>
-                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant mt-1">{{ $step[1] }}</p>
+                                <p class="font-title-md text-sm {{ $isErrorStep ? 'text-error' : ($step[2] ? 'text-on-surface' : 'text-on-surface-variant') }} leading-tight">{{ $step[0] }}</p>
+                                <p class="font-label-sm text-[10px] uppercase tracking-wider {{ $isErrorStep ? 'text-error' : 'text-on-surface-variant' }} mt-1">{{ $step[1] }}</p>
                             </div>
                         </div>
                     </li>
