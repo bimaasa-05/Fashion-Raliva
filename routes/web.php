@@ -114,9 +114,7 @@ Route::get('/reset-password', fn () => view('customer.auth.reset-password'))->na
 
 // customer
 Route::prefix('customer')->name('customer.')->group(function () {
-    Route::get('/', function () {
-        return view('customer.home.index');
-    })->name('home');
+    Route::get('/', [\App\Http\Controllers\Customer\HomeController::class, 'index'])->name('home');
 
     Route::get('/shop', [\App\Http\Controllers\Customer\ShopController::class, 'index'])->name('shop');
 

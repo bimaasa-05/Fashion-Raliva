@@ -319,7 +319,15 @@
 </style>
 </head>
  <body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72">
-@php $cartCount = auth()->check() ? \App\Http\Controllers\Customer\CartController::countForUser(auth()->id()) : 0; @endphp
+@php $cartCount = $cartCount ?? 0; @endphp
+@php
+    $homeCats = collect($products)
+        ->map(fn ($p) => $p->category?->parent?->nama_kategori ?? $p->category?->nama_kategori)
+        ->filter()
+        ->unique()
+        ->values()
+        ->all();
+@endphp
 <!-- TopAppBar -->
 <header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
 <button class="hover:opacity-80 transition-opacity lg:hidden" onclick="openDrawer()" type="button">
@@ -358,12 +366,10 @@
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium grid grid-cols-3 gap-sm md:flex md:items-center md:justify-center md:gap-md">
-<button type="button" data-cat="All" onclick="selectHomeCategory(null)" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('Semua') }}</button>
-<button type="button" data-cat="Women" onclick="selectHomeCategory('Women')" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Women') }}</button>
-<button type="button" data-cat="Men" onclick="selectHomeCategory('Men')" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Men') }}</button>
-<button type="button" data-cat="Accessories" onclick="selectHomeCategory('Accessories')" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Accessories') }}</button>
-<button type="button" data-cat="Shoes" onclick="selectHomeCategory('Shoes')" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Shoes') }}</button>
-<button type="button" data-cat="Bags" onclick="selectHomeCategory('Bags')" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Bags') }}</button>
+<button type="button" data-cat="All" id="home-cat-all" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('Semua') }}</button>
+@foreach ($homeCats as $homeCat)
+<button type="button" data-cat="{{ $homeCat }}" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ $homeCat }}</button>
+@endforeach
 </div>
 </div>
 </section>
@@ -375,62 +381,33 @@
 </div>
 <h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('The Latest from Our Ateliers') }}</h3>
 <div id="new-arrivals-grid" class="grid grid-cols-2 md:grid-cols-4 gap-gutter mt-md">
-<!-- Product 1 -->
-<div data-category="Women" class="relative flex flex-col group cursor-pointer">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
+@forelse ($products as $p)
+@php
+    $homeCat = $p->category?->parent?->nama_kategori ?? $p->category?->nama_kategori;
+    $minPrice = $p->variants->min('harga') ?? $p->harga_dasar;
+    $firstImage = $p->images->first()->file_gambar ?? '';
+    $homeImg = $firstImage ? (filter_var($firstImage, FILTER_VALIDATE_URL) ? $firstImage : asset($firstImage)) : 'https://picsum.photos/seed/product/900/1200';
+    $homeWl = in_array($p->product_id, $wishlistedIds, true);
+@endphp
+<div data-category="{{ $homeCat }}" class="relative flex flex-col group cursor-pointer">
+<a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A high-quality minimalist editorial product shot of a tailored linen blazer in a soft ivory shade." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="{{ $p->nama_produk }}" src="{{ $homeImg }}"/>
 </div>
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Noiré Studio</span>
-<h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Tailored Linen Blazer</h4>
-<span class="font-body-sm text-body-sm text-on-surface">$245.00</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $p->store?->nama_toko ?? __('RALIVA') }}</span>
+<h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $p->nama_produk }}</h4>
+<span class="font-body-sm text-body-sm text-on-surface">Rp {{ number_format($minPrice, 0, ',', '.') }}</span>
 </a>
-<button type="button" aria-label="{{ __('Add to wishlist') }}" data-wishlist-toggle data-product-id="1" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-wishlist-toggle data-product-id="{{ $p->product_id }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center{{ $homeWl ? ' wishlisted-active' : '' }}">
+<span class="material-symbols-outlined" data-icon="favorite{{ $homeWl ? '' : '_border' }}"@if($homeWl) data-weight="fill"@endif>favorite{{ $homeWl ? '' : '_border' }}</span>
 </button>
 </div>
-<!-- Product 2 -->
-<div data-category="Bags" class="relative flex flex-col group cursor-pointer">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
-<div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A sleek, minimalist editorial photograph of a black leather structured tote bag." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDotrquQ9ru5aXlWl5XbgLhEMJq3WBfo5DDEAS3Z-F5LnAIv27Q3259la3QLZghjnF5R8udNJqY0Toq6SHw5JvN3PqANThsUOvwujXixkrq5zZBH5OW_D3QTRD3qObufW5Uz2-ahDe36xdtDHuA8SK2Ldhp4wpMReozYAnqkNj5ZG3A37LwDOS6aXDnCEg_MNh_j2C1VKegB7PNMCwMV-jwzYAwrhuqG1UCGjQoSl3A0QRKO-gFHlQ"/>
+@empty
+<div class="col-span-full flex flex-col items-center justify-center text-center gap-md py-lg">
+<span class="material-symbols-outlined text-5xl text-outline-variant mb-xs" data-icon="inventory_2">inventory_2</span>
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('Tidak ada produk saat ini.') }}</p>
 </div>
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
-<h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Structured Leather Tote</h4>
-<span class="font-body-sm text-body-sm text-on-surface">$380.00</span>
-</a>
-<button type="button" aria-label="{{ __('Add to wishlist') }}" data-wishlist-toggle data-product-id="2" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</button>
-</div>
-<!-- Product 3 -->
-<div data-category="Women" class="relative flex flex-col group cursor-pointer">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
-<div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A beautiful, clean editorial product shot of a minimalist silk slip dress in a muted olive tone." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrQWexD2Xms4d7-qplQNqqTI4EebkIxaCqpOssP3jfxkcDDAjBvE4kuCEgO-j-Yd-Vfxm6sW-zOaQShx89-kFo0JwvaQ9DnVYjw0ZeHlwNYQaWtigNJNUb1P2E3VS7jVbvb2gfkn5AgK0_pHzGjUiSO2kjiDWXbTKy2tRqRQq5I2md_UYdyHQR_axy07aFn3BeoVctJgri9jLNSSEizCJoXGSF5I0rX6QAaqkzanalXeH6sTmuLnA"/>
-</div>
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Maëva House</span>
-<h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Silk Slip Dress</h4>
-<span class="font-body-sm text-body-sm text-on-surface">$195.00</span>
-</a>
-<button type="button" aria-label="{{ __('Add to wishlist') }}" data-wishlist-toggle data-product-id="3" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</button>
-</div>
-<!-- Product 4 -->
-<div data-category="Accessories" class="relative flex flex-col group cursor-pointer">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
-<div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="A pristine editorial shot of minimal, modern geometric gold hoop earrings resting on a white marble surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXqNhNFWMr-Gm8_uwAVgBbqtzcNdb5MAfQUsG_3GJbmE0gm167f27WLQY44QclgDSw7N_b2k0qpe9HdTKZlExYsZl6FJUCnKft0foIHP3pp3uFUAxnwrYM3o7ap46wCmmnSGAbNN-gDM_Kptg0bVNG6ghZhp7r3PeQ66ZD2yhgIMKhB9sSycHTa8yXBJ3fTbNvx2tH5SUu76da_WcZ3bJW7JeJmVuEnVOdIHENcwQB0a1sOCp-u_s"/>
-</div>
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Kayana Apparel</span>
-<h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Geometric Gold Hoops</h4>
-<span class="font-body-sm text-body-sm text-on-surface">$85.00</span>
-</a>
-<button type="button" aria-label="{{ __('Add to wishlist') }}" data-wishlist-toggle data-product-id="4" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</button>
-</div>
+@endforelse
 </div>
 <p id="new-arrivals-empty" class="hidden text-center text-on-surface-variant font-body-lg py-md">{{ __('No products in this category.') }}</p>
 <div class="mt-md flex justify-center">
@@ -449,38 +426,24 @@
 </div>
 <h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Maisions We Love') }}</h3>
 <div class="flex overflow-x-auto no-scrollbar lg:grid lg:grid-cols-4 lg:overflow-visible gap-md pb-xs mt-md snap-x snap-mandatory">
-<!-- Store 1 -->
-<a href="{{ route('customer.shop.store', 1) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
+@forelse ($stores as $s)
+@php
+    $storeImg = $s->logo;
+    $storeImgUrl = $storeImg ? (filter_var($storeImg, FILTER_VALIDATE_URL) ? $storeImg : asset($storeImg)) : 'https://picsum.photos/seed/store/900/600';
+@endphp
+<a href="{{ route('customer.shop.store', $s->store_id) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Lunara Fashion boutique exterior." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATiKrXBx3vVfoNsTu1_JuFvfVqHhF9A63yLIFGC0hF5MVVUZB6Nu-eyjEa5IxqGiEpPzawhFtGfTAatsc-_9Pwi9D9AsVEO7TOOEszevnRdatfxPYIK7ZAvB0-Aa3R8CSQPOhV3EN9w5_S8sCYYX8NCMlAs_gD3RYhAkt91QyBdC8bmQs-v4yGHXrAH2KKGIPWNoi7jJqivQtsOliueGluswaKxAgwLxl1rh_aTfA_gB_LTeqw8oU"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="{{ $s->nama_toko }}" src="{{ $storeImgUrl }}"/>
 </div>
-<h4 class="font-title-md text-title-md text-on-surface group-hover:text-secondary transition-colors">Lunara Fashion</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Modern feminine silhouettes.') }}</p>
+<h4 class="font-title-md text-title-md text-on-surface group-hover:text-secondary transition-colors">{{ $s->nama_toko }}</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ \Illuminate\Support\Str::limit($s->deskripsi ?? __('Boutique RALIVA'), 60) }}</p>
 </a>
-<!-- Store 2 -->
-<a href="{{ route('customer.shop.store', 2) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
-<div class="aspect-video mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Noiré Studio interior." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGwknduyLPGxjMRvTx7tN4JeGs-9IICVVEqumRS28Y9jTBxPfkTa9uV98aPjekXCG1uLxayAYmBwFZIIf73qfeWOcTQ6jI97GOQBVdIzBaAZhTlYEO8RKF_NsqCMXssspqoctKzP8RpOHtJI_bw-qZI1QF_fn1OH80mwa6ht1vSJY8vkFSZq_OBTROdz1TubDt_Y_Ax7quip7t8HNO7TkKNnLYOEFLbmjlpYvis2wIP6LJwYtpaNo"/>
+@empty
+<div class="w-full flex flex-col items-center justify-center text-center gap-sm py-lg">
+<span class="material-symbols-outlined text-5xl text-outline-variant" data-icon="storefront">storefront</span>
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('Belum ada toko.') }}</p>
 </div>
-<h4 class="font-title-md text-title-md text-on-surface group-hover:text-secondary transition-colors">Noiré Studio</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Tailored, stark minimalism.') }}</p>
-</a>
-<!-- Store 3 -->
-<a href="{{ route('customer.shop.store', 3) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
-<div class="aspect-video mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Kayana Apparel lifestyle shot." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSCazvaWZuccedNS2ILQbkHUJlNvuZ7i1_N2EHvjuBbo7CLD3CW8iHh-xOfNuHEsio3RxsEYKR2jEnuEUUOg9R7Xza1li0VetG6_yfhRrJs3dSULL6lG6fVDPX4qijbhNAokLUQ8tn673XhAZ-l8Vx3WZDIaxtdNLAHriglRfoPt6xRPff_qYINXAgslwYqW_xSQsAbEn2mjrBLNDh6NTT4t86gs2BbXDST-ewDyDYcbA5FZIEMUM"/>
-</div>
-<h4 class="font-title-md text-title-md text-on-surface group-hover:text-secondary transition-colors">Kayana Apparel</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Organic textures and flow.') }}</p>
-</a>
-<!-- Store 4 -->
-<a href="{{ route('customer.shop.store', 4) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
-<div class="aspect-video mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="Maëva House still-life." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBces6Xx741Ae5cYEDlbS_pgcHXZ9vEiOAGb5jvlBttKDyIRgUl6PUSDzKjI9nXu8X8Zb-RxuuplZY4dbVXDDBRqOVusLCAlczBCFDMM9qeGCl18jyL9AKeYbo_KYUolJQ-tUyLZ6kLqZFaQ2yKWY0Gs6ucQPlMm57RTWXBipH9At2Nbp1nWNEZDCqkafxCVNpFOE3MSCOi3nOPMbtk9_6tU4iBkCexkl7qGGFlVexn74kqDcVgzRc"/>
-</div>
-<h4 class="font-title-md text-title-md text-on-surface group-hover:text-secondary transition-colors">Maëva House</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Essential daily luxury.') }}</p>
-</a>
+@endforelse
 </div>
 </div>
 </div>
@@ -525,7 +488,7 @@
 </div>
 </div>
 <div class="border-t border-outline-variant pt-md flex flex-col md:flex-row justify-between items-center gap-sm">
-<span class="font-body-sm text-body-sm text-on-surface-variant">© 2024 RALIVA. All rights reserved.</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">© {{ date('Y') }} RALIVA. All rights reserved.</span>
 <div class="flex gap-md">
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Privacy Policy') }}</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Terms of Service') }}</a>
@@ -563,6 +526,11 @@
             b.classList.toggle('text-on-surface-variant', !on);
         });
     }
+    document.querySelectorAll('.home-cat-pill').forEach(function (b) {
+        b.addEventListener('click', function () {
+            selectHomeCategory(b.dataset.cat === 'All' ? null : b.dataset.cat);
+        });
+    });
     syncHomePills();
 
     /* Hero crossfade — matched to RALIVA Register editorial transition */
@@ -595,6 +563,7 @@
         els.forEach(function (e) { io.observe(e); });
     })();
 </script>
+@include('customer._partials.wishlist-script')
 @include('customer._partials.bottom-nav')
 @include('customer._partials.drawer')
 </body></html>
