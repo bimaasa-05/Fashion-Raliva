@@ -2,7 +2,7 @@
 
 <html class="light" lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
 <title>RALIVA - {{ __('My Reviews') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -10,6 +10,14 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -24,7 +32,7 @@
                         "primary-fixed-dim": "#c8c6c5",
                         "surface-variant": "#e3e2e2",
                         "on-surface": "#1b1c1c",
-                        "secondary": "#795905",
+                        "secondary": "#8B1E3F",
                         "surface-dim": "#dbdad9",
                         "on-error": "#ffffff",
                         "primary": "#000000",
@@ -32,7 +40,7 @@
                         "tertiary-container": "#1a1c1a",
                         "error-container": "#ffdad6",
                         "on-tertiary": "#ffffff",
-                        "secondary-fixed": "#ffdf9f",
+                        "secondary-fixed": "#8B1E3F",
                         "on-primary": "#ffffff",
                         "surface-container-lowest": "#ffffff",
                         "error": "#ba1a1a",
@@ -43,20 +51,20 @@
                         "primary-fixed": "#e5e2e1",
                         "outline-variant": "#c4c7c7",
                         "surface-tint": "#5f5e5e",
-                        "secondary-fixed-dim": "#ebc168",
+                        "secondary-fixed-dim": "#8B1E3F",
                         "outline": "#747878",
                         "on-primary-fixed-variant": "#474646",
-                        "on-secondary-fixed-variant": "#5c4300",
+                        "on-secondary-fixed-variant": "#6D1428",
                         "on-tertiary-fixed": "#1a1c1a",
-                        "on-secondary-container": "#775804",
+                        "on-secondary-container": "#6D1428",
                         "inverse-on-surface": "#f2f0f0",
                         "tertiary-fixed-dim": "#c7c6c4",
                         "tertiary-fixed": "#e3e2df",
                         "surface-container-high": "#e9e8e7",
-                        "on-secondary-fixed": "#261a00",
+                        "on-secondary-fixed": "#6D1428",
                         "background": "#fbf9f9",
                         "surface": "#fbf9f9",
-                        "secondary-container": "#fdd177",
+                        "secondary-container": "#8B1E3F",
                         "on-surface-variant": "#444748",
                         "primary-container": "#1c1b1b",
                         "inverse-primary": "#c8c6c5",
@@ -107,14 +115,6 @@
         }
     </script>
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .material-symbols-outlined[data-weight="fill"] {
-            font-variation-settings: 'FILL' 1;
-        }
-    </style>
-<style>
     body {
       min-height: max(884px, 100dvh);
     }
@@ -128,7 +128,11 @@
         --chrome-text-faint: rgba(0,0,0,.45);
         --chrome-border: rgba(0,0,0,.1);
         --chrome-hover: rgba(0,0,0,.06);
-        --chrome-accent: #795905;
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #F8F6F2;
+        --surface-warm: #F3F0EA;
+        --border-soft: #E5E1DA;
+        --text-muted: #777777;
     }
     html.theme-dark {
         --chrome-bg: #1c1b1b;
@@ -138,7 +142,11 @@
         --chrome-text-faint: rgba(255,255,255,.5);
         --chrome-border: rgba(255,255,255,.1);
         --chrome-hover: rgba(255,255,255,.1);
-        --chrome-accent: #ebc168;
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #1e1d1c;
+        --surface-warm: #201f1e;
+        --border-soft: rgba(255,255,255,.1);
+        --text-muted: #b9b6b1;
     }
 </style>
 <style>
@@ -165,7 +173,8 @@
     html.theme-dark .text-outline { color: #8a8781 !important; }
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
-    html.theme-dark .text-secondary { color: #ebc168 !important; }
+    html.theme-dark .text-secondary { color: #8B1E3F !important; }
+    html.theme-dark .text-secondary-fixed-dim { color: #8B1E3F !important; }
     html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
     html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
@@ -179,7 +188,7 @@
     html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
     html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
     html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
-    html.theme-dark .hover\:text-secondary:hover { color: #ebc168 !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #8B1E3F !important; }
     html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
     html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
     html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
@@ -192,164 +201,244 @@
     html.theme-dark .group:hover .group-hover\:text-primary { color: #f2efec !important; }
     html.theme-dark .group:hover .group-hover\:border-outline { border-color: #4a4844 !important; }
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
-</style>
+  </style>
+<style>
+    /* ===== Premium cards + burgundy accents (parity with account/address) ===== */
+    .card-premium { box-shadow:0 1px 2px rgb(17 17 17 / .04),0 12px 32px -16px rgb(17 17 17 / .16); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; }
+    .card-premium:hover { transform:translateY(-3px); box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
+    html.theme-dark .card-premium { background-color:var(--surface-ivory); border-color:var(--border-soft); box-shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px -12px rgb(0 0 0 / .5); }
+    html.theme-dark .card-premium:hover { box-shadow:0 2px 4px rgb(0 0 0 / .4),0 20px 48px -20px rgb(0 0 0 / .7); border-color:rgba(139,30,63,.55); }
+    .premium-heading { display:block; }
+    .premium-heading::before { content:''; display:inline-block; width:4px; height:.95em; margin-right:.65rem; background:#8B1E3F; border-radius:9999px; vertical-align:-.05em; }
+    .atl-eyebrow { display:inline-flex; align-items:center; gap:.65rem; }
+    .atl-eyebrow::before { content:''; width:30px; height:1px; background:var(--chrome-accent); opacity:.7; }
+    html.theme-dark .premium-heading::before { background:#8B1E3F; }
+    .reveal-up { opacity:0; transform:translateY(12px); transition:opacity .5s ease,transform .5s ease; }
+    .reveal-up.is-visible { opacity:1; transform:none; }
+    @media (prefers-reduced-motion: reduce) { .reveal-up { opacity:1; transform:none; transition:none; } }
+    /* ===== Primary solid button (burgundy + shimmer flash) ===== */
+    .btn-gold { position: relative; overflow: hidden; background-color: var(--btn-gold-bg) !important; color: var(--btn-gold-text) !important; }
+    .btn-gold::after { content:''; position:absolute; top:-10%; bottom:-10%; left:-80%; width:45%; background: rgba(255,255,255,.55); transform:skewX(-24deg); pointer-events:none; }
+    .btn-gold:hover::after { animation: authFlash 1.4s linear infinite; }
+    .btn-gold.flashing::after { animation: authFlash 1.4s cubic-bezier(.4,0,.2,1) 1; }
+    @keyframes authFlash { from { left:-80%; } to { left:135%; } }
+    :root           { --btn-gold-bg:#8B1E3F; --btn-gold-text:#ffffff; }
+    html.theme-dark { --btn-gold-bg:#6D1428; --btn-gold-text:#ffffff; }
+    /* ===== Drawer / bottom-nav burgundy parity ===== */
+    #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(139,30,30,.10); }
+    html.theme-dark #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(163,38,38,.16); }
+    .bn-active .material-symbols-outlined { color:#8B1E3F !important; }
+    html.theme-dark .bn-active .material-symbols-outlined { color:#8B1E3F !important; }
+    /* ===== Reviews Toolbar (parity with customer/shop toolbar) ===== */
+    .hide-scrollbar::-webkit-scrollbar { display:none; width:0; height:0; }
+    .hide-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
+    .cat-pill {
+        display:inline-flex; align-items:center; gap:6px;
+        padding:6px 16px; border-radius:9999px; white-space:nowrap;
+        font-family:'Manrope'; font-size:12px; font-weight:500;
+        transition:border-color .2s ease, color .2s ease, background-color .2s ease;
+    }
+    .cat-pill:hover { border-color:#8B1E3F; color:#8B1E3F; }
+    .cat-count {
+        min-width:20px; height:20px; padding:0 6px; border-radius:9999px;
+        display:inline-flex; align-items:center; justify-content:center;
+        font-size:10px; font-weight:700; line-height:1;
+        background:var(--border-soft); color:var(--chrome-text-faint);
+    }
+    .cat-pill.active .cat-count { background:#8B1E3F; color:#ffffff; }
+    .shop-action-btn {
+        min-height:40px; min-width:40px; display:inline-flex; align-items:center; justify-content:center;
+        border-radius:9999px; transition:color .2s ease, border-color .2s ease, background-color .2s ease;
+    }
+    .shop-action-btn:hover { background-color: var(--chrome-hover); }
+  </style>
   </head>
-<body class="bg-surface text-on-surface antialiased font-body-lg lg:pl-72">
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
-<header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
-<a href="{{ route('customer.account') }}" aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
-<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+<header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky z-40 border-b border-[var(--chrome-border)]">
+<a aria-label="{{ __('Go back') }}" href="{{ route('customer.account') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">{{ __('My Reviews') }}</h1>
-<div class="w-10"></div> <!-- Spacer for centering -->
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('MY REVIEWS') }}</h1>
+<div class="w-10"></div> <!-- Spacer for center alignment -->
 </header>
-<!-- Tabs -->
-<div class="sticky top-16 z-30 bg-surface border-b border-outline-variant mt-16">
-<nav class="flex px-container-margin max-w-2xl mx-auto">
-<button id="tab-written" onclick="switchTab('written')" class="py-sm px-md border-b-2 border-primary text-primary font-label-caps text-label-caps whitespace-nowrap transition-colors">{{ __('WRITTEN (3)') }}
-                </button>
-<button id="tab-to-review" onclick="switchTab('to-review')" class="py-sm px-md border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-caps text-label-caps whitespace-nowrap">
-                    {{ __('TO REVIEW (2)') }}
-                </button>
-</nav>
+<!-- Reviews Toolbar (mirrors customer/shop toolbar) -->
+<div class="flex flex-row items-center gap-sm md:gap-md px-container-margin py-sm sticky top-16 z-30">
+<div class="flex-1 min-w-0 flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm">
+<div class="flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar">
+<button type="button" id="tab-written" onclick="switchTab('written')" class="cat-pill shrink-0 border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5 active">{{ __('Written') }} <span class="cat-count">3</span></button>
+<button type="button" id="tab-to-review" onclick="switchTab('to-review')" class="cat-pill shrink-0 border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full">{{ __('To Review') }} <span class="cat-count">2</span></button>
+</div>
+<div class="relative shrink-0 ml-auto">
+<button aria-label="{{ __('Total Reviews') }}" type="button" class="shop-action-btn border border-outline-variant hover:text-secondary hover:border-secondary transition-colors">
+<span class="material-symbols-outlined text-[20px]">rate_review</span>
+<span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">5</span>
+</button>
+</div>
+</div>
 </div>
 <!-- Main Content -->
-<main class="pt-md pb-xl max-w-2xl mx-auto w-full">
+<main class="flex-grow pt-md pb-8 lg:pb-12 w-full overflow-x-hidden">
+<section class="py-xl reveal-up">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('REVIEWS') }}</p>
+<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('My Reviews') }}</h2>
+
 <!-- Panel: Written Reviews -->
 <section id="panel-written">
+<div class="flex flex-col gap-sm">
 <!-- Review 1 -->
-<article class="px-container-margin py-md border-b border-outline-variant">
-<div class="flex gap-md">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 h-24 bg-surface-container shrink-0 overflow-hidden block">
-<img alt="Tailored Linen Blazer" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ"/>
+<article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline">
+<div class="flex gap-sm md:gap-md">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
+<img alt="{{ __('Tailored Linen Blazer') }}" class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ"/>
 </a>
 <div class="flex-grow min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Noiré Studio</span>
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Tailored Linen Blazer</h3>
-<div class="flex items-center gap-xs mt-xs">
-<div class="flex text-secondary-fixed-dim">
-<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Noiré Studio') }}</span>
+<h3 class="font-title-sm text-title-md text-on-surface font-semibold truncate">{{ __('Tailored Linen Blazer') }}</h3>
+<div class="flex items-center gap-xs mt-xs flex-wrap">
+<div class="flex text-secondary">
+<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
 </div>
-<span class="font-label-sm text-label-sm text-on-surface-variant ml-1">May 12, 2026</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant ml-1">{{ __('May 12, 2026') }}</span>
 </div>
 </div>
 </div>
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm">
-                Beautifully tailored and the linen feels premium. The fit is exactly as described and it has become my go-to blazer for both work and weekends.
-            </p>
-<div class="flex justify-end gap-md mt-sm pt-sm border-t border-outline-variant">
-<a href="{{ route('customer.reviews.edit') }}" class="font-label-caps text-label-caps text-on-surface hover:text-secondary transition-colors uppercase tracking-wider py-1 flex items-center">{{ __('Edit') }}</a>
-<button class="font-label-caps text-label-caps text-error hover:opacity-80 transition-opacity uppercase tracking-wider py-1">{{ __('Delete') }}</button>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-md">{{ __('Beautifully tailored and the linen feels premium. The fit is exactly as described and it has become my go-to blazer for both work and weekends.') }}</p>
+<div class="flex flex-col sm:flex-row justify-end gap-sm mt-md pt-sm border-t border-outline-variant">
+<a href="{{ route('customer.reviews.edit') }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-secondary/5">
+<span class="material-symbols-outlined text-[18px]">edit</span>{{ __('Edit') }}</a>
+<button type="button" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-error text-error font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-error/5" onclick="if(!confirm('{{ __('Are you sure you want to delete this review?') }}')) return false;">
+<span class="material-symbols-outlined text-[18px]">delete</span>{{ __('Delete') }}</button>
 </div>
 </article>
 <!-- Review 2 -->
-<article class="px-container-margin py-md border-b border-outline-variant">
-<div class="flex gap-md">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 h-24 bg-surface-container shrink-0 overflow-hidden block">
-<img alt="Structured Leather Tote" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDotrquQ9ru5aXlWl5XbgLhEMJq3WBfo5DDEAS3Z-F5LnAIv27Q3259la3QLZghjnF5R8udNJqY0Toq6SHw5JvN3PqANThsUOvwujXixkrq5zZBH5OW_D3QTRD3qObufW5Uz2-ahDe36xdtDHuA8SK2Ldhp4wpMReozYAnqkNj5ZG3A37LwDOS6aXDnCEg_MNh_j2C1VKegB7PNMCwMV-jwzYAwrhuqG1UCGjQoSl3A0QRKO-gFHlQ"/>
+<article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline">
+<div class="flex gap-sm md:gap-md">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
+<img alt="{{ __('Structured Leather Tote') }}" class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDotrquQ9ru5aXlWl5XbgLhEMJq3WBfo5DDEAS3Z-F5LnAIv27Q3259la3QLZghjnF5R8udNJqY0Toq6SHw5JvN3PqANThsUOvwujXixkrq5zZBH5OW_D3QTRD3qObufW5Uz2-ahDe36xdtDHuA8SK2Ldhp4wpMReozYAnqkNj5ZG3A37LwDOS6aXDnCEg_MNh_j2C1VKegB7PNMCwMV-jwzYAwrhuqG1UCGjQoSl3A0QRKO-gFHlQ"/>
 </a>
 <div class="flex-grow min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lunara Fashion</span>
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Structured Leather Tote</h3>
-<div class="flex items-center gap-xs mt-xs">
-<div class="flex text-secondary-fixed-dim">
-<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star_border">star_border</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Lunara Fashion') }}</span>
+<h3 class="font-title-sm text-title-md text-on-surface font-semibold truncate">{{ __('Structured Leather Tote') }}</h3>
+<div class="flex items-center gap-xs mt-xs flex-wrap">
+<div class="flex text-secondary">
+<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="star_border">star_border</span>
 </div>
-<span class="font-label-sm text-label-sm text-on-surface-variant ml-1">Apr 28, 2026</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant ml-1">{{ __('Apr 28, 2026') }}</span>
 </div>
 </div>
 </div>
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm">
-                Gorgeous bag with a very sturdy structure. It fits my laptop perfectly. One star off because the strap felt slightly stiff during the first week.
-            </p>
-<div class="flex justify-end gap-md mt-sm pt-sm border-t border-outline-variant">
-<a href="{{ route('customer.reviews.edit') }}" class="font-label-caps text-label-caps text-on-surface hover:text-secondary transition-colors uppercase tracking-wider py-1 flex items-center">{{ __('Edit') }}</a>
-<button class="font-label-caps text-label-caps text-error hover:opacity-80 transition-opacity uppercase tracking-wider py-1">{{ __('Delete') }}</button>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-md">{{ __('Gorgeous bag with a very sturdy structure. It fits my laptop perfectly. One star off because the strap felt slightly stiff during the first week.') }}</p>
+<div class="flex flex-col sm:flex-row justify-end gap-sm mt-md pt-sm border-t border-outline-variant">
+<a href="{{ route('customer.reviews.edit') }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-secondary/5">
+<span class="material-symbols-outlined text-[18px]">edit</span>{{ __('Edit') }}</a>
+<button type="button" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-error text-error font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-error/5" onclick="if(!confirm('{{ __('Are you sure you want to delete this review?') }}')) return false;">
+<span class="material-symbols-outlined text-[18px]">delete</span>{{ __('Delete') }}</button>
 </div>
 </article>
 <!-- Review 3 -->
-<article class="px-container-margin py-md border-b border-outline-variant">
-<div class="flex gap-md">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 h-24 bg-surface-container shrink-0 overflow-hidden block">
-<img alt="Silk Slip Dress" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrQWexD2Xms4d7-qplQNqqTI4EebkIxaCqpOssP3jfxkcDDAjBvE4kuCEgO-j-Yd-Vfxm6sW-zOaQShx89-kFo0JwvaQ9DnVYjw0ZeHlwNYQaWtigNJNUb1P2E3VS7jVbvb2gfkn5AgK0_pHzGjUiSO2kjiDWXbTKy2tRqRQq5I2md_UYdyHQR_axy07aFn3BeoVctJgri9jLNSSEizCJoXGSF5I0rX6QAaqkzanalXeH6sTmuLnA"/>
+<article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline">
+<div class="flex gap-sm md:gap-md">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
+<img alt="{{ __('Silk Slip Dress') }}" class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrQWexD2Xms4d7-qplQNqqTI4EebkIxaCqpOssP3jfxkcDDAjBvE4kuCEgO-j-Yd-Vfxm6sW-zOaQShx89-kFo0JwvaQ9DnVYjw0ZeHlwNYQaWtigNJNUb1P2E3VS7jVbvb2gfkn5AgK0_pHzGjUiSO2kjiDWXbTKy2tRqRQq5I2md_UYdyHQR_axy07aFn3BeoVctJgri9jLNSSEizCJoXGSF5I0rX6QAaqkzanalXeH6sTmuLnA"/>
 </a>
 <div class="flex-grow min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Maëva House</span>
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Silk Slip Dress</h3>
-<div class="flex items-center gap-xs mt-xs">
-<div class="flex text-secondary-fixed-dim">
-<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star_border">star_border</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star_border">star_border</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Maëva House') }}</span>
+<h3 class="font-title-sm text-title-md text-on-surface font-semibold truncate">{{ __('Silk Slip Dress') }}</h3>
+<div class="flex items-center gap-xs mt-xs flex-wrap">
+<div class="flex text-secondary">
+<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="star_border">star_border</span>
+<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="star_border">star_border</span>
 </div>
-<span class="font-label-sm text-label-sm text-on-surface-variant ml-1">Apr 10, 2026</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant ml-1">{{ __('Apr 10, 2026') }}</span>
 </div>
 </div>
 </div>
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm">
-                The silk drapes beautifully, but the color is slightly lighter than the photos. Still an elegant piece for special occasions.
-            </p>
-<div class="flex justify-end gap-md mt-sm pt-sm border-t border-outline-variant">
-<a href="{{ route('customer.reviews.edit') }}" class="font-label-caps text-label-caps text-on-surface hover:text-secondary transition-colors uppercase tracking-wider py-1 flex items-center">{{ __('Edit') }}</a>
-<button class="font-label-caps text-label-caps text-error hover:opacity-80 transition-opacity uppercase tracking-wider py-1">{{ __('Delete') }}</button>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-md">{{ __('The silk drapes beautifully, but the color is slightly lighter than the photos. Still an elegant piece for special occasions.') }}</p>
+<div class="flex flex-col sm:flex-row justify-end gap-sm mt-md pt-sm border-t border-outline-variant">
+<a href="{{ route('customer.reviews.edit') }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-secondary/5">
+<span class="material-symbols-outlined text-[18px]">edit</span>{{ __('Edit') }}</a>
+<button type="button" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-error text-error font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-error/5" onclick="if(!confirm('{{ __('Are you sure you want to delete this review?') }}')) return false;">
+<span class="material-symbols-outlined text-[18px]">delete</span>{{ __('Delete') }}</button>
 </div>
 </article>
+</div>
 </section>
 <!-- Panel: To Review -->
 <section id="panel-to-review" class="hidden">
+<div class="flex flex-col gap-sm">
 <!-- Item 1 -->
-<article class="px-container-margin py-md border-b border-outline-variant flex items-center gap-md">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 h-24 bg-surface-container shrink-0 overflow-hidden block">
-<img alt="Geometric Gold Hoops" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXqNhNFWMr-Gm8_uwAVgBbqtzcNdb5MAfQUsG_3GJbmE0gm167f27WLQY44QclgDSw7N_b2k0qpe9HdTKZlExYsZl6FJUCnKft0foIHP3pp3uFUAxnwrYM3o7ap46wCmmnSGAbNN-gDM_Kptg0bVNG6ghZhp7r3PeQ66ZD2yhgIMKhB9sSycHTa8yXBJ3fTbNvx2tH5SUu76da_WcZ3bJW7JeJmVuEnVOdIHENcwQB0a1sOCp-u_s"/>
+<article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline flex items-center gap-sm md:gap-md">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
+<img alt="{{ __('Geometric Gold Hoops') }}" class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXqNhNFWMr-Gm8_uwAVgBbqtzcNdb5MAfQUsG_3GJbmE0gm167f27WLQY44QclgDSw7N_b2k0qpe9HdTKZlExYsZl6FJUCnKft0foIHP3pp3uFUAxnwrYM3o7ap46wCmmnSGAbNN-gDM_Kptg0bVNG6ghZhp7r3PeQ66ZD2yhgIMKhB9sSycHTa8yXBJ3fTbNvx2tH5SUu76da_WcZ3bJW7JeJmVuEnVOdIHENcwQB0a1sOCp-u_s"/>
 </a>
 <div class="flex-grow min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Kayana Apparel</span>
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Geometric Gold Hoops</h3>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">Delivered May 20, 2026</p>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Kayana Apparel') }}</span>
+<h3 class="font-title-sm text-title-md text-on-surface font-semibold truncate">{{ __('Geometric Gold Hoops') }}</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Delivered May 20, 2026') }}</p>
 </div>
-<a href="{{ route('customer.reviews.create') }}" class="shrink-0 px-md py-xs border border-primary text-primary font-label-caps text-label-caps uppercase tracking-widest hover:bg-surface-container-low transition-colors">
-                {{ __('Write Review') }}
-            </a>
+<a href="{{ route('customer.reviews.create') }}" class="btn-gold shrink-0 px-md py-2.5 rounded-full font-label-caps text-label-caps uppercase tracking-widest inline-flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">rate_review</span>{{ __('Write Review') }}</a>
 </article>
 <!-- Item 2 -->
-<article class="px-container-margin py-md border-b border-outline-variant flex items-center gap-md">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 h-24 bg-surface-container shrink-0 overflow-hidden block">
-<img alt="Ribbed Knit Tank" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBSCYHpJJ10PR1rv62xsiSUHcgECc8Yl7gxPOJqlAhXqjJGHnlXSe3G3OT0zZOpoO6zdOywN_zGJ312gSUWGyrERx3QJH1sib9jdTkpcPR1UGz6mjrBLNDh6NTT4t86gs2BbXDST-ewDyDYcbA5FZIEMUM"/>
+<article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline flex items-center gap-sm md:gap-md">
+<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
+<img alt="{{ __('Ribbed Knit Tank') }}" class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBSCYHpJJ10PR1rv62xsiSUHcgECc8Yl7gxPOJqlAhXqjJGHnlXSe3G3OT0zZOpoO6zdOywN_zGJ312gSUWGyrERx3QJH1sib9jdTkpcPR1UGz6mjrBLNDh6NTT4t86gs2BbXDST-ewDyDYcbA5FZIEMUM"/>
 </a>
 <div class="flex-grow min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">RALIVA</span>
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Ribbed Knit Tank</h3>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">Delivered May 15, 2026</p>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('RALIVA') }}</span>
+<h3 class="font-title-sm text-title-md text-on-surface font-semibold truncate">{{ __('Ribbed Knit Tank') }}</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Delivered May 15, 2026') }}</p>
 </div>
-<a href="{{ route('customer.reviews.create') }}" class="shrink-0 px-md py-xs border border-primary text-primary font-label-caps text-label-caps uppercase tracking-widest hover:bg-surface-container-low transition-colors">
-                {{ __('Write Review') }}
-            </a>
+<a href="{{ route('customer.reviews.create') }}" class="btn-gold shrink-0 px-md py-2.5 rounded-full font-label-caps text-label-caps uppercase tracking-widest inline-flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">rate_review</span>{{ __('Write Review') }}</a>
 </article>
+</div>
+</section>
+
+</div>
+</div>
 </section>
 </main>
+<!-- BottomNavBar (Mobile Only) -->
+@include('customer._partials.drawer')
 <script>
         function switchTab(name) {
             ['written', 'to-review'].forEach(function (tab) {
                 var isActive = tab === name;
                 var tabBtn = document.getElementById('tab-' + tab);
                 var panel = document.getElementById('panel-' + tab);
-                tabBtn.classList.toggle('border-primary', isActive);
-                tabBtn.classList.toggle('text-primary', isActive);
-                tabBtn.classList.toggle('border-transparent', !isActive);
+                tabBtn.classList.toggle('active', isActive);
+                tabBtn.classList.toggle('border-secondary', isActive);
+                tabBtn.classList.toggle('text-secondary', isActive);
+                tabBtn.classList.toggle('bg-secondary/5', isActive);
+                tabBtn.classList.toggle('border-outline-variant', !isActive);
                 tabBtn.classList.toggle('text-on-surface-variant', !isActive);
                 panel.classList.toggle('hidden', !isActive);
             });
         }
     </script>
-@include('customer._partials.drawer')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var els = document.querySelectorAll('.reveal-up');
+        if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('is-visible'); }); return; }
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); } });
+        }, { threshold: 0.1 });
+        els.forEach(function (e) { io.observe(e); });
+    });
+    </script>
 </body></html>

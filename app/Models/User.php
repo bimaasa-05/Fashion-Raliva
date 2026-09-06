@@ -129,6 +129,11 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(\App\Models\Address::class, 'user_id', 'user_id');
+    }
+
     public function wishlist(): HasOne
     {
         return $this->hasOne(Wishlist::class, 'user_id', 'user_id');

@@ -46,6 +46,56 @@
         });
     });
 
+    // Edit address pre-fill
+    document.querySelectorAll('[data-modal-open="modal-edit-address"]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            document.getElementById('modal-address-title').textContent = '{{ __('Edit Address') }}';
+            document.getElementById('address-form').setAttribute('action', '');
+        });
+    });
+
+    // Address form submit (AJAX)
+    document.getElementById('address-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (window._addressSubmitting) return;
+        window._addressSubmitting = true;
+        const form = e.target;
+        const btn = form.querySelector('button[type="submit"]');
+        const original = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '{{ __('Saving...') }}';
+        const action = form.getAttribute('action');
+        try {
+            const res = await fetch(action, {
+                method: form.getAttribute('method'),
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' },
+                body: new FormData(form),
+            });
+            const d = await res.json().catch(() => null);
+            if (res.ok) {
+                window.showRalivaToast(d?.message || '{{ __('Alamat berhasil disimpan.') }}', 'task_alt');
+                const modal = document.getElementById('modal-add-address');
+                if (modal) modal.classList.add('hidden');
+                document.body.style.overflow = '';
+                setTimeout(() => location.reload(), 600);
+            } else {
+                if (d?.errors) {
+                    let msg = '';
+                    Object.values(d.errors).forEach(v => { msg += (Array.isArray(v) ? v[0] : v) + '\n'; });
+                    window.showRalivaToast(msg.trim(), 'gpp_bad');
+                } else {
+                    window.showRalivaToast(d?.message || '{{ __('Gagal menyimpan alamat.') }}', 'gpp_bad');
+                }
+            }
+        } catch (err) {
+            window.showRalivaToast('{{ __('Terjadi kesalahan jaringan.') }}', 'gpp_bad');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = original;
+            window._addressSubmitting = false;
+        }
+    });
+
     document.querySelectorAll('[data-detail-open]').forEach((btn) => {
         btn.addEventListener('click', () => {
             const modal = document.getElementById(btn.getAttribute('data-detail-open'));

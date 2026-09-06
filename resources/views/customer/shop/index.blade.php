@@ -239,6 +239,18 @@
         border-color: #3a3937;
         background-color: #201f1e;
     }
+    /* ============ LOAD MORE SPINNER ============ */
+    .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(139,30,63,.35);
+        border-top-color: #8B1E3F;
+        border-radius: 50%;
+        animation: spin .7s linear infinite;
+        display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #load-more-btn:disabled { cursor: not-allowed; opacity: .7; }
 </style>
 <style>
     /* ============ Shop: remap drawer + bottom-nav accent to burgundy (Register language) ============ */
@@ -352,14 +364,19 @@
 <!-- Shop Toolbar (parent container: category navigation left, actions right) -->
 <div class="shop-toolbar flex flex-row items-center gap-sm md:gap-md px-container-margin py-sm sticky top-16 lg:top-16 z-30">
     <!-- Category Navigation Card (Super-Admin card-premium style) -->
-    <div class="shop-category-card flex-1 min-w-0 flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-md md:px-[64px] py-sm md:py-md shadow-sm">
-    <div class="shop-category-nav w-1/2 md:flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar">
+    <div class="shop-category-card flex-1 min-w-0 flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm">
+    <div class="shop-category-nav flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar">
         <button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-pill shrink-0 px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('All') }}</button>
-        <button type="button" data-cat="Women" onclick="selectCategory('Women')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Women') }}</button>
-        <button type="button" data-cat="Men" onclick="selectCategory('Men')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Men') }}</button>
-        <button type="button" data-cat="Accessories" onclick="selectCategory('Accessories')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Accessories') }}</button>
-        <button type="button" data-cat="Shoes" onclick="selectCategory('Shoes')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Shoes') }}</button>
-        <button type="button" data-cat="Bags" onclick="selectCategory('Bags')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ __('Bags') }}</button>
+@php
+    $parentCats = $products
+        ->map(fn ($p) => $p->category?->parent?->nama_kategori ?? $p->category?->nama_kategori)
+        ->filter()
+        ->unique()
+        ->values();
+@endphp
+@foreach ($parentCats as $pc)
+        <button type="button" data-cat="{{ $pc }}" onclick="selectCategory('{{ $pc }}')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ $pc }}</button>
+@endforeach
     </div>
         <!-- Shop Actions (Filter · Cart · Sort) -->
         <button aria-label="{{ __('Filter') }}" class="shop-action-btn order-3 border border-outline-variant hover:text-secondary hover:border-secondary transition-colors relative" onclick="openFilter()" type="button">
@@ -368,7 +385,7 @@
         </button>
         <a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart') }}" class="shop-action-btn relative order-2 border border-outline-variant hover:text-secondary hover:border-secondary transition-colors">
             <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
-            <span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+            <span class="cart-badge absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
         </a>
         <div class="relative shop-sort-trigger order-1 ml-auto" id="sort-menu-container">
             <button class="shop-action-btn md:px-md gap-1 border border-outline-variant font-label-sm text-label-sm text-on-surface hover:text-secondary hover:border-secondary transition-colors" onclick="toggleSortMenu()" type="button">
@@ -403,83 +420,54 @@
 <button id="clear-all" class="font-label-sm text-label-sm text-secondary underline hover:opacity-80 transition-opacity shrink-0" onclick="clearAll()" type="button">{{ __('Clear all') }}</button>
 </div>
 <!-- Shop Content Container -->
-<div class="mx-auto max-w-[1400px] py-xl">
-<div class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <!-- Shop Header -->
 <div class="flex items-center justify-between gap-md mb-md flex-wrap">
 <div class="atl-eyebrow">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary shop-content-heading">{{ __('Shop') }}</span>
 </div>
-<div class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Showing') }} <span id="result-count">0</span> {{ __('items') }}</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Showing') }} <span id="result-count">{{ $products->count() }}</span> {{ __('items') }}</div>
 </div>
 <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-gutter" style="background-color: transparent;">
-<!-- Product 1 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
+@forelse ($products as $p)
+@php
+    $parentCat = $p->category?->parent?->nama_kategori ?? $p->category?->nama_kategori;
+    $sizes = $p->variants->pluck('ukuran')->unique()->implode(' ');
+    $colors = $p->variants->pluck('warna')->unique()->implode(' ');
+    $minPrice = $p->variants->min('harga') ?? $p->harga_dasar;
+    $firstImage = $p->images->first()->file_gambar ?? '';
+@endphp
+<!-- Product -->
+<a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col group cursor-pointer" data-category="{{ $parentCat }}" data-size="{{ $sizes }}" data-color="{{ $colors }}" data-price="{{ $minPrice }}" data-created="{{ $p->created_at?->getTimestamp() ?? 0 }}" data-popular="0">
 <div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
-<img class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" data-alt="A full-length editorial shot of a model wearing high-end minimal straight fit trousers in a sophisticated ivory tone. The lighting is soft and natural, evoking a premium fashion lookbook style. The background is a stark, bright studio setting to emphasize the clean lines and texture of the fabric." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAps2M8arrWbQY6jXAaISjDMblJoS3se1hpcmHWepeH6VczwS5VPkR4AM-pXm-ncoDRs1Nvlc-uTUq0Njoh538e4U4gtMAG0OyE3mOcGJPaz0g4fpCbTiNUVrBR12VzliXLH0tih4PCW3xl2DSpKGC_xkQZAyXSyn5W9SfOUfPKBcD0MUHvDTvlix7j3UEroZX7lXoveWhsxMc0B1clCXYWJ-5Mct8SR210aTaGAxBrtYJbIinXAiU"/>
-<button aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
+<img class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" loading="lazy" decoding="async" alt="{{ $p->nama_produk }}" src="{{ $firstImage ? (filter_var($firstImage, FILTER_VALIDATE_URL) ? $firstImage : asset($firstImage)) : 'https://picsum.photos/seed/product/900/1200' }}"/>
+@php $isWl = in_array($p->product_id, $wishlistedIds, true); @endphp
+<button data-wishlist-toggle data-product-id="{{ $p->product_id }}" aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors{{ $isWl ? ' wishlisted-active' : '' }}">
+<span class="material-symbols-outlined" data-icon="favorite{{ $isWl ? '' : '_border' }}"@if($isWl) data-weight="fill"@endif>favorite{{ $isWl ? '' : '_border' }}</span>
 </button>
 </div>
 <div class="flex flex-col gap-1">
-<span class="font-label-sm text-label-sm text-on-surface-variant">RALIVA ESSENTIALS</span>
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Straight Fit Pants</h3>
-<span class="font-body-sm text-body-sm text-on-surface">Rp 329.000</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">{{ $p->store?->nama_toko ?? __('RALIVA') }}</span>
+<h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $p->nama_produk }}</h3>
+<span class="font-body-sm text-body-sm text-on-surface">Rp {{ number_format($minPrice, 0, ',', '.') }}</span>
 </div>
 </a>
-<!-- Product 2 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
-<div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
-<img class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" data-alt="A premium fashion editorial image featuring a relaxed fit blazer in a muted earthy tone, worn by a model in a high-end minimalist setting. The lighting is diffused, highlighting the drape and structure of the garment. The overall aesthetic is clean, sophisticated, and modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAax1OhxvSc1htL3J-oZrJsK06nXoqeC7N_pmJWtnMwexPZmJABVpA8hgsW7QimiCrKDbAbF2QZJZqX32JY1O-0BxXFuuSE5FkP0xonQAuzISb3yAK3r-YD1svUl5LmSg6Rdn_vJ_617kZ_uA83kwaYo-0divU3t_vq5baQRi1RcPOEZ4sCHHcfr_xsvzeGRThANll5NUxqWpFBAnjwzb4kGdK_w_CN6OXuOOTYMiLbt9ADnrPJAKA"/>
-<button aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
+@empty
+<div class="col-span-full">
+<div id="product-empty" class="w-full flex-col items-center justify-center text-center gap-md py-2xl">
+<span class="material-symbols-outlined text-[72px] text-on-surface-variant/40" data-icon="inventory_2">inventory_2</span>
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No products found for this selection.') }}</p>
+<button class="btn-gold font-label-caps text-label-caps px-lg py-3 lg:px-xl rounded-full uppercase tracking-widest mt-xs" type="button" onclick="selectCategory(null)">{{ __('Reset filters') }}</button>
+</div>
+</div>
+@endforelse
+</div>
+<div id="load-more-wrap" class="flex justify-center py-xl mt-md" data-total="{{ $totalProducts }}">
+<button id="load-more-btn" class="border border-[var(--chrome-accent)] text-[var(--chrome-accent)] bg-transparent font-label-caps text-label-caps px-xl py-sm hover:bg-surface-container-low transition-colors w-full md:w-auto rounded-lg flex items-center justify-center gap-2 uppercase tracking-widest" type="button" onclick="loadMoreProducts()" style="display:none;">
+<span class="spinner" style="display:none;"></span>
+<span id="load-more-txt">Load More</span>
 </button>
-</div>
-<div class="flex flex-col gap-1">
-<span class="font-label-sm text-label-sm text-on-surface-variant">RALIVA STUDIO</span>
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Relaxed Blazer</h3>
-<span class="font-body-sm text-body-sm text-on-surface">Rp 579.000</span>
-</div>
-</a>
-<!-- Product 3 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
-<div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
-<img class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" data-alt="A striking close-up shot of a pleated midi skirt in motion, capturing the elegant flow of the fabric. The color is a soft, warm neutral. The studio lighting casts subtle shadows to emphasize the pleats. The mood is refined and distinctly high-fashion." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAumPepE3uIJ6AwAkmTZ9_-YsAJidBJhhtUl1zj0Gr1TL0xi50_O8B6t0Y-QrwVzrsGu6V9Ez0WWnJAMSroGzu5A9ZFd9BMdxY9fo9n62z5gEI_137Qx8UGHVAMXBxep6FQ7LwfN5GDvsLBShloSY7SE5-bycdtXhqUHyAWcA4B36P_xx4H5ldRuNR76fo3XUMsW3b0Mh-XLL12XFCmtO-5LE3uGUVWagT2xjawnzMa4frmfrKE-SU"/>
-<button aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</button>
-</div>
-<div class="flex flex-col gap-1">
-<span class="font-label-sm text-label-sm text-on-surface-variant">RALIVA STUDIO</span>
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Pleated Midi Skirt</h3>
-<span class="font-body-sm text-body-sm text-on-surface">Rp 380.000</span>
-</div>
-</a>
-<!-- Product 4 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
-<div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
-<img class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" data-alt="An editorial fashion photograph of a crisp linen blend shirt in pristine white. The shirt is styled simply on a model against a minimalist, warm grey background. Natural light illuminates the breathable texture of the linen, creating a serene, luxury aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFDVvGhk1fRmFqr2msVELhThiwYZS_qaw5B2sFlpG_oUABmy2HUkfTdsOGgu3QoYvDiwgRG62hQu2-iz4wze0Jgt10LNVpzeMWtp5JvLJ0s1T3mW9YBzf7XWv2f73BU_Dp8smVo8FG7viGA4YrJKUSEmOB9PLKo12---_uuSNV455LZytF66bBcFn8pdC4HPxE7imenZu4rcnccn6PDK8lreskykX-dBeOyaljMak73QzcCv8e4no"/>
-<button aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</button>
-</div>
-<div class="flex flex-col gap-1">
-<span class="font-label-sm text-label-sm text-on-surface-variant">RALIVA ESSENTIALS</span>
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Linen Blend Shirt</h3>
-<span class="font-body-sm text-body-sm text-on-surface">Rp 299.000</span>
-</div>
-</a>
-</div>
-<!-- Empty State (shown when no products match the selected filters) -->
-<div id="product-empty" class="hidden w-full flex-col items-center justify-center text-center gap-md py-2xl">
-    <span class="material-symbols-outlined text-[72px] text-on-surface-variant/40" data-icon="inventory_2">inventory_2</span>
-    <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No products found for this selection.') }}</p>
-    <button class="btn-gold font-label-caps text-label-caps px-lg py-3 lg:px-xl rounded-full uppercase tracking-widest mt-xs" type="button" onclick="selectCategory(null)">{{ __('Reset filters') }}</button>
-</div>
-<div id="load-more-wrap" class="flex justify-center py-xl mt-md">
-<button class="btn-gold font-label-caps text-label-caps px-lg py-3 lg:px-xl rounded-full uppercase tracking-widest" type="button">
-                    {{ __('LOAD MORE') }}
-                </button>
 </div>
 </div>
 </div>
@@ -546,6 +534,7 @@
     <script>
         var activeFilters = { category: [], size: [], color: [], price: { min: null, max: null } };
         var currentSort = 'Newest';
+        var revealedCount = 6;
 
         function openFilter() {
             document.getElementById('filter-sheet').classList.remove('translate-y-full');
@@ -706,7 +695,7 @@
         function applyGridFilter() {
             var cards = document.querySelectorAll('#product-grid > a');
             var shown = 0;
-            cards.forEach(function (card) {
+            cards.forEach(function (card, idx) {
                 var cat = (card.getAttribute('data-category') || '').split(' ');
                 var sizes = (card.getAttribute('data-size') || '').split(' ');
                 var colors = (card.getAttribute('data-color') || '').split(' ');
@@ -717,8 +706,9 @@
                 if (activeFilters.color.length && !activeFilters.color.some(function (c) { return colors.indexOf(c) >= 0; })) ok = false;
                 if (activeFilters.price.min !== null && price < activeFilters.price.min) ok = false;
                 if (activeFilters.price.max !== null && price > activeFilters.price.max) ok = false;
-                card.style.display = ok ? '' : 'none';
-                if (ok) shown++;
+                var visible = ok && idx < revealedCount;
+                card.style.display = visible ? '' : 'none';
+                if (visible) shown++;
             });
             var countEl = document.getElementById('result-count');
             if (countEl) countEl.textContent = shown;
@@ -727,8 +717,48 @@
                 emptyEl.classList.toggle('hidden', shown > 0);
                 emptyEl.classList.toggle('flex', shown === 0);
             }
-            var loadMoreEl = document.getElementById('load-more-wrap');
-            if (loadMoreEl) loadMoreEl.classList.toggle('hidden', shown === 0);
+            updateLoadMoreButton();
+        }
+        function updateLoadMoreButton() {
+            var wrap = document.getElementById('load-more-wrap');
+            var btn = document.getElementById('load-more-btn');
+            if (!wrap || !btn) return;
+            var total = parseInt(wrap.getAttribute('data-total') || '0', 10);
+            var hiddenCount = 0;
+            document.querySelectorAll('#product-grid > a').forEach(function (c, idx) {
+                if (idx >= revealedCount) hiddenCount++;
+            });
+            var show = total > 6 && hiddenCount > 0 && !btn.hasAttribute('disabled');
+            btn.style.display = show ? 'inline-flex' : 'none';
+            wrap.classList.toggle('hidden', shownCount() === 0);
+        }
+        function shownCount() {
+            var n = 0;
+            document.querySelectorAll('#product-grid > a').forEach(function (c) {
+                if (c.style.display !== 'none') n++;
+            });
+            return n;
+        }
+        function loadMoreProducts() {
+            var btn = document.getElementById('load-more-btn');
+            if (!btn || btn.hasAttribute('disabled')) return;
+            btn.setAttribute('disabled', 'disabled');
+            var spinner = btn.querySelector('.spinner');
+            var txt = document.getElementById('load-more-txt');
+            if (txt) txt.textContent = 'Loading';
+            if (spinner) spinner.style.display = 'inline-block';
+            if (btn.classList) btn.classList.add('flashing');
+            setTimeout(function () {
+                var wrap = document.getElementById('load-more-wrap');
+                var total = wrap ? parseInt(wrap.getAttribute('data-total') || '0', 10) : 0;
+                revealedCount += 6;
+                if (txt) txt.textContent = 'Load More';
+                if (spinner) spinner.style.display = 'none';
+                if (btn.classList) btn.classList.remove('flashing');
+                btn.removeAttribute('disabled');
+                applyGridFilter();
+                applySort();
+            }, 650);
         }
         function applySort() {
             var grid = document.getElementById('product-grid');
@@ -792,24 +822,8 @@
             }
         });
         (function initShop() {
-            var productData = [
-                { category: 'Women', size: 'S M L', color: 'Beige Brown', price: 329000, created: 4, popular: 2 },
-                { category: 'Women', size: 'S M', color: 'Brown', price: 579000, created: 3, popular: 4 },
-                { category: 'Women', size: 'XS S M', color: 'Beige', price: 380000, created: 2, popular: 3 },
-                { category: 'Men', size: 'M L XL', color: 'White', price: 299000, created: 1, popular: 1 }
-            ];
-            var cards = document.querySelectorAll('#product-grid > a');
-            cards.forEach(function (card, i) {
-                var d = productData[i];
-                if (!d) return;
-                card.setAttribute('data-category', d.category);
-                card.setAttribute('data-size', d.size);
-                card.setAttribute('data-color', d.color);
-                card.setAttribute('data-price', d.price);
-                card.setAttribute('data-created', d.created);
-                card.setAttribute('data-popular', d.popular);
-            });
             applySort();
+            applyGridFilter();
             renderChips();
             updateBadge();
             updateAppliedLabel();

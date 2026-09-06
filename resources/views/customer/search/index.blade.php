@@ -223,16 +223,17 @@
 </style>
 </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72">
+@php $cartCount = auth()->check() ? \App\Http\Controllers\Customer\CartController::countForUser(auth()->id()) : 0; @endphp
 <!-- TopAppBar -->
 <header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
-<a href="{{ url()->previous() }}" aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
+<a href="{{ route('customer.shop') }}" data-go-back aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
 <div class="flex items-center gap-sm">
 <a href="{{ route('customer.chart') }}" aria-label="Cart" class="relative hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
-<span class="absolute -top-1 -right-1 bg-secondary text-on-secondary text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
+<span class="cart-badge absolute -top-1 -right-1 bg-secondary text-on-secondary text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
 </a>
 </div>
 </header>
@@ -240,8 +241,8 @@
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Search Bar Section -->
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <form class="flex items-center gap-sm w-full">
 <div class="relative flex-grow">
 <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
@@ -253,8 +254,8 @@
 </div>
 </section>
 <!-- Popular Searches -->
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Popular Searches') }}</h3>
 <div class="mt-md flex flex-wrap gap-sm">
 @foreach (['Linen Shirt', 'Silk Dress', 'Blazer', 'Tote Bag', 'Trousers', 'Knit Top'] as $tag)
@@ -265,8 +266,8 @@
 </div>
 <!-- Trending Now -->
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px]">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl px-xl md:px-[64px] py-md md:py-lg shadow-sm card-premium">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="flex justify-between items-center mb-xs">
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ __('Trending Now') }}</h2>
 <a href="{{ route('customer.shop') }}" class="font-label-caps text-label-caps text-secondary uppercase tracking-widest hover:opacity-80 transition-opacity">View All</a>
@@ -281,7 +282,7 @@
 <a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
 <img alt="{{ $product['name'] }}" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" src="{{ $product['img'] }}"/>
-<button type="button" aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center bg-surface/70 rounded-full backdrop-blur-sm">
+<button type="button" data-wishlist-toggle data-product-id="{{ $loop->iteration }}" aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
 </button>
 </div>
@@ -306,6 +307,20 @@ document.addEventListener('DOMContentLoaded', function(){
     entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
   }, { threshold: 0.12 });
   els.forEach(function(e){ io.observe(e); });
+});
+</script>
+<script>
+/* Arrow back = kembali ke halaman customer sebelumnya */
+document.addEventListener('click', function (e) {
+    var back = e.target.closest('[data-go-back]');
+    if (!back) return;
+    e.preventDefault();
+    var ref = document.referrer;
+    if (ref && ref.indexOf(window.location.origin) === 0) {
+        window.history.back();
+    } else {
+        window.location.href = back.getAttribute('href');
+    }
 });
 </script>
 </body></html>

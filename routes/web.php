@@ -118,30 +118,32 @@ Route::prefix('customer')->name('customer.')->group(function () {
         return view('customer.home.index');
     })->name('home');
 
-    Route::get('/shop', function () {
-        return view('customer.shop.index');
-    })->name('shop');
+    Route::get('/shop', [\App\Http\Controllers\Customer\ShopController::class, 'index'])->name('shop');
 
-    Route::get('/shop/produk/{id}', function () {
-        return view('customer.shop.produk-detail');
-    })->name('shop.produk-detail');
+    Route::get('/shop/produk/{id}', [\App\Http\Controllers\Customer\ShopController::class, 'produkDetail'])->name('shop.produk-detail');
 
-    Route::get('/shop/store/{id}', function () {
-        return view('customer.shop.store-detail');
-    })->name('shop.store-detail');
+    Route::get('/shop/produk/{id}/riviews', [\App\Http\Controllers\Customer\ShopController::class, 'produkRiviews'])->name('shop.produk-riviews');
+
+    Route::get('/shop/store/{id}', [\App\Http\Controllers\Customer\ShopController::class, 'store'])->name('shop.store');
+
+    Route::get('/shop/store/{id}/riviews', [\App\Http\Controllers\Customer\ShopController::class, 'storeRiviews'])->name('shop.store.riviews');
+
+    Route::get('/shop/store/{id}/about', [\App\Http\Controllers\Customer\ShopController::class, 'storeAbout'])->name('shop.store.about');
 
     Route::get('/search', function () {
         return view('customer.search.index');
     })->name('search');
 
     Route::middleware('role:Customer')->group(function () {
-        Route::get('/chart', function () {
-            return view('customer.chart.index');
-        })->name('chart');
+        Route::resource('address', \App\Http\Controllers\Customer\AddressController::class)->except(['show']);
+        Route::post('/address/{address}/set-default', [\App\Http\Controllers\Customer\AddressController::class, 'setDefault'])->name('customer.address.set-default');
+        Route::get('/chart', [\App\Http\Controllers\Customer\CartController::class, 'index'])->name('chart');
 
-        Route::get('/checkout', function () {
-            return view('customer.checkout.index');
-        })->name('checkout');
+        Route::post('/cart/add', [\App\Http\Controllers\Customer\CartController::class, 'add'])->name('cart.add');
+        Route::patch('/cart/{cartItem}', [\App\Http\Controllers\Customer\CartController::class, 'update'])->name('cart.update');
+        Route::delete('/cart/{cartItem}', [\App\Http\Controllers\Customer\CartController::class, 'destroy'])->name('cart.destroy');
+
+        Route::get('/checkout', [\App\Http\Controllers\Customer\CheckoutController::class, 'index'])->name('checkout');
 
         Route::get('/order-tracking', function () {
             return view('customer.order-tracking.index');
@@ -151,8 +153,6 @@ Route::prefix('customer')->name('customer.')->group(function () {
             return view('customer.account.index');
         })->name('account');
 
-        Route::post('/account', [CustomerProfileController::class, 'update'])->name('account.update');
-
         Route::get('/account/edit', function () {
             return view('customer.account.edit');
         })->name('account.edit');
@@ -160,10 +160,6 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('/account/password', function () {
             return view('customer.account.password');
         })->name('account.password');
-
-        Route::get('/address', function () {
-            return view('customer.address.index');
-        })->name('address');
 
         Route::get('/reviews', function () {
             return view('customer.reviews.index');
@@ -185,9 +181,9 @@ Route::prefix('customer')->name('customer.')->group(function () {
             return view('customer.settings.index');
         })->name('settings');
 
-        Route::get('/wishlist', function () {
-            return view('customer.wishlist.index');
-        })->name('wishlist');
+        Route::get('/wishlist', [\App\Http\Controllers\Customer\WishlistController::class, 'index'])->name('wishlist');
+        Route::post('/wishlist/toggle', [\App\Http\Controllers\Customer\WishlistController::class, 'toggle'])->name('wishlist.toggle');
+        Route::delete('/wishlist/{productId}', [\App\Http\Controllers\Customer\WishlistController::class, 'destroy'])->name('wishlist.destroy');
     });
 
     Route::get('/help', function () {

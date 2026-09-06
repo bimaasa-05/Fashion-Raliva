@@ -14,53 +14,53 @@
           theme: {
             extend: {
               "colors": {
-                      "on-primary-fixed": "#1c1b1b",
-                      "on-error-container": "#93000a",
-                      "on-tertiary-container": "#848482",
-                      "surface-bright": "#fbf9f9",
-                      "on-primary-container": "#858383",
-                      "primary-fixed-dim": "#c8c6c5",
-                      "surface-variant": "#e3e2e2",
-                      "on-surface": "#1b1c1c",
-                      "secondary": "#8B1E1E",
-                      "surface-dim": "#dbdad9",
-                      "on-error": "#ffffff",
-                      "primary": "#000000",
-                      "on-secondary": "#ffffff",
-                      "tertiary-container": "#1a1c1a",
-                      "error-container": "#ffdad6",
-                      "on-tertiary": "#ffffff",
-                      "secondary-fixed": "#8B1E1E",
-                      "on-primary": "#ffffff",
-                      "surface-container-lowest": "#ffffff",
-                      "error": "#ba1a1a",
-                      "surface-container-highest": "#e3e2e2",
-                      "inverse-surface": "#303031",
-                      "surface-container": "#efeded",
-                      "tertiary": "#000000",
-                      "primary-fixed": "#e5e2e1",
-                      "outline-variant": "#c4c7c7",
-                      "surface-tint": "#5f5e5e",
-                      "secondary-fixed-dim": "#8B1E1E",
-                      "outline": "#747878",
-                      "on-primary-fixed-variant": "#474646",
-                      "on-secondary-fixed-variant": "#5E0F0F",
-                      "on-tertiary-fixed": "#1a1c1a",
-                      "on-secondary-container": "#5E0F0F",
-                      "inverse-on-surface": "#f2f0f0",
-                      "tertiary-fixed-dim": "#c7c6c4",
-                      "tertiary-fixed": "#e3e2df",
-                      "surface-container-high": "#e9e8e7",
-                      "on-secondary-fixed": "#5E0F0F",
-                      "background": "#fbf9f9",
-                      "surface": "#fbf9f9",
-                      "secondary-container": "#8B1E1E",
-                      "on-surface-variant": "#444748",
-                      "primary-container": "#1c1b1b",
-                      "inverse-primary": "#c8c6c5",
-                      "surface-container-low": "#f5f3f3",
-                      "on-tertiary-fixed-variant": "#464745",
-                      "on-background": "#1b1c1c"
+                "on-primary-fixed": "#1c1b1b",
+                "on-error-container": "#93000a",
+                "on-tertiary-container": "#848482",
+                "surface-bright": "#fbf9f9",
+                "on-primary-container": "#858383",
+                "primary-fixed-dim": "#c8c6c5",
+                "surface-variant": "#e3e2e2",
+                "on-surface": "#1b1c1c",
+                "secondary": "#8B1E3F",
+                "surface-dim": "#dbdad9",
+                "on-error": "#ffffff",
+                "primary": "#000000",
+                "on-secondary": "#ffffff",
+                "tertiary-container": "#1a1c1a",
+                "error-container": "#ffdad6",
+                "on-tertiary": "#ffffff",
+                "secondary-fixed": "#8B1E3F",
+                "on-primary": "#ffffff",
+                "surface-container-lowest": "#ffffff",
+                "error": "#ba1a1a",
+                "surface-container-highest": "#e3e2e2",
+                "inverse-surface": "#303031",
+                "surface-container": "#efeded",
+                "tertiary": "#000000",
+                "primary-fixed": "#e5e2e1",
+                "outline-variant": "#c4c7c7",
+                "surface-tint": "#5f5e5e",
+                "secondary-fixed-dim": "#8B1E3F",
+                "outline": "#747878",
+                "on-primary-fixed-variant": "#474646",
+                "on-secondary-fixed-variant": "#6D1428",
+                "on-tertiary-fixed": "#1a1c1a",
+                "on-secondary-container": "#6D1428",
+                "inverse-on-surface": "#f2f0f0",
+                "tertiary-fixed-dim": "#c7c6c4",
+                "tertiary-fixed": "#e3e2df",
+                "surface-container-high": "#e9e8e7",
+                "on-secondary-fixed": "#6D1428",
+                "background": "#fbf9f9",
+                "surface": "#fbf9f9",
+                "secondary-container": "#8B1E3F",
+                "on-surface-variant": "#444748",
+                "primary-container": "#1c1b1b",
+                "inverse-primary": "#c8c6c5",
+                "surface-container-low": "#f5f3f3",
+                "on-tertiary-fixed-variant": "#464745",
+                "on-background": "#1b1c1c"
               },
               "borderRadius": {
                       "DEFAULT": "0.25rem",
@@ -205,7 +205,11 @@
         --chrome-text-faint: rgba(0,0,0,.45);
         --chrome-border: rgba(0,0,0,.1);
         --chrome-hover: rgba(0,0,0,.06);
-        --chrome-accent: #8B1E1E;
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #F8F6F2;
+        --surface-warm: #F3F0EA;
+        --border-soft: #E5E1DA;
+        --text-muted: #777777;
     }
     html.theme-dark {
         --chrome-bg: #1c1b1b;
@@ -215,7 +219,11 @@
         --chrome-text-faint: rgba(255,255,255,.5);
         --chrome-border: rgba(255,255,255,.1);
         --chrome-hover: rgba(255,255,255,.1);
-        --chrome-accent: #A32626;
+        --chrome-accent: #8B1E3F;
+        --surface-ivory: #1e1d1c;
+        --surface-warm: #201f1e;
+        --border-soft: rgba(255,255,255,.1);
+        --text-muted: #b9b6b1;
     }
 </style>
 <style>
@@ -242,7 +250,8 @@
     html.theme-dark .text-outline { color: #8a8781 !important; }
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
-    html.theme-dark .text-secondary { color: #A32626 !important; }
+    html.theme-dark .text-secondary { color: #8B1E3F !important; }
+    html.theme-dark .text-secondary-fixed-dim { color: #8B1E3F !important; }
     html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
     html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
@@ -256,7 +265,7 @@
     html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
     html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
     html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
-    html.theme-dark .hover\:text-secondary:hover { color: #A32626 !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #8B1E3F !important; }
     html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
     html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
     html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
@@ -296,374 +305,428 @@
     .btn-gold.flashing::after { opacity: 1; animation: authFlash 1.4s linear infinite; }
     .btn-gold.flashing::after { animation: authFlash 1.4s cubic-bezier(.4,0,.2,1) 1; }
     @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
-    .btn-gold:hover { box-shadow: 0 0 0 1px rgba(139,30,30,.35), 0 8px 22px -8px rgba(139,30,30,.45); }
-    html.theme-dark .btn-gold:hover { box-shadow: 0 0 0 1px rgba(163,38,38,.4), 0 8px 22px -8px rgba(163,38,38,.5); }
-    :root           { --btn-gold-bg: #8B1E1E; --btn-gold-text: #ffffff; }
-    html.theme-dark { --btn-gold-bg: #5E0F0F; --btn-gold-text: #ffffff; }
+    .btn-gold:hover { box-shadow: 0 0 0 1px rgba(139,30,63,.35), 0 8px 22px -8px rgba(139,30,63,.45); }
+    html.theme-dark .btn-gold:hover { box-shadow: 0 0 0 1px rgba(139,30,63,.4), 0 8px 22px -8px rgba(139,30,63,.5); }
+    :root           { --btn-gold-bg: #8B1E3F; --btn-gold-text: #ffffff; }
+    html.theme-dark { --btn-gold-bg: #6D1428; --btn-gold-text: #ffffff; }
     /* ============ SHOP/DETAIL CHECKBOX + RADIO (same system as Register .terms-checkbox) ============ */
     .shop-checkbox {
         border-radius: 4px;
         transition: border-color .2s ease, background-color .2s ease;
     }
-    .shop-checkbox:hover:not(:checked) { border-color: #8B1E1E; }
+    .shop-checkbox:hover:not(:checked) { border-color: #8B1E3F; }
     .shop-checkbox:checked {
-        background-color: #8B1E1E !important;
-        border-color: #8B1E1E !important;
+        background-color: #8B1E3F !important;
+        border-color: #8B1E3F !important;
     }
-    .shop-checkbox:focus-visible { box-shadow: 0 0 0 3px rgba(139,30,30,.3); }
+    .shop-checkbox:focus-visible { box-shadow: 0 0 0 3px rgba(139,30,63,.3); }
     html.theme-dark .shop-checkbox {
         border-color: #3a3937;
         background-color: #201f1e;
     }
+    /* ============ PRODUCT DETAIL: COLOR SWATCHES + SIZE PILLS ============ */
+    .swatch {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 9999px;
+        border: 1px solid var(--border-soft);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-family: 'Manrope', sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        transition: box-shadow .2s ease, border-color .2s ease, transform .2s ease;
+    }
+    .swatch:hover { transform: translateY(-2px); border-color: #8B1E3F; }
+    .swatch-selected {
+        border-color: #8B1E3F;
+        box-shadow: 0 0 0 2px var(--chrome-bg), 0 0 0 4px #8B1E3F;
+    }
+    .size-pill {
+        min-width: 3rem;
+        height: 3rem;
+        padding: 0 1.25rem;
+        border-radius: 9999px;
+        border: 1px solid var(--border-soft);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-family: 'Manrope', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--on-surface);
+        background: transparent;
+        transition: border-color .2s ease, color .2s ease, background-color .2s ease, transform .2s ease;
+    }
+    .size-pill:hover { border-color: #8B1E3F; color: #8B1E3F; }
+    .size-pill-selected {
+        border-color: #8B1E3F !important;
+        color: #8B1E3F !important;
+        background: rgba(139,30,63,.07);
+        font-weight: 700;
+    }
+    html.theme-dark .swatch-selected { box-shadow: 0 0 0 2px #1e1d1c, 0 0 0 4px #8B1E3F; }
+    html.theme-dark .size-pill { color: #e6e4e1; }
+    html.theme-dark .size-pill-selected { background: rgba(139,30,63,.18); }
 </style>
 <style>
     /* ============ Product Detail: remap drawer + bottom-nav accent to burgundy (Register language) ============ */
-    #drawer-panel { --chrome-accent: #8B1E1E; --gold-wash: rgba(139,30,30,.10); }
-    html.theme-dark #drawer-panel { --chrome-accent: #A32626; --gold-wash: rgba(163,38,38,.16); }
-    .bn-active .material-symbols-outlined { color: #8B1E1E !important; }
-    html.theme-dark .bn-active .material-symbols-outlined { color: #A32626 !important; }
-    .bn-active { color: #8B1E1E !important; }
-    html.theme-dark .bn-active { color: #A32626 !important; }
-</style>
+    #drawer-panel { --chrome-accent: #8B1E3F; --gold-wash: rgba(139,30,63,.10); }
+    html.theme-dark #drawer-panel { --chrome-accent: #8B1E3F; --gold-wash: rgba(163,38,63,.16); }
+    .bn-active .material-symbols-outlined { color: #8B1E3F !important; }
+    html.theme-dark .bn-active .material-symbols-outlined { color: #8B1E3F !important; }
+    .bn-active { color: #8B1E3F !important; }
+    html.theme-dark .bn-active { color: #8B1E3F !important; }
+  </style>
+<style>
+    /* ===== Premium cards + burgundy accents (parity with account/address) ===== */
+    .card-premium { box-shadow:0 1px 2px rgb(17 17 17 / .04),0 12px 32px -16px rgb(17 17 17 / .16); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; }
+    .card-premium:hover { transform:translateY(-3px); box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
+    html.theme-dark .card-premium { background-color:var(--surface-ivory); border-color:var(--border-soft); box-shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px -12px rgb(0 0 0 / .5); }
+    html.theme-dark .card-premium:hover { box-shadow:0 2px 4px rgb(0 0 0 / .4),0 20px 48px -20px rgb(0 0 0 / .7); border-color:rgba(139,30,63,.55); }
+    .premium-heading { display:block; }
+    .premium-heading::before { content:''; display:inline-block; width:4px; height:.95em; margin-right:.65rem; background:#8B1E3F; border-radius:9999px; vertical-align:-.05em; }
+    .atl-eyebrow { display:inline-flex; align-items:center; gap:.65rem; }
+    .atl-eyebrow::before { content:''; width:30px; height:1px; background:var(--chrome-accent); opacity:.7; }
+    html.theme-dark .premium-heading::before { background:#8B1E3F; }
+    .reveal-up { opacity:0; transform:translateY(12px); transition:opacity .5s ease,transform .5s ease; }
+    .reveal-up.is-visible { opacity:1; transform:none; }
+    @media (prefers-reduced-motion: reduce) { .reveal-up { opacity:1; transform:none; transition:none; } }
+  </style>
   </head>
-<body class="bg-surface text-on-surface font-body-lg antialiased pb-32 lg:pl-72 lg:pb-0">
-<!-- Header (Custom TopAppBar for Product Details) -->
-<header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] grid grid-cols-3 items-center px-container-margin h-16">
-<a aria-label="Go back" href="{{ url()->previous() }}" class="w-10 h-10 justify-self-start flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
-<span class="material-symbols-outlined text-[var(--chrome-text)]">arrow_back</span>
-</a>
-<h1 class="font-display-lg text-title-md md:text-headline-md tracking-widest text-[var(--chrome-accent)] text-center truncate">RALIVA</h1>
-<div class="flex gap-xs justify-self-end">
-<a aria-label="Wishlist" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
-<span class="material-symbols-outlined text-[var(--chrome-text)]">favorite_border</span>
-</a>
-<a aria-label="Cart" href="{{ route('customer.chart') }}" class="relative w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-lowest/50 hover:bg-surface-variant transition-colors">
-<span class="material-symbols-outlined text-[var(--chrome-text)]">shopping_cart</span>
-<span class="absolute top-0 right-0 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
-</a>
-</div>
-</header>
-<main class="pt-0 lg:pt-16">
-<div class="lg:flex lg:items-start lg:gap-xl">
-<!-- Product Gallery -->
-<section class="relative w-full aspect-[3/4] md:aspect-[4/5] lg:w-[44%] lg:shrink-0 lg:aspect-auto lg:h-[calc(100vh-9rem)] bg-surface-variant overflow-hidden snap-x snap-mandatory flex overflow-x-auto hide-scrollbar lg:sticky lg:top-24 lg:self-start">
-<div class="min-w-full snap-start relative">
-<img class="w-full h-full object-cover" data-alt="A high-fashion editorial shot of a crisp white oversized linen shirt worn by a model in a minimalist, sunlit studio. The lighting is soft and natural, casting delicate shadows that emphasize the texture and drape of the breathable linen fabric. The aesthetic is clean, luxurious, and modern, with a neutral soft ivory background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB60zlPtMN4DNcfKmNtNvMLaGtiKfbUV1jwb0QK8OA5iaHO4UH7XENx8hMwhaE5yT5LrfK8UMcwLCPExcTdn6andqBGPBlLUnx50TloBkou9GTUxw3G_AUUXNsW0tW-nac6qgCMlCN5DNx-MS9SaBZyxtqnHsrZoA5wWOTWt35qMllqNd3QRmPFzPPUS0OYj9jK2fpGsyo_-h8LA0wGcj5Ox9jJzKViCJecEiEYn63RRtnGwLNRA44"/>
-</div>
-<div class="min-w-full snap-start relative">
-<img class="w-full h-full object-cover" data-alt="Close-up detail shot of the oversized white linen shirt, focusing on the collar, buttons, and fabric weave. The image highlights the premium quality and effortless elegance of the garment. Natural lighting creates a sophisticated, minimalist mood, consistent with a high-end luxury fashion catalog." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5hkBUk8qjajx4Fs6RcYyo91ZEngPiYmbd4X1xjBR-1fRqEFsTUr3wJO9ILTg25nmWSo1ZwRtuMoHAH8BFNB_kPlvgOmAGOKVLwSO5vgy0InA79cDfZAFfH6-i_efcu1--rpyxDrlBXOfbgFC0qZSHx-tEMf7gLErcRFXJ5jIb527IzIUXgYjwJoOcwqGXsFxx4Rmttv2pWKce_alMda2737sk-d7imVOjnHulwFk6JxBuryI-ssU"/>
-</div>
-<div class="absolute bottom-md left-1/2 -translate-x-1/2 flex gap-2 z-10">
-<div class="w-2 h-2 rounded-full bg-on-surface"></div>
-<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
-</div>
-</section>
-<div class="lg:flex-1 lg:min-w-0">
-<!-- Product Info -->
-<section class="px-container-margin py-md">
-<div class="flex justify-between items-start mb-2">
-<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Oversized Linen Shirt</h1>
-</div>
-<div class="flex items-center gap-xs mb-sm">
-<div class="flex text-secondary-fixed-dim">
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-<span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('4.8 (124 reviews)') }}</span>
-</div>
-<p class="font-title-md text-title-md text-on-surface mb-lg">Rp 289.000</p>
-<!-- Color Selection -->
-<div class="mb-lg">
-<p class="font-label-caps text-label-caps text-on-surface mb-sm">{{ __('COLOR: WHITE') }}</p>
-<div class="flex gap-sm">
-<button aria-label="{{ __('Select White') }}" class="w-8 h-8 rounded-full border border-on-surface p-[2px]">
-<span class="block w-full h-full rounded-full bg-[#FFFFFF] border border-outline-variant"></span>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[120px] lg:pl-72">
+    <!-- Header (Custom TopAppBar for Product Details) -->
+    <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full lg:w-auto px-container-margin h-16 fixed lg:left-72 lg:right-0 z-40 border-b border-[var(--chrome-border)]">
+        <a aria-label="Go back" href="{{ route('customer.shop') }}" data-go-back class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+            <span class="material-symbols-outlined text-[24px]">arrow_back</span>
+            </a>
+        <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">RALIVA</h1>
+        <div class="w-10"></div> <!-- Spacer for centering -->
+        <div class="flex gap-xs">
+            @php $isWl = in_array($product->product_id, $wishlistedIds, true); @endphp
+            <button type="button" data-wishlist-toggle data-product-id="{{ $product->product_id }}" aria-label="Wishlist" class="p-2 hover:opacity-70 transition-all duration-200 flex{{ $isWl ? ' wishlisted-active' : '' }}">
+                <span class="material-symbols-outlined text-[24px]">favorite{{ $isWl ? '' : '_border' }}</span>
+                </button>
+            <a aria-label="Cart" href="{{ route('customer.chart') }}" class="relative p-2 hover:opacity-70 transition-all duration-200 flex">
+                <span class="material-symbols-outlined text-[24px]">shopping_cart</span>
+                <span class="cart-badge absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
+                </a>
+            </div>
+        </header>
+    <main class="pt-16 lg:pt-16">
+        <div class="mx-auto max-w-[1400px] px-container-margin">
+            <div class="lg:flex lg:items-start lg:gap-xl">
+                <!-- Product Gallery (left) -->
+                <section class="relative w-full aspect-[3/4] md:aspect-[4/5] lg:w-[42%] lg:shrink-0 lg:aspect-auto lg:h-[calc(100vh-8rem)] lg:sticky lg:top-24 lg:self-start bg-surface-variant overflow-hidden snap-x snap-mandatory flex overflow-x-auto hide-scrollbar">
+@forelse ($product->images as $img)
+                    <div class="min-w-full snap-start relative">
+                        <img class="w-full h-full object-cover" alt="{{ $product->nama_produk }}" src="{{ filter_var($img->file_gambar, FILTER_VALIDATE_URL) ? $img->file_gambar : asset($img->file_gambar) }}"/>
+                        </div>
+@empty
+                    <div class="min-w-full snap-start relative">
+                        <img class="w-full h-full object-cover" alt="{{ $product->nama_produk }}" src="https://picsum.photos/seed/product/900/1200"/>
+                        </div>
+@endforelse
+                    <div class="absolute bottom-md left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                        <div class="w-2 h-2 rounded-full bg-on-surface"></div>
+                        <div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+                        </div>
+                    </section>
+                <div class="lg:flex-1 lg:min-w-0">
+                    <section class="py-xl reveal-up">
+                        @php
+                        $allVariants = $product->variants;
+                        $colors = $allVariants->pluck('warna')->unique()->values();
+                        $sizes = $allVariants->pluck('ukuran')->unique()->values();
+                        $colorHexMap = [
+                            'white' => '#f5f5f5', 'black' => '#1b1b1b', 'beige' => '#e6d3b3',
+                            'ivory' => '#f6f1e7', 'muted sand' => '#cfc0a8', 'charcoal' => '#3a3a3a',
+                            'warm sand' => '#cfc1a6', 'taupe' => '#8b7d6b', 'blush' => '#f4c2c2',
+                            'sand' => '#d8c7ad', 'grey' => '#8f9396', 'gray' => '#8f9396',
+                            'navy' => '#1f2a44', 'brown' => '#7a5636', 'green' => '#5c6b4a',
+                            'blue' => '#2f5f8f', 'red' => '#b03a3a', 'cream' => '#f3e9d8',
+                        ];
+                    @endphp
+                        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium" data-variants="{{ $allVariants->map(fn($v) => ['id' => $v->product_variant_id, 'warna' => $v->warna, 'ukuran' => $v->ukuran, 'harga' => (float)$v->harga])->toJson(JSON_UNESCAPED_UNICODE) }}">
+                            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('PRODUCT DETAILS') }}</p>
+                            <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ $product->nama_produk }}</h2>
+                            <div class="flex items-center gap-xs mb-sm">
+                                <div class="flex text-secondary-fixed-dim">
+                                    <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    </div>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">{{ number_format($averageRating ?: 0, 1) }} ({{ $reviewCount }} {{ __('reviews') }})</span>
+                                </div>
+                            <p id="pd-price" class="font-title-md text-title-md text-on-surface mb-lg">Rp {{ number_format($product->variants->min('harga') ?? $product->harga_dasar, 0, ',', '.') }}</p>
+                            <!-- Color Selection -->
+                            <div class="mb-lg">
+                                <p class="font-label-caps text-label-caps text-on-surface mb-sm">{{ __('COLOR') }}: <span id="pd-color-label">{{ strtoupper($colors->first() ?? __('N/A')) }}</span></p>
+                                <div class="flex flex-wrap items-center gap-md">
+@foreach ($colors as $color)
+@php $hex = $colorHexMap[strtolower($color)] ?? ''; @endphp
+<button type="button" data-color-btn data-color="{{ $color }}" aria-label="{{ $color }}" title="{{ $color }}" class="swatch{{ $loop->first ? ' swatch-selected' : '' }}" style="{{ $hex ? 'background-color:' . $hex . ';' : 'background-color:var(--surface-container-high);' }}">{{ $hex ? '' : mb_substr($color, 0, 1) }}</button>
+@endforeach
+                                    </div>
+                                </div>
+                            <!-- Size Selection -->
+                            <div class="mb-lg">
+                                <div class="flex justify-between items-center mb-sm">
+                                    <p class="font-label-caps text-label-caps text-on-surface">{{ __('SIZE') }}</p>
+                                    <button class="font-label-sm text-label-sm text-on-surface-variant underline decoration-1 underline-offset-4">{{ __('Size Guide') }}</button>
+                                    </div>
+                                <div class="flex flex-wrap gap-md">
+@foreach ($sizes as $size)
+<button type="button" data-size-btn data-size="{{ $size }}" class="size-pill{{ $loop->first ? ' size-pill-selected' : '' }}">{{ $size }}</button>
+@endforeach
+                                    </div>
+                                </div>
+                            <!-- Accordions -->
+                            <section class="border-t border-outline-variant">
+                                <!-- Description -->
+                                <details class="group border-b border-outline-variant">
+                                    <summary class="flex justify-between items-center px-container-margin md:px-[64px] py-sm cursor-pointer list-none">
+                                        <span class="font-title-md text-title-md text-on-surface">{{ __('Description') }}</span>
+                                        <span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
+                                        </summary>
+                                    <div class="px-container-margin md:px-[64px] pb-sm">
+                                        <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                                            {{ $product->deskripsi }}
+                                            </p>
+                                        </div>
+                                    </details>
+                                <!-- Material & Care -->
+                                <details class="group border-b border-outline-variant">
+                                    <summary class="flex justify-between items-center px-container-margin md:px-[64px] py-sm cursor-pointer list-none">
+                                        <span class="font-title-md text-title-md text-on-surface">{{ __('Material &amp; Care') }}</span>
+                                        <span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
+                                        </summary>
+                                    <div class="px-container-margin md:px-[64px] pb-sm">
+                                        <ul class="font-body-sm text-body-sm text-on-surface-variant list-disc list-inside space-y-1">
+                                            <li>100% Linen</li>
+                                            <li>{{ __('Machine wash cold with like colors') }}</li>
+                                            <li>{{ __('Do not bleach') }}</li>
+                                            <li>{{ __('Tumble dry low or hang to dry') }}</li>
+                                            <li>{{ __('Warm iron if needed') }}</li>
+                                            </ul>
+                                        </div>
+                                    </details>
+                                <!-- Shipping & Returns -->
+                                <details class="group border-b border-outline-variant">
+                                    <summary class="flex justify-between items-center px-container-margin md:px-[64px] py-sm cursor-pointer list-none">
+                                        <span class="font-title-md text-title-md text-on-surface">{{ __('Shipping &amp; Returns') }}</span>
+                                        <span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
+                                        </summary>
+                                    <div class="px-container-margin md:px-[64px] pb-sm">
+                                        <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                                            {{ __('Free standard shipping on orders over Rp 500.000. Returns accepted within 14 days of delivery. Items must be unworn with original tags attached.') }}
+                                            </p>
+                                        </div>
+                                    </details>
+                                </section>
+                            <!-- Buyer Reviews -->
+                            <section class="border-t border-outline-variant">
+                                <div class="flex items-center justify-between px-container-margin md:px-[64px] pt-md pb-sm">
+                                    <h2 class="font-title-md text-title-md text-on-surface">{{ __('Buyer Reviews') }}</h2>
+                                    <span class="font-label-sm text-label-sm text-on-surface-variant inline-flex items-center gap-xs">{{ number_format($averageRating ?: 0, 1) }} <span class="material-symbols-outlined text-[14px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span> ({{ $reviewCount }})</span>
+                                    </div>
+@forelse ($reviews as $ri => $review)
+                                <!-- Review -->
+                                <article class="px-container-margin md:px-[64px] py-md border-b border-outline-variant">
+                                    <div class="flex items-start justify-between gap-md">
+                                        <div class="flex items-center gap-sm min-w-0">
+                                            <div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-caps text-label-caps shrink-0">{{ mb_substr($review->user?->nama_lengkap ?? 'U', 0, 2) }}</div>
+                                            <div class="min-w-0">
+                                                <p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $review->user?->nama_lengkap ?? __('Customer') }}</p>
+                                                <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $review->created_at?->format('M d, Y') }} · {{ __('Verified Purchase') }}</p>
+                                                </div>
+                                            </div>
+                                        <div class="relative shrink-0">
+                                            <button aria-label="{{ __('More options') }}" class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant" onclick="toggleReviewMenu(event, 'rv-menu-{{ $ri }}')" type="button">
+                                                <span class="material-symbols-outlined text-[18px]">more_vert</span>
+                                                </button>
+                                            <div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT shadow-xl overflow-hidden" id="rv-menu-{{ $ri }}">
+                                                <button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="toggleReviewMenu(event, 'rv-menu-{{ $ri }}')" type="button">
+                                                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant">translate</span>{{ __('Translate') }}
+                                                    </button>
+                                                <button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-error hover:bg-surface-container-low transition-colors text-left" onclick="openReport()" type="button">
+                                                    <span class="material-symbols-outlined text-[18px]">flag</span>{{ __('Report review') }}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <div class="flex items-center gap-xs mt-xs">
+                                        <div class="flex text-secondary-fixed-dim">
+@for ($s = 1; $s <= 5; $s++)
+@php $filled = $review->rating >= $s; @endphp
+                                            <span class="material-symbols-outlined text-[16px]" style="{{ $filled ? "font-variation-settings: 'FILL' 1;" : '' }}">{{ $filled ? 'star' : 'star_border' }}</span>
+@endfor
+                                            </div>
+                                        </div>
+                                    <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm">{{ $review->ulasan }}</p>
+                                    </article>
+@empty
+                                <article class="px-container-margin md:px-[64px] py-md text-center">
+                                    <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No reviews yet. Be the first to review this product.') }}</p>
+                                    </article>
+@endforelse
+                                @if ($reviewCount > 3)
+                                <div class="px-container-margin md:px-[64px] py-md flex justify-center">
+                                    <a href="{{ route('customer.shop.produk-riviews', $product->product_id) }}" class="inline-flex items-center gap-sm font-label-caps text-label-caps uppercase tracking-widest text-secondary hover:text-primary transition-colors">
+                                        <span>{{ __('Lihat selengkapnya') }}</span>
+                                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                    </a>
+                                </div>
+                                @endif
+                                </section>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <!-- You May Also Like -->
+                <section class="py-xl border-t border-outline-variant">
+                    <h2 class="font-headline-md text-headline-md text-center text-on-surface mb-lg">{{ __('You May Also Like') }}</h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-gutter px-container-margin pb-sm">
+@forelse ($relatedProducts as $rp)
+@php $rpImage = $rp->images->first()?->file_gambar; $rpMin = $rp->variants->min('harga') ?? $rp->harga_dasar; @endphp
+                        <!-- Related -->
+                        <a href="{{ route('customer.shop.produk-detail', $rp->product_id) }}" class="block group cursor-pointer">
+                            <div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant overflow-hidden">
+                                <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" alt="{{ $rp->nama_produk }}" src="{{ $rpImage ? (filter_var($rpImage, FILTER_VALIDATE_URL) ? $rpImage : asset($rpImage)) : 'https://picsum.photos/seed/related/900/1200' }}"/>
+@php $rpWl = in_array($rp->product_id, $wishlistedIds, true); @endphp
+<button type="button" data-wishlist-toggle data-product-id="{{ $rp->product_id }}" aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center{{ $rpWl ? ' wishlisted-active' : '' }}">
+<span class="material-symbols-outlined" data-icon="favorite{{ $rpWl ? '' : '_border' }}"@if($rpWl) data-weight="fill"@endif>favorite{{ $rpWl ? '' : '_border' }}</span>
 </button>
-<button aria-label="{{ __('Select Black') }}" class="w-8 h-8 rounded-full border border-transparent p-[2px]">
-<span class="block w-full h-full rounded-full bg-[#111111]"></span>
-</button>
-<button aria-label="{{ __('Select Beige') }}" class="w-8 h-8 rounded-full border border-transparent p-[2px]">
-<span class="block w-full h-full rounded-full bg-[#E5DCC5]"></span>
-</button>
-</div>
-</div>
-<!-- Size Selection -->
-<div class="mb-lg">
-<div class="flex justify-between items-center mb-sm">
-<p class="font-label-caps text-label-caps text-on-surface">{{ __('SIZE') }}</p>
-<button class="font-label-sm text-label-sm text-on-surface-variant underline decoration-1 underline-offset-4">{{ __('Size Guide') }}</button>
-</div>
-<div class="grid grid-cols-4 gap-gutter">
-<button class="h-12 border border-outline-variant flex items-center justify-center font-body-sm text-body-sm text-on-surface hover:border-on-surface transition-colors">S</button>
-<button class="h-12 border border-secondary bg-secondary/5 flex items-center justify-center font-body-sm text-body-sm text-secondary font-semibold">M</button>
-<button class="h-12 border border-outline-variant flex items-center justify-center font-body-sm text-body-sm text-on-surface hover:border-on-surface transition-colors">L</button>
-<button class="h-12 border border-outline-variant flex items-center justify-center font-body-sm text-body-sm text-on-surface hover:border-on-surface transition-colors">XL</button>
-</div>
-</div>
-<!-- Desktop Actions -->
-<div class="hidden lg:flex gap-sm mt-xl">
-<a href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="flex-1 h-12 border border-secondary text-secondary bg-transparent font-label-caps text-label-caps tracking-widest hover:bg-secondary/5 transition-colors flex items-center justify-center">
-            {{ __('ADD TO CART') }}
-        </a>
-<a href="{{ route('customer.checkout') }}" class="btn-gold flex-1 h-12 font-label-caps text-label-caps tracking-widest flex items-center justify-center">
-            {{ __('BUY NOW') }}
-        </a>
-</div>
-</section>
-<!-- Accordions -->
-<section class="border-t border-outline-variant">
-<!-- Description -->
-<details class="group border-b border-outline-variant">
-<summary class="flex justify-between items-center px-container-margin py-sm cursor-pointer list-none">
-<span class="font-title-md text-title-md text-on-surface">{{ __('Description') }}</span>
-<span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
-</summary>
-<div class="px-container-margin pb-sm">
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-                        An effortlessly chic oversized shirt crafted from premium, breathable linen. Featuring a classic collar, button-down front, and dropped shoulders for a relaxed silhouette. Perfect for layering over swimwear or tucking into tailored trousers for a sophisticated summer look.
-                    </p>
-</div>
-</details>
-<!-- Material & Care -->
-<details class="group border-b border-outline-variant">
-<summary class="flex justify-between items-center px-container-margin py-sm cursor-pointer list-none">
-<span class="font-title-md text-title-md text-on-surface">{{ __('Material &amp; Care') }}</span>
-<span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
-</summary>
-<div class="px-container-margin pb-sm">
-<ul class="font-body-sm text-body-sm text-on-surface-variant list-disc list-inside space-y-1">
-<li>100% Linen</li>
-<li>{{ __('Machine wash cold with like colors') }}</li>
-<li>{{ __('Do not bleach') }}</li>
-<li>{{ __('Tumble dry low or hang to dry') }}</li>
-<li>{{ __('Warm iron if needed') }}</li>
-</ul>
-</div>
-</details>
-<!-- Shipping & Returns -->
-<details class="group border-b border-outline-variant">
-<summary class="flex justify-between items-center px-container-margin py-sm cursor-pointer list-none">
-<span class="font-title-md text-title-md text-on-surface">{{ __('Shipping &amp; Returns') }}</span>
-<span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
-</summary>
-<div class="px-container-margin pb-sm">
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-                        {{ __('Free standard shipping on orders over Rp 500.000. Returns accepted within 14 days of delivery. Items must be unworn with original tags attached.') }}
-                    </p>
-</div>
-</details>
-</section>
-<!-- Buyer Reviews -->
-<section class="border-t border-outline-variant">
-<div class="flex items-center justify-between px-container-margin pt-md pb-sm">
-<h2 class="font-title-md text-title-md text-on-surface">{{ __('Buyer Reviews') }}</h2>
-<span class="font-label-sm text-label-sm text-on-surface-variant inline-flex items-center gap-xs">4.8 <span class="material-symbols-outlined text-[14px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span> {{ __('(124)') }}</span>
-</div>
-<!-- Review 1 -->
-<article class="px-container-margin py-md border-b border-outline-variant">
-<div class="flex items-start justify-between gap-md">
-<div class="flex items-center gap-sm min-w-0">
-<div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-caps text-label-caps shrink-0">SM</div>
-<div class="min-w-0">
-<p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Sarah M.</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant truncate">May 30, 2026 · {{ __('Verified Purchase') }}</p>
-</div>
-</div>
-<div class="relative shrink-0">
-<button aria-label="{{ __('More options') }}" class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant" onclick="toggleReviewMenu(event, 'rv-menu-1')" type="button">
-<span class="material-symbols-outlined text-[18px]">more_vert</span>
-</button>
-<div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT shadow-xl overflow-hidden" id="rv-menu-1">
-<button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="translateReview('rv-text-1', this)" type="button">
-<span class="material-symbols-outlined text-[18px] text-on-surface-variant">translate</span><span class="rv-label" data-state="b" data-a="{{ __('See original') }}" data-b="{{ __('Translate') }}">{{ __('Translate') }}</span>
-</button>
-<button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-error hover:bg-surface-container-low transition-colors text-left" onclick="openReport()" type="button">
-<span class="material-symbols-outlined text-[18px]">flag</span>{{ __('Report review') }}
-</button>
-</div>
-</div>
-</div>
-<div class="flex items-center gap-xs mt-xs">
-<div class="flex text-secondary-fixed-dim">
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm" data-state="original" data-original="The linen quality is exceptional - breathable yet structured. The oversized cut drapes beautifully and the white stays crisp after washing. Worth every rupiah." data-translated="Kualitas linen-nya luar biasa - adem tapi tetap terstruktur. Potongan oversized-nya jatuhnya bagus banget dan warna putihnya tetap cerah setelah dicuci. Sepadunya!" id="rv-text-1">
-                    The linen quality is exceptional - breathable yet structured. The oversized cut drapes beautifully and the white stays crisp after washing. Worth every rupiah.
-                </p>
-</article>
-<!-- Review 2 -->
-<article class="px-container-margin py-md border-b border-outline-variant">
-<div class="flex items-start justify-between gap-md">
-<div class="flex items-center gap-sm min-w-0">
-<div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-caps text-label-caps shrink-0">DK</div>
-<div class="min-w-0">
-<p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Dewi K.</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant truncate">May 21, 2026 · {{ __('Verified Purchase') }}</p>
-</div>
-</div>
-<div class="relative shrink-0">
-<button aria-label="{{ __('More options') }}" class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant" onclick="toggleReviewMenu(event, 'rv-menu-2')" type="button">
-<span class="material-symbols-outlined text-[18px]">more_vert</span>
-</button>
-<div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT shadow-xl overflow-hidden" id="rv-menu-2">
-<button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="translateReview('rv-text-2', this)" type="button">
-<span class="material-symbols-outlined text-[18px] text-on-surface-variant">translate</span><span class="rv-label" data-state="b" data-a="{{ __('See original') }}" data-b="{{ __('Translate') }}">{{ __('Translate') }}</span>
-</button>
-<button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-error hover:bg-surface-container-low transition-colors text-left" onclick="openReport()" type="button">
-<span class="material-symbols-outlined text-[18px]">flag</span>{{ __('Report review') }}
-</button>
-</div>
-</div>
-</div>
-<div class="flex items-center gap-xs mt-xs">
-<div class="flex text-secondary-fixed-dim">
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]">star_border</span>
-</div>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm" data-state="original" data-original="Bahannya adem dan tidak nerawang, cocok untuk cuaca Jakarta. Ukurannya sesuai dengan panduan ukuran dan pengirimannya cepat. Recommended!" data-translated="The fabric is cool and not see-through, perfect for Jakarta weather. The size matches the size guide and delivery was fast. Recommended!" id="rv-text-2">
-                    Bahannya adem dan tidak nerawang, cocok untuk cuaca Jakarta. Ukurannya sesuai dengan panduan ukuran dan pengirimannya cepat. Recommended!
-                </p>
-</article>
-<!-- Review 3 -->
-<article class="px-container-margin py-md border-b border-outline-variant">
-<div class="flex items-start justify-between gap-md">
-<div class="flex items-center gap-sm min-w-0">
-<div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-caps text-label-caps shrink-0">AR</div>
-<div class="min-w-0">
-<p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Amanda R.</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant truncate">May 12, 2026 · {{ __('Verified Purchase') }}</p>
-</div>
-</div>
-<div class="relative shrink-0">
-<button aria-label="{{ __('More options') }}" class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant" onclick="toggleReviewMenu(event, 'rv-menu-3')" type="button">
-<span class="material-symbols-outlined text-[18px]">more_vert</span>
-</button>
-<div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT shadow-xl overflow-hidden" id="rv-menu-3">
-<button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="translateReview('rv-text-3', this)" type="button">
-<span class="material-symbols-outlined text-[18px] text-on-surface-variant">translate</span><span class="rv-label" data-state="b" data-a="{{ __('See original') }}" data-b="{{ __('Translate') }}">{{ __('Translate') }}</span>
-</button>
-<button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-error hover:bg-surface-container-low transition-colors text-left" onclick="openReport()" type="button">
-<span class="material-symbols-outlined text-[18px]">flag</span>{{ __('Report review') }}
-</button>
-</div>
-</div>
-</div>
-<div class="flex items-center gap-xs mt-xs">
-<div class="flex text-secondary-fixed-dim">
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm" data-state="original" data-original="An elegant minimalist shirt that pairs with everything in my closet. The sleeves run slightly long but that is the intended oversized look." data-translated="Kemeja minimalis yang elegan dan mudah dipadukan dengan semua baju di lemari saya. Lengannya agak panjang tapi memang itu gaya oversized yang dimaksudkan." id="rv-text-3">
-                    An elegant minimalist shirt that pairs with everything in my closet. The sleeves run slightly long but that is the intended oversized look.
-                </p>
-</article>
-</section>
-</div>
-</div>
-<!-- You May Also Like -->
-<section class="py-xl border-t border-outline-variant">
-<h2 class="font-headline-md text-headline-md text-center text-on-surface mb-lg">{{ __('You May Also Like') }}</h2>
-<div class="grid grid-cols-2 sm:grid-cols-3 gap-gutter px-container-margin pb-sm">
-<!-- Card 1 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="block group cursor-pointer">
-<div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant overflow-hidden">
-<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" data-alt="A minimalist fashion editorial image of tailored wide-leg trousers in a soft beige tone, styled cleanly against a light, neutral background, reflecting premium quality and modern elegance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4IYXT8zx75qRHmyTLk9xkyFXQ2aqGro0exB1cwe11WPpyS4_FUyQA7qq8cxx_mFM3PPrNwyPQcZ-_wI0J8kAwOnv5OPd8VFDvqKFUJDKt9UwsYXTBwCIVxPjpYG2Tc4O-GOg6_Sx5cjoPIKUP4Xa4HwLQKlAk6lcw-xaN7sm1Ad78waPAEVlkv60tLR_o8Ap-HQ14icz3DI2UgdsVBjVQiozmTytcTh9-KT1npkU4xDEEJGQTJro"/>
-<button type="button" aria-label="{{ __('Add to wishlist') }}" data-url="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" onclick="goWishlist(this)" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</button>
-</div>
-<div class="space-y-1">
-<p class="font-label-sm text-label-sm text-on-surface-variant">RALIVA</p>
-<p class="font-body-sm text-body-sm text-on-surface font-medium truncate">Tailored Wide Leg Trousers</p>
-<p class="font-body-sm text-body-sm text-on-surface">Rp 349.000</p>
-</div>
-</a>
-<!-- Card 2 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="block group cursor-pointer">
-<div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant overflow-hidden">
-<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" data-alt="A chic, minimalist editorial shot of a ribbed knit tank top in black, draped elegantly on a hanger against a pristine white background. The focus is on the texture and modern silhouette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBSCYHpJJ10PR1rv62xsiSUHcgECc8Yl7gxPOJqlAhXqjJGHnlXSe3G3OT0zZOpoO6zdOywN_zGJ312gSUWGyrERx3QJH1sib9jdTkpcPR1UGz6uHG3aBCzTk7nRRLeHq2PxVj1WHkGQGh3Vuk2k_lfNftY_XKOXombF0_TGRpWMQudl33iPubHVACr4ZiMJFHeHt5rU1xGcveNoDt2q3Et_j-G22OqOzW2MDW8EobpXOmXTWjw3M"/>
-<button type="button" aria-label="{{ __('Add to wishlist') }}" data-url="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" onclick="goWishlist(this)" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</button>
-</div>
-<div class="space-y-1">
-<p class="font-label-sm text-label-sm text-on-surface-variant">RALIVA</p>
-<p class="font-body-sm text-body-sm text-on-surface font-medium truncate">Ribbed Knit Tank</p>
-<p class="font-body-sm text-body-sm text-on-surface">Rp 149.000</p>
-</div>
-</a>
-<!-- Card 3 -->
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="block group cursor-pointer">
-<div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant overflow-hidden">
-<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" data-alt="A sophisticated editorial photograph of a minimalist leather tote bag in deep brown, placed thoughtfully on a smooth stone surface with soft, diffused lighting typical of luxury fashion campaigns." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1cthY8K2JPKLNpkQV3JBRI6w4KRyg6mQeqgXctAcetZp_v6EdYIOJjePq8SWVSrQa2JsuHIHIjEMmjJ5PJF-s2QDQm4sbvggtYfBOhWZFYXxH9UkXED66ErqitL29o75HKKd40LGYNnkEMndKxfJ4L-7z-rbdPVecIV7fdOrMA_mrvmKu5Y8cgTTHi3JY3AyfNe_NyppH-jBZSnRZdg5g_HhxOs5QixseLjNAx7O8kEcjJiOq07Q"/>
-<button type="button" aria-label="{{ __('Add to wishlist') }}" data-url="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" onclick="goWishlist(this)" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
-</button>
-</div>
-<div class="space-y-1">
-<p class="font-label-sm text-label-sm text-on-surface-variant">RALIVA</p>
-<p class="font-body-sm text-body-sm text-on-surface font-medium truncate">Minimalist Leather Tote</p>
-<p class="font-body-sm text-body-sm text-on-surface">Rp 599.000</p>
-</div>
-</a>
-</div>
-</section>
-</main>
-<!-- Sticky Bottom Action Bar -->
-<div class="fixed bottom-0 left-0 w-full lg:hidden bg-surface/95 backdrop-blur-sm px-container-margin py-md flex gap-sm z-40" style="padding-bottom: max(16px, env(safe-area-inset-bottom));">
-<a href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => url()->current()]) }}" class="flex-1 h-12 border border-secondary text-secondary bg-transparent font-label-caps text-label-caps tracking-widest hover:bg-secondary/5 transition-colors flex items-center justify-center">
-            {{ __('ADD TO CART') }}
-        </a>
-<a href="{{ route('customer.checkout') }}" class="btn-gold flex-1 h-12 font-label-caps text-label-caps tracking-widest flex items-center justify-center">
-            {{ __('BUY NOW') }}
-        </a>
-</div>
-<!-- Report Review Modal -->
-<div class="hidden fixed inset-0 bg-black/50 z-[80] flex items-center justify-center p-container-margin" id="report-modal" onclick="closeReport()">
-<div class="w-full max-w-sm bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-xl" onclick="event.stopPropagation()">
-<div class="flex items-center gap-sm mb-sm">
-<span class="material-symbols-outlined text-error text-[22px]">flag</span>
-<h3 class="font-title-md text-title-md text-on-surface">{{ __('Report this review') }}</h3>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant mb-md">{{ __('Why are you reporting this review?') }}</p>
-<form id="report-form">
-<label class="flex items-center gap-sm py-sm border-b border-outline-variant cursor-pointer">
-<input class="w-4 h-4 shop-checkbox shrink-0" name="reason" required type="radio" value="spam"/>
-<span class="font-body-sm text-body-sm text-on-surface">{{ __('Spam or promotion') }}</span>
-</label>
-<label class="flex items-center gap-sm py-sm border-b border-outline-variant cursor-pointer">
-<input class="w-4 h-4 shop-checkbox shrink-0" name="reason" required type="radio" value="harassment"/>
-<span class="font-body-sm text-body-sm text-on-surface">{{ __('Harassment or offensive content') }}</span>
-</label>
-<label class="flex items-center gap-sm py-sm cursor-pointer">
-<input class="w-4 h-4 shop-checkbox shrink-0" name="reason" required type="radio" value="irrelevant"/>
-<span class="font-body-sm text-body-sm text-on-surface">{{ __('Irrelevant to the product') }}</span>
-</label>
-<div class="flex gap-gutter mt-lg">
-<button class="flex-1 h-12 border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-widest hover:bg-secondary/5 transition-colors" onclick="closeReport()" type="button">{{ __('Cancel') }}</button>
-<button class="flex-1 h-12 btn-gold font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center" type="submit">{{ __('Send report') }}</button>
-</div>
-</form>
-<div class="hidden text-center py-md" id="report-success">
-<span class="material-symbols-outlined text-secondary text-[48px]">check_circle</span>
-<p class="font-body-lg text-body-lg text-on-surface mt-sm mb-lg">{{ __('Thank you. Your report has been submitted.') }}</p>
-<button class="w-full h-12 btn-gold font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center" onclick="closeReport()" type="button">{{ __('Close') }}</button>
-</div>
-</div>
-</div>
-<script>
+                                </div>
+                            <div class="space-y-1">
+                                <p class="font-label-sm text-label-sm text-on-surface-variant">{{ $rp->store?->nama_toko ?? __('RALIVA') }}</p>
+                                <p class="font-body-sm text-body-sm text-on-surface font-medium truncate">{{ $rp->nama_produk }}</p>
+                                <p class="font-body-sm text-body-sm text-on-surface">Rp {{ number_format($rpMin, 0, ',', '.') }}</p>
+                            </div>
+                        </a>
+@empty
+                        <div class="col-span-full text-center py-xl">
+                            <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No related products yet.') }}</p>
+                        </div>
+@endforelse
+                    </div>
+                </section>
+            </div>
+        </main>
+    <!-- Mobile Sticky Bottom Action Bar -->
+    <div class="fixed bottom-0 left-0 right-0 lg:left-72 z-50 px-container-margin py-sm pb-safe">
+        <div class="flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.18)]">
+            <button type="button" data-cart-add data-variant-id="" class="flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-widest transition-colors hover:bg-secondary/5">
+                <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+                <span class="truncate">{{ __('CART') }}</span>
+                </button>
+            <a href="{{ route('customer.checkout') }}" data-buy-now class="btn-gold flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                <span class="material-symbols-outlined text-[20px]">attach_money</span>
+                <span class="truncate">{{ __('BUY') }}</span>
+                </a>
+            </div>
+        </div>
+    <!-- Report Review Modal -->
+    <div class="hidden fixed inset-0 bg-black/50 z-[80] flex items-center justify-center p-container-margin" id="report-modal" onclick="closeReport()">
+        <div class="w-full max-w-sm bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-xl" onclick="event.stopPropagation()">
+            <div class="flex items-center gap-sm mb-sm">
+                <span class="material-symbols-outlined text-error text-[22px]">flag</span>
+                <h3 class="font-title-md text-title-md text-on-surface">{{ __('Report this review') }}</h3>
+                </div>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">{{ __('Why are you reporting this review?') }}</p>
+            <form id="report-form">
+                <label class="flex items-center gap-sm py-sm border-b border-outline-variant cursor-pointer">
+                    <input class="w-4 h-4 shop-checkbox shrink-0" name="reason" required type="radio" value="spam"/>
+                    <span class="font-body-sm text-body-sm text-on-surface">{{ __('Spam or promotion') }}</span>
+                    </label>
+                <label class="flex items-center gap-sm py-sm border-b border-outline-variant cursor-pointer">
+                    <input class="w-4 h-4 shop-checkbox shrink-0" name="reason" required type="radio" value="harassment"/>
+                    <span class="font-body-sm text-body-sm text-on-surface">{{ __('Harassment or offensive content') }}</span>
+                    </label>
+                <label class="flex items-center gap-sm py-sm cursor-pointer">
+                    <input class="w-4 h-4 shop-checkbox shrink-0" name="reason" required type="radio" value="irrelevant"/>
+                    <span class="font-body-sm text-body-sm text-on-surface">{{ __('Irrelevant to the product') }}</span>
+                    </label>
+                <div class="flex gap-gutter mt-lg">
+                    <button class="flex-1 h-12 border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-widest hover:bg-secondary/5 transition-colors" onclick="closeReport()" type="button">{{ __('Cancel') }}</button>
+                    <button class="flex-1 h-12 btn-gold font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center" type="submit">{{ __('Send report') }}</button>
+                    </div>
+                </form>
+            <div class="hidden text-center py-md" id="report-success">
+                <span class="material-symbols-outlined text-secondary text-[48px]">check_circle</span>
+                <p class="font-body-lg text-body-lg text-on-surface mt-sm mb-lg">{{ __('Thank you. Your report has been submitted.') }}</p>
+                <button class="w-full h-12 btn-gold font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center" onclick="closeReport()" type="button">{{ __('Close') }}</button>
+                </div>
+            </div>
+        </div>
+    <script>
+        /* ==== VARIANT SELECTION for Add to Cart ==== */
+        (function () {
+            var card = document.querySelector('[data-variants]');
+            if (!card) return;
+            var variants = JSON.parse(card.getAttribute('data-variants') || '[]');
+            var colorBtns = Array.prototype.slice.call(document.querySelectorAll('[data-color-btn]'));
+            var sizeBtns = Array.prototype.slice.call(document.querySelectorAll('[data-size-btn]'));
+            var priceEl = document.getElementById('pd-price');
+            var colorLabel = document.getElementById('pd-color-label');
+            var addBtns = Array.prototype.slice.call(document.querySelectorAll('[data-cart-add]'));
+            var buyNow = document.querySelector('[data-buy-now]');
+            var buyBase = buyNow ? buyNow.getAttribute('href') : '';
+
+            var selectedColor = colorBtns.length ? colorBtns[0].getAttribute('data-color') : null;
+            var selectedSize = sizeBtns.length ? sizeBtns[0].getAttribute('data-size') : null;
+
+            function rupiah(n) {
+                n = Math.round(Number(n) || 0);
+                return 'Rp ' + n.toLocaleString('id-ID');
+            }
+
+            function applySelection() {
+                var match = variants.find(function (v) {
+                    return v.warna === selectedColor && v.ukuran === selectedSize;
+                });
+
+                colorBtns.forEach(function (b) {
+                    var active = b.getAttribute('data-color') === selectedColor;
+                    b.classList.toggle('swatch-selected', active);
+                });
+                sizeBtns.forEach(function (b) {
+                    var active = b.getAttribute('data-size') === selectedSize;
+                    b.classList.toggle('size-pill-selected', active);
+                });
+
+                var variantId = match ? String(match.id) : '';
+                addBtns.forEach(function (b) { b.setAttribute('data-variant-id', variantId); });
+
+                if (buyNow) {
+                    buyNow.setAttribute('href', match
+                        ? buyBase + (buyBase.indexOf('?') >= 0 ? '&' : '?') + 'buy=' + variantId
+                        : buyBase);
+                }
+
+                if (colorLabel && selectedColor) colorLabel.textContent = selectedColor.toUpperCase();
+                if (priceEl && match) priceEl.textContent = rupiah(match.harga);
+            }
+
+            colorBtns.forEach(function (b) {
+                b.addEventListener('click', function () {
+                    selectedColor = b.getAttribute('data-color');
+                    applySelection();
+                });
+            });
+            sizeBtns.forEach(function (b) {
+                b.addEventListener('click', function () {
+                    selectedSize = b.getAttribute('data-size');
+                    applySelection();
+                });
+            });
+
+            applySelection();
+        })();
+
         function toggleReviewMenu(e, id) {
             e.stopPropagation();
             document.querySelectorAll('[id^="rv-menu-"]').forEach(function (m) {
@@ -718,6 +781,28 @@
             event.stopPropagation();
             window.location.href = btn.dataset.url;
         };
+        document.addEventListener('DOMContentLoaded', function () {
+            var els = document.querySelectorAll('.reveal-up');
+            if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('is-visible'); }); return; }
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); } });
+            }, { threshold: 0.1 });
+            els.forEach(function (e) { io.observe(e); });
+        });
     </script>
-@include('customer._partials.drawer')
-</body></html>
+    <script>
+        /* Arrow back = kembali ke halaman customer sebelumnya */
+        document.addEventListener('click', function (e) {
+            var back = e.target.closest('[data-go-back]');
+            if (!back) return;
+            e.preventDefault();
+            var ref = document.referrer;
+            if (ref && ref.indexOf(window.location.origin) === 0) {
+                window.history.back();
+            } else {
+                window.location.href = back.getAttribute('href');
+            }
+        });
+    </script>
+    @include('customer._partials.drawer')
+    </body></html>

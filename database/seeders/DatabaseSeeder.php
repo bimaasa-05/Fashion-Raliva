@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             SuperAdminSeeder::class,
             UserSeeder::class,
+            ProductSeeder::class,
+            ReviewSeeder::class,
             WalletSeeder::class,
             GudangDemoSeeder::class,
             OwnerSeeder::class,

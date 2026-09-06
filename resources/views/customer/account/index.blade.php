@@ -22,7 +22,7 @@
                         "primary-fixed-dim": "#c8c6c5",
                         "surface-variant": "#e3e2e2",
                         "on-surface": "#1b1c1c",
-                        "secondary": "#795905",
+                        "secondary": "#8B1E3F",
                         "surface-dim": "#dbdad9",
                         "on-error": "#ffffff",
                         "primary": "#000000",
@@ -30,7 +30,7 @@
                         "tertiary-container": "#1a1c1a",
                         "error-container": "#ffdad6",
                         "on-tertiary": "#ffffff",
-                        "secondary-fixed": "#ffdf9f",
+                        "secondary-fixed": "#8B1E3F",
                         "on-primary": "#ffffff",
                         "surface-container-lowest": "#ffffff",
                         "error": "#ba1a1a",
@@ -41,20 +41,20 @@
                         "primary-fixed": "#e5e2e1",
                         "outline-variant": "#c4c7c7",
                         "surface-tint": "#5f5e5e",
-                        "secondary-fixed-dim": "#ebc168",
+                        "secondary-fixed-dim": "#8B1E3F",
                         "outline": "#747878",
                         "on-primary-fixed-variant": "#474646",
-                        "on-secondary-fixed-variant": "#5c4300",
+                        "on-secondary-fixed-variant": "#6D1428",
                         "on-tertiary-fixed": "#1a1c1a",
-                        "on-secondary-container": "#775804",
+                        "on-secondary-container": "#6D1428",
                         "inverse-on-surface": "#f2f0f0",
                         "tertiary-fixed-dim": "#c7c6c4",
                         "tertiary-fixed": "#e3e2df",
                         "surface-container-high": "#e9e8e7",
-                        "on-secondary-fixed": "#261a00",
+                        "on-secondary-fixed": "#6D1428",
                         "background": "#fbf9f9",
                         "surface": "#fbf9f9",
-                        "secondary-container": "#fdd177",
+                        "secondary-container": "#8B1E3F",
                         "on-surface-variant": "#444748",
                         "primary-container": "#1c1b1b",
                         "inverse-primary": "#c8c6c5",
@@ -121,7 +121,7 @@
         --chrome-text-faint: rgba(0,0,0,.45);
         --chrome-border: rgba(0,0,0,.1);
         --chrome-hover: rgba(0,0,0,.06);
-        --chrome-accent: #795905;
+        --chrome-accent: #8B1E3F;
     }
     html.theme-dark {
         --chrome-bg: #1c1b1b;
@@ -131,7 +131,7 @@
         --chrome-text-faint: rgba(255,255,255,.5);
         --chrome-border: rgba(255,255,255,.1);
         --chrome-hover: rgba(255,255,255,.1);
-        --chrome-accent: #ebc168;
+        --chrome-accent: #8B1E3F;
     }
 </style>
 <style>
@@ -158,7 +158,7 @@
     html.theme-dark .text-outline { color: #8a8781 !important; }
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
-    html.theme-dark .text-secondary { color: #ebc168 !important; }
+    html.theme-dark .text-secondary { color: #8B1E3F !important; }
     html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
     html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
@@ -172,7 +172,7 @@
     html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
     html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
     html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
-    html.theme-dark .hover\:text-secondary:hover { color: #ebc168 !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #8B1E3F !important; }
     html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
     html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
     html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
@@ -204,10 +204,30 @@
     .btn-gold:hover::after { animation: authFlash 1.4s linear infinite; }
     .btn-gold.flashing::after { animation: authFlash 1.4s cubic-bezier(.4,0,.2,1) 1; }
     @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
-    :root           { --btn-gold-bg: #e8c25a; --btn-gold-text: #261a00; }
-    html.theme-dark { --btn-gold-bg: #d9ab4f; --btn-gold-text: #261a00; }
+    :root           { --btn-gold-bg: #8B1E3F; --btn-gold-text: #ffffff; }
+    html.theme-dark { --btn-gold-bg: #6D1428; --btn-gold-text: #ffffff; }
 </style>
-  </head>
+  <style>
+  /* ===== RALIVA ACCOUNT: premium card + burgundy parity (home/shop/order/wishlist/search) ===== */
+  :root { --surface-ivory:#F8F6F2; --surface-warm:#F3F0EA; --border-soft:#E5E1DA; --text-muted:#777777; }
+  html.theme-dark { --surface-ivory:#1e1d1c; --surface-warm:#201f1e; --border-soft:rgba(255,255,255,.1); --text-muted:#b9b6b1; }
+  .atl-eyebrow { display:inline-flex; align-items:center; gap:.65rem; }
+  .atl-eyebrow::before { content:''; width:30px; height:1px; background:var(--chrome-accent); opacity:.7; }
+  .card-premium { box-shadow:0 1px 2px rgb(17 17 17 / .04),0 12px 32px -16px rgb(17 17 17 / .16); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; }
+  .card-premium:hover { transform:translateY(-3px); box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
+  html.theme-dark .card-premium { background-color:var(--surface-ivory); border-color:var(--border-soft); box-shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px -12px rgb(0 0 0 / .5); }
+  html.theme-dark .card-premium:hover { box-shadow:0 2px 4px rgb(0 0 0 / .4),0 20px 48px -20px rgb(0 0 0 / .7); border-color:rgba(139,30,63,.55); }
+  .premium-heading::before { content:''; display:inline-block; width:4px; height:.95em; margin-right:.65rem; background:#8B1E3F; border-radius:9999px; vertical-align:-.05em; }
+  .reveal-up { opacity:0; }
+  .reveal-up.in { animation: sectionRise .7s cubic-bezier(.22,1,.36,1) forwards; }
+  @keyframes sectionRise { from { opacity:0; transform:translateY(16px);} to { opacity:1; transform:none; } }
+  @media (prefers-reduced-motion: reduce) { .reveal-up { animation:none !important; opacity:1 !important; transform:none !important; } }
+  #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(139,30,30,.10); }
+  html.theme-dark #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(163,38,38,.16); }
+  .bn-active .material-symbols-outlined { color:#8B1E3F !important; }
+  html.theme-dark .bn-active .material-symbols-outlined { color:#8B1E3F !important; }
+</style>
+</head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
 <header class="flex justify-between items-center w-full px-container-margin h-16 bg-[var(--chrome-bg)] text-[var(--chrome-text)] border-b border-[var(--chrome-border)] flat no shadows docked full-width top-0 z-40 sticky">
@@ -220,13 +240,26 @@
 </button>
 </header>
 <!-- Main Content Canvas -->
-<main class="flex-grow w-full max-w-[600px] lg:max-w-3xl mx-auto px-container-margin py-md">
+<main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Page Title -->
-<div class="mb-lg text-center md:text-left">
-<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">{{ __('ACCOUNT') }}</h2>
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium mb-lg md:mb-xl text-center md:text-left">
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">MY PROFILE</p>
+<h2 class="premium-heading font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">{{ __('ACCOUNT') }}</h2>
+</div>
 </div>
 <!-- Profile Header -->
 @auth
+<<<<<<< HEAD
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex flex-col items-center md:flex-row md:items-start gap-md">
+<div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant flex-shrink-0 bg-surface-container-high flex items-center justify-center">
+@if(Auth::user()->foto_profil_url)
+<img src="{{ Auth::user()->foto_profil_url }}" alt="{{ Auth::user()->nama_lengkap }}" class="w-full h-full object-cover"/>
+@else
+<span class="material-symbols-outlined text-[44px] text-on-surface-variant">person</span>
+@endif
+=======
 @php
   $cnama = Auth::user()->nama_lengkap ?? 'Customer';
   $cw = preg_split('/\s+/', trim($cnama));
@@ -239,19 +272,23 @@
 <section class="flex flex-col items-center md:flex-row md:items-start gap-md mb-xl bg-surface-container-low rounded-lg p-md">
 <div class="w-24 h-24 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-2xl shrink-0 border border-gold-accent/30">
 {{ $cinit }}
+>>>>>>> 2b09555281b997789a03982a1f3357cb46141e24
 </div>
 <div class="flex flex-col items-center md:items-start justify-center flex-grow">
 <h3 class="font-title-md text-title-md text-on-surface mb-1">{{ Auth::user()->nama_lengkap }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mb-4">{{ Auth::user()->email }}</p>
 <div class="flex flex-wrap items-center gap-3">
-<a class="px-6 py-2 border border-primary text-primary font-label-caps text-label-caps uppercase hover:bg-surface-container-low transition-colors duration-200 inline-block" href="{{ route('customer.account.edit') }}">
+<a class="px-6 py-2 border border-secondary text-secondary font-label-caps text-label-caps uppercase hover:bg-secondary/10 transition-colors duration-200 inline-block" href="{{ route('customer.account.edit') }}">
                     {{ __('Edit Profile') }}
                 </a>
 </div>
 </div>
-</section>
+</div>
+</div>
 @else
-<section class="flex flex-col items-center md:flex-row md:items-start gap-md mb-xl">
+<section class="py-xl reveal-up">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex flex-col items-center md:flex-row md:items-start gap-md">
 <div class="w-24 h-24 rounded-full border border-outline-variant flex-shrink-0 bg-surface-container-high flex items-center justify-center">
 <span class="material-symbols-outlined text-[44px] text-on-surface-variant">person</span>
 </div>
@@ -266,60 +303,64 @@
 <a class="text-secondary font-semibold hover:opacity-80 transition-opacity ml-1" href="{{ route('login', ['redirect' => '/customer/account']) }}">{{ __('LOGIN') }}</a>
 </p>
 </div>
+</div>
+</div>
 </section>
 @endif
 <!-- Menu List -->
-<nav class="flex flex-col border-t border-outline-variant">
+<section class="py-xl reveal-up">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<nav class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex flex-col">
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.order-tracking') }}">
 <div class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="local_mall">local_mall</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors" data-icon="local_mall">local_mall</span>
 <span class="font-body-lg text-body-lg text-on-surface">{{ __('My Orders') }}</span>
 </div>
-<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-secondary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
         <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.wishlist') }}">
             <div class="flex items-center gap-sm">
-                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="favorite_border">favorite_border</span>
+                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors" data-icon="favorite_border">favorite_border</span>
                 <span class="font-body-lg text-body-lg text-on-surface">{{ __('Wishlist') }}</span>
 </div>
-<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-secondary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
-<a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.address') }}">
+<a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.address.index') }}">
 <div class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="location_on">location_on</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors" data-icon="location_on">location_on</span>
 <span class="font-body-lg text-body-lg text-on-surface">{{ __('Addresses') }}</span>
 </div>
-<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-secondary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.reviews') }}">
 <div class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="star_border">star_border</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors" data-icon="star_border">star_border</span>
 <span class="font-body-lg text-body-lg text-on-surface">{{ __('My Reviews') }}</span>
 </div>
-<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-secondary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.notifications') }}">
 <div class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="notifications_none">notifications_none</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors" data-icon="notifications_none">notifications_none</span>
 <span class="font-body-lg text-body-lg text-on-surface">{{ __('Notifications') }}</span>
 </div>
-<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-secondary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.help') }}">
 <div class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="help_outline">help_outline</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors" data-icon="help_outline">help_outline</span>
 <span class="font-body-lg text-body-lg text-on-surface">{{ __('Help Center') }}</span>
 </div>
-<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-secondary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.settings') }}">
 <div class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="settings">settings</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors" data-icon="settings">settings</span>
 <span class="font-body-lg text-body-lg text-on-surface">Settings</span>
 </div>
-<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-secondary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
-<form method="POST" action="{{ route('logout') }}" class="mt-lg">
+<form method="POST" action="{{ route('logout') }}">
     @csrf
     <button type="submit" class="w-full flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
         <div class="flex items-center gap-sm">
@@ -329,6 +370,8 @@
     </button>
 </form>
 </nav>
+</div>
+</section>
 </main>
 <!-- BottomNavBar (Mobile Only) -->
 @include('customer._partials.bottom-nav')
@@ -343,4 +386,14 @@
         });
     </script>
 @include('customer._partials.drawer')
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var els = document.querySelectorAll('.reveal-up');
+  if (!('IntersectionObserver' in window)) { els.forEach(function(e){ e.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { threshold: 0.12 });
+  els.forEach(function(e){ io.observe(e); });
+});
+</script>
 </body></html>
