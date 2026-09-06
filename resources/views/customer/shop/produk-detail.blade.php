@@ -623,7 +623,7 @@
                 <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
                 <span class="truncate">{{ __('CART') }}</span>
                 </button>
-            <a href="{{ route('customer.checkout') }}" class="btn-gold flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+            <a href="{{ route('customer.checkout') }}" data-buy-now class="btn-gold flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
                 <span class="material-symbols-outlined text-[20px]">attach_money</span>
                 <span class="truncate">{{ __('BUY') }}</span>
                 </a>
@@ -673,6 +673,8 @@
             var priceEl = document.getElementById('pd-price');
             var colorLabel = document.getElementById('pd-color-label');
             var addBtns = Array.prototype.slice.call(document.querySelectorAll('[data-cart-add]'));
+            var buyNow = document.querySelector('[data-buy-now]');
+            var buyBase = buyNow ? buyNow.getAttribute('href') : '';
 
             var selectedColor = colorBtns.length ? colorBtns[0].getAttribute('data-color') : null;
             var selectedSize = sizeBtns.length ? sizeBtns[0].getAttribute('data-size') : null;
@@ -698,6 +700,12 @@
 
                 var variantId = match ? String(match.id) : '';
                 addBtns.forEach(function (b) { b.setAttribute('data-variant-id', variantId); });
+
+                if (buyNow) {
+                    buyNow.setAttribute('href', match
+                        ? buyBase + (buyBase.indexOf('?') >= 0 ? '&' : '?') + 'buy=' + variantId
+                        : buyBase);
+                }
 
                 if (colorLabel && selectedColor) colorLabel.textContent = selectedColor.toUpperCase();
                 if (priceEl && match) priceEl.textContent = rupiah(match.harga);
