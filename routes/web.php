@@ -128,9 +128,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
 
     Route::get('/shop/store/{id}/about', [\App\Http\Controllers\Customer\ShopController::class, 'storeAbout'])->name('shop.store.about');
 
-    Route::get('/search', function () {
-        return view('customer.search.index');
-    })->name('search');
+    Route::get('/search', [\App\Http\Controllers\Customer\SearchController::class, 'index'])->name('search');
 
     Route::middleware('role:Customer')->group(function () {
         Route::resource('address', \App\Http\Controllers\Customer\AddressController::class)->except(['show']);

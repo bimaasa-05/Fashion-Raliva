@@ -243,10 +243,10 @@
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
-<form class="flex items-center gap-sm w-full">
+<form action="{{ route('customer.search') }}" method="GET" class="flex items-center gap-sm w-full">
 <div class="relative flex-grow">
 <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-<input autofocus class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-xl pr-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" placeholder="{{ __('Search products, stores, categories...') }}" type="search"/>
+<input name="q" value="{{ $q }}" autofocus class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-xl pr-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" placeholder="{{ __('Search products, stores, categories...') }}" type="search"/>
 </div>
 <button class="bg-secondary text-on-secondary font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:opacity-90 transition-opacity rounded-full" type="submit">{{ __('SEARCH') }}</button>
 </form>
@@ -258,9 +258,11 @@
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Popular Searches') }}</h3>
 <div class="mt-md flex flex-wrap gap-sm">
-@foreach (['Linen Shirt', 'Silk Dress', 'Blazer', 'Tote Bag', 'Trousers', 'Knit Top'] as $tag)
-<a href="{{ route('customer.shop') }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ $tag }}</a>
-@endforeach
+@forelse ($popularTags as $tag)
+<a href="{{ route('customer.search', ['q' => $tag]) }}" class="shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-primary hover:text-primary transition-colors">{{ $tag }}</a>
+@empty
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Belum ada tag populer.') }}</p>
+@endforelse
 </div>
 </div>
 </div>
@@ -269,34 +271,43 @@
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="flex justify-between items-center mb-xs">
-<h2 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ __('Trending Now') }}</h2>
+<h2 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ $q !== '' ? __('Search Results') : __('Trending Now') }}</h2>
 <a href="{{ route('customer.shop') }}" class="font-label-caps text-label-caps text-secondary uppercase tracking-widest hover:opacity-80 transition-opacity">View All</a>
 </div>
 <div class="mt-md grid grid-cols-2 md:grid-cols-4 gap-gutter">
-@foreach ([
-                    ['brand' => 'Noiré Studio', 'name' => 'Tailored Linen Blazer', 'price' => '$245.00', 'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ'],
-                    ['brand' => 'Lunara Fashion', 'name' => 'Structured Leather Tote', 'price' => '$380.00', 'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuDotrquQ9ru5aXlWl5XbgLhEMJq3WBfo5DDEAS3Z-F5LnAIv27Q3259la3QLZghjnF5R8udNJqY0Toq6SHw5JvN3PqANThsUOvwujXixkrq5zZBH5OW_D3QTRD3qObufW5Uz2-ahDe36xdtDHuA8SK2Ldhp4wpMReozYAnqkNj5ZG3A37LwDOS6aXDnCEg_MNh_j2C1VKegB7PNMCwMV-jwzYAwrhuqG1UCGjQoSl3A0QRKO-gFHlQ'],
-                    ['brand' => 'Maëva House', 'name' => 'Silk Slip Dress', 'price' => '$195.00', 'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuBrQWexD2Xms4d7-qplQNqqTI4EebkIxaCqpOssP3jfxkcDDAjBvE4kuCEgO-j-Yd-Vfxm6sW-zOaQShx89-kFo0JwvaQ9DnVYjw0ZeHlwNYQaWtigNJNUb1P2E3VS7jVbvb2gfkn5AgK0_pHzGjUiSO2kjiDWXbTKy2tRqRQq5I2md_UYdyHQR_axy07aFn3BeoVctJgri9jLNSSEizCJoXGSF5I0rX6QAaqkzanalXeH6sTmuLnA'],
-                    ['brand' => 'Kayana Apparel', 'name' => 'Geometric Gold Hoops', 'price' => '$85.00', 'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuAXqNhNFWMr-Gm8_uwAVgBbqtzcNdb5MAfQUsG_3GJbmE0gm167f27WLQY44QclgDSw7N_b2k0qpe9HdTKZlExYsZl6FJUCnKft0foIHP3pp3uFUAxnwrYM3o7ap46wCmmnSGAbNN-gDM_Kptg0bVNG6ghZhp7r3PeQ66ZD2yhgIMKhB9sSycHTa8yXBJ3fTbNvx2tH5SUu76da_WcZ3bJW7JeJmVuEnVOdIHENcwQB0a1sOCp-u_s'],
-                ] as $product)
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="flex flex-col group cursor-pointer">
+@forelse ($products as $p)
+@php
+    $sMin = $p->variants->min('harga') ?? $p->harga_dasar;
+    $sImg = $p->images->first()?->file_gambar ?? '';
+    $sImgUrl = $sImg ? (filter_var($sImg, FILTER_VALIDATE_URL) ? $sImg : asset($sImg)) : 'https://picsum.photos/seed/search/900/1200';
+    $sWl = in_array($p->product_id, $wishlistedIds, true);
+@endphp
+<div class="relative flex flex-col group cursor-pointer">
+<a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
-<img alt="{{ $product['name'] }}" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" src="{{ $product['img'] }}"/>
-<button type="button" data-wishlist-toggle data-product-id="{{ $loop->iteration }}" aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center">
-<span class="material-symbols-outlined" data-icon="favorite_border">favorite_border</span>
+<img alt="{{ $p->nama_produk }}" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" src="{{ $sImgUrl }}"/>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $p->store?->nama_toko ?? __('RALIVA') }}</span>
+<h3 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">{{ $p->nama_produk }}</h3>
+<span class="font-body-sm text-body-sm text-on-surface mt-1">Rp {{ number_format($sMin, 0, ',', '.') }}</span>
+</a>
+<button type="button" data-wishlist-toggle data-product-id="{{ $p->product_id }}" aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center{{ $sWl ? ' wishlisted-active' : '' }}">
+<span class="material-symbols-outlined" data-icon="favorite{{ $sWl ? '' : '_border' }}"@if($sWl) data-weight="fill"@endif>favorite{{ $sWl ? '' : '_border' }}</span>
 </button>
 </div>
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $product['brand'] }}</span>
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">{{ $product['name'] }}</h3>
-<span class="font-body-sm text-body-sm text-on-surface mt-1">{{ $product['price'] }}</span>
-</a>
-@endforeach
+@empty
+<div class="col-span-full flex flex-col items-center justify-center text-center py-lg gap-md">
+<span class="material-symbols-outlined text-5xl text-outline-variant" data-icon="search_off">search_off</span>
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('Tidak ada produk yang cocok.') }}</p>
+</div>
+@endforelse
 </div>
 </div>
 </div>
 </section>
 </main>
 <!-- BottomNavBar (Mobile Only) -->
+@include('customer._partials.wishlist-script')
 @include('customer._partials.bottom-nav')
 @include('customer._partials.drawer')
 <script>
