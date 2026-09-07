@@ -10,22 +10,22 @@
 <div class="space-y-section-gap">
     <section data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">assignment_return</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">assignment_return</span>
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Pengajuan Masuk</span>
             <span class="raliva-figure text-[26px] text-gold-accent relative">{{ $pengajuan->count() }}</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Menunggu</span>
             <span class="raliva-figure text-[26px] text-on-surface relative">{{ $pengajuan->where('status','requested')->count() }}</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">outbox</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">outbox</span>
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Eskalasi</span>
             <span class="raliva-figure text-[26px] text-on-surface relative">{{ $pengajuan->where('status','eskalasi')->count() }}</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">history</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">history</span>
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Riwayat</span>
             <span class="raliva-figure text-[26px] text-on-surface relative">{{ $riwayat->total() ?? $riwayat->count() }}</span>
         </div>
