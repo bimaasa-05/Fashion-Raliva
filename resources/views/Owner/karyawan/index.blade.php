@@ -29,10 +29,10 @@
     {{-- Ringkasan --}}
     <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
         @foreach ([['Total Karyawan', $summary['total'], 'on-surface', 'groups'], ['Admin', $summary['admin'], 'secondary', 'admin_panel_settings'], ['Produksi & Gudang', $summary['produksi_gudang'], 'on-surface', 'precision_manufacturing'], ['Nonaktif', $summary['nonaktif'], 'error', 'person_off']] as $stat)
-            <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ $stat[0] }}</span>
                 <span class="raliva-figure text-[26px] text-{{ $stat[2] }}">{{ $stat[1] }}</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">{{ $stat[3] }}</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">{{ $stat[3] }}</span>
             </div>
         @endforeach
     </section>
