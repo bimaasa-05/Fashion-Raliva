@@ -273,10 +273,20 @@
             </div>
         </div>
 
-        <div id="drawer-toko-section" class="space-y-3">
+        <div id="drawer-toko-section" class="space-y-3 hidden">
             <h5 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Toko yang Dimiliki</h5>
-            <div id="drawer-toko-list" class="space-y-2"></div>
+            <div id="drawer-toko-list" class="space-y-3"></div>
             <p id="drawer-no-toko" class="text-on-surface-variant/60 text-sm italic hidden">Belum memiliki toko</p>
+        </div>
+
+        <div id="drawer-penugasan-section" class="space-y-3 hidden">
+            <h5 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Karyawan di Toko Milik Owner</h5>
+            <div id="drawer-penugasan-list" class="space-y-3"></div>
+            <p id="drawer-no-penugasan" class="text-on-surface-variant/60 text-sm italic hidden">Belum ditugaskan ke toko manapun</p>
+            <div id="drawer-warehouses-wrap" class="hidden space-y-2 pt-2 border-t border-muted-border/50">
+                <p class="text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Penugasan Gudang</p>
+                <div id="drawer-warehouses-list" class="space-y-2"></div>
+            </div>
         </div>
 
         <div class="space-y-3">
@@ -450,6 +460,10 @@
 
         document.getElementById('drawer-toko-list').innerHTML = '';
         document.getElementById('drawer-no-toko').classList.add('hidden');
+        document.getElementById('drawer-penugasan-list').innerHTML = '';
+        document.getElementById('drawer-no-penugasan').classList.add('hidden');
+        document.getElementById('drawer-warehouses-wrap').classList.add('hidden');
+        document.getElementById('drawer-warehouses-list').innerHTML = '';
         document.getElementById('drawer-aktivitas-list').innerHTML = '';
         document.getElementById('drawer-no-aktivitas').classList.add('hidden');
 
@@ -461,23 +475,125 @@
                 if (roleId) document.getElementById('drawer-role-select').value = roleId[1];
 
                 const tokoSection = document.getElementById('drawer-toko-section');
-                if (data.is_super_admin) {
+                const showToko = data.show_toko ?? data.is_owner ?? (data.role === 'Owner');
+                if (!showToko) {
                     tokoSection.classList.add('hidden');
                 } else {
                     tokoSection.classList.remove('hidden');
+                    const tokoList = document.getElementById('drawer-toko-list');
+                    const noToko = document.getElementById('drawer-no-toko');
+                    tokoList.innerHTML = '';
+                    noToko.classList.add('hidden');
                     if (data.toko && data.toko.length > 0) {
+                        const roleIcons = { 'Admin': 'admin_panel_settings', 'Produksi': 'precision_manufacturing', 'Gudang': 'warehouse' };
+                        const roleBadge = {
+                            'Admin': 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
+                            'Produksi': 'bg-secondary-container/20 text-secondary border-secondary/20',
+                            'Gudang': 'bg-surface-container-high text-on-surface-variant border-outline-variant'
+                        };
                         data.toko.forEach(t => {
-                            document.getElementById('drawer-toko-list').innerHTML += `
-                                <div class="flex items-center justify-between p-3 bg-surface-container rounded-lg border border-muted-border/50">
-                                    <div>
-                                        <p class="font-body-md text-sm text-on-surface font-medium">${t.nama}</p>
-                                        <p class="text-xs text-on-surface-variant">${t.produk} produk • Rating ${t.rating}</p>
+                            const karyawan = (t.karyawan || []).map(k => {
+                                const icon = roleIcons[k.role] || 'badge';
+                                const badge = roleBadge[k.role] || 'bg-surface-container-high text-on-surface-variant border-outline-variant';
+                                const avatar = k.foto
+                                    ? `<img src="${k.foto}" alt="${k.nama}" class="w-7 h-7 rounded-full object-cover shrink-0">`
+                                    : `<span class="w-7 h-7 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center text-[10px] font-bold text-on-surface shrink-0">${k.initial || ''}</span>`;
+                                const status = k.status === 'aktif'
+                                    ? '<span class="w-1.5 h-1.5 rounded-full bg-success status-dot-pulse" title="Aktif"></span>'
+                                    : '<span class="w-1.5 h-1.5 rounded-full bg-error" title="Nonaktif"></span>';
+                                return `
+                                    <li class="flex items-center gap-2.5">
+                                        ${avatar}
+                                        <span class="min-w-0 flex-1 truncate text-sm text-on-surface">${k.nama || '-'}</span>
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase whitespace-nowrap ${badge}">
+                                            <span class="material-symbols-outlined text-[11px]">${icon}</span>${k.role || '-'}
+                                        </span>
+                                        ${status}
+                                    </li>`;
+                            }).join('');
+                            tokoList.innerHTML += `
+                                <div class="rounded-lg border border-muted-border/50 bg-surface-container overflow-hidden">
+                                    <div class="flex items-center justify-between gap-3 p-3 border-b border-muted-border/50">
+                                        <div class="min-w-0">
+                                            <p class="font-body-md text-sm text-on-surface font-medium truncate flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined text-gold-accent text-[16px]">storefront</span>${t.nama}
+                                            </p>
+                                            <p class="text-xs text-on-surface-variant mt-0.5">${t.produk} produk • Rating ${t.rating}</p>
+                                        </div>
+                                        ${t.status ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border ${t.status === 'aktif' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-error/10 text-error border-error/20'}">${t.status}</span>` : ''}
                                     </div>
-                                    <span class="material-symbols-outlined text-gold-accent text-[18px]">storefront</span>
+                                    <div class="p-3">
+                                        <p class="text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest mb-2">Karyawan</p>
+                                        ${karyawan ? `<ul class="space-y-2">${karyawan}</ul>` : '<p class="text-xs text-on-surface-variant/60 italic">Belum ada karyawan</p>'}
+                                    </div>
                                 </div>`;
                         });
                     } else {
-                        document.getElementById('drawer-no-toko').classList.remove('hidden');
+                        noToko.classList.remove('hidden');
+                    }
+                }
+
+                const penugasanSec = document.getElementById('drawer-penugasan-section');
+                const showPenugasan = data.show_penugasan ?? data.is_staff ?? ['Admin', 'Produksi', 'Gudang'].includes(data.role);
+                if (!showPenugasan) {
+                    penugasanSec.classList.add('hidden');
+                } else {
+                    penugasanSec.classList.remove('hidden');
+                    const penugasanList = document.getElementById('drawer-penugasan-list');
+                    const noPenugasan = document.getElementById('drawer-no-penugasan');
+                    penugasanList.innerHTML = '';
+                    noPenugasan.classList.add('hidden');
+                    if (data.penugasan && data.penugasan.length > 0) {
+                        data.penugasan.forEach(t => {
+                            const statusBadge = t.status_penugasan === 'aktif'
+                                ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border bg-secondary-container/20 text-secondary border-secondary/20"><span class="w-1.5 h-1.5 rounded-full bg-secondary status-dot-pulse"></span>Aktif</span>'
+                                : '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border bg-error/10 text-error border-error/20">Nonaktif</span>';
+                            penugasanList.innerHTML += `
+                                <div class="rounded-lg border border-muted-border/50 bg-surface-container overflow-hidden">
+                                    <div class="flex items-center justify-between gap-3 p-3 border-b border-muted-border/50">
+                                        <div class="min-w-0">
+                                            <p class="font-body-md text-sm text-on-surface font-medium truncate flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined text-gold-accent text-[16px]">storefront</span>${t.nama_toko}
+                                            </p>
+                                            <p class="text-xs text-on-surface-variant mt-0.5 truncate">Status toko: ${t.status_toko}</p>
+                                        </div>
+                                        ${statusBadge}
+                                    </div>
+                                    <div class="p-3">
+                                        <p class="text-sm text-on-surface flex items-start gap-1.5">
+                                            <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 shrink-0">badge</span>
+                                            <span>Karyawan di Toko Milik Owner: <span class="font-semibold">${t.owner_nama}</span></span>
+                                        </p>
+                                        <p class="text-xs text-on-surface-variant mt-1 ml-[26px] truncate">${t.owner_email || '-'}</p>
+                                        <p class="text-[10px] text-on-surface-variant mt-2 flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[13px]">event</span>Ditugaskan sejak ${t.tanggal_penugasan || '-'}
+                                        </p>
+                                    </div>
+                                </div>`;
+                        });
+                    } else {
+                        noPenugasan.classList.remove('hidden');
+                    }
+
+                    const warehousesWrap = document.getElementById('drawer-warehouses-wrap');
+                    const warehousesList = document.getElementById('drawer-warehouses-list');
+                    warehousesList.innerHTML = '';
+                    if (data.warehouses && data.warehouses.length > 0) {
+                        warehousesWrap.classList.remove('hidden');
+                        data.warehouses.forEach(w => {
+                            const dot = w.status === 'aktif'
+                                ? '<span class="w-1.5 h-1.5 rounded-full bg-secondary status-dot-pulse" title="Aktif"></span>'
+                                : '<span class="w-1.5 h-1.5 rounded-full bg-error" title="Nonaktif"></span>';
+                            warehousesList.innerHTML += `
+                                <div class="flex items-center gap-2.5 p-2.5 rounded-lg border border-muted-border/40 bg-surface-container-lowest">
+                                    <span class="material-symbols-outlined text-gold-accent text-[18px] shrink-0">warehouse</span>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="text-sm text-on-surface font-medium truncate">${w.gudang}</p>
+                                        <p class="text-xs text-on-surface-variant truncate">${w.store} &middot; Owner: ${w.owner} &middot; sejak ${w.tanggal || '-'}</p>
+                                    </div>
+                                    ${dot}
+                                </div>`;
+                        });
                     }
                 }
 
