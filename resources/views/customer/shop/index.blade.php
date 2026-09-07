@@ -454,14 +454,12 @@
 </div>
 </a>
 @empty
-<div class="col-span-full">
-<div id="product-empty" class="w-full flex-col items-center justify-center text-center gap-md py-2xl">
+@endforelse
+</div>
+<div id="product-empty" class="hidden w-full flex-col items-center justify-center text-center gap-md py-2xl min-h-[40vh] md:min-h-[30vh]">
 <span class="material-symbols-outlined text-[72px] text-on-surface-variant/40" data-icon="inventory_2">inventory_2</span>
 <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No products found for this selection.') }}</p>
 <button class="btn-gold font-label-caps text-label-caps px-lg py-3 lg:px-xl rounded-full uppercase tracking-widest mt-xs" type="button" onclick="selectCategory(null)">{{ __('Reset filters') }}</button>
-</div>
-</div>
-@endforelse
 </div>
 <div id="load-more-wrap" class="flex justify-center py-xl mt-md" data-total="{{ $totalProducts }}">
 <button id="load-more-btn" class="border border-[var(--chrome-accent)] text-[var(--chrome-accent)] bg-transparent font-label-caps text-label-caps px-xl py-sm hover:bg-surface-container-low transition-colors w-full md:w-auto rounded-lg flex items-center justify-center gap-2 uppercase tracking-widest" type="button" onclick="loadMoreProducts()" style="display:none;">
