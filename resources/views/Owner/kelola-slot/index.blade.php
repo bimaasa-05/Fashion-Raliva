@@ -1,9 +1,11 @@
 @extends('layouts.owner')
 
+@php $badgeSlot = ($used ?? 0) . ' / ' . ($total ?? 0) . ' Terpakai'; @endphp
+
 @section('title', 'Kelola Slot')
 
 @section('header-title', 'Kelola Slot')
-@section('header-badge', '{{ $used ?? 0 }} / {{ $total ?? 0 }} Terpakai')
+@section('header-badge', $badgeSlot)
 @section('header-subtitle', 'Kelola kuota slot produk toko Anda — tambah slot via Super Admin.')
 
 @section('content')
