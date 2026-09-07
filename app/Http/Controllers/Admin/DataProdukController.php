@@ -30,6 +30,13 @@ class DataProdukController extends Controller
             'category_id' => 'nullable|exists:categories,category_id',
             'tipe_produk' => 'nullable|string|max:50',
             'deskripsi' => 'nullable|string|max:2000',
+            'foto_produk' => 'nullable|array|max:8',
+            'foto_produk.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+            'stok_awal' => 'nullable|integer|min:0',
+            'stok_minimum' => 'nullable|integer|min:0',
+            'ukuran_terpilih' => 'nullable|string|max:50',
+            'warna' => 'nullable|array',
+            'warna.*' => 'string|max:30',
         ], [
             'nama_produk.required' => 'Nama produk wajib diisi.',
             'harga_dasar.required' => 'Harga dasar wajib diisi.',
@@ -41,11 +48,51 @@ class DataProdukController extends Controller
             return back()->with('error', 'Admin belum ditugaskan ke toko mana pun.');
         }
 
-        Product::create(array_merge($data, [
+        $product = Product::create([
             'store_id' => $storeId,
+            'category_id' => $data['category_id'] ?? null,
+            'nama_produk' => $data['nama_produk'],
+            'deskripsi' => $data['deskripsi'] ?? null,
+            'harga_dasar' => $data['harga_dasar'],
+            'tipe_produk' => $data['tipe_produk'] ?? null,
             'status' => Product::STATUS_PENDING,
             'alasan_penolakan' => 'Menunggu persetujuan Owner.',
-        ]));
+        ]);
+
+        // Handle foto upload
+        if ($request->hasFile('foto_produk')) {
+            foreach ($request->file('foto_produk') as $idx => $file) {
+                if ($file && $file->isValid()) {
+                    $path = $file->store('products', 'public');
+                    \App\Models\ProductImage::create([
+                        'product_id' => $product->product_id,
+                        'file_gambar' => $path,
+                        'urutan' => $idx,
+                    ]);
+                    if ($idx === 0) $product->update(['gambar_utama' => $path]);
+                }
+            }
+        }
+
+        // Handle variasi
+        $ukuranList = $data['ukuran_terpilih'] ? explode(',', $data['ukuran_terpilih']) : ['All Size'];
+        $warnaList = $data['warna'] ?? ['Hitam'];
+        $stokAwal = (int) ($data['stok_awal'] ?? 50);
+        $stokMin = (int) ($data['stok_minimum'] ?? 10);
+        foreach ($ukuranList as $uk) {
+            foreach ($warnaList as $wr) {
+                \App\Models\ProductVariant::create([
+                    'product_id' => $product->product_id,
+                    'sku' => strtoupper(substr($product->nama_produk, 0, 3)).'-'.str_pad($product->product_id, 4, '0').'-'.strtoupper(substr($uk,0,1)).substr($wr,0,1).rand(10,99),
+                    'ukuran' => trim($uk),
+                    'warna' => trim($wr),
+                    'harga' => $data['harga_dasar'],
+                    'stok' => (int) ($stokAwal / max(1, count($ukuranList)*count($warnaList))),
+                    'stok_minimum' => $stokMin,
+                    'status' => 'aktif',
+                ]);
+            }
+        }
 
         return back()->with('success', 'Produk diajukan. Menunggu persetujuan Owner.');
     }
