@@ -20,7 +20,7 @@
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                     <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari produk..." class="raliva-search" />
                 </form>
-                <button type="button" data-modal-open="modal-tambah-produk" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
+                <button type="button" data-drawer-open="drawer-form-produk" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
                     <span class="material-symbols-outlined text-[18px]">add</span> Tambah
                 </button>
             </div>
@@ -102,52 +102,114 @@
 </div>
 @endforeach
 
-{{-- Modal Tambah Produk --}}
-<div id="modal-tambah-produk" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-    <form method="POST" action="{{ route('admin.produk.store') }}" class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+{{-- Drawer Form Produk — sesuai demo --}}
+<div id="drawer-overlay" class="fixed inset-0 bg-black/50 z-[70] hidden opacity-0 transition-opacity duration-300"></div>
+<div id="drawer-form-produk" data-drawer-panel class="fixed inset-y-0 right-0 z-[80] w-full max-w-xl bg-surface-container-lowest border-l border-muted-border shadow-xl translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-muted-border shrink-0">
+        <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Produk Baru</h3>
+        <button type="button" data-drawer-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <form method="POST" action="{{ route('admin.produk.store') }}" enctype="multipart/form-data" class="flex-1 overflow-y-auto p-6 space-y-6">
         @csrf
-        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-            <div>
-                <p class="raliva-label text-gold-accent">Tambah Produk</p>
-                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">Ajukan Produk Baru</h3>
-                <p class="text-xs text-on-surface-variant mt-0.5">Akan menunggu persetujuan Owner.</p>
+        {{-- Foto --}}
+        <div>
+            <label class="block raliva-label mb-2">Foto Produk (maks. 8 foto)</label>
+            <div class="grid grid-cols-4 gap-gutter">
+                @for ($i = 0; $i < 4; $i++)
+                    <label class="aspect-[3/4] rounded-lg border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-gold-accent hover:bg-surface-container-low transition-colors group">
+                        <input type="file" name="foto_produk[]" accept="image/*" class="hidden" onchange="if(this.files[0]){this.parentElement.querySelector('span').textContent='✓';}" />
+                        <span class="material-symbols-outlined text-[22px] text-on-surface-variant group-hover:text-gold-accent transition-colors">add_photo_alternate</span>
+                        <span class="text-[10px] text-on-surface-variant">Foto {{ $i + 1 }}</span>
+                    </label>
+                @endfor
             </div>
-            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
         </div>
-        <div class="p-6 space-y-4">
+
+        {{-- Informasi Dasar --}}
+        <div class="space-y-4">
+            <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">Informasi Dasar</p>
             <div>
-                <label class="raliva-label" for="np-nama">Nama Produk <span class="text-error">*</span></label>
-                <input id="np-nama" name="nama_produk" required class="raliva-input" placeholder="Misal: Trench Coat Signature" />
+                <label for="fp-nama" class="block raliva-label mb-2">Nama Produk</label>
+                <input id="fp-nama" name="nama_produk" type="text" placeholder="cth. Blazer Wool Premium" required class="raliva-input" />
             </div>
-            <div class="grid grid-cols-2 gap-3">
+            <div>
+                <label for="fp-deskripsi" class="block raliva-label mb-2">Deskripsi</label>
+                <textarea id="fp-deskripsi" name="deskripsi" rows="3" placeholder="Bahan, potongan, keunggulan produk..." class="raliva-textarea"></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-gutter">
                 <div>
-                    <label class="raliva-label" for="np-harga">Harga Dasar <span class="text-error">*</span></label>
-                    <input id="np-harga" name="harga_dasar" required type="number" min="0" class="raliva-input" placeholder="0" />
-                </div>
-                <div>
-                    <label class="raliva-label" for="np-kategori">Kategori</label>
-                    <select id="np-kategori" name="category_id" class="raliva-select">
+                    <label for="fp-kategori" class="block raliva-label mb-2">Kategori</label>
+                    <select id="fp-kategori" name="category_id" class="raliva-select">
                         <option value="">— Pilih —</option>
                         @foreach ($categories as $c)
                             <option value="{{ $c->category_id }}">{{ $c->nama_kategori }}</option>
                         @endforeach
                     </select>
                 </div>
-            </div>
-            <div>
-                <label class="raliva-label" for="np-tipe">Tipe Produk</label>
-                <input id="np-tipe" name="tipe_produk" class="raliva-input" placeholder="Misal: Atasan, Bawahan, Outer" />
-            </div>
-            <div>
-                <label class="raliva-label" for="np-deskripsi">Deskripsi</label>
-                <textarea id="np-deskripsi" name="deskripsi" rows="3" class="raliva-textarea" placeholder="Deskripsi singkat produk..."></textarea>
+                <div>
+                    <label for="fp-harga" class="block raliva-label mb-2">Harga (Rp)</label>
+                    <input id="fp-harga" name="harga_dasar" type="number" placeholder="949000" required class="raliva-input" />
+                </div>
             </div>
         </div>
-        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end gap-3">
-            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-            <button type="submit" class="px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Ajukan</button>
+
+        {{-- Variasi --}}
+        <div class="space-y-4">
+            <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">Variasi &amp; Stok</p>
+            <div>
+                <p class="raliva-label mb-2">Ukuran</p>
+                <div class="flex flex-wrap gap-2">
+                    @foreach (['XS', 'S', 'M', 'L', 'XL', 'XXL', 'All Size'] as $size)
+                        <button type="button" class="ukuran-chip px-4 py-2 rounded-lg border border-muted-border text-xs font-medium text-on-surface hover:border-gold-accent transition-colors" data-size="{{ $size }}">{{ $size }}</button>
+                    @endforeach
+                </div>
+                <input type="hidden" name="ukuran_terpilih" id="ukuran-terpilih" />
+            </div>
+            <div>
+                <p class="raliva-label mb-2">Warna</p>
+                <div class="flex flex-wrap gap-3">
+                    @foreach ([['Hitam', '#1c1b1b'], ['Krem', '#e8dcc8'], ['Navy', '#22304a'], ['Camel', '#c19a6b'], ['Putih', '#f5f3f3']] as $color)
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="warna[]" value="{{ $color[0] }}" class="sr-only peer" />
+                            <span class="w-7 h-7 rounded-full border border-outline-variant shadow-inner peer-checked:ring-2 peer-checked:ring-gold-accent peer-checked:ring-offset-2 ring-offset-surface-container-lowest transition-all" style="background-color: {{ $color[1] }};"></span>
+                            <span class="font-body-md text-xs text-on-surface peer-checked:text-gold-accent">{{ $color[0] }}</span>
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-gutter">
+                <div>
+                    <label for="fp-stok" class="block raliva-label mb-2">Total Stok Awal</label>
+                    <input id="fp-stok" name="stok_awal" type="number" value="50" min="0" class="raliva-input" />
+                </div>
+                <div>
+                    <label for="fp-min-restock" class="block raliva-label mb-2">Ambang Stok Menipis</label>
+                    <input id="fp-min-restock" name="stok_minimum" type="number" value="10" min="0" class="raliva-input" />
+                </div>
+            </div>
+        </div>
+
+        <div class="sticky bottom-0 -mx-6 px-6 py-4 bg-surface-container-lowest border-t border-muted-border flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
+            <button type="button" data-drawer-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+            <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[16px]">check_circle</span>Simpan Produk
+            </button>
         </div>
     </form>
 </div>
+@push('scripts')
+<script>
+document.querySelectorAll('.ukuran-chip').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+        btn.classList.toggle('bg-gold-accent');
+        btn.classList.toggle('text-white');
+        btn.classList.toggle('border-gold-accent');
+        const selected = Array.from(document.querySelectorAll('.ukuran-chip.bg-gold-accent')).map(b=>b.dataset.size || b.textContent.trim());
+        document.getElementById('ukuran-terpilih').value = selected.join(',');
+    });
+});
+</script>
+@endpush
 @endsection
