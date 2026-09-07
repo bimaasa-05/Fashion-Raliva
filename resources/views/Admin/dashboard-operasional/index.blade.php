@@ -29,29 +29,29 @@
 <section>
     <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Hari Ini</h2>
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
-        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+        <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pesanan Baru</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $stats['pesanan_baru'] }}</span>
             <a href="{{ route('admin.pesanan', ['status' => \App\Models\Order::STATUS_DIBAYAR]) }}" class="inline-flex items-center gap-1 text-xs text-secondary hover:underline"><span class="material-symbols-outlined text-[14px]">arrow_forward</span>proses sekarang</a>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
         </div>
-        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+        <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Verifikasi</span>
             <span class="raliva-figure text-[26px] text-gold-accent">{{ $stats['menunggu_verifikasi'] }}</span>
             <a href="{{ route('admin.verifikasi-pembayaran') }}" class="inline-flex items-center gap-1 text-xs text-on-surface-variant hover:text-gold-accent hover:underline">perlu ditinjau hari ini<span class="material-symbols-outlined text-[14px]">arrow_forward</span></a>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">fact_check</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">fact_check</span>
         </div>
-        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+        <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Siap Kirim</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $stats['siap_dikirim'] }}</span>
             <a href="{{ route('admin.pengiriman') }}" class="inline-flex items-center gap-1 text-xs text-on-surface-variant hover:text-gold-accent hover:underline">paket menunggu resi<span class="material-symbols-outlined text-[14px]">arrow_forward</span></a>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">local_shipping</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">local_shipping</span>
         </div>
-        <div class="bg-surface-container-lowest p-4 border border-error/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+        <div class="bg-surface-container-lowest p-5 border border-error/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Komplain Aktif</span>
             <span class="raliva-figure text-[26px] text-error">{{ $stats['komplain_terbuka'] }}</span>
             <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px]">schedule</span>respons maks 24 jam</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-error/10 pointer-events-none select-none" aria-hidden="true">support_agent</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-error/10 pointer-events-none select-none" aria-hidden="true">support_agent</span>
         </div>
     </div>
 </section>
