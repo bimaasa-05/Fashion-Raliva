@@ -387,9 +387,10 @@
 </button>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
 <div class="flex items-center gap-sm">
-<a aria-label="Search" href="{{ route('customer.search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center">
-<span class="material-symbols-outlined" data-icon="search">search</span>
-</a>
+<button aria-label="{{ __('Filter') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center relative" onclick="openFilter()" type="button">
+<span class="material-symbols-outlined text-[22px]" data-icon="tune">tune</span>
+<span id="filter-badge" class="absolute -top-0.5 -right-1 bg-secondary text-on-secondary text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold hidden">0</span>
+</button>
 </div>
 </header>
 <!-- Main Content -->
@@ -415,11 +416,7 @@
         <button type="button" data-cat="{{ $pc }}" onclick="selectCategory('{{ $pc }}')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ $pc }}</button>
 @endforeach
     </div>
-        <!-- Shop Actions (Filter · Cart · Sort) -->
-        <button aria-label="{{ __('Filter') }}" class="shop-action-btn order-3 border border-outline-variant hover:text-secondary hover:border-secondary transition-colors relative" onclick="openFilter()" type="button">
-            <span class="material-symbols-outlined text-[18px]" data-icon="tune">tune</span>
-            <span id="filter-badge" class="absolute -top-1 -right-1.5 bg-secondary text-on-secondary text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold hidden">0</span>
-        </button>
+        <!-- Shop Actions (Cart · Sort) -->
         <a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart') }}" class="shop-action-btn relative order-2 border border-outline-variant hover:text-secondary hover:border-secondary transition-colors">
             <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
             <span class="cart-badge absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>

@@ -335,11 +335,11 @@
 <body class="bg-surface text-on-surface antialiased font-body-lg flex flex-col min-h-screen pb-[72px] md:pb-0 lg:pl-72 overflow-x-hidden">
 <!-- TopAppBar (parity home/shop - fixed with burgundy) -->
 <header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
-<a href="{{ auth()->check() ? route('customer.account') : route('login', ['redirect' => route('customer.account')]) }}" class="w-10 h-10 flex items-center justify-start hover:opacity-80 transition-opacity">
-<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
-</a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase text-center flex-1">ORDER TRACKING</h1>
-<div class="w-10"></div> <!-- Spacer for centering -->
+<button aria-label="{{ __('Menu') }}" class="hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center" onclick="openDrawer()" type="button">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
+<div class="w-10"></div>
 </header>
 <!-- Main Content Canvas -->
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-clip">

@@ -217,6 +217,20 @@
     html.theme-dark .bn-active { color: #8B1E3F !important; }
 </style>
 <style>
+    /* ===== Wishlist header search (scoped) ===== */
+    .wl-header-item { transition: opacity .3s ease, transform .3s ease; }
+    .wl-header-hidden { opacity: 0; transform: translateY(-6px); pointer-events: none; }
+    #wl-search-panel { opacity: 0; transform: translateX(28px); pointer-events: none; transition: opacity .3s cubic-bezier(.22,1,.36,1), transform .3s cubic-bezier(.22,1,.36,1); }
+    #wl-search-panel.wl-search-open { opacity: 1; transform: translateX(0); pointer-events: auto; }
+    #wl-hamburger:focus,
+    #wl-search-toggle:focus,
+    #wl-search-close:focus,
+    #wl-search-input:focus { outline: none; }
+    #wl-hamburger:focus-visible,
+    #wl-search-toggle:focus-visible,
+    #wl-search-close:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(139,30,63,.5); border-radius: 9999px; }
+</style>
+<style>
     /* ============ ATELIER EYEBROW (parity home/order-tracking) ============ */
     .atl-eyebrow { display: inline-flex; align-items: center; gap: .65rem; }
     .atl-eyebrow::before {
@@ -287,17 +301,23 @@
 @php $cartCount = auth()->check() ? \App\Http\Controllers\Customer\CartController::countForUser(auth()->id()) : 0; @endphp
 <!-- TopAppBar -->
 <header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
-<a href="{{ route('customer.shop') }}" data-go-back aria-label="Back" class="hover:opacity-80 transition-opacity flex">
-<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
-</a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
+<button id="wl-hamburger" aria-label="{{ __('Menu') }}" class="wl-header-item hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center" onclick="openDrawer()" type="button">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 id="wl-title" class="wl-header-item font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
 <div class="flex items-center gap-sm">
-<a href="{{ route('customer.chart') }}" aria-label="Cart" class="relative hover:opacity-80 transition-opacity flex">
-<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
-<span class="cart-badge absolute -top-1 -right-1 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
-</a>
+<button id="wl-search-toggle" aria-label="{{ __('Search wishlist') }}" class="wl-header-item hover:opacity-80 transition-opacity flex items-center justify-center relative" onclick="toggleWishlistSearch()" type="button">
+<span class="material-symbols-outlined text-[22px]" data-icon="search">search</span>
+</button>
 </div>
 </header>
+<div id="wl-search-panel" class="fixed top-0 inset-x-0 lg:left-72 z-[55] h-16 bg-[var(--chrome-bg)] text-[var(--chrome-text)] border-b border-[var(--chrome-border)] flex items-center gap-sm px-container-margin">
+<button id="wl-search-close" aria-label="{{ __('Close search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center shrink-0" onclick="toggleWishlistSearch()" type="button">
+<span class="material-symbols-outlined text-[22px]" data-icon="search">search</span>
+</button>
+<input id="wl-search-input" type="search" autocomplete="off" placeholder="{{ __('Cari wishlist Anda...') }}" class="flex-1 min-w-0 bg-transparent font-body-lg text-body-lg text-on-surface placeholder:text-on-surface-variant/70 border-b border-[var(--chrome-border)] focus:border-secondary outline-none py-2"/>
+<span id="wl-search-count" class="font-label-sm text-label-sm text-on-surface-variant shrink-0 hidden"></span>
+</div>
 <!-- Main Content -->
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Wishlist Header (Super-Admin style premium card, aksen Burgundy) -->
@@ -369,6 +389,7 @@
 </div>
 </div>
 </div>
+<p id="wl-no-results" class="hidden mt-md text-center font-body-sm text-body-sm text-on-surface-variant mx-auto max-w-[1400px] px-container-margin">{{ __('Tidak ada item yang cocok.') }}</p>
 </main>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -432,18 +453,50 @@
     })();
 </script>
 <script>
-/* Arrow back = kembali ke halaman customer sebelumnya */
-document.addEventListener('click', function (e) {
-    var back = e.target.closest('[data-go-back]');
-    if (!back) return;
-    e.preventDefault();
-    var ref = document.referrer;
-    if (ref && ref.indexOf(window.location.origin) === 0) {
-        window.history.back();
-    } else {
-        window.location.href = back.getAttribute('href');
-    }
-});
+    /* Wishlist header search: slide-to-left overlay + live filter */
+    (function () {
+        var panel = document.getElementById('wl-search-panel');
+        var input = document.getElementById('wl-search-input');
+        var countEl = document.getElementById('wl-search-count');
+        var noResults = document.getElementById('wl-no-results');
+        var headers = document.querySelectorAll('.wl-header-item');
+        if (!panel || !input) return;
+
+        var open = false;
+        function setOpen(v) {
+            open = v;
+            panel.classList.toggle('wl-search-open', v);
+            headers.forEach(function (h) { h.classList.toggle('wl-header-hidden', v); });
+            if (v) {
+                input.focus();
+            } else {
+                input.value = '';
+                filter('');
+            }
+        }
+        window.toggleWishlistSearch = function () { setOpen(!open); };
+
+        function filter(q) {
+            q = (q || '').trim().toLowerCase();
+            var cards = document.querySelectorAll('[data-wishlist-item]');
+            var shown = 0;
+            cards.forEach(function (card) {
+                var nameEl = card.querySelector('h3');
+                var name = (nameEl ? nameEl.textContent : '').toLowerCase();
+                var ok = !q || name.indexOf(q) >= 0;
+                card.style.display = ok ? '' : 'none';
+                if (ok) shown++;
+            });
+            if (countEl) {
+                countEl.textContent = shown + ' / ' + cards.length;
+                countEl.classList.toggle('hidden', !q);
+            }
+            if (noResults) noResults.classList.toggle('hidden', shown > 0 || cards.length === 0);
+        }
+
+        input.addEventListener('input', function () { filter(input.value); });
+        input.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+    })();
 </script>
 <!-- BottomNavBar -->
 @include('customer._partials.bottom-nav')

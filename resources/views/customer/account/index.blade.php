@@ -231,13 +231,11 @@
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
 <header class="flex justify-between items-center w-full px-container-margin h-16 bg-[var(--chrome-bg)] text-[var(--chrome-text)] border-b border-[var(--chrome-border)] flat no shadows docked full-width top-0 z-40 sticky">
-<button aria-label="Menu" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 -ml-2">
+<button aria-label="{{ __('Menu') }}" class="hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
-<button aria-label="{{ __('Search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 -mr-2">
-<span class="material-symbols-outlined" data-icon="search">search</span>
-</button>
+<div class="w-10" aria-hidden="true"></div>
 </header>
 <!-- Main Content Canvas -->
 <main class="flex-grow pt-10 pb-8 lg:pb-12 w-full overflow-x-hidden">
