@@ -24,8 +24,9 @@ class DataPesananController extends Controller
             Order::STATUS_DIBATALKAN => 'Dibatalkan',
         ];
 
+        $storeIds = AdminContext::assignedStoreIds();
         $orders = Order::query()
-            ->whereIn('store_id', AdminContext::assignedStoreIds())
+            ->whereIn('store_id', $storeIds)
             ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap,email', 'checkout.payment.proofs', 'checkout.payment.paymentMethod', 'items.productVariant.product', 'shipments'])
             ->when(
                 array_key_exists($status, $statuses),
@@ -35,10 +36,19 @@ class DataPesananController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
+        $variants = \App\Models\ProductVariant::with(['product:product_id,store_id,nama_produk', 'warehouseStocks:warehouse_stock_id,product_variant_id,jumlah_stok'])
+            ->whereHas('product', fn ($q) => $q->whereIn('store_id', $storeIds))
+            ->orderBy('product_id')->limit(200)->get();
+        $recentOrders = Order::with('checkout.user:user_id,nama_lengkap')
+            ->whereIn('store_id', $storeIds)
+            ->orderByDesc('order_id')->limit(20)->get();
+
         return view('Admin.pesanan.index', [
             'orders' => $orders,
             'statuses' => $statuses,
             'activeStatus' => $status,
+            'variants' => $variants,
+            'recentOrders' => $recentOrders,
         ]);
     }
 
@@ -81,57 +91,114 @@ class DataPesananController extends Controller
 
     public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
-        $sourceOrderId = $request->input('order_id');
+        // Toko tunggal: admin hanya pegang 1 toko (1 owner = 1 toko)
+        $storeIds = AdminContext::assignedStoreIds();
+        $storeId = $storeIds[0] ?? null;
+        if (! $storeId) {
+            return back()->with('toast', ['message' => 'Admin belum ditugaskan ke toko mana pun.', 'icon' => 'gpp_maybe']);
+        }
+
+        $mode = $request->input('mode', 'baru');
+        if (! in_array($mode, ['baru', 'salin'], true)) $mode = 'baru';
         $userId = $request->input('user_id');
+        $customer = $userId ? \App\Models\User::find($userId) : null;
+        if (! $customerId = $customer?->user_id) {
+            return back()->with('toast', ['message' => 'Pilih customer terlebih dahulu.', 'icon' => 'gpp_maybe']);
+        }
 
-        if ($sourceOrderId) {
-            $source = Order::with(['checkout.user', 'items'])->findOrFail($sourceOrderId);
-            $customerId = $source->checkout?->user_id ?? $userId;
-        } elseif ($userId) {
-            $source = Order::with(['checkout.user', 'items'])
-                ->whereHas('checkout', fn ($q) => $q->where('user_id', $userId))
-                ->orderByDesc('order_id')
+        if ($mode === 'salin') {
+            $source = Order::with(['checkout.user', 'items.productVariant.product'])
+                ->where('order_id', $request->input('order_id'))
+                ->where('store_id', $storeId)
                 ->first();
-            $customerId = $userId;
+            if (! $source || $source->items->isEmpty()) {
+                return back()->with('toast', ['message' => 'Pesanan sumber tidak ditemukan / tidak ada item untuk disalin.', 'icon' => 'gpp_maybe']);
+            }
+            if ((int) ($source->checkout?->user_id ?? 0) !== (int) $customerId) {
+                return back()->with('toast', ['message' => 'Pesanan sumber milik customer lain.', 'icon' => 'gpp_maybe']);
+            }
+            $lines = $source->items->map(fn ($it) => [
+                'variant' => $it->productVariant,
+                'qty' => (int) $it->quantity,
+            ]);
         } else {
-            return back()->with('toast', ['message' => 'Pilih customer atau pesanan sumber.', 'icon' => 'gpp_maybe']);
+            $data = $request->validate([
+                'items' => ['required', 'array', 'min:1', 'max:3'],
+                'items.*.product_variant_id' => ['nullable', 'exists:product_variants,product_variant_id'],
+                'items.*.quantity' => ['nullable', 'integer', 'min:1', 'max:100'],
+            ], [
+                'items.required' => 'Isi minimal 1 baris produk.',
+                'items.*.quantity.min' => 'Qty minimal 1.',
+            ]);
+            $data['items'] = collect($data['items'] ?? [])->filter(fn ($r) => ! empty($r['product_variant_id']))->values()->all();
+            if (empty($data['items'])) {
+                return back()->with('toast', ['message' => 'Isi minimal 1 baris produk dengan varian terpilih.', 'icon' => 'gpp_maybe']);
+            }
+            $variantIds = collect($data['items'])->pluck('product_variant_id')->all();
+            $variants = \App\Models\ProductVariant::with(['product:product_id,store_id,nama_produk,harga_dasar', 'warehouseStocks'])
+                ->whereIn('product_variant_id', $variantIds)->get()->keyBy('product_variant_id');
+            $lines = collect();
+            foreach ($data['items'] as $row) {
+                $variant = $variants->get($row['product_variant_id']);
+                if (! $variant || (int) $variant->product?->store_id !== (int) $storeId) {
+                    return back()->with('toast', ['message' => 'Varian tidak valid untuk toko ini.', 'icon' => 'gpp_maybe']);
+                }
+                $qty = max(1, (int) ($row['quantity'] ?? 1));
+                $stok = (int) $variant->warehouseStocks->sum('jumlah_stok');
+                if ($stok > 0 && $qty > $stok) {
+                    return back()->with('toast', ['message' => 'Stok ' . ($variant->product?->nama_produk ?? 'produk') . ' hanya tersisa ' . $stok . '.', 'icon' => 'gpp_maybe']);
+                }
+                $lines->push(['variant' => $variant, 'qty' => $qty]);
+            }
         }
 
-        if (! $source || $source->items->isEmpty()) {
-            return back()->with('toast', ['message' => 'Tidak ada item pesanan yang bisa disalin.', 'icon' => 'gpp_maybe']);
-        }
-
-        $newOrder = \DB::transaction(function () use ($source, $customerId) {
+        $newOrder = \DB::transaction(function () use ($lines, $customerId, $storeId) {
+            $subtotal = 0;
+            $prepared = [];
+            foreach ($lines as $line) {
+                $variant = $line['variant'];
+                $qty = $line['qty'];
+                $harga = (float) ($variant->harga ?? $variant->product?->harga_dasar ?? 0);
+                $sub = $harga * $qty;
+                $subtotal += $sub;
+                $prepared[] = [
+                    'variant' => $variant,
+                    'qty' => $qty,
+                    'harga' => $harga,
+                    'subtotal' => $sub,
+                ];
+            }
             $checkout = \App\Models\Checkout::create([
                 'user_id' => $customerId,
-                'subtotal' => $source->checkout?->subtotal ?? $source->grand_total ?? 0,
-                'total_diskon' => $source->checkout?->total_diskon ?? 0,
-                'total_pajak' => $source->checkout?->total_pajak ?? 0,
-                'biaya_layanan' => $source->checkout?->biaya_layanan ?? 0,
-                'total_ongkir' => $source->checkout?->total_ongkir ?? 0,
-                'grand_total' => $source->checkout?->grand_total ?? $source->grand_total ?? 0,
-                'status' => \App\Models\Checkout::STATUS_DIBAYAR,
+                'subtotal' => $subtotal,
+                'total_diskon' => 0,
+                'total_pajak' => 0,
+                'biaya_layanan' => 0,
+                'total_ongkir' => 0,
+                'grand_total' => $subtotal,
+                'status' => \App\Models\Checkout::STATUS_PENDING,
             ]);
 
             $newOrder = Order::create([
-                'store_id' => $source->store_id,
+                'store_id' => $storeId,
                 'checkout_id' => $checkout->checkout_id,
-                'nomor_order' => 'RLV-' . $source->store_id . '-' . strtoupper(substr(md5(uniqid()), 0, 6)),
-                'subtotal' => $source->subtotal ?? $source->grand_total ?? 0,
-                'grand_total' => $source->grand_total ?? 0,
+                'nomor_order' => 'RLV-' . $storeId . '-' . strtoupper(substr(md5(uniqid()), 0, 6)),
+                'subtotal' => $subtotal,
+                'grand_total' => $subtotal,
                 'status' => Order::STATUS_PENDING_PAYMENT,
             ]);
 
-            foreach ($source->items as $item) {
+            foreach ($prepared as $p) {
+                $variant = $p['variant'];
                 \App\Models\OrderItem::create([
                     'order_id' => $newOrder->order_id,
-                    'product_variant_id' => $item->product_variant_id,
-                    'nama_produk_snapshot' => $item->nama_produk_snapshot,
-                    'harga_snapshot' => $item->harga_snapshot,
-                    'quantity' => $item->quantity,
-                    'subtotal' => $item->subtotal,
-                    'diskon' => $item->diskon,
-                    'total' => $item->total,
+                    'product_variant_id' => $variant->product_variant_id,
+                    'nama_produk_snapshot' => $variant->product?->nama_produk ?? 'Produk',
+                    'harga_snapshot' => $p['harga'],
+                    'quantity' => $p['qty'],
+                    'subtotal' => $p['subtotal'],
+                    'diskon' => 0,
+                    'total' => $p['subtotal'],
                 ]);
             }
 
@@ -139,7 +206,7 @@ class DataPesananController extends Controller
         });
 
         return back()->with('toast', [
-            'message' => 'Pesanan ' . ($newOrder->nomor_order ?? ('#'.$newOrder->order_id)) . ' dibuat ulang untuk customer.',
+            'message' => 'Pesanan ' . ($newOrder->nomor_order ?? ('#'.$newOrder->order_id)) . ' dibuat (Menunggu Pembayaran).',
             'icon' => 'task_alt',
         ]);
     }
