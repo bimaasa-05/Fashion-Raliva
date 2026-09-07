@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read \Carbon\Carbon|null $tanggal_penugasan
+ */
 class StoreStaff extends Model
 {
     protected $primaryKey = 'store_staff_id';

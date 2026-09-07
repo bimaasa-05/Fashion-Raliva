@@ -253,7 +253,12 @@
 <div id="user-drawer-overlay" class="drawer-overlay fixed inset-0 z-[60] bg-black/50 backdrop-blur-[2px] hidden opacity-0" onclick="closeUserDetail()"></div>
 <div id="user-drawer-panel" class="drawer-panel closed fixed top-0 right-0 z-[65] h-full w-full max-w-md bg-surface-container-lowest border-l border-muted-border shadow-2xl overflow-y-auto">
     <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-center justify-between px-6 py-4 border-b border-muted-border">
-        <h3 class="font-title-md text-title-md text-on-surface premium-heading">Detail Pengguna</h3>
+        <div class="flex items-center gap-2 min-w-0">
+            <button type="button" id="drawer-back" onclick="onDrawerBack()" class="hidden items-center justify-center shrink-0 w-8 h-8 rounded-lg hover:bg-surface-container transition-colors text-on-surface-variant hover:text-gold-accent">
+                <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            </button>
+            <h3 class="font-title-md text-title-md text-on-surface premium-heading">Detail Pengguna</h3>
+        </div>
         <button type="button" onclick="closeUserDetail()" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
     </div>
     <div class="p-6 space-y-6">
@@ -418,6 +423,8 @@
     let isEditMode = false;
 
     /* ── Detail Drawer ── */
+    const drawerHistory = [];
+
     function renderDrawerAvatar(data) {
         const avatar = document.getElementById('drawer-avatar');
         avatar.innerHTML = '';
@@ -436,9 +443,226 @@
         }
     }
 
+    function updateDrawerBackButton() {
+        const btn = document.getElementById('drawer-back');
+        if (drawerHistory.length > 0) btn.classList.remove('hidden');
+        else btn.classList.add('hidden');
+    }
+
+    function onDrawerBack() {
+        const prev = drawerHistory.pop();
+        if (prev) fetchAndRender(prev);
+        else closeUserDetail();
+        updateDrawerBackButton();
+    }
+
+    function renderDrawer(data) {
+        document.getElementById('drawer-name').textContent = data.nama;
+        document.getElementById('drawer-email').textContent = data.email;
+        document.getElementById('drawer-phone').textContent = data.nomor_telepon || '';
+        document.getElementById('drawer-role').textContent = data.role;
+        document.getElementById('drawer-status').textContent = data.status;
+        document.getElementById('drawer-status').className = 'inline-flex px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (data.status === 'aktif' ? 'bg-success/10 text-success border border-success/20' : data.status === 'suspend' ? 'bg-tertiary-container/30 text-on-tertiary-container border border-tertiary-container/50' : 'bg-error/10 text-error border border-error/20');
+        const verified = data.is_verified ?? (data.email_verified_at != null);
+        document.getElementById('drawer-verified').innerHTML = verified
+            ? '<span class="material-symbols-outlined text-[10px]">verified</span>Verified'
+            : '<span class="material-symbols-outlined text-[10px]">email</span>Belum Verified';
+        document.getElementById('drawer-verified').className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (verified ? 'bg-secondary-container/20 text-secondary border border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant');
+
+        renderDrawerAvatar(data);
+
+        const roleId = Object.entries(rolesJson).find(([k, v]) => v && k === data.role);
+        if (roleId) document.getElementById('drawer-role-select').value = roleId[1];
+
+        document.getElementById('role-form').action = urls.role(data.user_id);
+        document.getElementById('nonaktifkan-form').action = urls.nonaktifkan(data.user_id);
+
+        const nonaktifkanBtn = document.getElementById('nonaktifkan-btn');
+        nonaktifkanBtn.textContent = data.status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan';
+        nonaktifkanBtn.className = 'w-full py-3 border font-label-sm text-[11px] uppercase tracking-widest rounded transition-colors ' + (data.status === 'aktif' ? 'border-error text-error hover:bg-error/10' : 'border-success text-success hover:bg-success/10');
+
+        document.getElementById('drawer-toko-list').innerHTML = '';
+        document.getElementById('drawer-no-toko').classList.add('hidden');
+        document.getElementById('drawer-penugasan-list').innerHTML = '';
+        document.getElementById('drawer-no-penugasan').classList.add('hidden');
+        document.getElementById('drawer-warehouses-wrap').classList.add('hidden');
+        document.getElementById('drawer-warehouses-list').innerHTML = '';
+        document.getElementById('drawer-aktivitas-list').innerHTML = '';
+        document.getElementById('drawer-no-aktivitas').classList.add('hidden');
+
+        const roleIcons = { 'Admin': 'admin_panel_settings', 'Produksi': 'precision_manufacturing', 'Gudang': 'warehouse' };
+        const roleBadge = {
+            'Admin': 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
+            'Produksi': 'bg-secondary-container/20 text-secondary border-secondary/20',
+            'Gudang': 'bg-surface-container-high text-on-surface-variant border-outline-variant'
+        };
+
+        const tokoSection = document.getElementById('drawer-toko-section');
+        const showToko = data.show_toko ?? data.is_owner ?? (data.role === 'Owner');
+        if (!showToko) {
+            tokoSection.classList.add('hidden');
+        } else {
+            tokoSection.classList.remove('hidden');
+            const tokoList = document.getElementById('drawer-toko-list');
+            const noToko = document.getElementById('drawer-no-toko');
+            tokoList.innerHTML = '';
+            noToko.classList.add('hidden');
+            if (data.toko && data.toko.length > 0) {
+                data.toko.forEach(t => {
+                    const karyawan = (t.karyawan || []).map(k => {
+                        const icon = roleIcons[k.role] || 'badge';
+                        const badge = roleBadge[k.role] || 'bg-surface-container-high text-on-surface-variant border-outline-variant';
+                        const avatarHtml = k.foto
+                            ? `<img src="${k.foto}" alt="${k.nama}" class="w-7 h-7 rounded-full object-cover shrink-0">`
+                            : `<span class="w-7 h-7 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center text-[10px] font-bold text-on-surface shrink-0">${k.initial || ''}</span>`;
+                        const dot = k.status === 'aktif'
+                            ? '<span class="w-1.5 h-1.5 rounded-full bg-success status-dot-pulse shrink-0" title="Aktif"></span>'
+                            : '<span class="w-1.5 h-1.5 rounded-full bg-error shrink-0" title="Nonaktif"></span>';
+                        if (k.user_id) {
+                            return `<li>
+                                <button type="button" onclick="openKaryawanDetail(${k.user_id})" class="flex w-full items-center gap-2.5 px-2 -mx-2 py-1.5 rounded-lg hover:bg-surface-container-low transition-colors text-left group/row">
+                                    ${avatarHtml}
+                                    <span class="min-w-0 flex-1 truncate text-sm text-on-surface group-hover/row:underline group-hover/row:text-gold-accent transition-colors">${k.nama || '-'}</span>
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase whitespace-nowrap shrink-0 ${badge}">
+                                        <span class="material-symbols-outlined text-[11px]">${icon}</span>${k.role || '-'}
+                                    </span>
+                                    ${dot}
+                                </button>
+                            </li>`;
+                        }
+                        return `<li class="flex items-center gap-2.5 px-2 py-1.5">
+                            ${avatarHtml}
+                            <span class="min-w-0 flex-1 truncate text-sm text-on-surface">${k.nama || '-'}</span>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase whitespace-nowrap shrink-0 ${badge}">
+                                <span class="material-symbols-outlined text-[11px]">${icon}</span>${k.role || '-'}
+                            </span>
+                            ${dot}
+                        </li>`;
+                    }).join('');
+                    tokoList.innerHTML += `
+                        <div class="rounded-lg border border-muted-border/50 bg-surface-container overflow-hidden">
+                            <div class="flex items-center justify-between gap-3 p-3 border-b border-muted-border/50">
+                                <div class="min-w-0">
+                                    <p class="font-body-md text-sm text-on-surface font-medium truncate flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-gold-accent text-[16px]">storefront</span>${t.nama}
+                                    </p>
+                                    <p class="text-xs text-on-surface-variant mt-0.5">${t.produk} produk • Rating ${t.rating}</p>
+                                </div>
+                                ${t.status ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border ${t.status === 'aktif' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-error/10 text-error border-error/20'}">${t.status}</span>` : ''}
+                            </div>
+                            <div class="p-3">
+                                <p class="text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest mb-2">Karyawan</p>
+                                ${karyawan ? `<ul class="space-y-1">${karyawan}</ul>` : '<p class="text-xs text-on-surface-variant/60 italic">Belum ada karyawan</p>'}
+                            </div>
+                        </div>`;
+                });
+            } else {
+                noToko.classList.remove('hidden');
+            }
+        }
+
+        const penugasanSec = document.getElementById('drawer-penugasan-section');
+        const showPenugasan = data.show_penugasan ?? data.is_staff ?? ['Admin', 'Produksi', 'Gudang'].includes(data.role);
+        if (!showPenugasan) {
+            penugasanSec.classList.add('hidden');
+        } else {
+            penugasanSec.classList.remove('hidden');
+            const penugasanList = document.getElementById('drawer-penugasan-list');
+            const noPenugasan = document.getElementById('drawer-no-penugasan');
+            penugasanList.innerHTML = '';
+            noPenugasan.classList.add('hidden');
+            if (data.penugasan && data.penugasan.length > 0) {
+                data.penugasan.forEach(t => {
+                    const statusBadge = t.status_penugasan === 'aktif'
+                        ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border bg-secondary-container/20 text-secondary border-secondary/20"><span class="w-1.5 h-1.5 rounded-full bg-secondary status-dot-pulse"></span>Aktif</span>'
+                        : '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border bg-error/10 text-error border-error/20">Nonaktif</span>';
+                    const ownerClick = t.owner_user_id
+                        ? `<button type="button" onclick="openKaryawanDetail(${t.owner_user_id})" class="font-semibold hover:underline hover:text-gold-accent transition-colors cursor-pointer">${t.owner_nama}</button>`
+                        : `<span class="font-semibold">${t.owner_nama}</span>`;
+                    penugasanList.innerHTML += `
+                        <div class="rounded-lg border border-muted-border/50 bg-surface-container overflow-hidden">
+                            <div class="flex items-center justify-between gap-3 p-3 border-b border-muted-border/50">
+                                <div class="min-w-0">
+                                    <p class="font-body-md text-sm text-on-surface font-medium truncate flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-gold-accent text-[16px]">storefront</span>${t.nama_toko}
+                                    </p>
+                                    <p class="text-xs text-on-surface-variant mt-0.5 truncate">Status toko: ${t.status_toko}</p>
+                                </div>
+                                ${statusBadge}
+                            </div>
+                            <div class="p-3">
+                                <p class="text-sm text-on-surface flex items-start gap-1.5">
+                                    <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 shrink-0">badge</span>
+                                    <span>Karyawan di Toko Milik Owner: ${ownerClick}</span>
+                                </p>
+                                <p class="text-xs text-on-surface-variant mt-1 ml-[26px] truncate">${t.owner_email || '-'}</p>
+                                <p class="text-[10px] text-on-surface-variant mt-2 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[13px]">event</span>Ditugaskan sejak ${t.tanggal_penugasan || '-'}
+                                </p>
+                            </div>
+                        </div>`;
+                });
+            } else {
+                noPenugasan.classList.remove('hidden');
+            }
+
+            const warehousesWrap = document.getElementById('drawer-warehouses-wrap');
+            const warehousesList = document.getElementById('drawer-warehouses-list');
+            warehousesList.innerHTML = '';
+            if (data.warehouses && data.warehouses.length > 0) {
+                warehousesWrap.classList.remove('hidden');
+                data.warehouses.forEach(w => {
+                    const dot = w.status === 'aktif'
+                        ? '<span class="w-1.5 h-1.5 rounded-full bg-secondary status-dot-pulse" title="Aktif"></span>'
+                        : '<span class="w-1.5 h-1.5 rounded-full bg-error" title="Nonaktif"></span>';
+                    warehousesList.innerHTML += `
+                        <div class="flex items-center gap-2.5 p-2.5 rounded-lg border border-muted-border/40 bg-surface-container-lowest">
+                            <span class="material-symbols-outlined text-gold-accent text-[18px] shrink-0">warehouse</span>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-sm text-on-surface font-medium truncate">${w.gudang}</p>
+                                <p class="text-xs text-on-surface-variant truncate">${w.store} &middot; Owner: ${w.owner} &middot; sejak ${w.tanggal || '-'}</p>
+                            </div>
+                            ${dot}
+                        </div>`;
+                });
+            }
+        }
+
+        if (data.aktivitas && data.aktivitas.length > 0) {
+            data.aktivitas.forEach(a => {
+                document.getElementById('drawer-aktivitas-list').innerHTML += `
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 fill">schedule</span>
+                        <div>
+                            <p class="text-sm text-on-surface">${a.deskripsi}</p>
+                            <p class="text-xs text-on-surface-variant">${a.tanggal}</p>
+                        </div>
+                    </div>`;
+            });
+        } else {
+            document.getElementById('drawer-no-aktivitas').classList.remove('hidden');
+        }
+    }
+
+    function fetchAndRender(userId) {
+        return fetch(urls.detail(userId))
+            .then(r => { if (!r.ok) throw r; return r.json(); })
+            .then(data => renderDrawer(data))
+            .catch(() => { window.showRalivaToast && showRalivaToast('Gagal memuat detail pengguna', 'error'); });
+    }
+
+    function openKaryawanDetail(userId) {
+        const curForm = document.getElementById('role-form').action;
+        const curMatch = curForm.match(/(\d+)\/role/);
+        if (curMatch) drawerHistory.push(curMatch[1]);
+        updateDrawerBackButton();
+        fetchAndRender(userId);
+    }
+
     function openUserDetail(card) {
         const d = card.dataset;
-        const userId = d.id;
+        drawerHistory.length = 0;
+        updateDrawerBackButton();
 
         document.getElementById('drawer-name').textContent = d.name;
         document.getElementById('drawer-email').textContent = d.email;
@@ -451,8 +675,8 @@
             : '<span class="material-symbols-outlined text-[10px]">email</span>Belum Verified';
         document.getElementById('drawer-verified').className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (d.verified === 'true' ? 'bg-secondary-container/20 text-secondary border border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant');
 
-        document.getElementById('role-form').action = urls.role(userId);
-        document.getElementById('nonaktifkan-form').action = urls.nonaktifkan(userId);
+        document.getElementById('role-form').action = urls.role(d.id);
+        document.getElementById('nonaktifkan-form').action = urls.nonaktifkan(d.id);
 
         const nonaktifkanBtn = document.getElementById('nonaktifkan-btn');
         nonaktifkanBtn.textContent = d.status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan';
@@ -467,151 +691,9 @@
         document.getElementById('drawer-aktivitas-list').innerHTML = '';
         document.getElementById('drawer-no-aktivitas').classList.add('hidden');
 
-        fetch(urls.detail(userId))
+        fetch(urls.detail(d.id))
             .then(r => r.json())
-            .then(data => {
-                renderDrawerAvatar(data);
-                const roleId = Object.entries(rolesJson).find(([k, v]) => v && k === data.role);
-                if (roleId) document.getElementById('drawer-role-select').value = roleId[1];
-
-                const tokoSection = document.getElementById('drawer-toko-section');
-                const showToko = data.show_toko ?? data.is_owner ?? (data.role === 'Owner');
-                if (!showToko) {
-                    tokoSection.classList.add('hidden');
-                } else {
-                    tokoSection.classList.remove('hidden');
-                    const tokoList = document.getElementById('drawer-toko-list');
-                    const noToko = document.getElementById('drawer-no-toko');
-                    tokoList.innerHTML = '';
-                    noToko.classList.add('hidden');
-                    if (data.toko && data.toko.length > 0) {
-                        const roleIcons = { 'Admin': 'admin_panel_settings', 'Produksi': 'precision_manufacturing', 'Gudang': 'warehouse' };
-                        const roleBadge = {
-                            'Admin': 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
-                            'Produksi': 'bg-secondary-container/20 text-secondary border-secondary/20',
-                            'Gudang': 'bg-surface-container-high text-on-surface-variant border-outline-variant'
-                        };
-                        data.toko.forEach(t => {
-                            const karyawan = (t.karyawan || []).map(k => {
-                                const icon = roleIcons[k.role] || 'badge';
-                                const badge = roleBadge[k.role] || 'bg-surface-container-high text-on-surface-variant border-outline-variant';
-                                const avatar = k.foto
-                                    ? `<img src="${k.foto}" alt="${k.nama}" class="w-7 h-7 rounded-full object-cover shrink-0">`
-                                    : `<span class="w-7 h-7 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center text-[10px] font-bold text-on-surface shrink-0">${k.initial || ''}</span>`;
-                                const status = k.status === 'aktif'
-                                    ? '<span class="w-1.5 h-1.5 rounded-full bg-success status-dot-pulse" title="Aktif"></span>'
-                                    : '<span class="w-1.5 h-1.5 rounded-full bg-error" title="Nonaktif"></span>';
-                                return `
-                                    <li class="flex items-center gap-2.5">
-                                        ${avatar}
-                                        <span class="min-w-0 flex-1 truncate text-sm text-on-surface">${k.nama || '-'}</span>
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase whitespace-nowrap ${badge}">
-                                            <span class="material-symbols-outlined text-[11px]">${icon}</span>${k.role || '-'}
-                                        </span>
-                                        ${status}
-                                    </li>`;
-                            }).join('');
-                            tokoList.innerHTML += `
-                                <div class="rounded-lg border border-muted-border/50 bg-surface-container overflow-hidden">
-                                    <div class="flex items-center justify-between gap-3 p-3 border-b border-muted-border/50">
-                                        <div class="min-w-0">
-                                            <p class="font-body-md text-sm text-on-surface font-medium truncate flex items-center gap-1.5">
-                                                <span class="material-symbols-outlined text-gold-accent text-[16px]">storefront</span>${t.nama}
-                                            </p>
-                                            <p class="text-xs text-on-surface-variant mt-0.5">${t.produk} produk • Rating ${t.rating}</p>
-                                        </div>
-                                        ${t.status ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border ${t.status === 'aktif' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-error/10 text-error border-error/20'}">${t.status}</span>` : ''}
-                                    </div>
-                                    <div class="p-3">
-                                        <p class="text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest mb-2">Karyawan</p>
-                                        ${karyawan ? `<ul class="space-y-2">${karyawan}</ul>` : '<p class="text-xs text-on-surface-variant/60 italic">Belum ada karyawan</p>'}
-                                    </div>
-                                </div>`;
-                        });
-                    } else {
-                        noToko.classList.remove('hidden');
-                    }
-                }
-
-                const penugasanSec = document.getElementById('drawer-penugasan-section');
-                const showPenugasan = data.show_penugasan ?? data.is_staff ?? ['Admin', 'Produksi', 'Gudang'].includes(data.role);
-                if (!showPenugasan) {
-                    penugasanSec.classList.add('hidden');
-                } else {
-                    penugasanSec.classList.remove('hidden');
-                    const penugasanList = document.getElementById('drawer-penugasan-list');
-                    const noPenugasan = document.getElementById('drawer-no-penugasan');
-                    penugasanList.innerHTML = '';
-                    noPenugasan.classList.add('hidden');
-                    if (data.penugasan && data.penugasan.length > 0) {
-                        data.penugasan.forEach(t => {
-                            const statusBadge = t.status_penugasan === 'aktif'
-                                ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border bg-secondary-container/20 text-secondary border-secondary/20"><span class="w-1.5 h-1.5 rounded-full bg-secondary status-dot-pulse"></span>Aktif</span>'
-                                : '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border bg-error/10 text-error border-error/20">Nonaktif</span>';
-                            penugasanList.innerHTML += `
-                                <div class="rounded-lg border border-muted-border/50 bg-surface-container overflow-hidden">
-                                    <div class="flex items-center justify-between gap-3 p-3 border-b border-muted-border/50">
-                                        <div class="min-w-0">
-                                            <p class="font-body-md text-sm text-on-surface font-medium truncate flex items-center gap-1.5">
-                                                <span class="material-symbols-outlined text-gold-accent text-[16px]">storefront</span>${t.nama_toko}
-                                            </p>
-                                            <p class="text-xs text-on-surface-variant mt-0.5 truncate">Status toko: ${t.status_toko}</p>
-                                        </div>
-                                        ${statusBadge}
-                                    </div>
-                                    <div class="p-3">
-                                        <p class="text-sm text-on-surface flex items-start gap-1.5">
-                                            <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 shrink-0">badge</span>
-                                            <span>Karyawan di Toko Milik Owner: <span class="font-semibold">${t.owner_nama}</span></span>
-                                        </p>
-                                        <p class="text-xs text-on-surface-variant mt-1 ml-[26px] truncate">${t.owner_email || '-'}</p>
-                                        <p class="text-[10px] text-on-surface-variant mt-2 flex items-center gap-1">
-                                            <span class="material-symbols-outlined text-[13px]">event</span>Ditugaskan sejak ${t.tanggal_penugasan || '-'}
-                                        </p>
-                                    </div>
-                                </div>`;
-                        });
-                    } else {
-                        noPenugasan.classList.remove('hidden');
-                    }
-
-                    const warehousesWrap = document.getElementById('drawer-warehouses-wrap');
-                    const warehousesList = document.getElementById('drawer-warehouses-list');
-                    warehousesList.innerHTML = '';
-                    if (data.warehouses && data.warehouses.length > 0) {
-                        warehousesWrap.classList.remove('hidden');
-                        data.warehouses.forEach(w => {
-                            const dot = w.status === 'aktif'
-                                ? '<span class="w-1.5 h-1.5 rounded-full bg-secondary status-dot-pulse" title="Aktif"></span>'
-                                : '<span class="w-1.5 h-1.5 rounded-full bg-error" title="Nonaktif"></span>';
-                            warehousesList.innerHTML += `
-                                <div class="flex items-center gap-2.5 p-2.5 rounded-lg border border-muted-border/40 bg-surface-container-lowest">
-                                    <span class="material-symbols-outlined text-gold-accent text-[18px] shrink-0">warehouse</span>
-                                    <div class="min-w-0 flex-1">
-                                        <p class="text-sm text-on-surface font-medium truncate">${w.gudang}</p>
-                                        <p class="text-xs text-on-surface-variant truncate">${w.store} &middot; Owner: ${w.owner} &middot; sejak ${w.tanggal || '-'}</p>
-                                    </div>
-                                    ${dot}
-                                </div>`;
-                        });
-                    }
-                }
-
-                if (data.aktivitas && data.aktivitas.length > 0) {
-                    data.aktivitas.forEach(a => {
-                        document.getElementById('drawer-aktivitas-list').innerHTML += `
-                            <div class="flex items-start gap-3">
-                                <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 fill">schedule</span>
-                                <div>
-                                    <p class="text-sm text-on-surface">${a.deskripsi}</p>
-                                    <p class="text-xs text-on-surface-variant">${a.tanggal}</p>
-                                </div>
-                            </div>`;
-                    });
-                } else {
-                    document.getElementById('drawer-no-aktivitas').classList.remove('hidden');
-                }
-            });
+            .then(data => renderDrawer(data));
 
         const overlay = document.getElementById('user-drawer-overlay');
         const panel = document.getElementById('user-drawer-panel');
@@ -621,6 +703,8 @@
     }
 
     function closeUserDetail() {
+        drawerHistory.length = 0;
+        updateDrawerBackButton();
         const overlay = document.getElementById('user-drawer-overlay');
         const panel = document.getElementById('user-drawer-panel');
         overlay.classList.add('opacity-0');
