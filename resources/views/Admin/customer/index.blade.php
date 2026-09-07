@@ -9,22 +9,22 @@
 
     <section data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter mb-6">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">groups</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">groups</span>
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Total Customer</span>
             <span class="raliva-figure text-[26px] text-on-surface relative">{{ $customers->total() ?? 0 }}</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">person_add</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">person_add</span>
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Baru Bulan Ini</span>
             <span class="raliva-figure text-[26px] text-secondary relative">{{ $customers->where('created_at', '>=', now()->startOfMonth())->count() }}</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">repeat</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">repeat</span>
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Repeat</span>
             <span class="raliva-figure text-[26px] text-on-surface relative">{{ $customers->filter(fn($c)=>($c->total_pesanan??0)>=2)->count() }}</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">payments</span>
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Avg Belanja</span>
             <span class="raliva-figure text-[26px] text-gold-accent relative">Rp {{ number_format($customers->avg('orders_sum_grand_total') ?? 0,0,',','.') }}</span>
         </div>
