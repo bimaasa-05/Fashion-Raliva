@@ -260,7 +260,7 @@
             <p class="font-label-caps text-label-caps text-[var(--chrome-accent)] uppercase tracking-widest mb-xs">{{ __('MY PROFILE') }}</p>
             <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md md:mb-lg">{{ __('Edit Profile') }}</h2>
 
-            <form id="profile-form" method="POST" action="{{ route('customer.account.edit') }}" enctype="multipart/form-data">
+            <form id="profile-form" method="POST" action="{{ route('customer.account.update') }}" enctype="multipart/form-data">
                 @csrf
 
                 {{-- ========== PROFILE PHOTO ========== --}}
@@ -362,8 +362,11 @@
                     {{-- Date of Birth --}}
                     <div>
                         <label for="dob" class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('Date of Birth') }}</label>
-                        <input type="date" id="dob" value="{{ old('tanggal_lahir', '1998-05-17') }}" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none"/>
+                        <input type="date" id="dob" name="tanggal_lahir" value="{{ old('tanggal_lahir', optional(Auth::user()->tanggal_lahir)->format('Y-m-d')) }}" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none"/>
                         <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Get a special surprise on your birthday.') }}</p>
+                        @error('tanggal_lahir')
+                        <p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 

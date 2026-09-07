@@ -266,13 +266,13 @@
 <div class="flex flex-row items-center gap-sm md:gap-md px-container-margin py-sm sticky top-16 z-30">
 <div class="flex-1 min-w-0 flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm">
 <div class="flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar">
-<button type="button" id="tab-written" onclick="switchTab('written')" class="cat-pill shrink-0 border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5 active">{{ __('Written') }} <span class="cat-count">3</span></button>
-<button type="button" id="tab-to-review" onclick="switchTab('to-review')" class="cat-pill shrink-0 border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full">{{ __('To Review') }} <span class="cat-count">2</span></button>
+<button type="button" id="tab-written" onclick="switchTab('written')" class="cat-pill shrink-0 border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5 active">{{ __('Written') }} <span class="cat-count">{{ $reviews->count() }}</span></button>
+<button type="button" id="tab-to-review" onclick="switchTab('to-review')" class="cat-pill shrink-0 border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full">{{ __('To Review') }} <span class="cat-count">{{ $toReviewItems->count() }}</span></button>
 </div>
 <div class="relative shrink-0 ml-auto">
 <button aria-label="{{ __('Total Reviews') }}" type="button" class="shop-action-btn border border-outline-variant hover:text-secondary hover:border-secondary transition-colors">
 <span class="material-symbols-outlined text-[20px]">rate_review</span>
-<span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">5</span>
+<span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">{{ $reviews->count() + $toReviewItems->count() }}</span>
 </button>
 </div>
 </div>
@@ -288,124 +288,84 @@
 <!-- Panel: Written Reviews -->
 <section id="panel-written">
 <div class="flex flex-col gap-sm">
-<!-- Review 1 -->
+@forelse ($reviews as $rv)
+@php
+$prod = $rv->product;
+$img = $prod?->images->first()?->file_gambar ?? '';
+$imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/review-'.$rv->review_id.'/900/1200';
+$link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
+@endphp
 <article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline">
 <div class="flex gap-sm md:gap-md">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
-<img alt="{{ __('Tailored Linen Blazer') }}" class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPD5-Gnh3eTuUtU4T7JNWo5RRzeJvQHK9Ga-Qyub2VAxmLGZrXcu5eAhUHzglaK2leeCgs_S1rotd_qxAlW3J4__SdbjTf72VBHQzRpit8rbEixeyo2UKLpiBeBbgQfpUO8i83JOSeojGk4-pg0MhKw305uBjXfYyPk4JPteEhhs_SytMO40NERGkVHIbKNFaDIS4tZRo7KpphEGebXYRJRggcWTAf3NNm6pvcs8WOjecDptx1ZzQ"/>
+<a href="{{ $link }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
+<img alt="{{ $prod?->nama_produk }}" class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" src="{{ $imgUrl }}"/>
 </a>
 <div class="flex-grow min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Noiré Studio') }}</span>
-<h3 class="font-title-sm text-title-md text-on-surface font-semibold truncate">{{ __('Tailored Linen Blazer') }}</h3>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $rv->store?->nama_toko ?? 'RALIVA' }}</span>
+<h3 class="font-title-sm text-title-md text-on-surface font-semibold truncate">{{ $prod?->nama_produk }}</h3>
 <div class="flex items-center gap-xs mt-xs flex-wrap">
 <div class="flex text-secondary">
-<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
+@for ($i = 1; $i <= 5; $i++)
+<span class="material-symbols-outlined text-[16px] {{ $i <= $rv->rating ? '' : 'text-outline-variant' }}" data-icon="{{ $i <= $rv->rating ? 'star' : 'star_border' }}" data-weight="fill">{{ $i <= $rv->rating ? 'star' : 'star_border' }}</span>
+@endfor
 </div>
-<span class="font-label-sm text-label-sm text-on-surface-variant ml-1">{{ __('May 12, 2026') }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant ml-1">{{ $rv->created_at->format('M j, Y') }}</span>
+@if ($rv->status !== \App\Models\Review::STATUS_AKTIF)
+<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-low border border-outline-variant font-label-sm text-label-sm text-on-surface-variant">{{ __('Menunggu moderasi') }}</span>
+@endif
 </div>
 </div>
 </div>
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-md">{{ __('Beautifully tailored and the linen feels premium. The fit is exactly as described and it has become my go-to blazer for both work and weekends.') }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-md">{{ $rv->ulasan }}</p>
 <div class="flex flex-col sm:flex-row justify-end gap-sm mt-md pt-sm border-t border-outline-variant">
-<a href="{{ route('customer.reviews.edit') }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-secondary/5">
+<a href="{{ route('customer.reviews.edit', $rv->review_id) }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-secondary/5">
 <span class="material-symbols-outlined text-[18px]">edit</span>{{ __('Edit') }}</a>
-<button type="button" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-error text-error font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-error/5" onclick="if(!confirm('{{ __('Are you sure you want to delete this review?') }}')) return false;">
+<form method="POST" action="{{ route('customer.reviews.destroy', $rv->review_id) }}" onsubmit="return confirm('{{ __('Are you sure you want to delete this review?') }}')">
+@csrf
+@method('DELETE')
+<button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-error text-error font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-error/5">
 <span class="material-symbols-outlined text-[18px]">delete</span>{{ __('Delete') }}</button>
+</form>
 </div>
 </article>
-<!-- Review 2 -->
-<article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline">
-<div class="flex gap-sm md:gap-md">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
-<img alt="{{ __('Structured Leather Tote') }}" class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDotrquQ9ru5aXlWl5XbgLhEMJq3WBfo5DDEAS3Z-F5LnAIv27Q3259la3QLZghjnF5R8udNJqY0Toq6SHw5JvN3PqANThsUOvwujXixkrq5zZBH5OW_D3QTRD3qObufW5Uz2-ahDe36xdtDHuA8SK2Ldhp4wpMReozYAnqkNj5ZG3A37LwDOS6aXDnCEg_MNh_j2C1VKegB7PNMCwMV-jwzYAwrhuqG1UCGjQoSl3A0QRKO-gFHlQ"/>
-</a>
-<div class="flex-grow min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Lunara Fashion') }}</span>
-<h3 class="font-title-sm text-title-md text-on-surface font-semibold truncate">{{ __('Structured Leather Tote') }}</h3>
-<div class="flex items-center gap-xs mt-xs flex-wrap">
-<div class="flex text-secondary">
-<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
-<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="star_border">star_border</span>
+@empty
+<div class="text-center py-xl">
+<span class="material-symbols-outlined text-[40px] text-outline-variant block mx-auto mb-sm">rate_review</span>
+<p class="font-body-sm text-body-sm text-on-surface font-semibold">{{ __('Belum ada review') }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Review yang Anda tulis akan muncul di sini.') }}</p>
 </div>
-<span class="font-label-sm text-label-sm text-on-surface-variant ml-1">{{ __('Apr 28, 2026') }}</span>
-</div>
-</div>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-md">{{ __('Gorgeous bag with a very sturdy structure. It fits my laptop perfectly. One star off because the strap felt slightly stiff during the first week.') }}</p>
-<div class="flex flex-col sm:flex-row justify-end gap-sm mt-md pt-sm border-t border-outline-variant">
-<a href="{{ route('customer.reviews.edit') }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-secondary/5">
-<span class="material-symbols-outlined text-[18px]">edit</span>{{ __('Edit') }}</a>
-<button type="button" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-error text-error font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-error/5" onclick="if(!confirm('{{ __('Are you sure you want to delete this review?') }}')) return false;">
-<span class="material-symbols-outlined text-[18px]">delete</span>{{ __('Delete') }}</button>
-</div>
-</article>
-<!-- Review 3 -->
-<article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline">
-<div class="flex gap-sm md:gap-md">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
-<img alt="{{ __('Silk Slip Dress') }}" class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrQWexD2Xms4d7-qplQNqqTI4EebkIxaCqpOssP3jfxkcDDAjBvE4kuCEgO-j-Yd-Vfxm6sW-zOaQShx89-kFo0JwvaQ9DnVYjw0ZeHlwNYQaWtigNJNUb1P2E3VS7jVbvb2gfkn5AgK0_pHzGjUiSO2kjiDWXbTKy2tRqRQq5I2md_UYdyHQR_axy07aFn3BeoVctJgri9jLNSSEizCJoXGSF5I0rX6QAaqkzanalXeH6sTmuLnA"/>
-</a>
-<div class="flex-grow min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Maëva House') }}</span>
-<h3 class="font-title-sm text-title-md text-on-surface font-semibold truncate">{{ __('Silk Slip Dress') }}</h3>
-<div class="flex items-center gap-xs mt-xs flex-wrap">
-<div class="flex text-secondary">
-<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
-<span class="material-symbols-outlined text-[16px]" data-icon="star" data-weight="fill">star</span>
-<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="star_border">star_border</span>
-<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="star_border">star_border</span>
-</div>
-<span class="font-label-sm text-label-sm text-on-surface-variant ml-1">{{ __('Apr 10, 2026') }}</span>
-</div>
-</div>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-md">{{ __('The silk drapes beautifully, but the color is slightly lighter than the photos. Still an elegant piece for special occasions.') }}</p>
-<div class="flex flex-col sm:flex-row justify-end gap-sm mt-md pt-sm border-t border-outline-variant">
-<a href="{{ route('customer.reviews.edit') }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-secondary/5">
-<span class="material-symbols-outlined text-[18px]">edit</span>{{ __('Edit') }}</a>
-<button type="button" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-error text-error font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-error/5" onclick="if(!confirm('{{ __('Are you sure you want to delete this review?') }}')) return false;">
-<span class="material-symbols-outlined text-[18px]">delete</span>{{ __('Delete') }}</button>
-</div>
-</article>
+@endforelse
 </div>
 </section>
 <!-- Panel: To Review -->
 <section id="panel-to-review" class="hidden">
 <div class="flex flex-col gap-sm">
-<!-- Item 1 -->
+@forelse ($toReviewItems as $item)
+@php
+$prod = $item->productVariant?->product;
+$img = $prod?->images->first()?->file_gambar ?? '';
+$imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/toreview-'.$item->order_item_id.'/900/1200';
+$link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
+@endphp
 <article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline flex items-center gap-sm md:gap-md">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
-<img alt="{{ __('Geometric Gold Hoops') }}" class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXqNhNFWMr-Gm8_uwAVgBbqtzcNdb5MAfQUsG_3GJbmE0gm167f27WLQY44QclgDSw7N_b2k0qpe9HdTKZlExYsZl6FJUCnKft0foIHP3pp3uFUAxnwrYM3o7ap46wCmmnSGAbNN-gDM_Kptg0bVNG6ghZhp7r3PeQ66ZD2yhgIMKhB9sSycHTa8yXBJ3fTbNvx2tH5SUu76da_WcZ3bJW7JeJmVuEnVOdIHENcwQB0a1sOCp-u_s"/>
+<a href="{{ $link }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
+<img alt="{{ $prod?->nama_produk }}" class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" src="{{ $imgUrl }}"/>
 </a>
 <div class="flex-grow min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Kayana Apparel') }}</span>
-<h3 class="font-title-sm text-title-md text-on-surface font-semibold truncate">{{ __('Geometric Gold Hoops') }}</h3>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Delivered May 20, 2026') }}</p>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $item->order?->store?->nama_toko ?? 'RALIVA' }}</span>
+<h3 class="font-title-sm text-title-md text-on-surface font-semibold truncate">{{ $item->nama_produk_snapshot }}</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Delivered') }} {{ $item->order?->created_at->format('M j, Y') }}</p>
 </div>
-<a href="{{ route('customer.reviews.create') }}" class="btn-gold shrink-0 px-md py-2.5 rounded-full font-label-caps text-label-caps uppercase tracking-widest inline-flex items-center justify-center gap-1.5">
+<a href="{{ route('customer.reviews.create', ['order_item' => $item->order_item_id]) }}" class="btn-gold shrink-0 px-md py-2.5 rounded-full font-label-caps text-label-caps uppercase tracking-widest inline-flex items-center justify-center gap-1.5">
 <span class="material-symbols-outlined text-[18px]">rate_review</span>{{ __('Write Review') }}</a>
 </article>
-<!-- Item 2 -->
-<article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline flex items-center gap-sm md:gap-md">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
-<img alt="{{ __('Ribbed Knit Tank') }}" class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBSCYHpJJ10PR1rv62xsiSUHcgECc8Yl7gxPOJqlAhXqjJGHnlXSe3G3OT0zZOpoO6zdOywN_zGJ312gSUWGyrERx3QJH1sib9jdTkpcPR1UGz6mjrBLNDh6NTT4t86gs2BbXDST-ewDyDYcbA5FZIEMUM"/>
-</a>
-<div class="flex-grow min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('RALIVA') }}</span>
-<h3 class="font-title-sm text-title-md text-on-surface font-semibold truncate">{{ __('Ribbed Knit Tank') }}</h3>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Delivered May 15, 2026') }}</p>
+@empty
+<div class="text-center py-xl">
+<span class="material-symbols-outlined text-[40px] text-outline-variant block mx-auto mb-sm">task_alt</span>
+<p class="font-body-sm text-body-sm text-on-surface font-semibold">{{ __('Tidak ada produk untuk direview') }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Produk dari pesanan yang sudah selesai akan muncul di sini.') }}</p>
 </div>
-<a href="{{ route('customer.reviews.create') }}" class="btn-gold shrink-0 px-md py-2.5 rounded-full font-label-caps text-label-caps uppercase tracking-widest inline-flex items-center justify-center gap-1.5">
-<span class="material-symbols-outlined text-[18px]">rate_review</span>{{ __('Write Review') }}</a>
-</article>
+@endforelse
 </div>
 </section>
 

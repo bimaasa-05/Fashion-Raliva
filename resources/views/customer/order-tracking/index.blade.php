@@ -343,6 +343,54 @@
 </header>
 <!-- Main Content Canvas -->
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
+@if (! $selected)
+<section class="py-xl reveal-up">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium text-center">
+<div class="atl-eyebrow mb-sm justify-center">
+<span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Order Tracking') }}</span>
+</div>
+<span class="material-symbols-outlined text-[40px] text-outline-variant block mx-auto mb-sm">local_shipping</span>
+<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Belum ada pesanan') }}</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-md max-w-md mx-auto">{{ __('Anda belum memiliki pesanan. Mulai belanja dan pesanan Anda akan muncul di sini.') }}</p>
+<a href="{{ route('customer.shop') }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest">
+<span class="material-symbols-outlined text-[18px]">shopping_bag</span>{{ __('Mulai Belanja') }}</a>
+</div>
+</div>
+</section>
+@else
+@php
+    $step = $selectedStep;
+    $statusLabel = \App\Http\Controllers\Customer\OrderTrackingController::STATUS_LABELS[$selected->status] ?? ucfirst(str_replace('_', ' ', $selected->status));
+    $isCancelled = $step === null;
+    $shipment = $selected->shipments->first();
+    $estDeliv = $shipment?->estimasi_tiba;
+    $itemsCount = $selected->items->count();
+    $progressWidth = $isCancelled ? 0 : (($step - 1) / 3 * 100);
+    $details = [
+        'pending_payment' => [__('Menunggu pembayaran'), __('Silakan selesaikan pembayaran Anda agar pesanan segera diproses.')],
+        'dibayar' => [__('Pembayaran diterima'), __('Pembayaran Anda telah kami terima. Pesanan sedang menunggu diproses.')],
+        'diproses' => [__('Sedang disiapkan'), __('Pesanan sedang diproses di gudang dan akan segera dikirim.')],
+        'dikirim' => [__('Sedang dalam perjalanan'), __('Pesanan sudah dikirim dan sedang dalam perjalanan menuju alamat Anda.')],
+        'selesai' => [__('Pesanan selesai'), __('Pesanan telah sampai dan selesai. Terima kasih sudah berbelanja di RALIVA.')],
+        'dibatalkan' => [__('Pesanan dibatalkan'), __('Pesanan ini telah dibatalkan. Hubungi layanan pelanggan jika ada pertanyaan.')],
+        'refund' => [__('Refund sedang diproses'), __('Pengembalian dana untuk pesanan ini sedang diproses.')],
+    ];
+    $detail = $details[$selected->status] ?? [__('Pesanan diterima'), __('Pesanan Anda telah tercatat.')];
+@endphp
+@if ($orders->count() > 1)
+<div class="pt-lg">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="ot-product-list px-sm py-xs flex gap-sm overflow-x-auto hide-scrollbar" style="max-height:none">
+@foreach ($orders as $o)
+<a href="{{ route('customer.order-tracking', ['order' => $o->order_id]) }}" class="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-200 {{ $o->order_id === $selected->order_id ? 'bg-secondary text-white border-secondary' : 'border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary' }}">
+<span class="font-label-sm text-label-sm font-semibold">#{{ $o->nomor_order }}</span>
+</a>
+@endforeach
+</div>
+</div>
+</div>
+@endif
 <!-- Order Header (Super-Admin style premium card, aksen Burgundy) -->
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px] px-container-margin">
@@ -353,15 +401,15 @@
 <div class="flex flex-wrap justify-between items-end gap-sm">
 <div>
 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-1">{{ __('Order ID') }}</p>
-<p class="font-title-md text-title-md md:text-headline-md font-semibold text-on-surface tracking-tight">#RLV-240501-1234</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">May 1, 2024 • {{ __('2 items') }}</p>
+<p class="font-title-md text-title-md md:text-headline-md font-semibold text-on-surface tracking-tight">#{{ $selected->nomor_order }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">{{ $selected->created_at->format('M j, Y') }} • {{ $itemsCount }} {{ __('items') }}</p>
 </div>
 <div class="text-left md:text-right">
-<div class="inline-flex items-center gap-xs px-sm py-1 rounded-full bg-secondary/10 border border-secondary/15">
-<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">{{ __('Preparing') }}</span>
+<div class="inline-flex items-center gap-xs px-sm py-1 rounded-full border {{ $isCancelled ? 'bg-error/10 border-error/15' : 'bg-secondary/10 border-secondary/15' }}">
+<span class="w-2 h-2 rounded-full {{ $isCancelled ? 'bg-error' : 'bg-secondary' }} animate-pulse"></span>
+<span class="font-label-sm text-label-sm {{ $isCancelled ? 'text-error' : 'text-secondary' }} uppercase tracking-wider font-semibold">{{ $statusLabel }}</span>
 </div>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ __('Est. delivery: May 5–7, 2024') }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ $estDeliv ? __('Est. delivery:').' '.$estDeliv->format('M j, Y') : __('Menunggu konfirmasi pengiriman') }}</p>
 </div>
 </div>
 </div>
@@ -370,42 +418,48 @@
 <!-- Visual Tracking Timeline -->
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
+@if ($isCancelled)
+<div class="text-center py-1">
+<span class="material-symbols-outlined text-[40px] text-error mb-xs block">cancel</span>
+<h3 class="font-title-md text-title-md text-on-surface mb-xs">{{ $detail[0] }}</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-md mx-auto">{{ $detail[1] }}</p>
+</div>
+@else
 <div class="relative max-w-[480px] mx-auto">
 <div class="timeline-line"></div>
-<div class="timeline-progress" style="width: 0%;"></div>
+<div class="timeline-progress" style="width: {{ $progressWidth }}%;"></div>
 <div class="flex justify-between gap-2 relative z-10">
-<!-- Step 1: Preparing (Active) -->
+@foreach ([1 => __('Preparing'), 2 => __('Packed'), 3 => __('Shipped'), 4 => __('Delivered')] as $stepIndex => $stepLabel)
+@php
+$passed = ! $isCancelled && $step && $stepIndex < $step;
+$active = ! $isCancelled && $step && $stepIndex === $step;
+@endphp
 <div class="flex flex-col items-center gap-1 group cursor-pointer flex-1">
+@if ($passed)
+<div class="w-7 h-7 md:w-6 md:h-6 rounded-full flex items-center justify-center bg-secondary border border-secondary shrink-0">
+<span class="material-symbols-outlined text-[14px] text-white">check</span>
+</div>
+<span class="font-label-sm text-[10px] md:text-label-sm uppercase tracking-wider text-on-surface-variant text-center leading-tight">{{ $stepLabel }}</span>
+@elseif ($active)
 <div class="w-7 h-7 md:w-6 md:h-6 rounded-full flex items-center justify-center bg-surface transition-colors timeline-active-circle shrink-0" style="border: 2px solid var(--chrome-accent);">
 <div class="w-2.5 h-2.5 md:w-2 md:h-2 rounded-full timeline-active-dot" style="background-color: var(--chrome-accent);"></div>
 </div>
-<span class="font-label-sm text-[10px] md:text-label-sm uppercase tracking-wider text-on-surface text-center leading-tight timeline-active-label" style="color: var(--chrome-accent);">{{ __('Preparing') }}</span>
-</div>
-<!-- Step 2: Packed -->
-<div class="flex flex-col items-center gap-1 group cursor-pointer flex-1">
+<span class="font-label-sm text-[10px] md:text-label-sm uppercase tracking-wider text-on-surface text-center leading-tight timeline-active-label" style="color: var(--chrome-accent);">{{ $stepLabel }}</span>
+@else
 <div class="w-7 h-7 md:w-6 md:h-6 rounded-full bg-surface border border-outline-variant flex items-center justify-center shrink-0 transition-colors group-hover:border-outline">
 </div>
-<span class="font-label-sm text-[10px] md:text-label-sm uppercase tracking-wider text-on-surface-variant text-center leading-tight">{{ __('Packed') }}</span>
+<span class="font-label-sm text-[10px] md:text-label-sm uppercase tracking-wider text-on-surface-variant text-center leading-tight">{{ $stepLabel }}</span>
+@endif
 </div>
-<!-- Step 3: Shipped -->
-<div class="flex flex-col items-center gap-1 group cursor-pointer flex-1">
-<div class="w-7 h-7 md:w-6 md:h-6 rounded-full bg-surface border border-outline-variant flex items-center justify-center shrink-0 transition-colors group-hover:border-outline">
-</div>
-<span class="font-label-sm text-[10px] md:text-label-sm uppercase tracking-wider text-on-surface-variant text-center leading-tight">{{ __('Shipped') }}</span>
-</div>
-<!-- Step 4: Delivered -->
-<div class="flex flex-col items-center gap-1 group cursor-pointer flex-1">
-<div class="w-7 h-7 md:w-6 md:h-6 rounded-full bg-surface border border-outline-variant flex items-center justify-center shrink-0 transition-colors group-hover:border-outline">
-</div>
-<span class="font-label-sm text-[10px] md:text-label-sm uppercase tracking-wider text-on-surface-variant text-center leading-tight">{{ __('Delivered') }}</span>
-</div>
+@endforeach
 </div>
 </div>
 <!-- Current Status Detail -->
 <div class="mt-lg text-center bg-surface-container-low p-md border border-outline-variant rounded-xl shadow-sm shadow-[0_2px_10px_rgba(0,0,0,.05)]">
-<h3 class="font-title-md text-title-md text-on-surface mb-xs">{{ __("We're getting your order ready") }}</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Your items are currently being processed in our warehouse and will be packed shortly.') }}</p>
+<h3 class="font-title-md text-title-md text-on-surface mb-xs">{{ $detail[0] }}</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ $detail[1] }}</p>
 </div>
+@endif
 </div>
 </div>
 <!-- Order Items List -->
@@ -416,45 +470,40 @@
 <div class="atl-eyebrow mb-1">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Order Items') }}</span>
 </div>
-<h2 class="premium-heading font-title-md md:font-headline-md text-title-md md:text-headline-md text-on-surface">{{ __('Items in Order') }} <span class="font-body-sm text-body-sm text-on-surface-variant font-normal">• 2 items</span></h2>
+<h2 class="premium-heading font-title-md md:font-headline-md text-title-md md:text-headline-md text-on-surface">{{ __('Items in Order') }} <span class="font-body-sm text-body-sm text-on-surface-variant font-normal">• {{ $itemsCount }} {{ __('items') }}</span></h2>
 </div>
 <!-- Product List (nested scroll container) -->
 <div class="ot-product-list">
-<!-- Item 1 -->
+@foreach ($selected->items as $item)
+@php
+$v = $item->productVariant;
+$img = $v?->product?->images->first()?->file_gambar ?? '';
+$imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/order-'.$item->order_item_id.'/900/1200';
+$warna = $v?->warna;
+$ukuran = $v?->ukuran;
+@endphp
 <div class="group flex gap-sm md:gap-md">
 <div class="w-24 h-32 md:w-28 md:h-36 bg-surface-container-lowest rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant/30">
-<img class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" data-alt="A luxurious, minimalist product shot of an oversized linen shirt in a pristine white color, styled neatly folded against a stark white background with soft, diffused high-key studio lighting. The texture of the premium linen is highlighted, evoking a sophisticated, modern, and editorial fashion aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJlZAPwP-_xQgZVO14xE3Iu5npa30PNtPh-mhwqhHFy8WGyDIB88pqpUCiHtphw4m9zlFgrt_ycF_HlVLz0pUDshR1F3eqGVZYdqp4_qIihhITt0Blr3kgQOXjSp8iPBaotQEQIy3fGR8WUWbYK9JzLS_tYGjRSwZ8AMmViSKwigSNj1QeNqICwi6gOfkES04iTCN8Q-PxuntGupL9_rET-Zmjx_exlyS_3ai4_QXi8XxmMbFdQq4"/>
+<img class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" src="{{ $imgUrl }}" alt="{{ $item->nama_produk_snapshot }}"/>
 </div>
 <div class="flex flex-col justify-between py-1 flex-grow min-w-0">
 <div class="min-w-0">
-<div class="inline-flex items-center self-start px-2 py-0.5 mb-1 rounded-full bg-secondary/5 text-secondary border border-secondary/20 font-label-sm text-label-sm uppercase tracking-widest">RALIVA</div>
-<h3 class="font-body-sm md:font-title-md text-body-sm md:text-title-md font-semibold text-on-surface truncate">Oversized Linen Shirt</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex flex-wrap gap-2"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-low border border-outline-variant text-xs">{{ __('White') }} • M</span></p>
+<div class="inline-flex items-center self-start px-2 py-0.5 mb-1 rounded-full bg-secondary/5 text-secondary border border-secondary/20 font-label-sm text-label-sm uppercase tracking-widest">{{ $selected->store?->nama_toko ?? 'RALIVA' }}</div>
+<h3 class="font-body-sm md:font-title-md text-body-sm md:text-title-md font-semibold text-on-surface truncate">{{ $item->nama_produk_snapshot }}</h3>
+@if ($warna || $ukuran)
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex flex-wrap gap-2"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-low border border-outline-variant text-xs">{{ $warna ?: __('Default') }}@if ($ukuran) • {{ $ukuran }}@endif</span></p>
+@endif
 </div>
 <div class="flex justify-between items-center mt-sm">
-<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Qty: 1') }}</p>
-<p class="font-body-sm md:font-title-md text-body-sm md:text-title-md font-semibold text-on-surface">$145.00</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Qty:') }} {{ $item->quantity }}</p>
+<p class="font-body-sm md:font-title-md text-body-sm md:text-title-md font-semibold text-on-surface">Rp {{ number_format($item->harga_snapshot, 0, ',', '.') }}</p>
 </div>
 </div>
 </div>
+@if (! $loop->last)
 <div class="h-px bg-outline-variant/40 mx-1 my-1"></div>
-<!-- Item 2 -->
-<div class="group flex gap-sm md:gap-md">
-<div class="w-24 h-32 md:w-28 md:h-36 bg-surface-container-lowest rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant/30">
-<img class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" data-alt="A high-end editorial product photograph of tailored straight fit pants in deep black, sharply folded and presented on a minimalist gray textured surface. The lighting is crisp and dramatic, highlighting the structural integrity and premium fabric of the garment, perfectly suited for a luxury fashion marketplace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjIMzWrbFLT6KKutzy6PhQHHWEnYzrTgY-dKZrde1_cde8Vn6WRo8ZqI5d6eCMRbNv0V1GLwD501aHhMDfqY2xyaMilKOQFanRXb_E2Lgr0zm2E07fnIj01Ek7udmiq8489lpf4z38jLzFHJTW_XAKLUZO5a5fvIj1yMCqo1OlmFisVMzLkqVYJ0_nUJurX6Us8b3nT34YQMqNISCpv1fVNHyXNZkUn8-wgCUk-2yx6KcGEJn3Ncs"/>
-</div>
-<div class="flex flex-col justify-between py-1 flex-grow min-w-0">
-<div class="min-w-0">
-<div class="inline-flex items-center self-start px-2 py-0.5 mb-1 rounded-full bg-secondary/5 text-secondary border border-secondary/20 font-label-sm text-label-sm uppercase tracking-widest">RALIVA</div>
-<h3 class="font-body-sm md:font-title-md text-body-sm md:text-title-md font-semibold text-on-surface truncate">Straight Fit Pants</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex flex-wrap gap-2"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-low border border-outline-variant text-xs">{{ __('Black') }} • 32</span></p>
-</div>
-<div class="flex justify-between items-center mt-sm">
-<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Qty: 1') }}</p>
-<p class="font-body-sm md:font-title-md text-body-sm md:text-title-md font-semibold text-on-surface">$210.00</p>
-</div>
-</div>
-</div>
+@endif
+@endforeach
 </div>
 </div>
 </div>
@@ -471,20 +520,24 @@
 <div class="flex flex-col gap-sm">
 <div class="flex justify-between py-1">
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Subtotal') }}</p>
-<p class="font-body-sm text-body-sm text-on-surface font-medium">$355.00</p>
+<p class="font-body-sm text-body-sm text-on-surface font-medium">Rp {{ number_format($selected->subtotal, 0, ',', '.') }}</p>
 </div>
 <div class="flex justify-between py-1">
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Shipping') }}</p>
+@if ((float) $selected->total_ongkir > 0)
+<p class="font-body-sm text-body-sm text-on-surface font-medium">Rp {{ number_format($selected->total_ongkir, 0, ',', '.') }}</p>
+@else
 <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-[#e8f5e9] text-[#2e7d32] dark:bg-[#1b3a1f] dark:text-[#a5d6a7] font-label-sm text-label-sm font-semibold">{{ __('Free') }}</span>
+@endif
 </div>
 <div class="flex justify-between py-1">
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Tax') }}</p>
-<p class="font-body-sm text-body-sm text-on-surface font-medium">$31.95</p>
+<p class="font-body-sm text-body-sm text-on-surface font-medium">Rp {{ number_format($selected->total_pajak, 0, ',', '.') }}</p>
 </div>
 <div class="w-full h-px bg-outline-variant my-md"></div>
 <div class="flex justify-between items-center py-1">
 <p class="font-title-md text-title-md text-on-surface font-semibold">{{ __('Total') }}</p>
-<p class="font-headline-md text-headline-md text-on-surface">$386.95</p>
+<p class="font-headline-md text-headline-md text-on-surface">Rp {{ number_format($selected->grand_total, 0, ',', '.') }}</p>
 </div>
 <p class="font-label-sm text-label-sm text-on-surface-variant/70 text-right mt-1">{{ __('Shipping & taxes calculated at checkout') }}</p>
 </div>
@@ -508,6 +561,7 @@
 </div>
 </div>
 </section>
+@endif
 </main>
 <!-- BottomNavBar -->
 @include('customer._partials.bottom-nav')
