@@ -253,6 +253,8 @@ class ManajemenPenggunaController extends Controller
             'penugasan' => $penugasan,
             'warehouses' => $warehouses,
             'is_super_admin' => $user->role && $user->role->nama_role === Role::SUPER_ADMIN,
+            'email_verified_at' => $user->email_verified_at?->toISOString(),
+            'is_verified' => $user->email_verified_at !== null,
             'foto_profil_url' => $user->foto_profil_url,
             'initial' => strtoupper(mb_substr($user->nama_lengkap, 0, 2)),
             'toko' => $toko,

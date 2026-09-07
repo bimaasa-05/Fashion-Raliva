@@ -463,7 +463,7 @@
         document.getElementById('drawer-role').textContent = data.role;
         document.getElementById('drawer-status').textContent = data.status;
         document.getElementById('drawer-status').className = 'inline-flex px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (data.status === 'aktif' ? 'bg-success/10 text-success border border-success/20' : data.status === 'suspend' ? 'bg-tertiary-container/30 text-on-tertiary-container border border-tertiary-container/50' : 'bg-error/10 text-error border border-error/20');
-        const verified = data.email_verified_at != null;
+        const verified = data.is_verified ?? (data.email_verified_at != null);
         document.getElementById('drawer-verified').innerHTML = verified
             ? '<span class="material-symbols-outlined text-[10px]">verified</span>Verified'
             : '<span class="material-symbols-outlined text-[10px]">email</span>Belum Verified';
