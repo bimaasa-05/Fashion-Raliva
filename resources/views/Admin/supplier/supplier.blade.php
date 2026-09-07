@@ -11,25 +11,25 @@
 <div class="space-y-6">
     <!-- Statistik Ringkas -->
     <div class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
-        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
+        <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">Total Supplier</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">18</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">local_shipping</span>
+            <span class="raliva-figure text-[26px] text-on-surface relative">{{ $stats['total'] ?? 0 }}</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">local_shipping</span>
         </div>
-        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
+        <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">Supplier Aktif</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary">14</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">check_circle</span>
+            <span class="raliva-figure text-[26px] text-secondary relative">{{ $stats['aktif'] ?? 0 }}</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">check_circle</span>
         </div>
-        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
+        <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">Menunggu Verifikasi</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">3</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
+            <span class="raliva-figure text-[26px] text-gold-accent relative">{{ $stats['menunggu'] ?? 0 }}</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
         </div>
-        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
+        <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">Jangkauan Kota</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">9 <span class="text-on-surface-variant font-body-md text-sm">kota</span></span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">location_on</span>
+            <span class="raliva-figure text-[26px] text-on-surface relative">{{ $stats['kota'] ?? 0 }} <span class="text-on-surface-variant font-label-sm text-[11px]">kota</span></span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">location_on</span>
         </div>
     </div>
 
