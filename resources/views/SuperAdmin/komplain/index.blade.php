@@ -114,7 +114,7 @@
                             data-id="{{ $c->complaint_id }}" data-kode="{{ $kode }}">
                             <td class="p-6 text-center text-on-surface-variant font-mono row-num"></td>
                             <td class="p-6">
-                                <p class="font-title-md text-title-md text-on-surface">{{ $c->subject }}</p>
+                                <p class="font-title-md text-title-md text-on-surface">{{ $c->subjek }}</p>
                                 <p class="font-mono text-xs text-on-surface-variant">{{ $kode }}</p>
                             </td>
                             <td class="p-6">
@@ -124,13 +124,13 @@
                             <td class="p-6">
                                 <span class="inline-flex items-center px-2 py-1 rounded {{ $badge['class'] }} text-xs uppercase">{{ $badge['label'] }}</span>
                             </td>
-                            <td class="p-6 text-xs">{{ $c->tipe_komplain }}</td>
+                            <td class="p-6 text-xs">{{ $c->kategori }}</td>
                             <td class="p-6 text-xs text-on-surface-variant">
                                 {{ $c->dibuat_pada ? \Carbon\Carbon::parse($c->dibuat_pada)->locale('id')->diffForHumans() : '-' }}
                             </td>
                             <td class="p-6">
                                 <div class="flex items-center gap-2 justify-end">
-                                    <button type="button" onclick="openChatModal({{ $c->complaint_id }}, '{{ $kode }}', '{{ addslashes($c->subject) }}', {{ $c->eskalasi_oleh_sa ? 'true' : 'false' }})"
+                                    <button type="button" onclick="openChatModal({{ $c->complaint_id }}, '{{ $kode }}', '{{ addslashes($c->subjek ?? $c->kategori) }}', {{ $c->eskalasi_oleh_sa ? 'true' : 'false' }})"
                                         class="flex items-center gap-1 px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:opacity-80 transition-opacity btn-premium">
                                         <span class="material-symbols-outlined text-sm">chat</span>
                                         Buka
@@ -182,7 +182,7 @@
                 <article data-table-row data-status="{{ $c->status }}" data-search="{{ strtolower($kode.' '.($c->user->nama_lengkap ?? '').' '.($c->store->nama_toko ?? '').' '.($c->store->owner->nama_lengkap ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="min-w-0">
-                            <p class="font-title-md text-title-md text-on-surface leading-tight">{{ $c->subject }}</p>
+                            <p class="font-title-md text-title-md text-on-surface leading-tight">{{ $c->subjek }}</p>
                             <p class="font-mono text-xs text-on-surface-variant mt-0.5">{{ $kode }}</p>
                         </div>
                         <span class="inline-flex items-center px-2.5 py-1 rounded {{ $badge['class'] }} text-[10px] font-bold uppercase shrink-0">{{ $badge['label'] }}</span>
@@ -199,7 +199,7 @@
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">Kategori</dt>
-                            <dd class="text-on-surface text-right">{{ $c->tipe_komplain }}</dd>
+                            <dd class="text-on-surface text-right">{{ $c->kategori }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">Kirim</dt>
@@ -208,7 +208,7 @@
                     </dl>
 
                     <div class="flex gap-gutter">
-                        <button type="button" onclick="openChatModal({{ $c->complaint_id }}, '{{ $kode }}', '{{ addslashes($c->subject) }}', {{ $c->eskalasi_oleh_sa ? 'true' : 'false' }})" class="flex-1 min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:opacity-80 transition-opacity btn-premium">
+                        <button type="button" onclick="openChatModal({{ $c->complaint_id }}, '{{ $kode }}', '{{ addslashes($c->subjek ?? $c->kategori) }}', {{ $c->eskalasi_oleh_sa ? 'true' : 'false' }})" class="flex-1 min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:opacity-80 transition-opacity btn-premium">
                             <span class="material-symbols-outlined text-[16px]">chat</span>Buka
                         </button>
 
@@ -314,13 +314,26 @@
     async function loadMessages() {
         if (!currentChat.id) return;
         try {
-            const resp = await fetch(`/komplain/${currentChat.id}/messages`, {
+            const url = '{{ route('superadmin.komplain.messages', ':id:') }}'.replace(':id:', currentChat.id);
+            const resp = await fetch(url, {
                 headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
             });
-            if (!resp.ok) return;
+            if (!resp.ok) throw new Error('Gagal memuat pesan');
             const messages = await resp.json();
             renderMessages(messages);
-        } catch (_) {}
+        } catch (err) {
+            showChatError(err.message);
+        }
+    }
+
+    function showChatError(message) {
+        const el = document.getElementById('chat-messages');
+        el.innerHTML = `
+            <div class="text-center py-8">
+                <p class="text-on-surface-variant text-sm">${escapeHtml(message)}</p>
+                <p class="text-xs text-on-surface-variant/60 mt-1">Coba muat ulang halaman.</p>
+            </div>`;
+        el.scrollTop = el.scrollHeight;
     }
 
     function renderMessages(messages) {
@@ -357,7 +370,8 @@
         input.value = '';
 
         try {
-            const resp = await fetch(`/komplain/${currentChat.id}/messages`, {
+            const url = '{{ route('superadmin.komplain.messages.store', ':id:') }}'.replace(':id:', currentChat.id);
+            const resp = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -367,6 +381,7 @@
                 body: JSON.stringify({ pesan })
             });
             if (resp.ok) loadMessages();
+            else throw new Error('Gagal mengirim pesan');
         } catch (_) {
             input.value = pesan;
         } finally {
