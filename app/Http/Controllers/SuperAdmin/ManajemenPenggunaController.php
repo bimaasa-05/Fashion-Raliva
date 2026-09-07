@@ -8,6 +8,7 @@ use App\Models\Role;
 use App\Models\Store;
 use App\Models\StoreStaff;
 use App\Models\User;
+use App\Models\WarehouseStaff;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -172,7 +173,9 @@ class ManajemenPenggunaController extends Controller
     {
         $user->load('role', 'ownedStores.storeStaff.user.role');
 
-        $isOwner = $user->role && $user->role->nama_role === Role::OWNER;
+        $roleNama = $user->role?->nama_role;
+        $isOwner = $roleNama === Role::OWNER;
+        $isStaff = in_array($roleNama, [Role::ADMIN, Role::PRODUKSI, Role::GUDANG], true);
 
         $aktivitas = ActivityLog::where('user_id', $user->user_id)
             ->orderByDesc('activity_log_id')
@@ -203,6 +206,36 @@ class ManajemenPenggunaController extends Controller
             ]);
         }
 
+        $penugasan = [];
+        $warehouses = [];
+        if ($isStaff) {
+            $penugasan = StoreStaff::where('user_id', $user->user_id)
+                ->with('store.owner')
+                ->orderByDesc('store_staff_id')
+                ->get()
+                ->map(fn (StoreStaff $s) => [
+                    'store_id' => $s->store_id,
+                    'nama_toko' => $s->store?->nama_toko ?? '-',
+                    'status_toko' => $s->store?->status ?? '-',
+                    'owner_nama' => $s->store?->owner?->nama_lengkap ?? '-',
+                    'owner_email' => $s->store?->owner?->email ?? '',
+                    'tanggal_penugasan' => $s->tanggal_penugasan?->translatedFormat('d M Y'),
+                    'status_penugasan' => $s->status,
+                ])->values()->all();
+
+            $warehouses = WarehouseStaff::where('user_id', $user->user_id)
+                ->with('warehouse.store.owner')
+                ->orderByDesc('warehouse_staff_id')
+                ->get()
+                ->map(fn ($ws) => [
+                    'gudang' => $ws->warehouse?->nama_gudang ?? '-',
+                    'store' => $ws->warehouse?->store?->nama_toko ?? '-',
+                    'owner' => $ws->warehouse?->store?->owner?->nama_lengkap ?? '-',
+                    'status' => $ws->status,
+                    'tanggal' => $ws->tanggal_penugasan?->translatedFormat('d M Y'),
+                ])->values()->all();
+        }
+
         return response()->json([
             'user_id' => $user->user_id,
             'nama' => $user->nama_lengkap,
@@ -213,6 +246,10 @@ class ManajemenPenggunaController extends Controller
             'status' => $user->status,
             'is_owner' => $isOwner,
             'show_toko' => $isOwner,
+            'is_staff' => $isStaff,
+            'show_penugasan' => $isStaff,
+            'penugasan' => $penugasan,
+            'warehouses' => $warehouses,
             'is_super_admin' => $user->role && $user->role->nama_role === Role::SUPER_ADMIN,
             'foto_profil_url' => $user->foto_profil_url,
             'initial' => strtoupper(mb_substr($user->nama_lengkap, 0, 2)),
