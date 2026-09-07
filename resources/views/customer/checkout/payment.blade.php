@@ -560,184 +560,104 @@
 
 <!-- TopAppBar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-    <a href="{{ route('customer.chart') }}" aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+    <a href="{{ route('customer.order-tracking') }}" aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
         <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
     </a>
-    <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('CHECKOUT') }}</h1>
+    <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('PEMBAYARAN') }}</h1>
     <div class="w-10"></div>
 </header>
 
 <!-- Main Content -->
 <main class="pt-16 pb-[72px] w-full overflow-x-hidden">
-
-    {{-- Outer wrapper: same as account/index, address/edit --}}
     <div class="mx-auto max-w-[1400px] px-container-margin">
 
         {{-- Page Title Card --}}
         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium mb-lg md:mb-xl text-center md:text-left reveal-up">
-            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('ORDER') }}</p>
-            <h2 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ __('Checkout') }}</h2>
+            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('PAYMENT') }}</p>
+            <h2 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ __('Selesaikan Pembayaran') }}</h2>
         </div>
 
-        {{-- Form Card: ONE card contains all sections --}}
+        {{-- Status hint --}}
+        @if ($payment->status === \App\Models\Payment::STATUS_MENUNGGU_VERIFIKASI)
+        <div class="bg-surface-container-low border border-outline-variant rounded-xl p-md mb-lg flex items-center gap-sm reveal-up">
+            <span class="material-symbols-outlined text-secondary">hourglass_top</span>
+            <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Bukti pembayaran sedang diverifikasi oleh admin. Anda akan mendapat notifikasi setelah diverifikasi.') }}</p>
+        </div>
+        @elseif ($payment->status === \App\Models\Payment::STATUS_DITOLAK)
+        <div class="bg-surface-container-low border border-error rounded-xl p-md mb-lg flex items-center gap-sm reveal-up">
+            <span class="material-symbols-outlined text-error">error</span>
+            <p class="font-body-sm text-body-sm text-error">{{ __('Bukti pembayaran Anda ditolak. Silakan unggah ulang bukti yang benar di bawah.') }}</p>
+        </div>
+        @elseif ($payment->status === \App\Models\Payment::STATUS_TERVERIFIKASI)
+        <div class="bg-surface-container-low border border-outline-variant rounded-xl p-md mb-lg flex items-center gap-sm reveal-up">
+            <span class="material-symbols-outlined text-secondary">task_alt</span>
+            <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Pembayaran telah diverifikasi. Pesanan Anda sedang diproses.') }}</p>
+        </div>
+        @endif
+
+        {{-- Card: detail pembayaran --}}
         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('DETAIL') }}</p>
 
-            {{-- ========== DELIVERY ADDRESS ========== --}}
-            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('DELIVERY ADDRESS') }}</p>
-
-            @if($address)
-            <div class="flex items-start gap-md py-md">
-                <div class="co-icon mt-0.5">
-                    <span class="material-symbols-outlined">location_on</span>
-                </div>
-                <div class="min-w-0 flex-1 flex flex-col gap-1">
-                    <p class="font-body-sm text-body-sm text-on-surface font-semibold">{{ $address->nama_penerima }}</p>
-                    <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">{{ trim(implode(', ', array_filter([
-                        $address->alamat,
-                        $address->kota,
-                        $address->provinsi,
-                        $address->kode_pos,
-                    ]))) }}</p>
-                    <p class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[16px]">call</span>
-                        {{ $address->nomor_telepon }}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-md mt-sm">
+                <div class="border border-outline-variant rounded-lg p-md">
+                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Nomor Pesanan') }}</p>
+                    <p class="font-body-lg text-body-lg font-semibold text-on-surface mt-xs">
+                        @foreach ($checkout->orders as $o)
+                            <span class="inline-block">{{ $o->nomor_order }}</span><br/>
+                        @endforeach
                     </p>
                 </div>
-                <a href="{{ route('customer.address.index') }}" class="font-label-caps text-label-caps text-[var(--chrome-accent)] hover:underline underline-offset-2 shrink-0">{{ __('Edit') }}</a>
-            </div>
-            @else
-            <div class="flex flex-col items-center justify-center py-lg text-center gap-1">
-                <span class="material-symbols-outlined text-5xl text-outline-variant mb-xs">location_off</span>
-                <p class="font-body-md text-body-md text-on-surface-variant">{{ __('Anda belum memiliki alamat pengiriman.') }}</p>
-                <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">{{ __('Tambahkan alamat terlebih dahulu untuk melanjutkan checkout.') }}</p>
-                <a href="{{ route('customer.address.create') }}" class="btn-gold inline-flex items-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest shadow-lg">
-                    <span class="material-symbols-outlined text-[20px]">add</span>
-                    {{ __('Tambah Alamat') }}
-                </a>
-            </div>
-            @endif
-
-            <hr class="co-divider"/>
-
-            {{-- ========== ORDER ITEMS ========== --}}
-            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('ORDER ITEMS') }}</p>
-
-            <div class="flex gap-sm overflow-x-auto co-scroll">
-@forelse ($items as $i)
-@php
-    $pv = $i->productVariant;
-    $pr = $pv?->product;
-    $img = $pr?->images->first()?->file_gambar ?? '';
-    $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/checkout/600/800';
-@endphp
-                <div class="flex-shrink-0 w-64 flex items-center gap-sm bg-surface-container border border-[var(--border-soft)] rounded-xl p-sm">
-                    <div class="flex-shrink-0 w-16 h-20 bg-surface-container-high rounded-lg overflow-hidden">
-                        <img class="w-full h-full object-cover" loading="lazy" alt="{{ $pr?->nama_produk ?? __('Produk') }}" src="{{ $imgUrl }}"/>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="font-body-sm text-body-sm text-on-surface font-semibold truncate">{{ $pr?->nama_produk ?? __('Produk') }}</p>
-                        <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ trim(($pv?->warna ?? '') . ' · ' . ($pv?->ukuran ?? ''), ' ·') }}</p>
-                        <p class="font-body-sm text-body-sm text-on-surface mt-xs">Rp {{ number_format((float)$i->harga_snapshot, 0, ',', '.') }} <span class="text-on-surface-variant">×{{ $i->quantity }}</span></p>
-                    </div>
+                <div class="border border-outline-variant rounded-lg p-md">
+                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Metode Pembayaran') }}</p>
+                    <p class="font-body-lg text-body-lg font-semibold text-on-surface mt-xs">{{ $payment->paymentMethod?->nama_metode }}</p>
                 </div>
-@empty
-                <div class="flex-shrink-0 w-full flex items-center justify-center py-lg text-center">
-                    <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Keranjang masih kosong.') }}</p>
+                <div class="border border-outline-variant rounded-lg p-md">
+                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Total Dibayar') }}</p>
+                    <p class="font-title-md text-title-md font-semibold text-[var(--chrome-accent)] mt-xs">Rp {{ number_format((float) $payment->jumlah, 0, ',', '.') }}</p>
                 </div>
-@endforelse
+                <div class="border border-outline-variant rounded-lg p-md">
+                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Batas Waktu') }}</p>
+                    <p class="font-body-lg text-body-lg font-semibold text-on-surface mt-xs">{{ $payment->batas_waktu->format('d M Y, H:i') }}</p>
+                </div>
             </div>
 
-            <hr class="co-divider"/>
+            <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-lg">
+                {{ __('Transfer sesuai total di atas, lalu unggah bukti pembayaran untuk diverifikasi admin.') }}
+            </p>
+        </div>
 
-            {{-- ========== SHIPPING METHOD ========== --}}
-            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('SHIPPING METHOD') }}</p>
-
-            @foreach ($shippingOptions as $opt)
-@php $selectedShip = (int)$opt['ongkir'] === (int)$shipping; @endphp
-            <div class="co-ship-option{{ $selectedShip ? ' selected' : '' }}" data-shipping-ongkir="{{ $opt['ongkir'] }}">
-                <div class="flex items-center gap-sm">
-                    <div class="w-4 h-4 rounded-full border-2 border-secondary flex items-center justify-center">
-                        @if($selectedShip)<div class="w-2 h-2 rounded-full bg-secondary"></div>@endif
-                    </div>
-                    <div>
-                        <p class="font-body-sm text-body-sm font-semibold">{{ __($opt['nama']) }}</p>
-                        <p class="font-label-sm text-label-sm text-on-surface-variant">{{ __($opt['estimasi']) }}</p>
-                    </div>
-                </div>
-                <span class="font-body-sm text-body-sm">{{ $opt['ongkir'] > 0 ? 'Rp ' . number_format((float)$opt['ongkir'], 0, ',', '.') : __('Free') }}</span>
-            </div>
-@endforeach
-
-            <hr class="co-divider"/>
-
-            {{-- ========== PAYMENT METHOD ========== --}}
-            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('PAYMENT METHOD') }}</p>
-
-            @php
-    $payIcons = [
-        \App\Models\PaymentMethod::KODE_QRIS => 'qr_code_2',
-        \App\Models\PaymentMethod::KODE_EWALLET => 'account_balance_wallet',
-        \App\Models\PaymentMethod::KODE_BANK_TRANSFER => 'account_balance',
-    ];
-@endphp
-            <div class="co-payment-grid">
-@foreach ($paymentMethods as $pm)
-                <button class="co-payment-btn{{ $loop->first ? ' selected' : '' }}" type="button" data-payment-method data-payment-id="{{ $pm->payment_method_id }}">
-                    <span class="material-symbols-outlined">{{ $payIcons[$pm->kode_metode] ?? 'payments' }}</span>
-                    {{ __($pm->nama_metode) }}
+        {{-- Card: upload bukti --}}
+        @if (in_array($payment->status, [\App\Models\Payment::STATUS_PENDING, \App\Models\Payment::STATUS_DITOLAK], true))
+        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium mt-lg reveal-up">
+            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('UPLOAD BUKTI') }}</p>
+            <form method="POST" action="{{ route('customer.checkout.payment.upload', $checkout->checkout_id) }}" enctype="multipart/form-data" class="mt-sm">
+                @csrf
+                <label class="flex flex-col items-center justify-center gap-sm border-2 border-dashed border-outline rounded-xl py-xl bg-surface-container-low cursor-pointer hover:border-secondary transition-colors text-center">
+                    <span class="material-symbols-outlined text-[40px] text-on-surface-variant">upload_file</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Klik untuk memilih gambar bukti transfer (JPG/PNG)') }}</span>
+                    <input type="file" name="bukti" accept="image/jpeg,image/png" class="sr-only" required/>
+                </label>
+                @error('bukti')
+                <p class="font-label-sm text-label-sm text-error mt-xs">{{ $message }}</p>
+                @enderror
+                <button type="submit" class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest mt-md">
+                    <span class="material-symbols-outlined text-[20px]">task_alt</span>
+                    {{ __('Unggah Bukti Pembayaran') }}
                 </button>
-@endforeach
-            </div>
+            </form>
+        </div>
+        @endif
 
-            <hr class="co-divider"/>
-
-            {{-- ========== ORDER SUMMARY ========== --}}
-            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('ORDER SUMMARY') }}</p>
-
-            <div class="co-summary-row">
-                <span>Subtotal</span>
-                <span id="co-subtotal" data-subtotal="{{ $subtotal }}">Rp {{ number_format((float)$subtotal, 0, ',', '.') }}</span>
-            </div>
-            <div class="co-summary-row">
-                <span>Shipping</span>
-                <span id="co-shipping">Rp {{ number_format((float)$shipping, 0, ',', '.') }}</span>
-            </div>
-            <div class="co-summary-row">
-                <span>Tax</span>
-                <span>Rp {{ number_format((float)$tax, 0, ',', '.') }}</span>
-            </div>
-            <div class="co-summary-row total">
-                <span>Total Payment</span>
-                <span id="co-total">Rp {{ number_format((float)$total, 0, ',', '.') }}</span>
-            </div>
-
+        <div class="mt-lg flex justify-center">
+            <a href="{{ route('customer.order-tracking') }}" class="inline-flex items-center gap-2 px-xl py-3 rounded-full border border-outline-variant font-label-caps text-label-caps uppercase tracking-widest text-on-surface hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">
+                <span class="material-symbols-outlined text-[18px]">local_shipping</span>
+                {{ __('Lihat Status Pesanan') }}
+            </a>
         </div>
 
     </div>
 </main>
-
-{{-- Bottom Action Bar (mirrors customer/address toolbar card) --}}
-<div class="co-bottom-bar fixed bottom-0 left-0 right-0 lg:left-72 z-50 px-container-margin py-sm pb-safe">
-    <div class="co-bottom-bar-card card-premium flex items-center gap-sm md:gap-md bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.18)]">
-        <div class="summary flex-1 min-w-0">
-            <p>{{ __('Total Payment') }}</p>
-            <p id="co-total-bottom">Rp {{ number_format((float)$total, 0, ',', '.') }}</p>
-        </div>
-        <form method="POST" action="{{ route('customer.checkout.store') }}" class="flex items-center gap-sm md:gap-md flex-1 min-w-0">
-            @csrf
-            <input type="hidden" name="address_id" value="{{ $address?->address_id }}"/>
-            <input type="hidden" name="shipping" id="co-shipping-input" value="{{ $shipping }}"/>
-            <input type="hidden" name="payment_method_id" id="co-payment-input" value="{{ $paymentMethods->first()?->payment_method_id }}"/>
-            @if ($buyId > 0)
-            <input type="hidden" name="buy" value="{{ $buyId }}"/>
-            @endif
-            <button type="submit" class="btn-place shrink-0" {{ $address ? '' : 'disabled' }} @if(!$address) title="{{ __('Anda belum memiliki alamat pengiriman.') }}" @endif>
-                <span class="material-symbols-outlined">check</span>
-                <span class="truncate">{{ __('PLACE ORDER') }}</span>
-            </button>
-        </form>
-    </div>
-</div>
 
 {{-- Drawer --}}
 @include('customer._partials.drawer')
@@ -758,45 +678,6 @@
             });
         }, { threshold: 0.08 });
         els.forEach(function (e) { io.observe(e); });
-    });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        function rupiah(n) {
-            n = Math.round(Number(n) || 0);
-            return 'Rp ' + n.toLocaleString('id-ID');
-        }
-
-        var subtotalEl = document.getElementById('co-subtotal');
-        var subtotal = subtotalEl ? (parseFloat(subtotalEl.getAttribute('data-subtotal')) || 0) : 0;
-
-        function refreshTotal(ongkir) {
-            var total = subtotal + (parseFloat(ongkir) || 0);
-            var shipEl = document.getElementById('co-shipping');
-            var totalEls = document.querySelectorAll('#co-total, #co-total-bottom');
-            if (shipEl) shipEl.textContent = rupiah(ongkir);
-            totalEls.forEach(function (t) { t.textContent = rupiah(total); });
-        }
-
-        document.querySelectorAll('.co-ship-option').forEach(function (opt) {
-            opt.addEventListener('click', function () {
-                document.querySelectorAll('.co-ship-option').forEach(function (o) { o.classList.remove('selected'); });
-                opt.classList.add('selected');
-                refreshTotal(opt.getAttribute('data-shipping-ongkir'));
-                var shipInput = document.getElementById('co-shipping-input');
-                if (shipInput) shipInput.value = opt.getAttribute('data-shipping-ongkir');
-            });
-        });
-
-        document.querySelectorAll('[data-payment-method]').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                document.querySelectorAll('[data-payment-method]').forEach(function (b) { b.classList.remove('selected'); });
-                btn.classList.add('selected');
-                var payInput = document.getElementById('co-payment-input');
-                if (payInput) payInput.value = btn.getAttribute('data-payment-id');
-            });
-        });
     });
 </script>
 

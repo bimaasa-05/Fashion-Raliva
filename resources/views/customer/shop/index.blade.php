@@ -321,6 +321,35 @@
         transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
     }
     .shop-content-container:hover { border-color: rgba(139, 30, 63, .45); }
+    .shop-content-container.is-empty,
+    .shop-content-container.is-empty:hover {
+        background-color: transparent !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
+    }
+.shop-canvas:has(.shop-content-container.is-empty) { height: calc(100dvh - 4rem - 2rem); }
+@media (min-width: 1024px) {
+    .shop-canvas:has(.shop-content-container.is-empty) { height: calc(100dvh - 4rem - 3rem); }
+}
+.shop-canvas:has(.shop-content-container.is-empty) .shop-content-wrap {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+    .shop-content-wrap:has(.shop-content-container.is-empty) .shop-content-container.is-empty {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-block: 2.5rem;
+        text-align: center;
+    }
+    .shop-content-container.is-empty .shop-content-header { justify-content: center; }
+    .shop-content-container.is-empty #product-empty { min-height: 0; }
     /* Customer premium-heading: vertical burgundy accent bar (mirrors super-admin card-premium heading, NO gold) */
     .shop-content-heading {
         position: relative;
@@ -342,6 +371,12 @@
         border-color: var(--border-soft);
     }
     html.theme-dark .shop-content-container:hover { border-color: rgba(139, 30, 63, .55); }
+    html.theme-dark .shop-content-container.is-empty,
+    html.theme-dark .shop-content-container.is-empty:hover {
+        background-color: transparent !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
+    }
 </style>
   </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72">
@@ -352,17 +387,20 @@
 </button>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
 <div class="flex items-center gap-sm">
-<a aria-label="Search" href="{{ route('customer.search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center">
-<span class="material-symbols-outlined" data-icon="search">search</span>
-</a>
+<button aria-label="{{ __('Filter') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center relative" onclick="openFilter()" type="button">
+<span class="material-symbols-outlined text-[22px]" data-icon="tune">tune</span>
+<span id="filter-badge" class="absolute -top-0.5 -right-1 bg-secondary text-on-secondary text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold hidden">0</span>
+</button>
 </div>
 </header>
 <!-- Main Content -->
 <main class="flex-grow w-full flex flex-col pt-16 pb-8 lg:pb-12 overflow-x-clip">
 <!-- Canvas Area -->
-<div class="flex-grow flex flex-col w-full">
+<div class="flex-grow flex flex-col w-full shop-canvas">
+<!-- Sticky block: toolbar + active filter chips (stay visible when scrolled) -->
+<div class="flex flex-col w-full sticky top-16 lg:top-16 z-30">
 <!-- Shop Toolbar (parent container: category navigation left, actions right) -->
-<div class="shop-toolbar flex flex-row items-center gap-sm md:gap-md px-container-margin py-sm sticky top-16 lg:top-16 z-30">
+<div class="shop-toolbar flex flex-row items-center gap-sm md:gap-md px-container-margin py-sm">
     <!-- Category Navigation Card (Super-Admin card-premium style) -->
     <div class="shop-category-card flex-1 min-w-0 flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm">
     <div class="shop-category-nav flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar">
@@ -378,11 +416,7 @@
         <button type="button" data-cat="{{ $pc }}" onclick="selectCategory('{{ $pc }}')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ $pc }}</button>
 @endforeach
     </div>
-        <!-- Shop Actions (Filter · Cart · Sort) -->
-        <button aria-label="{{ __('Filter') }}" class="shop-action-btn order-3 border border-outline-variant hover:text-secondary hover:border-secondary transition-colors relative" onclick="openFilter()" type="button">
-            <span class="material-symbols-outlined text-[18px]" data-icon="tune">tune</span>
-            <span id="filter-badge" class="absolute -top-1 -right-1.5 bg-secondary text-on-secondary text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold hidden">0</span>
-        </button>
+        <!-- Shop Actions (Cart · Sort) -->
         <a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart') }}" class="shop-action-btn relative order-2 border border-outline-variant hover:text-secondary hover:border-secondary transition-colors">
             <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
             <span class="cart-badge absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
@@ -419,11 +453,12 @@
 <div id="chips-list" class="flex flex-wrap gap-sm items-center grow"></div>
 <button id="clear-all" class="font-label-sm text-label-sm text-secondary underline hover:opacity-80 transition-opacity shrink-0" onclick="clearAll()" type="button">{{ __('Clear all') }}</button>
 </div>
+</div>
 <!-- Shop Content Container -->
-<div class="mx-auto max-w-[1400px] px-container-margin">
-<div class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
+<div class="mx-auto max-w-[1400px] px-container-margin shop-content-wrap">
+<div id="shop-content-box" class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium{{ $products->count() ? '' : ' is-empty' }}">
 <!-- Shop Header -->
-<div class="flex items-center justify-between gap-md mb-md flex-wrap">
+<div class="flex items-center justify-between gap-md mb-md flex-wrap shop-content-header">
 <div class="atl-eyebrow">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary shop-content-heading">{{ __('Shop') }}</span>
 </div>
@@ -454,14 +489,12 @@
 </div>
 </a>
 @empty
-<div class="col-span-full">
-<div id="product-empty" class="w-full flex-col items-center justify-center text-center gap-md py-2xl">
-<span class="material-symbols-outlined text-[72px] text-on-surface-variant/40" data-icon="inventory_2">inventory_2</span>
-<p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No products found for this selection.') }}</p>
-<button class="btn-gold font-label-caps text-label-caps px-lg py-3 lg:px-xl rounded-full uppercase tracking-widest mt-xs" type="button" onclick="selectCategory(null)">{{ __('Reset filters') }}</button>
-</div>
-</div>
 @endforelse
+</div>
+<div id="product-empty" class="hidden w-full flex-col items-center justify-center text-center gap-md py-2xl min-h-[40vh]">
+<span class="material-symbols-outlined text-[72px] lg:text-[96px] text-on-surface-variant/40" data-icon="inventory_2">inventory_2</span>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-sm lg:max-w-md mx-auto">{{ __('No products found for this selection.') }}</p>
+<button class="btn-gold font-label-caps text-label-caps px-lg py-3 lg:px-xl rounded-full uppercase tracking-widest mt-xs" type="button" onclick="selectCategory(null)">{{ __('Reset filters') }}</button>
 </div>
 <div id="load-more-wrap" class="flex justify-center py-xl mt-md" data-total="{{ $totalProducts }}">
 <button id="load-more-btn" class="border border-[var(--chrome-accent)] text-[var(--chrome-accent)] bg-transparent font-label-caps text-label-caps px-xl py-sm hover:bg-surface-container-low transition-colors w-full md:w-auto rounded-lg flex items-center justify-center gap-2 uppercase tracking-widest" type="button" onclick="loadMoreProducts()" style="display:none;">
@@ -712,6 +745,8 @@
             });
             var countEl = document.getElementById('result-count');
             if (countEl) countEl.textContent = shown;
+            var boxEl = document.getElementById('shop-content-box');
+            if (boxEl) boxEl.classList.toggle('is-empty', shown === 0);
             var emptyEl = document.getElementById('product-empty');
             if (emptyEl) {
                 emptyEl.classList.toggle('hidden', shown > 0);

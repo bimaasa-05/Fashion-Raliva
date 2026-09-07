@@ -256,37 +256,33 @@
         {{-- ONE card: bg-surface-container-lowest (matches reviews/edit, address/edit) --}}
         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
 
-            {{-- Section label + heading (compact, same style as reviews/edit section headers) --}}
-            <p class="font-label-caps text-label-caps text-[var(--chrome-accent)] uppercase tracking-widest mb-xs">{{ __('MY PROFILE') }}</p>
-            <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md md:mb-lg">{{ __('Edit Profile') }}</h2>
+          
 
-            <form id="profile-form" method="POST" action="{{ route('customer.account.edit') }}" enctype="multipart/form-data">
+            <form id="profile-form" method="POST" action="{{ route('customer.account.update') }}" enctype="multipart/form-data">
                 @csrf
 
-                {{-- ========== PROFILE PHOTO ========== --}}
-                <p class="font-label-caps text-label-caps text-[var(--chrome-accent)] uppercase tracking-widest mb-xs mt-1">{{ __('PROFILE PHOTO') }}</p>
+               
 
-                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-md rounded-xl border border-[var(--border-soft)] bg-[var(--surface-warm)] p-md">
-                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border border-outline-variant bg-surface-container-high flex items-center justify-center shrink-0">
-                        @if(Auth::user()->foto_profil_url)
-                            <img id="photo-preview-small" alt="Profile Picture" src="{{ Auth::user()->foto_profil_url }}" class="w-full h-full object-cover"/>
-                        @else
-                            <span class="material-symbols-outlined text-[30px] text-on-surface-variant">person</span>
-                        @endif
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __('Profile Photo') }}</p>
-                        <p id="no-file-chosen" class="font-body-sm text-body-sm text-on-surface-variant">{{ __('No file chosen') }}</p>
-                    </div>
-                    <div class="flex items-center gap-sm shrink-0">
+                <div class="profile-photo-edit flex flex-col items-center text-center gap-sm">
+                    <label for="foto_profil" class="profile-photo-edit-avatar inline-block cursor-pointer relative">
+                        <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant bg-surface-container-high flex items-center justify-center">
+                            <img id="photo-preview-small" alt="Profile Picture" src="{{ Auth::user()->foto_profil_url ?? '' }}" class="w-full h-full object-cover {{ Auth::user()->foto_profil_url ? '' : 'hidden' }}"/>
+                            <span id="photo-fallback" class="material-symbols-outlined text-[40px] text-on-surface-variant {{ Auth::user()->foto_profil_url ? 'hidden' : '' }}">person</span>
+                        </div>
+                        <span class="profile-photo-edit-badge absolute bottom-0 right-0 w-8 h-8 rounded-full bg-secondary text-on-secondary border-2 border-surface-container-lowest flex items-center justify-center">
+                            <span class="material-symbols-outlined text-base">photo_camera</span>
+                        </span>
+                    </label>
+                    <div class="profile-photo-edit-action flex flex-col items-center gap-1">
                         <label for="foto_profil" class="inline-flex items-center gap-1.5 cursor-pointer px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant font-label-caps text-label-caps uppercase tracking-widest hover:bg-surface-container-low hover:border-secondary hover:text-secondary transition-all duration-200">
                             <span class="material-symbols-outlined text-[16px]">upload</span>
                             {{ __('Change Photo') }}
                         </label>
+                        <p id="no-file-chosen" class="font-body-sm text-body-sm text-on-surface-variant">{{ __('No file chosen') }}</p>
                         @if(Auth::user()->foto_profil_url)
-                            <button type="button" id="remove-photo" aria-label="{{ __('Remove photo') }}" class="w-9 h-9 rounded-full bg-error/10 text-error flex items-center justify-center cursor-pointer hover:bg-error/20 transition-all">
-                                <span class="material-symbols-outlined text-base">delete</span>
-                            </button>
+                        <button type="button" id="remove-photo" aria-label="{{ __('Remove photo') }}" class="w-9 h-9 rounded-full bg-error/10 text-error flex items-center justify-center cursor-pointer hover:bg-error/20 transition-all">
+                            <span class="material-symbols-outlined text-base">delete</span>
+                        </button>
                         @endif
                     </div>
                 </div>
@@ -362,8 +358,11 @@
                     {{-- Date of Birth --}}
                     <div>
                         <label for="dob" class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('Date of Birth') }}</label>
-                        <input type="date" id="dob" value="{{ old('tanggal_lahir', '1998-05-17') }}" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none"/>
+                        <input type="date" id="dob" name="tanggal_lahir" value="{{ old('tanggal_lahir', optional(Auth::user()->tanggal_lahir)->format('Y-m-d')) }}" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none"/>
                         <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Get a special surprise on your birthday.') }}</p>
+                        @error('tanggal_lahir')
+                        <p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
@@ -398,6 +397,7 @@
         (function () {
             var input = document.getElementById('foto_profil');
             var previewSmall = document.getElementById('photo-preview-small');
+            var fallback = document.getElementById('photo-fallback');
             var placeholder = document.getElementById('no-file-chosen');
             var errorEl = document.getElementById('photo-error');
             var removeFlag = document.getElementById('remove-photo-flag');
@@ -409,6 +409,7 @@
                     previewSmall.src = src;
                     previewSmall.classList.remove('hidden');
                 }
+                if (fallback) fallback.classList.add('hidden');
                 if (placeholder) placeholder.textContent = '';
             }
             function showPlaceholder() {
@@ -416,6 +417,7 @@
                     previewSmall.src = '';
                     previewSmall.classList.add('hidden');
                 }
+                if (fallback) fallback.classList.remove('hidden');
                 if (placeholder) placeholder.textContent = '{{ __("No file chosen") }}';
             }
             function clearError() {

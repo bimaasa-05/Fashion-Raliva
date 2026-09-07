@@ -4,6 +4,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
 <title>RALIVA - {{ __('Notifications') }}</title>
+<meta name="csrf-token" content="{{ csrf_token() }}"/>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -236,7 +237,7 @@
   </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[120px] lg:pl-72">
 <!-- TopAppBar -->
-<header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky z-40 border-b border-[var(--chrome-border)]">
+<header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
 <a href="{{ route('customer.account') }}" aria-label="{{ __('Go back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
@@ -258,73 +259,41 @@
 
 <!-- Notification List -->
 <section class="pt-lg mt-lg">
-<!-- Notification 1 (Unread) -->
-<article class="notification-item flex gap-sm md:gap-md px-container-margin py-md border-b border-outline-variant cursor-pointer" onclick="markRead(this)">
+@forelse ($notifications as $n)
+@php
+$icons = [
+    \App\Models\Notification::TIPE_ORDER => 'local_mall',
+    \App\Models\Notification::TIPE_PEMBAYARAN => 'payments',
+    \App\Models\Notification::TIPE_PENGIRIMAN => 'local_shipping',
+    \App\Models\Notification::TIPE_KOMPLAIN => 'support_agent',
+    \App\Models\Notification::TIPE_WALLET => 'account_balance_wallet',
+    \App\Models\Notification::TIPE_PROMO => 'sell',
+    \App\Models\Notification::TIPE_SISTEM => 'info',
+];
+$isUnread = $n->dibaca_pada === null;
+@endphp
+<article class="notification-item flex gap-sm md:gap-md px-container-margin py-md border-b border-outline-variant cursor-pointer {{ $isUnread ? '' : 'opacity-70' }}" onclick="markRead(this, {{ $n->notification_id }})">
 <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-[20px] text-on-surface-variant">local_mall</span>
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">{{ $icons[$n->tipe] ?? 'info' }}</span>
 </div>
 <div class="flex-grow min-w-0">
 <div class="flex justify-between items-start gap-sm">
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __('Order Shipped') }}</h3>
-<span class="font-label-sm text-[10px] text-on-surface-variant whitespace-nowrap mt-1">2h ago</span>
+<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">{{ $n->judul }}</h3>
+<span class="font-label-sm text-[10px] text-on-surface-variant whitespace-nowrap mt-1">{{ $n->created_at->diffForHumans() }}</span>
 </div>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Your order #RLV-240520-5678 has been shipped and is on its way.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ $n->pesan }}</p>
 </div>
+@if ($isUnread)
 <span class="unread-dot w-2 h-2 rounded-full shrink-0 self-center"></span>
+@endif
 </article>
-<!-- Notification 2 (Unread) -->
-<article class="notification-item flex gap-sm md:gap-md px-container-margin py-md border-b border-outline-variant cursor-pointer" onclick="markRead(this)">
-<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-[20px] text-on-surface-variant">sell</span>
+@empty
+<div class="text-center py-xl">
+<span class="material-symbols-outlined text-[40px] text-outline-variant block mx-auto mb-sm">notifications_off</span>
+<p class="font-body-sm text-body-sm text-on-surface font-semibold">{{ __('Tidak ada notifikasi') }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Notifikasi tentang pesanan dan promo Anda akan muncul di sini.') }}</p>
 </div>
-<div class="flex-grow min-w-0">
-<div class="flex justify-between items-start gap-sm">
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __('Mid-Year Sale') }}</h3>
-<span class="font-label-sm text-[10px] text-on-surface-variant whitespace-nowrap mt-1">5h ago</span>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Enjoy up to 50% off on selected items. Use code RALIVA50 at checkout.</p>
-</div>
-<span class="unread-dot w-2 h-2 rounded-full shrink-0 self-center"></span>
-</article>
-<!-- Notification 3 -->
-<article class="notification-item flex gap-sm md:gap-md px-container-margin py-md border-b border-outline-variant cursor-pointer" onclick="markRead(this)">
-<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-[20px] text-on-surface-variant">favorite</span>
-</div>
-<div class="flex-grow min-w-0">
-<div class="flex justify-between items-start gap-sm">
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __('Wishlist Price Drop') }}</h3>
-<span class="font-label-sm text-[10px] text-on-surface-variant whitespace-nowrap mt-1">1d ago</span>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Silk Slip Dress from your wishlist is now $175.00 — down from $195.00.</p>
-</div>
-</article>
-<!-- Notification 4 -->
-<article class="notification-item flex gap-sm md:gap-md px-container-margin py-md border-b border-outline-variant cursor-pointer" onclick="markRead(this)">
-<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-[20px] text-on-surface-variant">local_shipping</span>
-</div>
-<div class="flex-grow min-w-0">
-<div class="flex justify-between items-start gap-sm">
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __('Order Delivered') }}</h3>
-<span class="font-label-sm text-[10px] text-on-surface-variant whitespace-nowrap mt-1">3d ago</span>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Order #RLV-240501-1234 was delivered. We hope you love it!</p>
-</div>
-</article>
-<!-- Notification 5 -->
-<article class="notification-item flex gap-sm md:gap-md px-container-margin py-md border-b border-outline-variant cursor-pointer" onclick="markRead(this)">
-<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-[20px] text-on-surface-variant">rate_review</span>
-</div>
-<div class="flex-grow min-w-0">
-<div class="flex justify-between items-start gap-sm">
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __('Review Reminder') }}</h3>
-<span class="font-label-sm text-[10px] text-on-surface-variant whitespace-nowrap mt-1">4d ago</span>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">How were your Geometric Gold Hoops? Share a review to help other shoppers.</p>
-</div>
-</article>
+@endforelse
 </section>
 
 </div>
@@ -333,12 +302,25 @@
 <div class="md:hidden h-24"></div>
 </main>
 <script>
-        function markRead(el) {
+        var csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        function postForm(url) {
+            return fetch(url, {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                credentials: 'same-origin'
+            });
+        }
+        function markRead(el, id) {
             var dot = el.querySelector('.unread-dot');
-            if (dot) dot.remove();
+            if (!dot) return;
+            dot.remove();
+            el.classList.add('opacity-70');
+            postForm('{{ route('customer.notifications.read', ['notification' => '__ID__']) }}'.replace('__ID__', id));
         }
         function markAllRead() {
             document.querySelectorAll('.unread-dot').forEach(function (dot) { dot.remove(); });
+            document.querySelectorAll('.notification-item').forEach(function (el) { el.classList.add('opacity-70'); });
+            postForm('{{ route('customer.notifications.mark-all-read') }}');
         }
         document.addEventListener('DOMContentLoaded', function () {
             var els = document.querySelectorAll('.reveal-up');

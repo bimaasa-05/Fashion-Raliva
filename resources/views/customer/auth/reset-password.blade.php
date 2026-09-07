@@ -280,5 +280,11 @@
             applyAuthThemeIcon();
         }
         applyAuthThemeIcon();
+        window.addEventListener('pageshow', function (e) {
+            if (e.persisted) {
+                document.documentElement.classList.toggle('theme-dark', localStorage.getItem('raliva-theme') === 'dark');
+                applyAuthThemeIcon();
+            }
+        });
     </script>
 </body></html>
