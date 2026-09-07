@@ -17,7 +17,7 @@
 
 <div data-real class="hidden space-y-section-gap">
     @if(! \App\Support\OwnerContext::currentStore())
-        <div class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
+        <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
             <div>
                 <p class="font-bold text-sm">Belum punya toko</p>
@@ -240,7 +240,7 @@
 document.addEventListener('DOMContentLoaded', function(){
   if (!document.querySelector('[data-real]')) return;
   // Check if no store banner exists (means no store)
-  const noStore = document.body.innerHTML.includes('Belum punya toko');
+  const noStore = document.querySelector('[data-no-store-banner]');
   if (!noStore) return;
   // Disable all primary action buttons except Ajukan Toko
   document.querySelectorAll('[data-modal-open], button[type="submit"], a[href*="pengajuan-toko"]:not([href*="ajukan"])').forEach(el=>{
