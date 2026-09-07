@@ -343,10 +343,21 @@
 <h3 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">{{ $p?->nama_produk ?? '' }}</h3>
 <span class="font-body-sm text-body-sm text-on-surface mt-1">{{ $minPrice ? 'Rp ' . number_format($minPrice, 0, ',', '.') : '' }}</span>
 </a>
-<a href="{{ $p ? route('customer.shop.produk-detail', $p->product_id) : '#' }}" class="btn-gold mt-sm font-label-caps text-label-caps px-xs py-xs lg:px-md uppercase tracking-widest transition-colors flex items-center justify-center gap-xs">
+@php
+    $activeVariants = $p?->variants ?? collect();
+    $defaultVariant = $activeVariants->sortBy('harga')->first();
+@endphp
+@if ($defaultVariant)
+<button type="button" data-cart-add data-variant-id="{{ $defaultVariant->product_variant_id }}" class="btn-gold mt-sm font-label-caps text-label-caps px-xs py-xs lg:px-md uppercase tracking-widest transition-colors flex items-center justify-center gap-xs w-full">
 <span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
-{{ __('VIEW PRODUCT') }}
+{{ __('ADD TO CART') }}
+</button>
+@else
+<a href="{{ $p ? route('customer.shop.produk-detail', $p->product_id) : '#' }}" class="btn-gold mt-sm font-label-caps text-label-caps px-xs py-xs lg:px-md uppercase tracking-widest transition-colors flex items-center justify-center gap-xs w-full">
+<span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
+{{ __('ADD TO CART') }}
 </a>
+@endif
 </div>
 @empty
 <div class="col-span-full flex flex-col items-center justify-center text-center py-2xl gap-md">
