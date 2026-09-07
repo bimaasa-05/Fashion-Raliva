@@ -324,6 +324,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->grou
     Route::get('/promo', [PromoController::class, 'index'])->name('promo');
     Route::post('/promo/{promotion}/toggle', [PromoController::class, 'toggle'])->name('promo.toggle');
     Route::get('/permintaan-produksi', [PermintaanProduksiController::class, 'index'])->name('permintaan-produksi');
+    Route::post('/permintaan-produksi', [PermintaanProduksiController::class, 'store'])->name('permintaan-produksi.store');
     Route::get('/koordinasi-gudang', [KoordinasiGudangController::class, 'index'])->name('koordinasi-gudang');
     Route::post('/koordinasi-gudang/kirim', [KoordinasiGudangController::class, 'kirim'])->name('koordinasi-gudang.kirim');
     Route::get('/profil', [AdminProfilController::class, 'index'])->name('profil');
@@ -395,6 +396,7 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/gudang', [OwnerGudangController::class, 'index'])->name('gudang');
     Route::get('/komplain', [OwnerKomplainController::class, 'index'])->name('komplain');
     Route::get('/moderasi-produk', [OwnerModerasiProdukController::class, 'index'])->name('moderasi-produk');
+    Route::post('/moderasi-produk/{product}/verifikasi', [OwnerModerasiProdukController::class, 'verifikasi'])->name('moderasi-produk.verifikasi');
     Route::get('/paket-slot', [OwnerPaketSlotController::class, 'index'])->name('paket-slot');
     Route::get('/pencairan-dana', [OwnerPencairanDanaController::class, 'index'])->name('pencairan-dana');
     Route::post('/pencairan-dana', [OwnerPencairanDanaController::class, 'store'])->name('pencairan-dana.store');
