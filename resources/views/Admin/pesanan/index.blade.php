@@ -22,22 +22,22 @@
 
 <section data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter mb-6">
     <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
-        <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
+        <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
         <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Total Pesanan</span>
         <span class="raliva-figure text-[26px] text-on-surface relative">{{ $orders->count() }}</span>
     </div>
     <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
-        <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
+        <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">payments</span>
         <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Menunggu / Baru</span>
         <span class="raliva-figure text-[26px] text-gold-accent relative">{{ $orders->whereIn('status', ['pending_payment','dibayar'])->count() }}</span>
     </div>
     <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
-        <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">local_shipping</span>
+        <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">local_shipping</span>
         <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Diproses / Dikirim</span>
         <span class="raliva-figure text-[26px] text-secondary relative">{{ $orders->whereIn('status', ['diproses','dikirim'])->count() }}</span>
     </div>
     <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
-        <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">task_alt</span>
+        <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">task_alt</span>
         <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Selesai</span>
         <span class="raliva-figure text-[26px] text-secondary relative">{{ $orders->where('status', 'selesai')->count() }}</span>
     </div>
@@ -210,21 +210,26 @@
 @endif
 @endforeach
 
-{{-- Modal Tambah Pesanan (pilih customer lalu buat ulang dari pesanan terakhir) --}}
+{{-- Modal Tambah Pesanan (mode Baru / Salin, tanpa JS) --}}
+<style>
+    #modal-tambah-pesanan #mode-salin-fields { display: none; }
+    #modal-tambah-pesanan:has(input[name="mode"][value="salin"]:checked) #mode-salin-fields { display: block; }
+    #modal-tambah-pesanan:has(input[name="mode"][value="salin"]:checked) #mode-baru-fields { display: none; }
+</style>
 <div id="modal-tambah-pesanan" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-    <form method="POST" action="{{ route('admin.pesanan.store') }}" class="relative mx-auto w-[calc(100%-2rem)] max-w-md bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl max-h-[85vh] overflow-y-auto">
+    <form method="POST" action="{{ route('admin.pesanan.store') }}" class="relative mx-auto w-[calc(100%-2rem)] max-w-xl bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl max-h-[85vh] overflow-y-auto">
         @csrf
         <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div>
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Pesanan</h3>
-                <p class="text-on-surface-variant text-sm mt-1">Pilih customer, lalu buat ulang pesanan terakhirnya.</p>
+                <p class="text-on-surface-variant text-sm mt-1">Buat pesanan baru atau salin dari pesanan sebelumnya (status Menunggu Pembayaran).</p>
             </div>
             <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
         </div>
-        <div class="p-6 space-y-4">
+        <div class="p-6 space-y-5">
             <div>
-                <label class="raliva-label" for="tp-cust">Customer</label>
+                <label class="raliva-label" for="tp-cust">Customer <span class="text-error">*</span></label>
                 <select id="tp-cust" name="user_id" class="raliva-select" required>
                     <option value="">— Pilih Customer —</option>
                     @foreach (\App\Models\User::where('role_id', 6)->orderByDesc('created_at')->limit(50)->get() as $c)
@@ -232,7 +237,51 @@
                     @endforeach
                 </select>
             </div>
-            <p class="text-xs text-on-surface-variant">Sistem akan menyalin item dari pesanan terakhir customer tersebut ke pesanan baru (status Menunggu Pembayaran).</p>
+            <div>
+                <span class="raliva-label">Mode Pesanan</span>
+                <div class="grid grid-cols-2 gap-3 mt-2">
+                    <label class="flex items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
+                        <input type="radio" class="sr-only" name="mode" value="baru" checked /> Baru
+                    </label>
+                    <label class="flex items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
+                        <input type="radio" class="sr-only" name="mode" value="salin" /> Salin Pesanan
+                    </label>
+                </div>
+            </div>
+            <div id="mode-baru-fields" class="space-y-4">
+                <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">Item Baru (isi minimal 1 baris)</p>
+                @for ($i = 0; $i < 3; $i++)
+                    <div class="grid grid-cols-[1fr_110px] gap-3">
+                        <div>
+                            <label class="raliva-label" for="tp-item-{{ $i }}">Produk {{ $i + 1 }}</label>
+                            <select id="tp-item-{{ $i }}" name="items[{{ $i }}][product_variant_id]" class="raliva-select">
+                                <option value="">— Pilih Varian —</option>
+                                @foreach (($variants ?? collect()) as $v)
+                                    <option value="{{ $v->product_variant_id }}">{{ $v->product?->nama_produk ?? 'Produk' }} — {{ trim(($v->ukuran ?? '').' '.($v->warna ?? '')) }} (stok {{ $v->warehouseStocks->sum('jumlah_stok') }}) — Rp {{ number_format((float) ($v->harga ?? 0), 0, ',', '.') }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="raliva-label" for="tp-qty-{{ $i }}">Qty</label>
+                            <input id="tp-qty-{{ $i }}" name="items[{{ $i }}][quantity]" type="number" min="1" max="100" value="{{ $i === 0 ? 1 : '' }}" placeholder="1" class="raliva-input" />
+                        </div>
+                    </div>
+                @endfor
+            </div>
+            <div id="mode-salin-fields" class="space-y-4">
+                <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">Salin dari Pesanan</p>
+                <div>
+                    <label class="raliva-label" for="tp-order">Pesanan Sumber</label>
+                    <select id="tp-order" name="order_id" class="raliva-select">
+                        <option value="">— Pilih Pesanan —</option>
+                        @foreach (($recentOrders ?? collect()) as $o)
+                            <option value="{{ $o->order_id }}">{{ $o->nomor_order }} • {{ $o->checkout?->user?->nama_lengkap ?? '-' }} • {{ $o->items->count() }} item • Rp {{ number_format((float) $o->grand_total, 0, ',', '.') }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <p class="text-xs text-on-surface-variant">Item disalin persis dari pesanan sumber milik customer yang sama.</p>
+            </div>
+            <p class="text-xs text-on-surface-variant">Subtotal, ongkir (Rp 0), dan grand total dihitung server. Status awal Menunggu Pembayaran.</p>
         </div>
         <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end gap-3">
             <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
