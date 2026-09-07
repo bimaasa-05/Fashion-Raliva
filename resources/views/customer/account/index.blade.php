@@ -240,14 +240,7 @@
 </button>
 </header>
 <!-- Main Content Canvas -->
-<main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
-<!-- Page Title -->
-<div class="mx-auto max-w-[1400px] px-container-margin">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium mb-lg md:mb-xl text-center md:text-left">
-<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">MY PROFILE</p>
-<h2 class="premium-heading font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">{{ __('ACCOUNT') }}</h2>
-</div>
-</div>
+<main class="flex-grow pt-10 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Profile Header -->
 @auth
 <div class="mx-auto max-w-[1400px] px-container-margin">
