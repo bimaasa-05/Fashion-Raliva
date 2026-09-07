@@ -140,10 +140,11 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::delete('/cart/{cartItem}', [\App\Http\Controllers\Customer\CartController::class, 'destroy'])->name('cart.destroy');
 
         Route::get('/checkout', [\App\Http\Controllers\Customer\CheckoutController::class, 'index'])->name('checkout');
+        Route::post('/checkout', [\App\Http\Controllers\Customer\CheckoutController::class, 'store'])->name('checkout.store');
+        Route::get('/checkout/{checkout}/payment', [\App\Http\Controllers\Customer\CheckoutController::class, 'payment'])->name('checkout.payment');
+        Route::post('/checkout/{checkout}/payment', [\App\Http\Controllers\Customer\CheckoutController::class, 'uploadProof'])->name('checkout.payment.upload');
 
-        Route::get('/order-tracking', function () {
-            return view('customer.order-tracking.index');
-        })->name('order-tracking');
+        Route::get('/order-tracking', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'index'])->name('order-tracking');
 
         Route::get('/account', function () {
             return view('customer.account.index');
@@ -153,29 +154,29 @@ Route::prefix('customer')->name('customer.')->group(function () {
             return view('customer.account.edit');
         })->name('account.edit');
 
+        Route::post('/account', [\App\Http\Controllers\Customer\ProfileController::class, 'update'])->name('account.update');
+
         Route::get('/account/password', function () {
             return view('customer.account.password');
         })->name('account.password');
 
-        Route::get('/reviews', function () {
-            return view('customer.reviews.index');
-        })->name('reviews');
+        Route::post('/account/password', [\App\Http\Controllers\Customer\ProfileController::class, 'updatePassword'])->name('account.password.update');
 
-        Route::get('/reviews/create', function () {
-            return view('customer.reviews.create');
-        })->name('reviews.create');
+        Route::get('/reviews', [\App\Http\Controllers\Customer\ReviewController::class, 'index'])->name('reviews');
+        Route::get('/reviews/create', [\App\Http\Controllers\Customer\ReviewController::class, 'create'])->name('reviews.create');
+        Route::post('/reviews', [\App\Http\Controllers\Customer\ReviewController::class, 'store'])->name('reviews.store');
+        Route::get('/reviews/{review}/edit', [\App\Http\Controllers\Customer\ReviewController::class, 'edit'])->name('reviews.edit');
+        Route::put('/reviews/{review}', [\App\Http\Controllers\Customer\ReviewController::class, 'update'])->name('reviews.update');
+        Route::delete('/reviews/{review}', [\App\Http\Controllers\Customer\ReviewController::class, 'destroy'])->name('reviews.destroy');
 
-        Route::get('/reviews/edit', function () {
-            return view('customer.reviews.edit');
-        })->name('reviews.edit');
-
-        Route::get('/notifications', function () {
-            return view('customer.notifications.index');
-        })->name('notifications');
+        Route::get('/notifications', [\App\Http\Controllers\Customer\NotificationController::class, 'index'])->name('notifications');
+        Route::post('/notifications/mark-all-read', [\App\Http\Controllers\Customer\NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
+        Route::post('/notifications/{notification}/read', [\App\Http\Controllers\Customer\NotificationController::class, 'markRead'])->name('notifications.read');
 
         Route::get('/settings', function () {
             return view('customer.settings.index');
         })->name('settings');
+        Route::post('/settings/delete-account', [\App\Http\Controllers\Customer\SettingsController::class, 'deleteAccount'])->name('settings.delete-account');
 
         Route::get('/wishlist', [\App\Http\Controllers\Customer\WishlistController::class, 'index'])->name('wishlist');
         Route::post('/wishlist/toggle', [\App\Http\Controllers\Customer\WishlistController::class, 'toggle'])->name('wishlist.toggle');
