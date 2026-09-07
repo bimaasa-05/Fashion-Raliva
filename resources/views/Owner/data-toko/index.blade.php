@@ -17,7 +17,7 @@
 
 <div data-real class="hidden space-y-section-gap">
     @if(! \App\Support\OwnerContext::currentStore())
-        <div class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
+        <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
             <div>
                 <p class="font-bold text-sm">Belum punya toko</p>
@@ -49,7 +49,7 @@
         </div>
     </section>
 
-    <form method="POST" action="{{ route('owner.data-toko.update') }}" class="space-y-section-gap">
+    <form method="POST" action="{{ route('owner.data-toko.update') }}" id="form-data-toko" class="space-y-section-gap">
         @csrf
         @method('PUT')
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-section-gap">
@@ -115,9 +115,9 @@
     </form>
 
     {{-- Modal konfirmasi Atur Ulang --}}
-    <div id="modal-atur-ulang" data-modal class="fixed inset-0 z-[70] hidden">
+    <div id="modal-atur-ulang" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-        <div class="relative mx-auto mt-24 w-[calc(100%-2rem)] max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+        <div class="relative mx-auto w-[calc(100%-2rem)] max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
             <div class="flex items-center gap-3 mb-4">
                 <span class="material-symbols-outlined text-gold-accent">restart_alt</span>
                 <h3 class="font-title-md text-title-md text-on-surface">Atur Ulang Formulir?</h3>
@@ -125,7 +125,7 @@
             <p class="text-on-surface-variant text-sm mb-6">Semua perubahan yang belum disimpan akan dikembalikan ke data terakhir yang tersimpan. Tindakan ini tidak menghapus data toko Anda.</p>
             <div class="flex gap-3">
                 <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                <button type="button" onclick="document.querySelector('form[action=\'{{ route('owner.data-toko.update') }}\']').reset(); document.querySelector('[data-modal-close]').click();" class="flex-1 py-2.5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Ya, Atur Ulang</button>
+                <button type="reset" form="form-data-toko" data-modal-close class="flex-1 py-2.5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Ya, Atur Ulang</button>
             </div>
         </div>
     </div>
@@ -136,7 +136,7 @@
 document.addEventListener('DOMContentLoaded', function(){
   if (!document.querySelector('[data-real]')) return;
   // Check if no store banner exists (means no store)
-  const noStore = document.body.innerHTML.includes('Belum punya toko');
+  const noStore = document.querySelector('[data-no-store-banner]');
   if (!noStore) return;
   // Disable all primary action buttons except Ajukan Toko
   document.querySelectorAll('[data-modal-open], button[type="submit"], a[href*="pengajuan-toko"]:not([href*="ajukan"])').forEach(el=>{
