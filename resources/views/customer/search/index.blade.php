@@ -243,12 +243,11 @@
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
-<form action="{{ route('customer.search') }}" method="GET" class="flex items-center gap-sm w-full">
-<div class="relative flex-grow">
+<form action="{{ route('customer.search') }}" method="GET" onsubmit="return false" class="w-full">
+<div class="relative w-full">
 <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-<input name="q" value="{{ $q }}" autofocus class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-xl pr-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" placeholder="{{ __('Search products, stores, categories...') }}" type="search"/>
+<input id="search-input" name="q" value="{{ $q }}" autofocus class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-xl pr-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" placeholder="{{ __('Search products, stores, categories...') }}" type="search"/>
 </div>
-<button class="bg-secondary text-on-secondary font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:opacity-90 transition-opacity rounded-full" type="submit">{{ __('SEARCH') }}</button>
 </form>
 </div>
 </div>
@@ -270,6 +269,7 @@
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
+<div id="search-results">
 <div class="flex justify-between items-center mb-xs">
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ $q !== '' ? __('Search Results') : __('Trending Now') }}</h2>
 <a href="{{ route('customer.shop') }}" class="font-label-caps text-label-caps text-secondary uppercase tracking-widest hover:opacity-80 transition-opacity">View All</a>
@@ -304,12 +304,49 @@
 </div>
 </div>
 </div>
+</div>
 </section>
 </main>
 <!-- BottomNavBar (Mobile Only) -->
 @include('customer._partials.wishlist-script')
 @include('customer._partials.bottom-nav')
 @include('customer._partials.drawer')
+<script>
+/* Realtime search: hasil langsung muncul saat mengetik, tanpa tombol SEARCH */
+(function () {
+    var input = document.getElementById('search-input');
+    if (!input) return;
+    var results = document.getElementById('search-results');
+    if (!results) return;
+
+    var baseUrl = '{{ route('customer.search') }}';
+    var timer = null;
+    var seq = 0;
+
+    function runSearch(q) {
+        var mySeq = ++seq;
+        var url = q !== '' ? baseUrl + '?q=' + encodeURIComponent(q) : baseUrl;
+
+        fetch(url, { headers: { 'Accept': 'text/html' } })
+            .then(function (res) { return res.text(); })
+            .then(function (html) {
+                if (mySeq !== seq) return;
+                var doc = new DOMParser().parseFromString(html, 'text/html');
+                var incoming = doc.getElementById('search-results');
+                if (!incoming) return;
+                results.innerHTML = incoming.innerHTML;
+                results.querySelectorAll('.reveal-up').forEach(function (e) { e.classList.add('in'); });
+                try { history.replaceState(null, '', url); } catch (e) {}
+            })
+            .catch(function () {});
+    }
+
+    input.addEventListener('input', function () {
+        clearTimeout(timer);
+        timer = setTimeout(function () { runSearch(input.value.trim()); }, 300);
+    });
+})();
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', function(){
   var els = document.querySelectorAll('.reveal-up');
