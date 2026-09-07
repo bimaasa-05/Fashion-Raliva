@@ -20,6 +20,29 @@
 @section('content')
 @include('partials.flash-toast')
 
+<section data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter mb-6">
+    <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
+        <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
+        <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Total Pesanan</span>
+        <span class="raliva-figure text-[26px] text-on-surface relative">{{ $orders->count() }}</span>
+    </div>
+    <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
+        <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
+        <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Menunggu / Baru</span>
+        <span class="raliva-figure text-[26px] text-gold-accent relative">{{ $orders->whereIn('status', ['pending_payment','dibayar'])->count() }}</span>
+    </div>
+    <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
+        <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">local_shipping</span>
+        <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Diproses / Dikirim</span>
+        <span class="raliva-figure text-[26px] text-secondary relative">{{ $orders->whereIn('status', ['diproses','dikirim'])->count() }}</span>
+    </div>
+    <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
+        <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">task_alt</span>
+        <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Selesai</span>
+        <span class="raliva-figure text-[26px] text-secondary relative">{{ $orders->where('status', 'selesai')->count() }}</span>
+    </div>
+</section>
+
 <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Pesanan Toko</h2>
@@ -74,17 +97,14 @@
                             <p class="text-on-surface-variant text-xs">{{ $pesanan->store?->nama_toko }}</p>
                         </td>
                         <td class="p-4 text-on-surface" title="{{ $pesanan->items->pluck('nama_produk_snapshot')->implode(', ') }}">{{ $pesanan->items->count() }} produk &#8226; {{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->first(), 28) }}</td>
-                        <td class="p-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format((float) ($pesanan->total_harga ?? 0), 0, ',', '.') }}</td>
+                        <td class="p-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format((float) ($pesanan->grand_total ?? 0), 0, ',', '.') }}</td>
                         <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $badge['class'] }}">{{ $badge['label'] }}</span></td>
                         <td class="p-4 text-right whitespace-nowrap">
                             @if ($pesanan->status === \App\Models\Order::STATUS_DIBAYAR)
-                                <form method="POST" action="{{ route('admin.pesanan.proses', $pesanan->order_id) }}" class="inline-block" onsubmit="return confirm('Proses pesanan {{ $pesanan->nomor_order ?? '#'.$pesanan->order_id }}?');">
-                                    @csrf
-                                    <button type="submit" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Proses</button>
-                                </form>
+                                <button type="button" data-modal-open="modal-proses-{{ $pesanan->order_id }}" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Proses</button>
                             @endif
                             @if (in_array($pesanan->status, [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_DIPROSES], true))
-                                <button type="button" onclick="openBatalkanPesanan(this.closest('tr'))" class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Batalkan</button>
+                                <button type="button" data-modal-open="modal-batalkan-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Batalkan</button>
                             @endif
                             <button type="button" data-modal-open="modal-detail-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
                         </td>
@@ -96,26 +116,6 @@
         </table>
     </div>
 </section>
-
-<form method="POST" action="" id="batalkan-pesanan-form" onsubmit="closeBatalkanPesanan()">
-    @csrf
-    <div id="batalkanPesananModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-lg border border-muted-border shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                    <span class="material-symbols-outlined text-error text-[28px]">cancel</span>
-                </div>
-                <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Batalkan Pesanan</h3>
-                <p class="text-on-surface-variant text-sm text-center mb-4">Pesanan <span id="batalkan-nomor" class="font-mono font-bold text-on-surface">-</span> akan dibatalkan dan Customer dinotifikasi.</p>
-                <textarea name="alasan" required minlength="10" maxlength="1000" rows="3" class="raliva-textarea" placeholder="Alasan pembatalan... (minimal 10 karakter)"></textarea>
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeBatalkanPesanan()">Batal</button>
-                    <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Konfirmasi</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</form>
 
 {{-- Modal detail per pesanan --}}
 @foreach ($orders as $pesanan)
@@ -143,7 +143,22 @@
                     @endforeach
                 </ul>
             </div>
-            <div class="flex justify-between gap-4 pt-3 border-t border-muted-border"><dt class="text-on-surface-variant shrink-0">Total</dt><dd class="text-gold-accent font-bold text-right">Rp {{ number_format((float) ($pesanan->total_harga ?? 0), 0, ',', '.') }}</dd></div>
+            <div class="flex justify-between gap-4 pt-3 border-t border-muted-border"><dt class="text-on-surface-variant shrink-0">Total</dt><dd class="text-gold-accent font-bold text-right">Rp {{ number_format((float) ($pesanan->grand_total ?? 0), 0, ',', '.') }}</dd></div>
+            @if($pesanan->checkout?->payment?->proofs && $pesanan->checkout->payment->proofs->isNotEmpty())
+                <div class="pt-3 border-t border-muted-border">
+                    <p class="text-[10px] uppercase text-on-surface-variant mb-2">Bukti Bayar</p>
+                    @foreach($pesanan->checkout->payment->proofs as $proof)
+                        <a href="{{ asset('storage/'.$proof->file_bukti) }}" target="_blank" class="flex items-center gap-3 p-3 bg-surface-container-low rounded-lg border border-muted-border hover:border-gold-accent transition-colors">
+                            <span class="material-symbols-outlined text-gold-accent">receipt_long</span>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-on-surface truncate">{{ \Illuminate\Support\Str::afterLast($proof->file_bukti, '/') }}</p>
+                                <p class="text-xs text-on-surface-variant">{{ $proof->uploaded_at?->translatedFormat('d M Y H:i') ?? '-' }} • {{ $pesanan->checkout->payment->paymentMethod->nama_metode ?? 'Transfer' }} • Rp {{ number_format((float) ($pesanan->checkout->payment->jumlah ?? 0),0,',','.') }}</p>
+                            </div>
+                            <span class="material-symbols-outlined text-on-surface-variant">open_in_new</span>
+                        </a>
+                    @endforeach
+                </div>
+            @endif
             <div class="flex justify-between gap-4"><dt class="text-on-surface-variant shrink-0">Status</dt><dd class="text-on-surface text-right">{{ $badgeMap[$pesanan->status]['label'] ?? ucfirst($pesanan->status) }}</dd></div>
         </div>
         <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end gap-3">
@@ -156,6 +171,43 @@
         </div>
     </div>
 </div>
+@if ($pesanan->status === \App\Models\Order::STATUS_DIBAYAR)
+<div id="modal-proses-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto w-[calc(100%-2rem)] max-w-md bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl p-8 text-center">
+        <div class="w-14 h-14 rounded-full bg-secondary-container/20 border border-secondary/25 flex items-center justify-center mx-auto mb-5">
+            <span class="material-symbols-outlined text-secondary text-[28px]">task_alt</span>
+        </div>
+        <h3 class="font-title-md text-title-md text-on-surface mb-2">Proses Pesanan</h3>
+        <p class="text-on-surface-variant text-sm mb-6">Pesanan <span class="font-mono font-bold text-on-surface">{{ $pesanan->nomor_order ?? ('#'.$pesanan->order_id) }}</span> akan diproses?</p>
+        <div class="flex space-x-3">
+            <button type="button" data-modal-close class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg">Batal</button>
+            <form method="POST" action="{{ route('admin.pesanan.proses', $pesanan->order_id) }}" class="flex-1">
+                @csrf
+                <button type="submit" class="w-full bg-deep-onyx text-on-primary font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-black transition-colors rounded-lg btn-premium">Konfirmasi</button>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
+@if (in_array($pesanan->status, [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_DIPROSES], true))
+<div id="modal-batalkan-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <form method="POST" action="{{ route('admin.pesanan.batalkan', $pesanan->order_id) }}" class="relative mx-auto w-[calc(100%-2rem)] max-w-md bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl p-8">
+        @csrf
+        <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
+            <span class="material-symbols-outlined text-error text-[28px]">cancel</span>
+        </div>
+        <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Batalkan Pesanan</h3>
+        <p class="text-on-surface-variant text-sm text-center mb-4">Pesanan <span class="font-mono font-bold text-on-surface">{{ $pesanan->nomor_order ?? ('#'.$pesanan->order_id) }}</span> akan dibatalkan dan Customer dinotifikasi.</p>
+        <textarea name="alasan" required minlength="10" maxlength="1000" rows="3" class="raliva-textarea" placeholder="Alasan pembatalan... (minimal 10 karakter)"></textarea>
+        <div class="flex space-x-3 mt-4">
+            <button type="button" data-modal-close class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg">Batal</button>
+            <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Konfirmasi</button>
+        </div>
+    </form>
+</div>
+@endif
 @endforeach
 
 {{-- Modal Tambah Pesanan (pilih customer lalu buat ulang dari pesanan terakhir) --}}
@@ -192,27 +244,33 @@
 
 @push('scripts')
 <script>
-    const batalkanPesananUrl = '{{ route('admin.pesanan.batalkan', ':id:') }}';
-
-    function openBatalkanPesanan(row) {
-        document.getElementById('batalkan-nomor').textContent = row.dataset.nomor;
-        document.getElementById('batalkan-pesanan-form').action = batalkanPesananUrl.replace(':id:', row.dataset.id);
-        document.querySelector('#batalkan-pesanan-form textarea').value = '';
-        const modal = document.getElementById('batalkanPesananModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+    const lockScroll = () => {
+        const w = window.innerWidth - document.documentElement.clientWidth;
+        if (w > 0) { document.body.style.paddingRight = w + 'px'; document.documentElement.style.paddingRight = w + 'px'; }
         document.body.style.overflow = 'hidden';
-    }
-
-    function closeBatalkanPesanan() {
-        const modal = document.getElementById('batalkanPesananModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+        document.documentElement.style.overflow = 'hidden';
+    };
+    const unlockScroll = () => {
         document.body.style.overflow = '';
-    }
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeBatalkanPesanan();
+        document.body.style.paddingRight = '';
+        document.documentElement.style.overflow = '';
+        document.documentElement.style.paddingRight = '';
+    };
+    // Patch all data-modal on this page to use lockScroll with padding (anti geser)
+    document.querySelectorAll('[data-modal-open]').forEach(btn=>{
+        btn.addEventListener('click', ()=> setTimeout(lockScroll, 0));
+    });
+    document.querySelectorAll('[data-modal-close]').forEach(el=>{
+        el.addEventListener('click', ()=>{
+            setTimeout(()=>{
+                if (!document.querySelector('[data-modal]:not(.hidden)')) unlockScroll();
+            }, 50);
+        });
+    });
+    document.addEventListener('click', (e)=>{
+        if (e.target.matches('[data-modal]')) setTimeout(()=>{
+            if (!document.querySelector('[data-modal]:not(.hidden)')) unlockScroll();
+        }, 50);
     });
 </script>
 @endpush
