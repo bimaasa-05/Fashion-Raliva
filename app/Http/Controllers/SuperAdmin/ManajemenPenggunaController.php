@@ -195,6 +195,7 @@ class ManajemenPenggunaController extends Controller
                 'rating' => round($store->reviews()->avg('rating') ?? 0, 1),
                 'status' => $store->status,
                 'karyawan' => $store->storeStaff->map(fn (StoreStaff $st) => [
+                    'user_id' => $st->user?->user_id ?? $st->user_id,
                     'nama' => $st->user?->nama_lengkap ?? '-',
                     'email' => $st->user?->email ?? '',
                     'role' => $st->user?->role?->nama_role ?? '-',
@@ -217,6 +218,7 @@ class ManajemenPenggunaController extends Controller
                     'store_id' => $s->store_id,
                     'nama_toko' => $s->store?->nama_toko ?? '-',
                     'status_toko' => $s->store?->status ?? '-',
+                    'owner_user_id' => $s->store?->owner_id ?? $s->store?->owner?->user_id,
                     'owner_nama' => $s->store?->owner?->nama_lengkap ?? '-',
                     'owner_email' => $s->store?->owner?->email ?? '',
                     'tanggal_penugasan' => $s->tanggal_penugasan?->translatedFormat('d M Y'),
