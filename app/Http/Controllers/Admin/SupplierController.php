@@ -16,7 +16,14 @@ class SupplierController extends Controller
             ->orderBy('nama_supplier')
             ->paginate(12);
 
-        return view('Admin.supplier.supplier', compact('suppliers'));
+        $stats = [
+            'total' => $suppliers->total(),
+            'aktif' => Supplier::where('status', 'aktif')->count(),
+            'menunggu' => Supplier::where('status', 'verifikasi')->count(),
+            'kota' => Supplier::distinct('kota')->count('kota'),
+        ];
+
+        return view('Admin.supplier.supplier', compact('suppliers', 'stats'));
     }
 
     public function store(Request $request): RedirectResponse
