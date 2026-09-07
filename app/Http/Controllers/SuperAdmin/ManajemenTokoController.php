@@ -11,6 +11,7 @@ use App\Models\StoreDocument;
 use App\Support\ActivityLogger;
 use App\Support\SlotService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ManajemenTokoController extends Controller
 {
@@ -83,34 +84,62 @@ class ManajemenTokoController extends Controller
 
         $lama = $toko->only(['status', 'alasan_penolakan']);
 
-        $toko->update([
-            'status' => Store::STATUS_AKTIF,
-            'alasan_penolakan' => null,
-        ]);
+        DB::transaction(function () use ($toko, $lama) {
+            $toko->update([
+                'status' => Store::STATUS_AKTIF,
+                'alasan_penolakan' => null,
+            ]);
 
-        if (SlotService::freeQuota($toko->store_id) === 0) {
-            $slotAwal = (int) Setting::get(Setting::SLOT_AWAL_DEFAULT, '5');
+            $docsPending = StoreDocument::where('store_id', $toko->store_id)
+                ->where('status', 'pending')
+                ->get();
 
-            if ($slotAwal > 0) {
-                SlotService::setFreeQuota($toko->store_id, $slotAwal);
+            foreach ($docsPending as $dokumen) {
+                $lamaDokumen = $dokumen->only(['status', 'catatan']);
+
+                $dokumen->update([
+                    'status' => 'terverifikasi',
+                    'catatan' => null,
+                ]);
+
+                ActivityLogger::log(
+                    'store.document.approve',
+                    StoreDocument::class,
+                    $dokumen->store_document_id,
+                    $lamaDokumen,
+                    ['status' => 'terverifikasi', 'catatan' => null],
+                    sprintf(
+                        'Otomatis menyetujui dokumen %s saat menyetujui toko "%s".',
+                        $this->jenisLabel($dokumen->jenis),
+                        $toko->nama_toko
+                    )
+                );
             }
-        }
 
-        ActivityLogger::log(
-            'store.approve',
-            Store::class,
-            $toko->store_id,
-            $lama,
-            ['status' => Store::STATUS_AKTIF, 'alasan_penolakan' => null],
-            sprintf('Menyetujui toko "%s" milik %s.', $toko->nama_toko, $toko->owner->nama_lengkap ?? '-')
-        );
+            if (SlotService::freeQuota($toko->store_id) === 0) {
+                $slotAwal = (int) Setting::get(Setting::SLOT_AWAL_DEFAULT, '5');
 
-        Notification::create([
-            'user_id' => $toko->owner_id,
-            'tipe' => Notification::TIPE_SISTEM,
-            'judul' => 'Toko Disetujui',
-            'pesan' => sprintf('Selamat! Toko "%s" telah disetujui dan kini aktif di Raliva.', $toko->nama_toko),
-        ]);
+                if ($slotAwal > 0) {
+                    SlotService::setFreeQuota($toko->store_id, $slotAwal);
+                }
+            }
+
+            ActivityLogger::log(
+                'store.approve',
+                Store::class,
+                $toko->store_id,
+                $lama,
+                ['status' => Store::STATUS_AKTIF, 'alasan_penolakan' => null],
+                sprintf('Menyetujui toko "%s" milik %s.', $toko->nama_toko, $toko->owner->nama_lengkap ?? '-')
+            );
+
+            Notification::create([
+                'user_id' => $toko->owner_id,
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Toko Disetujui',
+                'pesan' => sprintf('Selamat! Toko "%s" telah disetujui dan kini aktif di Raliva.', $toko->nama_toko),
+            ]);
+        });
 
         return back()->with('toast', [
             'message' => sprintf('Toko %s disetujui dan kini aktif.', $toko->nama_toko),
