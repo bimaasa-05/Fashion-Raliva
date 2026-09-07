@@ -222,13 +222,39 @@
     .wl-header-hidden { opacity: 0; transform: translateY(-6px); pointer-events: none; }
     #wl-search-panel { opacity: 0; transform: translateX(28px); pointer-events: none; transition: opacity .3s cubic-bezier(.22,1,.36,1), transform .3s cubic-bezier(.22,1,.36,1); }
     #wl-search-panel.wl-search-open { opacity: 1; transform: translateX(0); pointer-events: auto; }
+    #wl-search-input,
+    #wl-search-input:focus,
+    #wl-search-input:focus-visible,
+    #wl-search-input:active {
+        outline: none !important;
+        box-shadow: none !important;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    #wl-search-input { caret-color: #8B1E3F; }
+    #wl-search-input::selection { background: rgba(139,30,63,.55); color: #ffffff; }
+    #wl-search-input:-webkit-autofill,
+    #wl-search-input:-webkit-autofill:hover,
+    #wl-search-input:-webkit-autofill:focus {
+        -webkit-text-fill-color: var(--chrome-text);
+        -webkit-box-shadow: 0 0 0 1000px var(--chrome-bg) inset;
+        box-shadow: 0 0 0 1000px var(--chrome-bg) inset;
+        transition: background-color 9999s ease-in-out 0s;
+        caret-color: #8B1E3F;
+    }
     #wl-hamburger:focus,
     #wl-search-toggle:focus,
     #wl-search-close:focus,
-    #wl-search-input:focus { outline: none; }
+    #wl-search-clear:focus,
+    #wl-search-input:focus { outline: none !important; }
+    #wl-hamburger:active,
+    #wl-search-toggle:active,
+    #wl-search-close:active,
+    #wl-search-clear:active { outline: none !important; box-shadow: none !important; }
     #wl-hamburger:focus-visible,
     #wl-search-toggle:focus-visible,
-    #wl-search-close:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(139,30,63,.5); border-radius: 9999px; }
+    #wl-search-close:focus-visible,
+    #wl-search-clear:focus-visible { outline: none !important; box-shadow: 0 0 0 2px rgba(139,30,63,.5); border-radius: 9999px; }
 </style>
 <style>
     /* ============ ATELIER EYEBROW (parity home/order-tracking) ============ */
@@ -315,7 +341,10 @@
 <button id="wl-search-close" aria-label="{{ __('Close search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center shrink-0" onclick="toggleWishlistSearch()" type="button">
 <span class="material-symbols-outlined text-[22px]" data-icon="search">search</span>
 </button>
-<input id="wl-search-input" type="search" autocomplete="off" placeholder="{{ __('Cari wishlist Anda...') }}" class="flex-1 min-w-0 bg-transparent font-body-lg text-body-lg text-on-surface placeholder:text-on-surface-variant/70 border-b border-[var(--chrome-border)] focus:border-secondary outline-none py-2"/>
+<input id="wl-search-input" type="text" inputmode="search" autocomplete="off" placeholder="{{ __('Cari wishlist Anda...') }}" class="flex-1 min-w-0 bg-transparent font-body-lg text-body-lg text-on-surface placeholder:text-on-surface-variant/70 border-b border-[var(--chrome-border)] focus:border-secondary py-2"/>
+<button id="wl-search-clear" aria-label="{{ __('Clear search') }}" class="hidden hover:opacity-80 transition-opacity flex items-center justify-center shrink-0" onclick="clearWishlistSearch()" type="button">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant" data-icon="close">close</span>
+</button>
 <span id="wl-search-count" class="font-label-sm text-label-sm text-on-surface-variant shrink-0 hidden"></span>
 </div>
 <!-- Main Content -->
@@ -458,6 +487,7 @@
         var panel = document.getElementById('wl-search-panel');
         var input = document.getElementById('wl-search-input');
         var countEl = document.getElementById('wl-search-count');
+        var clearBtn = document.getElementById('wl-search-clear');
         var noResults = document.getElementById('wl-no-results');
         var headers = document.querySelectorAll('.wl-header-item');
         if (!panel || !input) return;
@@ -475,6 +505,11 @@
             }
         }
         window.toggleWishlistSearch = function () { setOpen(!open); };
+        window.clearWishlistSearch = function () {
+            input.value = '';
+            filter('');
+            input.focus();
+        };
 
         function filter(q) {
             q = (q || '').trim().toLowerCase();
@@ -487,6 +522,7 @@
                 card.style.display = ok ? '' : 'none';
                 if (ok) shown++;
             });
+            if (clearBtn) clearBtn.classList.toggle('hidden', !q);
             if (countEl) {
                 countEl.textContent = shown + ' / ' + cards.length;
                 countEl.classList.toggle('hidden', !q);
