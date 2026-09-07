@@ -5,6 +5,7 @@
     $isMasuk = fn ($jenis) => in_array($jenis, [
         \App\Models\WalletTransaction::JENIS_PENJUALAN_MASUK,
         \App\Models\WalletTransaction::JENIS_KOMISI_MASUK,
+        \App\Models\WalletTransaction::JENIS_PEMASUKAN,
     ]);
 @endphp
 
@@ -26,7 +27,7 @@
 
 <div data-real class="hidden space-y-section-gap">
     @if (! isset($store) || ! $store)
-        <div class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
+        <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">info</span>
             <div>
                 <p class="font-bold text-sm text-on-surface">Belum punya toko</p>
@@ -39,11 +40,20 @@
             <p class="text-sm text-on-surface-variant">Dompet akan dibuat otomatis saat transaksi pertama. Keuangan tetap bisa dicatat manual (Pemasukan/Pengeluaran).</p>
         </div>
     @endif
-    {{-- Tab Switcher: Ringkasan | Pemasukan | Pengeluaran — selalu tampil --}}
-    <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 overflow-x-auto max-w-full">
-        <button type="button" data-saldo-tab="ringkasan" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">Ringkasan</button>
-        <button type="button" data-saldo-tab="pemasukan" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pemasukan</button>
-        <button type="button" data-saldo-tab="pengeluaran" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pengeluaran</button>
+    <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 overflow-x-auto max-w-full">
+            <button type="button" data-saldo-tab="ringkasan" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">Ringkasan</button>
+            <button type="button" data-saldo-tab="pemasukan" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pemasukan</button>
+            <button type="button" data-saldo-tab="pengeluaran" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pengeluaran</button>
+        </div>
+        <form method="GET" action="{{ route('owner.keuangan') }}" class="flex items-center gap-2">
+            <select name="period" onchange="this.form.submit()" class="raliva-select text-xs py-2">
+                <option value="7" {{ ($period ?? 30)==7 ? 'selected' : '' }}>7 Hari</option>
+                <option value="30" {{ ($period ?? 30)==30 ? 'selected' : '' }}>30 Hari</option>
+                <option value="90" {{ ($period ?? 30)==90 ? 'selected' : '' }}>90 Hari</option>
+                <option value="365" {{ ($period ?? 30)==365 ? 'selected' : '' }}>1 Tahun</option>
+            </select>
+        </form>
     </div>
 
     {{-- ============ PANEL: RINGKASAN ============ --}}
