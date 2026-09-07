@@ -40,7 +40,7 @@ class PencairanDanaController extends Controller
         }
         $data = $request->validate([
             'jumlah' => ['required', 'numeric', 'min:100000'],
-            'bank_account_id' => ['required', 'exists:store_bank_accounts,store_bank_account_id'],
+            'bank_account_id' => ['required', 'exists:store_bank_accounts,bank_account_id'],
             'catatan' => ['nullable', 'string', 'max:500'],
         ]);
         $wallet = $store->wallet;
@@ -51,20 +51,21 @@ class PencairanDanaController extends Controller
         \Illuminate\Support\Facades\DB::transaction(function () use ($wallet, $bank, $data, $store) {
             $wallet->decrement('saldo_tersedia', $data['jumlah']);
             Withdrawal::create([
+                'store_id' => $store->store_id,
                 'wallet_id' => $wallet->wallet_id,
-                'bank_account_id' => $bank->store_bank_account_id,
+                'bank_account_id' => $bank->bank_account_id,
                 'jumlah' => $data['jumlah'],
                 'status' => Withdrawal::STATUS_PENDING,
                 'diajukan_pada' => now(),
-                'catatan' => $data['catatan'] ?? null,
             ]);
             \App\Models\WalletTransaction::create([
                 'wallet_id' => $wallet->wallet_id,
+                'withdrawal_id' => null,
                 'jenis_transaksi' => \App\Models\WalletTransaction::JENIS_WITHDRAWAL,
-                'jumlah' => $data['jumlah'],
+                'jumlah' => -$data['jumlah'],
                 'saldo_sebelum' => (float) $wallet->saldo_tersedia + (float) $data['jumlah'],
                 'saldo_sesudah' => (float) $wallet->saldo_tersedia,
-                'keterangan' => 'Pengajuan pencairan',
+                'keterangan' => 'Pengajuan pencairan ke '.$bank->bank->nama_bank.' '.$bank->nomor_rekening,
             ]);
         });
 
