@@ -18,6 +18,8 @@ class SaldoController extends Controller
         $user = $request->user();
         $store = $user->ownedStores()->first();
 
+        $period = (int) $request->input('period', 30);
+        if (! in_array($period, [7, 30, 90, 365])) $period = 30;
         if (! $store) {
             $wallet = new \App\Models\Wallet(['saldo_tersedia'=>0,'saldo_tertahan'=>0]);
             return view('Owner.keuangan.index', [
@@ -33,6 +35,7 @@ class SaldoController extends Controller
                 'margin' => ['revenue'=>0,'gross'=>0,'ebitda'=>0,'ebit'=>0,'ebt'=>0,'net'=>0],
                 'totalDicairkan' => 0,
                 'fmt' => fn($v)=>'Rp '.number_format($v,0,',','.'),
+                'period' => $period,
             ]);
         }
 
@@ -64,20 +67,25 @@ class SaldoController extends Controller
             ->orderByDesc('diajukan_pada')
             ->get();
 
-        // Ringkasan bulan ini (dari awal bulan berjalan).
-        $startOfMonth = Carbon::now()->startOfMonth();
+        // Ringkasan per periode (7/30/90/365 hari)
+        $period = (int) $request->input('period', 30);
+        if (! in_array($period, [7, 30, 90, 365])) $period = 30;
+        $start = Carbon::now()->subDays($period - 1)->startOfDay();
+        $end = Carbon::now()->endOfDay();
         $monthTx = $wallet->transactions()
-            ->where('created_at', '>=', $startOfMonth)
+            ->whereBetween('created_at', [$start, $end])
             ->get();
 
         $pemasukan = $monthTx->whereIn('jenis_transaksi', [
             WalletTransaction::JENIS_PENJUALAN_MASUK,
             WalletTransaction::JENIS_KOMISI_MASUK,
+            WalletTransaction::JENIS_PEMASUKAN,
         ])->sum('jumlah');
 
         $pengeluaran = $monthTx->whereNotIn('jenis_transaksi', [
             WalletTransaction::JENIS_PENJUALAN_MASUK,
             WalletTransaction::JENIS_KOMISI_MASUK,
+            WalletTransaction::JENIS_PEMASUKAN,
         ])->sum(function ($t) {
             return abs((float) $t->jumlah);
         });
@@ -110,7 +118,7 @@ class SaldoController extends Controller
         $revenue = $pemasukan;
         $hpp = $revenue * 0.60;
         $grossProfit = $revenue - $hpp;
-        $operasional = (float) $expenses->where('tanggal', '>=', $startOfMonth)->sum('nominal');
+        $operasional = (float) $expenses->where('tanggal', '>=', $start->toDateString())->sum('nominal');
         $ebitda = $grossProfit - $operasional;
         $ebit = $ebitda;
         $ebt = $ebit;
@@ -129,7 +137,7 @@ class SaldoController extends Controller
         return view('Owner.keuangan.index', compact(
             'wallet', 'bankAccounts', 'totalDicairkan',
             'mutations', 'withdrawals', 'refunds', 'summary', 'chart',
-            'expenses', 'margin', 'store', 'fmt'
+            'expenses', 'margin', 'store', 'fmt', 'period'
         ));
     }
 
@@ -176,7 +184,7 @@ class SaldoController extends Controller
         $wallet->increment('saldo_tersedia', $validated['nominal']);
         \App\Models\WalletTransaction::create([
             'wallet_id' => $wallet->wallet_id,
-            'jenis_transaksi' => 'pemasukan',
+            'jenis_transaksi' => \App\Models\WalletTransaction::JENIS_PEMASUKAN,
             'jumlah' => $validated['nominal'],
             'saldo_sebelum' => (float) $wallet->saldo_tersedia - (float) $validated['nominal'],
             'saldo_sesudah' => (float) $wallet->saldo_tersedia,
