@@ -264,6 +264,8 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::match(['put', 'post'], '/profil', [ProfilController::class, 'updateProfile'])->name('profil.update');
     Route::match(['put', 'post'], '/profil/password', [ProfilController::class, 'updatePassword'])->name('profil.password');
     Route::get('/komplain', [SaKomplainController::class, 'index'])->name('komplain');
+    Route::get('/komplain/{komplain}/messages', [SaKomplainController::class, 'messages'])->name('komplain.messages');
+    Route::post('/komplain/{komplain}/messages', [SaKomplainController::class, 'storeMessage'])->name('komplain.messages.store');
     Route::post('/komplain/{komplain}/eskalasi', [SaKomplainController::class, 'eskalasi'])->name('komplain.eskalasi');
     Route::post('/komplain/{komplain}/tutup', [SaKomplainController::class, 'tutup'])->name('komplain.tutup');
     Route::get('/pengiriman', [SaPengirimanController::class, 'index'])->name('pengiriman');
