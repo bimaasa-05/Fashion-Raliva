@@ -26,7 +26,7 @@ class DataPesananController extends Controller
 
         $orders = Order::query()
             ->whereIn('store_id', AdminContext::assignedStoreIds())
-            ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap', 'items', 'shipments'])
+            ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap,email', 'checkout.payment.proofs', 'checkout.payment.paymentMethod', 'items.productVariant.product', 'shipments'])
             ->when(
                 array_key_exists($status, $statuses),
                 fn ($query) => $query->where('status', $status)
@@ -104,12 +104,12 @@ class DataPesananController extends Controller
         $newOrder = \DB::transaction(function () use ($source, $customerId) {
             $checkout = \App\Models\Checkout::create([
                 'user_id' => $customerId,
-                'subtotal' => $source->checkout?->subtotal ?? $source->total_harga ?? 0,
+                'subtotal' => $source->checkout?->subtotal ?? $source->grand_total ?? 0,
                 'total_diskon' => $source->checkout?->total_diskon ?? 0,
                 'total_pajak' => $source->checkout?->total_pajak ?? 0,
                 'biaya_layanan' => $source->checkout?->biaya_layanan ?? 0,
                 'total_ongkir' => $source->checkout?->total_ongkir ?? 0,
-                'grand_total' => $source->checkout?->grand_total ?? $source->total_harga ?? 0,
+                'grand_total' => $source->checkout?->grand_total ?? $source->grand_total ?? 0,
                 'status' => \App\Models\Checkout::STATUS_DIBAYAR,
             ]);
 
@@ -117,10 +117,9 @@ class DataPesananController extends Controller
                 'store_id' => $source->store_id,
                 'checkout_id' => $checkout->checkout_id,
                 'nomor_order' => 'RLV-' . $source->store_id . '-' . strtoupper(substr(md5(uniqid()), 0, 6)),
-                'subtotal' => $source->subtotal ?? $source->total_harga ?? 0,
-                'grand_total' => $source->grand_total ?? $source->total_harga ?? 0,
+                'subtotal' => $source->subtotal ?? $source->grand_total ?? 0,
+                'grand_total' => $source->grand_total ?? 0,
                 'status' => Order::STATUS_PENDING_PAYMENT,
-                'total_harga' => $source->total_harga ?? $source->checkout?->grand_total ?? 0,
             ]);
 
             foreach ($source->items as $item) {
