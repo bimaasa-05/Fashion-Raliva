@@ -170,9 +170,9 @@ class ManajemenPenggunaController extends Controller
 
     public function getDetail(User $user)
     {
-        $user->load('role', 'ownedStores');
+        $user->load('role', 'ownedStores.storeStaff.user.role');
 
-        $isSuperAdmin = $user->role && $user->role->nama_role === Role::SUPER_ADMIN;
+        $isOwner = $user->role && $user->role->nama_role === Role::OWNER;
 
         $aktivitas = ActivityLog::where('user_id', $user->user_id)
             ->orderByDesc('activity_log_id')
@@ -184,11 +184,22 @@ class ManajemenPenggunaController extends Controller
             ]);
 
         $toko = [];
-        if (! $isSuperAdmin) {
+        if ($isOwner) {
             $toko = $user->ownedStores->map(fn ($store) => [
+                'store_id' => $store->store_id,
                 'nama' => $store->nama_toko,
                 'produk' => $store->products()->count(),
                 'rating' => round($store->reviews()->avg('rating') ?? 0, 1),
+                'status' => $store->status,
+                'karyawan' => $store->storeStaff->map(fn (StoreStaff $st) => [
+                    'nama' => $st->user?->nama_lengkap ?? '-',
+                    'email' => $st->user?->email ?? '',
+                    'role' => $st->user?->role?->nama_role ?? '-',
+                    'role_id' => $st->user?->role_id,
+                    'status' => $st->status,
+                    'foto' => $st->user?->foto_profil_url,
+                    'initial' => strtoupper(mb_substr($st->user?->nama_lengkap ?? '?', 0, 2)),
+                ])->values()->all(),
             ]);
         }
 
@@ -200,7 +211,9 @@ class ManajemenPenggunaController extends Controller
             'role' => $user->role->nama_role ?? '-',
             'role_id' => $user->role_id,
             'status' => $user->status,
-            'is_super_admin' => $isSuperAdmin,
+            'is_owner' => $isOwner,
+            'show_toko' => $isOwner,
+            'is_super_admin' => $user->role && $user->role->nama_role === Role::SUPER_ADMIN,
             'foto_profil_url' => $user->foto_profil_url,
             'initial' => strtoupper(mb_substr($user->nama_lengkap, 0, 2)),
             'toko' => $toko,
