@@ -19,6 +19,8 @@ class WalletTransaction extends Model
 
     public const JENIS_PENYESUAIAN = 'penyesuaian';
 
+    public const JENIS_PEMASUKAN = 'pemasukan';
+
     protected $fillable = [
         'wallet_id',
         'order_id',
