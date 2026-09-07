@@ -91,28 +91,47 @@
             </div>
             <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
         </div>
-        <form class="p-6 space-y-5" id="produksi-form" data-toast-message="Permintaan produksi berhasil dikirim.">
+        <form method="POST" action="{{ route('admin.permintaan-produksi.store') }}" class="p-6 space-y-5" id="produksi-form">
+            @csrf
             <div>
-                <label class="raliva-label" for="produk">Produk</label>
-                <select class="raliva-select" id="produk">
-                    <option>Straight Fit Pants (stok 3)</option>
-                    <option>Relaxed Blazer</option>
-                    <option>Oversized Linen Shirt</option>
+                <label class="raliva-label" for="produk">Produk (dari pesanan dibayar/diproses)</label>
+                <select class="raliva-select" id="produk" name="product_variant_id" required>
+                    <option value="">— Pilih Varian —</option>
+                    @foreach(($pendingOrders ?? collect()) as $o)
+                        @foreach($o->items as $it)
+                            <option value="{{ $it->product_variant_id }}">{{ $it->productVariant?->product?->nama_produk ?? 'Produk' }} — {{ $it->productVariant?->ukuran ?? '' }} {{ $it->productVariant?->warna ?? '' }} (Order {{ $o->nomor_order }} ×{{ $it->quantity }})</option>
+                        @endforeach
+                    @endforeach
                 </select>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
                     <label class="raliva-label" for="jumlah">Jumlah</label>
-                    <input class="raliva-input" id="jumlah" type="number" min="1" placeholder="Misal: 50" />
+                    <input class="raliva-input" id="jumlah" name="jumlah_diminta" type="number" min="1" placeholder="Misal: 50" required />
                 </div>
                 <div>
                     <label class="raliva-label" for="target">Target Selesai</label>
-                    <input class="raliva-input" id="target" type="date" />
+                    <input class="raliva-input" id="target" name="tanggal_selesai" type="date" />
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                <div>
+                    <label class="raliva-label" for="tgl-mulai">Tanggal Mulai</label>
+                    <input class="raliva-input" id="tgl-mulai" name="tanggal_mulai" type="date" value="{{ date('Y-m-d') }}" />
+                </div>
+                <div>
+                    <label class="raliva-label" for="gudang">Gudang Tujuan</label>
+                    <select class="raliva-select" id="gudang" name="target_warehouse_id">
+                        <option value="">— Otomatis —</option>
+                        @foreach(($warehouses ?? collect()) as $w)
+                            <option value="{{ $w->warehouse_id }}">{{ $w->nama_gudang }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
             <div>
                 <label class="raliva-label" for="catatan">Catatan untuk Produksi</label>
-                <textarea class="raliva-textarea" id="catatan" rows="3" placeholder="Contoh: prioritas warna hitam, ukuran 28-34..."></textarea>
+                <textarea class="raliva-textarea" id="catatan" name="catatan" rows="3" placeholder="Contoh: prioritas warna hitam, ukuran 28-34..."></textarea>
             </div>
             <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
                 <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
