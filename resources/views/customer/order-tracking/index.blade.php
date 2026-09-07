@@ -342,7 +342,7 @@
 <div class="w-10"></div> <!-- Spacer for centering -->
 </header>
 <!-- Main Content Canvas -->
-<main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
+<main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-clip">
 @if (! $selected)
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px] px-container-margin">
@@ -379,7 +379,7 @@
     $detail = $details[$selected->status] ?? [__('Pesanan diterima'), __('Pesanan Anda telah tercatat.')];
 @endphp
 @if ($orders->count() > 1)
-<div class="pt-lg">
+<div class="pt-lg sticky top-16 z-30 bg-surface">
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="ot-product-list px-sm py-xs flex gap-sm overflow-x-auto hide-scrollbar" style="max-height:none">
 @foreach ($orders as $o)
