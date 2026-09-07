@@ -255,7 +255,7 @@
   </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
-<header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky z-40 border-b border-[var(--chrome-border)]">
+<header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
 <a aria-label="{{ __('Go back') }}" href="{{ route('customer.account') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
@@ -320,7 +320,7 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 <div class="flex flex-col sm:flex-row justify-end gap-sm mt-md pt-sm border-t border-outline-variant">
 <a href="{{ route('customer.reviews.edit', $rv->review_id) }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-secondary/5">
 <span class="material-symbols-outlined text-[18px]">edit</span>{{ __('Edit') }}</a>
-<form method="POST" action="{{ route('customer.reviews.destroy', $rv->review_id) }}" onsubmit="return confirm('{{ __('Are you sure you want to delete this review?') }}')">
+<form method="POST" action="{{ route('customer.reviews.destroy', $rv->review_id) }}" onsubmit="return confirm('{{ __('Are you sure you want to delete this review?') }}')" class="flex-1 sm:flex-none flex">
 @csrf
 @method('DELETE')
 <button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-error text-error font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-error/5">
