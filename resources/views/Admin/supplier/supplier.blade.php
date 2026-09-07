@@ -38,7 +38,7 @@
         <div class="p-4 md:p-6 pb-0">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-6">
                 <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Supplier</h2>
-                <button type="button" data-modal-open="modal-form-supplier" onclick="openAddSupplier()" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
+                <button type="button" data-modal-open="modal-form-supplier" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
                     <span class="material-symbols-outlined text-[18px]">add</span> Tambah Supplier
                 </button>
             </div>
@@ -88,13 +88,6 @@
                     @forelse ($suppliers as $s)
                     <tr data-table-row data-sup-id="{{ $s->supplier_id }}" data-jenis="{{ $s->jenis ?? 'lainnya' }}" data-status="{{ $s->status }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-4 font-mono text-on-surface">SUP-{{ $s->supplier_id }}</td>
-                        <input type="hidden" id="sup-nama-{{ $s->supplier_id }}" value="{{ $s->nama_supplier }}" />
-                        <input type="hidden" id="sup-kota-{{ $s->supplier_id }}" value="{{ $s->kota }}" />
-                        <input type="hidden" id="sup-kontak-{{ $s->supplier_id }}" value="{{ $s->kontak }}" />
-                        <input type="hidden" id="sup-email-{{ $s->supplier_id }}" value="{{ $s->email }}" />
-                        <input type="hidden" id="sup-jenis-{{ $s->supplier_id }}" value="{{ $s->jenis }}" />
-                        <input type="hidden" id="sup-status-{{ $s->supplier_id }}" value="{{ $s->status }}" />
-                        <input type="hidden" id="sup-catatan-{{ $s->supplier_id }}" value="{{ $s->catatan }}" />
                         <td class="p-4"><span class="block font-medium text-on-surface">{{ $s->nama_supplier }}</span><span class="text-xs text-on-surface-variant">Sejak {{ $s->created_at?->format('Y') }}</span></td>
                         <td class="p-4 text-on-surface-variant">{{ $s->kontak ?? '-' }}<br /><span class="text-xs">{{ $s->email ?? '' }}</span></td>
                         <td class="p-4 text-on-surface">{{ $s->kota ?? '-' }}</td>
@@ -109,7 +102,7 @@
                             @endif
                         </td>
                         <td class="p-4 text-right whitespace-nowrap">
-                            <button type="button" onclick="editSupplier({{ $s->supplier_id }})" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                            <button type="button" data-modal-open="modal-edit-{{ $s->supplier_id }}" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></button>
                             <button type="button" data-modal-open="modal-del-{{ $s->supplier_id }}" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus"><span class="material-symbols-outlined text-[18px]">delete</span></button>
                         </td>
                     </tr>
@@ -136,8 +129,6 @@
         </div>
         <form id="supplier-form" method="POST" action="{{ route('admin.supplier.store') }}" class="p-6 space-y-5">
             @csrf
-            @method('POST')
-            <input type="hidden" name="supplier_id" id="supplierId" value="" />
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
                     <label class="raliva-label" for="supplierNama">Nama Supplier</label>
@@ -210,39 +201,71 @@
     </form>
 </div>
 @endforeach
+
+{{-- Modal Edit Supplier per-baris (tanpa JS) --}}
+@foreach ($suppliers as $s)
+<div id="modal-edit-{{ $s->supplier_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl max-h-[85vh] overflow-y-auto">
+        <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <p class="raliva-label text-gold-accent">Ubah Data Supplier</p>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">Perbarui informasi kerja sama supplier.</h3>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <form method="POST" action="{{ route('admin.supplier.update', $s->supplier_id) }}" class="p-6 space-y-5">
+            @csrf
+            @method('PUT')
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                <div>
+                    <label class="raliva-label" for="edit-nama-{{ $s->supplier_id }}">Nama Supplier</label>
+                    <input type="text" id="edit-nama-{{ $s->supplier_id }}" name="nama_supplier" value="{{ $s->nama_supplier }}" required placeholder="Misal: CV Tekstil Bandung" class="raliva-input" />
+                </div>
+                <div>
+                    <label class="raliva-label" for="edit-kota-{{ $s->supplier_id }}">Kota</label>
+                    <input type="text" id="edit-kota-{{ $s->supplier_id }}" name="kota" value="{{ $s->kota }}" placeholder="Misal: Bandung" class="raliva-input" />
+                </div>
+                <div>
+                    <label class="raliva-label" for="edit-kontak-{{ $s->supplier_id }}">Nama Kontak</label>
+                    <input type="text" id="edit-kontak-{{ $s->supplier_id }}" name="kontak" value="{{ $s->kontak }}" placeholder="Nama PIC" class="raliva-input" />
+                </div>
+                <div>
+                    <label class="raliva-label" for="edit-telp-{{ $s->supplier_id }}">No. Telepon / Email</label>
+                    <input type="text" id="edit-telp-{{ $s->supplier_id }}" name="email" value="{{ $s->email }}" placeholder="08xx / email" class="raliva-input" />
+                </div>
+            </div>
+            <div>
+                <label class="raliva-label">Jenis Barang</label>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    @foreach(['kain' => 'Kain', 'aksesoris' => 'Aksesoris', 'kemasan' => 'Kemasan', 'jadi' => 'Produk Jadi'] as $val => $label)
+                        <label class="flex items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
+                            <input type="radio" class="sr-only" name="jenis" value="{{ $val }}" {{ ($s->jenis ?? 'kain') === $val ? 'checked' : '' }} />
+                            {{ $label }}
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+            <div>
+                <label class="raliva-label">Status Kerja Sama</label>
+                <div class="grid grid-cols-3 gap-3">
+                    @foreach(['aktif' => 'Aktif', 'verifikasi' => 'Verifikasi', 'nonaktif' => 'Non-aktif'] as $val => $label)
+                        <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
+                            <input type="radio" class="sr-only" name="status" value="{{ $val }}" {{ $s->status === $val ? 'checked' : '' }} /> {{ $label }}
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+            <div>
+                <label class="raliva-label" for="edit-catatan-{{ $s->supplier_id }}">Catatan</label>
+                <textarea class="raliva-textarea" id="edit-catatan-{{ $s->supplier_id }}" name="catatan" rows="3" placeholder="Syarat pembayaran, minimal order, dsb.">{{ $s->catatan }}</textarea>
+            </div>
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+@endforeach
 @endsection
-
-@push('scripts')
-<script>
-    const openAddSupplier = () => {
-        const form = document.getElementById('supplier-form');
-        form.action = '{{ route('admin.supplier.store') }}';
-        form.querySelector('input[name="_method"]')?.remove();
-        form.reset();
-        document.getElementById('supplierId').value = '';
-        document.getElementById('supplier-modal-title').textContent = 'Tambah Supplier Baru';
-        document.getElementById('supplier-modal-sub').textContent = 'Data supplier digunakan untuk pengadaan bahan & produk.';
-        document.getElementById('supplier-submit-btn').textContent = 'Simpan Supplier';
-    };
-
-    const editSupplier = (id) => {
-        const form = document.getElementById('supplier-form');
-        form.action = '{{ url('admin/supplier') }}/' + id;
-        form.querySelector('input[name="_method"]')?.remove();
-        const m = document.createElement('input');
-        m.type = 'hidden'; m.name = '_method'; m.value = 'PUT';
-        form.appendChild(m);
-        document.getElementById('supplierId').value = id;
-        document.getElementById('supplierNama').value = document.getElementById('sup-nama-' + id)?.value || '';
-        document.getElementById('supplierKota').value = document.getElementById('sup-kota-' + id)?.value || '';
-        document.getElementById('supplierKontak').value = document.getElementById('sup-kontak-' + id)?.value || '';
-        document.getElementById('supplierTelp').value = document.getElementById('sup-email-' + id)?.value || '';
-        document.getElementById('supplierCatatan').value = document.getElementById('sup-catatan-' + id)?.value || '';
-        document.querySelector('input[name="jenis"][value="' + (document.getElementById('sup-jenis-' + id)?.value || 'kain') + '"]')?.click();
-        document.querySelector('input[name="status"][value="' + (document.getElementById('sup-status-' + id)?.value || 'aktif') + '"]')?.click();
-        document.getElementById('supplier-modal-title').textContent = 'Ubah Data Supplier';
-        document.getElementById('supplier-modal-sub').textContent = 'Perbarui informasi kerja sama supplier.';
-        document.getElementById('supplier-submit-btn').textContent = 'Simpan Perubahan';
-    };
-</script>
-@endpush
