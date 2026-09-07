@@ -19,7 +19,14 @@ class DataProdukController extends Controller
 
         $categories = \App\Models\Category::where('status', 'aktif')->orderBy('nama_kategori')->get();
 
-        return view('Admin.produk.index', compact('products', 'categories'));
+        $stats = [
+            'total' => Product::count(),
+            'aktif' => Product::where('status', 'aktif')->count(),
+            'pending' => Product::where('status', 'pending')->count(),
+            'ditolak' => Product::where('status', 'ditolak')->count(),
+        ];
+
+        return view('Admin.produk.index', compact('products', 'categories', 'stats'));
     }
 
     public function store(Request $request): \Illuminate\Http\RedirectResponse
