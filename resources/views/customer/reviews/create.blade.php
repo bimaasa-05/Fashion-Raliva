@@ -340,6 +340,16 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
         document.querySelectorAll('#rating-stars .star-btn').forEach(function (btn) {
             btn.addEventListener('click', function () { setRating(parseInt(btn.dataset.value)); });
         });
+        (function () {
+            var v = parseInt((document.getElementById('rating-value') || {}).value, 10);
+            if (!isNaN(v)) {
+                setRating(v);
+                if (v === 0) {
+                    var label = document.getElementById('rating-label');
+                    if (label) label.textContent = '{{ __('Select rating') }}';
+                }
+            }
+        })();
         document.addEventListener('DOMContentLoaded', function () {
             var els = document.querySelectorAll('.reveal-up');
             if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('is-visible'); }); return; }

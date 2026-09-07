@@ -339,6 +339,10 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
         document.querySelectorAll('#rating-stars .star-btn').forEach(function (btn) {
             btn.addEventListener('click', function () { setRating(parseInt(btn.dataset.value)); });
         });
+        (function () {
+            var v = parseInt((document.getElementById('rating-value') || {}).value, 10);
+            if (!isNaN(v)) setRating(v);
+        })();
         const revealObserver = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
                 if (entry.isIntersecting) { entry.target.classList.add('is-visible'); revealObserver.unobserve(entry.target); }
