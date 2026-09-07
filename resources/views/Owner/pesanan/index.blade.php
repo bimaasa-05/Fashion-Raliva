@@ -27,7 +27,7 @@
     <section data-reveal-group class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-gutter">
         @foreach ([['Semua', $counts['semua'], 'on-surface', 'inventory_2'], ['Baru', $counts['baru'], 'gold-accent', 'shopping_cart'], ['Diproses', $counts['diproses'], 'secondary', 'precision_manufacturing'], ['Dikirim', $counts['dikirim'], 'on-surface', 'local_shipping'], ['Selesai', $counts['selesai'], 'secondary', 'task_alt'], ['Dibatalkan', $counts['dibatalkan'], 'error', 'cancel']] as $stat)
             <div data-reveal class="bg-surface-container-lowest p-5 md:p-6 border border-muted-border rounded-xl flex flex-col gap-1.5 relative overflow-hidden card-premium">
-                <span class="material-symbols-outlined absolute -right-2 -bottom-3 text-[72px] text-gold-accent/15 fill pointer-events-none select-none fill" aria-hidden="true">{{ $stat[3] }}</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none fill" aria-hidden="true">{{ $stat[3] }}</span>
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider relative z-10">{{ $stat[0] }}</span>
                 <span class="raliva-figure text-2xl md:text-[26px] text-{{ $stat[2] }} relative z-10">{{ $stat[1] }}</span>
             </div>
