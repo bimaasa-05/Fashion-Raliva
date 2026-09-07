@@ -53,9 +53,22 @@
             </a>
         @endforeach
     </div>
+
+    <div class="flex flex-col sm:flex-row sm:items-center gap-3 pt-4">
+        <div class="relative flex-1">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+            <input id="toko-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama toko, pemilik, lokasi, atau telepon..." />
+            <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+        </div>
+        <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+            <span id="result-count">{{ $stores->count() }}</span> toko
+        </p>
+    </div>
 </div>
 
-<section class="px-gutter md:px-container-margin py-8">
+<section data-table-scope class="px-gutter md:px-container-margin py-8">
     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         @forelse ($stores as $item)
             @php
@@ -65,6 +78,8 @@
                 $isPending = $store->status === \App\Models\Store::STATUS_PENDING;
             @endphp
             <article
+                data-table-row
+                data-search="{{ strtolower($store->nama_toko.' '.($item->owner_nama ?? '').' '.($item->location ?? '').' '.($store->deskripsi ?? '').' '.($store->nomor_telepon ?? '')) }}"
                 data-id="{{ $store->store_id }}"
                 data-status="{{ $store->status }}"
                 data-name="{{ $store->nama_toko }}"
@@ -128,6 +143,7 @@
             <p id="toko-kosong" class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada toko pada status ini.</p>
         @endforelse
     </div>
+    <p id="toko-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada toko yang cocok.</p>
 </section>
 @endsection
 
@@ -347,6 +363,51 @@
     document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') { closeStoreModal(); closeRejectModal(); closeDocRejectModal(); }
     });
+</script>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const scope = document.querySelector('[data-table-scope]');
+    if (!scope) return;
+
+    const rows = Array.from(scope.querySelectorAll('[data-table-row]'));
+    const searchInput = document.getElementById('toko-search');
+    const clearBtn = document.getElementById('clear-search');
+    const countEl = document.getElementById('result-count');
+    const emptySearch = document.getElementById('toko-empty-search');
+
+    function applyFilter() {
+        const term = searchInput.value.trim().toLowerCase();
+        let visible = 0;
+
+        rows.forEach((row) => {
+            const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
+            const show = matchSearch;
+            row.classList.toggle('hidden', !show);
+            if (show) visible++;
+        });
+
+        countEl.textContent = visible;
+        emptySearch.classList.toggle('hidden', visible > 0 || rows.length === 0);
+    }
+
+    let debounce;
+    searchInput.addEventListener('input', () => {
+        clearBtn.classList.toggle('opacity-0', !searchInput.value);
+        clearTimeout(debounce);
+        debounce = setTimeout(applyFilter, 200);
+    });
+
+    clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        clearBtn.classList.add('opacity-0');
+        applyFilter();
+    });
+
+    applyFilter();
+});
 </script>
 @endpush
 

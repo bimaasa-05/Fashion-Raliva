@@ -40,6 +40,31 @@ class KomplainController extends Controller
         ]);
     }
 
+    public function messages(Complaint $komplain)
+    {
+        $messages = $komplain->messages()
+            ->with('sender.role')
+            ->orderBy('created_at')
+            ->get();
+
+        return response()->json($messages);
+    }
+
+    public function storeMessage(Request $request, Complaint $komplain)
+    {
+        $data = $request->validate([
+            'pesan' => 'required|string|max:2000',
+        ]);
+
+        $pesan = ComplaintMessage::create([
+            'complaint_id' => $komplain->complaint_id,
+            'sender_id' => ActivityLogger::resolveActorId(),
+            'pesan' => $data['pesan'],
+        ]);
+
+        return response()->json($pesan->load('sender'));
+    }
+
     public function eskalasi(Request $request, Complaint $komplain)
     {
         if (! in_array($komplain->status, [Complaint::STATUS_OPEN, Complaint::STATUS_DIPROSES], true)) {

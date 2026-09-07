@@ -230,7 +230,7 @@
   </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[120px] lg:pl-72">
 <!-- TopAppBar -->
-<header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky z-40 border-b border-[var(--chrome-border)]">
+<header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
 <a href="{{ route('customer.reviews') }}" aria-label="{{ __('Go back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
@@ -243,19 +243,27 @@
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('REVIEWS') }}</p>
-<form>
+<form id="review-form" method="POST" action="{{ route('customer.reviews.store') }}">
+@csrf
 <!-- Product Summary -->
 <section class="pt-lg mt-lg border-t border-outline-variant">
 <div class="flex items-center gap-sm md:gap-md">
-<a href="{{ route('customer.shop.produk-detail', 1) }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
-<img alt="Geometric Gold Hoops" class="w-full h-full object-cover rounded-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXqNhNFWMr-Gm8_uwAVgBbqtzcNdb5MAfQUsG_3GJbmE0gm167f27WLQY44QclgDSw7N_b2k0qpe9HdTKZlExYsZl6FJUCnKft0foIHP3pp3uFUAxnwrYM3o7ap46wCmmnSGAbNN-gDM_Kptg0bVNG6ghZhp7r3PeQ66ZD2yhgIMKhB9sSycHTa8yXBJ3fTbNvx2tH5SUu76da_WcZ3bJW7JeJmVuEnVOdIHENcwQB0a1sOCp-u_s"/>
+@php
+$prod = $orderItem->productVariant?->product;
+$img = $prod?->images->first()?->file_gambar ?? '';
+$imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/create-'.$orderItem->order_item_id.'/900/1200';
+$link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
+@endphp
+<a href="{{ $link }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
+<img alt="{{ $prod?->nama_produk }}" class="w-full h-full object-cover rounded-xl" src="{{ $imgUrl }}"/>
 </a>
 <div class="min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Kayana Apparel</span>
-<h2 class="font-title-md text-title-md text-on-surface truncate">Geometric Gold Hoops</h2>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">Delivered May 20, 2026</p>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $orderItem->order?->store?->nama_toko ?? 'RALIVA' }}</span>
+<h2 class="font-title-md text-title-md text-on-surface truncate">{{ $orderItem->nama_produk_snapshot }}</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Delivered') }} {{ $orderItem->order?->created_at->format('M j, Y') }}</p>
 </div>
 </div>
+<input type="hidden" name="order_item_id" value="{{ $orderItem->order_item_id }}"/>
 </section>
 <!-- Rating -->
 <section class="pt-lg mt-lg border-t border-outline-variant">
@@ -267,14 +275,20 @@
 <button aria-label="Rate 4 stars" class="star-btn p-1" data-value="4" type="button"><span class="material-symbols-outlined text-[32px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span></button>
 <button aria-label="Rate 5 stars" class="star-btn p-1" data-value="5" type="button"><span class="material-symbols-outlined text-[32px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span></button>
 <span class="font-body-sm text-body-sm text-on-surface-variant ml-sm" id="rating-label">{{ __('Select rating') }}</span>
-<input id="rating-value" type="hidden" value="0"/>
+<input id="rating-value" name="rating" type="hidden" value="{{ old('rating', 0) }}"/>
 </div>
+@error('rating')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
 </section>
 <!-- Review Text -->
 <section class="pt-lg mt-lg border-t border-outline-variant">
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Your Review') }}</h3>
-<textarea class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors resize-none" id="review-text" placeholder="Share your experience with this product..." rows="5"></textarea>
+<textarea class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors resize-none {{ $errors->has('ulasan') ? 'border-error' : '' }}" id="review-text" name="ulasan" placeholder="Share your experience with this product..." rows="5">{{ old('ulasan') }}</textarea>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Minimum 20 characters. Be honest and helpful for other shoppers.') }}</p>
+@error('ulasan')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
 </section>
 <!-- Photos -->
 <section class="pt-lg mt-lg border-t border-outline-variant">
@@ -295,10 +309,10 @@
 <!-- Fixed Bottom Action Bar -->
 <div class="fixed bottom-0 left-0 right-0 lg:left-72 z-50 px-container-margin pb-safe">
 <div class="flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.18)]">
-<a href="{{ route('customer.reviews') }}" class="btn-gold flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+<button type="submit" form="review-form" class="btn-gold flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
 <span class="material-symbols-outlined text-[20px]">check</span>
 <span class="truncate">{{ __('Submit Review') }}</span>
-</a>
+</button>
 </div>
 </div>
 <script>

@@ -347,10 +347,19 @@
 <!-- Danger Zone -->
 <section class="px-container-margin py-lg">
 <h2 class="font-label-caps text-label-caps text-error uppercase tracking-widest mb-md">{{ __('Danger Zone') }}</h2>
-<button class="btn-danger w-full font-label-caps text-label-caps py-3 lg:px-xl rounded-full uppercase tracking-widest flex items-center justify-center gap-2" type="button">
+@if (session('status'))
+<p class="font-label-sm text-label-sm text-on-surface bg-surface-container-high border border-outline-variant rounded-xl px-md py-sm mb-sm">{{ session('status') }}</p>
+@endif
+@if (session('error'))
+<p class="font-label-sm text-label-sm text-error bg-surface-container-high border border-outline-variant rounded-xl px-md py-sm mb-sm">{{ session('error') }}</p>
+@endif
+<form method="POST" action="{{ route('customer.settings.delete-account') }}" onsubmit="return confirm('{{ __('Yakin ingin menghapus akun ini? Tindakan ini permanen.') }}')">
+@csrf
+<button class="btn-danger w-full font-label-caps text-label-caps py-3 lg:px-xl rounded-full uppercase tracking-widest flex items-center justify-center gap-2" type="submit">
 <span class="material-symbols-outlined text-[20px]">delete_forever</span>
 <span>{{ __('Delete Account') }}</span>
 </button>
+</form>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-sm text-center">{{ __('This action is permanent and cannot be undone.') }}</p>
 </section>
 </div>

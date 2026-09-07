@@ -9,9 +9,6 @@
 @push('styles')
 <style>
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .filter-chip { transition: all 0.2s ease; }
-    .filter-chip:hover { border-color: rgba(201, 162, 77, 0.5); color: #C9A24D; transform: translateY(-1px); }
-    .filter-chip.active { background-color: rgba(201, 162, 77, 0.15); border-color: rgba(201, 162, 77, 0.5); color: #C9A24D; }
 </style>
 @endpush
 
@@ -52,53 +49,62 @@
         </div>
     </section>
 
-    <!-- Toolbar -->
-    <section class="rise rise-d1">
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
-            <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
-                <div>
-                    <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Pengiriman</h2>
-                    <p class="text-xs text-on-surface-variant mt-1">Semua pengiriman dari seluruh toko di platform.</p>
-                </div>
-                <button type="button" data-filter-toggle data-filter-target="#pengiriman-filter" class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">tune</span>
-                    Filter
-                    <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
-                </button>
-            </div>
+    <section data-table-scope class="rise rise-d1 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Pengiriman</h2>
+            <button type="button" data-filter-toggle data-filter-target="#pengiriman-filter" class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
+                <span class="material-symbols-outlined text-[18px]">tune</span>
+                Filter
+                <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
+            </button>
+        </div>
 
-            <!-- Filters -->
-            <div id="pengiriman-filter" data-filter-panel class="hidden md:block flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
-                <div class="relative flex-1 min-w-[220px]">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                    <input type="text" id="searchInput" placeholder="Cari nomor pesanan, toko, kurir, atau resi..." class="w-full bg-transparent border border-muted-border rounded-lg pl-10 pr-4 py-2.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" oninput="applyFilter()" />
+        <!-- Filters -->
+        <div id="pengiriman-filter" data-filter-panel class="hidden md:block mb-6">
+            <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
+                <div class="flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
                 </div>
-                <div class="flex flex-wrap items-center gap-3 lg:justify-end">
-                    <select id="filterStatus" class="raliva-select lg:w-40" onchange="applyFilter()">
-                        <option value="">Semua Status</option>
-                        <option value="pending">Pending</option>
-                        <option value="diproses">Diproses</option>
-                        <option value="dikirim">Dikirim</option>
-                        <option value="diterima">Diterima</option>
-                        <option value="gagal">Gagal</option>
-                    </select>
-                    <button type="button" onclick="resetFilter()" class="py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Reset</button>
+                <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
+                <div id="chip-group" class="flex flex-wrap gap-2">
+                    <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua Pengiriman</button>
+                    <button type="button" data-chip="pending" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Pending</button>
+                    <button type="button" data-chip="diproses" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Diproses</button>
+                    <button type="button" data-chip="dikirim" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Dikirim</button>
+                    <button type="button" data-chip="diterima" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Diterima</button>
+                    <button type="button" data-chip="gagal" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Gagal</button>
                 </div>
             </div>
 
-            <!-- Table -->
-            <div class="overflow-x-auto hidden md:block">
-                <table class="w-full min-w-[1000px] font-body-md text-sm">
+            <!-- Search + Result Count -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div class="relative flex-1">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input id="searchInput" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nomor pesanan, toko, kurir, atau resi..." />
+                    <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                </div>
+                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                    <span id="pengiriman-result-count">{{ $shipments->count() }}</span> pengiriman
+                </p>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto hidden md:block">
+                <table class="w-full min-w-full bg-surface-container-lowest rounded-lg overflow-hidden premium-table">
                     <thead>
-                        <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                            <th class="p-4 text-center w-12">No</th>
-                            <th class="p-4 text-left">ID Pesanan</th>
-                            <th class="p-4 text-left">Toko</th>
-                            <th class="p-4 text-left">Kurir</th>
-                            <th class="p-4 text-left">No. Resi</th>
-                            <th class="p-4 text-left">Ongkir</th>
-                            <th class="p-4 text-left">Status</th>
-                            <th class="p-4 text-center">Aksi</th>
+                        <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
+                            <th class="p-6 w-12 text-center">No.</th>
+                            <th class="p-6">ID Pesanan</th>
+                            <th class="p-6">Toko</th>
+                            <th class="p-6">Kurir</th>
+                            <th class="p-6">No. Resi</th>
+                            <th class="p-6">Ongkir</th>
+                            <th class="p-6">Status</th>
+                            <th class="p-6 text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -106,16 +112,17 @@
                             @php
                                 $pelanggan = $s->order?->checkout?->user;
                             @endphp
-                            <tr class="border-b border-muted-border last:border-0"
-                                data-status="{{ $s->status }}"
-                                data-search="{{ strtolower(($s->order->nomor_order ?? '').' '.($s->order->store->nama_toko ?? '').' '.($s->courier->nama_kurir ?? '').' '.($s->nomor_resi ?? '')) }}">
-                                <td class="py-3.5 px-4 text-on-surface-variant">{{ $loop->iteration }}</td>
-                                <td class="py-3.5 px-4 font-mono text-on-surface">{{ $s->order->nomor_order ?? '-' }}</td>
-                                <td class="py-3.5 px-4 text-on-surface">{{ $s->order->store->nama_toko ?? '-' }}</td>
-                                <td class="py-3.5 px-4 text-on-surface">{{ $s->courier->nama_kurir ?? '-' }}</td>
-                                <td class="py-3.5 px-4 font-mono text-on-surface-variant text-xs">{{ $s->nomor_resi ?? '-' }}</td>
-                                <td class="py-3.5 px-4 text-right text-on-surface">Rp {{ number_format((float) $s->ongkir, 0, ',', '.') }}</td>
-                                <td class="py-3.5 px-4">
+                            <tr data-table-row
+                                        data-status="{{ $s->status }}"
+                                        data-search="{{ strtolower(($s->order->nomor_order ?? '').' '.($s->order->store->nama_toko ?? '').' '.($s->courier->nama_kurir ?? '').' '.($s->nomor_resi ?? '')) }}"
+                                        class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                                <td class="p-6 text-center text-on-surface-variant font-mono row-num"></td>
+                                <td class="p-6 font-mono">{{ $s->order->nomor_order ?? '-' }}</td>
+                                <td class="p-6">{{ $s->order->store->nama_toko ?? '-' }}</td>
+                                <td class="p-6">{{ $s->courier->nama_kurir ?? '-' }}</td>
+                                <td class="p-6 font-mono text-on-surface-variant text-xs">{{ $s->nomor_resi ?? '-' }}</td>
+                                <td class="p-6 text-right text-on-surface">Rp {{ number_format((float) $s->ongkir, 0, ',', '.') }}</td>
+                                <td class="p-6">
                                     <form method="POST" action="{{ route('superadmin.pengiriman.status', $s->shipment_id) }}" class="inline-flex">
                                         @csrf
                                         @method('PUT')
@@ -128,7 +135,7 @@
                                         </select>
                                     </form>
                                 </td>
-                                <td class="py-3.5 px-4 text-right">
+                                <td class="p-6 text-right">
                                     <button type="button" onclick="openDetail(this)" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors"
                                         data-order="{{ $s->order->nomor_order ?? '-' }}"
                                         data-toko="{{ $s->order->store->nama_toko ?? '-' }}"
@@ -146,9 +153,22 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="py-12 text-center text-on-surface-variant">Belum ada data pengiriman.</td>
+                                <td colspan="8" class="p-8 text-center">
+                                    <div class="flex flex-col items-center gap-2">
+                                        <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">inbox</span>
+                                        <p class="text-on-surface-variant font-body-md text-sm">Belum ada data pengiriman.</p>
+                                    </div>
+                                </td>
                             </tr>
                         @endforelse
+                        <tr id="empty-search" class="hidden">
+                            <td colspan="8" class="p-8 text-center">
+                                <div class="flex flex-col items-center gap-2">
+                                    <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
+                                    <p class="text-on-surface-variant font-body-md text-sm">Tidak ada pengiriman yang cocok.</p>
+                                </div>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -159,7 +179,7 @@
                     @php
                         $pelanggan = $s->order?->checkout?->user;
                     @endphp
-                    <article data-status="{{ $s->status }}" data-search="{{ strtolower(($s->order->nomor_order ?? '').' '.($s->order->store->nama_toko ?? '').' '.($s->courier->nama_kurir ?? '').' '.($s->nomor_resi ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    <article data-table-row data-status="{{ $s->status }}" data-search="{{ strtolower(($s->order->nomor_order ?? '').' '.($s->order->store->nama_toko ?? '').' '.($s->courier->nama_kurir ?? '').' '.($s->nomor_resi ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
                         <div class="flex items-start justify-between gap-3 mb-3">
                             <div class="min-w-0">
                                 <p class="font-mono font-bold text-on-surface leading-tight">{{ $s->order->nomor_order ?? '-' }}</p>
@@ -217,20 +237,10 @@
                 <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada pengiriman yang cocok.</p>
             </div>
 
-            <!-- Empty Search State -->
-            <div id="empty-search" class="hidden flex-col items-center py-12 text-center gap-3">
-                <div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center">
-                    <span class="material-symbols-outlined text-[28px] text-on-surface-variant">search_off</span>
-                </div>
-                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada pengiriman yang cocok.</p>
-                <button type="button" onclick="resetFilter()" class="mt-1 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Reset Filter</button>
-            </div>
-
             <p class="text-xs text-on-surface-variant mt-6 pt-5 border-t border-muted-border flex items-start gap-2">
-                <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 shrink-0">info</span>
-                SA dapat mengubah status pengiriman untuk keperluan darurat. Perubahan status tercatat di riwayat aktivitas.
-            </p>
-        </div>
+            <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 shrink-0">info</span>
+            SA dapat mengubah status pengiriman untuk keperluan darurat. Perubahan status tercatat di riwayat aktivitas.
+        </p>
     </section>
 </div>
 
@@ -303,36 +313,82 @@
 @push('scripts')
 <script>
     // === FILTER & SEARCH ===
+    const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
+    const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
+    let activeStatus = 'semua';
+
     function applyFilter() {
-        const search = document.getElementById('searchInput').value.toLowerCase().trim();
-        const status = document.getElementById('filterStatus').value;
-        const rows = document.querySelectorAll('#table-body tr[data-status]');
-        const cards = document.querySelectorAll('#card-grid article[data-status]');
+        const term = document.getElementById('searchInput').value.trim().toLowerCase();
         let visible = 0;
 
-        const match = (el) => {
-            const rowStatus = el.dataset.status;
-            const rowSearch = el.dataset.search;
-            let show = true;
-            if (status && rowStatus !== status) show = false;
-            if (search && !rowSearch.includes(search)) show = false;
-            el.style.display = show ? '' : 'none';
+        const each = (el) => {
+            const matchStatus = activeStatus === 'semua' || el.getAttribute('data-status') === activeStatus;
+            const matchSearch = !term || (el.getAttribute('data-search') || '').includes(term);
+            const show = matchStatus && matchSearch;
+            el.classList.toggle('hidden', !show);
             if (show) visible++;
+            return show;
         };
 
-        rows.forEach(match);
-        cards.forEach(match);
+        document.querySelectorAll('#table-body tr[data-table-row]').forEach((row) => {
+            if (each(row)) {
+                const num = row.querySelector('.row-num');
+                if (num) num.textContent = visible;
+            }
+        });
+        document.querySelectorAll('#card-grid article[data-table-row]').forEach(each);
 
-        document.getElementById('empty-search').style.display = visible === 0 ? 'flex' : 'none';
+        document.getElementById('pengiriman-result-count').textContent = visible;
+        document.getElementById('empty-search').classList.toggle('hidden', visible > 0);
         const em = document.getElementById('empty-search-mobile');
-        if (em) em.style.display = visible === 0 ? 'block' : 'none';
+        if (em) em.classList.toggle('hidden', visible > 0);
+
+        if (document.querySelectorAll('#table-body tr[data-table-row]').length === 0) {
+            document.getElementById('empty-search').classList.add('hidden');
+        }
     }
 
     function resetFilter() {
         document.getElementById('searchInput').value = '';
-        document.getElementById('filterStatus').value = '';
+        const clearBtn = document.getElementById('clear-search');
+        if (clearBtn) clearBtn.classList.add('opacity-0');
+        activateChip(document.querySelector('#chip-group [data-chip="semua"]'));
         applyFilter();
     }
+
+    function activateChip(chip) {
+        if (!chip) return;
+        document.querySelectorAll('#chip-group .chip-btn').forEach((c) => {
+            c.classList.remove(...activeClasses);
+            c.classList.add(...idleClasses, 'hover:bg-surface-container-high');
+        });
+        chip.classList.remove(...idleClasses, 'hover:bg-surface-container-high');
+        chip.classList.add(...activeClasses);
+        activeStatus = chip.getAttribute('data-chip');
+    }
+
+    document.querySelectorAll('#chip-group .chip-btn').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+            activateChip(chip);
+            applyFilter();
+        });
+    });
+
+    if (document.getElementById('clear-search')) {
+        document.getElementById('clear-search').addEventListener('click', function () {
+            document.getElementById('searchInput').value = '';
+            this.classList.add('opacity-0');
+            applyFilter();
+        });
+    }
+
+    let debounce;
+    document.getElementById('searchInput').addEventListener('input', function () {
+        const clearBtn = document.getElementById('clear-search');
+        if (clearBtn) clearBtn.classList.toggle('opacity-0', !this.value);
+        clearTimeout(debounce);
+        debounce = setTimeout(applyFilter, 200);
+    });
 
     // === DETAIL MODAL ===
     function openDetail(btn) {

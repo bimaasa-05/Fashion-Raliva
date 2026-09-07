@@ -3,7 +3,7 @@
 <html class="light" lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
-<title>RALIVA - {{ __('Store') }}</title>
+<title>{{ $store->nama_toko }} - {{ __('Store') }} | RALIVA</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -257,7 +257,7 @@
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[120px] lg:pl-72">
 <!-- TopAppBar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-<a href="{{ route('customer.account') }}" aria-label="{{ __('Go back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+<a href="{{ route('customer.shop') }}" data-go-back aria-label="{{ __('Go back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('STORE') }}</h1>
@@ -481,4 +481,18 @@
         });
     </script>
 @include('customer._partials.drawer')
+<script>
+    /* Arrow back = kembali ke halaman customer sebelumnya */
+    document.addEventListener('click', function (e) {
+        var back = e.target.closest('[data-go-back]');
+        if (!back) return;
+        e.preventDefault();
+        var ref = document.referrer;
+        if (ref && ref.indexOf(window.location.origin) === 0) {
+            window.history.back();
+        } else {
+            window.location.href = back.getAttribute('href');
+        }
+    });
+</script>
 </body></html>

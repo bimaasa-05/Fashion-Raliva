@@ -173,7 +173,7 @@
     html.theme-dark .text-outline { color: #8a8781 !important; }
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
-    html.theme-dark .text-secondary { color: #ebc168 !important; }
+    html.theme-dark .text-secondary { color: #8B1E3F !important; }
     html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
     html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
@@ -187,7 +187,7 @@
     html.theme-dark .hover\:bg-surface-variant:hover { background-color: #323130 !important; }
     html.theme-dark .hover\:bg-surface:hover { background-color: #262524 !important; }
     html.theme-dark .hover\:bg-primary:hover { background-color: #ffffff !important; }
-    html.theme-dark .hover\:text-secondary:hover { color: #ebc168 !important; }
+    html.theme-dark .hover\:text-secondary:hover { color: #8B1E3F !important; }
     html.theme-dark .hover\:text-primary:hover { color: #f2efec !important; }
     html.theme-dark .hover\:text-on-surface:hover { color: #e6e4e1 !important; }
     html.theme-dark .hover\:text-error:hover { color: #ffb4ab !important; }
@@ -246,35 +246,42 @@
             <p class="font-label-caps text-label-caps text-[var(--chrome-accent)] uppercase tracking-widest mb-xs">{{ __('ACCOUNT SECURITY') }}</p>
             <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md md:mb-lg">{{ __('Change Password') }}</h2>
 
-            <form id="password-form">
-            <section>
-            <div class="flex flex-col gap-md">
+            <form id="password-form" method="POST" action="{{ route('customer.account.password.update') }}">
+                @csrf
+                <section>
+                <div class="flex flex-col gap-md">
 <!-- Current Password -->
 <div>
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="current-password">{{ __('Current Password') }}</label>
 <div class="relative">
-<input autocomplete="current-password" class="w-full bg-surface border border-outline-variant rounded-lg pl-md pr-xl py-2.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors" id="current-password" placeholder="{{ __('Enter your current password') }}" type="password"/>
+<input autocomplete="current-password" name="current_password" class="w-full bg-surface border border-outline-variant rounded-lg pl-md pr-xl py-2.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors {{ $errors->has('current_password') ? 'border-error' : '' }}" id="current-password" placeholder="{{ __('Enter your current password') }}" type="password"/>
 <span aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 cursor-pointer text-on-surface-variant hover:text-on-surface transition-colors flex" role="button" tabindex="0">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </span>
 </div>
+@error('current_password')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
 </div>
 <!-- New Password -->
 <div>
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="new-password">{{ __('New Password') }}</label>
 <div class="relative">
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-lg pl-md pr-xl py-2.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors" id="new-password" placeholder="{{ __('Enter a new password') }}" type="password"/>
+<input autocomplete="new-password" name="new_password" class="w-full bg-surface border border-outline-variant rounded-lg pl-md pr-xl py-2.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors {{ $errors->has('new_password') ? 'border-error' : '' }}" id="new-password" placeholder="{{ __('Enter a new password') }}" type="password"/>
 <span aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 cursor-pointer text-on-surface-variant hover:text-on-surface transition-colors flex" role="button" tabindex="0">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </span>
 </div>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __("Choose a strong password you don't use elsewhere.") }}</p>
+@error('new_password')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
 </div>
 <!-- Confirm New Password -->
 <div>
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="confirm-password">{{ __('Confirm New Password') }}</label>
 <div class="relative">
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-lg pl-md pr-xl py-2.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors" id="confirm-password" placeholder="{{ __('Re-enter your new password') }}" type="password"/>
+<input autocomplete="new-password" name="new_password_confirmation" class="w-full bg-surface border border-outline-variant rounded-lg pl-md pr-xl py-2.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors {{ $errors->has('new_password') ? 'border-error' : '' }}" id="confirm-password" placeholder="{{ __('Re-enter your new password') }}" type="password"/>
 <span aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 cursor-pointer text-on-surface-variant hover:text-on-surface transition-colors flex" role="button" tabindex="0">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </span>

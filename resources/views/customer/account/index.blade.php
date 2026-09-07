@@ -231,26 +231,16 @@
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
 <header class="flex justify-between items-center w-full px-container-margin h-16 bg-[var(--chrome-bg)] text-[var(--chrome-text)] border-b border-[var(--chrome-border)] flat no shadows docked full-width top-0 z-40 sticky">
-<button aria-label="Menu" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 -ml-2">
+<button aria-label="{{ __('Menu') }}" class="hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
-<button aria-label="{{ __('Search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center p-2 -mr-2">
-<span class="material-symbols-outlined" data-icon="search">search</span>
-</button>
+<div class="w-10" aria-hidden="true"></div>
 </header>
 <!-- Main Content Canvas -->
-<main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
-<!-- Page Title -->
-<div class="mx-auto max-w-[1400px] px-container-margin">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium mb-lg md:mb-xl text-center md:text-left">
-<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">MY PROFILE</p>
-<h2 class="premium-heading font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">{{ __('ACCOUNT') }}</h2>
-</div>
-</div>
+<main class="flex-grow pt-10 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Profile Header -->
 @auth
-<<<<<<< HEAD
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex flex-col items-center md:flex-row md:items-start gap-md">
 <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant flex-shrink-0 bg-surface-container-high flex items-center justify-center">
@@ -259,20 +249,6 @@
 @else
 <span class="material-symbols-outlined text-[44px] text-on-surface-variant">person</span>
 @endif
-=======
-@php
-  $cnama = Auth::user()->nama_lengkap ?? 'Customer';
-  $cw = preg_split('/\s+/', trim($cnama));
-  $ci = '';
-  if(!empty($cw[0])) $ci .= mb_substr($cw[0],0,1);
-  if(isset($cw[1])) $ci .= mb_substr($cw[1],0,1);
-  elseif(mb_strlen($cw[0]??'')>1) $ci .= mb_substr($cw[0],1,1);
-  $cinit = strtoupper(mb_substr($ci,0,2)) ?: '?';
-@endphp
-<section class="flex flex-col items-center md:flex-row md:items-start gap-md mb-xl bg-surface-container-low rounded-lg p-md">
-<div class="w-24 h-24 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-2xl shrink-0 border border-gold-accent/30">
-{{ $cinit }}
->>>>>>> 2b09555281b997789a03982a1f3357cb46141e24
 </div>
 <div class="flex flex-col items-center md:items-start justify-center flex-grow">
 <h3 class="font-title-md text-title-md text-on-surface mb-1">{{ Auth::user()->nama_lengkap }}</h3>
