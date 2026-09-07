@@ -27,6 +27,7 @@ class VerifikasiPembayaranController extends Controller
             'menunggu' => (clone $base)->where('status', Payment::STATUS_MENUNGGU_VERIFIKASI)->count(),
             'diterima' => (clone $base)->where('status', Payment::STATUS_TERVERIFIKASI)->count(),
             'ditolak' => (clone $base)->where('status', Payment::STATUS_DITOLAK)->count(),
+            'nominal_menunggu' => (clone $base)->where('status', Payment::STATUS_MENUNGGU_VERIFIKASI)->sum('jumlah'),
         ];
 
         $payments = match ($tab) {
