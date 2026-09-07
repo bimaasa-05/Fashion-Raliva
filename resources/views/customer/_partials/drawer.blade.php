@@ -159,6 +159,13 @@
             applyThemeIcon();
         }
         applyThemeIcon();
+        window.addEventListener('pageshow', function (e) {
+            if (e.persisted) {
+                var dark = localStorage.getItem('raliva-theme') === 'dark';
+                document.documentElement.classList.toggle('theme-dark', dark);
+                applyThemeIcon();
+            }
+        });
     </script>
 @include('customer._partials.wishlist-script')
 @include('customer._partials.cart-script')

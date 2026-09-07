@@ -650,6 +650,12 @@
             b.title = document.documentElement.classList.contains('theme-dark') ? 'Mode terang' : 'Mode gelap';
         }
         updateThemeChipTitle();
+        window.addEventListener('pageshow', function (e) {
+            if (e.persisted) {
+                document.documentElement.classList.toggle('theme-dark', localStorage.getItem('raliva-theme') === 'dark');
+                updateThemeChipTitle();
+            }
+        });
     </script>
 <script>
         (function () {
