@@ -32,15 +32,44 @@
     </section>
 
     <!-- Categories Grid -->
-    <section class="space-y-gutter">
+    <section data-table-scope class="space-y-gutter">
         <div class="flex justify-between items-center flex-wrap gap-2">
             <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Daftar Kategori</h2>
             <span class="text-on-surface-variant font-body-md text-sm">{{ $stats['aktif'] }} kategori aktif • {{ $stats['induk'] }} induk • total {{ $stats['total'] }}</span>
         </div>
 
+        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 space-y-4">
+            <div class="flex items-center gap-2 shrink-0">
+                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Kategori</span>
+            </div>
+            <div id="kategori-chip-group" class="flex flex-wrap gap-2">
+                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['total'] }})</button>
+                <button type="button" data-chip="induk" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Induk ({{ $stats['induk'] }})</button>
+                <button type="button" data-chip="sub" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Sub ({{ $stats['total'] - $stats['induk'] }})</button>
+                <button type="button" data-chip="nonaktif" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Nonaktif ({{ $stats['total'] - $stats['aktif'] }})</button>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div class="relative flex-1">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input id="kategori-search" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama kategori atau deskripsi..." />
+                    <button type="button" id="kategori-clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                </div>
+                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                    <span id="kategori-result-count">{{ $categories->count() }}</span> kategori
+                </p>
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
             @forelse ($categories as $kategori)
                 <div class="group relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl p-6 transition-all duration-300 hover:border-gold-accent hover:shadow-lg hover:-translate-y-0.5"
+                    data-table-row
+                    data-filter="{{ $kategori->parent_id ? 'sub' : 'induk' }}"
+                    data-status="{{ $kategori->status }}"
+                    data-search="{{ strtolower($kategori->nama_kategori.' '.($kategori->deskripsi ?? '').' '.($kategori->parent->nama_kategori ?? '')) }}"
                     data-id="{{ $kategori->category_id }}"
                     data-nama="{{ $kategori->nama_kategori }}"
                     data-deskripsi="{{ $kategori->deskripsi }}"
@@ -84,6 +113,7 @@
                 <p class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-12">Belum ada kategori. Tambahkan kategori pertama Anda.</p>
             @endforelse
         </div>
+        <p id="kategori-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada kategori yang cocok.</p>
     </section>
 </div>
 
@@ -223,5 +253,71 @@
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') { closeKategoriModal(); closeHapusModal(); }
     });
+</script>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const scope = document.querySelector('[data-table-scope]');
+    if (!scope) return;
+
+    const rows = Array.from(scope.querySelectorAll('[data-table-row]'));
+    const chipBtns = document.querySelectorAll('#kategori-chip-group .chip-btn');
+    const searchInput = document.getElementById('kategori-search');
+    const clearBtn = document.getElementById('kategori-clear-search');
+    const countEl = document.getElementById('kategori-result-count');
+    const emptySearch = document.getElementById('kategori-empty-search');
+
+    const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
+    const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
+
+    let activeChip = 'semua';
+
+    function applyFilter() {
+        const term = searchInput.value.trim().toLowerCase();
+        let visible = 0;
+
+        rows.forEach((row) => {
+            const matchChip = activeChip === 'semua'
+                || (activeChip === 'nonaktif' ? row.getAttribute('data-status') === 'nonaktif' : row.getAttribute('data-filter') === activeChip);
+            const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
+            const show = matchChip && matchSearch;
+            row.classList.toggle('hidden', !show);
+            if (show) visible++;
+        });
+
+        countEl.textContent = visible;
+        emptySearch.classList.toggle('hidden', visible > 0 || rows.length === 0);
+    }
+
+    chipBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            chipBtns.forEach((b) => {
+                b.classList.remove(...activeClasses);
+                b.classList.add(...idleClasses, 'hover:bg-surface-container-high');
+            });
+            btn.classList.remove(...idleClasses, 'hover:bg-surface-container-high');
+            btn.classList.add(...activeClasses);
+            activeChip = btn.getAttribute('data-chip');
+            applyFilter();
+        });
+    });
+
+    let debounce;
+    searchInput.addEventListener('input', () => {
+        clearBtn.classList.toggle('opacity-0', !searchInput.value);
+        clearTimeout(debounce);
+        debounce = setTimeout(applyFilter, 200);
+    });
+
+    clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        clearBtn.classList.add('opacity-0');
+        applyFilter();
+    });
+
+    applyFilter();
+});
 </script>
 @endpush
