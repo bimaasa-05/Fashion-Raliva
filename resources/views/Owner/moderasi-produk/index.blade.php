@@ -23,7 +23,7 @@
 
 <div data-real class="hidden space-y-section-gap">
     @if(! \App\Support\OwnerContext::currentStore())
-        <div class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
+        <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
             <div>
                 <p class="font-bold text-sm">Belum punya toko</p>
@@ -117,9 +117,15 @@
                             </div>
                         </div>
                     @elseif ($status === 'pending')
-                        <div class="mt-4 border border-gold-accent/25 bg-gold-accent/5 rounded-lg px-4 py-3 flex items-center gap-3">
-                            <span class="material-symbols-outlined text-[20px] text-gold-accent">hourglass_top</span>
-                            <p class="font-body-md text-sm text-on-surface-variant">{{ $catatan }}</p>
+                        <div class="mt-4 border border-gold-accent/25 bg-gold-accent/5 rounded-lg px-4 py-3 flex items-center justify-between gap-3 flex-wrap">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-[20px] text-gold-accent">hourglass_top</span>
+                                <p class="font-body-md text-sm text-on-surface-variant">{{ $catatan }}</p>
+                            </div>
+                            <form method="POST" action="{{ route('owner.moderasi-produk.verifikasi', $item) }}" onsubmit="return confirm('Verifikasi {{ $item->nama_produk }} dan teruskan ke SuperAdmin?');">
+                                @csrf
+                                <button type="submit" class="px-4 py-2 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium whitespace-nowrap">Verifikasi &amp; Teruskan</button>
+                            </form>
                         </div>
                     @else
                         <p class="mt-4 text-xs text-on-surface-variant flex items-center gap-2">
@@ -186,7 +192,7 @@
 document.addEventListener('DOMContentLoaded', function(){
   if (!document.querySelector('[data-real]')) return;
   // Check if no store banner exists (means no store)
-  const noStore = document.body.innerHTML.includes('Belum punya toko');
+  const noStore = document.querySelector('[data-no-store-banner]');
   if (!noStore) return;
   // Disable all primary action buttons except Ajukan Toko
   document.querySelectorAll('[data-modal-open], button[type="submit"], a[href*="pengajuan-toko"]:not([href*="ajukan"])').forEach(el=>{
