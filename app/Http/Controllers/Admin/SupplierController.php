@@ -24,9 +24,12 @@ class SupplierController extends Controller
         $data = $request->validate([
             'nama_supplier' => 'required|string|max:120',
             'kontak' => 'nullable|string|max:40',
-            'email' => 'nullable|email|max:120',
+            'email' => 'nullable|string|max:120',
             'alamat' => 'nullable|string',
-            'status' => 'required|in:aktif,nonaktif',
+            'kota' => 'nullable|string|max:80',
+            'jenis' => 'nullable|string|max:30',
+            'catatan' => 'nullable|string|max:1000',
+            'status' => 'required|in:aktif,nonaktif,verifikasi',
         ]);
 
         Supplier::create($data);
@@ -39,9 +42,12 @@ class SupplierController extends Controller
         $data = $request->validate([
             'nama_supplier' => 'required|string|max:120',
             'kontak' => 'nullable|string|max:40',
-            'email' => 'nullable|email|max:120',
+            'email' => 'nullable|string|max:120',
             'alamat' => 'nullable|string',
-            'status' => 'required|in:aktif,nonaktif',
+            'kota' => 'nullable|string|max:80',
+            'jenis' => 'nullable|string|max:30',
+            'catatan' => 'nullable|string|max:1000',
+            'status' => 'required|in:aktif,nonaktif,verifikasi',
         ]);
 
         $supplier->update($data);
