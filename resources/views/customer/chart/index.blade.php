@@ -269,7 +269,7 @@
 <div class="lg:max-w-screen-xl lg:mx-auto lg:px-md">
 
 <!-- Empty state -->
-<div id="cart-empty" class="{{ $items->count() ? 'hidden' : '' }} flex flex-col items-center justify-center text-center gap-md py-2xl px-container-margin">
+<div id="cart-empty" class="{{ $items->count() ? 'hidden' : '' }} flex flex-col items-center justify-center text-center gap-md py-2xl px-container-margin min-h-[calc(100dvh-4rem)]">
 <span class="material-symbols-outlined text-[72px] text-on-surface-variant/40" data-icon="shopping_bag">shopping_bag</span>
 <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('Keranjang kamu masih kosong.') }}</p>
 <a href="{{ route('customer.shop') }}" class="btn-gold mt-sm font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest transition-colors">{{ __('START SHOPPING') }}</a>
