@@ -163,19 +163,24 @@
                             </td>
                             <td class="p-6 text-right">
                                 @if ($w->status === 'pending')
-                                    <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
-                                        <button type="button" onclick="openRejectDialog(this.closest('tr'))" title="Tolak"
-                                            class="w-8 h-8 flex items-center justify-center border border-outline text-on-surface hover:bg-error hover:text-on-error hover:border-error transition-colors">
-                                            <span class="material-symbols-outlined text-sm">close</span>
+                                    <div class="flex justify-end gap-2">
+                                        <button type="button" onclick="openRejectDialog(this.closest('tr'))"
+                                            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase tracking-wider rounded-full shadow-sm hover:bg-error/20 hover:shadow hover:-translate-y-px active:translate-y-0 transition-all duration-200">
+                                            <span class="material-symbols-outlined text-[14px] leading-none">block</span>
+                                            Tolak
                                         </button>
-                                        <button type="button" onclick="openApproveDialog(this.closest('tr'))" title="Setujui"
-                                            class="w-8 h-8 flex items-center justify-center bg-deep-onyx text-on-primary hover:opacity-80 transition-opacity">
-                                            <span class="material-symbols-outlined text-sm">check</span>
+                                        <button type="button" onclick="openApproveDialog(this.closest('tr'))"
+                                            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
+                                            <span class="material-symbols-outlined text-[14px] leading-none">task_alt</span>
+                                            Setujui
                                         </button>
                                     </div>
                                 @elseif ($w->status === 'disetujui')
                                     <button type="button" onclick="openPaidDialog(this.closest('tr'))"
-                                        class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:opacity-80 transition-opacity btn-premium">Tandai Dibayar</button>
+                                        class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
+                                        <span class="material-symbols-outlined text-[14px] leading-none">payments</span>
+                                        Tandai Dibayar
+                                    </button>
                                 @else
                                     <span class="text-on-surface-variant text-xs uppercase">&mdash;</span>
                                 @endif
@@ -248,16 +253,16 @@
 
                     @if ($w->status === 'pending')
                         <div class="flex gap-gutter">
-                            <button type="button" onclick="openRejectDialog(this.closest('article'))" class="flex-1 min-h-11 inline-flex items-center justify-center gap-2 border border-outline text-on-surface hover:bg-error hover:text-on-error hover:border-error transition-colors rounded-lg">
-                                <span class="material-symbols-outlined text-[16px]">close</span>Tolak
+                            <button type="button" onclick="openRejectDialog(this.closest('article'))" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 border border-error/20 bg-error/10 text-error font-label-sm text-[10px] uppercase tracking-wider rounded-full shadow-sm hover:bg-error/20 hover:shadow hover:-translate-y-px transition-all duration-200">
+                                <span class="material-symbols-outlined text-[16px] leading-none">block</span>Tolak
                             </button>
-                            <button type="button" onclick="openApproveDialog(this.closest('article'))" class="flex-1 min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary hover:opacity-80 transition-opacity rounded-lg btn-premium">
-                                <span class="material-symbols-outlined text-[16px]">check</span>Setujui
+                            <button type="button" onclick="openApproveDialog(this.closest('article'))" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium">
+                                <span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Setujui
                             </button>
                         </div>
                     @elseif ($w->status === 'disetujui')
-                        <button type="button" onclick="openPaidDialog(this.closest('article'))" class="w-full min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:opacity-80 transition-opacity btn-premium">
-                            <span class="material-symbols-outlined text-[16px]">local_atm</span>Tandai Dibayar
+                        <button type="button" onclick="openPaidDialog(this.closest('article'))" class="w-full min-h-11 inline-flex items-center justify-center gap-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium">
+                            <span class="material-symbols-outlined text-[16px] leading-none">payments</span>Tandai Dibayar
                         </button>
                     @else
                         <span class="block text-center text-on-surface-variant text-xs uppercase py-3">&mdash;</span>
@@ -295,8 +300,8 @@
                 </div>
             </div>
             <div class="flex justify-end gap-4 mt-6">
-                <button type="button" class="border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase hover:bg-surface-container transition-colors" onclick="hideDialog('paid-dialog')">Batal</button>
-                <button type="submit" class="bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase hover:opacity-90 transition-opacity btn-premium">Ya, Sudah Dibayar</button>
+                <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('paid-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
+                <button type="submit" class="inline-flex items-center gap-1.5 bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium"><span class="material-symbols-outlined text-[16px] leading-none">payments</span>Ya, Sudah Dibayar</button>
             </div>
         </div>
     </form>
@@ -312,8 +317,8 @@
             <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4 text-center">Konfirmasi Pencairan</h3>
             <p class="font-body-md text-body-md text-on-surface-variant mb-8 text-center">Anda akan menyetujui pencairan sebesar <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> ke <span id="approve-toko" class="font-bold text-on-surface">-</span>. Saldo toko akan dikunci untuk proses pembayaran.</p>
             <div class="flex justify-end gap-4">
-                <button type="button" class="border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase hover:bg-surface-container transition-colors" onclick="hideDialog('approve-dialog')">Batal</button>
-                <button type="submit" class="bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase hover:opacity-90 transition-opacity">Konfirmasi Persetujuan</button>
+                <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('approve-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
+                <button type="submit" class="inline-flex items-center gap-1.5 bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Konfirmasi Persetujuan</button>
             </div>
         </div>
     </form>
@@ -335,8 +340,8 @@
                     placeholder="Tulis alasan... (minimal 10 karakter)"></textarea>
             </div>
             <div class="flex justify-end gap-4">
-                <button type="button" class="border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase hover:bg-surface-container transition-colors" onclick="hideDialog('reject-dialog')">Batal</button>
-                <button type="submit" class="bg-error text-on-error px-6 py-3 font-label-sm text-label-sm uppercase hover:opacity-90 transition-opacity">Tolak Pengajuan</button>
+                <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('reject-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
+                <button type="submit" class="inline-flex items-center gap-1.5 bg-error text-on-error px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full shadow-sm hover:shadow-md hover:-translate-y-px hover:opacity-90 transition-all duration-200"><span class="material-symbols-outlined text-[16px] leading-none">block</span>Tolak Pengajuan</button>
             </div>
         </div>
     </form>
