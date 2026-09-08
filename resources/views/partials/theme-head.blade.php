@@ -7,6 +7,7 @@
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
     tailwind.config = {
         darkMode: "class",
@@ -344,5 +345,4 @@
     /* Overlay modal tidak boleh terbawa margin flow (mis. dari parent space-y-*) */
     [data-modal] { margin: 0 !important; }
 </style>
-@vite(['resources/css/app.css', 'resources/js/app.js'])
 @stack('styles')
