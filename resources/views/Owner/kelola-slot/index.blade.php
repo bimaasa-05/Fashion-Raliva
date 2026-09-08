@@ -6,7 +6,7 @@
 
 @section('header-title', 'Kelola Slot')
 @section('header-badge', $badgeSlot)
-@section('header-subtitle', 'Kelola kuota slot produk toko Anda — tambah slot via Super Admin.')
+@section('header-subtitle', 'Kelola kuota slot produk toko Anda — beli slot fleksibel atau paket berbayar.')
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
@@ -18,6 +18,9 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
+    @if (session('success') || session('error'))
+        <div class="rounded-lg border px-4 py-3 text-sm font-body-md {{ session('success') ? 'border-secondary/30 bg-secondary-container/15 text-secondary' : 'border-error/30 bg-error/10 text-error' }}">{{ session('success') ?? session('error') }}</div>
+    @endif
     @if(! \App\Support\OwnerContext::currentStore())
         <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
@@ -49,29 +52,56 @@
     </section>
 
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-section-gap items-start">
-        {{-- Form Ajukan Tambah Slot --}}
+        {{-- Form Beli Slot Fleksibel --}}
         <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium lg:sticky lg:top-24">
-            <h2 class="font-title-md text-title-md text-on-surface premium-heading">Ajukan Tambah Slot</h2>
-            <p class="text-on-surface-variant font-body-md text-xs mt-1">Permintaan akan diteruskan ke SuperAdmin untuk persetujuan.</p>
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading">Beli Slot Fleksibel</h2>
+            <p class="text-on-surface-variant font-body-md text-xs mt-1">Pilih jumlah slot bebas, bayar sesuai harga per slot, upload bukti transfer. Verifikasi oleh SuperAdmin maksimal 1×24 jam.</p>
 
-            <form method="POST" action="{{ route('owner.kelola-slot.request') }}" class="mt-6 space-y-5">
+            <form method="POST" action="{{ route('owner.kelola-slot.request') }}" enctype="multipart/form-data" class="mt-6 space-y-5">
                 @csrf
                 <div>
-                    <label for="slot-jumlah" class="block raliva-label mb-2">Jumlah Slot Tambahan</label>
-                    <input id="slot-jumlah" name="jumlah_slot" type="number" value="50" min="10" max="500" step="10" required class="raliva-input" />
-                    <p class="text-xs text-on-surface-variant mt-1.5">Kelipatan 10 disarankan. Maksimal 500 per pengajuan.</p>
+                    <label for="slot-jumlah" class="block raliva-label mb-2">Jumlah Slot</label>
+                    <input id="slot-jumlah" name="jumlah_slot" type="number" value="50" min="1" max="1000" step="1" required class="raliva-input" data-slot-qty />
+                    <p class="text-xs text-on-surface-variant mt-1.5">Bebas mulai 1 slot, maksimal 1000 per pembelian.</p>
                     @error('jumlah_slot') <p class="text-xs text-error mt-1">{{ $message }}</p> @enderror
                 </div>
+                <div class="border border-gold-accent/20 bg-gold-accent/5 rounded-lg px-4 py-3 flex items-center justify-between">
+                    <span class="text-on-surface-variant font-body-md text-xs">Harga per slot</span>
+                    <span class="font-bold text-gold-accent text-sm">Rp {{ number_format($hargaPerSlot ?? 2000, 0, ',', '.') }}</span>
+                </div>
+                <div class="border border-deep-onyx/20 bg-deep-onyx/[0.04] rounded-lg px-4 py-3 flex items-center justify-between">
+                    <span class="text-on-surface-variant font-body-md text-xs">Total yang harus dibayar</span>
+                    <span id="slot-total" class="font-title-md text-title-md text-deep-onyx">Rp {{ number_format(50 * ($hargaPerSlot ?? 2000), 0, ',', '.') }}</span>
+                </div>
                 <div>
-                    <label for="slot-alasan" class="block raliva-label mb-2">Alasan / Catatan</label>
-                    <textarea id="slot-alasan" name="catatan" rows="3" placeholder="cth. Menambah koleksi musim baru 40 SKU..." class="raliva-textarea"></textarea>
+                    <label for="slot-metode" class="block raliva-label mb-2">Metode Pembayaran</label>
+                    <select id="slot-metode" name="metode_pembayaran" required class="raliva-select">
+                        <option value="" disabled selected>Pilih metode...</option>
+                        @forelse ($metode ?? [] as $m)
+                            <option value="{{ $m->payment_method_id }}">{{ $m->nama_metode }}</option>
+                        @empty
+                            <option value="" disabled>Tidak ada metode tersedia</option>
+                        @endforelse
+                    </select>
+                    @error('metode_pembayaran') <p class="text-xs text-error mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label for="slot-bukti" class="block raliva-label mb-2">Bukti Pembayaran</label>
+                    <input id="slot-bukti" name="file_bukti" type="file" accept=".jpg,.jpeg,.png,.pdf" required class="raliva-input" />
+                    <p class="text-xs text-on-surface-variant mt-1.5">JPG, PNG, atau PDF. Maksimal 4 MB.</p>
+                    @error('file_bukti') <p class="text-xs text-error mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label for="slot-alasan" class="block raliva-label mb-2">Alasan / Keterangan <span class="text-on-surface-variant">(opsional)</span></label>
+                    <textarea id="slot-alasan" name="alasan" rows="2" placeholder="cth. Menambah koleksi musim baru 40 SKU..." class="raliva-textarea"></textarea>
+                    @error('alasan') <p class="text-xs text-error mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div class="border border-gold-accent/20 bg-gold-accent/5 rounded-lg px-4 py-3 flex items-start gap-3">
                     <span class="material-symbols-outlined text-[20px] text-gold-accent mt-0.5">info</span>
-                    <p class="text-on-surface-variant font-body-md text-xs leading-relaxed">Slot ditambah manual oleh SuperAdmin setelah menyetujui permintaan Anda.</p>
+                    <p class="text-on-surface-variant font-body-md text-xs leading-relaxed">Slots hanya ditambahkan setelah bukti pembayaran diverifikasi dan disetujui oleh SuperAdmin.</p>
                 </div>
                 <button type="submit" class="w-full py-3 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-[16px]">send</span>Ajukan ke SuperAdmin
+                    <span class="material-symbols-outlined text-[16px]">send</span>Bayar & Ajukan
                 </button>
             </form>
         </section>
@@ -82,13 +112,13 @@
             <p class="text-on-surface-variant font-body-md text-xs mt-1">Audit trail penambahan kuota — transparan untuk Owner & SuperAdmin.</p>
 
             <div data-table-wrap class="overflow-x-auto mt-6">
-                <table class="premium-table w-full min-w-[640px] font-body-md text-sm">
+                <table class="premium-table w-full min-w-[720px] font-body-md text-sm">
                     <thead>
                         <tr class="border-b border-muted-border text-left">
                             <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tanggal</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Oleh</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tipe</th>
                             <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Tambahan</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Kuota Baru</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Total Bayar</th>
                             <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Catatan</th>
                             <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
                         </tr>
@@ -96,13 +126,17 @@
                     <tbody>
                         @forelse ($riwayat as $row)
                             <tr class="border-b border-muted-border last:border-0">
-                                <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $row->created_at?->translatedFormat('d M Y') ?? '-' }}</td>
-                                <td class="py-3.5 px-4 text-on-surface whitespace-nowrap">Owner</td>
-                                <td class="py-3.5 px-4 text-right font-bold text-gold-accent whitespace-nowrap">+{{ $row->jumlah_slot }}</td>
-                                <td class="py-3.5 px-4 text-right text-on-surface whitespace-nowrap">—</td>
-                                <td class="py-3.5 px-4 text-on-surface-variant max-w-[180px]">{{ $row->catatan ?? '-' }}</td>
+                                <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $row['tanggal']?->translatedFormat('d M Y') ?? '-' }}</td>
+                                <td class="py-3.5 px-4 text-on-surface whitespace-nowrap">{{ $row['tipe'] === 'permintaan' ? 'Beli Fleksibel' : 'Grant ('.$row['tipe'].')' }}</td>
+                                <td class="py-3.5 px-4 text-right font-bold text-gold-accent whitespace-nowrap">+{{ $row['jumlah_slot'] }}</td>
+                                <td class="py-3.5 px-4 text-right text-on-surface whitespace-nowrap">{{ $row['total_harga'] !== null ? 'Rp '.number_format($row['total_harga'], 0, ',', '.') : '—' }}</td>
+                                <td class="py-3.5 px-4 text-on-surface-variant max-w-[200px]">{{ $row['catatan'] ?? '-' }}</td>
                                 <td class="py-3.5 px-4 text-center">
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full {{ $row->status==='aktif' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' }} text-[10px] font-bold uppercase border">{{ $row->status==='aktif' ? 'Disetujui' : ucfirst($row->status) }}</span>
+                                    @if ($row['payment_status'] !== null)
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full {{ $row['payment_status'] === \App\Models\SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI ? 'bg-success/10 text-success border-success/20' : ($row['status'] === 'ditolak' ? 'bg-error/10 text-error border-error/30' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }} text-[10px] font-bold uppercase border">{{ str_replace('_', ' ', $row['payment_status']) }}</span>
+                                    @else
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success border-success/20 text-[10px] font-bold uppercase border">Disetujui</span>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
@@ -123,6 +157,17 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function(){
+  const qty = document.querySelector('[data-slot-qty]');
+  if (qty) {
+    const harga = {{ $hargaPerSlot ?? 2000 }};
+    const totalEl = document.getElementById('slot-total');
+    const fmt = n => 'Rp ' + Number(n).toLocaleString('id-ID');
+    const render = () => {
+      const n = Math.max(0, parseInt(qty.value || '0', 10));
+      totalEl.textContent = fmt(n * harga);
+    };
+    qty.addEventListener('input', render);
+  }
   if (!document.querySelector('[data-real]')) return;
   // Check if no store banner exists (means no store)
   const noStore = document.querySelector('[data-no-store-banner]');
