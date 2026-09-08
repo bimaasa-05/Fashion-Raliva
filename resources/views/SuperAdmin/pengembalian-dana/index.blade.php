@@ -102,7 +102,7 @@
                         <th class="p-6 text-right">Jumlah</th>
                         <th class="p-6 text-center">Status</th>
                         <th class="p-6">Diajukan</th>
-                        <th class="p-6 text-right">Aksi</th>
+                        <th class="p-6 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -132,16 +132,21 @@
                             <td class="p-6 text-right whitespace-nowrap">
                                 @if ($refund->status === 'requested')
                                     <button type="button" onclick="openRejectRefund(this.closest('tr'))"
-                                        class="px-3 py-1.5 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Tolak</button>
-                                    <form method="POST" action="{{ route('superadmin.pengembalian-dana.setujui', $refund->refund_id) }}" class="inline-block ml-1" onsubmit="return confirm('Setujui refund Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }} untuk pesanan {{ $refund->order?->nomor_order }}?');">
-                                        @csrf
-                                        <button type="submit" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Setujui</button>
-                                    </form>
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase tracking-wider rounded-full shadow-sm hover:bg-error/20 hover:shadow hover:-translate-y-px transition-all duration-200">
+                                        <span class="material-symbols-outlined text-[14px] leading-none">block</span>
+                                        Tolak
+                                    </button>
+                                    <button type="button" data-modal-open="modal-setujui-{{ $refund->refund_id }}"
+                                        class="ml-1 inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
+                                        <span class="material-symbols-outlined text-[14px] leading-none">task_alt</span>
+                                        Setujui
+                                    </button>
                                 @elseif ($refund->status === 'disetujui')
-                                    <form method="POST" action="{{ route('superadmin.pengembalian-dana.selesaikan', $refund->refund_id) }}" class="inline-block" onsubmit="return confirm('Tandai refund {{ $kode }} sudah dikirim ke Customer?');">
-                                        @csrf
-                                        <button type="submit" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Selesaikan</button>
-                                    </form>
+                                    <button type="button" data-modal-open="modal-selesaikan-{{ $refund->refund_id }}"
+                                        class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
+                                        <span class="material-symbols-outlined text-[14px] leading-none">payments</span>
+                                        Selesaikan
+                                    </button>
                                 @else
                                     <span class="text-on-surface-variant text-xs uppercase">&mdash;</span>
                                 @endif
@@ -207,16 +212,19 @@
 
                     <div class="flex gap-gutter">
                         @if ($refund->status === 'requested')
-                            <button type="button" onclick="openRejectRefund(this.closest('article'))" class="flex-1 min-h-11 inline-flex items-center justify-center gap-2 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Tolak</button>
-                            <form method="POST" action="{{ route('superadmin.pengembalian-dana.setujui', $refund->refund_id) }}" class="flex-1" onsubmit="return confirm('Setujui refund Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }} untuk pesanan {{ $refund->order?->nomor_order }}?');">
-                                @csrf
-                                <button type="submit" class="w-full min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Setujui</button>
-                            </form>
+                            <button type="button" onclick="openRejectRefund(this.closest('article'))" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase tracking-wider rounded-full shadow-sm hover:bg-error/20 hover:shadow hover:-translate-y-px transition-all duration-200">
+                                <span class="material-symbols-outlined text-[16px] leading-none">block</span>
+                                Tolak
+                            </button>
+                            <button type="button" data-modal-open="modal-setujui-{{ $refund->refund_id }}" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
+                                <span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>
+                                Setujui
+                            </button>
                         @elseif ($refund->status === 'disetujui')
-                            <form method="POST" action="{{ route('superadmin.pengembalian-dana.selesaikan', $refund->refund_id) }}" class="flex-1" onsubmit="return confirm('Tandai refund {{ $kode }} sudah dikirim ke Customer?');">
-                                @csrf
-                                <button type="submit" class="w-full min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Selesaikan</button>
-                            </form>
+                            <button type="button" data-modal-open="modal-selesaikan-{{ $refund->refund_id }}" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
+                                <span class="material-symbols-outlined text-[16px] leading-none">payments</span>
+                                Selesaikan
+                            </button>
                         @else
                             <span class="flex-1 text-center text-on-surface-variant text-xs uppercase py-3">&mdash;</span>
                         @endif
@@ -229,6 +237,58 @@
         </div>
     </section>
 </div>
+
+{{-- Modal konfirmasi Setujui & Selesaikan per refund (ganti confirm JS) --}}
+@foreach ($refunds as $refund)
+    @php
+        $kodeRefund = 'REF-' . str_pad((string) $refund->refund_id, 10, '0', STR_PAD_LEFT);
+    @endphp
+    @if ($refund->status === 'requested')
+    <div id="modal-setujui-{{ $refund->refund_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+        <form method="POST" action="{{ route('superadmin.pengembalian-dana.setujui', $refund->refund_id) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+            @csrf
+            <div class="w-14 h-14 rounded-full bg-secondary-container/20 flex items-center justify-center mx-auto mb-5">
+                <span class="material-symbols-outlined text-secondary text-[28px]">task_alt</span>
+            </div>
+            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Setujui Refund?</h3>
+            <p class="text-sm text-on-surface-variant text-center">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> sebesar <span class="font-bold text-on-surface">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</span> untuk pesanan {{ $refund->order?->nomor_order ?? '-' }} akan disetujui.</p>
+            <div class="flex gap-3 mt-6">
+                <button type="button" data-modal-close class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded-full hover:bg-surface-container-low transition-colors">
+                    <span class="material-symbols-outlined text-[16px] leading-none">close</span>
+                    Batal
+                </button>
+                <button type="submit" class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium">
+                    <span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>
+                    Ya, Setujui
+                </button>
+            </div>
+        </form>
+    </div>
+    @elseif ($refund->status === 'disetujui')
+    <div id="modal-selesaikan-{{ $refund->refund_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+        <form method="POST" action="{{ route('superadmin.pengembalian-dana.selesaikan', $refund->refund_id) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+            @csrf
+            <div class="w-14 h-14 rounded-full bg-secondary-container/20 flex items-center justify-center mx-auto mb-5">
+                <span class="material-symbols-outlined text-secondary text-[28px]">payments</span>
+            </div>
+            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Tandai Selesai?</h3>
+            <p class="text-sm text-on-surface-variant text-center">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> akan ditandai <span class="font-bold text-on-surface">selesai</span> dan Customer dikonfirmasi dana telah dikirim.</p>
+            <div class="flex gap-3 mt-6">
+                <button type="button" data-modal-close class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded-full hover:bg-surface-container-low transition-colors">
+                    <span class="material-symbols-outlined text-[16px] leading-none">close</span>
+                    Batal
+                </button>
+                <button type="submit" class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium">
+                    <span class="material-symbols-outlined text-[16px] leading-none">payments</span>
+                    Ya, Selesaikan
+                </button>
+            </div>
+        </form>
+    </div>
+    @endif
+@endforeach
 
 <form method="POST" action="" id="reject-refund-form" onsubmit="closeRejectRefund()">
     @csrf
