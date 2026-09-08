@@ -321,6 +321,8 @@
     }
     #chat-messages { scrollbar-width: none; -ms-overflow-style: none; }
     #chat-messages::-webkit-scrollbar { display: none; }
+    #chat-emoji-panel { scrollbar-width: none; -ms-overflow-style: none; }
+    #chat-emoji-panel::-webkit-scrollbar { display: none; }
 </style>
 <!-- Chat Komplain Modal (ala Super Admin; warna RALIVA) -->
 <div class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
@@ -343,8 +345,12 @@
                     <div class="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div>
                 </div>
             </div>
-            <div class="px-6 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-[var(--border-soft)] bg-surface-container-lowest/60 shrink-0" id="chat-input-area">
-                <div id="chat-composer" class="flex items-end gap-3">
+            <div class="relative px-6 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-[var(--border-soft)] bg-surface-container-lowest/60 shrink-0" id="chat-input-area">
+                <div id="chat-emoji-panel" class="hidden absolute bottom-full mb-3 left-6 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-outline-variant bg-surface-container-high p-3 shadow-xl"></div>
+                <div id="chat-composer" class="flex items-end gap-2 lg:gap-3">
+                    <button type="button" onclick="toggleEmojiPanel()" id="chat-emoji-toggle" aria-label="{{ __('Emoji') }}" title="{{ __('Emoji') }}" class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0">
+                        <span class="material-symbols-outlined text-[20px]">mood</span>
+                    </button>
                     <textarea id="chat-input" rows="1" maxlength="2000" placeholder="{{ __('Tulis pesan...') }}"
                         class="flex-1 bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant resize-none focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors"
                         onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
@@ -388,6 +394,7 @@
         currentChat.id = id;
         currentChat.done = done;
         currentChat.closing = false;
+        closeEmojiPanel();
         document.getElementById('chat-subject').textContent = subjek;
         document.getElementById('chat-kode').textContent = kode;
         const statusEl = document.getElementById('chat-status');
@@ -415,6 +422,7 @@
         const container = document.getElementById('chat-container');
         if (currentChat.closing || container.classList.contains('hidden')) return;
         currentChat.closing = true;
+        closeEmojiPanel();
         document.body.style.overflow = '';
         if (currentChat.polling) clearInterval(currentChat.polling);
         currentChat.id = null;
@@ -501,6 +509,57 @@
         return d.innerHTML;
     }
 
+    const CHAT_EMOJI = ['😀','😁','😂','🤣','😊','😍','🥰','😘','😚','😜','🤪','😎','🥸','🤗','🤭','🫢','😇','🥺','🤔','🤨','😐','😑','😶','🙄','😏','😮','😯','😪','😴','🤤','😌','😢','😭','😅','😆','😉','🙃','😬','👍','👎','👌','✌️','🤞','🤝','🙏','👏','🙌','💪','🤙','👋','❤️','🧡','💛','💚','💙','💜','🖤','🤍','💖','💘','💯','🔥','✨','⭐','🎉','🎁','🎊','👀'];
+
+    function renderEmojiPanel() {
+        const panel = document.getElementById('chat-emoji-panel');
+        if (!panel || panel.dataset.rendered) return;
+        panel.innerHTML = '<div class="grid grid-cols-8 gap-1">' + CHAT_EMOJI.map(function (e) {
+            return '<button type="button" data-emoji="' + e + '" onclick="insertEmoji(this)" class="w-9 h-9 flex items-center justify-center text-[20px] leading-none rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">' + e + '</button>';
+        }).join('') + '</div>';
+        panel.dataset.rendered = '1';
+    }
+
+    function toggleEmojiPanel() {
+        renderEmojiPanel();
+        const panel = document.getElementById('chat-emoji-panel');
+        const btn = document.getElementById('chat-emoji-toggle');
+        if (!panel) return;
+        const open = panel.classList.toggle('hidden') === false;
+        if (btn) {
+            btn.classList.toggle('text-secondary', open);
+            btn.classList.toggle('bg-surface-container-high', open);
+        }
+    }
+
+    function closeEmojiPanel() {
+        const panel = document.getElementById('chat-emoji-panel');
+        if (!panel || panel.classList.contains('hidden')) return;
+        panel.classList.add('hidden');
+        const btn = document.getElementById('chat-emoji-toggle');
+        if (btn) btn.classList.remove('text-secondary', 'bg-surface-container-high');
+    }
+
+    function insertEmoji(btn) {
+        const input = document.getElementById('chat-input');
+        const emoji = btn.getAttribute('data-emoji');
+        if (!input || !emoji) return;
+        const start = input.selectionStart != null ? input.selectionStart : input.value.length;
+        const end = input.selectionEnd != null ? input.selectionEnd : start;
+        const next = input.value.slice(0, start) + emoji + input.value.slice(end);
+        input.value = next.slice(0, 2000);
+        const pos = start + emoji.length;
+        input.focus();
+        input.setSelectionRange(pos, pos);
+    }
+
+    document.addEventListener('click', function (ev) {
+        const panel = document.getElementById('chat-emoji-panel');
+        if (!panel || panel.classList.contains('hidden')) return;
+        if (ev.target.closest && (ev.target.closest('#chat-emoji-panel') || ev.target.closest('#chat-emoji-toggle'))) return;
+        closeEmojiPanel();
+    });
+
     async function sendMessage() {
         const composer = document.getElementById('chat-composer');
         if (composer.classList.contains('hidden')) return;
@@ -547,7 +606,13 @@
         }
     }
 
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeChatModal(); });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            const panel = document.getElementById('chat-emoji-panel');
+            if (panel && !panel.classList.contains('hidden')) { closeEmojiPanel(); return; }
+            closeChatModal();
+        }
+    });
 
     document.addEventListener('DOMContentLoaded', function () {
         var params = new URLSearchParams(window.location.search);
