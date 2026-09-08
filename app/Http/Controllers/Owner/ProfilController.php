@@ -42,7 +42,10 @@ class ProfilController extends Controller
 
         $user->update($data);
 
-        return redirect()->route('owner.profil')->with('success', 'Profil berhasil diperbarui.');
+        return redirect()->route('owner.profil')->with('toast', [
+            'message' => 'Profil berhasil diperbarui.',
+            'icon' => 'task_alt',
+        ]);
     }
 
     public function updatePassword(Request $request)
@@ -62,7 +65,10 @@ class ProfilController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        return redirect()->route('owner.profil')->with('success', 'Kata sandi berhasil diperbarui.');
+        return redirect()->route('owner.profil')->with('toast', [
+            'message' => 'Kata sandi berhasil diperbarui.',
+            'icon' => 'task_alt',
+        ]);
     }
 
     public function updatePhoto(Request $request)
@@ -83,6 +89,9 @@ class ProfilController extends Controller
             $user->update(['foto_profil' => $path]);
         }
 
-        return back()->with('success', 'Foto profil berhasil diperbarui.');
+        return back()->with('toast', [
+            'message' => 'Foto profil berhasil diperbarui.',
+            'icon' => 'task_alt',
+        ]);
     }
 }
