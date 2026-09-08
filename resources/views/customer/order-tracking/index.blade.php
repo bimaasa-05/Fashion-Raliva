@@ -459,6 +459,21 @@ $active = ! $isCancelled && $step && $stepIndex === $step;
 <h3 class="font-title-md text-title-md text-on-surface mb-xs">{{ $detail[0] }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $detail[1] }}</p>
 </div>
+@if (in_array($selected->status, [\App\Models\Order::STATUS_DIKIRIM, \App\Models\Order::STATUS_SELESAI]))
+<div class="mt-lg flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-sm">
+@if ($selected->status === \App\Models\Order::STATUS_DIKIRIM)
+<form method="POST" action="{{ route('customer.order-tracking.confirm', $selected->order_id) }}" class="flex-1 sm:flex-none">
+@csrf
+<button type="submit" class="btn-gold w-full sm:w-auto flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>{{ __('Konfirmasi Pesanan Diterima') }}
+</button>
+</form>
+@endif
+<a href="{{ route('customer.komplain.create', ['order' => $selected->order_id]) }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">
+<span class="material-symbols-outlined text-[18px]">report</span>{{ __('Ajukan Komplain') }}
+</a>
+</div>
+@endif
 @endif
 </div>
 </div>
