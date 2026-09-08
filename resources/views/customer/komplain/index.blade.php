@@ -170,6 +170,10 @@
     html.theme-dark .text-on-surface, html.theme-dark .text-on-background { color: #e6e4e1 !important; }
     html.theme-dark .text-on-surface-variant { color: #b9b6b1 !important; }
     html.theme-dark .text-on-surface-variant\/70 { color: rgba(185,182,177,.7) !important; }
+    html.theme-dark .text-on-surface-variant\/50 { color: rgba(185,182,177,.5) !important; }
+    html.theme-dark .text-on-surface-variant\/60 { color: rgba(185,182,177,.6) !important; }
+    html.theme-dark .bg-surface-container-high\/80 { background-color: rgba(44,43,42,.8) !important; }
+    html.theme-dark .bg-surface-container-lowest\/60 { background-color: rgba(30,29,28,.6) !important; }
     html.theme-dark .text-outline { color: #8a8781 !important; }
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
@@ -264,10 +268,7 @@
             <span class="material-symbols-outlined text-[22px]">{{ $done ? 'task_alt' : 'support_agent' }}</span>
         </div>
         <div class="flex-grow min-w-0">
-            <div class="flex flex-wrap items-center justify-between gap-sm">
-                <p class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">#{{ $c->complaint_id }} • {{ $c->order_id ? '#'.$c->order_id : '-' }}</p>
-                <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $done ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }}">{{ $statusLabel }}</span>
-            </div>
+            <p class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">#{{ $c->complaint_id }} • {{ $c->order_id ? '#'.$c->order_id : '-' }}</p>
             <p class="font-title-md text-title-md text-on-surface mt-1 truncate">{{ $c->subjek }}</p>
             <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">{{ $c->deskripsi }}</p>
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-xs text-on-surface-variant">
@@ -278,9 +279,12 @@
                 <span>{{ optional($c->dibuat_pada)->translatedFormat('d M Y, H:i') }}</span>
             </div>
         </div>
-        <span class="shrink-0 self-center inline-flex items-center gap-1 px-3 py-2 rounded-full border border-outline-variant text-on-surface-variant group-hover:border-secondary group-hover:text-secondary transition-colors font-label-caps text-label-caps uppercase tracking-widest">
-            <span class="material-symbols-outlined text-[16px]">chat</span>{{ __('Buka') }}
-        </span>
+        <div class="shrink-0 self-stretch flex flex-col items-end gap-md">
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $done ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }}">{{ $statusLabel }}</span>
+            <span class="mt-auto mb-auto inline-flex items-center gap-1 px-3 py-2 rounded-full border border-outline-variant text-on-surface-variant group-hover:border-secondary group-hover:text-secondary transition-colors font-label-caps text-label-caps uppercase tracking-widest">
+                <span class="material-symbols-outlined text-[16px]">chat</span>{{ __('Buka') }}
+            </span>
+        </div>
     </article>
 @empty
     <div class="text-center py-10">
@@ -297,37 +301,60 @@
 </div>
 </section>
 </main>
+<style>
+    @keyframes raliva-chat-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes raliva-chat-backdrop-out { from { opacity: 1; } to { opacity: 0; } }
+    @keyframes raliva-chat-sheet-in-mobile { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    @keyframes raliva-chat-sheet-out-mobile { from { transform: translateY(0); } to { transform: translateY(100%); } }
+    @keyframes raliva-chat-sheet-in-desktop { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    @keyframes raliva-chat-sheet-out-desktop { from { transform: translateX(0); } to { transform: translateX(100%); } }
+    .raliva-chat-in { animation: raliva-chat-backdrop-in .2s ease-out both; }
+    .raliva-chat-out { animation: raliva-chat-backdrop-out .2s ease-in both; }
+    .raliva-chat-in-sheet { animation: raliva-chat-sheet-in-mobile .28s cubic-bezier(.22,.68,.34,1) both; }
+    .raliva-chat-out-sheet { animation: raliva-chat-sheet-out-mobile .28s cubic-bezier(.22,1,.36,1) both; }
+    @media (min-width: 1024px) {
+        .raliva-chat-in-sheet { animation-name: raliva-chat-sheet-in-desktop; }
+        .raliva-chat-out-sheet { animation-name: raliva-chat-sheet-out-desktop; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .raliva-chat-in, .raliva-chat-out, .raliva-chat-in-sheet, .raliva-chat-out-sheet { animation: none; }
+    }
+    #chat-messages { scrollbar-width: none; -ms-overflow-style: none; }
+    #chat-messages::-webkit-scrollbar { display: none; }
+</style>
 <!-- Chat Komplain Modal (ala Super Admin; warna RALIVA) -->
 <div class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
-    <div class="p-4 lg:p-8 flex items-end justify-end">
-        <button type="button" onclick="closeChatModal()" class="p-3 rounded-full bg-surface-container-high/80 text-on-surface hover:bg-surface-container-high transition-colors lg:mt-4 print:hidden" title="{{ __('Tutup') }}">
-            <span class="material-symbols-outlined text-[20px]">close</span>
-        </button>
-    </div>
-    <div class="flex flex-col bg-surface-container-low border-l border-[var(--border-soft)] lg:h-full overflow-hidden" onclick="event.stopPropagation()">
-        <div class="flex items-center justify-between gap-3 px-6 py-4 border-b border-[var(--border-soft)] shrink-0">
-            <div class="min-w-0">
-                <h3 class="font-title-md text-title-md text-on-surface truncate" id="chat-subject">-</h3>
-                <p class="font-mono text-on-surface-variant text-xs mt-0.5" id="chat-kode">-</p>
+    <div class="min-h-full lg:h-full flex flex-col justify-end lg:flex-row lg:justify-end" onclick="if(event.target===this) closeChatModal()">
+        <div id="chat-panel" class="flex flex-col bg-surface-container-low border-t lg:border-t-0 lg:border-l border-[var(--border-soft)] rounded-t-3xl lg:rounded-none max-h-[85dvh] lg:max-h-full lg:h-full lg:w-[560px] lg:max-w-full overflow-hidden" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between gap-2 px-6 py-4 border-b border-[var(--border-soft)] shrink-0">
+                <div class="min-w-0">
+                    <h3 class="font-title-md text-title-md text-on-surface truncate" id="chat-subject">-</h3>
+                    <p class="font-mono text-on-surface-variant text-xs mt-0.5" id="chat-kode">-</p>
+                </div>
+                <div class="flex items-center gap-3 shrink-0">
+                    <span id="chat-status" class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border bg-surface-container-high text-on-surface-variant border-outline-variant"></span>
+                    <button type="button" onclick="closeChatModal()" class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer" title="{{ __('Tutup') }}">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                </div>
             </div>
-            <span id="chat-status" class="shrink-0 inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border bg-surface-container-high text-on-surface-variant border-outline-variant"></span>
-        </div>
-        <div class="flex-1 overflow-y-auto px-6 py-6 space-y-4 min-h-0" id="chat-messages">
-            <div class="flex justify-center items-center py-8">
-                <div class="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div>
+            <div class="flex-1 overflow-y-auto px-6 py-6 space-y-4 min-h-0" id="chat-messages">
+                <div class="flex justify-center items-center py-8">
+                    <div class="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div>
+                </div>
             </div>
-        </div>
-        <div class="px-6 py-4 border-t border-[var(--border-soft)] bg-surface-container-lowest/60 shrink-0" id="chat-input-area">
-            <div id="chat-composer" class="flex items-end gap-3">
-                <textarea id="chat-input" rows="1" maxlength="2000" placeholder="{{ __('Tulis pesan...') }}"
-                    class="flex-1 bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant resize-none focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors"
-                    onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
-                <button type="button" onclick="sendMessage()" id="chat-send"
-                    class="w-12 h-12 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 transition-opacity disabled:opacity-40 rounded-full">
-                    <span class="material-symbols-outlined text-[20px]">send</span>
-                </button>
+            <div class="px-6 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-[var(--border-soft)] bg-surface-container-lowest/60 shrink-0" id="chat-input-area">
+                <div id="chat-composer" class="flex items-end gap-3">
+                    <textarea id="chat-input" rows="1" maxlength="2000" placeholder="{{ __('Tulis pesan...') }}"
+                        class="flex-1 bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant resize-none focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors"
+                        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
+                    <button type="button" onclick="sendMessage()" id="chat-send"
+                        class="w-12 h-12 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 transition-opacity disabled:opacity-40 rounded-full">
+                        <span class="material-symbols-outlined text-[20px]">send</span>
+                    </button>
+                </div>
+                <p id="chat-closed-note" class="hidden text-center font-body-sm text-body-sm text-on-surface-variant pt-4">{{ __('Komplain telah selesai dan tidak dapat dibalas lagi.') }}</p>
             </div>
-            <p id="chat-closed-note" class="hidden text-center font-body-sm text-body-sm text-on-surface-variant pt-4">{{ __('Komplain telah selesai dan tidak dapat dibalas lagi.') }}</p>
         </div>
     </div>
 </div>
@@ -342,7 +369,7 @@
     });
 </script>
 <script>
-    let currentChat = { id: null, polling: null, done: false };
+    let currentChat = { id: null, polling: null, done: false, closing: false };
     const myId = {{ Auth::id() }};
 
     function openChatFromCard(el) {
@@ -360,6 +387,7 @@
     function openChatModal(id, subjek, kode, statusLabel, done) {
         currentChat.id = id;
         currentChat.done = done;
+        currentChat.closing = false;
         document.getElementById('chat-subject').textContent = subjek;
         document.getElementById('chat-kode').textContent = kode;
         const statusEl = document.getElementById('chat-status');
@@ -370,9 +398,12 @@
         document.getElementById('chat-messages').innerHTML = '<div class="flex justify-center items-center py-8"><div class="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div></div>';
 
         const container = document.getElementById('chat-container');
-        container.classList.remove('hidden');
-        if (window.innerWidth >= 1024) container.style.display = 'grid';
-        container.style.gridTemplateColumns = '1fr 560px';
+        const panel = document.getElementById('chat-panel');
+        container.classList.remove('hidden', 'raliva-chat-out');
+        panel.classList.remove('raliva-chat-out-sheet');
+        void container.offsetWidth;
+        container.classList.add('raliva-chat-in');
+        panel.classList.add('raliva-chat-in-sheet');
         document.body.style.overflow = 'hidden';
 
         loadMessages();
@@ -382,26 +413,44 @@
 
     function closeChatModal() {
         const container = document.getElementById('chat-container');
-        container.classList.add('hidden');
-        container.style.display = '';
-        container.style.gridTemplateColumns = '';
+        if (currentChat.closing || container.classList.contains('hidden')) return;
+        currentChat.closing = true;
         document.body.style.overflow = '';
         if (currentChat.polling) clearInterval(currentChat.polling);
         currentChat.id = null;
+
+        const panel = document.getElementById('chat-panel');
+        container.classList.remove('raliva-chat-in');
+        panel.classList.remove('raliva-chat-in-sheet');
+        void container.offsetWidth;
+        container.classList.add('raliva-chat-out');
+        panel.classList.add('raliva-chat-out-sheet');
+        setTimeout(function () {
+            if (!currentChat.closing) return;
+            container.classList.add('hidden');
+            container.classList.remove('raliva-chat-out');
+            panel.classList.remove('raliva-chat-out-sheet');
+            currentChat.closing = false;
+        }, 320);
     }
 
     async function loadMessages() {
         if (!currentChat.id) return;
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 10000);
         try {
             const url = '{{ route('customer.komplain.messages', ':id:') }}'.replace(':id:', currentChat.id);
             const resp = await fetch(url, {
-                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                signal: controller.signal
             });
             if (!resp.ok) throw new Error('Gagal memuat pesan');
             const messages = await resp.json();
             renderMessages(messages);
         } catch (err) {
-            showChatError(err.message);
+            if (currentChat.id !== null) showChatError(err.name === 'AbortError' ? 'Waktu memuat pesan habis. Coba lagi.' : err.message);
+        } finally {
+            clearTimeout(timer);
         }
     }
 
@@ -416,6 +465,14 @@
 
     function renderMessages(messages) {
         const el = document.getElementById('chat-messages');
+        if (!messages || messages.length === 0) {
+            el.innerHTML = '<div class="text-center py-10">' +
+                '<span class="material-symbols-outlined text-[38px] text-outline-variant inline-block mb-2">chat_bubble_outline</span>' +
+                '<p class="font-body-sm text-body-sm text-on-surface-variant">' + escapeHtml('Belum ada pesan. Mulai percakapan dengan toko.') + '</p>' +
+                '</div>';
+            el.scrollTop = el.scrollHeight;
+            return;
+        }
         el.innerHTML = messages.map(m => {
             const mine = m.sender_id === myId;
             const bubble = mine ? 'bg-secondary text-white' : 'bg-surface-container-low';
@@ -445,6 +502,8 @@
     }
 
     async function sendMessage() {
+        const composer = document.getElementById('chat-composer');
+        if (composer.classList.contains('hidden')) return;
         const input = document.getElementById('chat-input');
         const pesan = input.value.trim();
         if (!pesan || !currentChat.id) return;
