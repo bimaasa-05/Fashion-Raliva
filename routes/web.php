@@ -153,6 +153,8 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::post('/komplain', [\App\Http\Controllers\Customer\KomplainController::class, 'store'])->name('komplain.store');
         Route::get('/komplain/{komplain}/messages', [\App\Http\Controllers\Customer\KomplainController::class, 'messages'])->name('komplain.messages');
         Route::post('/komplain/{komplain}/messages', [\App\Http\Controllers\Customer\KomplainController::class, 'storeMessage'])->name('komplain.messages.store');
+        Route::patch('/komplain/{komplain}/messages/{message}', [\App\Http\Controllers\Customer\KomplainController::class, 'updateMessage'])->name('komplain.messages.update');
+        Route::delete('/komplain/{komplain}/messages/{message}', [\App\Http\Controllers\Customer\KomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy');
 
         Route::get('/account', function () {
             return view('customer.account.index');
