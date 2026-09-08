@@ -271,6 +271,7 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/pengiriman', [SaPengirimanController::class, 'index'])->name('pengiriman');
     Route::put('/pengiriman/{pengiriman}/status', [SaPengirimanController::class, 'updateStatus'])->name('pengiriman.status');
     Route::get('/stok', [SaStokController::class, 'index'])->name('stok');
+    Route::get('/stok/{warehouseStock}/detail', [SaStokController::class, 'detailJson'])->name('stok.detail');
     Route::get('/produksi', [ProduksiController::class, 'index'])->name('produksi');
     Route::get('/produksi/{productionOrder}/detail', [ProduksiController::class, 'detailJson'])->name('produksi.detail');
     Route::get('/gudang', [GudangController::class, 'index'])->name('gudang');
