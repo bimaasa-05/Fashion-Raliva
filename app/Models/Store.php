@@ -20,9 +20,12 @@ class Store extends Model
 
     public const STATUS_DITOLAK = 'ditolak';
 
+    public const KATEGORI_OPTIONS = ['Fashion & Lifestyle', 'Pakaian Wanita', 'Pakaian Pria', 'Aksesoris'];
+
     protected $fillable = [
         'owner_id',
         'nama_toko',
+        'kategori',
         'logo',
         'deskripsi',
         'alamat',

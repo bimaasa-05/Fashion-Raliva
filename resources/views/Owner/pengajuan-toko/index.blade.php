@@ -122,6 +122,15 @@
                     <input name="nomor_telepon" type="text" value="{{ old('nomor_telepon') }}" required placeholder="08xxxxxxxxxx" class="raliva-input" />
                     @error('nomor_telepon') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
+                <div>
+                    <label class="block raliva-label mb-2">Kategori Toko</label>
+                    <select name="kategori" class="raliva-select">
+                        @foreach (\App\Models\Store::KATEGORI_OPTIONS as $opsi)
+                            <option value="{{ $opsi }}" @selected(old('kategori') === $opsi)>{{ $opsi }}</option>
+                        @endforeach
+                    </select>
+                    @error('kategori') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
                 <div class="md:col-span-2">
                     <label class="block raliva-label mb-2">Alamat Lengkap <span class="text-error">*</span></label>
                     <textarea name="alamat" rows="3" required placeholder="Jl. Contoh No. 123, Kota, Provinsi" class="raliva-textarea">{{ old('alamat') }}</textarea>
@@ -185,6 +194,16 @@
                     <div>
                         <label class="block raliva-label mb-2">Nomor Telepon</label>
                         <input name="nomor_telepon" type="text" value="{{ old('nomor_telepon', $store->nomor_telepon) }}" class="raliva-input" />
+                    </div>
+                    <div>
+                        <label class="block raliva-label mb-2">Kategori Toko</label>
+                        <select name="kategori" class="raliva-select">
+                            @php $kategoriRepair = old('kategori', $store->kategori ?? 'Fashion & Lifestyle'); @endphp
+                            @foreach (\App\Models\Store::KATEGORI_OPTIONS as $opsi)
+                                <option value="{{ $opsi }}" @selected($kategoriRepair === $opsi)>{{ $opsi }}</option>
+                            @endforeach
+                        </select>
+                        @error('kategori') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div class="md:col-span-2">
                         <label class="block raliva-label mb-2">Alamat Lengkap</label>

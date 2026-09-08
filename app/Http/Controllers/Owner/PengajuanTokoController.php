@@ -8,6 +8,7 @@ use App\Models\StoreDocument;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class PengajuanTokoController extends Controller
 {
@@ -29,6 +30,7 @@ class PengajuanTokoController extends Controller
         if (! $store) {
             $validatedStore = $request->validate([
                 'nama_toko' => ['required', 'string', 'max:150'],
+                'kategori' => ['nullable', 'string', 'max:100', Rule::in(Store::KATEGORI_OPTIONS)],
                 'alamat' => ['required', 'string', 'max:500'],
                 'nomor_telepon' => ['required', 'string', 'max:20'],
                 'deskripsi' => ['nullable', 'string', 'max:1000'],
@@ -37,6 +39,7 @@ class PengajuanTokoController extends Controller
             $store = Store::create([
                 'owner_id' => $user->user_id,
                 'nama_toko' => $validatedStore['nama_toko'],
+                'kategori' => $validatedStore['kategori'] ?? null,
                 'alamat' => $validatedStore['alamat'],
                 'nomor_telepon' => $validatedStore['nomor_telepon'],
                 'deskripsi' => $validatedStore['deskripsi'] ?? null,
@@ -46,6 +49,7 @@ class PengajuanTokoController extends Controller
             // Izinkan perbaikan data toko saat ditolak -> reset ke pending
             $validatedStore = $request->validate([
                 'nama_toko' => ['sometimes', 'string', 'max:150'],
+                'kategori' => ['nullable', 'string', 'max:100', Rule::in(Store::KATEGORI_OPTIONS)],
                 'alamat' => ['sometimes', 'string', 'max:500'],
                 'nomor_telepon' => ['sometimes', 'string', 'max:20'],
                 'deskripsi' => ['nullable', 'string', 'max:1000'],
