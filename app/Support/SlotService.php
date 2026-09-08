@@ -3,18 +3,29 @@
 namespace App\Support;
 
 use App\Models\Product;
+use App\Models\Setting;
 use App\Models\SlotGrant;
 use App\Models\StoreSlotSubscription;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class SlotService
 {
+
+    public static function hargaPerSlot(): int
+    {
+        return max(1, (int) Setting::get(Setting::SLOT_HARGA_PER_SLOT, '2000'));
+    }
+
     public static function totalQuota(int $storeId): int
     {
         $grants = (int) SlotGrant::where('store_id', $storeId)->sum('jumlah_slot');
 
         $legacy = (int) StoreSlotSubscription::where('store_id', $storeId)
             ->where('status', StoreSlotSubscription::STATUS_AKTIF)
+            ->where(function (Builder $q) {
+                $q->whereNull('tanggal_berakhir')->orWhere('tanggal_berakhir', '>=', now()->toDateTimeString());
+            })
             ->sum('jumlah_slot');
 
         return $grants + $legacy;
