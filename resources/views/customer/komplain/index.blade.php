@@ -345,9 +345,22 @@
                 </div>
                 <div class="flex items-center gap-3 shrink-0">
                     <span id="chat-status" class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border bg-surface-container-high text-on-surface-variant border-outline-variant"></span>
-                    <button type="button" onclick="closeChatModal()" class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer" title="{{ __('Tutup') }}">
-                        <span class="material-symbols-outlined text-[20px]">close</span>
-                    </button>
+                    <div class="relative shrink-0" id="chat-more-wrap">
+                        <button type="button" onclick="toggleChatMoreMenu()" id="chat-more-btn" class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer" title="{{ __('Menu') }}">
+                            <span class="material-symbols-outlined text-[20px]">more_horiz</span>
+                        </button>
+                        <div id="chat-more-menu" class="hidden absolute right-0 top-full mt-2 min-w-[220px] rounded-xl border border-outline-variant bg-surface-container-high shadow-xl z-40 py-1.5">
+                            <button type="button" onclick="openWallpaperPicker()" id="chat-more-item-wallpaper" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[19px]">wallpaper</span>{{ __('Ganti Wallpaper') }}
+                            </button>
+                            <button type="button" onclick="selectMessagesMode()" id="chat-more-item-select" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[19px]">check_box</span>{{ __('Select Messages') }}
+                            </button>
+                            <button type="button" onclick="openExportChat()" id="chat-more-item-export" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[19px]">ios_share</span>{{ __('Ekspor Chat') }}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="flex-1 overflow-y-auto px-6 py-6 space-y-4 min-h-0" id="chat-messages">
@@ -480,6 +493,7 @@
         const container = document.getElementById('chat-container');
         if (currentChat.closing || container.classList.contains('hidden')) return;
         currentChat.closing = true;
+        closeChatMoreMenu();
         closeChatMenu();
         closeDeleteDialog();
         closeEditDialog();
@@ -616,6 +630,7 @@
 
     let chatEditMsgId = null;
     let chatMenuId = null;
+    let chatMoreOpen = false;
     let deleteDialogMsgId = null;
     let chatMessages = [];
 
@@ -631,6 +646,7 @@
         const opening = menu.classList.contains('hidden');
         closeChatMenu();
         if (opening) {
+            closeChatMoreMenu();
             menu.classList.remove('hidden');
             chatMenuId = id;
         }
@@ -641,6 +657,52 @@
         const menu = document.querySelector('[data-menu="' + chatMenuId + '"]');
         if (menu) menu.classList.add('hidden');
         chatMenuId = null;
+    }
+
+    function toggleChatMoreMenu() {
+        const menu = document.getElementById('chat-more-menu');
+        if (!menu) return;
+        const opening = menu.classList.contains('hidden');
+        closeChatMoreMenu();
+        if (opening) {
+            closeChatMenu();
+            menu.classList.remove('hidden');
+            chatMoreOpen = true;
+        }
+    }
+
+    function closeChatMoreMenu() {
+        if (!chatMoreOpen) return;
+        const menu = document.getElementById('chat-more-menu');
+        if (menu) menu.classList.add('hidden');
+        chatMoreOpen = false;
+    }
+
+    function showChatToast(message) {
+        var existing = document.getElementById('chat-toast');
+        if (existing) existing.remove();
+        var toast = document.createElement('div');
+        toast.id = 'chat-toast';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#1c1b1b;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-family:Manrope,sans-serif;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;transition:opacity .3s ease;';
+        document.body.appendChild(toast);
+        requestAnimationFrame(function () { toast.style.opacity = '1'; });
+        setTimeout(function () { toast.style.opacity = '0'; setTimeout(function () { toast.remove(); }, 350); }, 2200);
+    }
+
+    function openWallpaperPicker() {
+        closeChatMoreMenu();
+        showChatToast('Fitur Ganti Wallpaper disiapkan.');
+    }
+
+    function selectMessagesMode() {
+        closeChatMoreMenu();
+        showChatToast('Select Messages disiapkan.');
+    }
+
+    function openExportChat() {
+        closeChatMoreMenu();
+        showChatToast('Ekspor Chat disiapkan.');
     }
 
     function openEditDialog(id) {
@@ -830,6 +892,7 @@
 
     document.addEventListener('click', function (ev) {
         if (ev.target.closest) {
+            if (chatMoreOpen && !ev.target.closest('#chat-more-wrap')) closeChatMoreMenu();
             if (chatMenuId !== null) {
                 const inMenu = ev.target.closest('[data-menu="' + chatMenuId + '"]') ||
                     ev.target.closest('[data-menu-btn="' + chatMenuId + '"]') ||
@@ -905,6 +968,7 @@
 
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
+            if (chatMoreOpen) { closeChatMoreMenu(); return; }
             const ep = document.getElementById('chat-edit-emoji-panel');
             if (ep && !ep.classList.contains('hidden')) { closeEditEmojiPanel(); return; }
             const ed = document.getElementById('chat-edit-dialog');
