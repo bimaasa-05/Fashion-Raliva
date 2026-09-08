@@ -308,7 +308,7 @@
         box-shadow: 0 1px 2px rgba(17,17,17,.04), 0 8px 24px -12px rgba(17,17,17,.12);
         transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
     }
-    .card-premium:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(17,17,17,.06), 0 18px 40px -16px rgba(17,17,17,.18); border-color: rgba(139,30,63,.45); }
+    .card-premium:hover {  box-shadow: 0 4px 12px rgba(17,17,17,.06), 0 18px 40px -16px rgba(17,17,17,.18); border-color: rgba(139,30,63,.45); }
     html.theme-dark .card-premium { background-color: var(--surface-ivory); border-color: var(--border-soft); box-shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5); }
     html.theme-dark .card-premium:hover { border-color: rgba(139,30,63,.5); box-shadow: 0 4px 12px rgba(0,0,0,.35), 0 20px 44px -16px rgba(0,0,0,.6); }
     .premium-heading { position: relative; padding-left: 0.9rem; }
@@ -484,7 +484,7 @@ $ukuran = $v?->ukuran;
 @endphp
 <div class="group flex gap-sm md:gap-md">
 <div class="w-24 h-32 md:w-28 md:h-36 bg-surface-container-lowest rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant/30">
-<img class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" src="{{ $imgUrl }}" alt="{{ $item->nama_produk_snapshot }}"/>
+<img class="w-full h-full object-cover " loading="lazy" src="{{ $imgUrl }}" alt="{{ $item->nama_produk_snapshot }}"/>
 </div>
 <div class="flex flex-col justify-between py-1 flex-grow min-w-0">
 <div class="min-w-0">

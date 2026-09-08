@@ -268,7 +268,6 @@
         transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     }
     .card-premium:hover {
-        transform: translateY(-3px);
         box-shadow: 0 2px 4px rgb(17 17 17 / 0.05), 0 20px 48px -20px rgb(17 17 17 / 0.22);
         border-color: rgba(139, 30, 63, .45);   /* Burgundy, bukan gold */
     }
@@ -476,7 +475,7 @@
 <!-- Product -->
 <a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col group cursor-pointer" data-category="{{ $parentCat }}" data-size="{{ $sizes }}" data-color="{{ $colors }}" data-price="{{ $minPrice }}" data-created="{{ $p->created_at?->getTimestamp() ?? 0 }}" data-popular="0">
 <div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
-<img class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" loading="lazy" decoding="async" alt="{{ $p->nama_produk }}" src="{{ $firstImage ? (filter_var($firstImage, FILTER_VALIDATE_URL) ? $firstImage : asset($firstImage)) : 'https://picsum.photos/seed/product/900/1200' }}"/>
+<img class="w-full h-full object-cover " loading="lazy" decoding="async" alt="{{ $p->nama_produk }}" src="{{ $firstImage ? (filter_var($firstImage, FILTER_VALIDATE_URL) ? $firstImage : asset($firstImage)) : 'https://picsum.photos/seed/product/900/1200' }}"/>
 @php $isWl = in_array($p->product_id, $wishlistedIds, true); @endphp
 <button data-wishlist-toggle data-product-id="{{ $p->product_id }}" aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors{{ $isWl ? ' wishlisted-active' : '' }}">
 <span class="material-symbols-outlined" data-icon="favorite{{ $isWl ? '' : '_border' }}"@if($isWl) data-weight="fill"@endif>favorite{{ $isWl ? '' : '_border' }}</span>

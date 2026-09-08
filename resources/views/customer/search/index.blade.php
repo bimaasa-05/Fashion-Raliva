@@ -208,7 +208,7 @@
   .atl-eyebrow { display:inline-flex; align-items:center; gap:.65rem; }
   .atl-eyebrow::before { content:''; width:30px; height:1px; background:var(--chrome-accent); opacity:.7; }
   .card-premium { box-shadow:0 1px 2px rgb(17 17 17 / .04),0 12px 32px -16px rgb(17 17 17 / .16); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; }
-  .card-premium:hover { transform:translateY(-3px); box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
+  .card-premium:hover {  box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
   html.theme-dark .card-premium { background-color:var(--surface-ivory); border-color:var(--border-soft); box-shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px -12px rgb(0 0 0 / .5); }
   html.theme-dark .card-premium:hover { box-shadow:0 2px 4px rgb(0 0 0 / .4),0 20px 48px -20px rgb(0 0 0 / .7); border-color:rgba(139,30,63,.55); }
   .premium-heading::before { content:''; display:inline-block; width:4px; height:.95em; margin-right:.65rem; background:#8B1E3F; border-radius:9999px; vertical-align:-.05em; }
@@ -285,7 +285,7 @@
 <div class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
-<img alt="{{ $p->nama_produk }}" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" src="{{ $sImgUrl }}"/>
+<img alt="{{ $p->nama_produk }}" class="object-cover w-full h-full " src="{{ $sImgUrl }}"/>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $p->store?->nama_toko ?? __('RALIVA') }}</span>
 <h3 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">{{ $p->nama_produk }}</h3>

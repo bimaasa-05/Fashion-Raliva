@@ -205,7 +205,7 @@
 <style>
     /* ===== Premium cards + burgundy accents (parity with account/address) ===== */
     .card-premium { box-shadow:0 1px 2px rgb(17 17 17 / .04),0 12px 32px -16px rgb(17 17 17 / .16); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; }
-    .card-premium:hover { transform:translateY(-3px); box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
+    .card-premium:hover {  box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
     html.theme-dark .card-premium { background-color:var(--surface-ivory); border-color:var(--border-soft); box-shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px -12px rgb(0 0 0 / .5); }
     html.theme-dark .card-premium:hover { box-shadow:0 2px 4px rgb(0 0 0 / .4),0 20px 48px -20px rgb(0 0 0 / .7); border-color:rgba(139,30,63,.55); }
     .premium-heading { display:block; }
@@ -298,7 +298,7 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 <article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline">
 <div class="flex gap-sm md:gap-md">
 <a href="{{ $link }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
-<img alt="{{ $prod?->nama_produk }}" class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" src="{{ $imgUrl }}"/>
+<img alt="{{ $prod?->nama_produk }}" class="w-full h-full object-cover " src="{{ $imgUrl }}"/>
 </a>
 <div class="flex-grow min-w-0">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $rv->store?->nama_toko ?? 'RALIVA' }}</span>
@@ -349,7 +349,7 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 @endphp
 <article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline flex items-center gap-sm md:gap-md">
 <a href="{{ $link }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
-<img alt="{{ $prod?->nama_produk }}" class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" src="{{ $imgUrl }}"/>
+<img alt="{{ $prod?->nama_produk }}" class="w-full h-full object-cover " src="{{ $imgUrl }}"/>
 </a>
 <div class="flex-grow min-w-0">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $item->order?->store?->nama_toko ?? 'RALIVA' }}</span>
