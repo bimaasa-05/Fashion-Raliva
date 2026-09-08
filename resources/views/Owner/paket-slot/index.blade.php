@@ -1,5 +1,13 @@
 @extends('layouts.owner')
 
+@php
+/** @var array{nama:string,harga:string,total:int,used:int,sisa:int,progress:int} $active */
+/** @var \Illuminate\Database\Eloquent\Collection<int,\App\Models\StoreSlotSubscription> $riwayat */
+/** @var \Illuminate\Database\Eloquent\Collection<int,\App\Models\ProductSlotPackage> $packages */
+/** @var \Illuminate\Database\Eloquent\Collection<int,\App\Models\PaymentMethod> $metode */
+/** @var int $hargaPerSlot */
+@endphp
+
 @section('title', 'Paket Slot Produk')
 
 @section('header-title', 'Paket Slot Produk')
