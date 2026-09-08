@@ -116,11 +116,121 @@ class KomplainController extends Controller
         abort_unless($komplain->user_id === Auth::id(), 403);
 
         $messages = $komplain->messages()
+            ->withTrashed()
             ->with('sender')
             ->orderBy('created_at')
-            ->get();
+            ->get()
+            ->map(fn ($message) => $this->serializeMessage($message))
+            ->values();
 
         return response()->json($messages);
+    }
+
+    /**
+     * Ubah isi pesan milik sendiri (maksimal 15 menit setelah dikirim).
+     */
+    public function updateMessage(Request $request, Complaint $komplain, ComplaintMessage $message)
+    {
+        $this->authorizeMessage($komplain, $message);
+
+        if ($message->deleted_at) {
+            return response()->json(['message' => 'Pesan sudah dihapus.'], 422);
+        }
+
+        if (in_array($komplain->status, [Complaint::STATUS_SELESAI, Complaint::STATUS_DITUTUP], true)) {
+            return response()->json(['message' => 'Komplain ini sudah selesai dan tidak dapat diubah.'], 422);
+        }
+
+        if ($message->created_at->lt(now()->subMinutes(15))) {
+            return response()->json(['message' => 'Pesan hanya dapat diedit dalam 15 menit pertama setelah dikirim.'], 422);
+        }
+
+        $data = $request->validate([
+            'pesan' => 'required|string|min:3|max:2000',
+        ], [
+            'pesan.required' => 'Pesan wajib diisi.',
+            'pesan.min' => 'Pesan minimal 3 karakter.',
+            'pesan.max' => 'Pesan maksimal 2000 karakter.',
+        ]);
+
+        $message->update([
+            'pesan' => $data['pesan'],
+            'edited_at' => now(),
+        ]);
+
+        return response()->json($this->serializeMessage($message));
+    }
+
+    /**
+     * Hapus pesan sendiri — per=all (untuk semua) atau per=me (hanya untuk saya).
+     */
+    public function destroyMessage(Request $request, Complaint $komplain, ComplaintMessage $message)
+    {
+        $this->authorizeMessage($komplain, $message);
+
+        if ($message->deleted_at) {
+            return response()->json(['message' => 'Pesan sudah dihapus.'], 422);
+        }
+
+        if (in_array($komplain->status, [Complaint::STATUS_SELESAI, Complaint::STATUS_DITUTUP], true)) {
+            return response()->json(['message' => 'Komplain ini sudah selesai dan tidak dapat diubah.'], 422);
+        }
+
+        $per = $request->input('per', 'all');
+
+        if ($per === 'me') {
+            $deletedBy = $message->deleted_by ?? [];
+            if (!in_array(Auth::id(), $deletedBy, true)) {
+                $deletedBy[] = Auth::id();
+                $message->update(['deleted_by' => $deletedBy]);
+            }
+        } else {
+            $message->delete();
+        }
+
+        return response()->json([
+            'deleted' => true,
+            'complaint_message_id' => $message->complaint_message_id,
+        ]);
+    }
+
+    /**
+     * Pastikan komplain milik user aktif dan pesan miliknya sendiri.
+     */
+    private function authorizeMessage(Complaint $komplain, ComplaintMessage $message): void
+    {
+        abort_unless($komplain->user_id === Auth::id(), 403);
+        abort_unless(
+            $message->complaint_id === $komplain->complaint_id && $message->sender_id === Auth::id(),
+            403
+        );
+    }
+
+    /**
+     * Bangun representasi pesan yang siap diserialisasi, termasuk status hapus
+     * (untuk semua / hanya untuk pengguna yang meminta).
+     */
+    private function serializeMessage(ComplaintMessage $message): array
+    {
+        $deletedByMe = in_array(Auth::id(), $message->deleted_by ?? [], true);
+        $deleted = !is_null($message->deleted_at) || $deletedByMe;
+
+        return [
+            'complaint_message_id' => $message->complaint_message_id,
+            'complaint_id' => $message->complaint_id,
+            'sender_id' => $message->sender_id,
+            'pesan' => $deleted ? null : $message->pesan,
+            'lampiran' => $deleted ? null : $message->lampiran,
+            'created_at' => $message->created_at,
+            'updated_at' => $message->updated_at,
+            'deleted' => $deleted,
+            'deleted_at' => $message->deleted_at,
+            'edited_at' => $message->edited_at,
+            'sender' => $message->sender ? [
+                'user_id' => $message->sender->user_id,
+                'nama_lengkap' => $message->sender->nama_lengkap,
+            ] : null,
+        ];
     }
 
     /**
