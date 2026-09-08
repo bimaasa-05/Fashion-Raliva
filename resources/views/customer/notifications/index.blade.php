@@ -266,13 +266,19 @@ $icons = [
     \App\Models\Notification::TIPE_PEMBAYARAN => 'payments',
     \App\Models\Notification::TIPE_PENGIRIMAN => 'local_shipping',
     \App\Models\Notification::TIPE_KOMPLAIN => 'support_agent',
+    \App\Models\Notification::TIPE_ULASAN => 'reviews',
     \App\Models\Notification::TIPE_WALLET => 'account_balance_wallet',
     \App\Models\Notification::TIPE_PROMO => 'sell',
     \App\Models\Notification::TIPE_SISTEM => 'info',
 ];
+$notifHref = route('customer.order-tracking');
+if ($n->tipe === \App\Models\Notification::TIPE_KOMPLAIN) {
+    preg_match('/#(\d+)/', (string) $n->pesan, $m);
+    $notifHref = isset($m[1]) ? route('customer.komplain', ['open' => (int) $m[1]]) : route('customer.komplain');
+}
 $isUnread = $n->dibaca_pada === null;
 @endphp
-<article class="notification-item flex gap-sm md:gap-md px-container-margin py-md border-b border-outline-variant cursor-pointer {{ $isUnread ? '' : 'opacity-70' }}" onclick="markRead(this, {{ $n->notification_id }})">
+<article class="notification-item flex gap-sm md:gap-md px-container-margin py-md border-b border-outline-variant cursor-pointer {{ $isUnread ? '' : 'opacity-70' }}" onclick="handleNotif(this, {{ $n->notification_id }}, '{{ $notifHref }}')">
 <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0">
 <span class="material-symbols-outlined text-[20px] text-on-surface-variant">{{ $icons[$n->tipe] ?? 'info' }}</span>
 </div>
@@ -316,6 +322,10 @@ $isUnread = $n->dibaca_pada === null;
             dot.remove();
             el.classList.add('opacity-70');
             postForm('{{ route('customer.notifications.read', ['notification' => '__ID__']) }}'.replace('__ID__', id));
+        }
+        function handleNotif(el, id, href) {
+            markRead(el, id);
+            window.location.href = href;
         }
         function markAllRead() {
             document.querySelectorAll('.unread-dot').forEach(function (dot) { dot.remove(); });
