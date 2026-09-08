@@ -276,6 +276,7 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/komplain', [SaKomplainController::class, 'index'])->name('komplain');
     Route::get('/komplain/{komplain}/messages', [SaKomplainController::class, 'messages'])->name('komplain.messages');
     Route::post('/komplain/{komplain}/messages', [SaKomplainController::class, 'storeMessage'])->name('komplain.messages.store');
+    Route::delete('/komplain/{komplain}/messages/{message}', [SaKomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy');
     Route::post('/komplain/{komplain}/eskalasi', [SaKomplainController::class, 'eskalasi'])->name('komplain.eskalasi');
     Route::post('/komplain/{komplain}/tutup', [SaKomplainController::class, 'tutup'])->name('komplain.tutup');
     Route::get('/pengiriman', [SaPengirimanController::class, 'index'])->name('pengiriman');
