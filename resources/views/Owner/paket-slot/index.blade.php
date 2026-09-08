@@ -3,8 +3,8 @@
 @section('title', 'Paket Slot Produk')
 
 @section('header-title', 'Paket Slot Produk')
-@section('header-badge', 'Paket Growth')
-@section('header-subtitle', 'Pantau kapasitas slot produk dan upgrade paket sesuai kebutuhan.')
+@section('header-badge', 'Paket Aktif')
+@section('header-subtitle', 'Pantau kapasitas slot produk dan beli paket sesuai kebutuhan.')
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
@@ -18,6 +18,9 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
+    @if (session('success') || session('error'))
+        <div class="rounded-lg border px-4 py-3 text-sm font-body-md {{ session('success') ? 'border-secondary/30 bg-secondary-container/15 text-secondary' : 'border-error/30 bg-error/10 text-error' }}">{{ session('success') ?? session('error') }}</div>
+    @endif
     @if(! \App\Support\OwnerContext::currentStore())
         <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
@@ -34,7 +37,7 @@
             <div>
                 <p class="text-xs font-semibold text-gold-accent">Paket Aktif</p>
                 <h2 class="raliva-figure text-[30px] mt-2">{{ $active['nama'] }}</h2>
-                <p class="font-body-md text-sm text-inverse-on-surface/70 mt-2">{{ $active['harga'] }} / bulan &bull; Berlaku s.d. 12 Feb 2027</p>
+                <p class="font-body-md text-sm text-inverse-on-surface/70 mt-2">{{ $active['harga'] }} {{ $active['nama'] === 'Fleksibel' ? '/ slot' : '/ bulan' }}</p>
             </div>
             <div class="w-full max-w-md">
                 <div class="flex items-end justify-between mb-2">
@@ -88,7 +91,9 @@
                     @if ($isActive)
                         <button type="button" disabled class="mt-8 w-full py-3 bg-surface-container-high text-on-surface-variant rounded-lg text-sm font-semibold cursor-default">Sedang Digunakan</button>
                     @else
-                        <button type="button" disabled class="mt-8 w-full py-3 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant cursor-default">Upgrade (read-only)</button>
+                        <button type="button" data-beli-paket data-paket-id="{{ $pkg->slot_package_id }}" data-paket-nama="{{ $pkg->nama_paket }}" data-slot-count="{{ $slot }}" data-harga="{{ number_format($pkg->harga,0,',','.') }}" class="mt-8 w-full py-3 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-[16px]">shopping_cart</span>Beli Paket
+                        </button>
                     @endif
                 </article>
             @empty
@@ -109,7 +114,6 @@
             <table class="premium-table w-full min-w-[720px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Invoice</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Paket</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Periode</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Nominal</th>
@@ -117,32 +121,106 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ([
-                        ['inv' => 'INV-PKT-202602-014', 'paket' => 'Growth — Bulanan', 'periode' => '12 Jan — 12 Feb 2027', 'nominal' => 'Rp 199.000', 'status' => 'Lunas'],
-                        ['inv' => 'INV-PKT-202601-009', 'paket' => 'Growth — Bulanan', 'periode' => '12 Des — 12 Jan 2027', 'nominal' => 'Rp 199.000', 'status' => 'Lunas'],
-                        ['inv' => 'INV-PKT-202512-031', 'paket' => 'Upgrade Basic → Growth', 'periode' => '12 Nov — 12 Des 2026', 'nominal' => 'Rp 132.000', 'status' => 'Lunas'],
-                        ['inv' => 'INV-PKT-202511-002', 'paket' => 'Basic — Bulanan', 'periode' => '12 Okt — 12 Nov 2026', 'nominal' => 'Rp 99.000', 'status' => 'Lunas'],
-                    ] as $row)
+                    @forelse ($riwayat as $r)
                         <tr class="border-b border-muted-border last:border-0">
-                            <td class="py-3.5 px-4 font-bold text-on-surface">{{ $row['inv'] }}</td>
-                            <td class="py-3.5 px-4 text-on-surface">{{ $row['paket'] }}</td>
-                            <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $row['periode'] }}</td>
-                            <td class="py-3.5 px-4 font-bold text-gold-accent whitespace-nowrap">{{ $row['nominal'] }}</td>
-                            <td class="py-3.5 px-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">{{ $row['status'] }}</span></td>
+                            <td class="py-3.5 px-4 font-bold text-on-surface">{{ $r->package?->nama_paket ?? 'Paket #'.$r->slot_package_id }}</td>
+                            <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $r->tanggal_mulai?->translatedFormat('d M Y') }} — {{ $r->tanggal_berakhir?->translatedFormat('d M Y') }}</td>
+                            <td class="py-3.5 px-4 font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format($r->package?->harga ?? 0, 0, ',', '.') }}</td>
+                            <td class="py-3.5 px-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">{{ ucfirst($r->status) }}</span></td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr><td colspan="4" class="py-8 text-center text-on-surface-variant text-sm">Belum ada pembelian paket. Kuota aktif saat ini dari slot fleksibel/gratis.</td></tr>
+                    @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border border-muted-border rounded-lg p-4 bg-surface-container-low">
+            <div class="flex items-start gap-3">
+                <span class="material-symbols-outlined text-[20px] text-gold-accent mt-0.5">tune</span>
+                <div>
+                    <p class="font-bold text-on-surface text-sm">Butuh jumlah fleksibel?</p>
+                    <p class="text-xs text-on-surface-variant mt-0.5">Beli slot fleksibel mulai 1 slot dengan harga per slot Rp {{ number_format($hargaPerSlot ?? 2000, 0, ',', '.') }}.</p>
+                </div>
+            </div>
+            <a href="{{ route('owner.kelola-slot') }}" class="inline-flex items-center justify-center gap-2 py-2.5 px-5 rounded-lg border border-gold-accent/40 text-gold-accent text-xs font-semibold hover:bg-gold-accent/10 transition-colors shrink-0">
+                <span class="material-symbols-outlined text-[16px]">add</span>Beli Fleksibel
+            </a>
         </div>
     </section>
 </div>
 
-{{-- Modal Konfirmasi Upgrade --}}
-
+{{-- Modal Konfirmasi Beli Paket --}}
+<div id="modal-beli-paket" class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-black/50" onclick="closeBeliModal()"></div>
+    <div class="relative mx-auto w-full max-w-md mt-[10vh] bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[80vh] overflow-y-auto">
+        <div class="flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <p class="raliva-label text-gold-accent">Beli Paket Slot</p>
+                <h3 id="beli-paket-nama" class="font-title-md text-title-md text-on-surface premium-heading mt-1">-</h3>
+            </div>
+            <button type="button" onclick="closeBeliModal()" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <form id="beli-paket-form" method="POST" action="" enctype="multipart/form-data" class="p-6 space-y-5">
+            @csrf
+            <div class="grid grid-cols-2 gap-4">
+                <div class="border border-muted-border rounded-lg px-4 py-3">
+                    <p class="text-xs text-on-surface-variant">Jumlah Slot</p>
+                    <p id="beli-paket-slot" class="font-title-md text-title-md text-on-surface mt-1">-</p>
+                </div>
+                <div class="border border-deep-onyx/20 bg-deep-onyx/[0.04] rounded-lg px-4 py-3">
+                    <p class="text-xs text-on-surface-variant">Total Bayar</p>
+                    <p id="beli-paket-harga" class="font-title-md text-title-md text-deep-onyx mt-1">-</p>
+                </div>
+            </div>
+            <div>
+                <label for="beli-metode" class="block raliva-label mb-2">Metode Pembayaran</label>
+                <select id="beli-metode" name="metode_pembayaran" required class="raliva-select">
+                    <option value="" disabled selected>Pilih metode...</option>
+                    @forelse ($metode ?? [] as $m)
+                        @php /** @var \App\Models\PaymentMethod $m */ @endphp
+                        <option value="{{ $m->payment_method_id }}">{{ $m->nama_metode }}</option>
+                    @empty
+                        <option value="" disabled>Tidak ada metode tersedia</option>
+                    @endforelse
+                </select>
+            </div>
+            <div>
+                <label for="beli-bukti" class="block raliva-label mb-2">Bukti Pembayaran</label>
+                <input id="beli-bukti" name="file_bukti" type="file" accept=".jpg,.jpeg,.png,.pdf" required class="raliva-input" />
+                <p class="text-xs text-on-surface-variant mt-1.5">JPG, PNG, atau PDF. Maksimal 4 MB. Paket aktif segera setelah bukti divertifikasi.</p>
+            </div>
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+                <button type="button" onclick="closeBeliModal()" class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[16px]">shopping_cart</span>Beli Paket</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function(){
+  function openBeliModal(el) {
+    document.getElementById('beli-paket-nama').textContent = el.dataset.paketNama;
+    document.getElementById('beli-paket-slot').textContent = el.dataset.slotCount + ' slot';
+    document.getElementById('beli-paket-harga').textContent = 'Rp ' + el.dataset.harga;
+    document.getElementById('beli-paket-form').action = '{{ route('owner.paket-slot.beli', ':id:') }}'.replace(':id:', el.dataset.paketId);
+    document.getElementById('modal-beli-paket').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeBeliModal() {
+    document.getElementById('modal-beli-paket').classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+  window.closeBeliModal = closeBeliModal;
+  document.querySelectorAll('[data-beli-paket]').forEach(btn => {
+    btn.addEventListener('click', () => openBeliModal(btn));
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeBeliModal();
+  });
+
   if (!document.querySelector('[data-real]')) return;
   // Check if no store banner exists (means no store)
   const noStore = document.querySelector('[data-no-store-banner]');
