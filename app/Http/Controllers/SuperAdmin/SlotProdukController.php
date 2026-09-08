@@ -48,6 +48,8 @@ class SlotProdukController extends Controller
 
         $slotAwalDefault = (int) Setting::get(Setting::SLOT_AWAL_DEFAULT, '5');
 
+        $hargaPerSlot = SlotService::hargaPerSlot();
+
         return view('SuperAdmin.slot-produk.index', compact(
             'section',
             'stores',
@@ -56,7 +58,8 @@ class SlotProdukController extends Controller
             'purchaseRequests',
             'pendingCount',
             'grantLog',
-            'slotAwalDefault'
+            'slotAwalDefault',
+            'hargaPerSlot'
         ));
     }
 
@@ -94,6 +97,44 @@ class SlotProdukController extends Controller
 
         return back()->with('toast', [
             'message' => sprintf('Slot awal toko baru diatur menjadi %d slot.', $nilaiBaru),
+            'icon' => 'task_alt',
+        ]);
+    }
+
+    public function updateHargaPerSlot(Request $request)
+    {
+        $data = $request->validate([
+            'harga_per_slot' => 'required|integer|min:100|max:100000',
+        ], [
+            'harga_per_slot.required' => 'Harga per slot wajib diisi.',
+            'harga_per_slot.integer' => 'Harga per slot harus berupa angka.',
+            'harga_per_slot.min' => 'Harga per slot minimal Rp 100.',
+            'harga_per_slot.max' => 'Harga per slot terlalu besar.',
+        ]);
+
+        $nilaiBaru = (int) $data['harga_per_slot'];
+        $nilaiLama = SlotService::hargaPerSlot();
+
+        if ($nilaiBaru === $nilaiLama) {
+            return back()->with('toast', [
+                'message' => sprintf('Tidak ada perubahan — harga per slot sudah Rp %s.', number_format($nilaiBaru, 0, ',', '.')),
+                'icon' => 'info',
+            ]);
+        }
+
+        Setting::set(Setting::SLOT_HARGA_PER_SLOT, (string) $nilaiBaru);
+
+        ActivityLogger::log(
+            'setting.slot.harga',
+            Setting::class,
+            null,
+            ['nilai' => (string) $nilaiLama],
+            ['nilai' => (string) $nilaiBaru],
+            sprintf('Mengubah harga per slot pembelian fleksibel dari Rp %s menjadi Rp %s.', number_format($nilaiLama, 0, ',', '.'), number_format($nilaiBaru, 0, ',', '.'))
+        );
+
+        return back()->with('toast', [
+            'message' => sprintf('Harga per slot pembelian fleksibel diatur menjadi Rp %s.', number_format($nilaiBaru, 0, ',', '.')),
             'icon' => 'task_alt',
         ]);
     }
@@ -194,11 +235,58 @@ class SlotProdukController extends Controller
         ]);
     }
 
+    public function verifikasiPembayaran(Request $request, SlotPurchaseRequest $rmt)
+    {
+        if ($rmt->status !== SlotPurchaseRequest::STATUS_PENDING) {
+            return back()->with('toast', [
+                'message' => 'Permintaan sudah diproses.',
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
+        if ($rmt->payment_status === SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI) {
+            return back()->with('toast', [
+                'message' => 'Pembayaran permintaan ini sudah terverifikasi.',
+                'icon' => 'info',
+            ]);
+        }
+
+        $lama = $rmt->only(['payment_status']);
+        $rmt->update([
+            'payment_status' => SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI,
+            'paid_at' => now(),
+            'handled_by' => Auth::id(),
+        ]);
+
+        ActivityLogger::log(
+            'slot.purchase.verify',
+            SlotPurchaseRequest::class,
+            $rmt->slot_purchase_id,
+            $lama,
+            $rmt->only(['payment_status', 'paid_at', 'handled_by']),
+            sprintf('Memverifikasi pembayaran %d slot (Rp %s) untuk toko %s.', $rmt->jumlah_slot, number_format((float) $rmt->total_harga, 0, ',', '.'), $rmt->store->nama_toko ?? '-')
+        );
+
+        $this->notifyOwner($rmt->store, 'Pembayaran Slot Terverifikasi', sprintf('Pembayaran %d slot senilai Rp %s untuk toko "%s" telah diverifikasi. Menunggu persetujuan penambahan slot.', $rmt->jumlah_slot, number_format((float) $rmt->total_harga, 0, ',', '.'), $rmt->store->nama_toko ?? '-'));
+
+        return back()->with('toast', [
+            'message' => sprintf('Pembayaran %d slot (Rp %s) berhasil diverifikasi.', $rmt->jumlah_slot, number_format((float) $rmt->total_harga, 0, ',', '.')),
+            'icon' => 'task_alt',
+        ]);
+    }
+
     public function approvePurchase(Request $request, SlotPurchaseRequest $rmt)
     {
         if ($rmt->status !== SlotPurchaseRequest::STATUS_PENDING) {
             return back()->with('toast', [
                 'message' => 'Permintaan sudah diproses.',
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
+        if ($rmt->payment_status !== SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI) {
+            return back()->with('toast', [
+                'message' => 'Verifikasi pembayaran terlebih dahulu sebelum menyetujui.',
                 'icon' => 'gpp_maybe',
             ]);
         }

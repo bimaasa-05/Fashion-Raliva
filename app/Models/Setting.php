@@ -18,6 +18,8 @@ class Setting extends Model
 
     public const SLOT_AWAL_DEFAULT = 'slot_awal_default';
 
+    public const SLOT_HARGA_PER_SLOT = 'slot_harga_per_slot';
+
     public const NAMA_PLATFORM = 'nama_platform';
 
     public const EMAIL_SUPPORT = 'email_support';

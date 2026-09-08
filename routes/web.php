@@ -284,9 +284,11 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::put('/store-staff/{staff}', [StoreStaffController::class, 'update'])->name('store-staff.update');
     Route::get('/slot-produk', [SlotProdukController::class, 'index'])->name('slot-produk');
     Route::put('/slot-produk/default', [SlotProdukController::class, 'updateDefault'])->name('slot-produk.default');
+    Route::put('/slot-produk/harga-per-slot', [SlotProdukController::class, 'updateHargaPerSlot'])->name('slot-produk.harga-per-slot');
     Route::post('/slot-produk/toko/{store}/tambah', [SlotProdukController::class, 'grantManual'])->name('slot-produk.tambah-manual');
     Route::post('/slot-produk/paket', [SlotProdukController::class, 'storePackage'])->name('slot-produk.paket.store');
     Route::post('/slot-produk/paket/{paket}/toggle', [SlotProdukController::class, 'togglePackage'])->name('slot-produk.paket.toggle');
+    Route::post('/slot-produk/permintaan/{rmt}/verifikasi', [SlotProdukController::class, 'verifikasiPembayaran'])->name('slot-produk.permintaan.verifikasi');
     Route::post('/slot-produk/permintaan/{rmt}/setujui', [SlotProdukController::class, 'approvePurchase'])->name('slot-produk.permintaan.setujui');
     Route::post('/slot-produk/permintaan/{rmt}/tolak', [SlotProdukController::class, 'rejectPurchase'])->name('slot-produk.permintaan.tolak');
 });
@@ -372,6 +374,7 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/produk', [OwnerProdukController::class, 'index'])->name('produk');
     Route::get('/kelola-slot', [KelolaSlotController::class, 'index'])->name('kelola-slot');
     Route::post('/kelola-slot', [KelolaSlotController::class, 'store'])->name('kelola-slot.request');
+    Route::post('/paket-slot/{paket}/beli', [OwnerPaketSlotController::class, 'purchase'])->name('paket-slot.beli');
     Route::get('/pesanan', [OwnerPesananController::class, 'index'])->name('pesanan');
     Route::post('/pesanan/{order}/forward', [OwnerPesananController::class, 'forward'])->name('pesanan.forward');
     Route::get('/promo', [OwnerPromoController::class, 'index'])->name('promo');
