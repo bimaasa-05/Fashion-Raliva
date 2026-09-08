@@ -8,6 +8,7 @@ use App\Models\ComplaintMessage;
 use App\Models\Notification;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class KomplainController extends Controller
 {
@@ -43,11 +44,46 @@ class KomplainController extends Controller
     public function messages(Complaint $komplain)
     {
         $messages = $komplain->messages()
+            ->withTrashed()
             ->with('sender.role')
             ->orderBy('created_at')
-            ->get();
+            ->get()
+            ->map(fn ($message) => $message->toChatArray(Auth::id()))
+            ->values();
 
         return response()->json($messages);
+    }
+
+    public function destroyMessage(Request $request, Complaint $komplain, ComplaintMessage $message)
+    {
+        if ($message->complaint_id !== $komplain->complaint_id) {
+            abort(404);
+        }
+
+        if ($message->deleted_at) {
+            return response()->json(['message' => 'Pesan sudah dihapus.'], 422);
+        }
+
+        $per = $request->input('per', 'all');
+
+        if ($per === 'all' && $message->sender_id !== Auth::id()) {
+            return response()->json(['message' => 'Hanya pemilik pesan yang dapat menghapus untuk semua orang.'], 403);
+        }
+
+        if ($per === 'me') {
+            $deletedBy = $message->deleted_by ?? [];
+            if (!in_array(Auth::id(), $deletedBy, true)) {
+                $deletedBy[] = Auth::id();
+                $message->update(['deleted_by' => $deletedBy]);
+            }
+        } else {
+            $message->delete();
+        }
+
+        return response()->json([
+            'deleted' => true,
+            'complaint_message_id' => $message->complaint_message_id,
+        ]);
     }
 
     public function storeMessage(Request $request, Complaint $komplain)

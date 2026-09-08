@@ -263,12 +263,12 @@
         };
         $done = in_array($c->status, ['selesai', 'ditutup'], true);
     @endphp
-    <article data-complaint-card data-open-id="{{ $c->complaint_id }}" data-open-subjek="{{ $c->subjek }}" data-open-kode="#{{ $c->complaint_id }}" data-open-statuslabel="{{ $statusLabel }}" data-open-done="{{ $done ? '1' : '0' }}" onclick="openChatFromCard(this)" class="group flex items-start gap-sm md:gap-md p-md border border-outline-variant rounded-xl cursor-pointer transition-colors hover:border-secondary">
+    <article data-complaint-card data-open-id="{{ $c->complaint_id }}" data-open-subjek="{{ $c->subjek }}" data-open-kode="{{ $c->complaint_id }}" data-open-statuslabel="{{ $statusLabel }}" data-open-done="{{ $done ? '1' : '0' }}" onclick="openChatFromCard(this)" class="group flex items-start gap-sm md:gap-md p-md border border-outline-variant rounded-xl cursor-pointer transition-colors hover:border-secondary">
         <div class="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center shrink-0 {{ $done ? '' : 'text-[var(--chrome-accent)]' }}">
             <span class="material-symbols-outlined text-[22px]">{{ $done ? 'task_alt' : 'support_agent' }}</span>
         </div>
         <div class="flex-grow min-w-0">
-            <p class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">#{{ $c->complaint_id }} • {{ $c->order_id ? '#'.$c->order_id : '-' }}</p>
+            <p class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">{{ $c->complaint_id }} • {{ $c->order_id ? $c->order_id : '-' }}</p>
             <p class="font-title-md text-title-md text-on-surface mt-1 truncate">{{ $c->subjek }}</p>
             <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">{{ $c->deskripsi }}</p>
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-xs text-on-surface-variant">
@@ -323,6 +323,16 @@
     #chat-messages::-webkit-scrollbar { display: none; }
     #chat-emoji-panel { scrollbar-width: none; -ms-overflow-style: none; }
     #chat-emoji-panel::-webkit-scrollbar { display: none; }
+    #chat-edit-emoji-panel { scrollbar-width: none; -ms-overflow-style: none; }
+    #chat-edit-emoji-panel::-webkit-scrollbar { display: none; }
+    .raliva-doodle {
+        background-color: var(--surface-container-low);
+        background-image: radial-gradient(circle at 1.5px 1.5px, rgba(120, 80, 0, .10) 1.5px, transparent 0);
+        background-size: 22px 22px;
+    }
+    html.theme-dark .raliva-doodle {
+        background-image: radial-gradient(circle at 1.5px 1.5px, rgba(255, 255, 255, .07) 1.5px, transparent 0);
+    }
 </style>
 <!-- Chat Komplain Modal (ala Super Admin; warna RALIVA) -->
 <div class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
@@ -366,7 +376,7 @@
     <div id="chat-delete-dialog" class="hidden fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeDeleteDialog();}">
         <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-outline-variant shadow-2xl" onclick="event.stopPropagation()">
             <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">{{ __('Hapus pesan ini?') }}</p>
-            <button type="button" data-del-per="all" onclick="deleteMessage(deleteDialogMsgId,'all')" class="w-full text-left px-4 py-3 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
+            <button type="button" id="chat-del-opt-all" data-del-per="all" onclick="deleteMessage(deleteDialogMsgId,'all')" class="w-full text-left px-4 py-3 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
                 <span class="block font-body-sm text-body-sm text-on-surface">{{ __('Hapus untuk semua orang') }}</span>
                 <span class="block font-body-sm text-body-sm text-on-surface-variant/80">{{ __('Pesan akan dihapus untuk semua peserta chat ini') }}</span>
             </button>
@@ -377,6 +387,34 @@
             <button type="button" onclick="closeDeleteDialog()" class="w-full text-left px-4 py-3 mt-1 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
                 <span class="font-body-sm text-body-sm text-secondary">{{ __('Batal') }}</span>
             </button>
+        </div>
+    </div>
+    <div id="chat-edit-dialog" class="hidden fixed inset-0 z-[80] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeEditDialog();}">
+        <div class="w-full sm:max-w-lg bg-surface-container-low rounded-t-3xl sm:rounded-2xl border border-outline-variant shadow-2xl overflow-hidden flex flex-col max-h-[90dvh]" onclick="event.stopPropagation()">
+            <div class="flex items-center gap-3 px-5 py-4 border-b border-[var(--border-soft)] shrink-0">
+                <button type="button" onclick="closeEditDialog()" class="p-2 -ml-2 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer" title="{{ __('Tutup') }}">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+                <h3 class="font-title-md text-title-md text-on-surface">{{ __('Edit pesan') }}</h3>
+            </div>
+            <div class="raliva-doodle flex-1 min-h-[150px] sm:min-h-[220px] flex items-center justify-end px-6 py-8">
+                <div class="max-w-[90%] rounded-xl px-4 py-2.5 bg-secondary text-white">
+                    <p class="text-xs mb-1 text-white/60 uppercase tracking-wider">{{ __('Anda') }}</p>
+                    <p id="chat-edit-preview" class="font-body-sm text-body-sm whitespace-pre-wrap break-words">-</p>
+                </div>
+            </div>
+            <div class="relative border-t border-[var(--border-soft)] bg-surface-container-lowest/60 px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] shrink-0">
+                <div id="chat-edit-emoji-panel" class="hidden absolute bottom-full mb-3 left-5 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-outline-variant bg-surface-container-high p-3 shadow-xl"></div>
+                <div class="flex items-end gap-2 lg:gap-3">
+                    <button type="button" onclick="toggleEditEmojiPanel()" id="chat-edit-emoji-toggle" class="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Emoji') }}">
+                        <span class="material-symbols-outlined text-[20px]">mood</span>
+                    </button>
+                    <textarea id="chat-edit-input" rows="1" maxlength="2000" class="flex-1 bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant resize-none focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors" onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();saveEditMessage();}"></textarea>
+                    <button type="button" onclick="saveEditMessage()" id="chat-edit-save" class="w-11 h-11 lg:w-12 lg:h-12 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 transition-opacity disabled:opacity-40 rounded-full" title="{{ __('Simpan') }}">
+                        <span class="material-symbols-outlined text-[20px]">check</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -410,9 +448,10 @@
         currentChat.id = id;
         currentChat.done = done;
         currentChat.closing = false;
-        chatEditingId = null;
+        chatEditMsgId = null;
         closeChatMenu();
         closeDeleteDialog();
+        closeEditDialog();
         closeEmojiPanel();
         document.getElementById('chat-subject').textContent = subjek;
         document.getElementById('chat-kode').textContent = kode;
@@ -443,6 +482,7 @@
         currentChat.closing = true;
         closeChatMenu();
         closeDeleteDialog();
+        closeEditDialog();
         closeEmojiPanel();
         document.body.style.overflow = '';
         if (currentChat.polling) clearInterval(currentChat.polling);
@@ -492,8 +532,15 @@
         el.scrollTop = el.scrollHeight;
     }
 
+    function chatMenuMarkup(id, btnColor) {
+        return '<span class="relative shrink-0 chat-menu-wrap">' +
+            '<button type="button" data-menu-btn="' + id + '" onclick="toggleChatMenu(' + id + ')" class="chat-menu-btn ' + btnColor + ' lg:opacity-0 lg:group-hover:opacity-100 transition-opacity cursor-pointer rounded-full w-7 h-7 flex items-center justify-center" title="…"><span class="material-symbols-outlined text-[17px]">more_horiz</span></button>' +
+            '<span data-menu="' + id + '" class="chat-menu hidden absolute right-0 top-full mt-1 min-w-[170px] z-30 rounded-xl border border-outline-variant bg-surface-container-high py-1 shadow-xl">';
+    }
+
     function renderMessages(messages) {
         const el = document.getElementById('chat-messages');
+        chatMessages = messages || [];
         if (!messages || messages.length === 0) {
             el.innerHTML = '<div class="text-center py-10">' +
                 '<span class="material-symbols-outlined text-[38px] text-outline-variant inline-block mb-2">chat_bubble_outline</span>' +
@@ -503,55 +550,55 @@
             return;
         }
 
-        let editingNode = null;
-        if (chatEditingId !== null) {
-            editingNode = el.querySelector('[data-mid="' + chatEditingId + '"]');
-            if (editingNode) editingNode.parentNode.removeChild(editingNode);
-        }
-
-        el.innerHTML = messages.filter(function (m) {
-            return parseInt(m.complaint_message_id, 10) !== parseInt(chatEditingId, 10);
-        }).map(function (m) {
+        el.innerHTML = messages.map(function (m) {
             const mine = m.sender_id === myId;
             const sender = mine ? 'Anda' : (m.sender ? m.sender.nama_lengkap : 'Toko');
             const time = mine ? 'text-white/40' : 'text-on-surface-variant/50';
             const bubble = mine ? 'bg-secondary text-white' : 'bg-surface-container-low';
             const meta = mine ? 'text-white/60' : 'text-on-surface-variant';
             const edited = m.edited_at ? ' <span class="italic">(' + escapeHtml('diedit') + ')</span>' : '';
+            const actionsOn = !currentChat.done;
 
             if (m.deleted) {
                 const delBubble = mine ? 'bg-secondary/20 border-white/25' : 'bg-transparent border-outline-variant';
                 const delText = mine ? 'text-white/60' : 'text-on-surface-variant/70';
-                return '<div class="flex ' + (mine ? 'justify-end' : 'justify-start') + '">' +
-                    '<div class="max-w-[85%] md:max-w-[70%] rounded-xl px-4 py-2 border border-dashed ' + delBubble + '">' +
+                const delBtn = mine ? 'text-white/50 hover:text-white' : 'text-on-surface-variant hover:text-on-surface';
+                let delMenu = '';
+                if (actionsOn) {
+                    delMenu = chatMenuMarkup(m.complaint_message_id, delBtn) +
+                        '<button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ',true)" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>' +
+                        '</span></span>';
+                }
+                return '<div class="flex ' + (mine ? 'justify-end' : 'justify-start') + ' group chat-msg" data-mid="' + m.complaint_message_id + '">' +
+                    '<div class="max-w-[85%] md:max-w-[70%] rounded-xl px-4 py-2 border border-dashed ' + delBubble + '" data-bubble>' +
+                    '<div class="flex items-center justify-between gap-2">' +
                     '<p class="font-body-sm text-body-sm italic ' + delText + '">' + escapeHtml('Pesan ini telah dihapus') + '</p>' +
+                    delMenu +
+                    '</div>' +
                     '<p class="text-[10px] mt-1 ' + time + '">' + formatTime(m.created_at) + '</p>' +
                     '</div></div>';
             }
 
-            let action = '';
-            if (mine && !currentChat.done) {
+            let menu = '';
+            if (mine && actionsOn) {
                 const menuItems = chatEditAllowed(m.created_at)
-                    ? '<button type="button" onclick="startEditMessage(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">edit</span>' + escapeHtml('Edit pesan') + '</button>' +
-                      '<button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>'
-                    : '<button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>';
-                action = '<div class="chat-menu-wrap relative shrink-0 mb-1">' +
-                    '<button type="button" data-menu-btn="' + m.complaint_message_id + '" onclick="toggleChatMenu(' + m.complaint_message_id + ')" class="chat-menu-btn w-8 h-8 flex items-center justify-center rounded-full text-white/60 hover:text-white lg:opacity-0 lg:group-hover:opacity-100 transition-opacity cursor-pointer" title="…"><span class="material-symbols-outlined text-[18px]">more_horiz</span></button>' +
-                    '<div data-menu="' + m.complaint_message_id + '" class="chat-menu hidden absolute bottom-full right-0 mb-1 min-w-[170px] z-20 rounded-xl border border-outline-variant bg-surface-container-high py-1 shadow-xl">' +
-                    menuItems +
-                    '</div></div>';
+                    ? '<button type="button" onclick="openEditDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">edit</span>' + escapeHtml('Edit pesan') + '</button>' +
+                      '<button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ',false)" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>'
+                    : '<button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ',false)" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>';
+                menu = chatMenuMarkup(m.complaint_message_id, 'text-white/60 hover:text-white') + menuItems + '</span></span>';
             }
 
             return '<div class="flex ' + (mine ? 'justify-end' : 'justify-start') + ' group chat-msg" data-mid="' + m.complaint_message_id + '">' +
-                (mine ? action : '') +
                 '<div class="max-w-[85%] md:max-w-[70%] rounded-xl px-4 py-3 ' + bubble + '" data-bubble>' +
-                '<p class="text-xs mb-1 ' + meta + ' uppercase tracking-wider">' + escapeHtml(sender) + '</p>' +
+                '<div class="flex items-start justify-between gap-2 mb-1">' +
+                '<p class="text-xs ' + meta + ' uppercase tracking-wider">' + escapeHtml(sender) + '</p>' +
+                menu +
+                '</div>' +
                 '<p class="font-body-sm text-body-sm whitespace-pre-wrap break-words" data-pesan>' + escapeHtml(m.pesan) + '</p>' +
                 '<p class="text-[10px] mt-2 ' + time + '">' + formatTime(m.created_at) + edited + '</p>' +
                 '</div></div>';
         }).join('');
 
-        if (editingNode) el.appendChild(editingNode);
         el.scrollTop = el.scrollHeight;
     }
 
@@ -567,9 +614,10 @@
         return d.innerHTML;
     }
 
-    let chatEditingId = null;
+    let chatEditMsgId = null;
     let chatMenuId = null;
     let deleteDialogMsgId = null;
+    let chatMessages = [];
 
     function chatEditAllowed(createdAt) {
         const t = new Date(createdAt).getTime();
@@ -595,38 +643,41 @@
         chatMenuId = null;
     }
 
-    function startEditMessage(id) {
+    function openEditDialog(id) {
         closeChatMenu();
-        const row = document.querySelector('[data-mid="' + id + '"]');
-        const bubble = row ? row.querySelector('[data-bubble]') : null;
-        const pesanEl = row ? row.querySelector('[data-pesan]') : null;
-        if (!bubble) return;
-        const oldText = pesanEl ? pesanEl.textContent : '';
-        chatEditingId = id;
-        bubble.innerHTML =
-            '<textarea id="chat-edit-input-' + id + '" rows="2" maxlength="2000" class="w-full bg-white/15 text-white rounded-lg px-3 py-2 font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-white/50 resize-none">' + escapeHtml(oldText) + '</textarea>' +
-            '<div class="flex justify-end gap-2 mt-2">' +
-            '<button type="button" onclick="cancelEditMessage(' + id + ')" class="px-3 py-1 rounded-full font-body-sm text-body-sm text-white/80 hover:bg-white/10 transition-colors cursor-pointer">' + escapeHtml('Batal') + '</button>' +
-            '<button type="button" onclick="saveEditMessage(' + id + ')" class="px-3 py-1 rounded-full font-body-sm text-body-sm bg-white text-secondary font-semibold hover:opacity-90 transition-opacity cursor-pointer">' + escapeHtml('Simpan') + '</button>' +
-            '</div>';
-        const ta = document.getElementById('chat-edit-input-' + id);
-        if (ta) {
-            ta.focus();
-            ta.setSelectionRange(ta.value.length, ta.value.length);
-        }
+        const msg = chatMessages.find(function (m) {
+            return parseInt(m.complaint_message_id, 10) === parseInt(id, 10);
+        });
+        if (!msg) return;
+        chatEditMsgId = id;
+        const input = document.getElementById('chat-edit-input');
+        const preview = document.getElementById('chat-edit-preview');
+        const saveBtn = document.getElementById('chat-edit-save');
+        input.value = msg.pesan || '';
+        if (preview) preview.textContent = msg.pesan || '';
+        input.disabled = false;
+        if (saveBtn) saveBtn.disabled = false;
+        document.getElementById('chat-edit-dialog').classList.remove('hidden');
+        setTimeout(function () {
+            input.focus();
+            input.setSelectionRange(input.value.length, input.value.length);
+        }, 30);
     }
 
-    async function cancelEditMessage(id) {
-        chatEditingId = null;
-        await loadMessages();
+    function closeEditDialog() {
+        closeEditEmojiPanel();
+        chatEditMsgId = null;
+        document.getElementById('chat-edit-dialog').classList.add('hidden');
     }
 
-    async function saveEditMessage(id) {
-        const ta = document.getElementById('chat-edit-input-' + id);
-        if (!ta) return;
-        const pesan = ta.value.trim();
-        if (pesan.length < 3) { ta.focus(); return; }
-        ta.disabled = true;
+    async function saveEditMessage() {
+        const id = chatEditMsgId;
+        if (!id) return;
+        const input = document.getElementById('chat-edit-input');
+        const pesan = input.value.trim();
+        if (pesan.length < 3) { input.focus(); return; }
+        input.disabled = true;
+        document.getElementById('chat-edit-save').disabled = true;
         try {
             const url = '{{ route('customer.komplain.messages.update', [':cid:', ':mid:']) }}'.replace(':cid:', currentChat.id).replace(':mid:', id);
             const resp = await fetch(url, {
@@ -640,7 +691,7 @@
                 body: JSON.stringify({ pesan })
             });
             if (resp.ok) {
-                chatEditingId = null;
+                closeEditDialog();
                 await loadMessages();
             } else {
                 let msg = 'Gagal menyimpan perubahan';
@@ -650,18 +701,22 @@
                     else if (data && data.errors) msg = Object.values(data.errors).flat().join('\n');
                 } catch (_) {}
                 alert(msg);
-                ta.disabled = false;
-                ta.focus();
+                input.disabled = false;
+                document.getElementById('chat-edit-save').disabled = false;
+                input.focus();
             }
         } catch (_) {
-            ta.disabled = false;
-            ta.focus();
+            input.disabled = false;
+            document.getElementById('chat-edit-save').disabled = false;
+            input.focus();
         }
     }
 
-    function openDeleteDialog(id) {
+    function openDeleteDialog(id, onlyMe) {
         closeChatMenu();
         deleteDialogMsgId = id;
+        const optAll = document.getElementById('chat-del-opt-all');
+        if (optAll) optAll.classList.toggle('hidden', !!onlyMe);
         document.getElementById('chat-delete-dialog').classList.remove('hidden');
     }
 
@@ -704,14 +759,17 @@
 
     const CHAT_EMOJI = ['😀','😁','😂','🤣','😊','😍','🥰','😘','😚','😜','🤪','😎','🥸','🤗','🤭','🫢','😇','🥺','🤔','🤨','😐','😑','😶','🙄','😏','😮','😯','😪','😴','🤤','😌','😢','😭','😅','😆','😉','🙃','😬','👍','👎','👌','✌️','🤞','🤝','🙏','👏','🙌','💪','🤙','👋','❤️','🧡','💛','💚','💙','💜','🖤','🤍','💖','💘','💯','🔥','✨','⭐','🎉','🎁','🎊','👀'];
 
-    function renderEmojiPanel() {
-        const panel = document.getElementById('chat-emoji-panel');
+    function renderEmojiPanelOf(panelId, inputId) {
+        const panel = document.getElementById(panelId);
         if (!panel || panel.dataset.rendered) return;
+        panel.dataset.inputId = inputId;
         panel.innerHTML = '<div class="grid grid-cols-8 gap-1">' + CHAT_EMOJI.map(function (e) {
-            return '<button type="button" data-emoji="' + e + '" onclick="insertEmoji(this)" class="w-9 h-9 flex items-center justify-center text-[20px] leading-none rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">' + e + '</button>';
+            return '<button type="button" data-emoji="' + e + '" onclick="insertEmojiTo(this)" class="w-9 h-9 flex items-center justify-center text-[20px] leading-none rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">' + e + '</button>';
         }).join('') + '</div>';
         panel.dataset.rendered = '1';
     }
+
+    function renderEmojiPanel() { renderEmojiPanelOf('chat-emoji-panel', 'chat-input'); }
 
     function toggleEmojiPanel() {
         renderEmojiPanel();
@@ -733,14 +791,38 @@
         if (btn) btn.classList.remove('text-secondary', 'bg-surface-container-high');
     }
 
-    function insertEmoji(btn) {
-        const input = document.getElementById('chat-input');
+    function toggleEditEmojiPanel() {
+        renderEmojiPanelOf('chat-edit-emoji-panel', 'chat-edit-input');
+        const panel = document.getElementById('chat-edit-emoji-panel');
+        const btn = document.getElementById('chat-edit-emoji-toggle');
+        if (!panel) return;
+        const open = panel.classList.toggle('hidden') === false;
+        if (btn) {
+            btn.classList.toggle('text-secondary', open);
+            btn.classList.toggle('bg-surface-container-high', open);
+        }
+    }
+
+    function closeEditEmojiPanel() {
+        const panel = document.getElementById('chat-edit-emoji-panel');
+        if (!panel || panel.classList.contains('hidden')) return;
+        panel.classList.add('hidden');
+        const btn = document.getElementById('chat-edit-emoji-toggle');
+        if (btn) btn.classList.remove('text-secondary', 'bg-surface-container-high');
+    }
+
+    function insertEmojiTo(btn) {
+        const panel = btn.closest('[data-input-id]');
+        const input = panel ? document.getElementById(panel.dataset.inputId) : null;
         const emoji = btn.getAttribute('data-emoji');
         if (!input || !emoji) return;
         const start = input.selectionStart != null ? input.selectionStart : input.value.length;
         const end = input.selectionEnd != null ? input.selectionEnd : start;
         const next = input.value.slice(0, start) + emoji + input.value.slice(end);
         input.value = next.slice(0, 2000);
+        if (typeof input.dispatchEvent === 'function') {
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
         const pos = start + emoji.length;
         input.focus();
         input.setSelectionRange(pos, pos);
@@ -754,12 +836,26 @@
                     ev.target.closest('[data-mid="' + chatMenuId + '"]');
                 if (!inMenu) closeChatMenu();
             }
+            const ep = document.getElementById('chat-edit-emoji-panel');
+            if (ep && !ep.classList.contains('hidden') &&
+                !ev.target.closest('#chat-edit-emoji-panel') &&
+                !ev.target.closest('#chat-edit-emoji-toggle')) {
+                closeEditEmojiPanel();
+            }
         }
         const panel = document.getElementById('chat-emoji-panel');
         if (!panel || panel.classList.contains('hidden')) return;
         if (ev.target.closest && (ev.target.closest('#chat-emoji-panel') || ev.target.closest('#chat-emoji-toggle'))) return;
         closeEmojiPanel();
     });
+
+    const chatEditInputEl = document.getElementById('chat-edit-input');
+    if (chatEditInputEl) {
+        chatEditInputEl.addEventListener('input', function () {
+            const preview = document.getElementById('chat-edit-preview');
+            if (preview) preview.textContent = this.value;
+        });
+    }
 
     async function sendMessage() {
         const composer = document.getElementById('chat-composer');
@@ -809,6 +905,10 @@
 
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
+            const ep = document.getElementById('chat-edit-emoji-panel');
+            if (ep && !ep.classList.contains('hidden')) { closeEditEmojiPanel(); return; }
+            const ed = document.getElementById('chat-edit-dialog');
+            if (ed && !ed.classList.contains('hidden')) { closeEditDialog(); return; }
             if (chatMenuId !== null) { closeChatMenu(); return; }
             const dialog = document.getElementById('chat-delete-dialog');
             if (dialog && !dialog.classList.contains('hidden')) { closeDeleteDialog(); return; }

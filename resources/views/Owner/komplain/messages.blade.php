@@ -53,12 +53,20 @@
                     $mine = $msg->sender_id === auth()->id();
                 @endphp
                 <div class="flex {{ $mine ? 'justify-end' : 'justify-start' }}">
-                    <div class="max-w-[78%] md:max-w-[60%] px-4 py-3 rounded-xl border {{ $mine ? 'bg-deep-onyx text-on-primary border-on-surface/10' : 'bg-surface-container-low border-muted-border' }}">
-                        <p class="text-[10px] uppercase tracking-wider {{ $mine ? 'text-on-primary/60' : 'text-on-surface-variant' }} mb-1">
-                            {{ $mine ? 'Anda' : ($msg->sender?->nama_lengkap ?? 'Customer') }} • {{ $msg->created_at->format('d M Y, H:i') }}
-                        </p>
-                        <p class="font-body-sm text-sm">{{ $msg->pesan }}</p>
-                    </div>
+                    @if ($msg->trashed())
+                        <div class="max-w-[78%] md:max-w-[60%] px-4 py-2 rounded-xl border border-dashed {{ $mine ? 'bg-deep-onyx/20 border-on-surface/25' : 'bg-transparent border-outline-variant' }}">
+                            <p class="font-body-sm text-sm italic {{ $mine ? 'text-on-primary/60' : 'text-on-surface-variant/70' }}">Pesan ini telah dihapus</p>
+                            <p class="text-[10px] mt-1 {{ $mine ? 'text-on-primary/40' : 'text-on-surface-variant/50' }}">{{ $msg->created_at->format('d M Y, H:i') }}</p>
+                        </div>
+                    @else
+                        <div class="max-w-[78%] md:max-w-[60%] px-4 py-3 rounded-xl border {{ $mine ? 'bg-deep-onyx text-on-primary border-on-surface/10' : 'bg-surface-container-low border-muted-border' }}">
+                            <p class="text-[10px] uppercase tracking-wider {{ $mine ? 'text-on-primary/60' : 'text-on-surface-variant' }} mb-1">
+                                {{ $mine ? 'Anda' : ($msg->sender?->nama_lengkap ?? 'Customer') }} • {{ $msg->created_at->format('d M Y, H:i') }}
+                                @if ($msg->edited_at)<span class="italic normal-case">(diedit)</span>@endif
+                            </p>
+                            <p class="font-body-sm text-sm">{{ $msg->pesan }}</p>
+                        </div>
+                    @endif
                 </div>
             @empty
                 <p class="text-on-surface-variant text-sm text-center py-6">Belum ada percakapan.</p>

@@ -40,7 +40,11 @@ class KomplainController extends Controller
     {
         abort_unless($this->belongsToStore($komplain), 404);
 
-        $komplain->load(['user', 'order', 'messages.sender']);
+        $komplain->load([
+            'user',
+            'order',
+            'messages' => fn ($q) => $q->withTrashed()->with('sender')->orderBy('created_at'),
+        ]);
 
         return view('Owner.komplain.messages', compact('komplain'));
     }

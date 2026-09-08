@@ -117,10 +117,10 @@ class KomplainController extends Controller
 
         $messages = $komplain->messages()
             ->withTrashed()
-            ->with('sender')
+            ->with('sender.role')
             ->orderBy('created_at')
             ->get()
-            ->map(fn ($message) => $this->serializeMessage($message))
+            ->map(fn ($message) => $message->toChatArray(Auth::id()))
             ->values();
 
         return response()->json($messages);
@@ -158,11 +158,12 @@ class KomplainController extends Controller
             'edited_at' => now(),
         ]);
 
-        return response()->json($this->serializeMessage($message));
+        return response()->json($message->toChatArray(Auth::id()));
     }
 
     /**
-     * Hapus pesan sendiri — per=all (untuk semua) atau per=me (hanya untuk saya).
+     * Hapus pesan — per=all (untuk semua) hanya untuk pesan milik sendiri,
+     * per=me (hanya untuk saya) boleh untuk pesan siapa pun di thread.
      */
     public function destroyMessage(Request $request, Complaint $komplain, ComplaintMessage $message)
     {
@@ -177,6 +178,10 @@ class KomplainController extends Controller
         }
 
         $per = $request->input('per', 'all');
+
+        if ($per === 'all' && $message->sender_id !== Auth::id()) {
+            return response()->json(['message' => 'Hanya pemilik pesan yang dapat menghapus untuk semua orang.'], 403);
+        }
 
         if ($per === 'me') {
             $deletedBy = $message->deleted_by ?? [];
@@ -200,37 +205,7 @@ class KomplainController extends Controller
     private function authorizeMessage(Complaint $komplain, ComplaintMessage $message): void
     {
         abort_unless($komplain->user_id === Auth::id(), 403);
-        abort_unless(
-            $message->complaint_id === $komplain->complaint_id && $message->sender_id === Auth::id(),
-            403
-        );
-    }
-
-    /**
-     * Bangun representasi pesan yang siap diserialisasi, termasuk status hapus
-     * (untuk semua / hanya untuk pengguna yang meminta).
-     */
-    private function serializeMessage(ComplaintMessage $message): array
-    {
-        $deletedByMe = in_array(Auth::id(), $message->deleted_by ?? [], true);
-        $deleted = !is_null($message->deleted_at) || $deletedByMe;
-
-        return [
-            'complaint_message_id' => $message->complaint_message_id,
-            'complaint_id' => $message->complaint_id,
-            'sender_id' => $message->sender_id,
-            'pesan' => $deleted ? null : $message->pesan,
-            'lampiran' => $deleted ? null : $message->lampiran,
-            'created_at' => $message->created_at,
-            'updated_at' => $message->updated_at,
-            'deleted' => $deleted,
-            'deleted_at' => $message->deleted_at,
-            'edited_at' => $message->edited_at,
-            'sender' => $message->sender ? [
-                'user_id' => $message->sender->user_id,
-                'nama_lengkap' => $message->sender->nama_lengkap,
-            ] : null,
-        ];
+        abort_unless($message->complaint_id === $komplain->complaint_id, 403);
     }
 
     /**

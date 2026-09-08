@@ -35,4 +35,32 @@ class ComplaintMessage extends Model
     {
         return $this->belongsTo(User::class, 'sender_id', 'user_id');
     }
+
+    /**
+     * Representasi pesan untuk API chat berdasar sudut pandang viewer.
+     * Pesan tersembunyi (deleted untuk semua ATAU deleted_by viewer) tidak
+     * mengirimkan isi pesan.
+     */
+    public function toChatArray(int $viewerId): array
+    {
+        $deleted = !is_null($this->deleted_at) || in_array($viewerId, $this->deleted_by ?? [], true);
+
+        return [
+            'complaint_message_id' => $this->complaint_message_id,
+            'complaint_id' => $this->complaint_id,
+            'sender_id' => $this->sender_id,
+            'pesan' => $deleted ? null : $this->pesan,
+            'lampiran' => $deleted ? null : $this->lampiran,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'deleted' => $deleted,
+            'deleted_at' => $this->deleted_at,
+            'edited_at' => $this->edited_at,
+            'sender' => $this->sender ? [
+                'user_id' => $this->sender->user_id,
+                'nama_lengkap' => $this->sender->nama_lengkap,
+                'role' => $this->sender->role?->nama_role ?? null,
+            ] : null,
+        ];
+    }
 }

@@ -274,6 +274,18 @@
             </div>
         </div>
     </div>
+    <div id="chat-delete-dialog" class="hidden fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeDeleteDialog();}">
+        <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-outline-variant shadow-2xl" onclick="event.stopPropagation()">
+            <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">Hapus pesan ini?</p>
+            <button type="button" data-del-per="me" onclick="deleteMessage()" class="w-full text-left px-4 py-3 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
+                <span class="block font-body-md text-sm text-on-surface">Hapus untuk diri sendiri</span>
+                <span class="block font-body-md text-sm text-on-surface-variant/80">Pesan hanya dihapus dari perangkat Anda</span>
+            </button>
+            <button type="button" onclick="closeDeleteDialog()" class="w-full text-left px-4 py-3 mt-1 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
+                <span class="font-body-md text-sm text-secondary">Batal</span>
+            </button>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -309,6 +321,8 @@
         document.body.style.overflow = '';
         if (currentChat.polling) clearInterval(currentChat.polling);
         currentChat.id = null;
+        closeChatMenu();
+        closeDeleteDialog();
     }
 
     async function loadMessages() {
@@ -336,24 +350,125 @@
         el.scrollTop = el.scrollHeight;
     }
 
+    function fmtTs(value) {
+        return new Date(value).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
+    }
+
+    function chatMenuMarkup(id, btnColor) {
+        return '<span class="relative shrink-0 chat-menu-wrap">' +
+            '<button type="button" data-menu-btn="' + id + '" onclick="toggleChatMenu(' + id + ')" class="chat-menu-btn ' + btnColor + ' lg:opacity-0 lg:group-hover:opacity-100 transition-opacity cursor-pointer rounded-full w-7 h-7 flex items-center justify-center" title="…"><span class="material-symbols-outlined text-[17px]">more_horiz</span></button>' +
+            '<span data-menu="' + id + '" class="chat-menu hidden absolute right-0 top-full mt-1 min-w-[170px] z-30 rounded-xl border border-outline-variant bg-surface-container-high py-1 shadow-xl">';
+    }
+
     function renderMessages(messages) {
         const el = document.getElementById('chat-messages');
-        el.innerHTML = messages.map(m => `
-            <div class="flex ${m.sender_id === myId ? 'justify-end' : 'justify-start'}">
-                <div class="max-w-[80%] rounded-xl p-4 ${m.sender_id === myId ? 'bg-deep-onyx text-on-primary' : 'bg-surface-container-high text-on-surface'}">
-                    <p class="text-xs mb-1 ${m.sender_id === myId ? 'text-on-primary/60' : 'text-on-surface-variant'}">
-                        ${m.sender_id === myId ? 'Super Admin' : (m.sender?.role === 'customer' ? m.sender?.nama_lengkap : 'Toko')}
-                    </p>
-                    <p class="font-body-md text-sm whitespace-pre-wrap">${escapeHtml(m.pesan)}</p>
-                    <p class="text-[10px] mt-2 ${m.sender_id === myId ? 'text-on-primary/40' : 'text-on-surface-variant/50'}">
-                        ${new Date(m.created_at).toLocaleString('id-ID', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false})}
-                    </p>
-                </div>
-            </div>
-        `).join('');
+        el.innerHTML = messages.map(m => {
+            const mine = m.sender_id === myId;
+            const align = mine ? 'justify-end' : 'justify-start';
+            if (m.deleted) {
+                const delBubble = mine ? 'bg-deep-onyx/20 border-on-surface/25' : 'bg-transparent border-outline-variant';
+                const delText = mine ? 'text-on-primary/60' : 'text-on-surface-variant/70';
+                const delBtn = mine ? 'text-on-primary/50 hover:text-on-primary' : 'text-on-surface-variant hover:text-on-surface';
+                const menu = chatMenuMarkup(m.complaint_message_id, delBtn) +
+                    '<button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>' +
+                    '</span></span>';
+                return '<div class="flex ' + align + ' group chat-msg" data-mid="' + m.complaint_message_id + '">' +
+                    '<div class="max-w-[80%] rounded-xl px-4 py-2 border border-dashed ' + delBubble + '">' +
+                    '<div class="flex items-center justify-between gap-2">' +
+                    '<p class="font-body-md text-sm italic ' + delText + '">Pesan ini telah dihapus</p>' +
+                    menu +
+                    '</div>' +
+                    '<p class="text-[10px] mt-1 ' + (mine ? 'text-on-primary/40' : 'text-on-surface-variant/50') + '">' + fmtTs(m.created_at) + '</p>' +
+                    '</div></div>';
+            }
+            return '<div class="flex ' + align + '">' +
+                '<div class="max-w-[80%] rounded-xl p-4 ' + (mine ? 'bg-deep-onyx text-on-primary' : 'bg-surface-container-high text-on-surface') + '">' +
+                '<p class="text-xs mb-1 ' + (mine ? 'text-on-primary/60' : 'text-on-surface-variant') + '">' +
+                (mine ? 'Super Admin' : (m.sender?.role === 'customer' ? m.sender?.nama_lengkap : 'Toko')) +
+                '</p>' +
+                '<p class="font-body-md text-sm whitespace-pre-wrap">' + escapeHtml(m.pesan) + '</p>' +
+                '<p class="text-[10px] mt-2 ' + (mine ? 'text-on-primary/40' : 'text-on-surface-variant/50') + '">' +
+                fmtTs(m.created_at) + (m.edited_at ? ' <span class="italic">(diedit)</span>' : '') +
+                '</p>' +
+                '</div></div>';
+        }).join('');
         el.scrollTop = el.scrollHeight;
         document.getElementById('chat-input-area').classList.remove('hidden');
     }
+
+    let chatMenuId = null;
+    let deleteDialogMsgId = null;
+
+    function toggleChatMenu(id) {
+        const menu = document.querySelector('[data-menu="' + id + '"]');
+        if (!menu) return;
+        const opening = menu.classList.contains('hidden');
+        closeChatMenu();
+        if (opening) {
+            menu.classList.remove('hidden');
+            chatMenuId = id;
+        }
+    }
+
+    function closeChatMenu() {
+        if (chatMenuId === null) return;
+        const menu = document.querySelector('[data-menu="' + chatMenuId + '"]');
+        if (menu) menu.classList.add('hidden');
+        chatMenuId = null;
+    }
+
+    function openDeleteDialog(id) {
+        closeChatMenu();
+        deleteDialogMsgId = id;
+        document.getElementById('chat-delete-dialog').classList.remove('hidden');
+    }
+
+    function closeDeleteDialog() {
+        deleteDialogMsgId = null;
+        document.getElementById('chat-delete-dialog').classList.add('hidden');
+    }
+
+    async function deleteMessage() {
+        const id = deleteDialogMsgId;
+        if (!id) return;
+        const btnEl = document.querySelector('#chat-delete-dialog [data-del-per="me"]');
+        if (btnEl) btnEl.disabled = true;
+        try {
+            const url = '{{ route('superadmin.komplain.messages.destroy', [':cid:', ':mid:']) }}'.replace(':cid:', currentChat.id).replace(':mid:', id);
+            const resp = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ per: 'me' })
+            });
+            closeDeleteDialog();
+            if (resp.ok) {
+                loadMessages();
+            } else {
+                let msg = 'Gagal menghapus pesan';
+                try {
+                    const data = await resp.json();
+                    if (data && data.message) msg = data.message;
+                } catch (_) {}
+                alert(msg);
+            }
+        } catch (_) {
+            closeDeleteDialog();
+        }
+    }
+
+    document.addEventListener('click', function (ev) {
+        if (chatMenuId !== null && ev.target.closest) {
+            const inMenu = ev.target.closest('[data-menu="' + chatMenuId + '"]') ||
+                ev.target.closest('[data-menu-btn="' + chatMenuId + '"]') ||
+                ev.target.closest('[data-mid="' + chatMenuId + '"]');
+            if (!inMenu) closeChatMenu();
+        }
+    });
 
     function escapeHtml(text) {
         const d = document.createElement('div');
@@ -389,7 +504,14 @@
         }
     }
 
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeChatModal(); });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            if (chatMenuId !== null) { closeChatMenu(); return; }
+            const dlg = document.getElementById('chat-delete-dialog');
+            if (dlg && !dlg.classList.contains('hidden')) { closeDeleteDialog(); return; }
+            closeChatModal();
+        }
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
         const scope = document.querySelector('[data-table-scope]');
