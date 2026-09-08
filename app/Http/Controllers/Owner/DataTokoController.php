@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Support\OwnerContext;
 use App\Models\Review;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class DataTokoController extends Controller
 {
@@ -33,6 +34,7 @@ class DataTokoController extends Controller
 
         $validated = $request->validate([
             'nama_toko' => ['required', 'string', 'max:100'],
+            'kategori' => ['nullable', 'string', 'max:100', Rule::in(\App\Models\Store::KATEGORI_OPTIONS)],
             'deskripsi' => ['nullable', 'string', 'max:1000'],
             'alamat' => ['required', 'string', 'max:500'],
             'nomor_telepon' => ['required', 'string', 'max:20'],
@@ -41,6 +43,7 @@ class DataTokoController extends Controller
 
         $store->update([
             'nama_toko' => $validated['nama_toko'],
+            'kategori' => $validated['kategori'] ?? null,
             'deskripsi' => $validated['deskripsi'],
             'alamat' => $validated['alamat'],
             'nomor_telepon' => $validated['nomor_telepon'],

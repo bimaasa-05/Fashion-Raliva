@@ -4,6 +4,11 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Complaint;
+use App\Models\Store;
+use App\Models\StoreDocument;
+use App\Models\StoreExpense;
+use App\Models\Supplier;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 
@@ -18,8 +23,38 @@ class KategoriProdukController extends Controller
             ->orderBy('nama_kategori')
             ->get();
 
+        $kategoriKomplain = Complaint::selectRaw('kategori, COUNT(*) as total')
+            ->groupBy('kategori')
+            ->orderBy('kategori')
+            ->get();
+
+        $kategoriPengeluaran = StoreExpense::selectRaw('kategori, COUNT(*) as total, SUM(nominal) as total_nominal')
+            ->groupBy('kategori')
+            ->orderBy('kategori')
+            ->get();
+
+        $jenisSupplier = Supplier::selectRaw("COALESCE(NULLIF(jenis, ''), '-') as jenis, COUNT(*) as total")
+            ->groupBy('jenis')
+            ->orderBy('jenis')
+            ->get();
+
+        $jenisDokumen = StoreDocument::selectRaw('jenis, COUNT(*) as total')
+            ->groupBy('jenis')
+            ->orderBy('jenis')
+            ->get();
+
+        $kategoriToko = Store::selectRaw("COALESCE(NULLIF(kategori, ''), 'Lainnya') as kategori, COUNT(*) as total")
+            ->groupBy('kategori')
+            ->orderBy('kategori')
+            ->get();
+
         return view('SuperAdmin.kategori-produk.index', [
             'categories' => $categories,
+            'kategoriKomplain' => $kategoriKomplain,
+            'kategoriPengeluaran' => $kategoriPengeluaran,
+            'jenisSupplier' => $jenisSupplier,
+            'jenisDokumen' => $jenisDokumen,
+            'kategoriToko' => $kategoriToko,
             'parents' => Category::whereNull('parent_id')->where('status', Category::STATUS_AKTIF)->orderBy('nama_kategori')->get(['category_id', 'nama_kategori']),
             'stats' => [
                 'total' => $categories->count(),

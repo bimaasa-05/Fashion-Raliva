@@ -215,10 +215,11 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/moderasi-produk', [ModerasiProdukController::class, 'index'])->name('moderasi-produk');
     Route::post('/moderasi-produk/{produk}/setujui', [ModerasiProdukController::class, 'setujui'])->name('moderasi-produk.setujui');
     Route::post('/moderasi-produk/{produk}/tolak', [ModerasiProdukController::class, 'tolak'])->name('moderasi-produk.tolak');
-    Route::get('/kategori-produk', [KategoriProdukController::class, 'index'])->name('kategori-produk');
-    Route::post('/kategori-produk', [KategoriProdukController::class, 'store'])->name('kategori-produk.store');
-    Route::post('/kategori-produk/{kategori}/update', [KategoriProdukController::class, 'update'])->name('kategori-produk.update');
-    Route::post('/kategori-produk/{kategori}/hapus', [KategoriProdukController::class, 'hapus'])->name('kategori-produk.hapus');
+    Route::get('/kategori', [KategoriProdukController::class, 'index'])->name('kategori');
+    Route::post('/kategori', [KategoriProdukController::class, 'store'])->name('kategori.store');
+    Route::post('/kategori/{kategori}/update', [KategoriProdukController::class, 'update'])->name('kategori.update');
+    Route::post('/kategori/{kategori}/hapus', [KategoriProdukController::class, 'hapus'])->name('kategori.hapus');
+    Route::redirect('/kategori-produk', '/superadmin/kategori', 301);
     Route::get('/data-pesanan', [DataPesananController::class, 'index'])->name('data-pesanan');
     Route::get('/data-pembayaran', [DataPembayaranController::class, 'index'])->name('data-pembayaran');
     Route::get('/pengembalian-dana', [PengembalianDanaController::class, 'index'])->name('pengembalian-dana');

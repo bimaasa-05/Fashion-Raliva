@@ -1,11 +1,11 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Kategori Produk')
+@section('title', 'Kategori')
 
-@section('header-title', 'Kategori Produk')
+@section('header-title', 'Kategori')
 @section('header-badge', 'Kelola')
 
-@section('header-subtitle', 'Kelola kategori global yang digunakan oleh semua toko')
+@section('header-subtitle', 'Kelola semua kategori global yang digunakan oleh semua toko')
 
 @push('styles')
 <style>
@@ -22,8 +22,8 @@
         <div class="flex items-center gap-3">
             <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">category</span></div>
             <div>
-                <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Kategori Produk</h2>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Kelola kategori global yang digunakan semua toko.</p>
+                <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Semua Kategori</h2>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Kelola semua kategori global yang digunakan semua toko.</p>
             </div>
         </div>
         <button type="button" onclick="openKategoriForm()" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
@@ -31,8 +31,18 @@
         </button>
     </section>
 
+    <!-- Tab navigation -->
+    <div data-kategori-tabs class="flex flex-wrap gap-2 border-b border-muted-border pb-4">
+        <button type="button" data-tab="produk" class="kategori-tab-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Produk ({{ $stats['total'] }})</button>
+        <button type="button" data-tab="komplain" class="kategori-tab-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Komplain ({{ $kategoriKomplain->count() }})</button>
+        <button type="button" data-tab="pengeluaran" class="kategori-tab-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Pengeluaran ({{ $kategoriPengeluaran->count() }})</button>
+        <button type="button" data-tab="supplier" class="kategori-tab-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Jenis Supplier ({{ $jenisSupplier->count() }})</button>
+        <button type="button" data-tab="dokumen" class="kategori-tab-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Jenis Dokumen ({{ $jenisDokumen->count() }})</button>
+        <button type="button" data-tab="toko" class="kategori-tab-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Toko ({{ $kategoriToko->count() }})</button>
+    </div>
+
     <!-- Categories Grid -->
-    <section data-table-scope class="space-y-gutter">
+    <section data-tab-panel="produk" data-table-scope class="space-y-gutter">
         <div class="flex justify-between items-center flex-wrap gap-2">
             <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Daftar Kategori</h2>
             <span class="text-on-surface-variant font-body-md text-sm">{{ $stats['aktif'] }} kategori aktif • {{ $stats['induk'] }} induk • total {{ $stats['total'] }}</span>
@@ -115,6 +125,151 @@
         </div>
         <p id="kategori-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada kategori yang cocok.</p>
     </section>
+
+    <!-- Panel: Kategori Komplain -->
+    <section data-tab-panel="komplain" class="hidden space-y-gutter">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden">
+            <table class="w-full premium-table">
+                <thead>
+                    <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-center w-12">No</th>
+                        <th class="p-4 text-left">Kategori Komplain</th>
+                        <th class="p-4 text-center">Total Komplain</th>
+                    </tr>
+                </thead>
+                <tbody class="font-body-md text-sm">
+                    @forelse ($kategoriKomplain as $k)
+                        <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                            <td class="p-4 text-center text-on-surface-variant font-mono">{{ $loop->iteration }}</td>
+                            <td class="p-4 text-on-surface capitalize">{{ $k->kategori }}</td>
+                            <td class="p-4 text-center text-on-surface font-bold">{{ $k->total }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="p-8 text-center text-on-surface-variant">Belum ada data kategori komplain.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Panel: Kategori Pengeluaran -->
+    <section data-tab-panel="pengeluaran" class="hidden space-y-gutter">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden">
+            <table class="w-full premium-table">
+                <thead>
+                    <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-center w-12">No</th>
+                        <th class="p-4 text-left">Kategori Pengeluaran</th>
+                        <th class="p-4 text-center">Total Transaksi</th>
+                        <th class="p-4 text-right">Total Nominal</th>
+                    </tr>
+                </thead>
+                <tbody class="font-body-md text-sm">
+                    @forelse ($kategoriPengeluaran as $k)
+                        <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                            <td class="p-4 text-center text-on-surface-variant font-mono">{{ $loop->iteration }}</td>
+                            <td class="p-4 text-on-surface">{{ $k->kategori }}</td>
+                            <td class="p-4 text-center text-on-surface">{{ $k->total }}</td>
+                            <td class="p-4 text-right text-on-surface font-bold">Rp {{ number_format((float) $k->total_nominal, 0, ',', '.') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="p-8 text-center text-on-surface-variant">Belum ada data kategori pengeluaran.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Panel: Jenis Supplier -->
+    <section data-tab-panel="supplier" class="hidden space-y-gutter">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden">
+            <table class="w-full premium-table">
+                <thead>
+                    <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-center w-12">No</th>
+                        <th class="p-4 text-left">Jenis Supplier</th>
+                        <th class="p-4 text-center">Total Supplier</th>
+                    </tr>
+                </thead>
+                <tbody class="font-body-md text-sm">
+                    @forelse ($jenisSupplier as $k)
+                        <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                            <td class="p-4 text-center text-on-surface-variant font-mono">{{ $loop->iteration }}</td>
+                            <td class="p-4 text-on-surface capitalize">{{ $k->jenis === '-' ? 'Lainnya' : $k->jenis }}</td>
+                            <td class="p-4 text-center text-on-surface font-bold">{{ $k->total }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="p-8 text-center text-on-surface-variant">Belum ada data jenis supplier.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Panel: Jenis Dokumen -->
+    <section data-tab-panel="dokumen" class="hidden space-y-gutter">
+        @php
+            $dokumenLabelMap = ['ktp' => 'KTP', 'npwp' => 'NPWP', 'foto_depan' => 'Foto Depan', 'siu' => 'SIU'];
+        @endphp
+        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden">
+            <table class="w-full premium-table">
+                <thead>
+                    <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-center w-12">No</th>
+                        <th class="p-4 text-left">Jenis Dokumen</th>
+                        <th class="p-4 text-center">Total Dokumen</th>
+                    </tr>
+                </thead>
+                <tbody class="font-body-md text-sm">
+                    @forelse ($jenisDokumen as $k)
+                        <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                            <td class="p-4 text-center text-on-surface-variant font-mono">{{ $loop->iteration }}</td>
+                            <td class="p-4 text-on-surface">{{ $dokumenLabelMap[$k->jenis] ?? ucfirst($k->jenis) }}</td>
+                            <td class="p-4 text-center text-on-surface font-bold">{{ $k->total }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="p-8 text-center text-on-surface-variant">Belum ada data jenis dokumen.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Panel: Kategori Toko -->
+    <section data-tab-panel="toko" class="hidden space-y-gutter">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden">
+            <table class="w-full premium-table">
+                <thead>
+                    <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-center w-12">No</th>
+                        <th class="p-4 text-left">Kategori Toko</th>
+                        <th class="p-4 text-center">Total Toko</th>
+                    </tr>
+                </thead>
+                <tbody class="font-body-md text-sm">
+                    @forelse ($kategoriToko as $k)
+                        <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                            <td class="p-4 text-center text-on-surface-variant font-mono">{{ $loop->iteration }}</td>
+                            <td class="p-4 text-on-surface capitalize">{{ $k->kategori }}</td>
+                            <td class="p-4 text-center text-on-surface font-bold">{{ $k->total }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="p-8 text-center text-on-surface-variant">Belum ada data kategori toko.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </section>
 </div>
 
 <!-- Modal Form Kategori (Tambah/Edit) -->
@@ -182,9 +337,9 @@
 @push('scripts')
 <script>
     const kategoriUrls = {
-        store: '{{ route('superadmin.kategori-produk.store') }}',
-        update: (id) => '{{ route('superadmin.kategori-produk.update', ':id:') }}'.replace(':id:', id),
-        hapus: (id) => '{{ route('superadmin.kategori-produk.hapus', ':id:') }}'.replace(':id:', id)
+        store: '{{ route('superadmin.kategori.store') }}',
+        update: (id) => '{{ route('superadmin.kategori.update', ':id:') }}'.replace(':id:', id),
+        hapus: (id) => '{{ route('superadmin.kategori.hapus', ':id:') }}'.replace(':id:', id)
     };
 
     function openKategoriForm(card = null) {
@@ -318,6 +473,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     applyFilter();
+});
+</script>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const tabBtns = document.querySelectorAll('[data-kategori-tabs] [data-tab]');
+    const panels = document.querySelectorAll('[data-tab-panel]');
+    const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
+    const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
+
+    const activateTab = (id) => {
+        panels.forEach((panel) => panel.classList.toggle('hidden', panel.dataset.tabPanel !== id));
+        tabBtns.forEach((btn) => {
+            const active = btn.dataset.tab === id;
+            btn.classList.remove(...activeClasses, ...idleClasses, 'hover:bg-surface-container-high');
+            btn.classList.add(...(active ? activeClasses : [...idleClasses, 'hover:bg-surface-container-high']));
+        });
+    };
+
+    tabBtns.forEach((btn) => btn.addEventListener('click', () => activateTab(btn.dataset.tab)));
+    activateTab('produk');
 });
 </script>
 @endpush
