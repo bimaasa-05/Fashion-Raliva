@@ -333,6 +333,36 @@
     html.theme-dark .raliva-doodle {
         background-image: radial-gradient(circle at 1.5px 1.5px, rgba(255, 255, 255, .07) 1.5px, transparent 0);
     }
+    #chat-wp-layer { background-size: cover; background-position: center; }
+    #chat-messages.chat-selecting .chat-sel-box { display: inline-flex; }
+    .chat-selecting .chat-msg { cursor: pointer; user-select: none; -webkit-user-select: none; }
+    .chat-sel-box {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        flex-shrink: 0;
+        color: var(--on-surface-variant);
+        cursor: pointer;
+        transition: transform .2s ease, opacity .2s ease, background-color .2s ease, color .2s ease;
+    }
+    .chat-sel-box:hover { transform: scale(1.1); }
+    .chat-sel-box:active { transform: scale(.92); }
+    .chat-sel-box .material-symbols-outlined { font-size: 20px; }
+    .chat-msg.sel-selected { background-color: rgba(139, 30, 63, .06); border-radius: 10px; }
+    .chat-msg.sel-selected .chat-sel-box { background-color: var(--chrome-accent); color: #fff; }
+    #chat-input-area.chat-selecting #chat-composer { display: none; }
+    #chat-input-area.chat-selecting #chat-closed-note { display: none; }
+    #chat-select-bar { display: none; }
+    #chat-input-area.chat-selecting #chat-select-bar { display: flex; }
+    #chat-select-bar::-webkit-scrollbar { display: none; }
+    #chat-select-bar { scrollbar-width: none; }
+    #chat-select-bar.animate-in { animation: chatSelIn .25s ease both; }
+    #chat-select-bar.animate-out { animation: chatSelOut .2s ease both; }
+    @keyframes chatSelIn { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes chatSelOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(100%); opacity: 0; } }
 </style>
 <!-- Chat Komplain Modal (ala Super Admin; warna RALIVA) -->
 <div class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
@@ -352,6 +382,9 @@
                         <div id="chat-more-menu" class="hidden absolute right-0 top-full mt-2 min-w-[220px] rounded-xl border border-outline-variant bg-surface-container-high shadow-xl z-40 py-1.5">
                             <button type="button" onclick="openWallpaperPicker()" id="chat-more-item-wallpaper" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
                                 <span class="material-symbols-outlined text-[19px]">wallpaper</span>{{ __('Ganti Wallpaper') }}
+                            </button>
+                            <button type="button" onclick="resetWallpaper()" id="chat-more-item-wp-reset" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[19px]">restart_alt</span>{{ __('Reset Wallpaper') }}
                             </button>
                             <button type="button" onclick="selectMessagesMode()" id="chat-more-item-select" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
                                 <span class="material-symbols-outlined text-[19px]">check_box</span>{{ __('Select Messages') }}
@@ -382,10 +415,27 @@
                         <span class="material-symbols-outlined text-[20px]">send</span>
                     </button>
                 </div>
+                <div id="chat-select-bar" class="items-center gap-2 lg:gap-3 py-1 overflow-x-auto" aria-label="{{ __('Select messages') }}">
+                    <button type="button" onclick="exitSelectMessages()" id="chat-sel-close" class="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Keluar seleksi') }}">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                    <span id="chat-sel-count" class="font-body-md text-body-md text-on-surface-variant shrink-0 whitespace-nowrap">0 selected</span>
+                    <div class="flex-1 min-w-0"></div>
+                    <button type="button" onclick="copySelectedMessages()" id="chat-sel-copy" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Salin') }}" aria-label="{{ __('Salin') }}">
+                        <span class="material-symbols-outlined text-[20px]">content_copy</span>
+                    </button>
+                    <button type="button" onclick="confirmDeleteSelected()" id="chat-sel-delete" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Hapus') }}" aria-label="{{ __('Hapus') }}">
+                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                    </button>
+                    <button type="button" onclick="downloadSelectedMessages()" id="chat-sel-download" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Unduh') }}" aria-label="{{ __('Unduh') }}">
+                        <span class="material-symbols-outlined text-[20px]">download</span>
+                    </button>
+                </div>
                 <p id="chat-closed-note" class="hidden text-center font-body-sm text-body-sm text-on-surface-variant pt-4">{{ __('Komplain telah selesai dan tidak dapat dibalas lagi.') }}</p>
             </div>
         </div>
     </div>
+    <input type="file" id="chat-wallpaper-input" accept="image/*" class="hidden">
     <div id="chat-delete-dialog" class="hidden fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeDeleteDialog();}">
         <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-outline-variant shadow-2xl" onclick="event.stopPropagation()">
             <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">{{ __('Hapus pesan ini?') }}</p>
@@ -398,6 +448,18 @@
                 <span class="block font-body-sm text-body-sm text-on-surface-variant/80">{{ __('Pesan hanya dihapus dari perangkat Anda') }}</span>
             </button>
             <button type="button" onclick="closeDeleteDialog()" class="w-full text-left px-4 py-3 mt-1 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
+                <span class="font-body-sm text-body-sm text-secondary">{{ __('Batal') }}</span>
+            </button>
+        </div>
+    </div>
+    <div id="chat-sel-delete-dialog" class="hidden fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeSelDeleteDialog();}">
+        <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-outline-variant shadow-2xl" onclick="event.stopPropagation()">
+            <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">Hapus <span id="chat-sel-del-count" class="text-error">-</span>?</p>
+            <p class="font-body-sm text-body-sm text-on-surface-variant px-4 pb-2">{{ __('Pesan hanya dihapus dari akun Anda.') }}</p>
+            <button type="button" data-sel-del-ok onclick="deleteSelectedMessages()" class="w-full text-left px-4 py-3 mt-1 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
+                <span class="font-body-sm text-body-sm text-error">{{ __('Hapus untuk diri sendiri') }}</span>
+            </button>
+            <button type="button" onclick="closeSelDeleteDialog()" class="w-full text-left px-4 py-3 mt-1 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
                 <span class="font-body-sm text-body-sm text-secondary">{{ __('Batal') }}</span>
             </button>
         </div>
@@ -462,6 +524,12 @@
         currentChat.done = done;
         currentChat.closing = false;
         chatEditMsgId = null;
+        chatSelMode = false;
+        chatSelIds.clear();
+        document.getElementById('chat-messages').classList.remove('chat-selecting');
+        document.getElementById('chat-input-area').classList.remove('chat-selecting');
+        closeSelDeleteDialog();
+        closeChatMoreMenu();
         closeChatMenu();
         closeDeleteDialog();
         closeEditDialog();
@@ -493,6 +561,8 @@
         const container = document.getElementById('chat-container');
         if (currentChat.closing || container.classList.contains('hidden')) return;
         currentChat.closing = true;
+        exitSelectMessages();
+        closeSelDeleteDialog();
         closeChatMoreMenu();
         closeChatMenu();
         closeDeleteDialog();
@@ -572,6 +642,10 @@
             const meta = mine ? 'text-white/60' : 'text-on-surface-variant';
             const edited = m.edited_at ? ' <span class="italic">(' + escapeHtml('diedit') + ')</span>' : '';
             const actionsOn = !currentChat.done;
+            const selBox = '<span class="chat-sel-box" data-sel-box="' + m.complaint_message_id + '" onclick="event.stopPropagation();toggleSelectMessage(' + m.complaint_message_id + ')" aria-hidden="true"><span class="material-symbols-outlined">check_box_outline_blank</span></span>';
+            const rowClass = 'flex items-center gap-2 ' + (mine ? (chatSelMode ? 'justify-between' : 'justify-end') : 'justify-start') + ' group chat-msg';
+            const selFirst = selBox;
+            const selLast = '';
 
             if (m.deleted) {
                 const delBubble = mine ? 'bg-secondary/20 border-white/25' : 'bg-transparent border-outline-variant';
@@ -583,14 +657,15 @@
                         '<button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ',true)" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>' +
                         '</span></span>';
                 }
-                return '<div class="flex ' + (mine ? 'justify-end' : 'justify-start') + ' group chat-msg" data-mid="' + m.complaint_message_id + '">' +
+                return '<div class="' + rowClass + '" data-mid="' + m.complaint_message_id + '">' +
+                    selFirst +
                     '<div class="max-w-[85%] md:max-w-[70%] rounded-xl px-4 py-2 border border-dashed ' + delBubble + '" data-bubble>' +
                     '<div class="flex items-center justify-between gap-2">' +
                     '<p class="font-body-sm text-body-sm italic ' + delText + '">' + escapeHtml('Pesan ini telah dihapus') + '</p>' +
                     delMenu +
                     '</div>' +
                     '<p class="text-[10px] mt-1 ' + time + '">' + formatTime(m.created_at) + '</p>' +
-                    '</div></div>';
+                    '</div>' + selLast + '</div>';
             }
 
             let menu = '';
@@ -602,7 +677,8 @@
                 menu = chatMenuMarkup(m.complaint_message_id, 'text-white/60 hover:text-white') + menuItems + '</span></span>';
             }
 
-            return '<div class="flex ' + (mine ? 'justify-end' : 'justify-start') + ' group chat-msg" data-mid="' + m.complaint_message_id + '">' +
+            return '<div class="' + rowClass + '" data-mid="' + m.complaint_message_id + '">' +
+                selFirst +
                 '<div class="max-w-[85%] md:max-w-[70%] rounded-xl px-4 py-3 ' + bubble + '" data-bubble>' +
                 '<div class="flex items-start justify-between gap-2 mb-1">' +
                 '<p class="text-xs ' + meta + ' uppercase tracking-wider">' + escapeHtml(sender) + '</p>' +
@@ -610,9 +686,9 @@
                 '</div>' +
                 '<p class="font-body-sm text-body-sm whitespace-pre-wrap break-words" data-pesan>' + escapeHtml(m.pesan) + '</p>' +
                 '<p class="text-[10px] mt-2 ' + time + '">' + formatTime(m.created_at) + edited + '</p>' +
-                '</div></div>';
+                '</div>' + selLast + '</div>';
         }).join('');
-
+        applySelectionUI();
         el.scrollTop = el.scrollHeight;
     }
 
@@ -690,14 +766,181 @@
         setTimeout(function () { toast.style.opacity = '0'; setTimeout(function () { toast.remove(); }, 350); }, 2200);
     }
 
+    let chatSelMode = false;
+    let chatSelIds = new Set();
+
     function openWallpaperPicker() {
         closeChatMoreMenu();
-        showChatToast('Fitur Ganti Wallpaper disiapkan.');
+        const input = document.getElementById('chat-wallpaper-input');
+        if (input) input.click();
     }
+
+    function applyWallpaper(url, persist) {
+        const layer = document.getElementById('chat-messages');
+        if (!layer) return;
+        layer.style.backgroundImage = url ? "url('" + url.replace(/'/g, "\\'") + "')" : '';
+        layer.style.backgroundSize = 'cover';
+        layer.style.backgroundPosition = 'center';
+        if (persist) {
+            try {
+                localStorage.setItem('raliva_chat_wallpaper', url || '');
+            } catch (_) {}
+        }
+    }
+
+    function resetWallpaper() {
+        applyWallpaper('', true);
+        showChatToast('Wallpaper direset ke default.');
+    }
+
+    function initWallpaper() {
+        let saved = '';
+        try { saved = localStorage.getItem('raliva_chat_wallpaper') || ''; } catch (_) {}
+        if (saved) applyWallpaper(saved, false);
+    }
+
+    document.addEventListener('change', function (ev) {
+        if (ev.target && ev.target.id !== 'chat-wallpaper-input') return;
+        const file = ev.target.files && ev.target.files[0];
+        ev.target.value = '';
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function () {
+            applyWallpaper(reader.result, true);
+            showChatToast('Wallpaper diperbarui.');
+        };
+        reader.readAsDataURL(file);
+    });
 
     function selectMessagesMode() {
         closeChatMoreMenu();
-        showChatToast('Select Messages disiapkan.');
+        closeChatMenu();
+        if (currentChat.done) {
+            showChatToast('Pesan komplain yang sudah selesai tidak dapat dipilih.');
+            return;
+        }
+        chatSelMode = true;
+        chatSelIds.clear();
+        document.getElementById('chat-messages').classList.add('chat-selecting');
+        const bar = document.getElementById('chat-select-bar');
+        const area = document.getElementById('chat-input-area');
+        area.classList.add('chat-selecting');
+        bar.classList.remove('animate-out');
+        bar.classList.add('animate-in');
+        renderMessages(chatMessages);
+        applySelectionUI();
+    }
+
+    function exitSelectMessages() {
+        if (!chatSelMode) return;
+        chatSelMode = false;
+        chatSelIds.clear();
+        const area = document.getElementById('chat-input-area');
+        const bar = document.getElementById('chat-select-bar');
+        bar.classList.remove('animate-in');
+        bar.classList.add('animate-out');
+        setTimeout(function () {
+            area.classList.remove('chat-selecting');
+            bar.classList.remove('animate-out');
+        }, 200);
+        document.getElementById('chat-messages').classList.remove('chat-selecting');
+        renderMessages(chatMessages);
+        applySelectionUI();
+    }
+
+    function toggleSelectMessage(id) {
+        if (!chatSelMode) return;
+        id = parseInt(id, 10);
+        if (chatSelIds.has(id)) chatSelIds.delete(id); else chatSelIds.add(id);
+        applySelectionUI();
+    }
+
+    function applySelectionUI() {
+        const el = document.getElementById('chat-messages');
+        const count = chatSelIds.size;
+        const countEl = document.getElementById('chat-sel-count');
+        if (countEl) countEl.textContent = count + ' selected';
+        if (!el) return;
+        Array.prototype.forEach.call(el.querySelectorAll('[data-mid]'), function (row) {
+            const id = parseInt(row.getAttribute('data-mid'), 10);
+            const selected = chatSelMode && chatSelIds.has(id);
+            row.classList.toggle('sel-selected', selected);
+            const box = row.querySelector('[data-sel-box]');
+            if (box) {
+                const icon = box.querySelector('.material-symbols-outlined');
+                if (icon) icon.textContent = selected ? 'check_box' : 'check_box_outline_blank';
+            }
+        });
+    }
+
+    function copySelectedMessages() {
+        if (chatSelIds.size === 0) { showChatToast('Pilih minimal satu pesan.'); return; }
+        const rows = chatMessages.filter(function (m) {
+            return chatSelIds.has(parseInt(m.complaint_message_id, 10)) && m.pesan;
+        });
+        const text = rows.map(function (m) {
+            const sender = (m.sender_id === myId) ? 'Anda' : (m.sender ? m.sender.nama_lengkap : 'Toko');
+            return '[' + sender + '] ' + formatTime(m.created_at) + '\n' + m.pesan;
+        }).join('\n\n');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () {
+                showChatToast('Pesan tersalin ke clipboard.');
+            });
+        } else {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); showChatToast('Pesan tersalin ke clipboard.'); } catch (_) {}
+            ta.remove();
+        }
+    }
+
+    function confirmDeleteSelected() {
+        if (chatSelIds.size === 0) { showChatToast('Pilih minimal satu pesan.'); return; }
+        const el = document.getElementById('chat-sel-delete-dialog');
+        document.getElementById('chat-sel-del-count').textContent = chatSelIds.size + ' pesan';
+        el.classList.remove('hidden');
+    }
+
+    function closeSelDeleteDialog() {
+        document.getElementById('chat-sel-delete-dialog').classList.add('hidden');
+    }
+
+    async function deleteSelectedMessages() {
+        const ids = Array.from(chatSelIds);
+        if (ids.length === 0) return;
+        const btn = document.querySelector('#chat-sel-delete-dialog [data-sel-del-ok]');
+        if (btn) btn.disabled = true;
+        let failed = 0;
+        for (const id of ids) {
+            try {
+                const url = '{{ route('customer.komplain.messages.destroy', [':cid:', ':mid:']) }}'.replace(':cid:', currentChat.id).replace(':mid:', id);
+                const resp = await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ per: 'me' })
+                });
+                if (!resp.ok) failed++;
+            } catch (_) { failed++; }
+        }
+        closeSelDeleteDialog();
+        if (btn) btn.disabled = false;
+        exitSelectMessages();
+        loadMessages();
+        if (failed === 0) showChatToast(ids.length + ' pesan dihapus untuk diri sendiri.');
+        else showChatToast(failed + ' pesan gagal dihapus.');
+    }
+
+    function downloadSelectedMessages() {
+        showChatToast('Download disiapkan.');
     }
 
     function openExportChat() {
@@ -893,6 +1136,13 @@
     document.addEventListener('click', function (ev) {
         if (ev.target.closest) {
             if (chatMoreOpen && !ev.target.closest('#chat-more-wrap')) closeChatMoreMenu();
+            if (chatSelMode) {
+                const row = ev.target.closest('.chat-msg');
+                if (row && !ev.target.closest('[data-sel-box]') && !ev.target.closest('button') && !ev.target.closest('.chat-menu') && !ev.target.closest('#chat-more-wrap')) {
+                    toggleSelectMessage(row.getAttribute('data-mid'));
+                    return;
+                }
+            }
             if (chatMenuId !== null) {
                 const inMenu = ev.target.closest('[data-menu="' + chatMenuId + '"]') ||
                     ev.target.closest('[data-menu-btn="' + chatMenuId + '"]') ||
@@ -919,6 +1169,8 @@
             if (preview) preview.textContent = this.value;
         });
     }
+
+    initWallpaper();
 
     async function sendMessage() {
         const composer = document.getElementById('chat-composer');
@@ -968,6 +1220,7 @@
 
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
+            if (chatSelMode) { exitSelectMessages(); return; }
             if (chatMoreOpen) { closeChatMoreMenu(); return; }
             const ep = document.getElementById('chat-edit-emoji-panel');
             if (ep && !ep.classList.contains('hidden')) { closeEditEmojiPanel(); return; }
