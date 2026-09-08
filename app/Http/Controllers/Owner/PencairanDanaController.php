@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Withdrawal;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PencairanDanaController extends Controller
 {
@@ -44,12 +45,15 @@ class PencairanDanaController extends Controller
             'catatan' => ['nullable', 'string', 'max:500'],
         ]);
         $wallet = $store->wallet;
-        if ((float) $wallet->saldo_tersedia < (float) $data['jumlah']) {
-            return back()->with('error', 'Saldo tidak cukup.');
+        $locked = (float) $wallet->withdrawals()
+            ->where('status', Withdrawal::STATUS_PENDING)
+            ->sum('jumlah');
+        $available = (float) $wallet->saldo_tersedia - $locked;
+        if ($available < (float) $data['jumlah']) {
+            return back()->with('error', 'Saldo tidak cukup (termasuk opsi pencairan yang sedang menunggu).');
         }
         $bank = $store->bankAccounts()->findOrFail($data['bank_account_id']);
-        \Illuminate\Support\Facades\DB::transaction(function () use ($wallet, $bank, $data, $store) {
-            $wallet->decrement('saldo_tersedia', $data['jumlah']);
+        DB::transaction(function () use ($wallet, $bank, $data, $store) {
             Withdrawal::create([
                 'store_id' => $store->store_id,
                 'wallet_id' => $wallet->wallet_id,
@@ -58,18 +62,9 @@ class PencairanDanaController extends Controller
                 'status' => Withdrawal::STATUS_PENDING,
                 'diajukan_pada' => now(),
             ]);
-            \App\Models\WalletTransaction::create([
-                'wallet_id' => $wallet->wallet_id,
-                'withdrawal_id' => null,
-                'jenis_transaksi' => \App\Models\WalletTransaction::JENIS_WITHDRAWAL,
-                'jumlah' => -$data['jumlah'],
-                'saldo_sebelum' => (float) $wallet->saldo_tersedia + (float) $data['jumlah'],
-                'saldo_sesudah' => (float) $wallet->saldo_tersedia,
-                'keterangan' => 'Pengajuan pencairan ke '.$bank->bank->nama_bank.' '.$bank->nomor_rekening,
-            ]);
         });
 
-        return back()->with('success', 'Pengajuan pencairan berhasil.');
+        return back()->with('success', 'Pengajuan pencairan berhasil. Dana terkunci saat disetujui oleh admin.');
     }
 }
 
