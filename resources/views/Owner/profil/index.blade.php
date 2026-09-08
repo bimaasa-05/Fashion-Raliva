@@ -6,6 +6,7 @@
 @section('header-subtitle', 'Kelola informasi akun Owner Anda.')
 
 @section('content')
+@include('partials.flash-toast')
 <div data-skeleton class="space-y-section-gap">
     <div class="h-48 bg-surface-container-high rounded-lg animate-pulse"></div>
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-section-gap">
@@ -67,6 +68,7 @@
                 <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Keamanan Akun</h2>
                 <form method="POST" action="{{ route('owner.profil.password') }}" class="space-y-5">
                     @csrf
+                    @method('PUT')
                     <div>
                         <label for="pw-lama" class="block raliva-label mb-2">Kata Sandi Saat Ini</label>
                         <input id="pw-lama" name="password_lama" type="password" required class="raliva-input" />
@@ -142,6 +144,7 @@
             </div>
             <form method="POST" action="{{ route('owner.profil.update') }}" enctype="multipart/form-data" class="p-6 space-y-5">
                 @csrf
+                @method('PUT')
                 <div class="flex justify-center">
                     <div class="relative">
                         <div class="w-20 h-20 rounded-full overflow-hidden border border-outline-variant">
@@ -180,6 +183,35 @@
                 <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
                     <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
                     <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-foto" data-modal class="fixed inset-0 z-[70] hidden">
+        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl">
+            <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Ganti Foto</h3>
+                <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form method="POST" action="{{ route('owner.profil.foto') }}" enctype="multipart/form-data" class="p-6 space-y-5">
+                @csrf
+                <div class="flex justify-center">
+                    <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant">
+                        <img id="mf-preview" alt="Foto Profil" class="w-full h-full object-cover" src="{{ $user->foto_profil_url ?? ($user->foto_profil ? asset('storage/'.$user->foto_profil) : 'https://ui-avatars.com/api/?name='.urlencode($user->nama_lengkap ?? 'Owner').'&background=FF4F87&color=fff&size=96') }}" />
+                    </div>
+                </div>
+                <div>
+                    <label for="mf-foto" class="block raliva-label mb-2">Pilih Foto Baru</label>
+                    <input id="mf-foto" name="foto_profil" type="file" accept="image/*" required class="w-full text-sm text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border file:border-muted-border file:bg-surface-container-low file:text-sm" onchange="if(this.files[0]){const r=new FileReader();r.onload=e=>document.getElementById('mf-preview').src=e.target.result;r.readAsDataURL(this.files[0]);}" />
+                    @error('foto_profil') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+                    <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                    <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Unggah Foto</button>
                 </div>
             </form>
         </div>
