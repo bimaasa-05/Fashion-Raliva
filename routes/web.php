@@ -146,6 +146,14 @@ Route::prefix('customer')->name('customer.')->group(function () {
 
         Route::get('/order-tracking', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'index'])->name('order-tracking');
 
+        Route::post('/order-tracking/{order}/confirm', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'confirm'])->name('order-tracking.confirm');
+
+        Route::get('/komplain', [\App\Http\Controllers\Customer\KomplainController::class, 'index'])->name('komplain');
+        Route::get('/komplain/create', [\App\Http\Controllers\Customer\KomplainController::class, 'create'])->name('komplain.create');
+        Route::post('/komplain', [\App\Http\Controllers\Customer\KomplainController::class, 'store'])->name('komplain.store');
+        Route::get('/komplain/{komplain}/messages', [\App\Http\Controllers\Customer\KomplainController::class, 'messages'])->name('komplain.messages');
+        Route::post('/komplain/{komplain}/messages', [\App\Http\Controllers\Customer\KomplainController::class, 'storeMessage'])->name('komplain.messages.store');
+
         Route::get('/account', function () {
             return view('customer.account.index');
         })->name('account');
@@ -394,6 +402,8 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/laporan/export', [OwnerLaporanController::class, 'export'])->name('laporan.export');
     Route::get('/gudang', [OwnerGudangController::class, 'index'])->name('gudang');
     Route::get('/komplain', [OwnerKomplainController::class, 'index'])->name('komplain');
+    Route::get('/komplain/{komplain}/messages', [OwnerKomplainController::class, 'messages'])->name('komplain.messages');
+    Route::post('/komplain/{komplain}/balas', [OwnerKomplainController::class, 'balas'])->name('komplain.balas');
     Route::get('/moderasi-produk', [OwnerModerasiProdukController::class, 'index'])->name('moderasi-produk');
     Route::post('/moderasi-produk/{product}/verifikasi', [OwnerModerasiProdukController::class, 'verifikasi'])->name('moderasi-produk.verifikasi');
     Route::get('/paket-slot', [OwnerPaketSlotController::class, 'index'])->name('paket-slot');
