@@ -7,7 +7,7 @@
 
 @section('content')
 @include('partials.flash-toast')
-<div class="space-y-section-gap max-w-4xl">
+<div class="space-y-section-gap">
     <section data-reveal class="relative bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium">
         <div class="relative h-28 md:h-32 bg-gradient-to-r from-gold-accent/25 via-gold-accent/10 to-transparent">
             <span class="material-symbols-outlined absolute right-8 -bottom-6 text-[110px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">storefront</span>
@@ -58,7 +58,7 @@
         </div>
     </section>
 
-    <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
+    <section data-reveal-group class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">storefront</span>
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Toko Ditugaskan</span>
@@ -92,7 +92,7 @@
                     \App\Models\Store::STATUS_DITOLAK => ['label' => 'Ditolak', 'class' => 'bg-error/10 text-error border-error/20'],
                 ];
             @endphp
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
                 @foreach ($assignedStores as $assignment)
                     @php
                         $store = $assignment->store;
