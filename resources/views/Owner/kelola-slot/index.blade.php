@@ -78,6 +78,7 @@
                     <select id="slot-metode" name="metode_pembayaran" required class="raliva-select">
                         <option value="" disabled selected>Pilih metode...</option>
                         @forelse ($metode ?? [] as $m)
+                            @php /** @var \App\Models\PaymentMethod $m */ @endphp
                             <option value="{{ $m->payment_method_id }}">{{ $m->nama_metode }}</option>
                         @empty
                             <option value="" disabled>Tidak ada metode tersedia</option>
