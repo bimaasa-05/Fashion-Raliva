@@ -3,8 +3,7 @@
 <html class="light" lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
-<title>RALIVA - {{ __('Notifications') }}</title>
-<meta name="csrf-token" content="{{ csrf_token() }}"/>
+<title>RALIVA - {{ __('New Complaint') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -63,7 +62,7 @@
                         "inverse-primary": "#c8c6c5",
                         "surface-container-low": "#f5f3f3",
                         "on-tertiary-fixed-variant": "#464745",
-                        "on-background": "#1b1c1c"
+                        "on-background": "#1b1c1b"
                     },
                     "borderRadius": {
                         "DEFAULT": "0.25rem",
@@ -151,7 +150,6 @@
     }
 </style>
 <style>
-    /* ============ FULL DARK MODE TOKEN REMAP ============ */
     html.theme-dark .bg-background, html.theme-dark .bg-surface, html.theme-dark .bg-surface-bright { background-color: #161514 !important; }
     html.theme-dark .bg-surface-container-lowest { background-color: #1e1d1c !important; }
     html.theme-dark .bg-surface-container-low { background-color: #201f1e !important; }
@@ -175,7 +173,6 @@
     html.theme-dark .text-outline-variant { color: #6f6d68 !important; }
     html.theme-dark .text-error { color: #ffb4ab !important; }
     html.theme-dark .text-secondary { color: #8B1E3F !important; }
-    html.theme-dark .text-secondary-fixed-dim { color: #8B1E3F !important; }
     html.theme-dark .placeholder-on-surface-variant::placeholder { color: #b9b6b1 !important; }
     html.theme-dark .border-outline-variant { border-color: #3a3937 !important; }
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
@@ -204,7 +201,6 @@
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
   </style>
 <style>
-    /* ===== Premium cards + burgundy accents (parity with account/address) ===== */
     .card-premium { box-shadow:0 1px 2px rgb(17 17 17 / .04),0 12px 32px -16px rgb(17 17 17 / .16); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; }
     .card-premium:hover {  box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
     html.theme-dark .card-premium { background-color:var(--surface-ivory); border-color:var(--border-soft); box-shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px -12px rgb(0 0 0 / .5); }
@@ -217,7 +213,6 @@
     .reveal-up { opacity:0; transform:translateY(12px); transition:opacity .5s ease,transform .5s ease; }
     .reveal-up.is-visible { opacity:1; transform:none; }
     @media (prefers-reduced-motion: reduce) { .reveal-up { opacity:1; transform:none; transition:none; } }
-    /* ===== Primary solid button (burgundy + shimmer flash) ===== */
     .btn-gold { position: relative; overflow: hidden; background-color: var(--btn-gold-bg) !important; color: var(--btn-gold-text) !important; }
     .btn-gold::after { content:''; position:absolute; top:-10%; bottom:-10%; left:-80%; width:45%; background: rgba(255,255,255,.55); transform:skewX(-24deg); pointer-events:none; }
     .btn-gold:hover::after { animation: authFlash 1.4s linear infinite; }
@@ -225,121 +220,96 @@
     @keyframes authFlash { from { left:-80%; } to { left:135%; } }
     :root           { --btn-gold-bg:#8B1E3F; --btn-gold-text:#ffffff; }
     html.theme-dark { --btn-gold-bg:#6D1428; --btn-gold-text:#ffffff; }
-    /* ===== Drawer burgundy parity ===== */
     #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(139,30,63,.10); }
     html.theme-dark #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(163,38,63,.16); }
-    /* ===== Notification card (parity with review cards) ===== */
-    .notification-item { transition:background-color .2s ease,border-color .2s ease; }
-    .notification-item:hover { background-color: var(--chrome-hover); }
-    .unread-dot { background:#8B1E3F; }
-    html.theme-dark .unread-dot { background:#8B1E3F; }
   </style>
   </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[120px] lg:pl-72">
 <!-- TopAppBar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-<a href="{{ route('customer.account') }}" aria-label="{{ __('Go back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+<a href="{{ route('customer.komplain') }}" aria-label="{{ __('Go back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('NOTIFICATIONS') }}</h1>
-<div class="w-10"></div> <!-- Spacer for centering -->
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('NEW COMPLAINT') }}</h1>
+<div class="w-10"></div>
 </header>
 <!-- Main Content -->
 <main class="pt-16 pb-[120px] w-full">
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
-<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('NOTIFICATIONS') }}</p>
-<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('Notifications') }}</h2>
-
-<!-- Mark All As Read Bar -->
-<div class="flex justify-end items-center border-b border-outline-variant">
-<button class="font-label-caps text-label-caps text-secondary uppercase tracking-widest hover:opacity-80 transition-opacity px-sm py-sm" onclick="markAllRead()" type="button">{{ __('Mark all as read') }}</button>
-</div>
-
-<!-- Notification List -->
-<section class="pt-lg mt-lg">
-@forelse ($notifications as $n)
-@php
-$icons = [
-    \App\Models\Notification::TIPE_ORDER => 'local_mall',
-    \App\Models\Notification::TIPE_PEMBAYARAN => 'payments',
-    \App\Models\Notification::TIPE_PENGIRIMAN => 'local_shipping',
-    \App\Models\Notification::TIPE_KOMPLAIN => 'support_agent',
-    \App\Models\Notification::TIPE_ULASAN => 'reviews',
-    \App\Models\Notification::TIPE_WALLET => 'account_balance_wallet',
-    \App\Models\Notification::TIPE_PROMO => 'sell',
-    \App\Models\Notification::TIPE_SISTEM => 'info',
-];
-$notifHref = route('customer.order-tracking');
-if ($n->tipe === \App\Models\Notification::TIPE_KOMPLAIN) {
-    preg_match('/#(\d+)/', (string) $n->pesan, $m);
-    $notifHref = isset($m[1]) ? route('customer.komplain', ['open' => (int) $m[1]]) : route('customer.komplain');
-}
-$isUnread = $n->dibaca_pada === null;
-@endphp
-<article class="notification-item flex gap-sm md:gap-md px-container-margin py-md border-b border-outline-variant cursor-pointer {{ $isUnread ? '' : 'opacity-70' }}" onclick="handleNotif(this, {{ $n->notification_id }}, '{{ $notifHref }}')">
-<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-[20px] text-on-surface-variant">{{ $icons[$n->tipe] ?? 'info' }}</span>
-</div>
-<div class="flex-grow min-w-0">
-<div class="flex justify-between items-start gap-sm">
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">{{ $n->judul }}</h3>
-<span class="font-label-sm text-[10px] text-on-surface-variant whitespace-nowrap mt-1">{{ $n->created_at->diffForHumans() }}</span>
-</div>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ $n->pesan }}</p>
-</div>
-@if ($isUnread)
-<span class="unread-dot w-2 h-2 rounded-full shrink-0 self-center"></span>
-@endif
-</article>
-@empty
-<div class="text-center py-xl">
-<span class="material-symbols-outlined text-[40px] text-outline-variant block mx-auto mb-sm">notifications_off</span>
-<p class="font-body-sm text-body-sm text-on-surface font-semibold">{{ __('Tidak ada notifikasi') }}</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Notifikasi tentang pesanan dan promo Anda akan muncul di sini.') }}</p>
-</div>
-@endforelse
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('COMPLAINTS') }}</p>
+<form id="komplain-form" method="POST" action="{{ route('customer.komplain.store') }}">
+@csrf
+<!-- Pesanan -->
+<section class="pt-lg mt-lg border-t border-outline-variant">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Pesanan Terkait') }}</h3>
+<select name="order_id" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors {{ $errors->has('order_id') ? 'border-error' : '' }}">
+<option value="" {{ old('order_id', $order?->order_id ?? '') === '' ? 'selected' : '' }}>{{ __('Pilih pesanan yang bermasalah') }}</option>
+@foreach ($eligibleOrders as $o)
+<option value="{{ $o->order_id }}" {{ old('order_id', $order?->order_id ?? '') == $o->order_id ? 'selected' : '' }}>
+#{{ $o->nomor_order }} — {{ $o->store?->nama_toko }}
+</option>
+@endforeach
+</select>
+@error('order_id')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
 </section>
-
+<!-- Kategori -->
+<section class="pt-lg mt-lg border-t border-outline-variant">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Kategori Komplain') }}</h3>
+<select name="kategori" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors {{ $errors->has('kategori') ? 'border-error' : '' }}">
+<option value="produk" {{ old('kategori') === 'produk' ? 'selected' : '' }}>{{ __('Produk (kualitas / tidak sesuai)') }}</option>
+<option value="pengiriman" {{ old('kategori') === 'pengiriman' ? 'selected' : '' }}>{{ __('Pengiriman (lambat / rusak kirim)') }}</option>
+<option value="pelayanan" {{ old('kategori') === 'pelayanan' ? 'selected' : '' }}>{{ __('Pelayanan Toko') }}</option>
+<option value="lainnya" {{ old('kategori') === 'lainnya' ? 'selected' : '' }}>{{ __('Lainnya') }}</option>
+</select>
+@error('kategori')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
+</section>
+<!-- Subjek -->
+<section class="pt-lg mt-lg border-t border-outline-variant">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Judul / Subjek') }}</h3>
+<input name="subjek" type="text" value="{{ old('subjek') }}" placeholder="{{ __('Ringkasan masalah, mis. Produk datang cacat') }}" maxlength="150" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors {{ $errors->has('subjek') ? 'border-error' : '' }}"/>
+@error('subjek')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
+</section>
+<!-- Deskripsi -->
+<section class="pt-lg mt-lg border-t border-outline-variant">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Deskripsi Masalah') }}</h3>
+<textarea name="deskripsi" rows="5" placeholder="{{ __('Jelaskan masalah Anda secara detail. Semakin rinci semakin mudah ditangani.') }}" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors resize-none {{ $errors->has('deskripsi') ? 'border-error' : '' }}">{{ old('deskripsi') }}</textarea>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Minimum 20 karakter.') }}</p>
+@error('deskripsi')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
+</section>
+</form>
 </div>
 </div>
 </section>
 <div class="md:hidden h-24"></div>
 </main>
+<!-- Fixed Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 right-0 lg:left-72 z-50 px-container-margin pb-safe">
+<div class="flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.18)]">
+<button type="submit" form="komplain-form" class="btn-gold flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+<span class="material-symbols-outlined text-[20px]">send</span>
+<span class="truncate">{{ __('Kirim Komplain') }}</span>
+</button>
+</div>
+</div>
 <script>
-        var csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-        function postForm(url) {
-            return fetch(url, {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
-                credentials: 'same-origin'
-            });
-        }
-        function markRead(el, id) {
-            var dot = el.querySelector('.unread-dot');
-            if (!dot) return;
-            dot.remove();
-            el.classList.add('opacity-70');
-            postForm('{{ route('customer.notifications.read', ['notification' => '__ID__']) }}'.replace('__ID__', id));
-        }
-        function handleNotif(el, id, href) {
-            markRead(el, id);
-            window.location.href = href;
-        }
-        function markAllRead() {
-            document.querySelectorAll('.unread-dot').forEach(function (dot) { dot.remove(); });
-            document.querySelectorAll('.notification-item').forEach(function (el) { el.classList.add('opacity-70'); });
-            postForm('{{ route('customer.notifications.mark-all-read') }}');
-        }
-        document.addEventListener('DOMContentLoaded', function () {
-            var els = document.querySelectorAll('.reveal-up');
-            if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('is-visible'); }); return; }
-            var io = new IntersectionObserver(function (entries) {
-                entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); } });
-            }, { threshold: 0.1 });
-            els.forEach(function (e) { io.observe(e); });
-        });
-    </script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var els = document.querySelectorAll('.reveal-up');
+        if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('is-visible'); }); return; }
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); } });
+        }, { threshold: 0.1 });
+        els.forEach(function (e) { io.observe(e); });
+    });
+</script>
 @include('customer._partials.drawer')
 </body></html>

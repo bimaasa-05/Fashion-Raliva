@@ -219,6 +219,24 @@ class CheckoutController extends Controller
             'pesan' => sprintf('Pesanan %s berhasil dibuat. Silakan selesaikan pembayaran.', $orders[0]->nomor_order),
         ]);
 
+        $seenOwners = [];
+        foreach ($orders as $order) {
+            $ownerId = $order->store?->owner_id;
+            if ($ownerId && ! in_array($ownerId, $seenOwners, true)) {
+                $seenOwners[] = $ownerId;
+                Notification::create([
+                    'user_id' => $ownerId,
+                    'tipe' => Notification::TIPE_ORDER,
+                    'judul' => 'Pesanan Baru',
+                    'pesan' => sprintf(
+                        'Pesanan %s masuk untuk toko Anda. Total belanja Rp %s.',
+                        $order->nomor_order,
+                        number_format((float) $order->grand_total, 0, ',', '.')
+                    ),
+                ]);
+            }
+        }
+
         return redirect()->route('customer.checkout.payment', $checkout->checkout_id)
             ->with('toast', ['message' => 'Pesanan berhasil dibuat. Silakan selesaikan pembayaran.', 'icon' => 'task_alt']);
     }

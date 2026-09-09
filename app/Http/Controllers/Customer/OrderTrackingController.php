@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Order;
+use App\Support\WalletService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderTrackingController extends Controller
 {
@@ -64,5 +67,36 @@ class OrderTrackingController extends Controller
             'selected' => $selected,
             'selectedStep' => self::STATUS_STEPS[$selected->status] ?? 1,
         ]);
+    }
+
+    /**
+     * Konfirmasi customer bahwa pesanan sudah diterima.
+     * Mengubah status menjadi selesai + mengkredit dana penjualan ke wallet owner.
+     */
+    public function confirm(Request $request, int $order)
+    {
+        $order = Auth::user()->orders()->with('store')->findOrFail($order);
+
+        if ($order->status !== Order::STATUS_DIKIRIM) {
+            return redirect()->route('customer.order-tracking', ['order' => $order->order_id])
+                ->with('toast', ['message' => 'Pesanan tidak dapat dikonfirmasi pada status ini.', 'icon' => 'info']);
+        }
+
+        DB::transaction(function () use ($order) {
+            $order->update(['status' => Order::STATUS_SELESAI]);
+            WalletService::creditOrder($order);
+
+            if ($order->store && $order->store->owner_id) {
+                Notification::create([
+                    'user_id' => $order->store->owner_id,
+                    'tipe' => Notification::TIPE_ORDER,
+                    'judul' => 'Pesanan Selesai',
+                    'pesan' => sprintf('Pesanan %s telah dikonfirmasi diterima oleh customer.', $order->nomor_order),
+                ]);
+            }
+        });
+
+        return redirect()->route('customer.order-tracking', ['order' => $order->order_id])
+            ->with('toast', ['message' => 'Pesanan dikonfirmasi diterima. Terima kasih!', 'icon' => 'task_alt']);
     }
 }

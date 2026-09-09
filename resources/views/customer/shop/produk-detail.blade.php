@@ -386,7 +386,7 @@
 <style>
     /* ===== Premium cards + burgundy accents (parity with account/address) ===== */
     .card-premium { box-shadow:0 1px 2px rgb(17 17 17 / .04),0 12px 32px -16px rgb(17 17 17 / .16); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; }
-    .card-premium:hover { transform:translateY(-3px); box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
+    .card-premium:hover {  box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
     html.theme-dark .card-premium { background-color:var(--surface-ivory); border-color:var(--border-soft); box-shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px -12px rgb(0 0 0 / .5); }
     html.theme-dark .card-premium:hover { box-shadow:0 2px 4px rgb(0 0 0 / .4),0 20px 48px -20px rgb(0 0 0 / .7); border-color:rgba(139,30,63,.55); }
     .premium-heading { display:block; }
@@ -595,7 +595,7 @@
                         <!-- Related -->
                         <a href="{{ route('customer.shop.produk-detail', $rp->product_id) }}" class="block group cursor-pointer">
                             <div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant overflow-hidden">
-                                <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" alt="{{ $rp->nama_produk }}" src="{{ $rpImage ? (filter_var($rpImage, FILTER_VALIDATE_URL) ? $rpImage : asset($rpImage)) : 'https://picsum.photos/seed/related/900/1200' }}"/>
+                                <img class="w-full h-full object-cover " alt="{{ $rp->nama_produk }}" src="{{ $rpImage ? (filter_var($rpImage, FILTER_VALIDATE_URL) ? $rpImage : asset($rpImage)) : 'https://picsum.photos/seed/related/900/1200' }}"/>
 @php $rpWl = in_array($rp->product_id, $wishlistedIds, true); @endphp
 <button type="button" data-wishlist-toggle data-product-id="{{ $rp->product_id }}" aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center{{ $rpWl ? ' wishlisted-active' : '' }}">
 <span class="material-symbols-outlined" data-icon="favorite{{ $rpWl ? '' : '_border' }}"@if($rpWl) data-weight="fill"@endif>favorite{{ $rpWl ? '' : '_border' }}</span>

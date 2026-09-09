@@ -38,7 +38,7 @@ class DataTokoController extends Controller
             'deskripsi' => ['nullable', 'string', 'max:1000'],
             'alamat' => ['required', 'string', 'max:500'],
             'nomor_telepon' => ['required', 'string', 'max:20'],
-            'email' => ['required', 'email', 'max:150'],
+            'email' => ['required', 'email', 'max:150', \Illuminate\Validation\Rule::unique('users', 'email')->ignore($request->user()->user_id ?? 0, 'user_id')],
         ]);
 
         $store->update([

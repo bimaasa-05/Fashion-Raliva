@@ -3,7 +3,7 @@
 @section('title', 'Komplain')
 
 @section('header-title', 'Komplain')
-@section('header-badge', '3 Terbuka')
+@section('header-badge', $terbuka.' Terbuka')
 @section('header-subtitle', 'Pantau dan bantu tangani komplain customer toko Anda.')
 
 @section('content')
@@ -64,10 +64,11 @@
     <section data-table-scope>
         <div data-reveal class="flex items-center justify-between gap-4 mb-6">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Daftar Komplain</h2>
-            <select data-table-filter="status-komplain" class="raliva-select">
+            <select data-table-filter="status" class="raliva-select">
                 <option value="">Semua Status</option>
-                <option value="baru">Komplain Baru</option>
-                <option value="proses">Dalam Penanganan</option>
+                <option value="open">Komplain Baru</option>
+                <option value="diproses">Dalam Penanganan</option>
+                <option value="escalated">Eskalasi</option>
                 <option value="selesai">Selesai</option>
             </select>
         </div>
@@ -76,12 +77,20 @@
             @forelse ($complaints as $c)
                 @php
                     $key = $c->status;
-                    $prio = $key === 'baru' ? 'Tinggi' : ($key === 'proses' ? 'Sedang' : 'Rendah');
+                    $statusLabel = match ($key) {
+                        'open' => 'Baru',
+                        'diproses' => 'Dalam Penanganan',
+                        'selesai' => 'Selesai',
+                        'escalated' => 'Eskalasi',
+                        'ditutup' => 'Ditutup',
+                        default => ucfirst($key),
+                    };
+                    $prio = $key === 'open' ? 'Tinggi' : ($key === 'diproses' ? 'Sedang' : 'Rendah');
                     $prioClass = $prio === 'Tinggi'
                         ? 'bg-error/10 text-error border-error/20'
                         : ($prio === 'Sedang' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-surface-container-high text-on-surface-variant border-outline-variant');
                 @endphp
-                <article data-reveal data-komplain-row data-status="{{ $key }}" class="bg-surface-container-lowest border {{ $key === 'baru' ? 'border-error/25' : 'border-muted-border' }} rounded-lg p-5 md:p-6 card-premium">
+                <article data-reveal data-komplain-row data-status="{{ $key }}" class="bg-surface-container-lowest border {{ $key === 'open' ? 'border-error/25' : 'border-muted-border' }} rounded-lg p-5 md:p-6 card-premium">
                     <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
                         <div class="flex items-start gap-4 min-w-0">
                             <div class="w-11 h-11 rounded-xl {{ $key === 'selesai' ? 'bg-secondary-container/20 text-secondary' : 'bg-error/10 text-error' }} border {{ $key === 'selesai' ? 'border-secondary/20' : 'border-error/25' }} flex items-center justify-center shrink-0">
@@ -100,7 +109,7 @@
                             <span class="inline-flex items-center px-2 py-1 rounded-full {{ $prioClass }} text-[9px] font-bold uppercase border">Prioritas {{ $prio }}</span>
                             @if ($key === 'selesai')
                                 <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[9px] font-bold uppercase border border-secondary/20">Selesai</span>
-                            @elseif ($key === 'proses')
+                            @elseif ($key === 'diproses')
                                 <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">Ditangani</span>
                             @else
                                 <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20 animate-pulse">Baru</span>
@@ -109,6 +118,7 @@
                     </div>
                     <div class="flex flex-wrap gap-gutter mt-5 pt-4 border-t border-muted-border">
                         <button type="button" data-modal-open="modal-komplain-{{ $c->complaint_id }}" class="py-2 px-4 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium">Lihat Detail</button>
+                        <a href="{{ route('owner.komplain.messages', $c->complaint_id) }}" class="py-2 px-4 border border-muted-border text-on-surface rounded-lg text-xs font-semibold hover:border-gold-accent transition-colors">Buka Thread</a>
                     </div>
                 </article>
             @empty
@@ -146,7 +156,7 @@
                 </div>
                 <div class="bg-surface-container-low rounded-lg p-3">
                     <p class="text-[10px] uppercase text-on-surface-variant">Status</p>
-                    <p class="font-bold text-on-surface capitalize">{{ $c->status }}</p>
+                    <p class="font-bold text-on-surface">{{ $statusLabel }}</p>
                 </div>
             </div>
             <div class="bg-surface-container-low border border-muted-border rounded-lg p-4">

@@ -7,6 +7,7 @@ use App\Models\Notification;
 use App\Models\Order;
 use App\Models\Shipment;
 use App\Support\ActivityLogger;
+use App\Support\WalletService;
 use Illuminate\Http\Request;
 
 class PengirimanController extends Controller
@@ -57,7 +58,8 @@ class PengirimanController extends Controller
         $pengiriman->update($updateData);
 
         if ($newStatus === 'diterima' && $pengiriman->order) {
-            $pengiriman->order->update(['status' => Order::STATUS_DITERIMA]);
+            $pengiriman->order->update(['status' => Order::STATUS_SELESAI]);
+            WalletService::creditOrder($pengiriman->order);
         }
 
         if ($pengiriman->order?->checkout?->user_id) {

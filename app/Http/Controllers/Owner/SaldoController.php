@@ -79,7 +79,6 @@ class SaldoController extends Controller
         $pemasukan = $monthTx->whereIn('jenis_transaksi', [
             WalletTransaction::JENIS_PENJUALAN_MASUK,
             WalletTransaction::JENIS_KOMISI_MASUK,
-            WalletTransaction::JENIS_PEMASUKAN,
         ])->sum('jumlah');
 
         $pengeluaran = $monthTx->whereNotIn('jenis_transaksi', [
@@ -209,17 +208,18 @@ class SaldoController extends Controller
             return back()->with('error', 'Dompet toko tidak ditemukan.');
         }
 
-        if ((float) $wallet->saldo_tersedia < (float) $request->jumlah) {
-            return back()->with('error', 'Saldo tersedia tidak mencukupi untuk pencairan ini.');
+        $locked = (float) $wallet->withdrawals()
+            ->where('status', Withdrawal::STATUS_PENDING)
+            ->sum('jumlah');
+        $available = (float) $wallet->saldo_tersedia - $locked;
+        if ($available < (float) $request->jumlah) {
+            return back()->with('error', 'Saldo tersedia tidak mencukupi (termasuk opsi pencairan yang sedang menunggu).');
         }
 
         $bankAccount = $store->bankAccounts()->findOrFail($request->bank_account_id);
 
         DB::transaction(function () use ($wallet, $store, $bankAccount, $request) {
-            $saldoSebelum = (float) $wallet->saldo_tersedia;
-            $wallet->decrement('saldo_tersedia', $request->jumlah);
-
-            $withdrawal = Withdrawal::create([
+            Withdrawal::create([
                 'store_id' => $store->store_id,
                 'wallet_id' => $wallet->wallet_id,
                 'bank_account_id' => $bankAccount->bank_account_id,
@@ -227,18 +227,8 @@ class SaldoController extends Controller
                 'status' => Withdrawal::STATUS_PENDING,
                 'diajukan_pada' => now(),
             ]);
-
-            WalletTransaction::create([
-                'wallet_id' => $wallet->wallet_id,
-                'withdrawal_id' => $withdrawal->withdrawal_id,
-                'jenis_transaksi' => WalletTransaction::JENIS_WITHDRAWAL,
-                'jumlah' => -$request->jumlah,
-                'saldo_sebelum' => $saldoSebelum,
-                'saldo_sesudah' => $saldoSebelum - (float) $request->jumlah,
-                'keterangan' => 'Pencairan dana ke ' . ($bankAccount->bank->nama_bank ?? 'Bank') . ' ' . $bankAccount->nomor_rekening,
-            ]);
         });
 
-        return redirect()->route('owner.keuangan')->with('success', 'Permintaan pencairan berhasil diajukan.');
+        return redirect()->route('owner.keuangan')->with('success', 'Permintaan pencairan berhasil diajukan. Dana terkunci saat disetujui oleh admin.');
     }
 }
