@@ -454,10 +454,10 @@
     </div>
     <div id="chat-sel-delete-dialog" class="hidden fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeSelDeleteDialog();}">
         <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-outline-variant shadow-2xl" onclick="event.stopPropagation()">
-            <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">Hapus <span id="chat-sel-del-count" class="text-error">-</span>?</p>
+            <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">Hapus <span id="chat-sel-del-count" class="text-on-surface">-</span>?</p>
             <p class="font-body-sm text-body-sm text-on-surface-variant px-4 pb-2">{{ __('Pesan hanya dihapus dari akun Anda.') }}</p>
             <button type="button" data-sel-del-ok onclick="deleteSelectedMessages()" class="w-full text-left px-4 py-3 mt-1 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
-                <span class="font-body-sm text-body-sm text-error">{{ __('Hapus untuk diri sendiri') }}</span>
+                <span class="font-body-sm text-body-sm text-on-surface">{{ __('Hapus untuk diri sendiri') }}</span>
             </button>
             <button type="button" onclick="closeSelDeleteDialog()" class="w-full text-left px-4 py-3 mt-1 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
                 <span class="font-body-sm text-body-sm text-secondary">{{ __('Batal') }}</span>
