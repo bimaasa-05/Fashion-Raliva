@@ -472,7 +472,7 @@
                 </button>
                 <h3 class="font-title-md text-title-md text-on-surface">{{ __('Edit pesan') }}</h3>
             </div>
-            <div class="raliva-doodle flex-1 min-h-[150px] sm:min-h-[220px] flex items-center justify-end px-6 py-8">
+            <div id="chat-edit-wallpaper" class="raliva-doodle flex-1 min-h-[150px] sm:min-h-[220px] flex items-center justify-end px-6 py-8">
                 <div class="max-w-[90%] rounded-xl px-4 py-2.5 bg-secondary text-white">
                     <p class="text-xs mb-1 text-white/60 uppercase tracking-wider">{{ __('Anda') }}</p>
                     <p id="chat-edit-preview" class="font-body-sm text-body-sm whitespace-pre-wrap break-words">-</p>
@@ -786,10 +786,19 @@
 
     function applyWallpaper(url, persist) {
         const layer = document.getElementById('chat-messages');
-        if (!layer) return;
-        layer.style.backgroundImage = url ? "url('" + url.replace(/'/g, "\\'") + "')" : '';
-        layer.style.backgroundSize = 'cover';
-        layer.style.backgroundPosition = 'center';
+        const editLayer = document.getElementById('chat-edit-wallpaper');
+        [layer, editLayer].forEach(function (el) {
+            if (!el) return;
+            if (url) {
+                el.style.backgroundImage = "url('" + url.replace(/'/g, "\\'") + "')";
+                el.style.backgroundSize = 'cover';
+                el.style.backgroundPosition = 'center';
+            } else {
+                el.style.backgroundImage = '';
+                el.style.backgroundSize = '';
+                el.style.backgroundPosition = '';
+            }
+        });
         if (persist) {
             try {
                 localStorage.setItem('raliva_chat_wallpaper', url || '');
