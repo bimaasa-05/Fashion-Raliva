@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Gudang;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\User;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
@@ -81,6 +82,8 @@ class ProfilController extends Controller
             sprintf('Memperbarui profil "%s".', $data['nama_lengkap'])
         );
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Profil Diperbarui', 'Profil Anda berhasil diperbarui.', route('gudang.profil'));
+
         return back()->with('toast', [
             'message' => 'Profil berhasil diperbarui.',
             'icon' => 'task_alt',
@@ -120,6 +123,8 @@ class ProfilController extends Controller
             null,
             sprintf('"%s" mengubah password.', $user->nama_lengkap)
         );
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Kata Sandi Diperbarui', 'Kata sandi akun Anda berhasil diperbarui.', route('gudang.profil'));
 
         return back()->with('toast', [
             'message' => 'Password berhasil diubah.',

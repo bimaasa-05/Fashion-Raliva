@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Order;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
@@ -65,6 +66,18 @@ class PesananController extends Controller
         }
 
         $order->update(['status' => Order::STATUS_DIPROSES]);
+
+        if ($order->checkout?->user_id) {
+            Notification::create([
+                'user_id' => $order->checkout->user_id,
+                'aktor_id' => auth()->id(),
+                'tipe' => Notification::TIPE_ORDER,
+                'judul' => 'Pesanan Diteruskan',
+                'pesan' => sprintf('Pesanan %s kini diproses oleh toko.', $order->nomor_order),
+                'url' => route('customer.order-tracking'),
+            ]);
+        }
+        Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Diteruskan', sprintf('Pesanan %s diteruskan ke Admin Produksi.', $order->nomor_order), route('owner.pesanan'));
 
         return back()->with('success', 'Pesanan ' . $order->nomor_order . ' diteruskan ke Admin Produksi.');
     }

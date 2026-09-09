@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Store;
 use App\Models\StoreStaff;
 use App\Models\User;
@@ -90,6 +91,19 @@ class StoreStaffController extends Controller
             sprintf('Menugaskan "%s" ke toko "%s".', $user?->nama_lengkap ?? '-', $store?->nama_toko ?? '-')
         );
 
+        if ($user && $user->user_id !== auth()->id()) {
+            Notification::create([
+                'user_id' => $user->user_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Ditugaskan ke Toko',
+                'pesan' => sprintf('Anda ditugaskan sebagai staff di toko "%s".', $store?->nama_toko ?? '-'),
+                'url' => $this->staffRoute((int) ($user->role_id ?? 0)),
+            ]);
+        }
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Staff Ditugaskan', sprintf('"%s" ditugaskan ke toko "%s".', $user?->nama_lengkap ?? '-', $store?->nama_toko ?? '-'), route('superadmin.store-staff'));
+
         return back()->with('toast', [
             'message' => 'Staff berhasil ditugaskan ke toko.',
             'icon' => 'task_alt',
@@ -139,6 +153,19 @@ class StoreStaffController extends Controller
             sprintf('Mengubah status staff "%s" di toko "%s" menjadi "%s".', $staff->user->nama_lengkap ?? '-', $staff->store->nama_toko ?? '-', $validated['status'])
         );
 
+        if ($staff->user_id !== auth()->id()) {
+            Notification::create([
+                'user_id' => $staff->user_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Status Penugasan Diubah',
+                'pesan' => sprintf('Status keanggotaan Anda di toko "%s" menjadi "%s".', $staff->store->nama_toko ?? '-', $validated['status']),
+                'url' => $this->staffRoute((int) ($staff->user?->role_id ?? 0)),
+            ]);
+        }
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Status Staff Diubah', sprintf('Status "%s" di toko "%s" menjadi "%s".', $staff->user->nama_lengkap ?? '-', $staff->store->nama_toko ?? '-', $validated['status']), route('superadmin.store-staff'));
+
         return back()->with('toast', [
             'message' => 'Status staff berhasil diperbarui.',
             'icon' => 'task_alt',
@@ -160,9 +187,32 @@ class StoreStaffController extends Controller
             sprintf('Menonaktifkan staff "%s" dari toko "%s".', $staff->user->nama_lengkap ?? '-', $staff->store->nama_toko ?? '-')
         );
 
+        if ($staff->user_id !== auth()->id()) {
+            Notification::create([
+                'user_id' => $staff->user_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Penugasan Dinonaktifkan',
+                'pesan' => sprintf('Penugasan Anda di toko "%s" dinonaktifkan.', $staff->store->nama_toko ?? '-'),
+                'url' => $this->staffRoute((int) ($staff->user?->role_id ?? 0)),
+            ]);
+        }
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Staff Dinonaktifkan', sprintf('Penugasan "%s" di toko "%s" dinonaktifkan.', $staff->user->nama_lengkap ?? '-', $staff->store->nama_toko ?? '-'), route('superadmin.store-staff'));
+
         return back()->with('toast', [
             'message' => 'Staff berhasil dinonaktifkan.',
             'icon' => 'task_alt',
         ]);
+    }
+
+    private function staffRoute(int $roleId): string
+    {
+        return match ($roleId) {
+            3 => route('admin.dashboard'),
+            5 => route('gudang.dashboard'),
+            4 => route('produksi.dashboard'),
+            default => route('admin.dashboard'),
+        };
     }
 }

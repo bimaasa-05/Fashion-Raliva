@@ -68,18 +68,6 @@
         });
     });
 
-    document.querySelectorAll('[data-notification-toggle]').forEach((btn) => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const menu = btn.parentElement.querySelector('[data-notification-menu]');
-            allNotificationMenus.forEach((m) => {
-                if (m !== menu) m.classList.add('hidden');
-            });
-            allProfileMenus.forEach((m) => m.classList.add('hidden'));
-            menu?.classList.toggle('hidden');
-        });
-    });
-
     document.addEventListener('click', (e) => {
         document.querySelectorAll('[data-notification-container]').forEach((container) => {
             if (!container.contains(e.target)) {
@@ -218,4 +206,70 @@
         card.addEventListener('mouseleave', hideMenuTip);
     });
     sidebar?.querySelector('.sidebar-scroll')?.addEventListener('scroll', hideMenuTip, { passive: true });
+
+    /* ===== Notifikasi realtime (polling) — semua role ===== */
+    (function () {
+        const CSRF = () => (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
+        const who = () => document.querySelector('meta[name="user-id"]')?.getAttribute('content') || '';
+        const sinceKey = 'ralivaNotifSince';
+
+        const refreshBadge = () => {
+            fetch('/notifikasi/get', { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
+                .then((r) => r.json())
+                .then((data) => {
+                    const count = Number(data.unread_count || 0);
+                    const label = count > 99 ? '99+' : String(count);
+                    const badges = document.querySelectorAll('[data-notif-badge]');
+                    badges.forEach((b) => {
+                        b.textContent = label;
+                        const show = count > 0;
+                        b.classList.toggle('hidden', !show);
+                        b.classList.toggle('flex', show);
+                    });
+                })
+                .catch(() => {});
+        };
+
+        window.updateNotifBadge = refreshBadge;
+        refreshBadge();
+        setInterval(refreshBadge, 30000);
+
+        let recovery = false;
+        const pollAktivitas = () => {
+            const id = who();
+            if (!id) return;
+            const key = sinceKey + '_' + id;
+            let since = sessionStorage.getItem(key);
+            const params = since ? '?since=' + encodeURIComponent(since) : '';
+            fetch('/notifikasi/aktivitas-baru' + params, { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
+                .then((r) => r.json())
+                .then((data) => {
+                    if (!data || typeof data.now === 'undefined') throw new Error('bad response');
+                    recovery = false;
+                    sessionStorage.setItem(key, data.now);
+                    if (data.items && data.items.length) {
+                        data.items.forEach((item) => {
+                            if (window.showNotifToast) window.showNotifToast(item);
+                        });
+                        refreshBadge();
+                    }
+                })
+                .catch(() => {
+                    sessionStorage.removeItem(key);
+                    if (!recovery) {
+                        recovery = true;
+                        pollAktivitas();
+                    }
+                });
+        };
+
+        pollAktivitas();
+        setInterval(pollAktivitas, 30000);
+
+        document.querySelectorAll('form[action="/logout"],[data-logout-form]').forEach((form) => {
+            form.addEventListener('submit', () => {
+                sessionStorage.removeItem(sinceKey + '_' + who());
+            });
+        });
+    })();
 </script>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bank;
+use App\Models\Notification;
 use App\Models\StoreBankAccount;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
@@ -44,6 +45,8 @@ class DataBankController extends Controller
             'status' => 'aktif',
         ]);
 
+        Notification::fireSelf(Notification::TIPE_WALLET, 'Rekening Ditambahkan', sprintf('Rekening %s • %s berhasil ditambahkan.', $data['nama_pemilik'], $data['nomor_rekening']), route('owner.data-bank'));
+
         return back()->with('success', 'Rekening bank berhasil ditambahkan.');
     }
 
@@ -72,6 +75,8 @@ class DataBankController extends Controller
             'status' => $data['status'],
         ]);
 
+        Notification::fireSelf(Notification::TIPE_WALLET, 'Rekening Diperbarui', sprintf('Rekening %s • %s diperbarui.', $bankAccount->nama_pemilik, $bankAccount->nomor_rekening), route('owner.data-bank'));
+
         return back()->with('success', 'Rekening bank diperbarui.');
     }
 
@@ -80,6 +85,9 @@ class DataBankController extends Controller
         $store = OwnerContext::currentStore();
         if (! $store || (int) $bankAccount->store_id !== (int) $store->store_id) abort(403);
         $bankAccount->delete();
+
+        Notification::fireSelf(Notification::TIPE_WALLET, 'Rekening Dihapus', sprintf('Rekening %s • %s dihapus.', $bankAccount->nama_pemilik, $bankAccount->nomor_rekening), route('owner.data-bank'));
+
         return back()->with('success', 'Rekening bank dihapus.');
     }
 }

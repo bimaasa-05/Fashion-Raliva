@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\StoreStaff;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -36,6 +37,8 @@ class ProfilController extends Controller
 
         $user->update($data);
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Profil Diperbarui', 'Data profil Anda berhasil diperbarui.', route('admin.profil'));
+
         return redirect()->route('admin.profil')->with('toast', [
             'message' => 'Profil berhasil diperbarui.',
             'icon' => 'task_alt',
@@ -58,6 +61,8 @@ class ProfilController extends Controller
             }
             $path = $request->file('foto_profil')->store('profil', 'public');
             $user->update(['foto_profil' => $path]);
+
+            Notification::fireSelf(Notification::TIPE_SISTEM, 'Foto Profil Diperbarui', 'Foto profil Anda berhasil diperbarui.', route('admin.profil'));
         }
 
         return redirect()->route('admin.profil')->with('toast', [
@@ -82,6 +87,8 @@ class ProfilController extends Controller
         $user->update([
             'password' => Hash::make($data['password']),
         ]);
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Kata Sandi Diperbarui', 'Kata sandi akun Anda berhasil diperbarui.', route('admin.profil'));
 
         return redirect()->route('admin.profil')->with('toast', [
             'message' => 'Kata sandi berhasil diperbarui.',

@@ -113,6 +113,21 @@ class PengajuanTokoController extends Controller
             }
         });
 
+        $sa = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
+            ->where('status', \App\Models\User::STATUS_AKTIF)
+            ->first();
+        if ($sa) {
+            \App\Models\Notification::create([
+                'user_id' => $sa->user_id,
+                'aktor_id' => $user->user_id,
+                'tipe' => \App\Models\Notification::TIPE_SISTEM,
+                'judul' => 'Pengajuan Toko Baru',
+                'pesan' => sprintf('Owner %s mengajukan/merubah dokumen toko "%s" dan menunggu verifikasi.', $user->nama_lengkap ?? '-', $store->nama_toko),
+                'url' => route('superadmin.manajemen-toko'),
+            ]);
+        }
+        \App\Models\Notification::fireSelf(\App\Models\Notification::TIPE_SISTEM, 'Pengajuan Toko Terkirim', sprintf('%d dokumen toko "%s" terunggah dan menunggu verifikasi Super Admin.', $uploaded, $store->nama_toko), route('owner.pengajuan-toko'));
+
         return redirect()->route('owner.pengajuan-toko')
             ->with('success', count($presentFiles) . ' dokumen berhasil diunggah dan menunggu verifikasi.');
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Support\OwnerContext;
 use App\Models\Review;
 use App\Models\StoreCategory;
@@ -58,6 +59,8 @@ class DataTokoController extends Controller
         if ($user && $user->email !== $validated['email']) {
             $user->update(['email' => $validated['email']]);
         }
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Data Toko Diperbarui', sprintf('Data toko "%s" berhasil diperbarui.', $store->nama_toko), route('owner.data-toko'));
 
         return redirect()->route('owner.data-toko')
             ->with('success', 'Data toko berhasil disimpan.');

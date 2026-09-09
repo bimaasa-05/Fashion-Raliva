@@ -110,8 +110,8 @@ Route::post('/login', [LoginController::class, 'store']);
 Route::get('/register', [RegisterController::class, 'create'])->name('register');
 Route::post('/register', [RegisterController::class, 'store']);
 Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->middleware('auth');
-Route::get('/forgot-password', fn () => view('customer.auth.forgot-password'))->name('password.request');
-Route::get('/reset-password', fn () => view('customer.auth.reset-password'))->name('password.reset');
+Route::get('/forgot-password', fn() => view('customer.auth.forgot-password'))->name('password.request');
+Route::get('/reset-password', fn() => view('customer.auth.reset-password'))->name('password.reset');
 
 // customer
 Route::prefix('customer')->name('customer.')->group(function () {
@@ -312,6 +312,7 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/slot-produk/permintaan/{rmt}/tolak', [SlotProdukController::class, 'rejectPurchase'])->name('slot-produk.permintaan.tolak');
 });
 
+//Route Role Admin Lengkap
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/dashboard', [DashboardOperasionalController::class, 'index'])->name('dashboard');
     Route::get('/pesanan', [AdminDataPesananController::class, 'index'])->name('pesanan');
@@ -351,6 +352,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->grou
     Route::put('/profil', [AdminProfilController::class, 'update'])->name('profil.update');
     Route::post('/profil/foto', [AdminProfilController::class, 'updatePhoto'])->name('profil.foto');
     Route::put('/profil/password', [AdminProfilController::class, 'updatePassword'])->name('profil.password');
+    Route::get('/notifikasi', [\App\Http\Controllers\Admin\NotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/laporan', [AdminLaporanController::class, 'index'])->name('laporan');
     Route::get('/riwayat-aktivitas', [AdminRiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
 });
@@ -379,6 +381,7 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang'])->g
     Route::post('/notifikasi/tandai-dibaca', [GudangNotifikasiController::class, 'markRead'])->name('notifikasi.tandai-dibaca');
 });
 
+//Role Route Owner Lengkap
 Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->group(function () {
     Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/data-toko', [DataTokoController::class, 'index'])->name('data-toko');
@@ -455,4 +458,12 @@ Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi
     Route::get('/riwayat-produksi', [ProduksiRiwayatController::class, 'index'])->name('riwayat-produksi');
     Route::get('/notifikasi', [ProduksiNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [ProduksiProfilController::class, 'index'])->name('profil');
+});
+
+/* ===== Notifikasi Global (semua role) ===== */
+Route::prefix('notifikasi')->middleware('auth')->group(function () {
+    Route::get('/get', [\App\Http\Controllers\NotifikasiController::class, 'getNotif'])->name('notifikasi.get');
+    Route::get('/aktivitas-baru', [\App\Http\Controllers\NotifikasiController::class, 'popupAktivitas'])->name('notifikasi.aktivitas-baru');
+    Route::post('/mark-all-read', [\App\Http\Controllers\NotifikasiController::class, 'markAllRead'])->name('notifikasi.mark-all-read');
+    Route::post('/{notification}/read', [\App\Http\Controllers\NotifikasiController::class, 'markRead'])->name('notifikasi.read');
 });

@@ -76,11 +76,14 @@ class PermintaanPenarikanController extends Controller
         if ($penarikan->store) {
             Notification::create([
                 'user_id' => $penarikan->store->owner_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => Notification::TIPE_WALLET,
                 'judul' => 'Pencairan Disetujui',
                 'pesan' => sprintf('Pencairan sebesar Rp %s telah disetujui dan sedang diproses.', number_format((float) $penarikan->jumlah, 0, ',', '.')),
+                'url' => route('owner.pencairan-dana'),
             ]);
         }
+        Notification::fireSelf(Notification::TIPE_WALLET, 'Pencairan Disetujui', sprintf('Pencairan Rp %s disetujui.', number_format((float) $penarikan->jumlah, 0, ',', '.')), route('superadmin.permintaan-penarikan'));
 
         return back()->with('toast', [
             'message' => sprintf('Pencairan Rp %s disetujui dan dana dikunci untuk diproses.', number_format((float) $penarikan->jumlah, 0, ',', '.')),
@@ -125,11 +128,14 @@ class PermintaanPenarikanController extends Controller
         if ($penarikan->store) {
             Notification::create([
                 'user_id' => $penarikan->store->owner_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => Notification::TIPE_WALLET,
                 'judul' => 'Pencairan Ditolak',
                 'pesan' => sprintf('Pengajuan pencairan Rp %s ditolak. Alasan: %s', number_format((float) $penarikan->jumlah, 0, ',', '.'), $data['alasan']),
+                'url' => route('owner.pencairan-dana'),
             ]);
         }
+        Notification::fireSelf(Notification::TIPE_WALLET, 'Pencairan Ditolak', sprintf('Pencairan Rp %s ditolak.', number_format((float) $penarikan->jumlah, 0, ',', '.')), route('superadmin.permintaan-penarikan'));
 
         return back()->with('toast', [
             'message' => 'Pengajuan pencairan ditolak.',
@@ -198,11 +204,14 @@ class PermintaanPenarikanController extends Controller
         if ($penarikan->store) {
             Notification::create([
                 'user_id' => $penarikan->store->owner_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => Notification::TIPE_WALLET,
                 'judul' => 'Pencairan Dibayar',
                 'pesan' => sprintf('Dana pencairan sebesar Rp %s telah dikirim ke rekening Anda.', number_format((float) $penarikan->jumlah, 0, ',', '.')),
+                'url' => route('owner.pencairan-dana'),
             ]);
         }
+        Notification::fireSelf(Notification::TIPE_WALLET, 'Pencairan Dibayar', sprintf('Pencairan Rp %s ditandai dibayar.', number_format((float) $penarikan->jumlah, 0, ',', '.')), route('superadmin.permintaan-penarikan'));
 
         return back()->with('toast', [
             'message' => sprintf('Pencairan Rp %s ditandai sudah dibayar.', number_format((float) $penarikan->jumlah, 0, ',', '.')),

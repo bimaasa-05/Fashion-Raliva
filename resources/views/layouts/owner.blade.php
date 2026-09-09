@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="user-id" content="{{ Auth::id() }}" />
     <title>RALIVA - @yield('title', 'Owner')</title>
     @include('partials.theme-head')
     <style>
@@ -26,12 +27,7 @@
             <button type="button" class="theme-toggle text-on-surface hover:opacity-80 transition-opacity" aria-label="Ganti tema">
                 <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
             </button>
-            @include('partials.notification-panel', ['items' => [
-                ['icon' => 'shopping_bag', 'html' => 'Pesanan baru <span class="font-bold">#RLV-2093</span> menunggu konfirmasi.', 'time' => '5 menit lalu'],
-                ['icon' => 'storage', 'html' => 'Permintaan slot <span class="font-bold">+50</span> disetujui SuperAdmin.', 'time' => '30 menit lalu'],
-                ['icon' => 'payments', 'html' => 'Pencairan dana <span class="font-bold">WD-0092</span> berhasil diproses.', 'time' => '1 jam lalu'],
-                ['icon' => 'star', 'html' => 'Ulasan baru <span class="font-bold">5 bintang</span> untuk Trench Coat Signature.', 'time' => '2 jam lalu'],
-            ], 'lihatSemuaRoute' => 'owner.notifikasi'])
+            @include('partials.notification-panel', ['lihatSemuaRoute' => 'owner.notifikasi'])
             @php $ownerHeaderUser = Auth::user(); @endphp
             @include('partials.profile-menu', ['compact' => true, 'name' => $ownerHeaderUser?->nama_lengkap ?? 'Owner', 'role' => $ownerHeaderUser?->role?->nama_role ?? 'Owner', 'profilRoute' => 'owner.profil', 'pengaturanRoute' => 'owner.pengaturan-toko'])
         </div>
@@ -97,12 +93,7 @@
                 <button type="button" class="theme-toggle text-on-surface hover:text-secondary transition-colors" aria-label="Ganti tema">
                     <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
                 </button>
-                @include('partials.notification-panel', ['items' => [
-                    ['icon' => 'shopping_bag', 'html' => 'Pesanan baru <span class="font-bold">#RLV-2093</span> menunggu konfirmasi.', 'time' => '5 menit lalu'],
-                    ['icon' => 'storage', 'html' => 'Permintaan slot <span class="font-bold">+50</span> disetujui SuperAdmin.', 'time' => '30 menit lalu'],
-                    ['icon' => 'payments', 'html' => 'Pencairan dana <span class="font-bold">WD-0092</span> berhasil diproses.', 'time' => '1 jam lalu'],
-                    ['icon' => 'star', 'html' => 'Ulasan baru <span class="font-bold">5 bintang</span> untuk Trench Coat Signature.', 'time' => '2 jam lalu'],
-                ], 'lihatSemuaRoute' => 'owner.notifikasi'])
+                @include('partials.notification-panel', ['lihatSemuaRoute' => 'owner.notifikasi'])
                 @php $ownerDesktopUser = Auth::user(); @endphp
                 @include('partials.profile-menu', ['name' => $ownerDesktopUser?->nama_lengkap ?? 'Owner', 'role' => $ownerDesktopUser?->role?->nama_role ?? 'Owner', 'profilRoute' => 'owner.profil', 'pengaturanRoute' => 'owner.pengaturan-toko'])
             </div>
@@ -139,6 +130,7 @@
         <p class="font-body-md text-sm" data-toast-message></p>
     </div>
 
+    @include('partials.notification-popup')
     @include('partials.layout-scripts')
 
     <script>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Promotion;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
@@ -62,6 +63,8 @@ class PromoController extends Controller
             'status' => 'aktif',
         ]);
 
+        Notification::fireSelf(Notification::TIPE_PROMO, 'Promo Ditambahkan', sprintf('Promo "%s" (kode %s) berhasil ditambahkan.', $validated['nama_promo'], strtoupper($validated['kode_promo'])), route('owner.promo'));
+
         return redirect()->route('owner.promo')->with('success', 'Promo berhasil ditambahkan.');
     }
 
@@ -92,6 +95,8 @@ class PromoController extends Controller
             'status' => $validated['status'],
         ]);
 
+        Notification::fireSelf(Notification::TIPE_PROMO, 'Promo Diperbarui', sprintf('Promo "%s" berhasil diperbarui.', $promo->nama_promo), route('owner.promo'));
+
         return back()->with('success', 'Promo berhasil diperbarui.');
     }
 
@@ -100,6 +105,9 @@ class PromoController extends Controller
         $storeId = OwnerContext::firstStoreId();
         if ((int) $promo->store_id !== (int) $storeId) abort(403);
         $promo->delete();
+
+        Notification::fireSelf(Notification::TIPE_PROMO, 'Promo Dihapus', sprintf('Promo "%s" telah dihapus.', $promo->nama_promo), route('owner.promo'));
+
         return back()->with('success', 'Promo berhasil dihapus.');
     }
 
@@ -108,6 +116,9 @@ class PromoController extends Controller
         $storeId = OwnerContext::firstStoreId();
         if ((int) $promo->store_id !== (int) $storeId) abort(403);
         $promo->update(['status' => $promo->status === 'aktif' ? 'nonaktif' : 'aktif']);
+
+        Notification::fireSelf(Notification::TIPE_PROMO, 'Status Promo Diubah', sprintf('Promo "%s" kini %s.', $promo->nama_promo, $promo->status), route('owner.promo'));
+
         return back()->with('success', 'Status promo diubah menjadi '.ucfirst($promo->status).'.');
     }
 }

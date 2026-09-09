@@ -112,6 +112,8 @@ class PengirimanController extends Controller
             sprintf('Input resi %s untuk pesanan %s.', $data['nomor_resi'], $pesanan->nomor_order)
         );
 
+        Notification::fireSelf(Notification::TIPE_PENGIRIMAN, 'Resi Tersimpan', sprintf('Resi %s untuk pesanan %s tersimpan.', $data['nomor_resi'], $pesanan->nomor_order), route('admin.pengiriman'));
+
         return back()->with('toast', [
             'message' => "Resi untuk pesanan {$pesanan->nomor_order} tersimpan. Siap ditandai dikirim.",
             'icon' => 'task_alt',
@@ -161,12 +163,16 @@ class PengirimanController extends Controller
             sprintf('Menandai pesanan %s dikirim dengan resi %s.', $pesanan->nomor_order, $pengiriman->nomor_resi)
         );
 
+        Notification::fireSelf(Notification::TIPE_PENGIRIMAN, 'Pesanan Dikirim', sprintf('Pesanan %s ditandai dikirim (resi %s).', $pesanan->nomor_order, $pengiriman->nomor_resi), route('admin.pengiriman'));
+
         if ($pesanan->checkout?->user_id) {
             Notification::create([
                 'user_id' => $pesanan->checkout->user_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => Notification::TIPE_PENGIRIMAN,
                 'judul' => 'Pesanan Dikirim',
                 'pesan' => sprintf('Pesanan %s telah dikirim via %s dengan resi %s.', $pesanan->nomor_order, $pengiriman->courier?->nama_kurir ?? 'kurir', $pengiriman->nomor_resi),
+                'url' => route('customer.order-tracking'),
             ]);
         }
 

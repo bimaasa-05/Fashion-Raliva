@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
+use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -46,6 +47,21 @@ class DataCustomerController extends Controller
             'email_verified_at' => now(),
             'status' => User::STATUS_AKTIF,
         ]);
+
+        \App\Models\Notification::create([
+            'user_id' => $customer->user_id,
+            'aktor_id' => ActivityLogger::resolveActorId(),
+            'tipe' => \App\Models\Notification::TIPE_SISTEM,
+            'judul' => 'Akun Customer Dibuat',
+            'pesan' => sprintf('Akun dengan email %s telah dibuat oleh Admin toko.', $customer->email),
+            'url' => route('customer.account'),
+        ]);
+        \App\Models\Notification::fireSelf(
+            \App\Models\Notification::TIPE_SISTEM,
+            'Customer Ditambahkan',
+            sprintf('Customer "%s" (%s) berhasil ditambahkan.', $customer->nama_lengkap, $customer->email),
+            route('admin.customer')
+        );
 
         return back()->with('success', 'Customer ' . $customer->nama_lengkap . ' berhasil ditambahkan.');
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Setting;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
@@ -51,6 +52,8 @@ class PajakBiayaController extends Controller
             ['nilai' => $nilaiBaru],
             sprintf('Mengubah tarif pajak dari %s%% menjadi %s%%.', number_format((float) $nilaiLama, 0, ',', '.'), number_format((float) $nilaiBaru, 0, ',', '.'))
         );
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Tarif Pajak Diubah', sprintf('Tarif pajak menjadi %s%%.', number_format((float) $nilaiBaru, 0, ',', '.')), route('superadmin.pajak-biaya'));
 
         return back()->with('toast', [
             'message' => 'Tarif pajak berhasil diperbarui menjadi '.number_format((float) $nilaiBaru, 0, ',', '.').'%.',

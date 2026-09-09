@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="user-id" content="{{ Auth::id() }}" />
     <title>RALIVA - @yield('title', 'Staf Produksi')</title>
     @include('partials.theme-head')
     <style>
@@ -26,11 +27,7 @@
             <button type="button" class="theme-toggle text-on-surface hover:opacity-80 transition-opacity" aria-label="Ganti tema">
                 <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
             </button>
-            @include('partials.notification-panel', ['items' => [
-                ['icon' => 'assignment', 'html' => 'Permintaan baru <span class="font-bold">PRQ-0043</span> menunggu konfirmasi produksi.', 'time' => '8 menit lalu'],
-                ['icon' => 'fact_check', 'html' => 'Pemeriksaan <span class="font-bold">QC-0012</span> selesai: 38 layak, 2 defect.', 'time' => '45 menit lalu'],
-                ['icon' => 'task_alt', 'html' => 'Produk selesai <span class="font-bold">45 unit</span> siap serah ke Gudang.', 'time' => '2 jam lalu'],
-            ], 'lihatSemuaRoute' => 'produksi.notifikasi'])
+            @include('partials.notification-panel', ['lihatSemuaRoute' => 'produksi.notifikasi'])
             @php $prodHeaderUserM = Auth::user(); @endphp
             @include('partials.profile-menu', ['compact' => true, 'name' => $prodHeaderUserM?->nama_lengkap ?? 'Produksi', 'role' => $prodHeaderUserM?->role?->nama_role ?? 'Produksi', 'profilRoute' => 'produksi.profil', 'showPengaturan' => false])
         </div>
@@ -94,11 +91,7 @@
                 <button type="button" class="theme-toggle text-on-surface hover:text-secondary transition-colors" aria-label="Ganti tema">
                     <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
                 </button>
-                @include('partials.notification-panel', ['items' => [
-                    ['icon' => 'assignment', 'html' => 'Permintaan baru <span class="font-bold">PRQ-0043</span> menunggu konfirmasi produksi.', 'time' => '8 menit lalu'],
-                    ['icon' => 'fact_check', 'html' => 'Pemeriksaan <span class="font-bold">QC-0012</span> selesai: 38 layak, 2 defect.', 'time' => '45 menit lalu'],
-                    ['icon' => 'task_alt', 'html' => 'Produk selesai <span class="font-bold">45 unit</span> siap serah ke Gudang.', 'time' => '2 jam lalu'],
-                ], 'lihatSemuaRoute' => 'produksi.notifikasi'])
+                @include('partials.notification-panel', ['lihatSemuaRoute' => 'produksi.notifikasi'])
                 @php $prodHeaderUserD = Auth::user(); @endphp
                 @include('partials.profile-menu', ['name' => $prodHeaderUserD?->nama_lengkap ?? 'Produksi', 'role' => $prodHeaderUserD?->role?->nama_role ?? 'Produksi', 'profilRoute' => 'produksi.profil', 'showPengaturan' => false])
             </div>
@@ -135,6 +128,7 @@
         <p class="font-body-md text-sm" data-toast-message></p>
     </div>
 
+    @include('partials.notification-popup')
     @include('partials.layout-scripts')
 
     <script>

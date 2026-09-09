@@ -94,6 +94,20 @@ class KelolaSlotController extends Controller
             'diajukan_pada' => now(),
         ]);
 
+        $sa = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
+            ->where('status', \App\Models\User::STATUS_AKTIF)
+            ->first();
+        if ($sa) {
+            \App\Models\Notification::create([
+                'user_id' => $sa->user_id,
+                'aktor_id' => $request->user()->user_id,
+                'tipe' => \App\Models\Notification::TIPE_SISTEM,
+                'judul' => 'Pengajuan Pembelian Slot',
+                'pesan' => sprintf('Pengajuan pembelian %d slot (Rp %s) menunggu verifikasi.', (int) $data['jumlah_slot'], number_format($totalHarga, 0, ',', '.')),
+                'url' => route('superadmin.slot-produk'),
+            ]);
+        }
+
         return back()->with('success', 'Pengajuan pembelian '.$data['jumlah_slot'].' slot (Rp '.number_format($totalHarga, 0, ',', '.').') diajukan. Bukti pembayaran akan diverifikasi SuperAdmin.');
     }
 }

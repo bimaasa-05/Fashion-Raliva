@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\Notification;
 use App\Models\Role;
 use App\Models\Store;
 use App\Models\StoreStaff;
@@ -15,6 +16,18 @@ use Illuminate\Support\Facades\Hash;
 
 class ManajemenPenggunaController extends Controller
 {
+    private function routeForRole(string $roleName): string
+    {
+        return match ($roleName) {
+            Role::SUPER_ADMIN => route('superadmin.manajemen-pengguna'),
+            Role::ADMIN => route('admin.dashboard'),
+            Role::PRODUKSI => route('produksi.dashboard'),
+            Role::GUDANG => route('gudang.dashboard'),
+            Role::OWNER => route('owner.dashboard'),
+            default => route('customer.account'),
+        };
+    }
+
     public function index(Request $request)
     {
         $query = User::with('role');
@@ -95,6 +108,19 @@ class ManajemenPenggunaController extends Controller
             sprintf('Menambahkan pengguna baru "%s" dengan peran "%s".', $user->nama_lengkap, $roleName)
         );
 
+        if ($user->user_id !== auth()->id()) {
+            Notification::create([
+                'user_id' => $user->user_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Akun Dibuat',
+                'pesan' => sprintf('Akun Anda "%s" telah dibuat dengan peran "%s".', $user->nama_lengkap, $roleName),
+                'url' => $this->routeForRole($roleName),
+            ]);
+        }
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pengguna Ditambahkan', sprintf('Pengguna "%s" (peran %s) ditambahkan.', $user->nama_lengkap, $roleName), route('superadmin.manajemen-pengguna'));
+
         return back()->with('toast', [
             'message' => 'Pengguna "'.$user->nama_lengkap.'" berhasil ditambahkan.',
             'icon' => 'task_alt',
@@ -134,6 +160,21 @@ class ManajemenPenggunaController extends Controller
             sprintf('Memperbarui data pengguna "%s".', $user->nama_lengkap)
         );
 
+        $roleAkhir = $roleName;
+
+        if ((int) $user->user_id !== (int) auth()->id()) {
+            Notification::create([
+                'user_id' => $user->user_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Akun Diperbarui',
+                'pesan' => sprintf('Data akun Anda telah diperbarui oleh Super Admin (peran kini: "%s").', $roleAkhir),
+                'url' => $this->routeForRole($roleName),
+            ]);
+        }
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pengguna Diperbarui', sprintf('Data pengguna "%s" diperbarui.', $user->nama_lengkap), route('superadmin.manajemen-pengguna'));
+
         return back()->with('toast', [
             'message' => 'Data "'.$user->nama_lengkap.'" berhasil diperbarui.',
             'icon' => 'task_alt',
@@ -162,6 +203,8 @@ class ManajemenPenggunaController extends Controller
             [],
             sprintf('Menghapus pengguna "%s" (peran: %s).', $nama, $roleName)
         );
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pengguna Dihapus', sprintf('Pengguna "%s" (peran %s) dihapus.', $nama, $roleName), route('superadmin.manajemen-pengguna'));
 
         return back()->with('toast', [
             'message' => 'Pengguna "'.$nama.'" berhasil dihapus.',
@@ -285,6 +328,19 @@ class ManajemenPenggunaController extends Controller
             sprintf('Mengubah peran "%s" menjadi "%s".', $user->nama_lengkap, $roleBaru->nama_role)
         );
 
+        if ((int) $user->user_id !== (int) auth()->id()) {
+            Notification::create([
+                'user_id' => $user->user_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Peran Akun Diubah',
+                'pesan' => sprintf('Peran akun Anda diubah menjadi "%s".', $roleBaru->nama_role),
+                'url' => $this->routeForRole($roleBaru->nama_role),
+            ]);
+        }
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Peran Pengguna Diubah', sprintf('Peran "%s" menjadi %s.', $user->nama_lengkap, $roleBaru->nama_role), route('superadmin.manajemen-pengguna'));
+
         return back()->with('toast', [
             'message' => 'Peran "'.$user->nama_lengkap.'" berhasil diubah menjadi '.$roleBaru->nama_role.'.',
             'icon' => 'task_alt',
@@ -313,6 +369,17 @@ class ManajemenPenggunaController extends Controller
             ['status' => $baru],
             sprintf('Mengubah status "%s" dari %s menjadi %s.', $user->nama_lengkap, $lama, $baru)
         );
+
+        if ((int) $user->user_id !== (int) auth()->id()) {
+            Notification::create([
+                'user_id' => $user->user_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Status Akun Diubah',
+                'pesan' => sprintf('Status akun Anda diubah menjadi %s.', $baru === User::STATUS_AKTIF ? 'aktif' : 'nonaktif'),
+                'url' => route('customer.account'),
+            ]);
+        }
 
         if ($user->role && $user->role->nama_role === Role::OWNER) {
             $tokoCount = Store::where('owner_id', $user->user_id)->count();
@@ -345,11 +412,15 @@ class ManajemenPenggunaController extends Controller
                 );
             }
 
+            Notification::fireSelf(Notification::TIPE_SISTEM, 'Status & Cascade Diubah', sprintf('Status "%s" menjadi %s (cascade %d staff, %d toko).', $user->nama_lengkap, $baru, $staffCount, $tokoCount), route('superadmin.manajemen-pengguna'));
+
             return back()->with('toast', [
                 'message' => 'Status "'.$user->nama_lengkap.'" berhasil diubah menjadi '.$baru.($staffCount > 0 ? ' (+'.$staffCount.' staff & '.$tokoCount.' toko turut di'.$baru.')' : '').'.',
                 'icon' => 'task_alt',
             ]);
         }
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Status Pengguna Diubah', sprintf('Status "%s" menjadi %s.', $user->nama_lengkap, $baru), route('superadmin.manajemen-pengguna'));
 
         return back()->with('toast', [
             'message' => 'Status "'.$user->nama_lengkap.'" berhasil diubah menjadi '.$baru.'.',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\StoreStaff;
 use App\Models\User;
 use App\Support\OwnerContext;
@@ -74,6 +75,21 @@ class KaryawanController extends Controller
             'status' => 'aktif',
         ]);
 
+        $urlStaff = match ($validated['role']) {
+            'admin' => route('admin.dashboard'),
+            'produksi' => route('produksi.dashboard'),
+            default => route('gudang.dashboard'),
+        };
+        Notification::create([
+            'user_id' => $user->user_id,
+            'aktor_id' => auth()->id(),
+            'tipe' => Notification::TIPE_SISTEM,
+            'judul' => 'Karyawan Ditambahkan',
+            'pesan' => sprintf('Anda ditugaskan sebagai %s di toko %s oleh Owner.', ucfirst($validated['role']), OwnerContext::currentStore()?->nama_toko ?? '-'),
+            'url' => $urlStaff,
+        ]);
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Karyawan Ditambahkan', sprintf('Karyawan "%s" (%s) berhasil ditambahkan.', $validated['nama_lengkap'], $validated['role']), route('owner.karyawan'));
+
         return redirect()->route('owner.karyawan')->with('success', 'Karyawan berhasil ditambahkan.');
     }
 
@@ -94,6 +110,23 @@ class KaryawanController extends Controller
         }
         $storeStaff->update(['status' => $validated['status']]);
 
+        $urlStaff = match ($validated['role']) {
+            'admin' => route('admin.dashboard'),
+            'produksi' => route('produksi.dashboard'),
+            default => route('gudang.dashboard'),
+        };
+        if ($storeStaff->user_id) {
+            Notification::create([
+                'user_id' => $storeStaff->user_id,
+                'aktor_id' => auth()->id(),
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Akun Karyawan Diubah',
+                'pesan' => sprintf('Role Anda kini %s dan status %s.', ucfirst($validated['role']), $validated['status']),
+                'url' => $urlStaff,
+            ]);
+        }
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Data Karyawan Diperbarui', sprintf('Data karyawan "%s" diperbarui (role %s, status %s).', $storeStaff->user?->nama_lengkap ?? '-', $validated['role'], $validated['status']), route('owner.karyawan'));
+
         return redirect()->route('owner.karyawan')->with('success', 'Data karyawan berhasil diperbarui.');
     }
 
@@ -105,6 +138,18 @@ class KaryawanController extends Controller
 
         // Soft: nonaktifkan penugasan (jangan hapus user agar aman).
         $storeStaff->update(['status' => 'nonaktif']);
+
+        if ($storeStaff->user_id) {
+            Notification::create([
+                'user_id' => $storeStaff->user_id,
+                'aktor_id' => auth()->id(),
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Penugasan Dinonaktifkan',
+                'pesan' => sprintf('Penugasan Anda di toko %s dinonaktifkan oleh Owner.', OwnerContext::currentStore()?->nama_toko ?? '-'),
+                'url' => route('customer.account'),
+            ]);
+        }
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Karyawan Dinonaktifkan', sprintf('Karyawan "%s" dinonaktifkan.', $storeStaff->user?->nama_lengkap ?? '-'), route('owner.karyawan'));
 
         return redirect()->route('owner.karyawan')->with('success', 'Karyawan dinonaktifkan.');
     }

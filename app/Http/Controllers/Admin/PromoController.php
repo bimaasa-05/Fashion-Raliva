@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Promotion;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,6 +22,8 @@ class PromoController extends Controller
         $promotion->update([
             'status' => $promotion->status === 'aktif' ? 'nonaktif' : 'aktif',
         ]);
+
+        Notification::fireSelf(Notification::TIPE_PROMO, 'Status Promo Diperbarui', sprintf('Promo "%s" kini %s.', $promotion->nama_promo ?? ('#' . $promotion->promotion_id), $promotion->status), route('admin.promo'));
 
         return back()->with('success', 'Status promo diperbarui.');
     }

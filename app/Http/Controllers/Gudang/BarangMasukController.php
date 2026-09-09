@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Gudang;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
+use App\Models\Role;
 use App\Models\StockMovement;
 use App\Models\Supplier;
 use App\Models\WarehouseStock;
+use App\Services\NotificationService;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -96,6 +99,16 @@ class BarangMasukController extends Controller
             ['product_variant_id' => $data['product_variant_id'], 'supplier_id' => $data['supplier_id'], 'jumlah' => $data['jumlah']],
             sprintf('Barang masuk %d unit ke gudang "%s".', $data['jumlah'], $warehouse->nama_gudang)
         );
+
+        NotificationService::sendToRole(
+            Role::ADMIN,
+            Notification::TIPE_SISTEM,
+            'Barang Masuk',
+            sprintf('%d unit barang masuk ke gudang "%s".', $data['jumlah'], $warehouse->nama_gudang),
+            auth()->id(),
+            route('admin.stok')
+        );
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Barang Masuk Dicatat', sprintf('%d unit barang masuk dicatat di gudang "%s".', $data['jumlah'], $warehouse->nama_gudang), route('gudang.dashboard'));
 
         return back()->with('toast', ['message' => 'Barang masuk berhasil dicatat.', 'icon' => 'task_alt']);
     }

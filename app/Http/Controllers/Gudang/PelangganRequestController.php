@@ -168,9 +168,11 @@ class PelangganRequestController extends Controller
         if ($userId) {
             Notification::create([
                 'user_id' => $userId,
+                'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => Notification::TIPE_ORDER,
                 'judul' => 'Status Ketersediaan Bahan',
                 'pesan' => sprintf('Pengecekan bahan untuk order %s: %s.', $order->nomor_order, $labelMap[$data['hasil']] ?? $data['hasil']),
+                'url' => route('customer.order-tracking'),
             ]);
         }
 
