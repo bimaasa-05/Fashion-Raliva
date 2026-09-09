@@ -312,7 +312,7 @@
         box-shadow: 0 1px 2px rgba(17,17,17,.04), 0 8px 24px -12px rgba(17,17,17,.12);
         transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
     }
-    .card-premium:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(17,17,17,.06), 0 18px 40px -16px rgba(17,17,17,.18); border-color: rgba(139,30,63,.45); }
+    .card-premium:hover {  box-shadow: 0 4px 12px rgba(17,17,17,.06), 0 18px 40px -16px rgba(17,17,17,.18); border-color: rgba(139,30,63,.45); }
     html.theme-dark .card-premium { background-color: var(--surface-ivory); border-color: var(--border-soft); box-shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5); }
     html.theme-dark .card-premium:hover { border-color: rgba(139,30,63,.5); box-shadow: 0 4px 12px rgba(0,0,0,.35), 0 20px 44px -16px rgba(0,0,0,.6); }
     .premium-heading { position: relative; padding-left: 0.9rem; }
@@ -383,7 +383,7 @@
 <div class="flex flex-col group" data-wishlist-item data-product-id="{{ $p?->product_id }}">
 <a href="{{ $p ? route('customer.shop.produk-detail', $p->product_id) : '#' }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden rounded-lg">
-<img loading="lazy" decoding="async" alt="{{ $p?->nama_produk ?? '' }}" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" src="{{ $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/product/900/1200' }}"/>
+<img loading="lazy" decoding="async" alt="{{ $p?->nama_produk ?? '' }}" class="object-cover w-full h-full " src="{{ $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/product/900/1200' }}"/>
 <button type="button" aria-label="{{ __('Remove from wishlist') }}" data-wishlist-remove data-product-id="{{ $p?->product_id }}" class="absolute top-2 right-2 p-2 rounded-full bg-black/15 backdrop-blur-sm text-white hover:bg-black/30 hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite" data-weight="fill">favorite</span>
 </button>

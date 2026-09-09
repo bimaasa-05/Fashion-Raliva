@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Review;
@@ -73,6 +74,20 @@ class ReviewController extends Controller
             'ulasan' => $data['ulasan'],
             'status' => Review::STATUS_DIMODERASI,
         ]);
+
+        $store = $orderItem->order?->store;
+        if ($store && $store->owner_id) {
+            Notification::create([
+                'user_id' => $store->owner_id,
+                'tipe' => Notification::TIPE_ULASAN,
+                'judul' => 'Ulasan Baru',
+                'pesan' => sprintf(
+                    'Pelanggan memberi ulasan %d bintang untuk produk "%s".',
+                    (int) $data['rating'],
+                    $orderItem->nama_produk_snapshot
+                ),
+            ]);
+        }
 
         return redirect()->route('customer.reviews')->with('toast', [
             'message' => 'Review berhasil dikirim dan sedang menunggu moderasi.',

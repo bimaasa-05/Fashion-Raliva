@@ -216,7 +216,7 @@
 <style>
     /* ===== Premium cards + burgundy accents (parity with account/address) ===== */
     .card-premium { box-shadow:0 1px 2px rgb(17 17 17 / .04),0 12px 32px -16px rgb(17 17 17 / .16); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; }
-    .card-premium:hover { transform:translateY(-3px); box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
+    .card-premium:hover {  box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
     html.theme-dark .card-premium { background-color:var(--surface-ivory); border-color:var(--border-soft); box-shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px -12px rgb(0 0 0 / .5); }
     html.theme-dark .card-premium:hover { box-shadow:0 2px 4px rgb(0 0 0 / .4),0 20px 48px -20px rgb(0 0 0 / .7); border-color:rgba(139,30,63,.55); }
     .premium-heading { display:block; }
@@ -306,7 +306,7 @@
 <div class="group relative flex flex-col cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col w-full">
 <div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
-<img alt="{{ $p->nama_produk }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" src="{{ $pImg ? (filter_var($pImg, FILTER_VALIDATE_URL) ? $pImg : asset($pImg)) : 'https://picsum.photos/seed/store'.$p->product_id.'/900/1200' }}"/>
+<img alt="{{ $p->nama_produk }}" class="w-full h-full object-cover " src="{{ $pImg ? (filter_var($pImg, FILTER_VALIDATE_URL) ? $pImg : asset($pImg)) : 'https://picsum.photos/seed/store'.$p->product_id.'/900/1200' }}"/>
 </div>
 <div class="flex flex-col gap-1">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $store->nama_toko }}</span>

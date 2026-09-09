@@ -43,7 +43,7 @@
                         <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : 'schedule' }}</span>{{ $store?->status === 'aktif' ? 'Terverifikasi' : ucfirst($store?->status ?? 'Menunggu') }}
                     </span>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm mt-1">Fashion &mdash; ID Toko: RLV-TOKO-{{ str_pad($store?->store_id ?? 0, 4, '0', STR_PAD_LEFT) }} &bull; Bergabung {{ $store?->created_at?->translatedFormat('M Y') ?? '-' }}</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-1">{{ $store?->kategori ?? 'Fashion & Lifestyle' }} &mdash; ID Toko: RLV-TOKO-{{ str_pad($store?->store_id ?? 0, 4, '0', STR_PAD_LEFT) }} &bull; Bergabung {{ $store?->created_at?->translatedFormat('M Y') ?? '-' }}</p>
                 <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Rating toko <span class="font-bold text-gold-accent">{{ number_format($rating, 1, ',', '.') }}/5,0</span> &bull; {{ $reviewCount }} ulasan</p>
             </div>
         </div>
@@ -63,12 +63,13 @@
                     </div>
                     <div>
                         <label for="kategori-toko" class="block raliva-label mb-2">Kategori</label>
-                        <select id="kategori-toko" class="raliva-select">
-                            <option selected>Fashion & Lifestyle</option>
-                            <option>Pakaian Wanita</option>
-                            <option>Pakaian Pria</option>
-                            <option>Aksesoris</option>
+                        <select id="kategori-toko" name="kategori" class="raliva-select">
+                            @php $kategoriToko = old('kategori', $store?->kategori ?? ($storeCategories->first() ?? '')); @endphp
+                            @foreach (($storeCategories ?? collect()) as $opt)
+                                <option value="{{ $opt }}" @selected($kategoriToko === $opt)>{{ $opt }}</option>
+                            @endforeach
                         </select>
+                        @error('kategori') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label for="deskripsi-toko" class="block raliva-label mb-2">Deskripsi Toko</label>

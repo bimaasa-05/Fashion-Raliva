@@ -15,6 +15,9 @@ class Notification extends Model
     public const TIPE_PEMBAYARAN = 'pembayaran';
     public const TIPE_PENGIRIMAN = 'pengiriman';
     public const TIPE_KOMPLAIN = 'komplain';
+
+    public const TIPE_ULASAN = 'ulasan';
+
     public const TIPE_WALLET = 'wallet';
     public const TIPE_PROMO = 'promo';
     public const TIPE_SISTEM = 'sistem';

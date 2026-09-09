@@ -277,7 +277,6 @@
         transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     }
     .card-premium:hover {
-        transform: translateY(-3px);
         box-shadow: 0 2px 4px rgb(17 17 17 / 0.05), 0 20px 48px -20px rgb(17 17 17 / 0.22);
         border-color: rgba(139, 30, 63, .45);   /* Burgundy, bukan gold */
     }
@@ -392,7 +391,7 @@
 <div data-category="{{ $homeCat }}" class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="{{ $p->nama_produk }}" src="{{ $homeImg }}"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full " alt="{{ $p->nama_produk }}" src="{{ $homeImg }}"/>
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $p->store?->nama_toko ?? __('RALIVA') }}</span>
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $p->nama_produk }}</h4>
@@ -433,7 +432,7 @@
 @endphp
 <a href="{{ route('customer.shop.store', $s->store_id) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
-<img loading="lazy" decoding="async" class="object-cover w-full h-full group-hover:scale-[1.04] transition-transform duration-500" alt="{{ $s->nama_toko }}" src="{{ $storeImgUrl }}"/>
+<img loading="lazy" decoding="async" class="object-cover w-full h-full " alt="{{ $s->nama_toko }}" src="{{ $storeImgUrl }}"/>
 </div>
 <h4 class="font-title-md text-title-md text-on-surface group-hover:text-secondary transition-colors">{{ $s->nama_toko }}</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ \Illuminate\Support\Str::limit($s->deskripsi ?? __('Boutique RALIVA'), 60) }}</p>

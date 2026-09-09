@@ -71,6 +71,7 @@ use App\Http\Controllers\SuperAdmin\DataPembayaranController;
 use App\Http\Controllers\SuperAdmin\DataPesananController;
 use App\Http\Controllers\SuperAdmin\GudangController;
 use App\Http\Controllers\SuperAdmin\KategoriProdukController;
+use App\Http\Controllers\SuperAdmin\StoreCategoryController;
 use App\Http\Controllers\SuperAdmin\KomisiGlobalController;
 use App\Http\Controllers\SuperAdmin\KomplainController as SaKomplainController;
 use App\Http\Controllers\SuperAdmin\KurirController;
@@ -146,6 +147,16 @@ Route::prefix('customer')->name('customer.')->group(function () {
 
         Route::get('/order-tracking', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'index'])->name('order-tracking');
 
+        Route::post('/order-tracking/{order}/confirm', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'confirm'])->name('order-tracking.confirm');
+
+        Route::get('/komplain', [\App\Http\Controllers\Customer\KomplainController::class, 'index'])->name('komplain');
+        Route::get('/komplain/create', [\App\Http\Controllers\Customer\KomplainController::class, 'create'])->name('komplain.create');
+        Route::post('/komplain', [\App\Http\Controllers\Customer\KomplainController::class, 'store'])->name('komplain.store');
+        Route::get('/komplain/{komplain}/messages', [\App\Http\Controllers\Customer\KomplainController::class, 'messages'])->name('komplain.messages');
+        Route::post('/komplain/{komplain}/messages', [\App\Http\Controllers\Customer\KomplainController::class, 'storeMessage'])->name('komplain.messages.store');
+        Route::patch('/komplain/{komplain}/messages/{message}', [\App\Http\Controllers\Customer\KomplainController::class, 'updateMessage'])->name('komplain.messages.update');
+        Route::delete('/komplain/{komplain}/messages/{message}', [\App\Http\Controllers\Customer\KomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy')->withTrashed();
+
         Route::get('/account', function () {
             return view('customer.account.index');
         })->name('account');
@@ -215,10 +226,14 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/moderasi-produk', [ModerasiProdukController::class, 'index'])->name('moderasi-produk');
     Route::post('/moderasi-produk/{produk}/setujui', [ModerasiProdukController::class, 'setujui'])->name('moderasi-produk.setujui');
     Route::post('/moderasi-produk/{produk}/tolak', [ModerasiProdukController::class, 'tolak'])->name('moderasi-produk.tolak');
-    Route::get('/kategori-produk', [KategoriProdukController::class, 'index'])->name('kategori-produk');
-    Route::post('/kategori-produk', [KategoriProdukController::class, 'store'])->name('kategori-produk.store');
-    Route::post('/kategori-produk/{kategori}/update', [KategoriProdukController::class, 'update'])->name('kategori-produk.update');
-    Route::post('/kategori-produk/{kategori}/hapus', [KategoriProdukController::class, 'hapus'])->name('kategori-produk.hapus');
+    Route::get('/kategori', [KategoriProdukController::class, 'index'])->name('kategori');
+    Route::post('/kategori', [KategoriProdukController::class, 'store'])->name('kategori.store');
+    Route::post('/kategori/{kategori}/update', [KategoriProdukController::class, 'update'])->name('kategori.update');
+    Route::post('/kategori/{kategori}/hapus', [KategoriProdukController::class, 'hapus'])->name('kategori.hapus');
+    Route::post('/kategori/toko', [StoreCategoryController::class, 'store'])->name('kategori-toko.store');
+    Route::post('/kategori/toko/{storeCategory}/update', [StoreCategoryController::class, 'update'])->name('kategori-toko.update');
+    Route::post('/kategori/toko/{storeCategory}/hapus', [StoreCategoryController::class, 'hapus'])->name('kategori-toko.hapus');
+    Route::redirect('/kategori-produk', '/superadmin/kategori', 301);
     Route::get('/data-pesanan', [DataPesananController::class, 'index'])->name('data-pesanan');
     Route::get('/data-pembayaran', [DataPembayaranController::class, 'index'])->name('data-pembayaran');
     Route::get('/pengembalian-dana', [PengembalianDanaController::class, 'index'])->name('pengembalian-dana');
@@ -266,13 +281,17 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/komplain', [SaKomplainController::class, 'index'])->name('komplain');
     Route::get('/komplain/{komplain}/messages', [SaKomplainController::class, 'messages'])->name('komplain.messages');
     Route::post('/komplain/{komplain}/messages', [SaKomplainController::class, 'storeMessage'])->name('komplain.messages.store');
+    Route::delete('/komplain/{komplain}/messages/{message}', [SaKomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy')->withTrashed();
     Route::post('/komplain/{komplain}/eskalasi', [SaKomplainController::class, 'eskalasi'])->name('komplain.eskalasi');
     Route::post('/komplain/{komplain}/tutup', [SaKomplainController::class, 'tutup'])->name('komplain.tutup');
     Route::get('/pengiriman', [SaPengirimanController::class, 'index'])->name('pengiriman');
     Route::put('/pengiriman/{pengiriman}/status', [SaPengirimanController::class, 'updateStatus'])->name('pengiriman.status');
     Route::get('/stok', [SaStokController::class, 'index'])->name('stok');
+    Route::get('/stok/{warehouseStock}/detail', [SaStokController::class, 'detailJson'])->name('stok.detail');
     Route::get('/produksi', [ProduksiController::class, 'index'])->name('produksi');
+    Route::get('/produksi/{productionOrder}/detail', [ProduksiController::class, 'detailJson'])->name('produksi.detail');
     Route::get('/gudang', [GudangController::class, 'index'])->name('gudang');
+    Route::get('/gudang/{warehouse}/detail', [GudangController::class, 'detailJson'])->name('gudang.detail');
     Route::get('/saldo-toko', [SaldoTokoController::class, 'index'])->name('saldo-toko');
     Route::get('/produk', [ProdukController::class, 'index'])->name('produk');
     Route::get('/ulasan-produk-toko', [UlasanProdukTokoController::class, 'index'])->name('ulasan-produk-toko');
@@ -400,6 +419,8 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/laporan/export', [OwnerLaporanController::class, 'export'])->name('laporan.export');
     Route::get('/gudang', [OwnerGudangController::class, 'index'])->name('gudang');
     Route::get('/komplain', [OwnerKomplainController::class, 'index'])->name('komplain');
+    Route::get('/komplain/{komplain}/messages', [OwnerKomplainController::class, 'messages'])->name('komplain.messages');
+    Route::post('/komplain/{komplain}/balas', [OwnerKomplainController::class, 'balas'])->name('komplain.balas');
     Route::get('/moderasi-produk', [OwnerModerasiProdukController::class, 'index'])->name('moderasi-produk');
     Route::post('/moderasi-produk/{product}/verifikasi', [OwnerModerasiProdukController::class, 'verifikasi'])->name('moderasi-produk.verifikasi');
     Route::get('/paket-slot', [OwnerPaketSlotController::class, 'index'])->name('paket-slot');
