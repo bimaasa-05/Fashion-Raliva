@@ -1,3 +1,4 @@
+<meta name="csrf-token" content="{{ csrf_token() }}" />
 <script>
     (function () {
         if (localStorage.getItem('theme') === 'dark') {
