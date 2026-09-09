@@ -6,6 +6,27 @@
 @section('header-subtitle', 'Semua pemberitahuan penting untuk tim produksi Anda.')
 
 @section('content')
+@php
+    $iconMap = [
+        'order' => 'assignment',
+        'pembayaran' => 'payments',
+        'pengiriman' => 'local_shipping',
+        'komplain' => 'support_agent',
+        'wallet' => 'account_balance_wallet',
+        'promo' => 'local_offer',
+        'sistem' => 'notifications',
+    ];
+    $labelMap = [
+        'order' => 'Permintaan',
+        'pembayaran' => 'Pembayaran',
+        'pengiriman' => 'Pengiriman',
+        'komplain' => 'Komplain',
+        'wallet' => 'Keuangan',
+        'promo' => 'Promo',
+        'sistem' => 'Sistem',
+    ];
+@endphp
+
 <div data-skeleton class="space-y-gutter">
     @for ($i = 0; $i < 5; $i++)
         <div class="h-24 bg-surface-container-high rounded-lg animate-pulse"></div>
@@ -19,57 +40,109 @@
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-accent opacity-60"></span>
                 <span class="relative inline-flex rounded-full w-2.5 h-2.5 bg-gold-accent"></span>
             </span>
-            <p class="font-title-md text-sm text-on-surface">5 notifikasi belum dibaca</p>
+            <p class="font-title-md text-sm text-on-surface"><span id="notif-unread-count" class="font-bold text-gold-accent">{{ $notifications->whereNull('dibaca_pada')->count() }} notifikasi belum dibaca</span></p>
         </div>
-        <button type="button" onclick="showRalivaToast('Semua notifikasi ditandai sudah dibaca.', 'mark_email_read')" class="text-xs font-semibold text-gold-accent hover:underline shrink-0">Tandai Semua Dibaca</button>
+        <button type="button" id="mark-all-read" class="font-label-sm text-[10px] text-gold-accent uppercase tracking-widest hover:underline shrink-0">Tandai Semua Dibaca</button>
     </section>
 
-    {{-- Hari Ini --}}
     <section>
-        <h2 data-reveal class="raliva-label mb-gutter px-1">Hari Ini</h2>
-        <div data-reveal-group class="space-y-gutter">
-            @foreach ([
-                ['assignment', 'Permintaan baru PRQ-0043 dari Owner menunggu konfirmasi produksi.', '14:32', true],
-                ['fact_check', 'Pemeriksaan QC-0012 selesai: 38 layak, 2 defect perlu rework.', '13:05', true],
-                ['task_alt', 'Produk selesai 45 unit Knit Cardigan siap serah ke Gudang Utama.', '11:40', false],
-                ['report', 'Defect baru DEF-0012: 2 unit Blazer butuh keputusan.', '09:15', false],
-                ['inventory', 'Stok bahan Wool Charcoal menipis — sisa 18 meter.', '08:02', true],
-            ] as $n)
-                <article data-reveal class="bg-surface-container-lowest border {{ $n[3] ? 'border-l-[3px] border-l-gold-accent border-muted-border' : 'border-muted-border' }} rounded-lg px-5 py-4 flex items-start gap-4 card-premium hover:border-gold-accent/40 transition-colors">
-                    <div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-[20px] text-gold-accent">{{ $n[0] }}</span>
+        <ul id="notif-list" class="divide-y divide-muted-border bg-surface-container-lowest border border-muted-border rounded-lg card-premium overflow-hidden">
+            @forelse ($notifications as $item)
+                @php
+                    /** @var \App\Models\Notification $item */
+                    $unread = is_null($item->dibaca_pada);
+                    $relTime = $item->created_at?->diffForHumans() ?? '-';
+                @endphp
+                <li class="notif-item {{ $unread ? '' : 'opacity-80' }} flex items-start gap-4 px-5 py-4 hover:bg-surface-container-low transition-colors cursor-pointer"
+                    data-notif-id="{{ $item->notification_id }}"
+                    data-notif-target="{{ $item->url ?? '#' }}">
+                    <div class="relative shrink-0 mt-0.5">
+                        <div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center">
+                            <span class="material-symbols-outlined text-[20px] text-gold-accent">{{ $iconMap[$item->tipe] ?? 'notifications' }}</span>
+                        </div>
+                        @if ($unread)
+                            <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-error rounded-full border-2 border-surface-container-lowest notif-dot"></span>
+                        @endif
                     </div>
-                    <p class="flex-1 font-body-md text-sm text-on-surface leading-relaxed">{{ $n[1] }}</p>
-                    <span class="raliva-label whitespace-nowrap mt-1">{{ $n[2] }}</span>
-                </article>
-            @endforeach
-        </div>
-    </section>
-
-    {{-- Sebelumnya --}}
-    <section>
-        <h2 data-reveal class="raliva-label mb-gutter px-1">Sebelumnya</h2>
-        <div data-reveal-group class="space-y-gutter">
-            @foreach ([
-                ['history', 'PRD-0015 Wide Leg Trousers selesai 60 unit dan telah diserahkan.', 'Kemarin, 19:22'],
-                ['precision_manufacturing', 'Permintaan PRQ-0041 Blazer Wool 65% progres — penjahitan tahap 3.', 'Kemarin, 12:00'],
-                ['warehouse', 'Gudang Utama menerima batch FIN-0009 — 115 unit Kemeja Linen.', '20 Agu, 17:30'],
-                ['inventory', 'Bahan Kain Katun Premium masuk 50 meter dari supplier.', '20 Agu, 14:00'],
-                ['groups', 'Tim produksi menambah 1 staf baru: Bagas (helper jahit).', '18 Agu, 09:30'],
-            ] as $n)
-                <article data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg px-5 py-4 flex items-start gap-4 card-premium hover:border-gold-accent/40 transition-colors">
-                    <div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-[20px] text-on-surface-variant">{{ $n[0] }}</span>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-body-md text-sm text-on-surface {{ $unread ? 'font-semibold' : '' }} notif-text">{{ $item->judul }}</p>
+                        <p class="text-on-surface-variant font-body-md text-[13px] mt-0.5">{{ $item->pesan }}</p>
+                        <div class="flex items-center gap-3 mt-1.5 flex-wrap">
+                            <span class="raliva-label">{{ $relTime }}</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ $labelMap[$item->tipe] ?? 'Sistem' }}</span>
+                        </div>
                     </div>
-                    <p class="flex-1 font-body-md text-sm text-on-surface-variant leading-relaxed">{{ $n[1] }}</p>
-                    <span class="raliva-label whitespace-nowrap mt-1">{{ $n[2] }}</span>
-                </article>
-            @endforeach
-        </div>
-    </section>
+                    <span class="material-symbols-outlined text-outline-variant text-[20px] self-center shrink-0">chevron_right</span>
+                </li>
+            @empty
+                <li class="py-10 text-center flex flex-col items-center gap-3">
+                    <div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center">
+                        <span class="material-symbols-outlined text-on-surface-variant">notifications_off</span>
+                    </div>
+                    <p class="font-title-md text-title-md text-on-surface">Tidak Ada Notifikasi</p>
+                </li>
+            @endforelse
+        </ul>
 
-    <div data-reveal class="flex justify-center pt-2">
-        <button type="button" onclick="showRalivaToast('Memuat notifikasi lama (demo).', 'history')" class="px-8 py-3 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Muat Lebih Banyak</button>
-    </div>
+        @if ($notifications->hasPages())
+            <div class="flex flex-wrap items-center justify-between gap-4 mt-6">
+                <p class="font-label-sm text-xs text-on-surface-variant">Menampilkan {{ $notifications->firstItem() }}–{{ $notifications->lastItem() }} dari {{ $notifications->total() }} notifikasi</p>
+                <div class="flex items-center gap-1">{{ $notifications->withQueryString()->links() }}</div>
+            </div>
+        @endif
+    </section>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    (function () {
+        const csrf = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        const readUrlTemplate = '{{ route("notifikasi.read", ":id") }}';
+
+        document.querySelectorAll('.notif-item').forEach((item) => {
+            item.addEventListener('click', () => {
+                const id = item.getAttribute('data-notif-id');
+                const target = item.getAttribute('data-notif-target') || '#';
+                if (id) {
+                    fetch(readUrlTemplate.replace(':id', id), {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: { 'X-CSRF-TOKEN': csrf(), 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    }).then((res) => res.json()).then((data) => {
+                        window.location.href = data.target || target;
+                    }).catch(() => {
+                        window.location.href = target;
+                    });
+                } else {
+                    window.location.href = target;
+                }
+            });
+        });
+
+        const updateUnreadCount = () => {
+            const count = document.querySelectorAll('.notif-dot').length;
+            const el = document.getElementById('notif-unread-count');
+            if (!el) return;
+            el.textContent = count > 0 ? `${count} notifikasi belum dibaca` : 'Semua notifikasi telah dibaca';
+        };
+
+        document.getElementById('mark-all-read')?.addEventListener('click', () => {
+            fetch('{{ route("notifikasi.mark-all-read") }}', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'X-CSRF-TOKEN': csrf(), 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            }).then((res) => res.json()).then(() => {
+                document.querySelectorAll('.notif-dot').forEach((dot) => dot.remove());
+                document.querySelectorAll('.notif-item').forEach((item) => {
+                    item.classList.add('opacity-80');
+                    item.querySelector('.notif-text')?.classList.remove('font-semibold');
+                });
+                updateUnreadCount();
+                if (window.showRalivaToast) showRalivaToast('Semua notifikasi ditandai sudah dibaca.', 'done_all');
+                if (window.updateNotifBadge) window.updateNotifBadge();
+            });
+        });
+    })();
+</script>
+@endpush
