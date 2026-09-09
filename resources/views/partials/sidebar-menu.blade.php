@@ -12,7 +12,7 @@
                 ['route' => 'superadmin.manajemen-pengguna', 'icon' => 'group', 'text' => 'Data Pengguna'],
                 ['route' => 'superadmin.manajemen-toko', 'icon' => 'storefront', 'text' => 'Data Toko'],
                 ['route' => 'superadmin.moderasi-produk', 'icon' => 'inventory_2', 'text' => 'Moderasi Produk'],
-                ['route' => 'superadmin.kategori-produk', 'icon' => 'category', 'text' => 'Kategori Produk'],
+                ['route' => 'superadmin.kategori', 'icon' => 'category', 'text' => 'Kategori'],
                 ['route' => 'superadmin.produk', 'icon' => 'checkroom', 'text' => 'Data Produk'],
                 ['route' => 'superadmin.slot-produk', 'icon' => 'grid_view', 'text' => 'Slot Produk'],
                 ['route' => 'superadmin.store-staff', 'icon' => 'manage_accounts', 'text' => 'Staff Toko'],

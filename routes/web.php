@@ -225,10 +225,11 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/moderasi-produk', [ModerasiProdukController::class, 'index'])->name('moderasi-produk');
     Route::post('/moderasi-produk/{produk}/setujui', [ModerasiProdukController::class, 'setujui'])->name('moderasi-produk.setujui');
     Route::post('/moderasi-produk/{produk}/tolak', [ModerasiProdukController::class, 'tolak'])->name('moderasi-produk.tolak');
-    Route::get('/kategori-produk', [KategoriProdukController::class, 'index'])->name('kategori-produk');
-    Route::post('/kategori-produk', [KategoriProdukController::class, 'store'])->name('kategori-produk.store');
-    Route::post('/kategori-produk/{kategori}/update', [KategoriProdukController::class, 'update'])->name('kategori-produk.update');
-    Route::post('/kategori-produk/{kategori}/hapus', [KategoriProdukController::class, 'hapus'])->name('kategori-produk.hapus');
+    Route::get('/kategori', [KategoriProdukController::class, 'index'])->name('kategori');
+    Route::post('/kategori', [KategoriProdukController::class, 'store'])->name('kategori.store');
+    Route::post('/kategori/{kategori}/update', [KategoriProdukController::class, 'update'])->name('kategori.update');
+    Route::post('/kategori/{kategori}/hapus', [KategoriProdukController::class, 'hapus'])->name('kategori.hapus');
+    Route::redirect('/kategori-produk', '/superadmin/kategori', 301);
     Route::get('/data-pesanan', [DataPesananController::class, 'index'])->name('data-pesanan');
     Route::get('/data-pembayaran', [DataPembayaranController::class, 'index'])->name('data-pembayaran');
     Route::get('/pengembalian-dana', [PengembalianDanaController::class, 'index'])->name('pengembalian-dana');
@@ -282,8 +283,11 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/pengiriman', [SaPengirimanController::class, 'index'])->name('pengiriman');
     Route::put('/pengiriman/{pengiriman}/status', [SaPengirimanController::class, 'updateStatus'])->name('pengiriman.status');
     Route::get('/stok', [SaStokController::class, 'index'])->name('stok');
+    Route::get('/stok/{warehouseStock}/detail', [SaStokController::class, 'detailJson'])->name('stok.detail');
     Route::get('/produksi', [ProduksiController::class, 'index'])->name('produksi');
+    Route::get('/produksi/{productionOrder}/detail', [ProduksiController::class, 'detailJson'])->name('produksi.detail');
     Route::get('/gudang', [GudangController::class, 'index'])->name('gudang');
+    Route::get('/gudang/{warehouse}/detail', [GudangController::class, 'detailJson'])->name('gudang.detail');
     Route::get('/saldo-toko', [SaldoTokoController::class, 'index'])->name('saldo-toko');
     Route::get('/produk', [ProdukController::class, 'index'])->name('produk');
     Route::get('/ulasan-produk-toko', [UlasanProdukTokoController::class, 'index'])->name('ulasan-produk-toko');
@@ -295,9 +299,11 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::put('/store-staff/{staff}', [StoreStaffController::class, 'update'])->name('store-staff.update');
     Route::get('/slot-produk', [SlotProdukController::class, 'index'])->name('slot-produk');
     Route::put('/slot-produk/default', [SlotProdukController::class, 'updateDefault'])->name('slot-produk.default');
+    Route::put('/slot-produk/harga-per-slot', [SlotProdukController::class, 'updateHargaPerSlot'])->name('slot-produk.harga-per-slot');
     Route::post('/slot-produk/toko/{store}/tambah', [SlotProdukController::class, 'grantManual'])->name('slot-produk.tambah-manual');
     Route::post('/slot-produk/paket', [SlotProdukController::class, 'storePackage'])->name('slot-produk.paket.store');
     Route::post('/slot-produk/paket/{paket}/toggle', [SlotProdukController::class, 'togglePackage'])->name('slot-produk.paket.toggle');
+    Route::post('/slot-produk/permintaan/{rmt}/verifikasi', [SlotProdukController::class, 'verifikasiPembayaran'])->name('slot-produk.permintaan.verifikasi');
     Route::post('/slot-produk/permintaan/{rmt}/setujui', [SlotProdukController::class, 'approvePurchase'])->name('slot-produk.permintaan.setujui');
     Route::post('/slot-produk/permintaan/{rmt}/tolak', [SlotProdukController::class, 'rejectPurchase'])->name('slot-produk.permintaan.tolak');
 });
@@ -383,6 +389,7 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/produk', [OwnerProdukController::class, 'index'])->name('produk');
     Route::get('/kelola-slot', [KelolaSlotController::class, 'index'])->name('kelola-slot');
     Route::post('/kelola-slot', [KelolaSlotController::class, 'store'])->name('kelola-slot.request');
+    Route::post('/paket-slot/{paket}/beli', [OwnerPaketSlotController::class, 'purchase'])->name('paket-slot.beli');
     Route::get('/pesanan', [OwnerPesananController::class, 'index'])->name('pesanan');
     Route::post('/pesanan/{order}/forward', [OwnerPesananController::class, 'forward'])->name('pesanan.forward');
     Route::get('/promo', [OwnerPromoController::class, 'index'])->name('promo');
