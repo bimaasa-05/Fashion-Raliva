@@ -125,8 +125,8 @@
                 <div>
                     <label class="block raliva-label mb-2">Kategori Toko</label>
                     <select name="kategori" class="raliva-select">
-                        @foreach (\App\Models\Store::KATEGORI_OPTIONS as $opsi)
-                            <option value="{{ $opsi }}" @selected(old('kategori') === $opsi)>{{ $opsi }}</option>
+                        @foreach (($storeCategories ?? collect()) as $opt)
+                            <option value="{{ $opt }}" @selected(old('kategori') === $opt)>{{ $opt }}</option>
                         @endforeach
                     </select>
                     @error('kategori') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
@@ -198,9 +198,9 @@
                     <div>
                         <label class="block raliva-label mb-2">Kategori Toko</label>
                         <select name="kategori" class="raliva-select">
-                            @php $kategoriRepair = old('kategori', $store->kategori ?? 'Fashion & Lifestyle'); @endphp
-                            @foreach (\App\Models\Store::KATEGORI_OPTIONS as $opsi)
-                                <option value="{{ $opsi }}" @selected($kategoriRepair === $opsi)>{{ $opsi }}</option>
+                            @php $kategoriRepair = old('kategori', $store->kategori ?? ($storeCategories->first() ?? '')); @endphp
+                            @foreach (($storeCategories ?? collect()) as $opt)
+                                <option value="{{ $opt }}" @selected($kategoriRepair === $opt)>{{ $opt }}</option>
                             @endforeach
                         </select>
                         @error('kategori') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
