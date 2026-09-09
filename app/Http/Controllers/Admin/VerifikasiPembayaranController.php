@@ -166,9 +166,11 @@ class VerifikasiPembayaranController extends Controller
         if ($userId) {
             Notification::create([
                 'user_id' => $userId,
+                'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => Notification::TIPE_PEMBAYARAN,
                 'judul' => $judul,
                 'pesan' => $pesan,
+                'url' => route('customer.order-tracking'),
             ]);
         }
     }
