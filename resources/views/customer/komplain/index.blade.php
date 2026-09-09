@@ -587,6 +587,12 @@
         }, 320);
     }
 
+    function chatIsAtBottom(el, threshold) {
+        threshold = threshold || 80;
+        if (!el) return true;
+        return el.scrollTop + el.clientHeight >= el.scrollHeight - threshold;
+    }
+
     async function loadMessages() {
         if (!currentChat.id) return;
         const controller = new AbortController();
@@ -599,6 +605,14 @@
             });
             if (!resp.ok) throw new Error('Gagal memuat pesan');
             const messages = await resp.json();
+            const same = messages.length === chatMessages.length &&
+                messages.every(function (m, i) {
+                    const p = chatMessages[i];
+                    return p && m.complaint_message_id === p.complaint_message_id &&
+                        m.pesan === p.pesan &&
+                        !!m.deleted === !!p.deleted;
+                });
+            if (same) return;
             renderMessages(messages);
         } catch (err) {
             if (currentChat.id !== null) showChatError(err.name === 'AbortError' ? 'Waktu memuat pesan habis. Coba lagi.' : err.message);
@@ -624,6 +638,9 @@
 
     function renderMessages(messages) {
         const el = document.getElementById('chat-messages');
+        const wasAtBottom = chatIsAtBottom(el);
+        const hadMessages = chatMessages.length > 0;
+        const prevTop = el.scrollTop;
         chatMessages = messages || [];
         if (!messages || messages.length === 0) {
             el.innerHTML = '<div class="text-center py-10">' +
@@ -692,7 +709,11 @@
                 '</div>' + selLast + '</div>';
         }).join('');
         applySelectionUI();
-        el.scrollTop = el.scrollHeight;
+        if (!hadMessages || wasAtBottom) {
+            el.scrollTop = el.scrollHeight;
+        } else {
+            el.scrollTop = prevTop;
+        }
     }
 
     function formatTime(value) {
