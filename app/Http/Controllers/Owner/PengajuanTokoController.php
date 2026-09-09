@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Models\Store;
 use App\Models\StoreDocument;
+use App\Models\StoreCategory;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -18,8 +19,11 @@ class PengajuanTokoController extends Controller
         $documents = $store
             ? StoreDocument::where('store_id', $store->store_id)->get()
             : collect();
+        $storeCategories = StoreCategory::where('status', StoreCategory::STATUS_AKTIF)
+            ->orderBy('nama_kategori')
+            ->pluck('nama_kategori');
 
-        return view('Owner.pengajuan-toko.index', compact('store', 'documents'));
+        return view('Owner.pengajuan-toko.index', compact('store', 'documents', 'storeCategories'));
     }
 
     public function store(Request $request)
@@ -30,7 +34,7 @@ class PengajuanTokoController extends Controller
         if (! $store) {
             $validatedStore = $request->validate([
                 'nama_toko' => ['required', 'string', 'max:150'],
-                'kategori' => ['nullable', 'string', 'max:100', Rule::in(Store::KATEGORI_OPTIONS)],
+                'kategori' => ['nullable', 'string', 'max:100', Rule::exists('store_categories', 'nama_kategori')->where('status', StoreCategory::STATUS_AKTIF)],
                 'alamat' => ['required', 'string', 'max:500'],
                 'nomor_telepon' => ['required', 'string', 'max:20'],
                 'deskripsi' => ['nullable', 'string', 'max:1000'],
@@ -49,7 +53,7 @@ class PengajuanTokoController extends Controller
             // Izinkan perbaikan data toko saat ditolak -> reset ke pending
             $validatedStore = $request->validate([
                 'nama_toko' => ['sometimes', 'string', 'max:150'],
-                'kategori' => ['nullable', 'string', 'max:100', Rule::in(Store::KATEGORI_OPTIONS)],
+                'kategori' => ['nullable', 'string', 'max:100', Rule::exists('store_categories', 'nama_kategori')->where('status', StoreCategory::STATUS_AKTIF)],
                 'alamat' => ['sometimes', 'string', 'max:500'],
                 'nomor_telepon' => ['sometimes', 'string', 'max:20'],
                 'deskripsi' => ['nullable', 'string', 'max:1000'],

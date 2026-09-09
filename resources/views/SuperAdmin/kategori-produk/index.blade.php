@@ -26,8 +26,8 @@
                 <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Kelola semua kategori global yang digunakan semua toko.</p>
             </div>
         </div>
-        <button type="button" onclick="openKategoriForm()" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
-            <span class="material-symbols-outlined text-[18px]">add</span> Tambah Kategori
+        <button type="button" id="kategori-toolbar-btn" onclick="openKategoriForm()" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
+            <span id="kategori-toolbar-icon" class="material-symbols-outlined text-[18px]">add</span> <span id="kategori-toolbar-label">Tambah Kategori</span>
         </button>
     </section>
 
@@ -36,8 +36,6 @@
         <button type="button" data-tab="produk" class="kategori-tab-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Produk ({{ $stats['total'] }})</button>
         <button type="button" data-tab="komplain" class="kategori-tab-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Komplain ({{ $kategoriKomplain->count() }})</button>
         <button type="button" data-tab="pengeluaran" class="kategori-tab-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Pengeluaran ({{ $kategoriPengeluaran->count() }})</button>
-        <button type="button" data-tab="supplier" class="kategori-tab-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Jenis Supplier ({{ $jenisSupplier->count() }})</button>
-        <button type="button" data-tab="dokumen" class="kategori-tab-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Jenis Dokumen ({{ $jenisDokumen->count() }})</button>
         <button type="button" data-tab="toko" class="kategori-tab-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Toko ({{ $kategoriToko->count() }})</button>
     </div>
 
@@ -184,91 +182,77 @@
         </div>
     </section>
 
-    <!-- Panel: Jenis Supplier -->
-    <section data-tab-panel="supplier" class="hidden space-y-gutter">
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden">
-            <table class="w-full premium-table">
-                <thead>
-                    <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-4 text-center w-12">No</th>
-                        <th class="p-4 text-left">Jenis Supplier</th>
-                        <th class="p-4 text-center">Total Supplier</th>
-                    </tr>
-                </thead>
-                <tbody class="font-body-md text-sm">
-                    @forelse ($jenisSupplier as $k)
-                        <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                            <td class="p-4 text-center text-on-surface-variant font-mono">{{ $loop->iteration }}</td>
-                            <td class="p-4 text-on-surface capitalize">{{ $k->jenis === '-' ? 'Lainnya' : $k->jenis }}</td>
-                            <td class="p-4 text-center text-on-surface font-bold">{{ $k->total }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="p-8 text-center text-on-surface-variant">Belum ada data jenis supplier.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <!-- Panel: Jenis Dokumen -->
-    <section data-tab-panel="dokumen" class="hidden space-y-gutter">
-        @php
-            $dokumenLabelMap = ['ktp' => 'KTP', 'npwp' => 'NPWP', 'foto_depan' => 'Foto Depan', 'siu' => 'SIU'];
-        @endphp
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden">
-            <table class="w-full premium-table">
-                <thead>
-                    <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-4 text-center w-12">No</th>
-                        <th class="p-4 text-left">Jenis Dokumen</th>
-                        <th class="p-4 text-center">Total Dokumen</th>
-                    </tr>
-                </thead>
-                <tbody class="font-body-md text-sm">
-                    @forelse ($jenisDokumen as $k)
-                        <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                            <td class="p-4 text-center text-on-surface-variant font-mono">{{ $loop->iteration }}</td>
-                            <td class="p-4 text-on-surface">{{ $dokumenLabelMap[$k->jenis] ?? ucfirst($k->jenis) }}</td>
-                            <td class="p-4 text-center text-on-surface font-bold">{{ $k->total }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="p-8 text-center text-on-surface-variant">Belum ada data jenis dokumen.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </section>
-
     <!-- Panel: Kategori Toko -->
     <section data-tab-panel="toko" class="hidden space-y-gutter">
+        <div class="flex justify-between items-center flex-wrap gap-2">
+            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Master Kategori Toko</h2>
+            <span class="text-on-surface-variant font-body-md text-sm">{{ $kategoriToko->where('status', \App\Models\StoreCategory::STATUS_AKTIF)->count() }} aktif • total {{ $kategoriToko->count() }}</span>
+        </div>
+
+        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 space-y-4">
+            <div class="flex items-center gap-2 shrink-0">
+                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Kategori Toko</span>
+            </div>
+            <div id="toko-chip-group" class="flex flex-wrap gap-2">
+                <button type="button" data-toko-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $kategoriToko->count() }})</button>
+                <button type="button" data-toko-chip="aktif" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Aktif ({{ $kategoriToko->where('status', \App\Models\StoreCategory::STATUS_AKTIF)->count() }})</button>
+                <button type="button" data-toko-chip="nonaktif" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Nonaktif ({{ $kategoriToko->where('status', \App\Models\StoreCategory::STATUS_NONAKTIF)->count() }})</button>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div class="relative flex-1">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input id="toko-search" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama atau deskripsi kategori toko..." />
+                    <button type="button" id="toko-clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                </div>
+                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                    <span id="toko-result-count">{{ $kategoriToko->count() }}</span> kategori toko
+                </p>
+            </div>
+        </div>
+
         <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden">
             <table class="w-full premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
                         <th class="p-4 text-center w-12">No</th>
                         <th class="p-4 text-left">Kategori Toko</th>
+                        <th class="p-4 text-left">Deskripsi</th>
+                        <th class="p-4 text-center">Status</th>
                         <th class="p-4 text-center">Total Toko</th>
+                        <th class="p-4 text-center w-24">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
                     @forelse ($kategoriToko as $k)
-                        <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                        <tr data-table-row data-status="{{ $k->status }}" data-search="{{ strtolower($k->nama_kategori.' '.($k->deskripsi ?? '')) }}" data-id="{{ $k->store_category_id }}" data-nama="{{ $k->nama_kategori }}" data-deskripsi="{{ $k->deskripsi }}" data-toko="{{ $k->stores_count }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                             <td class="p-4 text-center text-on-surface-variant font-mono">{{ $loop->iteration }}</td>
-                            <td class="p-4 text-on-surface capitalize">{{ $k->kategori }}</td>
-                            <td class="p-4 text-center text-on-surface font-bold">{{ $k->total }}</td>
+                            <td class="p-4 text-on-surface capitalize font-semibold">{{ $k->nama_kategori }}</td>
+                            <td class="p-4 text-on-surface-variant">{{ \Illuminate\Support\Str::limit($k->deskripsi ?? '-', 60) }}</td>
+                            <td class="p-4 text-center">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $k->status === \App\Models\StoreCategory::STATUS_AKTIF ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-error/10 text-error border-error/20' }}">
+                                    <span class="material-symbols-outlined fill text-[12px]">{{ $k->status === \App\Models\StoreCategory::STATUS_AKTIF ? 'check_circle' : 'block' }}</span>{{ $k->status === \App\Models\StoreCategory::STATUS_AKTIF ? 'Aktif' : 'Nonaktif' }}
+                                </span>
+                            </td>
+                            <td class="p-4 text-center text-on-surface font-bold">{{ $k->stores_count }}</td>
+                            <td class="p-4">
+                                <div class="flex items-center justify-center gap-1">
+                                    <button type="button" onclick="openKategoriTokoForm(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+                                    <button type="button" onclick="openHapusKategoriToko(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+                                </div>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="p-8 text-center text-on-surface-variant">Belum ada data kategori toko.</td>
+                            <td colspan="6" class="p-8 text-center text-on-surface-variant">Belum ada kategori toko.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
+        <p id="toko-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada kategori toko yang cocok.</p>
     </section>
 </div>
 
@@ -326,6 +310,65 @@
                 <div id="hapus-warning" class="hidden mb-4"></div>
                 <div class="flex space-x-3">
                     <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeHapusModal()">Batal</button>
+                    <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Hapus</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Modal Form Kategori Toko (Tambah/Edit) -->
+<form method="POST" action="" id="kategori-toko-form" onsubmit="closeKategoriTokoModal()">
+    @csrf
+    <div id="modal-form-kategori-toko" data-modal class="fixed inset-0 z-[70] hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close onclick="closeKategoriTokoModal()"></div>
+        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
+            <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+                <div>
+                    <h3 id="kategori-toko-modal-title" class="font-title-md text-title-md text-on-surface premium-heading">Tambah Kategori Toko</h3>
+                    <p id="kategori-toko-modal-sub" class="text-on-surface-variant font-body-md text-sm mt-1">Kategori toko yang owner harus pilih saat mengisi data toko.</p>
+                </div>
+                <button type="button" onclick="closeKategoriTokoModal()" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <div class="p-6 space-y-5">
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKategoriToko">Nama Kategori Toko</label>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKategoriToko" name="nama_kategori" type="text" maxlength="100" placeholder="Misal: Fashion & Lifestyle" required />
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsiKategoriToko">Deskripsi</label>
+                    <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsiKategoriToko" name="deskripsi" rows="3" maxlength="500" placeholder="Deskripsi kategori toko..."></textarea>
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="statusKategoriToko">Status</label>
+                    <select name="status" id="statusKategoriToko" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors">
+                        <option value="aktif">Aktif</option>
+                        <option value="nonaktif">Nonaktif</option>
+                    </select>
+                </div>
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+                    <button type="button" onclick="closeKategoriTokoModal()" class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                    <button type="submit" id="kategori-toko-submit-btn" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tambah Kategori Toko</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Modal Hapus Kategori Toko -->
+<form method="POST" action="" id="hapus-kategori-toko-form" onsubmit="closeHapusKategoriTokoModal()">
+    @csrf
+    <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="hapusKategoriTokoModal" onclick="if (event.target === this) closeHapusKategoriTokoModal()">
+        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
+            <div class="p-8">
+                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
+                    <span class="material-symbols-outlined text-error text-[28px]">delete_forever</span>
+                </div>
+                <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Hapus Kategori Toko</h3>
+                <p class="text-on-surface-variant text-sm text-center mb-4">Kategori toko <span id="hapus-toko-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.</p>
+                <div id="hapus-toko-warning" class="hidden mb-4"></div>
+                <div class="flex space-x-3">
+                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeHapusKategoriTokoModal()">Batal</button>
                     <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Hapus</button>
                 </div>
             </div>
@@ -492,10 +535,147 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.classList.remove(...activeClasses, ...idleClasses, 'hover:bg-surface-container-high');
             btn.classList.add(...(active ? activeClasses : [...idleClasses, 'hover:bg-surface-container-high']));
         });
+
+        const toolbarBtn = document.getElementById('kategori-toolbar-btn');
+        if (toolbarBtn) {
+            const label = document.getElementById('kategori-toolbar-label');
+            const isToko = id === 'toko';
+            toolbarBtn.onclick = isToko ? () => openKategoriTokoForm() : () => openKategoriForm();
+            if (label) label.textContent = isToko ? 'Tambah Kategori Toko' : 'Tambah Kategori';
+        }
     };
 
     tabBtns.forEach((btn) => btn.addEventListener('click', () => activateTab(btn.dataset.tab)));
     activateTab('produk');
 });
+</script>
+@endpush
+
+@push('scripts')
+<script>
+    const kategoriTokoUrls = {
+        store: '{{ route('superadmin.kategori-toko.store') }}',
+        update: (id) => '{{ route('superadmin.kategori-toko.update', ':id:') }}'.replace(':id:', id),
+        hapus: (id) => '{{ route('superadmin.kategori-toko.hapus', ':id:') }}'.replace(':id:', id)
+    };
+
+    function openKategoriTokoForm(row = null) {
+        const isEdit = !!row;
+        const form = document.getElementById('kategori-toko-form');
+
+        if (isEdit) {
+            const d = row.dataset;
+            document.getElementById('kategori-toko-modal-title').textContent = 'Ubah Kategori Toko';
+            document.getElementById('kategori-toko-modal-sub').textContent = 'Perubahan akan berpengaruh ke dropdown kategori di halaman Owner.';
+            document.getElementById('namaKategoriToko').value = d.nama;
+            document.getElementById('deskripsiKategoriToko').value = d.deskripsi || '';
+            document.getElementById('statusKategoriToko').value = d.status || 'aktif';
+            form.action = kategoriTokoUrls.update(d.id);
+            document.getElementById('kategori-toko-submit-btn').textContent = 'Simpan Perubahan';
+        } else {
+            document.getElementById('kategori-toko-modal-title').textContent = 'Tambah Kategori Toko';
+            document.getElementById('kategori-toko-modal-sub').textContent = 'Kategori toko yang owner harus pilih saat mengisi data toko.';
+            document.getElementById('namaKategoriToko').value = '';
+            document.getElementById('deskripsiKategoriToko').value = '';
+            document.getElementById('statusKategoriToko').value = 'aktif';
+            form.action = kategoriTokoUrls.store;
+            document.getElementById('kategori-toko-submit-btn').textContent = 'Tambah Kategori Toko';
+        }
+
+        document.getElementById('modal-form-kategori-toko').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => document.getElementById('namaKategoriToko').focus(), 100);
+    }
+
+    function closeKategoriTokoModal() {
+        document.getElementById('modal-form-kategori-toko').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    function openHapusKategoriToko(row) {
+        const d = row.dataset;
+        const warningBox = document.getElementById('hapus-toko-warning');
+        document.getElementById('hapus-toko-nama').textContent = d.nama;
+
+        if (parseInt(d.toko) > 0) {
+            warningBox.className = 'mb-4 bg-error/5 border border-error/25 rounded-lg p-3 text-xs text-on-surface';
+            warningBox.textContent = '⚠️ Kategori ini masih dipakai ' + d.toko + ' toko. Penghapusan akan ditolak sistem.';
+        } else {
+            warningBox.className = 'hidden';
+            warningBox.textContent = '';
+        }
+
+        document.getElementById('hapus-kategori-toko-form').action = kategoriTokoUrls.hapus(d.id);
+        const modal = document.getElementById('hapusKategoriTokoModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeHapusKategoriTokoModal() {
+        const modal = document.getElementById('hapusKategoriTokoModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const scope = document.querySelector('[data-tab-panel="toko"]');
+        if (!scope) return;
+
+        const rows = Array.from(scope.querySelectorAll('[data-table-row]'));
+        const chipBtns = document.querySelectorAll('#toko-chip-group [data-toko-chip]');
+        const searchInput = document.getElementById('toko-search');
+        const clearBtn = document.getElementById('toko-clear-search');
+        const countEl = document.getElementById('toko-result-count');
+        const emptySearch = document.getElementById('toko-empty-search');
+
+        const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
+        const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
+
+        let activeChip = 'semua';
+
+        function applyTokoFilter() {
+            const term = searchInput.value.trim().toLowerCase();
+            let visible = 0;
+
+            rows.forEach((row) => {
+                const matchChip = activeChip === 'semua' || row.getAttribute('data-status') === activeChip;
+                const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
+                const show = matchChip && matchSearch;
+                row.classList.toggle('hidden', !show);
+                if (show) visible++;
+            });
+
+            countEl.textContent = visible;
+            emptySearch.classList.toggle('hidden', visible > 0 || rows.length === 0);
+        }
+
+        chipBtns.forEach((btn) => btn.addEventListener('click', () => {
+            activeChip = btn.dataset.tokoChip;
+            chipBtns.forEach((b) => {
+                b.classList.remove(...activeClasses, ...idleClasses, 'hover:bg-surface-container-high');
+                b.classList.add(...(b === btn ? activeClasses : [...idleClasses, 'hover:bg-surface-container-high']));
+            });
+            applyTokoFilter();
+        }));
+
+        let debounce;
+        searchInput.addEventListener('input', () => {
+            clearBtn.classList.toggle('opacity-0', !searchInput.value);
+            clearTimeout(debounce);
+            debounce = setTimeout(applyTokoFilter, 200);
+        });
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearBtn.classList.add('opacity-0');
+            applyTokoFilter();
+        });
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') { closeKategoriTokoModal(); closeHapusKategoriTokoModal(); }
+    });
 </script>
 @endpush

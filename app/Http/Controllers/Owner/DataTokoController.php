@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Support\OwnerContext;
 use App\Models\Review;
+use App\Models\StoreCategory;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -21,8 +22,11 @@ class DataTokoController extends Controller
 
         $rating = $store ? (float) Review::where('store_id', $store->store_id)->avg('rating') : 0;
         $reviewCount = $store ? Review::where('store_id', $store->store_id)->count() : 0;
+        $storeCategories = StoreCategory::where('status', StoreCategory::STATUS_AKTIF)
+            ->orderBy('nama_kategori')
+            ->pluck('nama_kategori');
 
-        return view('Owner.data-toko.index', compact('store', 'rating', 'reviewCount'));
+        return view('Owner.data-toko.index', compact('store', 'rating', 'reviewCount', 'storeCategories'));
     }
 
     public function update(Request $request)
@@ -34,7 +38,7 @@ class DataTokoController extends Controller
 
         $validated = $request->validate([
             'nama_toko' => ['required', 'string', 'max:100'],
-            'kategori' => ['nullable', 'string', 'max:100', Rule::in(\App\Models\Store::KATEGORI_OPTIONS)],
+            'kategori' => ['nullable', 'string', 'max:100', Rule::exists('store_categories', 'nama_kategori')->where('status', StoreCategory::STATUS_AKTIF)],
             'deskripsi' => ['nullable', 'string', 'max:1000'],
             'alamat' => ['required', 'string', 'max:500'],
             'nomor_telepon' => ['required', 'string', 'max:20'],

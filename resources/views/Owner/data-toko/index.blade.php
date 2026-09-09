@@ -64,9 +64,9 @@
                     <div>
                         <label for="kategori-toko" class="block raliva-label mb-2">Kategori</label>
                         <select id="kategori-toko" name="kategori" class="raliva-select">
-                            @php $kategoriToko = old('kategori', $store?->kategori ?? 'Fashion & Lifestyle'); @endphp
-                            @foreach (\App\Models\Store::KATEGORI_OPTIONS as $opsi)
-                                <option value="{{ $opsi }}" @selected($kategoriToko === $opsi)>{{ $opsi }}</option>
+                            @php $kategoriToko = old('kategori', $store?->kategori ?? ($storeCategories->first() ?? '')); @endphp
+                            @foreach (($storeCategories ?? collect()) as $opt)
+                                <option value="{{ $opt }}" @selected($kategoriToko === $opt)>{{ $opt }}</option>
                             @endforeach
                         </select>
                         @error('kategori') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror

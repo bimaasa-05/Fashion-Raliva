@@ -71,6 +71,7 @@ use App\Http\Controllers\SuperAdmin\DataPembayaranController;
 use App\Http\Controllers\SuperAdmin\DataPesananController;
 use App\Http\Controllers\SuperAdmin\GudangController;
 use App\Http\Controllers\SuperAdmin\KategoriProdukController;
+use App\Http\Controllers\SuperAdmin\StoreCategoryController;
 use App\Http\Controllers\SuperAdmin\KomisiGlobalController;
 use App\Http\Controllers\SuperAdmin\KomplainController as SaKomplainController;
 use App\Http\Controllers\SuperAdmin\KurirController;
@@ -219,6 +220,9 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/kategori', [KategoriProdukController::class, 'store'])->name('kategori.store');
     Route::post('/kategori/{kategori}/update', [KategoriProdukController::class, 'update'])->name('kategori.update');
     Route::post('/kategori/{kategori}/hapus', [KategoriProdukController::class, 'hapus'])->name('kategori.hapus');
+    Route::post('/kategori/toko', [StoreCategoryController::class, 'store'])->name('kategori-toko.store');
+    Route::post('/kategori/toko/{storeCategory}/update', [StoreCategoryController::class, 'update'])->name('kategori-toko.update');
+    Route::post('/kategori/toko/{storeCategory}/hapus', [StoreCategoryController::class, 'hapus'])->name('kategori-toko.hapus');
     Route::redirect('/kategori-produk', '/superadmin/kategori', 301);
     Route::get('/data-pesanan', [DataPesananController::class, 'index'])->name('data-pesanan');
     Route::get('/data-pembayaran', [DataPembayaranController::class, 'index'])->name('data-pembayaran');
