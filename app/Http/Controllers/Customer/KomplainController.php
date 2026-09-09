@@ -120,6 +120,7 @@ class KomplainController extends Controller
             ->with('sender.role')
             ->orderBy('created_at')
             ->get()
+            ->reject(fn ($message) => $message->deletedFor(Auth::id()))
             ->map(fn ($message) => $message->toChatArray(Auth::id()))
             ->values();
 
@@ -169,19 +170,11 @@ class KomplainController extends Controller
     {
         $this->authorizeMessage($komplain, $message);
 
-        if ($message->deleted_at) {
-            return response()->json(['message' => 'Pesan sudah dihapus.'], 422);
-        }
-
         if (in_array($komplain->status, [Complaint::STATUS_SELESAI, Complaint::STATUS_DITUTUP], true)) {
             return response()->json(['message' => 'Komplain ini sudah selesai dan tidak dapat diubah.'], 422);
         }
 
-        $per = $request->input('per', 'all');
-
-        if ($per === 'all' && $message->sender_id !== Auth::id()) {
-            return response()->json(['message' => 'Hanya pemilik pesan yang dapat menghapus untuk semua orang.'], 403);
-        }
+        $per = $request->input('per', 'me');
 
         if ($per === 'me') {
             $deletedBy = $message->deleted_by ?? [];
@@ -189,9 +182,26 @@ class KomplainController extends Controller
                 $deletedBy[] = Auth::id();
                 $message->update(['deleted_by' => $deletedBy]);
             }
-        } else {
-            $message->delete();
+
+            return response()->json([
+                'deleted' => true,
+                'complaint_message_id' => $message->complaint_message_id,
+            ]);
         }
+
+        if ($message->deleted_at) {
+            return response()->json(['message' => 'Pesan sudah dihapus.'], 422);
+        }
+
+        if ($message->sender_id !== Auth::id()) {
+            return response()->json(['message' => 'Hanya pemilik pesan yang dapat menghapus untuk semua orang.'], 403);
+        }
+
+        if ($message->created_at->lt(now()->subDays(2))) {
+            return response()->json(['message' => 'Pesan hanya dapat dihapus untuk semua orang dalam 2 hari setelah dikirim.'], 422);
+        }
+
+        $message->delete();
 
         return response()->json([
             'deleted' => true,

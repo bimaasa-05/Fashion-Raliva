@@ -669,12 +669,15 @@
             }
 
             let menu = '';
-            if (mine && actionsOn) {
-                const menuItems = chatEditAllowed(m.created_at)
-                    ? '<button type="button" onclick="openEditDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">edit</span>' + escapeHtml('Edit pesan') + '</button>' +
-                      '<button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ',false)" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>'
-                    : '<button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ',false)" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>';
-                menu = chatMenuMarkup(m.complaint_message_id, 'text-white/60 hover:text-white') + menuItems + '</span></span>';
+            if (actionsOn) {
+                const canAll = mine && chatDeleteForAllAllowed(m.created_at);
+                const canEdit = mine && chatEditAllowed(m.created_at);
+                let items = '';
+                if (canEdit) {
+                    items += '<button type="button" onclick="openEditDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">edit</span>' + escapeHtml('Edit pesan') + '</button>';
+                }
+                items += '<button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ',' + (canAll ? 'false' : 'true') + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>';
+                menu = chatMenuMarkup(m.complaint_message_id, mine ? 'text-white/60 hover:text-white' : 'text-on-surface-variant hover:text-on-surface') + items + '</span></span>';
             }
 
             return '<div class="' + rowClass + '" data-mid="' + m.complaint_message_id + '">' +
@@ -714,6 +717,12 @@
         const t = new Date(createdAt).getTime();
         if (isNaN(t)) return false;
         return (Date.now() - t) <= 15 * 60 * 1000;
+    }
+
+    function chatDeleteForAllAllowed(createdAt) {
+        const t = new Date(createdAt).getTime();
+        if (isNaN(t)) return false;
+        return (Date.now() - t) <= 2 * 24 * 60 * 60 * 1000;
     }
 
     function toggleChatMenu(id) {
@@ -940,12 +949,12 @@
     }
 
     function downloadSelectedMessages() {
-        showChatToast('Download disiapkan.');
+        showChatToast('Fitur akan segera hadir.');
     }
 
     function openExportChat() {
         closeChatMoreMenu();
-        showChatToast('Ekspor Chat disiapkan.');
+        showChatToast('Fitur akan segera hadir.');
     }
 
     function openEditDialog(id) {
@@ -1022,11 +1031,13 @@
         deleteDialogMsgId = id;
         const optAll = document.getElementById('chat-del-opt-all');
         if (optAll) optAll.classList.toggle('hidden', !!onlyMe);
+        document.querySelectorAll('#chat-delete-dialog [data-del-per]').forEach(function (b) { b.disabled = false; });
         document.getElementById('chat-delete-dialog').classList.remove('hidden');
     }
 
     function closeDeleteDialog() {
         deleteDialogMsgId = null;
+        document.querySelectorAll('#chat-delete-dialog [data-del-per]').forEach(function (b) { b.disabled = false; });
         document.getElementById('chat-delete-dialog').classList.add('hidden');
     }
 
@@ -1059,6 +1070,8 @@
             }
         } catch (_) {
             closeDeleteDialog();
+        } finally {
+            if (btnEl) btnEl.disabled = false;
         }
     }
 

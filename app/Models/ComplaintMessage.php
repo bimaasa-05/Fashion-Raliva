@@ -37,13 +37,21 @@ class ComplaintMessage extends Model
     }
 
     /**
+     * Apakah viewer sudah menghapus pesan ini "untuk diri sendiri".
+     */
+    public function deletedFor(int $viewerId): bool
+    {
+        return in_array($viewerId, $this->deleted_by ?? [], true);
+    }
+
+    /**
      * Representasi pesan untuk API chat berdasar sudut pandang viewer.
      * Pesan tersembunyi (deleted untuk semua ATAU deleted_by viewer) tidak
      * mengirimkan isi pesan.
      */
     public function toChatArray(int $viewerId): array
     {
-        $deleted = !is_null($this->deleted_at) || in_array($viewerId, $this->deleted_by ?? [], true);
+        $deleted = !is_null($this->deleted_at) || $this->deletedFor($viewerId);
 
         return [
             'complaint_message_id' => $this->complaint_message_id,
