@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta name="user-id" content="{{ Auth::id() }}" />
     <title>RALIVA - @yield('title', 'Gudang')</title>
     @include('partials.theme-head')
 </head>
@@ -139,6 +139,7 @@
         ['route' => 'gudang.profil', 'icon' => 'person', 'label' => 'Profil'],
     ]])
 
+    @include('partials.notification-popup')
     @include('partials.layout-scripts')
     @include('partials.ui-scripts')
 
