@@ -154,7 +154,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('/komplain/{komplain}/messages', [\App\Http\Controllers\Customer\KomplainController::class, 'messages'])->name('komplain.messages');
         Route::post('/komplain/{komplain}/messages', [\App\Http\Controllers\Customer\KomplainController::class, 'storeMessage'])->name('komplain.messages.store');
         Route::patch('/komplain/{komplain}/messages/{message}', [\App\Http\Controllers\Customer\KomplainController::class, 'updateMessage'])->name('komplain.messages.update');
-        Route::delete('/komplain/{komplain}/messages/{message}', [\App\Http\Controllers\Customer\KomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy');
+        Route::delete('/komplain/{komplain}/messages/{message}', [\App\Http\Controllers\Customer\KomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy')->withTrashed();
 
         Route::get('/account', function () {
             return view('customer.account.index');
@@ -276,7 +276,7 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/komplain', [SaKomplainController::class, 'index'])->name('komplain');
     Route::get('/komplain/{komplain}/messages', [SaKomplainController::class, 'messages'])->name('komplain.messages');
     Route::post('/komplain/{komplain}/messages', [SaKomplainController::class, 'storeMessage'])->name('komplain.messages.store');
-    Route::delete('/komplain/{komplain}/messages/{message}', [SaKomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy');
+    Route::delete('/komplain/{komplain}/messages/{message}', [SaKomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy')->withTrashed();
     Route::post('/komplain/{komplain}/eskalasi', [SaKomplainController::class, 'eskalasi'])->name('komplain.eskalasi');
     Route::post('/komplain/{komplain}/tutup', [SaKomplainController::class, 'tutup'])->name('komplain.tutup');
     Route::get('/pengiriman', [SaPengirimanController::class, 'index'])->name('pengiriman');
