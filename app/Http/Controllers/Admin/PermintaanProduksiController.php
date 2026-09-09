@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Order;
 use App\Models\ProductionOrder;
 use App\Models\ProductionOrderItem;
 use App\Models\Warehouse;
 use App\Support\AdminContext;
 use App\Support\ActivityLogger;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 
 class PermintaanProduksiController extends Controller
@@ -81,6 +83,16 @@ class PermintaanProduksiController extends Controller
         ]);
 
         ActivityLogger::log('admin.production.request', ProductionOrder::class, $po->production_order_id, [], $po->toArray(), 'Mengajukan produksi '.$variant->product?->nama_produk);
+
+        NotificationService::sendToRole(
+            \App\Models\Role::PRODUKSI,
+            Notification::TIPE_SISTEM,
+            'Permintaan Produksi Baru',
+            sprintf('Permintaan produksi %s untuk produk "%s" (%d unit).', $po->nomor_produksi, $variant->product?->nama_produk ?? '-', $data['jumlah_diminta']),
+            auth()->id(),
+            route('produksi.dashboard')
+        );
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Permintaan Produksi Dikirim', sprintf('Permintaan produksi %s dikirim ke tim Produksi.', $po->nomor_produksi), route('admin.permintaan-produksi'));
 
         return back()->with('success', 'Permintaan produksi '.$po->nomor_produksi.' dikirim ke tim Produksi.');
     }
