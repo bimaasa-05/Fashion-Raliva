@@ -19,19 +19,21 @@ class BarangMasukController extends Controller
         $warehouses = $this->assignedWarehouses();
         $warehouse = $this->activeWarehouse();
 
-        $items = collect();
+        $q = $request->query('q');
+        $supplierId = $request->query('supplier_id');
+
+        $items = StockMovement::with(['productVariant.product', 'creator', 'supplier'])
+            ->whereIn('tipe_pergerakan', [StockMovement::TIPE_MASUK, StockMovement::TIPE_MUTASI_MASUK])
+            ->when($q, fn ($query) => $query->whereHas('productVariant.product', fn ($pq) => $pq->where('nama_produk', 'like', '%'.$q.'%')))
+            ->when($supplierId, fn ($query) => $query->where('sumber_tipe', StockMovement::SUMBER_SUPPLIER)->where('sumber_id', $supplierId));
+
         if ($warehouse) {
-            $q = $request->query('q');
-            $supplierId = $request->query('supplier_id');
-            $items = StockMovement::with(['productVariant.product', 'creator', 'supplier'])
-                ->where('warehouse_id', $warehouse->warehouse_id)
-                ->whereIn('tipe_pergerakan', [StockMovement::TIPE_MASUK, StockMovement::TIPE_MUTASI_MASUK])
-                ->when($q, fn ($query) => $query->whereHas('productVariant.product', fn ($pq) => $pq->where('nama_produk', 'like', '%'.$q.'%')))
-                ->when($supplierId, fn ($query) => $query->where('sumber_tipe', StockMovement::SUMBER_SUPPLIER)->where('sumber_id', $supplierId))
-                ->orderByDesc('created_at')
-                ->paginate(15)
-                ->withQueryString();
+            $items->where('warehouse_id', $warehouse->warehouse_id);
+        } else {
+            $items->whereRaw('1 = 0');
         }
+
+        $items = $items->orderByDesc('created_at')->paginate(15)->withQueryString();
 
         return view('Gudang.barang-masuk.index', [
             'warehouses' => $warehouses,
@@ -71,7 +73,7 @@ class BarangMasukController extends Controller
         ]);
 
         DB::transaction(function () use ($warehouse, $data) {
-            WarehouseStock::updateOrCreate(
+            $stock = WarehouseStock::updateOrCreate(
                 ['warehouse_id' => $warehouse->warehouse_id, 'product_variant_id' => $data['product_variant_id']],
                 ['jumlah_stok' => DB::raw('jumlah_stok + '.$data['jumlah'])]
             );
@@ -86,6 +88,8 @@ class BarangMasukController extends Controller
                 'alasan' => $data['alasan'] ?? 'Barang masuk dari supplier',
                 'dibuat_oleh' => auth()->id(),
             ]);
+
+            $stock->update(['supplier_id' => $data['supplier_id']]);
         });
 
         ActivityLogger::log(

@@ -795,7 +795,7 @@ class RalivaDemoSeeder extends Seeder
         $supIds = Supplier::pluck('supplier_id', 'nama_supplier')->all();
         if ($supIds !== [] && WarehouseStock::exists()) {
             $supplierMovements = [];
-            $stockSamples = WarehouseStock::orderBy('warehouse_stock_id')->take(8)->get();
+            $stockSamples = WarehouseStock::orderBy('warehouse_stock_id')->take(50)->get();
             $supNames = array_keys($supIds);
             foreach ($stockSamples as $si => $ws) {
                 $supplierName = $supNames[$si % count($supNames)];
@@ -810,6 +810,7 @@ class RalivaDemoSeeder extends Seeder
                     'dibuat_oleh' => $firstGudangId,
                     'created_at' => now()->subDays(7 + $si),
                 ];
+                $ws->update(['supplier_id' => $supIds[$supplierName]]);
             }
             StockMovement::insert($supplierMovements);
         }

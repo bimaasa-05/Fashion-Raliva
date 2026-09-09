@@ -17,11 +17,17 @@ class WarehouseStock extends Model
         'jumlah_stok',
         'jumlah_direservasi',
         'stok_minimum',
+        'supplier_id',
     ];
 
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class, 'warehouse_id', 'warehouse_id');
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'supplier_id');
     }
 
     public function productVariant(): BelongsTo
