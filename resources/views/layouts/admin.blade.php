@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="user-id" content="{{ Auth::id() }}" />
     <title>RALIVA - @yield('title', 'Admin Toko')</title>
     @include('partials.theme-head')
 </head>
@@ -17,7 +18,7 @@
             <button type="button" class="theme-toggle text-on-surface hover:opacity-80 transition-opacity" aria-label="Ganti tema">
                 <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
             </button>
-            @include('partials.notification-panel')
+            @include('partials.notification-panel', ['lihatSemuaRoute' => 'admin.notifikasi'])
             @php $adminHeaderUserM = Auth::user(); @endphp
             @include('partials.profile-menu', ['compact' => true, 'name' => $adminHeaderUserM?->nama_lengkap ?? 'Admin Toko', 'role' => $adminHeaderUserM?->role?->nama_role ?? 'Admin Toko', 'profilRoute' => 'admin.profil', 'showPengaturan' => false])
         </div>
@@ -83,7 +84,7 @@
                 <button type="button" class="theme-toggle text-on-surface hover:text-secondary transition-colors" aria-label="Ganti tema">
                     <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
                 </button>
-                @include('partials.notification-panel')
+                @include('partials.notification-panel', ['lihatSemuaRoute' => 'admin.notifikasi'])
                 @php $adminHeaderUserD = Auth::user(); @endphp
                 @include('partials.profile-menu', ['name' => $adminHeaderUserD?->nama_lengkap ?? 'Admin Toko', 'role' => $adminHeaderUserD?->role?->nama_role ?? 'Admin Toko', 'profilRoute' => 'admin.profil', 'showPengaturan' => false])
             </div>
@@ -115,6 +116,7 @@
     ]])
 
     @stack('modals')
+    @include('partials.notification-popup')
     @include('partials.layout-scripts')
     @include('partials.ui-scripts')
     @stack('scripts')
