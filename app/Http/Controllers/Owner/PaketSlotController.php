@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\PaymentMethod;
 use App\Models\ProductSlotPackage;
+use App\Models\Role;
 use App\Models\SlotGrant;
 use App\Models\StoreSlotSubscription;
+use App\Services\NotificationService;
 use App\Support\OwnerContext;
 use App\Support\SlotService;
 use Illuminate\Http\Request;
@@ -95,6 +98,16 @@ class PaketSlotController extends Controller
             $sub->slot_subscription_id,
             StoreSlotSubscription::class
         );
+
+        NotificationService::sendToRole(
+            Role::SUPER_ADMIN,
+            Notification::TIPE_SISTEM,
+            'Pembelian Paket Slot',
+            sprintf('Toko membeli paket slot "%s" (%d slot).', $paket->nama_paket, $paket->jumlah_slot),
+            auth()->id(),
+            route('superadmin.slot-produk')
+        );
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Paket Slot Aktif', sprintf('Paket "%s" (%d slot) berhasil aktif.', $paket->nama_paket, $paket->jumlah_slot), route('owner.paket-slot'));
 
         return back()->with('success', 'Paket "'.$paket->nama_paket.'" ('.$paket->jumlah_slot.' slot) berhasil aktif. Kuota toko bertambah.');
     }
