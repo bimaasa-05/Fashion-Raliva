@@ -65,19 +65,6 @@ class PengajuanTokoController extends Controller
             ]);
         } elseif ($isRevising) {
             $storeFields = $request->validate([
-
-            $store = Store::create([
-                'owner_id' => $user->user_id,
-                'nama_toko' => $validatedStore['nama_toko'],
-                'kategori' => $validatedStore['kategori'] ?? null,
-                'alamat' => $validatedStore['alamat'],
-                'nomor_telepon' => $validatedStore['nomor_telepon'],
-                'deskripsi' => $validatedStore['deskripsi'] ?? null,
-                'status' => Store::STATUS_PENDING,
-            ]);
-        } elseif ($store->status === Store::STATUS_DITOLAK) {
-            // Izinkan perbaikan data toko saat ditolak -> reset ke pending
-            $validatedStore = $request->validate([
                 'nama_toko' => ['sometimes', 'string', 'max:150'],
                 'kategori' => ['nullable', 'string', 'max:100', Rule::exists('store_categories', 'nama_kategori')->where('status', StoreCategory::STATUS_AKTIF)],
                 'alamat' => ['sometimes', 'string', 'max:500'],
