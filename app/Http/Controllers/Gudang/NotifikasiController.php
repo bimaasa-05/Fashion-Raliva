@@ -54,6 +54,8 @@ class NotifikasiController extends Controller
             ->whereNull('dibaca_pada')
             ->update(['dibaca_pada' => now()]);
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Semua Notifikasi Dibaca', 'Semua notifikasi Anda ditandai sudah dibaca.', route('gudang.notifikasi'));
+
         return response()->json(['success' => true]);
     }
 }

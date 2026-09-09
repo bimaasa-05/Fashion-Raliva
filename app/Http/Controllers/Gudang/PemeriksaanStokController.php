@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Gudang;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
+use App\Models\Role;
 use App\Models\StockMovement;
 use App\Models\StockOpname;
 use App\Models\WarehouseStock;
+use App\Services\NotificationService;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -113,6 +116,16 @@ class PemeriksaanStokController extends Controller
             ['product_variant_id' => $data['product_variant_id'], 'stok_sistem' => $stokSistem, 'stok_fisik' => $data['stok_fisik'], 'selisih' => $selisih],
             sprintf('Pemeriksaan stok: sistem %d, fisik %d, selisih %s%d.', $stokSistem, $data['stok_fisik'], $selisih >= 0 ? '+' : '', $selisih)
         );
+
+        NotificationService::sendToRole(
+            Role::ADMIN,
+            Notification::TIPE_SISTEM,
+            'Pemeriksaan Stok (Opname)',
+            sprintf('Opname di gudang "%s": sistem %d, fisik %d, selisih %s%d.', $warehouse->nama_gudang, $stokSistem, $data['stok_fisik'], $selisih >= 0 ? '+' : '', $selisih),
+            auth()->id(),
+            route('admin.stok')
+        );
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemeriksaan Stok Disimpan', sprintf('Opname di gudang "%s" berhasil disimpan.', $warehouse->nama_gudang), route('gudang.dashboard'));
 
         return back()->with('toast', ['message' => 'Pemeriksaan stok berhasil disimpan.', 'icon' => 'task_alt']);
     }
