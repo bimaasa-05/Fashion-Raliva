@@ -205,6 +205,16 @@ class DataPesananController extends Controller
             return $newOrder;
         });
 
+        Notification::create([
+            'user_id' => $newOrder->checkout->user_id,
+            'aktor_id' => ActivityLogger::resolveActorId(),
+            'tipe' => Notification::TIPE_ORDER,
+            'judul' => 'Pesanan Dibuat Admin',
+            'pesan' => sprintf('Admin membuat pesanan %s untuk Anda (menunggu pembayaran).', $newOrder->nomor_order),
+            'url' => route('customer.order-tracking'),
+        ]);
+        Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Manual Dibuat', sprintf('Pesanan %s berhasil dibuat untuk customer.', $newOrder->nomor_order), route('admin.pesanan'));
+
         return back()->with('toast', [
             'message' => 'Pesanan ' . ($newOrder->nomor_order ?? ('#'.$newOrder->order_id)) . ' dibuat (Menunggu Pembayaran).',
             'icon' => 'task_alt',
@@ -262,9 +272,11 @@ class DataPesananController extends Controller
         if ($userId) {
             Notification::create([
                 'user_id' => $userId,
+                'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => Notification::TIPE_ORDER,
                 'judul' => $judul,
                 'pesan' => $pesan,
+                'url' => route('customer.order-tracking'),
             ]);
         }
     }
