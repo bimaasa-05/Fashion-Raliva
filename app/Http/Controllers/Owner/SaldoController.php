@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Refund;
+use App\Models\Role;
 use App\Models\StoreExpense;
 use App\Models\WalletTransaction;
 use App\Models\Withdrawal;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -164,6 +167,8 @@ class SaldoController extends Controller
             'tanggal' => $validated['tanggal'],
         ]);
 
+        Notification::fireSelf(Notification::TIPE_WALLET, 'Pengeluaran Dicatat', sprintf('Pengeluaran "%s" senilai Rp %s dicatat.', $validated['nama'], number_format((float) $validated['nominal'], 0, ',', '.')), route('owner.keuangan'));
+
         return redirect()->route('owner.keuangan')->with('success', 'Pengeluaran berhasil dicatat.');
     }
 
@@ -190,6 +195,8 @@ class SaldoController extends Controller
             'saldo_sesudah' => (float) $wallet->saldo_tersedia,
             'keterangan' => 'Pemasukan: '.$validated['sumber'],
         ]);
+        Notification::fireSelf(Notification::TIPE_WALLET, 'Pemasukan Dicatat', sprintf('Pemasukan dari %s senilai Rp %s dicatat.', $validated['sumber'], number_format((float) $validated['nominal'], 0, ',', '.')), route('owner.keuangan'));
+
         return redirect()->route('owner.keuangan')->with('success', 'Pemasukan berhasil dicatat.');
     }
 
@@ -238,6 +245,16 @@ class SaldoController extends Controller
                 'keterangan' => 'Pencairan dana ke ' . ($bankAccount->bank->nama_bank ?? 'Bank') . ' ' . $bankAccount->nomor_rekening,
             ]);
         });
+
+        NotificationService::sendToRole(
+            Role::SUPER_ADMIN,
+            Notification::TIPE_WALLET,
+            'Pengajuan Pencairan Baru',
+            sprintf('Toko "%s" mengajukan pencairan Rp %s.', $store->nama_toko, number_format((float) $request->jumlah, 0, ',', '.')),
+            $user->user_id,
+            route('superadmin.permintaan-penarikan')
+        );
+        Notification::fireSelf(Notification::TIPE_WALLET, 'Pencairan Diajukan', sprintf('Pengajuan pencairan Rp %s berhasil diajukan.', number_format((float) $request->jumlah, 0, ',', '.')), route('owner.keuangan'));
 
         return redirect()->route('owner.keuangan')->with('success', 'Permintaan pencairan berhasil diajukan.');
     }
