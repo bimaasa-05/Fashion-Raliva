@@ -72,9 +72,9 @@
 
             <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col relative overflow-hidden">
                 <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
-                <p class="raliva-label relative">Saldo Tertunda</p>
+                <p class="raliva-label relative">Saldo Tertahan</p>
                 <p class="raliva-figure text-[26px] mt-4 text-on-surface relative">{{ $fmt($wallet->saldo_tertahan) }}</p>
-                <p class="text-on-surface-variant font-body-md text-xs mt-auto pt-6 relative">Dana dilepas otomatis menjadi saldo tersedia H+2 setelah pesanan selesai.</p>
+                <p class="text-on-surface-variant font-body-md text-xs mt-auto pt-6 relative">Dana yang terkunci saat pencairan disetujui dan sedang diproses.</p>
             </div>
 
             <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col relative overflow-hidden">
@@ -101,35 +101,24 @@
                 <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
                     <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Total Omzet <span class="normal-case text-[9px] italic text-gold-accent/70">Revenue</span></span>
                     <span class="raliva-figure text-[20px] text-on-surface">{{ $fmt($margin['revenue']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Uang Masuk Dari Pelanggan</span>
-                    <span class="text-[9px] italic text-gold-accent/70 mt-1">Cross Margin — Produk kita menguntungkan?</span>
                 </div>
                 <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
                     <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Kotor <span class="normal-case text-[9px] italic text-gold-accent/70">Gross Profit</span></span>
                     <span class="raliva-figure text-[20px] text-secondary">{{ $fmt($margin['gross']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Setelah Bayar Supplier/HPP</span>
-                    <span class="text-[9px] italic text-gold-accent/70 mt-1">Gross Margin — Setelah HPP</span>
                 </div>
                 <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
                     <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Operasional <span class="normal-case text-[9px] italic text-gold-accent/70">EBITDA</span></span>
                     <span class="raliva-figure text-[20px] text-on-surface">{{ $fmt($margin['ebitda']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Setelah Bayar Operasional</span>
-                    <span class="text-[9px] italic text-gold-accent/70 mt-1">EBITDA Margin — Operasional Sehat?</span>
                 </div>
                 <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
                     <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Sebelum Pajak <span class="normal-case text-[9px] italic text-gold-accent/70">EBT</span></span>
                     <span class="raliva-figure text-[20px] text-on-surface">{{ $fmt($margin['ebt']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Setelah Bayar Bank/Bunga</span>
-                    <span class="text-[9px] italic text-gold-accent/70 mt-1">EBT Margin — Setelah Utang Masih Untung?</span>
                 </div>
                 <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
                     <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Bersih <span class="normal-case text-[9px] italic text-gold-accent/70">Net Profit</span></span>
                     <span class="raliva-figure text-[20px] text-gold-accent">{{ $fmt($margin['net']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Setelah Bayar Negara (Pajak) — Hak ShareHolder</span>
-                    <span class="text-[9px] italic text-gold-accent/70 mt-1">Net Profit Margin — Untuk Shareholder</span>
                 </div>
             </div>
-            <p class="text-[10px] text-on-surface-variant/70 italic mt-3 text-center">5 Lapis Cerita Keuangan: Revenue → Gross → EBITDA → EBIT (D&A) → EBT → Net Profit → ShareHolder</p>
         </section>
 
         {{-- Grafik Tren Saldo + Info --}}

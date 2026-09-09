@@ -5,6 +5,9 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Notification;
+use App\Models\Complaint;
+use App\Models\StoreCategory;
+use App\Models\StoreExpense;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 
@@ -19,8 +22,25 @@ class KategoriProdukController extends Controller
             ->orderBy('nama_kategori')
             ->get();
 
+        $kategoriKomplain = Complaint::selectRaw('kategori, COUNT(*) as total')
+            ->groupBy('kategori')
+            ->orderBy('kategori')
+            ->get();
+
+        $kategoriPengeluaran = StoreExpense::selectRaw('kategori, COUNT(*) as total, SUM(nominal) as total_nominal')
+            ->groupBy('kategori')
+            ->orderBy('kategori')
+            ->get();
+
+        $kategoriToko = StoreCategory::withCount('stores')
+            ->orderBy('nama_kategori')
+            ->get();
+
         return view('SuperAdmin.kategori-produk.index', [
             'categories' => $categories,
+            'kategoriKomplain' => $kategoriKomplain,
+            'kategoriPengeluaran' => $kategoriPengeluaran,
+            'kategoriToko' => $kategoriToko,
             'parents' => Category::whereNull('parent_id')->where('status', Category::STATUS_AKTIF)->orderBy('nama_kategori')->get(['category_id', 'nama_kategori']),
             'stats' => [
                 'total' => $categories->count(),

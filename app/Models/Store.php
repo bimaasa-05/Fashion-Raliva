@@ -23,6 +23,7 @@ class Store extends Model
     protected $fillable = [
         'owner_id',
         'nama_toko',
+        'kategori',
         'logo',
         'deskripsi',
         'alamat',

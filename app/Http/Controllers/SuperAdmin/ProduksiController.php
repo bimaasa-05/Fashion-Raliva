@@ -28,4 +28,42 @@ class ProduksiController extends Controller
             'stats' => $stats,
         ]);
     }
+
+    public function detailJson(ProductionOrder $productionOrder)
+    {
+        $productionOrder->load([
+            'store:store_id,nama_toko',
+            'targetWarehouse:warehouse_id,nama_gudang',
+            'requester:user_id,nama_lengkap',
+            'assignee:user_id,nama_lengkap',
+            'items.productVariant.product:product_id,nama_produk',
+        ]);
+
+        $items = $productionOrder->items
+            ->map(fn ($i) => [
+                'nama' => $i->productVariant?->product?->nama_produk ?? '-',
+                'sku' => $i->productVariant?->sku ?? '-',
+                'varian' => trim(($i->productVariant?->warna ?? '') . ' ' . ($i->productVariant?->ukuran ?? '')),
+                'jumlah' => (int) $i->jumlah_diminta,
+            ])
+            ->values()
+            ->all();
+
+        return response()->json([
+            'order' => [
+                'nomor' => $productionOrder->nomor_produksi,
+                'toko' => $productionOrder->store?->nama_toko ?? '-',
+                'gudang' => $productionOrder->targetWarehouse?->nama_gudang ?? '-',
+                'prioritas' => $productionOrder->prioritas,
+                'status' => $productionOrder->status,
+                'pemohon' => $productionOrder->requester?->nama_lengkap ?? '-',
+                'pelaksana' => $productionOrder->assignee?->nama_lengkap ?? '-',
+                'catatan' => $productionOrder->catatan ?? '-',
+                'dimulai' => $productionOrder->dimulai_pada ? $productionOrder->dimulai_pada->translatedFormat('d M Y') : '-',
+                'selesai' => $productionOrder->selesai_pada ? $productionOrder->selesai_pada->translatedFormat('d M Y') : '-',
+                'dibuat' => $productionOrder->created_at ? $productionOrder->created_at->translatedFormat('d M Y • H.i') : '-',
+            ],
+            'items' => $items,
+        ]);
+    }
 }
