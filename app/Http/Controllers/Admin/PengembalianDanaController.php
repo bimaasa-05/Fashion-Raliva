@@ -39,6 +39,18 @@ class PengembalianDanaController extends Controller
             'selesai_pada' => now(),
         ]);
 
+        if ($refund->requested_by) {
+            Notification::create([
+                'user_id' => $refund->requested_by,
+                'aktor_id' => Auth::id(),
+                'tipe' => Notification::TIPE_KOMPLAIN,
+                'judul' => 'Refund Disetujui',
+                'pesan' => sprintf('Pengajuan refund %s disetujui: dana dikembalikan ke saldo Anda.', $refund->kode),
+                'url' => route('customer.order-tracking'),
+            ]);
+        }
+        Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Refund Disetujui', sprintf('Refund %s telah disetujui.', $refund->kode), route('admin.pengembalian-dana'));
+
         return back()->with('success', 'Refund ' . $refund->refund_id . ' disetujui.');
     }
 
@@ -54,6 +66,18 @@ class PengembalianDanaController extends Controller
             'alasan_penolakan' => $request->input('alasan_penolakan'),
             'selesai_pada' => now(),
         ]);
+
+        if ($refund->requested_by) {
+            Notification::create([
+                'user_id' => $refund->requested_by,
+                'aktor_id' => Auth::id(),
+                'tipe' => Notification::TIPE_KOMPLAIN,
+                'judul' => 'Refund Ditolak',
+                'pesan' => sprintf('Pengajuan refund %s ditolak. Alasan: %s', $refund->kode, $request->input('alasan_penolakan') ?: '-'),
+                'url' => route('customer.order-tracking'),
+            ]);
+        }
+        Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Refund Ditolak', sprintf('Refund %s telah ditolak.', $refund->kode), route('admin.pengembalian-dana'));
 
         return back()->with('success', 'Refund ' . $refund->refund_id . ' ditolak.');
     }
@@ -74,11 +98,15 @@ class PengembalianDanaController extends Controller
         if ($ownerId) {
             Notification::create([
                 'user_id' => $ownerId,
+                'aktor_id' => Auth::id(),
                 'tipe' => Notification::TIPE_KOMPLAIN,
                 'judul' => 'Eskalasi Refund',
                 'pesan' => "Refund {$refund->kode} dieskalasi ke Anda untuk keputusan final. Alasan: " . ($refund->alasan ?: '-'),
+                'url' => route('owner.pengembalian-dana'),
             ]);
         }
+
+        Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Refund Dieskalasi', sprintf('Refund %s dieskalasi ke Owner.', $refund->kode), route('admin.pengembalian-dana'));
 
         return back()->with('success', 'Refund ' . $refund->kode . ' dieskalasi ke Owner Toko.');
     }
