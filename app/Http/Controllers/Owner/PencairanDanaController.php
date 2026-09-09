@@ -69,6 +69,21 @@ class PencairanDanaController extends Controller
             ]);
         });
 
+        $sa = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
+            ->where('status', \App\Models\User::STATUS_AKTIF)
+            ->first();
+        if ($sa) {
+            \App\Models\Notification::create([
+                'user_id' => $sa->user_id,
+                'aktor_id' => $request->user()->user_id,
+                'tipe' => \App\Models\Notification::TIPE_WALLET,
+                'judul' => 'Pengajuan Pencairan Baru',
+                'pesan' => sprintf('Toko "%s" mengajukan pencairan Rp %s.', $store->nama_toko, number_format((float) $data['jumlah'], 0, ',', '.')),
+                'url' => route('superadmin.permintaan-penarikan'),
+            ]);
+        }
+        \App\Models\Notification::fireSelf(\App\Models\Notification::TIPE_WALLET, 'Pencairan Diajukan', sprintf('Pengajuan pencairan Rp %s berhasil diajukan.', number_format((float) $data['jumlah'], 0, ',', '.')), route('owner.pencairan-dana'));
+
         return back()->with('success', 'Pengajuan pencairan berhasil.');
     }
 }
