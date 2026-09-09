@@ -95,6 +95,8 @@ class SlotProdukController extends Controller
             sprintf('Mengubah slot awal toko baru dari %d menjadi %d slot.', $nilaiLama, $nilaiBaru)
         );
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Slot Awal Diubah', sprintf('Slot awal toko baru diatur %d slot.', $nilaiBaru), route('superadmin.slot-produk'));
+
         return back()->with('toast', [
             'message' => sprintf('Slot awal toko baru diatur menjadi %d slot.', $nilaiBaru),
             'icon' => 'task_alt',
@@ -133,6 +135,8 @@ class SlotProdukController extends Controller
             sprintf('Mengubah harga per slot pembelian fleksibel dari Rp %s menjadi Rp %s.', number_format($nilaiLama, 0, ',', '.'), number_format($nilaiBaru, 0, ',', '.'))
         );
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Harga Per Slot Diubah', sprintf('Harga per slot diatur Rp %s.', number_format($nilaiBaru, 0, ',', '.')), route('superadmin.slot-produk'));
+
         return back()->with('toast', [
             'message' => sprintf('Harga per slot pembelian fleksibel diatur menjadi Rp %s.', number_format($nilaiBaru, 0, ',', '.')),
             'icon' => 'task_alt',
@@ -167,6 +171,7 @@ class SlotProdukController extends Controller
         );
 
         $this->notifyOwner($store, 'Slot Produk Ditambah', sprintf('Super Admin menambahkan %d slot produk untuk toko "%s".', (int) $data['jumlah_slot'], $store->nama_toko));
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Slot Ditambah Manual', sprintf('%d slot ditambahkan ke toko "%s".', (int) $data['jumlah_slot'], $store->nama_toko), route('superadmin.slot-produk'));
 
         return back()->with('toast', [
             'message' => sprintf('%d slot berhasil ditambahkan ke toko "%s".', (int) $data['jumlah_slot'], $store->nama_toko),
@@ -205,6 +210,8 @@ class SlotProdukController extends Controller
             sprintf('Menambahkan paket slot "%s" (%d slot / %d hari).', $paket->nama_paket, $paket->jumlah_slot, $paket->durasi_hari)
         );
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Paket Slot Ditambahkan', sprintf('Paket "%s" dibuat (%d slot / %d hari).', $paket->nama_paket, $paket->jumlah_slot, $paket->durasi_hari), route('superadmin.slot-produk'));
+
         return back()->with('toast', [
             'message' => sprintf('Paket slot "%s" berhasil ditambahkan.', $paket->nama_paket),
             'icon' => 'task_alt',
@@ -228,6 +235,8 @@ class SlotProdukController extends Controller
             ['status' => $baru],
             sprintf('Mengubah status paket slot "%s" menjadi "%s".', $paket->nama_paket, $baru)
         );
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Status Paket Slot Diubah', sprintf('Paket "%s" kini %s.', $paket->nama_paket, $baru), route('superadmin.slot-produk'));
 
         return back()->with('toast', [
             'message' => sprintf('Paket slot "%s" kini %s.', $paket->nama_paket, $baru === ProductSlotPackage::STATUS_AKTIF ? 'aktif' : 'nonaktif'),
@@ -268,6 +277,7 @@ class SlotProdukController extends Controller
         );
 
         $this->notifyOwner($rmt->store, 'Pembayaran Slot Terverifikasi', sprintf('Pembayaran %d slot senilai Rp %s untuk toko "%s" telah diverifikasi. Menunggu persetujuan penambahan slot.', $rmt->jumlah_slot, number_format((float) $rmt->total_harga, 0, ',', '.'), $rmt->store->nama_toko ?? '-'));
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pembayaran Slot Terverifikasi', sprintf('Pembayaran %d slot (Rp %s) terverifikasi.', $rmt->jumlah_slot, number_format((float) $rmt->total_harga, 0, ',', '.')), route('superadmin.slot-produk'));
 
         return back()->with('toast', [
             'message' => sprintf('Pembayaran %d slot (Rp %s) berhasil diverifikasi.', $rmt->jumlah_slot, number_format((float) $rmt->total_harga, 0, ',', '.')),
@@ -316,6 +326,7 @@ class SlotProdukController extends Controller
         );
 
         $this->notifyOwner($rmt->store, 'Pembelian Slot Disetujui', sprintf('Pembelian %d slot produk untuk toko "%s" telah disetujui.', $rmt->jumlah_slot, $rmt->store->nama_toko ?? '-'));
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pembelian Slot Disetujui', sprintf('%d slot disetujui untuk toko "%s".', $rmt->jumlah_slot, $rmt->store->nama_toko ?? '-'), route('superadmin.slot-produk'));
 
         return back()->with('toast', [
             'message' => sprintf('%d slot disetujui dan ditambahkan ke toko.', $rmt->jumlah_slot),
@@ -356,6 +367,7 @@ class SlotProdukController extends Controller
         );
 
         $this->notifyOwner($rmt->store, 'Pembelian Slot Ditolak', sprintf('Pembelian %d slot untuk toko "%s" ditolak. Alasan: %s', $rmt->jumlah_slot, $rmt->store->nama_toko ?? '-', $data['alasan']));
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pembelian Slot Ditolak', sprintf('Pembelian %d slot toko "%s" ditolak.', $rmt->jumlah_slot, $rmt->store->nama_toko ?? '-'), route('superadmin.slot-produk'));
 
         return back()->with('toast', [
             'message' => 'Permintaan pembelian slot ditolak.',
@@ -371,9 +383,11 @@ class SlotProdukController extends Controller
 
         Notification::create([
             'user_id' => $store->owner_id,
+            'aktor_id' => ActivityLogger::resolveActorId(),
             'tipe' => Notification::TIPE_SISTEM,
             'judul' => $judul,
             'pesan' => $pesan,
+            'url' => route('owner.kelola-slot'),
         ]);
     }
 }

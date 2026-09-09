@@ -62,6 +62,28 @@ class KomplainController extends Controller
             'pesan' => $data['pesan'],
         ]);
 
+        Notification::create([
+            'user_id' => $komplain->user_id,
+            'aktor_id' => ActivityLogger::resolveActorId(),
+            'tipe' => Notification::TIPE_KOMPLAIN,
+            'judul' => 'Balasan Platform',
+            'pesan' => sprintf('Platform memberikan balasan pada komplain "%s".', $komplain->subjek),
+            'url' => route('customer.order-tracking'),
+        ]);
+
+        if ($komplain->store?->owner_id) {
+            Notification::create([
+                'user_id' => $komplain->store->owner_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_KOMPLAIN,
+                'judul' => 'Balasan Platform (Komplain)',
+                'pesan' => sprintf('Platform membalas komplain "%s".', $komplain->subjek),
+                'url' => route('owner.ulasan'),
+            ]);
+        }
+
+        Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Balasan Terkirim', sprintf('Balasan pada komplain "%s" terkirim.', $komplain->subjek), route('superadmin.komplain'));
+
         return response()->json($pesan->load('sender'));
     }
 
@@ -91,9 +113,11 @@ class KomplainController extends Controller
         if ($ownerId) {
             Notification::create([
                 'user_id' => $ownerId,
+                'aktor_id' => $actorId,
                 'tipe' => Notification::TIPE_KOMPLAIN,
                 'judul' => 'Komplain Dieskalasi',
                 'pesan' => sprintf('Komplain "%s" dari Customer %s dieskalasikan oleh platform. Segera tangani dan perbarui statusnya.', $komplain->subjek, $komplain->user->nama_lengkap ?? '-'),
+                'url' => route('owner.ulasan'),
             ]);
         }
 
@@ -105,6 +129,8 @@ class KomplainController extends Controller
             ['status' => Complaint::STATUS_DIPROSES],
             sprintf('Mengeskalasi komplain "%s" ke Owner toko %s.', $komplain->subjek, $komplain->store->nama_toko ?? '-')
         );
+
+        Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Komplain Dieskalasi', sprintf('Komplain "%s" dieskalasi ke Owner.', $komplain->subjek), route('superadmin.komplain'));
 
         return back()->with('toast', [
             'message' => sprintf('Komplain %s dieskalasi ke Owner toko.', $komplain->subjek),
@@ -142,9 +168,11 @@ class KomplainController extends Controller
 
         Notification::create([
             'user_id' => $komplain->user_id,
+            'aktor_id' => ActivityLogger::resolveActorId(),
             'tipe' => Notification::TIPE_KOMPLAIN,
             'judul' => 'Komplain Ditutup',
             'pesan' => sprintf('Komplain "%s" telah ditutup oleh platform.%s', $komplain->subjek, ! empty($data['catatan']) ? ' Catatan: '.$data['catatan'] : ''),
+            'url' => route('customer.order-tracking'),
         ]);
 
         ActivityLogger::log(
@@ -155,6 +183,8 @@ class KomplainController extends Controller
             ['status' => Complaint::STATUS_DITUTUP],
             sprintf('Menutup komplain "%s".', $komplain->subjek)
         );
+
+        Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Komplain Ditutup', sprintf('Komplain "%s" ditutup.', $komplain->subjek), route('superadmin.komplain'));
 
         return back()->with('toast', [
             'message' => 'Komplain ditutup.',

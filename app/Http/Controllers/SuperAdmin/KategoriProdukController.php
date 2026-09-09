@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Notification;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 
@@ -53,6 +54,8 @@ class KategoriProdukController extends Controller
             sprintf('Menambahkan kategori "%s"%s.', $kategori->nama_kategori, $kategori->parent ? " di bawah \"{$kategori->parent->nama_kategori}\"" : '')
         );
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Kategori Ditambahkan', "Kategori \"{$kategori->nama_kategori}\" ditambahkan.", route('superadmin.kategori-produk'));
+
         return back()->with('toast', [
             'message' => "Kategori \"{$kategori->nama_kategori}\" berhasil ditambahkan.",
             'icon' => 'task_alt',
@@ -98,6 +101,8 @@ class KategoriProdukController extends Controller
             sprintf('Mengubah kategori "%s" menjadi "%s".', $lama['nama_kategori'], $kategori->nama_kategori)
         );
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Kategori Diubah', "Kategori \"{$kategori->nama_kategori}\" diperbarui.", route('superadmin.kategori-produk'));
+
         return back()->with('toast', [
             'message' => "Perubahan kategori \"{$kategori->nama_kategori}\" berhasil disimpan.",
             'icon' => 'task_alt',
@@ -136,6 +141,8 @@ class KategoriProdukController extends Controller
         );
 
         $kategori->delete();
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Kategori Dihapus', "Kategori \"{$lama['nama_kategori']}\" dihapus.", route('superadmin.kategori-produk'));
 
         return back()->with('toast', [
             'message' => "Kategori \"{$lama['nama_kategori']}\" berhasil dihapus.",

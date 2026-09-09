@@ -59,6 +59,7 @@ class PengembalianDanaController extends Controller
         );
 
         $this->notifyPihak($refund, 'Refund Disetujui', sprintf('Pengajuan refund Anda (%s) sebesar Rp %s telah disetujui dan sedang diproses.', $refund->tipe_refund === Refund::TIPE_FULL ? 'penuh' : 'parsial', number_format((float) $refund->jumlah, 0, ',', '.')));
+        Notification::fireSelf(Notification::TIPE_PEMBAYARAN, 'Refund Disetujui', sprintf('Refund Rp %s disetujui.', number_format((float) $refund->jumlah, 0, ',', '.')), route('superadmin.pengembalian-dana'));
 
         return back()->with('toast', [
             'message' => sprintf('Refund Rp %s disetujui dan diproses.', number_format((float) $refund->jumlah, 0, ',', '.')),
@@ -100,6 +101,7 @@ class PengembalianDanaController extends Controller
         );
 
         $this->notifyPihak($refund, 'Refund Ditolak', sprintf('Pengajuan refund Anda ditolak. Alasan: %s', $data['alasan']));
+        Notification::fireSelf(Notification::TIPE_PEMBAYARAN, 'Refund Ditolak', sprintf('Refund Rp %s ditolak.', number_format((float) $refund->jumlah, 0, ',', '.')), route('superadmin.pengembalian-dana'));
 
         return back()->with('toast', [
             'message' => 'Pengajuan refund ditolak. Customer akan dinotifikasi.',
@@ -133,6 +135,7 @@ class PengembalianDanaController extends Controller
         );
 
         $this->notifyPihak($refund, 'Refund Selesai', sprintf('Dana refund sebesar Rp %s telah dikirim ke akun Anda.', number_format((float) $refund->jumlah, 0, ',', '.')));
+        Notification::fireSelf(Notification::TIPE_PEMBAYARAN, 'Refund Selesai', sprintf('Refund Rp %s ditandai selesai.', number_format((float) $refund->jumlah, 0, ',', '.')), route('superadmin.pengembalian-dana'));
 
         return back()->with('toast', [
             'message' => 'Refund ditandai selesai.',
@@ -144,9 +147,11 @@ class PengembalianDanaController extends Controller
     {
         Notification::create([
             'user_id' => $refund->requested_by,
+            'aktor_id' => ActivityLogger::resolveActorId(),
             'tipe' => Notification::TIPE_PEMBAYARAN,
             'judul' => $judul,
             'pesan' => $pesan,
+            'url' => route('customer.order-tracking'),
         ]);
 
         $ownerId = optional($refund->order?->store)->owner_id;
@@ -154,9 +159,11 @@ class PengembalianDanaController extends Controller
         if ($ownerId) {
             Notification::create([
                 'user_id' => $ownerId,
+                'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => Notification::TIPE_PEMBAYARAN,
                 'judul' => $judul.' (Toko Anda)',
                 'pesan' => sprintf('%s | Pesanan %s.', $pesan, $refund->order->nomor_order ?? '-'),
+                'url' => route('owner.pengembalian-dana'),
             ]);
         }
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdSlot;
+use App\Models\Notification;
 use App\Models\Product;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
@@ -70,6 +71,19 @@ class PeringkatIklanController extends Controller
             'Mendaftarkan slot iklan baru untuk produk: '.$product->nama_produk
         );
 
+        Notification::fireSelf(Notification::TIPE_PROMO, 'Slot Iklan Dibuat', 'Slot iklan untuk produk "'.$product->nama_produk.'" didaftarkan.', route('superadmin.peringkat-iklan'));
+
+        if ($product->store?->owner_id) {
+            Notification::create([
+                'user_id' => $product->store->owner_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_PROMO,
+                'judul' => 'Iklan Produk Terdaftar',
+                'pesan' => sprintf('Produk "%s" didaftarkan ke slot iklan platform oleh Super Admin.', $product->nama_produk),
+                'url' => route('owner.produk'),
+            ]);
+        }
+
         return back()->with('toast', [
             'message' => 'Slot iklan berhasil didaftarkan.',
             'icon' => 'task_alt',
@@ -90,6 +104,8 @@ class PeringkatIklanController extends Controller
         );
 
         $slot->delete();
+
+        Notification::fireSelf(Notification::TIPE_PROMO, 'Slot Iklan Dihapus', 'Slot iklan "'.$nama.'" dihapus.', route('superadmin.peringkat-iklan'));
 
         return back()->with('toast', [
             'message' => 'Slot iklan "'.$nama.'" berhasil dihapus.',
