@@ -16,6 +16,16 @@
         color: var(--chrome-accent);
         font-weight: 700;
     }
+    /* Global Hide Scrollbar — customer mobile nav */
+    ::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+    * {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
 </style>
 <nav class="md:hidden fixed bottom-0 inset-x-0 z-50 flex justify-around items-center h-[72px] bg-[var(--chrome-bg)] text-[var(--chrome-text)] px-xs pb-safe border-t border-[var(--chrome-border)] shadow-sm">
     @php
