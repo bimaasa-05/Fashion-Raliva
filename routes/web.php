@@ -394,6 +394,9 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::post('/pengajuan-toko', [PengajuanTokoController::class, 'store'])->name('pengajuan-toko.store');
     Route::get('/pengaturan-toko', [PengaturanTokoController::class, 'index'])->name('pengaturan-toko');
     Route::get('/produk', [OwnerProdukController::class, 'index'])->name('produk');
+    Route::put('/produk/{product}', [OwnerProdukController::class, 'update'])->name('produk.update');
+    Route::delete('/produk/{product}', [OwnerProdukController::class, 'destroy'])->name('produk.destroy');
+    Route::post('/produk/{product}/status', [OwnerProdukController::class, 'status'])->name('produk.status');
     Route::get('/kelola-slot', [KelolaSlotController::class, 'index'])->name('kelola-slot');
     Route::post('/kelola-slot', [KelolaSlotController::class, 'store'])->name('kelola-slot.request');
     Route::post('/paket-slot/{paket}/beli', [OwnerPaketSlotController::class, 'purchase'])->name('paket-slot.beli');
@@ -422,7 +425,8 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/komplain/{komplain}/messages', [OwnerKomplainController::class, 'messages'])->name('komplain.messages');
     Route::post('/komplain/{komplain}/balas', [OwnerKomplainController::class, 'balas'])->name('komplain.balas');
     Route::get('/moderasi-produk', [OwnerModerasiProdukController::class, 'index'])->name('moderasi-produk');
-    Route::post('/moderasi-produk/{product}/verifikasi', [OwnerModerasiProdukController::class, 'verifikasi'])->name('moderasi-produk.verifikasi');
+    Route::post('/moderasi-produk/{product}/setujui', [OwnerModerasiProdukController::class, 'setujui'])->name('moderasi-produk.setujui');
+    Route::post('/moderasi-produk/{product}/tolak', [OwnerModerasiProdukController::class, 'tolak'])->name('moderasi-produk.tolak');
     Route::get('/paket-slot', [OwnerPaketSlotController::class, 'index'])->name('paket-slot');
     Route::get('/pencairan-dana', [OwnerPencairanDanaController::class, 'index'])->name('pencairan-dana');
     Route::post('/pencairan-dana', [OwnerPencairanDanaController::class, 'store'])->name('pencairan-dana.store');
