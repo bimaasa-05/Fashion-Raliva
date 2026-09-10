@@ -334,6 +334,12 @@
         background-image: radial-gradient(circle at 1.5px 1.5px, rgba(255, 255, 255, .07) 1.5px, transparent 0);
     }
     #chat-wp-layer { background-size: cover; background-position: center; }
+    #chat-content {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: transparent;
+    }
     .chat-header-item { transition: opacity .3s ease, transform .3s ease; }
     .chat-header-hidden { opacity: 0; transform: translateY(-6px); pointer-events: none; }
     #chat-search-panel { opacity: 0; transform: translateX(20px); pointer-events: none; transition: opacity .3s cubic-bezier(.22,1,.36,1), transform .3s cubic-bezier(.22,1,.36,1); z-index: 30; }
@@ -407,7 +413,7 @@
 <div class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
     <div class="min-h-full lg:h-full flex flex-col justify-end lg:flex-row lg:justify-end" onclick="if(event.target===this) closeChatModal()">
         <div id="chat-panel" class="flex flex-col bg-surface-container-low border-t lg:border-t-0 lg:border-l border-[var(--border-soft)] rounded-t-3xl lg:rounded-none max-h-[85dvh] lg:max-h-full lg:h-full lg:w-[560px] lg:max-w-full overflow-hidden" onclick="event.stopPropagation()">
-            <div class="relative flex items-center justify-between gap-2 px-6 py-4 border-b border-[var(--border-soft)] shrink-0" id="chat-header">
+            <div class="relative flex items-center justify-between gap-2 px-6 py-4 border-b border-[var(--border-soft)] shrink-0 bg-surface-container-low z-10" id="chat-header">
                 <div class="min-w-0 chat-header-item" id="chat-header-title">
                     <h3 class="font-title-md text-title-md text-on-surface truncate" id="chat-subject">-</h3>
                     <p class="font-mono text-on-surface-variant text-xs mt-0.5" id="chat-kode">-</p>
@@ -448,14 +454,15 @@
                     <span id="chat-search-count" class="font-label-sm text-label-sm text-on-surface-variant shrink-0 hidden"></span>
                 </div>
             </div>
-            <div class="flex-1 overflow-y-auto px-6 py-6 space-y-4 min-h-0" id="chat-messages">
+            <div class="relative flex-1 flex flex-col min-h-0 overflow-hidden" id="chat-content">
+            <div class="relative flex-1 overflow-y-auto px-6 py-6 space-y-4 min-h-0 bg-transparent" id="chat-messages">
                 <div class="flex justify-center items-center py-8">
                     <div class="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div>
                 </div>
             </div>
-            <div class="relative px-4 lg:px-6 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shrink-0" id="chat-input-area">
+            <div class="relative px-4 lg:px-6 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shrink-0 bg-transparent" id="chat-input-area">
                 <div id="chat-emoji-panel" class="hidden absolute bottom-full mb-3 left-4 lg:left-6 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-outline-variant bg-surface-container-high p-3 shadow-xl"></div>
-                <div id="chat-composer" class="flex items-end gap-1.5 bg-surface-container-lowest border border-[var(--border-soft)] rounded-[24px] px-2 py-2 shadow-sm transition-colors duration-150 focus-within:border-secondary">
+                <div id="chat-composer" class="flex items-end gap-1.5 bg-surface-container-lowest dark:bg-[#1c1c1c] border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-[28px] px-2.5 py-2.5 shadow-sm transition-colors duration-150 focus-within:border-secondary">
                     <button type="button" onclick="toggleEmojiPanel()" id="chat-emoji-toggle" aria-label="{{ __('Emoji') }}" title="{{ __('Emoji') }}" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0">
                         <span class="material-symbols-outlined text-[20px]">mood</span>
                     </button>
@@ -485,6 +492,7 @@
                 </div>
                 <p id="chat-closed-note" class="hidden text-center font-body-sm text-body-sm text-on-surface-variant pt-4">{{ __('Komplain telah selesai dan tidak dapat dibalas lagi.') }}</p>
             </div>
+            </div><!-- /#chat-content -->
         </div>
     </div>
     <input type="file" id="chat-wallpaper-input" accept="image/*" class="hidden">
@@ -944,7 +952,7 @@
     }
 
     function applyWallpaper(url, persist) {
-        const layer = document.getElementById('chat-messages');
+        const layer = document.getElementById('chat-content') || document.getElementById('chat-messages');
         const editLayer = document.getElementById('chat-edit-wallpaper');
         [layer, editLayer].forEach(function (el) {
             if (!el) return;
