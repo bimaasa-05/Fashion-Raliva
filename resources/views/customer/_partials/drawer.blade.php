@@ -29,6 +29,16 @@
         color: var(--chrome-accent);
         font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
+    /* Global Hide Scrollbar — customer (semua halaman yang include drawer) */
+    ::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+    * {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
 </style>
 <div id="drawer-overlay" class="fixed inset-0 bg-black/50 z-[60] opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden" onclick="closeDrawer()"></div>
 <aside id="drawer-panel" class="fixed top-0 left-0 h-full w-72 max-w-[85%] bg-[var(--chrome-bg)] text-[var(--chrome-text)] z-[70] -translate-x-full transition-transform duration-300 flex flex-col shadow-xl lg:translate-x-0 lg:max-w-full lg:shadow-none lg:border-r lg:border-[var(--chrome-border)]">
