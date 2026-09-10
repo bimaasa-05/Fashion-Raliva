@@ -119,6 +119,11 @@
     body {
       min-height: max(884px, 100dvh);
     }
+    @supports not (height: 100dvh) {
+      body { min-height: max(884px, 100vh); }
+      #chat-panel { max-height: 85vh; }
+      #chat-panel.max-h-\[85dvh\] { max-height: 85vh; }
+    }
   </style>
 <style>
         :root {
@@ -319,7 +324,7 @@
     @media (prefers-reduced-motion: reduce) {
         .raliva-chat-in, .raliva-chat-out, .raliva-chat-in-sheet, .raliva-chat-out-sheet { animation: none; }
     }
-    #chat-messages { scrollbar-width: none; -ms-overflow-style: none; }
+    #chat-messages { scrollbar-width: none; -ms-overflow-style: none; overscroll-behavior: contain; }
     #chat-messages::-webkit-scrollbar { display: none; }
     #chat-emoji-panel { scrollbar-width: none; -ms-overflow-style: none; }
     #chat-emoji-panel::-webkit-scrollbar { display: none; }
@@ -333,13 +338,24 @@
     html.theme-dark .raliva-doodle {
         background-image: radial-gradient(circle at 1.5px 1.5px, rgba(255, 255, 255, .07) 1.5px, transparent 0);
     }
-    #chat-wp-layer { background-size: cover; background-position: center; }
     #chat-content {
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         background-color: transparent;
+        position: relative;
+        isolation: isolate;
     }
+    #chat-content::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(255,255,255,.06);
+        pointer-events: none;
+        z-index: 0;
+    }
+    html.theme-dark #chat-content::before { background: rgba(0,0,0,.18); }
+    #chat-content > * { position: relative; z-index: 1; }
     .chat-header-item { transition: opacity .3s ease, transform .3s ease; }
     .chat-header-hidden { opacity: 0; transform: translateY(-6px); pointer-events: none; }
     #chat-search-panel { opacity: 0; transform: translateX(20px); pointer-events: none; transition: opacity .3s cubic-bezier(.22,1,.36,1), transform .3s cubic-bezier(.22,1,.36,1); z-index: 30; }
@@ -412,19 +428,19 @@
 <!-- Chat Komplain Modal (ala Super Admin; warna RALIVA) -->
 <div class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
     <div class="min-h-full lg:h-full flex flex-col justify-end lg:flex-row lg:justify-end" onclick="if(event.target===this) closeChatModal()">
-        <div id="chat-panel" class="flex flex-col bg-surface-container-low border-t lg:border-t-0 lg:border-l border-[var(--border-soft)] rounded-t-3xl lg:rounded-none max-h-[85dvh] lg:max-h-full lg:h-full lg:w-[560px] lg:max-w-full overflow-hidden" onclick="event.stopPropagation()">
-            <div class="relative flex items-center justify-between gap-2 px-6 py-4 border-b border-[var(--border-soft)] shrink-0 bg-surface-container-low z-10" id="chat-header">
-                <div class="min-w-0 chat-header-item" id="chat-header-title">
-                    <h3 class="font-title-md text-title-md text-on-surface truncate" id="chat-subject">-</h3>
-                    <p class="font-mono text-on-surface-variant text-xs mt-0.5" id="chat-kode">-</p>
+        <div id="chat-panel" class="flex flex-col bg-surface-container-low border-t md:border lg:border-t-0 lg:border-l border-[var(--border-soft)] rounded-t-3xl md:rounded-2xl lg:rounded-none max-h-[85dvh] md:max-h-[78dvh] lg:max-h-full lg:h-full w-full md:w-[520px] lg:w-[560px] xl:w-[600px] md:max-w-[88vw] lg:max-w-full md:mx-auto lg:mx-0 overflow-hidden md:shadow-2xl lg:shadow-none" onclick="event.stopPropagation()">
+            <div class="relative flex items-center justify-between gap-2 lg:gap-3 pl-6 pr-3 lg:px-6 py-3.5 lg:py-4 border-b border-[var(--border-soft)] shrink-0 bg-surface-container-low z-10 overflow-visible" id="chat-header">
+                <div class="min-w-0 flex-1 chat-header-item" id="chat-header-title">
+                    <h3 class="font-title-md text-title-md text-on-surface truncate leading-tight" id="chat-subject">-</h3>
+                    <p class="font-mono text-on-surface-variant text-xs mt-0.5 truncate" id="chat-kode">-</p>
                 </div>
-                <div class="flex items-center gap-3 shrink-0 chat-header-item" id="chat-header-actions">
-                    <span id="chat-status" class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border bg-surface-container-high text-on-surface-variant border-outline-variant"></span>
-                    <button type="button" onclick="toggleChatSearch()" id="chat-search-toggle" class="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Cari pesan') }}">
+                <div class="flex items-center gap-2 lg:gap-3 shrink-0 chat-header-item" id="chat-header-actions">
+                    <span id="chat-status" class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border bg-surface-container-high text-on-surface-variant border-outline-variant shrink-0 whitespace-nowrap"></span>
+                    <button type="button" onclick="toggleChatSearch()" id="chat-search-toggle" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Cari pesan') }}" aria-label="{{ __('Cari pesan') }}">
                         <span class="material-symbols-outlined text-[20px]">search</span>
                     </button>
                     <div class="relative shrink-0" id="chat-more-wrap">
-                        <button type="button" onclick="toggleChatMoreMenu()" id="chat-more-btn" class="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Menu') }}">
+                        <button type="button" onclick="toggleChatMoreMenu()" id="chat-more-btn" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Menu') }}" aria-label="{{ __('Menu') }}">
                             <span class="material-symbols-outlined text-[20px]">more_vert</span>
                         </button>
                         <div id="chat-more-menu" class="hidden absolute right-0 top-full mt-2 min-w-[220px] rounded-xl border border-outline-variant bg-surface-container-high shadow-xl z-40 py-1.5">
@@ -444,49 +460,49 @@
                     </div>
                 </div>
                 <div id="chat-search-panel" class="absolute inset-0 flex items-center gap-2 lg:gap-3 px-6">
-                    <button type="button" id="chat-search-close" onclick="toggleChatSearch()" class="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Tutup pencarian') }}">
+                    <button type="button" id="chat-search-close" onclick="toggleChatSearch()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Tutup pencarian') }}" aria-label="{{ __('Tutup pencarian') }}">
                         <span class="material-symbols-outlined text-[20px]">search</span>
                     </button>
                     <input id="chat-search-input" type="text" inputmode="search" autocomplete="off" placeholder="{{ __('Cari pesan...') }}" class="flex-1 min-w-0 bg-transparent font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/70 border-b border-[var(--border-soft)] focus:border-secondary py-2"/>
-                    <button type="button" id="chat-search-clear" onclick="clearChatSearch()" class="hidden w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Hapus pencarian') }}">
+                    <button type="button" id="chat-search-clear" onclick="clearChatSearch()" class="hidden w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Hapus pencarian') }}" aria-label="{{ __('Hapus pencarian') }}">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                     <span id="chat-search-count" class="font-label-sm text-label-sm text-on-surface-variant shrink-0 hidden"></span>
                 </div>
             </div>
             <div class="relative flex-1 flex flex-col min-h-0 overflow-hidden" id="chat-content">
-            <div class="relative flex-1 overflow-y-auto px-6 py-6 space-y-4 min-h-0 bg-transparent" id="chat-messages">
+            <div class="relative flex-1 overflow-y-auto px-4 lg:px-6 py-4 lg:py-6 space-y-3 min-h-0 bg-transparent" id="chat-messages">
                 <div class="flex justify-center items-center py-8">
                     <div class="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div>
                 </div>
             </div>
-            <div class="relative px-4 lg:px-6 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shrink-0 bg-transparent" id="chat-input-area">
-                <div id="chat-emoji-panel" class="hidden absolute bottom-full mb-3 left-4 lg:left-6 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-outline-variant bg-surface-container-high p-3 shadow-xl"></div>
-                <div id="chat-composer" class="flex items-end gap-1.5 bg-surface-container-lowest dark:bg-[#1c1c1c] border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-[28px] px-2.5 py-2.5 shadow-sm transition-colors duration-150 focus-within:border-secondary">
-                    <button type="button" onclick="toggleEmojiPanel()" id="chat-emoji-toggle" aria-label="{{ __('Emoji') }}" title="{{ __('Emoji') }}" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0">
+            <div class="relative px-3 lg:px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] shrink-0 bg-transparent" id="chat-input-area">
+                <div id="chat-emoji-panel" class="hidden absolute bottom-full mb-3 left-3 lg:left-4 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-outline-variant bg-surface-container-high p-3 shadow-xl"></div>
+                <div id="chat-composer" class="flex items-end gap-1 lg:gap-1.5 bg-surface-container-lowest dark:bg-[#1c1c1c] border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-[26px] lg:rounded-[28px] px-2 lg:px-2.5 py-2 lg:py-2.5 shadow-sm transition-colors duration-150 focus-within:border-secondary">
+                    <button type="button" onclick="toggleEmojiPanel()" id="chat-emoji-toggle" aria-label="{{ __('Emoji') }}" title="{{ __('Emoji') }}" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0">
                         <span class="material-symbols-outlined text-[20px]">mood</span>
                     </button>
                     <textarea id="chat-input" rows="1" maxlength="2000" placeholder="{{ __('Tulis pesan...') }}"
                         class="flex-1 min-w-0 bg-transparent border-0 outline-none resize-none px-1 py-2.5 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant"
-                        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
-                    <button type="button" onclick="sendMessage()" id="chat-send"
-                        class="w-10 h-10 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 transition-opacity disabled:opacity-40 rounded-full">
+                        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}" aria-label="{{ __('Tulis pesan') }}"></textarea>
+                    <button type="button" onclick="sendMessage()" id="chat-send" aria-label="{{ __('Kirim pesan') }}" title="{{ __('Kirim') }}"
+                        class="w-11 h-11 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 active:scale-[0.96] transition-all disabled:opacity-40 rounded-full">
                         <span class="material-symbols-outlined text-[20px]">send</span>
                     </button>
                 </div>
                 <div id="chat-select-bar" class="items-center gap-2 lg:gap-3 py-1 overflow-x-auto" aria-label="{{ __('Select messages') }}">
-                    <button type="button" onclick="exitSelectMessages()" id="chat-sel-close" class="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Keluar seleksi') }}">
+                    <button type="button" onclick="exitSelectMessages()" id="chat-sel-close" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Keluar seleksi') }}" aria-label="{{ __('Keluar seleksi') }}">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                     <span id="chat-sel-count" class="font-body-md text-body-md text-on-surface-variant shrink-0 whitespace-nowrap">0 selected</span>
                     <div class="flex-1 min-w-0"></div>
-                    <button type="button" onclick="copySelectedMessages()" id="chat-sel-copy" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Salin') }}" aria-label="{{ __('Salin') }}">
+                    <button type="button" onclick="copySelectedMessages()" id="chat-sel-copy" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Salin') }}" aria-label="{{ __('Salin') }}">
                         <span class="material-symbols-outlined text-[20px]">content_copy</span>
                     </button>
-                    <button type="button" onclick="confirmDeleteSelected()" id="chat-sel-delete" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Hapus') }}" aria-label="{{ __('Hapus') }}">
+                    <button type="button" onclick="confirmDeleteSelected()" id="chat-sel-delete" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Hapus') }}" aria-label="{{ __('Hapus') }}">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
                     </button>
-                    <button type="button" onclick="downloadSelectedMessages()" id="chat-sel-download" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Unduh') }}" aria-label="{{ __('Unduh') }}">
+                    <button type="button" onclick="downloadSelectedMessages()" id="chat-sel-download" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Unduh') }}" aria-label="{{ __('Unduh') }}">
                         <span class="material-symbols-outlined text-[20px]">download</span>
                     </button>
                 </div>
@@ -541,7 +557,7 @@
             <div class="relative border-t border-[var(--border-soft)] bg-surface-container-lowest/60 px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] shrink-0">
                 <div id="chat-edit-emoji-panel" class="hidden absolute bottom-full mb-3 left-5 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-outline-variant bg-surface-container-high p-3 shadow-xl"></div>
                 <div class="flex items-end gap-2 lg:gap-3">
-                    <button type="button" onclick="toggleEditEmojiPanel()" id="chat-edit-emoji-toggle" class="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Emoji') }}">
+                    <button type="button" onclick="toggleEditEmojiPanel()" id="chat-edit-emoji-toggle" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Emoji') }}" aria-label="{{ __('Emoji') }}">
                         <span class="material-symbols-outlined text-[20px]">mood</span>
                     </button>
                     <textarea id="chat-edit-input" rows="1" maxlength="2000" class="flex-1 bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant resize-none focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors" onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();saveEditMessage();}"></textarea>
@@ -701,7 +717,7 @@
 
     function chatMenuMarkup(id, btnColor) {
         return '<span class="relative shrink-0 chat-menu-wrap">' +
-            '<button type="button" data-menu-btn="' + id + '" onclick="toggleChatMenu(' + id + ')" class="chat-menu-btn ' + btnColor + ' lg:opacity-0 lg:group-hover:opacity-100 transition-opacity cursor-pointer rounded-full w-7 h-7 flex items-center justify-center" title="…"><span class="material-symbols-outlined text-[17px]">more_horiz</span></button>' +
+            '<button type="button" data-menu-btn="' + id + '" onclick="toggleChatMenu(' + id + ')" class="chat-menu-btn ' + btnColor + ' lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100 focus:opacity-100 transition-opacity cursor-pointer rounded-full w-7 h-7 flex items-center justify-center" title="…"><span class="material-symbols-outlined text-[17px]">more_horiz</span></button>' +
             '<span data-menu="' + id + '" class="chat-menu hidden absolute right-0 top-full mt-1 min-w-[170px] z-30 rounded-xl border border-outline-variant bg-surface-container-high py-1 shadow-xl">';
     }
 
@@ -745,12 +761,12 @@
                 }
                 return '<div class="' + rowClass + '" data-mid="' + m.complaint_message_id + '">' +
                     selFirst +
-                    '<div class="max-w-[85%] md:max-w-[70%] rounded-xl px-4 pt-2.5 pb-5 relative ' + delBubble + '" data-bubble>' +
+                    '<div class="max-w-[82%] lg:max-w-[72%] rounded-2xl px-3.5 lg:px-4 pt-2.5 pb-5 relative ' + delBubble + ' shadow-sm" data-bubble>' +
                     '<div class="flex items-center justify-between gap-2">' +
                     '<p class="font-body-sm text-body-sm italic flex items-center gap-1.5 ' + delText + '"><span class="material-symbols-outlined text-[16px] leading-none shrink-0">block</span>' + escapeHtml('Pesan ini telah dihapus') + '</p>' +
                     delMenu +
                     '</div>' +
-                    '<span class="absolute bottom-1.5 right-2 text-[10px] leading-none ' + time + '">' + formatTime(m.created_at) + '</span>' +
+                    '<span class="absolute bottom-1.5 right-2.5 text-[10px] leading-none ' + time + '">' + formatTime(m.created_at) + '</span>' +
                     '</div>' + selLast + '</div>';
             }
 
@@ -768,13 +784,13 @@
 
             return '<div class="' + rowClass + '" data-mid="' + m.complaint_message_id + '">' +
                 selFirst +
-                '<div class="max-w-[85%] md:max-w-[70%] rounded-xl px-4 pt-3 pb-5 relative ' + bubble + '" data-bubble>' +
+                '<div class="max-w-[82%] lg:max-w-[72%] rounded-2xl px-3.5 lg:px-4 pt-3 pb-5 relative ' + bubble + ' shadow-sm" data-bubble>' +
                 '<div class="flex items-start justify-between gap-2 mb-1">' +
-                '<p class="text-xs ' + meta + ' uppercase tracking-wider">' + escapeHtml(sender) + '</p>' +
+                '<p class="text-[11px] ' + meta + ' uppercase tracking-[0.06em] font-medium">' + escapeHtml(sender) + '</p>' +
                 menu +
                 '</div>' +
-                '<p class="font-body-sm text-body-sm whitespace-pre-wrap break-words" data-pesan>' + escapeHtml(m.pesan) + '</p>' +
-                '<span class="absolute bottom-1.5 right-2 text-[10px] leading-none ' + time + '">' + formatTime(m.created_at) + edited + '</span>' +
+                '<p class="font-body-sm text-body-sm whitespace-pre-wrap break-words leading-relaxed" data-pesan>' + escapeHtml(m.pesan) + '</p>' +
+                '<span class="absolute bottom-1.5 right-2.5 text-[10px] leading-none ' + time + '">' + formatTime(m.created_at) + edited + '</span>' +
                 '</div>' + selLast + '</div>';
         }).join('');
         applySelectionUI();
