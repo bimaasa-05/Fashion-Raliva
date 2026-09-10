@@ -15,6 +15,7 @@ use App\Models\Payment;
 use App\Models\PaymentMethod;
 use App\Models\PaymentProof;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\ProductionOrder;
 use App\Models\ProductionOrderItem;
 use App\Models\ProductVariant;
@@ -321,6 +322,16 @@ class RalivaDemoSeeder extends Seeder
                 }
             }
             $products[] = $product;
+
+            // Foto produk dari aset lokal (2 foto beda per produk untuk hover-cycle di card).
+            $imgA = 'assets/seeders/'.(($idx % 16) + 1).'.jfif';
+            $imgB = 'assets/seeders/'.((($idx + 8) % 16) + 1).'.jfif';
+            foreach ([$imgA, $imgB] as $order => $path) {
+                ProductImage::updateOrCreate(
+                    ['product_id' => $product->product_id, 'urutan' => $order + 1],
+                    ['file_gambar' => $path]
+                );
+            }
         }
 
         // Pergerakan keluar (beberapa produk)
