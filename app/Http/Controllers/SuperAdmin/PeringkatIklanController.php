@@ -18,8 +18,11 @@ use Illuminate\Support\Facades\Storage;
 
 class PeringkatIklanController extends Controller
 {
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
+        $tab = $request->query('tab', 'daftar');
+        if (! in_array($tab, ['daftar', 'riwayat', 'pengajuan'], true)) $tab = 'daftar';
+
         $slotsQuery = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko'])
             ->orderByDesc('nominal_bid');
 
@@ -35,7 +38,31 @@ class PeringkatIklanController extends Controller
             ->whereDate('tanggal_selesai', '>=', now()->toDateString())
             ->limit(3)->get();
 
-        $slots = $slotsQuery->paginate(20)->withQueryString();
+        $today = now()->toDateString();
+        if ($tab === 'pengajuan') {
+            $slots = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko', 'bankAccount.bank'])
+                ->where('status', AdSlot::STATUS_DITUNDA)
+                ->orderByDesc('created_at')
+                ->paginate(20)->withQueryString();
+        } elseif ($tab === 'daftar') {
+            $slots = (clone $slotsQuery)
+                ->where('status', AdSlot::STATUS_AKTIF)
+                ->whereNotNull('tanggal_mulai')
+                ->whereNotNull('tanggal_selesai')
+                ->whereDate('tanggal_mulai', '<=', $today)
+                ->whereDate('tanggal_selesai', '>=', $today)
+                ->paginate(20)->withQueryString();
+        } else {
+            $slots = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko', 'bankAccount.bank'])
+                ->where(function ($q) use ($today) {
+                    $q->where('status', AdSlot::STATUS_NONAKTIF)
+                        ->orWhere(function ($q2) use ($today) {
+                            $q2->where('status', AdSlot::STATUS_AKTIF)->whereDate('tanggal_selesai', '<', $today);
+                        });
+                })
+                ->orderByDesc('created_at')
+                ->paginate(20)->withQueryString();
+        }
 
         $products = Product::with('store:store_id,nama_toko')
             ->orderBy('nama_produk')
@@ -55,6 +82,7 @@ class PeringkatIklanController extends Controller
         return view('SuperAdmin.peringkat.peringkat-iklan', [
             'slots' => $slots,
             'top3' => $top3,
+            'tab' => $tab,
             'totalPendapatan' => $totalPendapatan,
             'slotAktif' => $slotAktif,
             'rataRataBid' => $rataRataBid,
@@ -66,61 +94,7 @@ class PeringkatIklanController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'product_id' => 'required|exists:products,product_id',
-            'nominal_bid' => 'required|numeric|min:100000',
-            'tanggal_mulai' => 'nullable|date',
-            'tanggal_selesai' => 'nullable|date|after:tanggal_mulai',
-        ], [
-            'product_id.required' => 'Produk wajib dipilih.',
-            'product_id.exists' => 'Produk tidak valid.',
-            'nominal_bid.required' => 'Nominal bayaran wajib diisi.',
-            'nominal_bid.min' => 'Minimal Rp 100.000.',
-        ]);
-
-        $product = Product::find($data['product_id']);
-
-        $hari = PeringkatService::resolveHari((int) $data['nominal_bid']);
-        $mulai = $data['tanggal_mulai'] ?? now()->toDateString();
-        $selesai = $data['tanggal_selesai'] ?? now()->addDays($hari)->toDateString();
-
-        $slot = AdSlot::create([
-            'product_id' => $data['product_id'],
-            'store_id' => $product->store_id,
-            'nominal_bid' => $data['nominal_bid'],
-            'tanggal_mulai' => $mulai,
-            'tanggal_selesai' => $selesai,
-            'status' => AdSlot::STATUS_AKTIF,
-            'payment_status' => AdSlot::PAYMENT_TERVERIFIKASI,
-            'paid_at' => now(),
-        ]);
-
-        ActivityLogger::log(
-            'ad_slot.create',
-            AdSlot::class,
-            $slot->ad_slot_id,
-            null,
-            $slot->toArray(),
-            'Mendaftarkan slot iklan baru untuk produk: '.$product->nama_produk
-        );
-
-        Notification::fireSelf(Notification::TIPE_PROMO, 'Slot Iklan Dibuat', 'Slot iklan untuk produk "'.$product->nama_produk.'" didaftarkan.', route('superadmin.peringkat-iklan'));
-
-        if ($product->store?->owner_id) {
-            Notification::create([
-                'user_id' => $product->store->owner_id,
-                'aktor_id' => ActivityLogger::resolveActorId(),
-                'tipe' => Notification::TIPE_PROMO,
-                'judul' => 'Iklan Produk Terdaftar',
-                'pesan' => sprintf('Produk "%s" didaftarkan ke slot iklan platform oleh Super Admin.', $product->nama_produk),
-                'url' => route('owner.produk'),
-            ]);
-        }
-
-        return back()->with('toast', [
-            'message' => 'Slot iklan berhasil didaftarkan.',
-            'icon' => 'task_alt',
-        ]);
+        abort(403, 'Pendaftaran slot via Super Admin dinonaktifkan. Gunakan alur Owner (bank+file+bukti).');
     }
 
     public function verifikasiPembayaran(Request $request, AdSlot $slot)

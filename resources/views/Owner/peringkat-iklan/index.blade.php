@@ -122,7 +122,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="p-8 text-center text-on-surface-variant text-sm">Belum ada pengajuan iklan.</td></tr>
+                        <tr><td colspan="6" class="p-8 text-center text-on-surface-variant text-sm">Belum ada riwayat pengajuan iklan.</td></tr>
                     @endforelse
                 </tbody>
             </table>
