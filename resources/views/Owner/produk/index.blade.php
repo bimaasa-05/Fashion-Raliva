@@ -311,7 +311,7 @@
                     <div class="grid grid-cols-4 gap-2">
                         @foreach ($p->images as $img)
                             <div class="h-20 rounded-lg overflow-hidden border border-outline-variant bg-surface-container-high">
-                                <img src="{{ asset('storage/' . $img->file_gambar) }}" alt="Foto produk" class="w-full h-full object-cover" loading="lazy" />
+                                <img src="{{ filter_var($img->file_gambar, FILTER_VALIDATE_URL) ? $img->file_gambar : asset($img->file_gambar) }}" alt="Foto produk" class="w-full h-full object-cover" loading="lazy" />
                             </div>
                         @endforeach
                     </div>
