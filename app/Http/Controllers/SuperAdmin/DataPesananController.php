@@ -12,17 +12,23 @@ class DataPesananController extends Controller
 {
     public function index(Request $request)
     {
-        $orders = Order::query()
+        $query = Order::query()
             ->with([
                 'store:store_id,nama_toko',
                 'checkout.user:user_id,nama_lengkap,email',
                 'items.productVariant:product_variant_id,product_id,warna,ukuran,sku',
                 'items.productVariant.product:product_id,nama_produk',
             ])
-            ->orderByDesc('created_at')
-            ->get();
+            ->orderByDesc('created_at');
 
-        $orders->transform(function (Order $order) {
+        $stats = [
+            'semua' => Order::count(),
+            'total' => Order::count(),
+        ];
+
+        $orders = $query->paginate(20)->withQueryString();
+
+        $orders->getCollection()->transform(function (Order $order) {
             $order->jumlah_produk = $order->items->sum('quantity');
             $order->waktu_relatif = $order->created_at
                 ? Carbon::parse($order->created_at)->locale('id')->diffForHumans()
@@ -33,6 +39,7 @@ class DataPesananController extends Controller
 
         return view('SuperAdmin.data-pesanan.index', [
             'orders' => $orders,
+            'stats' => $stats,
             'pajakPersen' => Setting::get(Setting::PAJAK_PERSEN, '11'),
             'biayaLayanan' => Setting::get(Setting::BIAYA_LAYANAN, '0'),
         ]);

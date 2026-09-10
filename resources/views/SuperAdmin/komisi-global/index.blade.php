@@ -15,7 +15,7 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
     .text-gradient-gold {
-        background: linear-gradient(115deg, #a8823a 0%, #C9A24D 35%, #ecd398 55%, #C9A24D 80%, #a8823a 100%);
+        background: linear-gradient(115deg, #6D1428 0%, #8B1E3F 35%, #c03a5a 55%, #8B1E3F 80%, #6D1428 100%);
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
@@ -25,14 +25,14 @@
         content: '';
         position: absolute;
         inset: -30%;
-        background: radial-gradient(circle at 70% 30%, rgba(201, 162, 77, 0.14), transparent 45%),
-                    radial-gradient(circle at 15% 85%, rgba(201, 162, 77, 0.08), transparent 40%);
+        background: radial-gradient(circle at 70% 30%, rgba(139, 30, 63, 0.14), transparent 45%),
+                    radial-gradient(circle at 15% 85%, rgba(139, 30, 63, 0.08), transparent 40%);
         pointer-events: none;
     }
 
     .gauge-progress {
         transition: stroke-dashoffset 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-        filter: drop-shadow(0 0 6px rgba(201, 162, 77, 0.45));
+        filter: drop-shadow(0 0 6px rgba(139, 30, 63, 0.45));
     }
 
     @keyframes riseIn {
@@ -42,7 +42,7 @@
     .rise { opacity: 0; animation: riseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
     .sim-chip { transition: all 0.2s ease; }
-    .sim-chip:hover { border-color: rgba(201, 162, 77, 0.5); color: #C9A24D; transform: translateY(-1px); }
+    .sim-chip:hover { border-color: rgba(139, 30, 63, 0.5); color: #8B1E3F; transform: translateY(-1px); }
 </style>
 @endpush
 
@@ -82,7 +82,7 @@
                 <div class="relative w-[210px] h-[210px]">
                     <svg viewBox="0 0 200 200" class="w-full h-full -rotate-90">
                         <circle cx="100" cy="100" r="84" fill="none" stroke="rgba(127,127,127,0.18)" stroke-width="12" />
-                        <circle id="gauge-ring" cx="100" cy="100" r="84" fill="none" stroke="#C9A24D" stroke-width="12" stroke-linecap="round" stroke-dasharray="527.79" stroke-dashoffset="527.79" class="gauge-progress" />
+                        <circle id="gauge-ring" cx="100" cy="100" r="84" fill="none" stroke="#8B1E3F" stroke-width="12" stroke-linecap="round" stroke-dasharray="527.79" stroke-dashoffset="527.79" class="gauge-progress" />
                     </svg>
                     <div class="absolute inset-0 flex flex-col items-center justify-center text-center rotate-0">
                         <span class="font-title-md text-title-md text-on-surface leading-none" id="gauge-value">{{ number_format($komisi, 0, ',', '.') }}%</span>
@@ -179,7 +179,7 @@
         <ol class="relative border-l border-muted-border ml-3 space-y-6">
             @forelse ($riwayat as $item)
                 <li class="pl-8 relative">
-                    <span class="absolute -left-[9px] top-1 w-4 h-4 rounded-full {{ $loop->first ? 'bg-gold-accent border-4 border-surface-container-lowest shadow-[0_0_0_3px_rgba(201,162,77,0.25)]' : 'bg-secondary border-4 border-surface-container-lowest' }}"></span>
+                    <span class="absolute -left-[9px] top-1 w-4 h-4 rounded-full {{ $loop->first ? 'bg-gold-accent border-4 border-surface-container-lowest shadow-[0_0_0_3px_rgba(139, 30, 63,0.25)]' : 'bg-secondary border-4 border-surface-container-lowest' }}"></span>
                     <div class="flex flex-wrap items-center gap-3 mb-2">
                         <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant">{{ $item['tanggal']->translatedFormat('d M Y') }}</span>
                         @if ($item['nilai_lama'] && $item['nilai_baru'])

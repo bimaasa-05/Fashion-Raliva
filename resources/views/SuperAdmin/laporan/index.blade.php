@@ -85,6 +85,9 @@
 <div class="mb-section-gap">
     <div class="flex justify-between items-center mb-6">
         <h3 class="font-title-md text-on-surface uppercase tracking-wider premium-heading">Transaksi Terbaru</h3>
+        <a href="{{ route('superadmin.laporan.export', ['period' => request('period', 30)]) }}" class="inline-flex items-center gap-2 px-3 py-2 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
+            <span class="material-symbols-outlined text-[18px]">download</span> Export CSV
+        </a>
     </div>
     <div class="border border-muted-border bg-surface-container-lowest rounded-lg overflow-x-auto hidden md:block card-premium">
         <table class="w-full text-left border-collapse premium-table">
@@ -187,10 +190,10 @@
                 datasets: [{
                     label: 'Pendapatan',
                     data: @json($chartData),
-                    borderColor: '#C9A24D',
-                    backgroundColor: 'rgba(201, 162, 77, 0.1)',
+                    borderColor: '#8B1E3F',
+                    backgroundColor: 'rgba(139, 30, 63, 0.1)',
                     borderWidth: 2,
-                    pointBackgroundColor: '#C9A24D',
+                    pointBackgroundColor: '#8B1E3F',
                     pointBorderColor: '#fff',
                     pointBorderWidth: 2,
                     pointRadius: 4,

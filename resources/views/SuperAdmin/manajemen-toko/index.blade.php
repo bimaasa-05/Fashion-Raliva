@@ -63,7 +63,7 @@
             </button>
         </div>
         <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-            <span id="result-count">{{ $stores->count() }}</span> toko
+            <span id="result-count">{{ $stores->total() }}</span> toko
         </p>
     </div>
 </div>
@@ -144,6 +144,9 @@
         @endforelse
     </div>
     <p id="toko-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada toko yang cocok.</p>
+    @if ($stores->hasPages())
+        <div class="mt-6 flex justify-center">{{ $stores->links() }}</div>
+    @endif
 </section>
 @endsection
 
@@ -224,19 +227,23 @@
             mainBtn.classList.remove('hidden');
             mainForm.action = actionUrls.setujui(d.id);
             rejectBtn.classList.remove('hidden');
+            document.getElementById('store-action-info')?.classList.remove('hidden');
         } else if (d.status === 'aktif') {
             mainBtn.textContent = 'Tangguhkan Toko';
             mainBtn.classList.remove('hidden');
             mainForm.action = actionUrls.tangguhkan(d.id);
             rejectBtn.classList.add('hidden');
+            document.getElementById('store-action-info')?.classList.add('hidden');
         } else if (d.status === 'nonaktif') {
             mainBtn.textContent = 'Aktifkan Kembali';
             mainBtn.classList.remove('hidden');
             mainForm.action = actionUrls.aktifkan(d.id);
             rejectBtn.classList.add('hidden');
+            document.getElementById('store-action-info')?.classList.add('hidden');
         } else {
             mainBtn.classList.add('hidden');
             rejectBtn.classList.add('hidden');
+            document.getElementById('store-action-info')?.classList.add('hidden');
         }
 
         document.getElementById('store-modal-scroll').scrollTop = 0;
@@ -508,10 +515,13 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <div class="shrink-0 border-t border-muted-border bg-surface/95 backdrop-blur px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-[14px] text-gold-accent">history</span>
-                Keputusan tercatat di riwayat aktivitas
-            </p>
+            <div class="space-y-1">
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[14px] text-gold-accent">history</span>
+                    Keputusan tercatat di riwayat aktivitas
+                </p>
+                <p id="store-action-info" class="text-[11px] text-on-surface-variant hidden">Menyetujui akan otomatis verifikasi dokumen pending & beri 5 slot awal bila kosong.</p>
+            </div>
             <div class="flex gap-3 w-full sm:w-auto">
                 <button id="store-action-reject" type="button" onclick="openRejectModal()" class="flex-1 sm:flex-none px-6 py-3 border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-wider rounded-lg hover:bg-error/10 transition-colors">Tolak</button>
                 <form id="store-action-form" method="POST" action="" onsubmit="closeStoreModal()">

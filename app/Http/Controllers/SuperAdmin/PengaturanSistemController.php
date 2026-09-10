@@ -12,6 +12,13 @@ class PengaturanSistemController extends Controller
 {
     public function index()
     {
+        $rawTier = Setting::get(Setting::PERINGKAT_TIER, null);
+        $tiers = \App\Support\PeringkatService::defaultTiers();
+        if ($rawTier) {
+            $decoded = json_decode($rawTier, true);
+            if (is_array($decoded) && $decoded !== []) $tiers = $decoded;
+        }
+
         return view('SuperAdmin.pengaturan-sistem.index', [
             'syaratKetentuan' => Setting::get(Setting::SYARAT_KETENTUAN, ''),
             'kebijakanPrivasi' => Setting::get(Setting::KEBIJAKAN_PRIVASI, ''),
@@ -24,6 +31,7 @@ class PengaturanSistemController extends Controller
                 'mode_maintenance' => Setting::get(Setting::MODE_MAINTENANCE, '0'),
                 'moderasi_otomatis' => Setting::get(Setting::MODERASI_OTOMATIS, '1'),
             ],
+            'tiers' => $tiers,
         ]);
     }
 
@@ -117,5 +125,139 @@ class PengaturanSistemController extends Controller
             'message' => 'Konten Syarat & Ketentuan dan Kebijakan Privasi berhasil disimpan.',
             'icon' => 'task_alt',
         ]);
+    }
+
+    public function updateTier(Request $request)
+    {
+        $data = $request->validate([
+            'tiers' => 'required|array|min:1',
+            'tiers.*.min' => 'required|integer|min:100000',
+            'tiers.*.max' => 'nullable|integer|min:100000',
+            'tiers.*.hari' => 'required|integer|min:1|max:365',
+        ]);
+
+        $tiers = collect($data['tiers'])->sortBy('min')->values()->all();
+
+        foreach ($tiers as $i => $t) {
+            if ($i > 0) {
+                $prevMax = $tiers[$i - 1]['max'];
+                if ($prevMax !== null && $t['min'] <= $prevMax) {
+                    return back()->with('toast', ['message' => 'Tier tumpang tindih pada baris '.($i + 1).'.', 'icon' => 'gpp_maybe']);
+                }
+            }
+            if ($t['max'] !== null && $t['max'] < $t['min']) {
+                return back()->with('toast', ['message' => 'Max harus >= min pada baris '.($i + 1).'.', 'icon' => 'gpp_maybe']);
+            }
+        }
+
+        $nullCount = collect($tiers)->whereNull('max')->count();
+        if ($nullCount > 1) {
+            return back()->with('toast', ['message' => 'Hanya tier terakhir boleh Max kosong (∞).', 'icon' => 'gpp_maybe']);
+        }
+        if ($nullCount === 1 && end($tiers)['max'] !== null) {
+            return back()->with('toast', ['message' => 'Tier dengan Max ∞ harus di urutan terakhir.', 'icon' => 'gpp_maybe']);
+        }
+
+        $old = Setting::get(Setting::PERINGKAT_TIER, null);
+        Setting::set(Setting::PERINGKAT_TIER, json_encode($tiers));
+        ActivityLogger::log('setting.peringkat_tier.update', Setting::class, 0, ['nilai_lama' => $old], ['nilai_baru' => $tiers], 'Mengubah tier peringkat iklan.');
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Tier Peringkat Diperbarui', 'Tier peringkat iklan berhasil diperbarui.', route('superadmin.pengaturan-sistem'));
+
+        return back()->with('toast', ['message' => 'Tier peringkat berhasil diperbarui.', 'icon' => 'task_alt']);
+    }
+
+    public function storeTier(Request $request)
+    {
+        $data = $request->validate([
+            'min' => 'required|integer|min:100000',
+            'max' => 'nullable|integer|min:100000',
+            'hari' => 'required|integer|min:1|max:365',
+        ]);
+
+        $raw = Setting::get(Setting::PERINGKAT_TIER, null);
+        $tiers = $raw ? json_decode($raw, true) : \App\Support\PeringkatService::defaultTiers();
+        if (! is_array($tiers)) $tiers = \App\Support\PeringkatService::defaultTiers();
+
+        $tiers[] = ['min' => (int) $data['min'], 'max' => $data['max'] !== null ? (int) $data['max'] : null, 'hari' => (int) $data['hari']];
+        $tiers = collect($tiers)->sortBy('min')->values()->all();
+
+        foreach ($tiers as $i => $t) {
+            if ($i > 0) {
+                $prevMax = $tiers[$i - 1]['max'];
+                if ($prevMax !== null && $t['min'] <= $prevMax) {
+                    return back()->with('toast', ['message' => 'Tier tumpang tindih.', 'icon' => 'gpp_maybe']);
+                }
+            }
+        }
+
+        $nullCount = collect($tiers)->whereNull('max')->count();
+        if ($nullCount > 1) {
+            return back()->with('toast', ['message' => 'Hanya tier terakhir boleh Max kosong.', 'icon' => 'gpp_maybe']);
+        }
+
+        Setting::set(Setting::PERINGKAT_TIER, json_encode($tiers));
+        ActivityLogger::log('setting.peringkat_tier.create', Setting::class, 0, null, $data, 'Menambah tier peringkat.');
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Tier Ditambahkan', 'Tier peringkat baru ditambahkan.', route('superadmin.pengaturan-sistem'));
+
+        return back()->with('toast', ['message' => 'Tier berhasil ditambahkan.', 'icon' => 'task_alt']);
+    }
+
+    public function updateSingleTier(Request $request, int $index)
+    {
+        $data = $request->validate([
+            'min' => 'required|integer|min:100000',
+            'max' => 'nullable|integer|min:100000',
+            'hari' => 'required|integer|min:1|max:365',
+        ]);
+
+        $raw = Setting::get(Setting::PERINGKAT_TIER, null);
+        $tiers = $raw ? json_decode($raw, true) : \App\Support\PeringkatService::defaultTiers();
+        if (! is_array($tiers) || ! isset($tiers[$index])) {
+            return back()->with('toast', ['message' => 'Tier tidak ditemukan.', 'icon' => 'gpp_maybe']);
+        }
+
+        $old = $tiers[$index];
+        $tiers[$index] = ['min' => (int) $data['min'], 'max' => $data['max'] !== null ? (int) $data['max'] : null, 'hari' => (int) $data['hari']];
+        $tiers = collect($tiers)->sortBy('min')->values()->all();
+
+        foreach ($tiers as $i => $t) {
+            if ($i > 0) {
+                $prevMax = $tiers[$i - 1]['max'];
+                if ($prevMax !== null && $t['min'] <= $prevMax) {
+                    return back()->with('toast', ['message' => 'Tier tumpang tindih pada baris '.($i + 1).'.', 'icon' => 'gpp_maybe']);
+                }
+            }
+            if ($t['max'] !== null && $t['max'] < $t['min']) {
+                return back()->with('toast', ['message' => 'Max harus >= min.', 'icon' => 'gpp_maybe']);
+            }
+        }
+
+        Setting::set(Setting::PERINGKAT_TIER, json_encode($tiers));
+        ActivityLogger::log('setting.peringkat_tier.update', Setting::class, $index, ['nilai_lama' => $old], ['nilai_baru' => $tiers[$index]], 'Mengubah tier peringkat index '.$index.'.');
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Tier Diperbarui', 'Tier peringkat diperbarui.', route('superadmin.pengaturan-sistem'));
+
+        return back()->with('toast', ['message' => 'Tier berhasil diperbarui.', 'icon' => 'task_alt']);
+    }
+
+    public function destroyTier(int $index)
+    {
+        $raw = Setting::get(Setting::PERINGKAT_TIER, null);
+        $tiers = $raw ? json_decode($raw, true) : \App\Support\PeringkatService::defaultTiers();
+        if (! is_array($tiers) || ! isset($tiers[$index])) {
+            return back()->with('toast', ['message' => 'Tier tidak ditemukan.', 'icon' => 'gpp_maybe']);
+        }
+        if (count($tiers) <= 1) {
+            return back()->with('toast', ['message' => 'Minimal harus ada 1 tier.', 'icon' => 'gpp_maybe']);
+        }
+
+        $removed = $tiers[$index];
+        array_splice($tiers, $index, 1);
+        $tiers = array_values($tiers);
+
+        Setting::set(Setting::PERINGKAT_TIER, json_encode($tiers));
+        ActivityLogger::log('setting.peringkat_tier.delete', Setting::class, $index, ['nilai_lama' => $removed], null, 'Menghapus tier peringkat index '.$index.'.');
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Tier Dihapus', 'Tier peringkat dihapus.', route('superadmin.pengaturan-sistem'));
+
+        return back()->with('toast', ['message' => 'Tier berhasil dihapus.', 'icon' => 'task_alt']);
     }
 }

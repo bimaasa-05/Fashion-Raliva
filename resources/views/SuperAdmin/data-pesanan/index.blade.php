@@ -49,7 +49,7 @@
                 </button>
             </div>
             <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-                <span id="result-count">{{ $orders->count() }}</span> pesanan
+                <span id="result-count">{{ $orders->total() }}</span> pesanan
             </p>
         </div>
     </div>
@@ -186,9 +186,12 @@
         @empty
             <p class="text-center text-on-surface-variant py-10">Belum ada pesanan tercatat.</p>
         @endforelse
-        <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada pesanan yang cocok.</p>
-    </div>
-</section>
+            <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada pesanan yang cocok.</p>
+        </div>
+        @if ($orders->hasPages())
+            <div class="mt-6 flex justify-center">{{ $orders->links() }}</div>
+        @endif
+    </section>
 
 @foreach ($orders as $order)
     @php

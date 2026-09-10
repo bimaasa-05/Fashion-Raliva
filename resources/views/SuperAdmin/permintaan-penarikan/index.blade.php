@@ -42,7 +42,7 @@
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 bg-secondary-container flex items-center justify-center rounded-full">
-                        <span class="material-symbols-outlined text-secondary">account_balance_wallet</span>
+                        <span class="material-symbols-outlined text-white">account_balance_wallet</span>
                     </div>
                     <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Total Nominal Menunggu</h3>
                 </div>

@@ -18,35 +18,43 @@
 
 <div class="space-y-section-gap">
     <!-- Toolbar -->
-    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">category</span></div>
-            <div>
-                <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Semua Kategori</h2>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Kelola semua kategori global yang digunakan semua toko.</p>
+    <section class="relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl p-6 md:p-8 hero-glow">
+        <div class="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-gold-accent/10 blur-3xl pointer-events-none"></div>
+        <span class="material-symbols-outlined absolute -bottom-8 -right-4 text-[140px] text-gold-accent/5 pointer-events-none select-none">category</span>
+        <div class="relative flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0 shadow-sm"><span class="material-symbols-outlined text-gold-accent text-[22px]">category</span></div>
+                <div>
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Semua Kategori</h2>
+                    <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Kelola semua kategori global yang digunakan semua toko.</p>
+                </div>
             </div>
+            <button type="button" id="kategori-toolbar-btn" onclick="openKategoriForm()" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0 shadow-sm">
+                <span id="kategori-toolbar-icon" class="material-symbols-outlined text-[18px]">add</span> <span id="kategori-toolbar-label">Tambah Kategori</span>
+            </button>
         </div>
-        <button type="button" id="kategori-toolbar-btn" onclick="openKategoriForm()" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
-            <span id="kategori-toolbar-icon" class="material-symbols-outlined text-[18px]">add</span> <span id="kategori-toolbar-label">Tambah Kategori</span>
-        </button>
     </section>
 
     <!-- Tab navigation -->
-    <div data-kategori-tabs class="flex flex-wrap gap-2 border-b border-muted-border pb-4">
-        <button type="button" data-tab="produk" class="kategori-tab-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Produk ({{ $stats['total'] }})</button>
-        <button type="button" data-tab="komplain" class="kategori-tab-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Komplain ({{ $kategoriKomplain->count() }})</button>
-        <button type="button" data-tab="pengeluaran" class="kategori-tab-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Pengeluaran ({{ $kategoriPengeluaran->count() }})</button>
-        <button type="button" data-tab="toko" class="kategori-tab-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Toko ({{ $kategoriToko->count() }})</button>
+    <div data-kategori-tabs class="bg-surface-container-low border border-muted-border rounded-xl p-1.5 flex flex-wrap gap-1.5">
+        <button type="button" data-tab="produk" class="kategori-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Produk<span class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-gold-accent/25 text-gold-accent text-[10px] font-bold">{{ $stats['total'] }}</span></button>
+        <button type="button" data-tab="komplain" class="kategori-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Komplain<span class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold">{{ $kategoriKomplain->count() }}</span></button>
+        <button type="button" data-tab="pengeluaran" class="kategori-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Pengeluaran<span class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold">{{ $kategoriPengeluaran->count() }}</span></button>
+        <button type="button" data-tab="toko" class="kategori-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Toko<span class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold">{{ $kategoriToko->count() }}</span></button>
     </div>
 
     <!-- Categories Grid -->
     <section data-tab-panel="produk" data-table-scope class="space-y-gutter">
         <div class="flex justify-between items-center flex-wrap gap-2">
             <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Daftar Kategori</h2>
-            <span class="text-on-surface-variant font-body-md text-sm">{{ $stats['aktif'] }} kategori aktif • {{ $stats['induk'] }} induk • total {{ $stats['total'] }}</span>
+            <div class="flex items-center flex-wrap gap-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[10px] font-bold uppercase tracking-wider"><span class="material-symbols-outlined text-[14px]">check_circle</span>{{ $stats['aktif'] }} aktif</span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/15 text-secondary border border-secondary/25 text-[10px] font-bold uppercase tracking-wider"><span class="material-symbols-outlined text-[14px]">account_tree</span>{{ $stats['induk'] }} induk</span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-lowest text-on-surface-variant border border-muted-border text-[10px] font-bold uppercase tracking-wider"><span class="material-symbols-outlined text-[14px]">category</span>total {{ $stats['total'] }}</span>
+            </div>
         </div>
 
-        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 space-y-4">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 space-y-4 card-premium">
             <div class="flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
                 <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Kategori</span>
@@ -60,7 +68,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div class="relative flex-1">
                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                    <input id="kategori-search" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama kategori atau deskripsi..." />
+                    <input id="kategori-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent focus:bg-surface-container-lowest transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama kategori atau deskripsi..." />
                     <button type="button" id="kategori-clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
@@ -73,7 +81,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
             @forelse ($categories as $kategori)
-                <div class="group relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl p-6 transition-all duration-300 hover:border-gold-accent hover:shadow-lg hover:-translate-y-0.5"
+                <div class="group relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl p-5 flex flex-col gap-4 transition-all duration-300 hover:border-gold-accent hover:shadow-lg hover:-translate-y-0.5"
                     data-table-row
                     data-filter="{{ $kategori->parent_id ? 'sub' : 'induk' }}"
                     data-status="{{ $kategori->status }}"
@@ -84,31 +92,35 @@
                     data-parent="{{ $kategori->parent_id ?? '' }}"
                     data-produk="{{ $kategori->products_count }}"
                     data-sub="{{ $kategori->children_count }}">
+                    <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-gold-accent via-gold-accent/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <span class="material-symbols-outlined absolute -right-5 -top-5 text-[110px] text-gold-accent/5 select-none pointer-events-none">{{ $kategori->parent_id ? 'category' : 'inventory_2' }}</span>
                     <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-secondary-container/20 to-transparent rounded-full -translate-y-8 translate-x-8" style="filter: blur(20px); opacity: 0.5;"></div>
                     <div class="relative flex items-start gap-4">
                         <div class="w-14 h-14 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                            <span class="material-symbols-outlined text-secondary text-[28px]">{{ $kategori->parent_id ? 'subdirectory_arrow_right' : 'folder' }}</span>
+                            <span class="material-symbols-outlined text-white text-[28px]">{{ $kategori->parent_id ? 'subdirectory_arrow_right' : 'folder' }}</span>
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 flex-wrap">
                                 <h3 class="font-title-md text-title-md text-on-surface group-hover:text-gold-accent transition-colors truncate">{{ $kategori->nama_kategori }}</h3>
                                 @if ($kategori->status !== \App\Models\Category::STATUS_AKTIF)
-                                    <span class="inline-flex px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Nonaktif</span>
+                                    <span class="inline-flex px-2 py-0.5 rounded-full bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Nonaktif</span>
                                 @endif
                             </div>
-                            <p class="text-on-surface-variant text-sm mt-1">
-                                {{ $kategori->products_count }} produk
-                                @if ($kategori->children_count > 0)• {{ $kategori->children_count }} sub-kategori @endif
-                            </p>
+                            <div class="flex items-center gap-3 text-sm mt-1.5 flex-wrap">
+                                <span class="inline-flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-gold-accent">inventory_2</span><span class="font-bold text-gold-accent">{{ $kategori->products_count }}</span>&nbsp;produk</span>
+                                @if ($kategori->children_count > 0)
+                                    <span class="inline-flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-gold-accent">account_tree</span><span class="font-bold text-gold-accent">{{ $kategori->children_count }}</span>&nbsp;sub-kategori</span>
+                                @endif
+                            </div>
                             @if ($kategori->deskripsi)
-                                <p class="text-on-surface-variant/80 text-xs mt-1 line-clamp-2" title="{{ $kategori->deskripsi }}">{{ \Illuminate\Support\Str::limit($kategori->deskripsi, 70) }}</p>
+                                <p class="text-on-surface-variant/80 text-xs mt-1.5 line-clamp-2" title="{{ $kategori->deskripsi }}">{{ \Illuminate\Support\Str::limit($kategori->deskripsi, 70) }}</p>
                             @endif
                             @if ($kategori->parent)
-                                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant mt-1.5 inline-flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">account_tree</span>Sub dari {{ $kategori->parent->nama_kategori }}</p>
+                                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant mt-2 inline-flex items-center gap-1"><span class="material-symbols-outlined text-[12px] text-gold-accent">account_tree</span>Sub dari {{ $kategori->parent->nama_kategori }}</p>
                             @endif
                         </div>
                     </div>
-                    <div class="flex items-center justify-between pt-4 border-t border-muted-border mt-4">
+                    <div class="relative flex items-center justify-between pt-4 border-t border-muted-border mt-auto">
                         <button type="button" onclick="openKategoriForm(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
                             <span class="material-symbols-outlined text-[20px]">edit</span>
                         </button>
@@ -118,15 +130,53 @@
                     </div>
                 </div>
             @empty
-                <p class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-12">Belum ada kategori. Tambahkan kategori pertama Anda.</p>
+                <div class="col-span-full flex flex-col items-center justify-center py-16 text-center bg-surface-container-lowest border border-dashed border-muted-border rounded-xl">
+                    <div class="w-16 h-16 rounded-2xl bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mb-4 shadow-sm"><span class="material-symbols-outlined text-gold-accent text-[32px]">category</span></div>
+                    <p class="font-title-md text-title-md text-on-surface mb-1">Belum ada kategori</p>
+                    <p class="text-on-surface-variant text-sm mb-6 max-w-sm">Tambahkan kategori pertama Anda agar toko dapat mengelompokkan produknya dengan rapi.</p>
+                    <button type="button" onclick="openKategoriForm()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium"><span class="material-symbols-outlined text-[18px]">add</span> Tambah Kategori</button>
+                </div>
             @endforelse
         </div>
-        <p id="kategori-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada kategori yang cocok.</p>
+        <p id="kategori-empty-search" class="hidden flex flex-col items-center justify-center text-center text-on-surface-variant font-body-md text-sm py-14">
+            <span class="material-symbols-outlined text-[40px] text-gold-accent/30 mb-3">search_off</span>
+            Tidak ada kategori yang cocok.
+        </p>
     </section>
 
     <!-- Panel: Kategori Komplain -->
     <section data-tab-panel="komplain" class="hidden space-y-gutter">
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden">
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-gutter">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">category</span></div>
+                    <div>
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Kategori Komplain</p>
+                        <p class="font-title-md text-title-md text-on-surface">{{ $kategoriKomplain->count() }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-lg bg-secondary-container/20 border border-secondary/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-secondary text-[20px]">report</span></div>
+                    <div>
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Total Komplain</p>
+                        <p class="font-title-md text-title-md text-on-surface">{{ $kategoriKomplain->sum('total') }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden lg:flex bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">priority_high</span></div>
+                    <div class="min-w-0">
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Top Kategori</p>
+                        <p class="font-title-md text-title-md text-on-surface capitalize truncate">{{ $kategoriKomplain->sortByDesc('total')->first()?->kategori ?? '—' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden card-premium">
             <table class="w-full premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -139,12 +189,14 @@
                     @forelse ($kategoriKomplain as $k)
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                             <td class="p-4 text-center text-on-surface-variant font-mono">{{ $loop->iteration }}</td>
-                            <td class="p-4 text-on-surface capitalize">{{ $k->kategori }}</td>
-                            <td class="p-4 text-center text-on-surface font-bold">{{ $k->total }}</td>
+                            <td class="p-4 text-on-surface capitalize font-semibold">{{ $k->kategori }}</td>
+                            <td class="p-4 text-center font-bold"><span class="inline-flex items-center justify-center min-w-[40px] px-2.5 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-xs">{{ $k->total }}</span></td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="p-8 text-center text-on-surface-variant">Belum ada data kategori komplain.</td>
+                            <td colspan="3" class="p-10 text-center text-on-surface-variant">
+                                <span class="material-symbols-outlined text-[36px] text-gold-accent/30 align-middle mr-2">inbox</span>Belum ada data kategori komplain.
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -154,7 +206,37 @@
 
     <!-- Panel: Kategori Pengeluaran -->
     <section data-tab-panel="pengeluaran" class="hidden space-y-gutter">
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">category</span></div>
+                    <div>
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Kategori Pengeluaran</p>
+                        <p class="font-title-md text-title-md text-on-surface">{{ $kategoriPengeluaran->count() }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-lg bg-secondary-container/20 border border-secondary/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-secondary text-[20px]">receipt_long</span></div>
+                    <div>
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Total Transaksi</p>
+                        <p class="font-title-md text-title-md text-on-surface">{{ $kategoriPengeluaran->sum('total') }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">payments</span></div>
+                    <div>
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Total Nominal</p>
+                        <p class="font-title-md text-title-md text-on-surface">Rp {{ number_format((float) $kategoriPengeluaran->sum('total_nominal'), 0, ',', '.') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden card-premium">
             <table class="w-full premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -168,13 +250,15 @@
                     @forelse ($kategoriPengeluaran as $k)
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                             <td class="p-4 text-center text-on-surface-variant font-mono">{{ $loop->iteration }}</td>
-                            <td class="p-4 text-on-surface">{{ $k->kategori }}</td>
-                            <td class="p-4 text-center text-on-surface">{{ $k->total }}</td>
+                            <td class="p-4 text-on-surface font-semibold">{{ $k->kategori }}</td>
+                            <td class="p-4 text-center"><span class="inline-flex items-center justify-center min-w-[40px] px-2.5 py-1 rounded-full bg-secondary-container/20 text-secondary text-xs font-bold">{{ $k->total }}</span></td>
                             <td class="p-4 text-right text-on-surface font-bold">Rp {{ number_format((float) $k->total_nominal, 0, ',', '.') }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="p-8 text-center text-on-surface-variant">Belum ada data kategori pengeluaran.</td>
+                            <td colspan="4" class="p-10 text-center text-on-surface-variant">
+                                <span class="material-symbols-outlined text-[36px] text-gold-accent/30 align-middle mr-2">inbox</span>Belum ada data kategori pengeluaran.
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -186,10 +270,13 @@
     <section data-tab-panel="toko" class="hidden space-y-gutter">
         <div class="flex justify-between items-center flex-wrap gap-2">
             <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Master Kategori Toko</h2>
-            <span class="text-on-surface-variant font-body-md text-sm">{{ $kategoriToko->where('status', \App\Models\StoreCategory::STATUS_AKTIF)->count() }} aktif • total {{ $kategoriToko->count() }}</span>
+            <div class="flex items-center flex-wrap gap-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/15 text-secondary border border-secondary/25 text-[10px] font-bold uppercase tracking-wider"><span class="material-symbols-outlined text-[14px]">check_circle</span>{{ $kategoriToko->where('status', \App\Models\StoreCategory::STATUS_AKTIF)->count() }} aktif</span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-lowest text-on-surface-variant border border-muted-border text-[10px] font-bold uppercase tracking-wider"><span class="material-symbols-outlined text-[14px]">storefront</span>total {{ $kategoriToko->count() }}</span>
+            </div>
         </div>
 
-        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 space-y-4">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 space-y-4 card-premium">
             <div class="flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
                 <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Kategori Toko</span>
@@ -202,7 +289,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div class="relative flex-1">
                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                    <input id="toko-search" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama atau deskripsi kategori toko..." />
+                    <input id="toko-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent focus:bg-surface-container-lowest transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama atau deskripsi kategori toko..." />
                     <button type="button" id="toko-clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
@@ -213,8 +300,9 @@
             </div>
         </div>
 
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden">
-            <table class="w-full premium-table">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden card-premium">
+            <div class="overflow-x-auto">
+            <table class="w-full min-w-[720px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
                         <th class="p-4 text-center w-12">No</th>
@@ -246,13 +334,19 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="p-8 text-center text-on-surface-variant">Belum ada kategori toko.</td>
+                            <td colspan="6" class="p-10 text-center text-on-surface-variant">
+                                <span class="material-symbols-outlined text-[36px] text-gold-accent/30 align-middle mr-2">storefront</span>Belum ada kategori toko.
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
+            </div>
         </div>
-        <p id="toko-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada kategori toko yang cocok.</p>
+        <p id="toko-empty-search" class="hidden flex flex-col items-center justify-center text-center text-on-surface-variant font-body-md text-sm py-14">
+            <span class="material-symbols-outlined text-[40px] text-gold-accent/30 mb-3">search_off</span>
+            Tidak ada kategori toko yang cocok.
+        </p>
     </section>
 </div>
 

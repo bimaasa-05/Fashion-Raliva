@@ -14,7 +14,7 @@
     .filter-scroll::-webkit-scrollbar { height: 4px; }
     .filter-scroll::-webkit-scrollbar-track { background: transparent; }
     .filter-scroll::-webkit-scrollbar-thumb { background-color: #e3e2e2; border-radius: 4px; }
-    .timeline-line::before { content: ''; position: absolute; left: 20px; top: 48px; bottom: -24px; width: 1px; background: linear-gradient(to bottom, rgba(201,162,77,0.55), rgba(201,162,77,0.06)); z-index: 0; }
+    .timeline-line::before { content: ''; position: absolute; left: 20px; top: 48px; bottom: -24px; width: 1px; background: linear-gradient(to bottom, rgba(139, 30, 63,0.55), rgba(139, 30, 63,0.06)); z-index: 0; }
     .timeline-item:last-child .timeline-line::before { display: none; }
 </style>
 @endpush
@@ -70,6 +70,9 @@
         <div class="flex items-center gap-2 mb-3">
             <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
             <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Kategori</span>
+            <a href="{{ route('superadmin.riwayat-aktivitas.export', ['kategori' => request('kategori')]) }}" class="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 border border-muted-border rounded-lg text-[11px] font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
+                <span class="material-symbols-outlined text-[16px]">download</span> Export CSV
+            </a>
         </div>
         <div class="flex overflow-x-auto filter-scroll pb-2 -mx-gutter px-gutter md:mx-0 md:px-0 space-x-4">
             @foreach(['semua' => 'Semua Aktivitas', 'pengguna' => 'Pengguna', 'toko' => 'Toko', 'produk' => 'Produk', 'keuangan' => 'Keuangan', 'sistem' => 'Sistem'] as $key => $label)
@@ -95,7 +98,7 @@
         @endphp
         <div data-kategori="{{ $tabKategori }}" class="timeline-item relative timeline-line">
             <div class="flex items-start">
-                <div class="relative z-10 w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center shrink-0 border border-gold-accent/40 shadow-[0_0_0_3px_rgba(201,162,77,0.08)] mt-1">
+                <div class="relative z-10 w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center shrink-0 border border-gold-accent/40 shadow-[0_0_0_3px_rgba(139, 30, 63,0.08)] mt-1">
                     <span class="material-symbols-outlined text-gold-accent text-sm">{{ $icon }}</span>
                 </div>
                 <div class="ml-element-gap flex-grow">

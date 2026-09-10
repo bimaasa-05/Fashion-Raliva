@@ -21,7 +21,7 @@ class StoreCategoryController extends Controller
         $kategori = StoreCategory::create([
             'nama_kategori' => $data['nama_kategori'],
             'deskripsi' => $data['deskripsi'] ?? null,
-            'status' => StoreCategory::STATUS_AKTIF,
+            'status' => $data['status'] ?? StoreCategory::STATUS_AKTIF,
         ]);
 
         ActivityLogger::log(
@@ -29,7 +29,7 @@ class StoreCategoryController extends Controller
             StoreCategory::class,
             $kategori->store_category_id,
             null,
-            ['nama_kategori' => $kategori->nama_kategori, 'deskripsi' => $kategori->deskripsi],
+            ['nama_kategori' => $kategori->nama_kategori, 'deskripsi' => $kategori->deskripsi, 'status' => $kategori->status],
             sprintf('Menambahkan kategori toko "%s".', $kategori->nama_kategori)
         );
 
