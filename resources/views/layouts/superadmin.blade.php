@@ -126,6 +126,8 @@
         .from-gold-accent\/10 { --tw-gradient-from: rgba(139,30,63,0.1) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
         .from-gold-accent\/15 { --tw-gradient-from: rgba(139,30,63,0.15) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
         .from-gold-accent\/20 { --tw-gradient-from: rgba(139,30,63,0.2) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .from-gold-accent\/25 { --tw-gradient-from: rgba(139,30,63,0.25) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .via-gold-accent\/10 { --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), rgba(139,30,63,0.1), var(--tw-gradient-to) !important; }
         .from-gold-accent\/45 { --tw-gradient-from: rgba(139,30,63,0.45) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
         .from-gold-accent\/40 { --tw-gradient-from: rgba(139,30,63,0.4) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
         .from-gold-accent\/60 { --tw-gradient-from: rgba(139,30,63,0.6) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
