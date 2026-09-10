@@ -23,9 +23,15 @@
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
             <div>
                 <p class="font-bold text-sm">Belum punya toko</p>
-                <p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk akses fitur ini.</p>
+<p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk akses fitur ini.</p>
+                </div>
             </div>
-        </div>
+        @endif
+    @if (($counts['pending'] ?? 0) > 0)
+        <a href="{{ route('owner.moderasi-produk') }}" class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-center gap-3 hover:border-gold-accent/60 transition-colors">
+            <span class="material-symbols-outlined text-gold-accent mt-0.5">hourglass_top</span>
+            <p class="text-sm text-on-surface"><span class="font-bold">{{ $counts['pending'] }} produk</span> menunggu verifikasi Owner. <span class="underline text-gold-accent font-semibold">Ke Moderasi Produk</span></p>
+        </a>
     @endif
     {{-- Ringkasan --}}
     <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
@@ -126,8 +132,15 @@
                                 <p class="text-xs text-on-surface-variant">{{ $p->variants->map(fn($v) => trim(($v->ukuran ?? '').' '.($v->warna ?? '')))->filter()->implode(', ') ?: '-' }}</p>
                             </td>
                             <td class="py-3.5 px-4 text-center">
-                                @if ($p->status === 'aktif')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aktif</span>
+                                @if (in_array($p->status, ['aktif', 'nonaktif', 'draft'], true))
+                                    <form method="POST" action="{{ route('owner.produk.status', $p) }}" class="inline">
+                                        @csrf
+                                        <select name="status" data-status-select data-current="{{ $p->status }}" title="Ubah status" class="cursor-pointer text-[10px] font-bold uppercase border rounded-full pl-2 pr-6 py-1 {{ $p->status === 'aktif' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : ($p->status === 'nonaktif' ? 'bg-surface-container-high text-on-surface-variant border-outline-variant' : 'bg-gold-accent/15 text-gold-accent border-gold-accent/30') }}">
+                                            @foreach (($statusOptions[$p->status] ?? [$p->status]) as $opt)
+                                                <option value="{{ $opt }}" @selected($opt === $p->status)>{{ ucfirst($opt) }}</option>
+                                            @endforeach
+                                        </select>
+                                    </form>
                                 @elseif ($p->status === 'pending')
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Menunggu</span>
                                 @elseif ($p->status === 'ditolak')
@@ -138,16 +151,13 @@
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ ucfirst($p->status) }}</span>
                                 @endif
                             </td>
-                            <td class="py-3.5 px-4 text-right">
-                                <div class="relative inline-block" data-dropdown-wrap>
-                                    <button type="button" data-dropdown-toggle class="p-1.5 rounded-md hover:bg-surface-container-high transition-colors text-on-surface-variant hover:text-on-surface" aria-label="Aksi produk">
-                                        <span class="material-symbols-outlined text-[20px]">more_vert</span>
-                                    </button>
-                                    <div data-dropdown-menu class="hidden absolute right-0 top-full mt-1 w-44 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 py-1.5 text-left">
-                                        <button type="button" data-modal-open="modal-produk-{{ $p->product_id }}" class="w-full flex items-center gap-3 px-4 py-2.5 text-on-surface hover:bg-surface-container-low transition-colors text-sm">
-                                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant">visibility</span>Lihat Detail
-                                        </button>
-                                    </div>
+                            <td class="py-3.5 px-4">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button type="button" data-modal-open="modal-produk-{{ $p->product_id }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">visibility</span>Detail</button>
+                                    @if (in_array($p->status, ['pending', 'ditolak', 'draft'], true))
+                                        <button type="button" data-modal-open="modal-edit-produk-{{ $p->product_id }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">edit</span>Edit</button>
+                                    @endif
+                                    <button type="button" data-modal-open="modal-hapus-produk-{{ $p->product_id }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-error/10 border border-error/20 rounded-lg text-xs font-semibold text-error hover:bg-error/20 transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">delete</span>Hapus</button>
                                 </div>
                             </td>
                         </tr>
@@ -243,6 +253,103 @@
 </div>
 @endforeach
 
+{{-- Modal Edit Produk per produk --}}
+@foreach ($products as $p)
+<div id="modal-edit-produk-{{ $p->product_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <p class="raliva-label text-gold-accent">Edit Produk</p>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $p->nama_produk }}</h3>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors" aria-label="Tutup">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form method="POST" action="{{ route('owner.produk.update', $p) }}" enctype="multipart/form-data" class="p-6 space-y-4">
+            @csrf
+            @method('PUT')
+            <div>
+                <label for="edit-nama-{{ $p->product_id }}" class="block raliva-label mb-2">Nama Produk</label>
+                <input id="edit-nama-{{ $p->product_id }}" name="nama_produk" type="text" value="{{ old('nama_produk', $p->nama_produk) }}" required class="raliva-input" />
+                @error('nama_produk') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="edit-harga-{{ $p->product_id }}" class="block raliva-label mb-2">Harga Dasar</label>
+                    <input id="edit-harga-{{ $p->product_id }}" name="harga_dasar" type="number" min="0" value="{{ old('harga_dasar', $p->harga_dasar) }}" required class="raliva-input" />
+                    @error('harga_dasar') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label for="edit-tipe-{{ $p->product_id }}" class="block raliva-label mb-2">Tipe</label>
+                    <select id="edit-tipe-{{ $p->product_id }}" name="tipe_produk" class="raliva-select">
+                        @foreach (['regular' => 'Regular', 'preorder' => 'Preorder', 'made_to_order' => 'Made to Order'] as $val => $label)
+                            <option value="{{ $val }}" @selected(old('tipe_produk', $p->tipe_produk) === $val)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label for="edit-kategori-{{ $p->product_id }}" class="block raliva-label mb-2">Kategori</label>
+                <select id="edit-kategori-{{ $p->product_id }}" name="category_id" class="raliva-select">
+                    <option value="">— Tanpa Kategori —</option>
+                    @foreach (($categoryOptions ?? collect()) as $id => $nama)
+                        <option value="{{ $id }}" @selected((string) old('category_id', $p->category_id) === (string) $id)>{{ $nama }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label for="edit-deskripsi-{{ $p->product_id }}" class="block raliva-label mb-2">Deskripsi</label>
+                <textarea id="edit-deskripsi-{{ $p->product_id }}" name="deskripsi" rows="3" class="raliva-textarea">{{ old('deskripsi', $p->deskripsi) }}</textarea>
+            </div>
+            @if ($p->images->isNotEmpty())
+                <div>
+                    <p class="raliva-label mb-2">Foto Saat Ini</p>
+                    <div class="grid grid-cols-4 gap-2">
+                        @foreach ($p->images as $img)
+                            <div class="h-20 rounded-lg overflow-hidden border border-outline-variant bg-surface-container-high">
+                                <img src="{{ asset('storage/' . $img->file_gambar) }}" alt="Foto produk" class="w-full h-full object-cover" loading="lazy" />
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+            <div>
+                <label for="edit-foto-{{ $p->product_id }}" class="block raliva-label mb-2">Tambah Foto (Opsional)</label>
+                <input id="edit-foto-{{ $p->product_id }}" type="file" name="foto_produk[]" accept=".jpg,.jpeg,.png,.webp" multiple class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
+                <p class="text-[11px] text-on-surface-variant mt-1">JPG / PNG / WEBP, maks 2 MB per file.</p>
+                @error('foto_produk.*') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button type="button" data-modal-close class="flex-1 py-3 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="submit" class="flex-1 py-3 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+@endforeach
+
+{{-- Modal Hapus Produk per produk --}}
+@foreach ($products as $p)
+<div id="modal-hapus-produk-{{ $p->product_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6 text-center">
+        <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-error text-[28px]">delete</span>
+        </div>
+        <h3 class="font-title-md text-title-md text-on-surface">Hapus Produk</h3>
+        <p class="text-on-surface-variant text-sm mt-2">Hapus <span class="font-bold text-on-surface">{{ $p->nama_produk }}</span> beserta varian &amp; fotonya? Tindakan ini tidak dapat dibatalkan.</p>
+        <form method="POST" action="{{ route('owner.produk.destroy', $p) }}" class="flex gap-3 mt-6">
+            @csrf
+            @method('DELETE')
+            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+            <button type="submit" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error text-sm font-semibold rounded-lg hover:bg-error/20 transition-colors">Ya, Hapus</button>
+        </form>
+    </div>
+</div>
+@endforeach
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function(){
@@ -284,6 +391,16 @@ document.addEventListener('DOMContentLoaded', function(){
 <script>
     document.querySelectorAll('.ukuran-chip').forEach((chip) => {
         chip.addEventListener('click', () => chip.classList.toggle('selected'));
+    });
+    document.querySelectorAll('[data-status-select]').forEach((sel) => {
+        sel.addEventListener('change', () => {
+            const label = sel.options[sel.selectedIndex]?.text || sel.value;
+            if (confirm('Ubah status menjadi ' + label + '?')) {
+                sel.closest('form').submit();
+            } else {
+                sel.value = sel.dataset.current;
+            }
+        });
     });
 </script>
 @endpush

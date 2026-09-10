@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 data: {
                     labels: chartLabels,
                     datasets: [
-                        { label: 'Saldo Akhir Bulan', data: chartData, borderColor: '#C9A24D', backgroundColor: 'rgba(201, 162, 77, 0.12)', fill: true, tension: 0.35, borderWidth: 2, pointBackgroundColor: '#C9A24D', pointRadius: 3 }
+                        { label: 'Saldo Akhir Bulan', data: chartData, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.12)', fill: true, tension: 0.35, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 }
                     ]
                 },
                 options: {

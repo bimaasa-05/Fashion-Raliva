@@ -99,6 +99,9 @@
                         </div>
                     @endif
                     <div class="absolute top-2 right-2 p-1 bg-surface/80 rounded"><span class="material-symbols-outlined text-[18px] text-on-surface">{{ $statusIconMap[$product->status] ?? 'pending' }}</span></div>
+                    @if ($product->owner_verified_at)
+                        <div class="absolute top-2 left-2 px-2 py-1 bg-gold-accent/90 text-white text-[9px] font-bold uppercase tracking-widest rounded">✓ Owner</div>
+                    @endif
                     @if ($product->status === \App\Models\Product::STATUS_DITOLAK)
                         <div class="absolute bottom-2 left-2 right-2 px-2 py-1 bg-error/90 text-on-error text-[9px] font-bold uppercase tracking-widest rounded text-center">Ditolak • Lihat Alasan</div>
                     @endif
