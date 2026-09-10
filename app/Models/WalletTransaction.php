@@ -21,12 +21,15 @@ class WalletTransaction extends Model
 
     public const JENIS_PEMASUKAN = 'pemasukan';
 
+    public const JENIS_BIAYA_IKLAN = 'biaya_iklan';
+
     protected $fillable = [
         'wallet_id',
         'order_id',
         'commission_id',
         'refund_id',
         'withdrawal_id',
+        'ad_slot_id',
         'jenis_transaksi',
         'jumlah',
         'saldo_sebelum',
@@ -57,5 +60,10 @@ class WalletTransaction extends Model
     public function withdrawal(): BelongsTo
     {
         return $this->belongsTo(Withdrawal::class, 'withdrawal_id', 'withdrawal_id');
+    }
+
+    public function adSlot(): BelongsTo
+    {
+        return $this->belongsTo(AdSlot::class, 'ad_slot_id', 'ad_slot_id');
     }
 }

@@ -63,7 +63,7 @@
             </button>
         </div>
         <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-            <span id="result-count">{{ $stores->count() }}</span> toko
+            <span id="result-count">{{ $stores->total() }}</span> toko
         </p>
     </div>
 </div>
@@ -144,6 +144,9 @@
         @endforelse
     </div>
     <p id="toko-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada toko yang cocok.</p>
+    @if ($stores->hasPages())
+        <div class="mt-6 flex justify-center">{{ $stores->links() }}</div>
+    @endif
 </section>
 @endsection
 

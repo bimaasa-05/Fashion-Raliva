@@ -87,7 +87,7 @@
                     </button>
                 </div>
                 <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-                    <span id="pengiriman-result-count">{{ $shipments->count() }}</span> pengiriman
+                    <span id="pengiriman-result-count">{{ $shipments->total() }}</span> pengiriman
                 </p>
             </div>
         </div>
@@ -236,6 +236,10 @@
                 @endforelse
                 <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada pengiriman yang cocok.</p>
             </div>
+
+            @if ($shipments->hasPages())
+                <div class="mt-6 flex justify-center">{{ $shipments->links() }}</div>
+            @endif
 
             <p class="text-xs text-on-surface-variant mt-6 pt-5 border-t border-muted-border flex items-start gap-2">
             <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 shrink-0">info</span>

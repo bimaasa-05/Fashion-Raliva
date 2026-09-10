@@ -67,7 +67,7 @@
                 </button>
             </div>
             <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-                <span id="result-count">{{ $productions->count() }}</span> produksi
+                <span id="result-count">{{ $productions->total() }}</span> produksi
             </p>
         </div>
     </div>
@@ -182,6 +182,9 @@
         @endforelse
         <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada data produksi yang cocok.</p>
     </div>
+    @if ($productions->hasPages())
+        <div class="mt-6 flex justify-center">{{ $productions->links() }}</div>
+    @endif
 </section>
 
 <!-- Modal Detail Produksi -->
