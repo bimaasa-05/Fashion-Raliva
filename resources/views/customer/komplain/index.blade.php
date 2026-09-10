@@ -334,6 +334,14 @@
         background-image: radial-gradient(circle at 1.5px 1.5px, rgba(255, 255, 255, .07) 1.5px, transparent 0);
     }
     #chat-wp-layer { background-size: cover; background-position: center; }
+    .chat-header-item { transition: opacity .3s ease, transform .3s ease; }
+    .chat-header-hidden { opacity: 0; transform: translateY(-6px); pointer-events: none; }
+    #chat-search-panel { opacity: 0; transform: translateX(20px); pointer-events: none; transition: opacity .3s cubic-bezier(.22,1,.36,1), transform .3s cubic-bezier(.22,1,.36,1); z-index: 30; }
+    #chat-search-panel.chat-search-open { opacity: 1; transform: translateX(0); pointer-events: auto; }
+    #chat-search-input, #chat-search-input:focus, #chat-search-input:focus-visible, #chat-search-input:active { outline: none !important; box-shadow: none !important; -webkit-appearance: none; appearance: none; }
+    #chat-search-input { caret-color: #8B1E3F; }
+    #chat-search-input::selection { background: rgba(139,30,63,.55); color: #ffffff; }
+    #chat-search-toggle:focus-visible, #chat-search-close:focus-visible, #chat-search-clear:focus-visible { outline: none !important; box-shadow: 0 0 0 2px rgba(139,30,63,.5); border-radius: 9999px; }
     #chat-messages.chat-selecting .chat-sel-box { display: inline-flex; }
     .chat-selecting .chat-msg { cursor: pointer; user-select: none; -webkit-user-select: none; }
     .chat-sel-box {
@@ -368,16 +376,19 @@
 <div class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
     <div class="min-h-full lg:h-full flex flex-col justify-end lg:flex-row lg:justify-end" onclick="if(event.target===this) closeChatModal()">
         <div id="chat-panel" class="flex flex-col bg-surface-container-low border-t lg:border-t-0 lg:border-l border-[var(--border-soft)] rounded-t-3xl lg:rounded-none max-h-[85dvh] lg:max-h-full lg:h-full lg:w-[560px] lg:max-w-full overflow-hidden" onclick="event.stopPropagation()">
-            <div class="flex items-center justify-between gap-2 px-6 py-4 border-b border-[var(--border-soft)] shrink-0">
-                <div class="min-w-0">
+            <div class="relative flex items-center justify-between gap-2 px-6 py-4 border-b border-[var(--border-soft)] shrink-0" id="chat-header">
+                <div class="min-w-0 chat-header-item" id="chat-header-title">
                     <h3 class="font-title-md text-title-md text-on-surface truncate" id="chat-subject">-</h3>
                     <p class="font-mono text-on-surface-variant text-xs mt-0.5" id="chat-kode">-</p>
                 </div>
-                <div class="flex items-center gap-3 shrink-0">
+                <div class="flex items-center gap-3 shrink-0 chat-header-item" id="chat-header-actions">
                     <span id="chat-status" class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border bg-surface-container-high text-on-surface-variant border-outline-variant"></span>
+                    <button type="button" onclick="toggleChatSearch()" id="chat-search-toggle" class="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Cari pesan') }}">
+                        <span class="material-symbols-outlined text-[20px]">search</span>
+                    </button>
                     <div class="relative shrink-0" id="chat-more-wrap">
-                        <button type="button" onclick="toggleChatMoreMenu()" id="chat-more-btn" class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer" title="{{ __('Menu') }}">
-                            <span class="material-symbols-outlined text-[20px]">more_horiz</span>
+                        <button type="button" onclick="toggleChatMoreMenu()" id="chat-more-btn" class="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Menu') }}">
+                            <span class="material-symbols-outlined text-[20px]">more_vert</span>
                         </button>
                         <div id="chat-more-menu" class="hidden absolute right-0 top-full mt-2 min-w-[220px] rounded-xl border border-outline-variant bg-surface-container-high shadow-xl z-40 py-1.5">
                             <button type="button" onclick="openWallpaperPicker()" id="chat-more-item-wallpaper" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
@@ -394,6 +405,16 @@
                             </button>
                         </div>
                     </div>
+                </div>
+                <div id="chat-search-panel" class="absolute inset-0 flex items-center gap-2 lg:gap-3 px-6">
+                    <button type="button" id="chat-search-close" onclick="toggleChatSearch()" class="w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Tutup pencarian') }}">
+                        <span class="material-symbols-outlined text-[20px]">search</span>
+                    </button>
+                    <input id="chat-search-input" type="text" inputmode="search" autocomplete="off" placeholder="{{ __('Cari pesan...') }}" class="flex-1 min-w-0 bg-transparent font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/70 border-b border-[var(--border-soft)] focus:border-secondary py-2"/>
+                    <button type="button" id="chat-search-clear" onclick="clearChatSearch()" class="hidden w-10 h-10 lg:w-11 lg:h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Hapus pencarian') }}">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                    <span id="chat-search-count" class="font-label-sm text-label-sm text-on-surface-variant shrink-0 hidden"></span>
                 </div>
             </div>
             <div class="flex-1 overflow-y-auto px-6 py-6 space-y-4 min-h-0" id="chat-messages">
@@ -530,6 +551,7 @@
         document.getElementById('chat-input-area').classList.remove('chat-selecting');
         closeSelDeleteDialog();
         closeChatMoreMenu();
+        closeChatSearch();
         closeChatMenu();
         closeDeleteDialog();
         closeEditDialog();
@@ -564,6 +586,7 @@
         exitSelectMessages();
         closeSelDeleteDialog();
         closeChatMoreMenu();
+        closeChatSearch();
         closeChatMenu();
         closeDeleteDialog();
         closeEditDialog();
@@ -714,6 +737,10 @@
         } else {
             el.scrollTop = prevTop;
         }
+        if (chatSearchOpen) {
+            const sInput = document.getElementById('chat-search-input');
+            filterChat(sInput ? sInput.value : '');
+        }
     }
 
     function formatTime(value) {
@@ -784,6 +811,79 @@
         chatMoreOpen = false;
     }
 
+    let chatSearchOpen = false;
+
+    function toggleChatSearch() {
+        const panel = document.getElementById('chat-search-panel');
+        const input = document.getElementById('chat-search-input');
+        if (!panel) return;
+        if (chatSearchOpen) { closeChatSearch(); return; }
+        chatSearchOpen = true;
+        closeChatMoreMenu();
+        closeChatMenu();
+        panel.classList.add('chat-search-open');
+        document.querySelectorAll('#chat-header .chat-header-item').forEach(function (h) { h.classList.add('chat-header-hidden'); });
+        if (input) input.focus();
+    }
+
+    function closeChatSearch() {
+        const panel = document.getElementById('chat-search-panel');
+        chatSearchOpen = false;
+        if (panel) panel.classList.remove('chat-search-open');
+        document.querySelectorAll('#chat-header .chat-header-item').forEach(function (h) { h.classList.remove('chat-header-hidden'); });
+        const input = document.getElementById('chat-search-input');
+        if (input) input.value = '';
+        filterChat('');
+    }
+
+    function clearChatSearch() {
+        const input = document.getElementById('chat-search-input');
+        if (input) input.value = '';
+        filterChat('');
+        if (input) input.focus();
+    }
+
+    function filterChat(q) {
+        q = (q || '').trim().toLowerCase();
+        const el = document.getElementById('chat-messages');
+        const rows = el ? Array.prototype.slice.call(el.querySelectorAll('[data-mid]')) : [];
+        let shown = 0;
+        rows.forEach(function (row) {
+            const pesanEl = row.querySelector('[data-pesan]');
+            const text = pesanEl ? pesanEl.textContent : (row.textContent || '');
+            const ok = !q || text.toLowerCase().indexOf(q) >= 0;
+            row.style.display = ok ? '' : 'none';
+            if (ok) shown++;
+        });
+        const clearBtn = document.getElementById('chat-search-clear');
+        const countEl = document.getElementById('chat-search-count');
+        if (clearBtn) clearBtn.classList.toggle('hidden', !q);
+        if (countEl) {
+            countEl.textContent = shown + ' / ' + rows.length;
+            countEl.classList.toggle('hidden', !q);
+        }
+        if (el) {
+            let noResults = document.getElementById('chat-search-noresults');
+            if (!noResults) {
+                noResults = document.createElement('p');
+                noResults.id = 'chat-search-noresults';
+                noResults.className = 'hidden text-center font-body-sm text-body-sm text-on-surface-variant py-8';
+                noResults.textContent = 'Tidak ada pesan yang cocok.';
+                el.appendChild(noResults);
+            }
+            noResults.classList.toggle('hidden', shown > 0 || rows.length === 0 || !q);
+        }
+    }
+
+    (function bindChatSearch() {
+        const input = document.getElementById('chat-search-input');
+        if (!input) return;
+        input.addEventListener('input', function () { filterChat(input.value); });
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') { e.stopPropagation(); closeChatSearch(); }
+        });
+    })();
+
     function showChatToast(message) {
         var existing = document.getElementById('chat-toast');
         if (existing) existing.remove();
@@ -853,6 +953,7 @@
 
     function selectMessagesMode() {
         closeChatMoreMenu();
+        closeChatSearch();
         closeChatMenu();
         if (currentChat.done) {
             showChatToast('Pesan komplain yang sudah selesai tidak dapat dipilih.');
@@ -1263,6 +1364,7 @@
 
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
+            if (chatSearchOpen) { closeChatSearch(); return; }
             if (chatSelMode) { exitSelectMessages(); return; }
             if (chatMoreOpen) { closeChatMoreMenu(); return; }
             const ep = document.getElementById('chat-edit-emoji-panel');
