@@ -17,6 +17,7 @@
             'label' => 'Operasional',
             'items' => [
                 ['route' => 'owner.produk', 'icon' => 'checkroom', 'text' => 'Data Produk'],
+                ['route' => 'owner.moderasi-produk', 'icon' => 'inventory_2', 'text' => 'Moderasi Produk'],
                 ['route' => 'owner.promo', 'icon' => 'local_offer', 'text' => 'Promo Toko'],
                 ['route' => 'owner.data-pelanggan', 'icon' => 'groups', 'text' => 'Data Pelanggan'],
                 ['route' => 'owner.kelola-slot', 'icon' => 'storage', 'text' => 'Kelola Slot'],
