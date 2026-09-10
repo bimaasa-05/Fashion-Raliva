@@ -345,5 +345,16 @@
 
     /* Overlay modal tidak boleh terbawa margin flow (mis. dari parent space-y-*) */
     [data-modal] { margin: 0 !important; }
+
+    /* Global Hide Scrollbar — semua role, tanpa ubah logic */
+    ::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+    * {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
 </style>
 @stack('styles')
