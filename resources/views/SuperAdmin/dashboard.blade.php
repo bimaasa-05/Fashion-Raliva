@@ -87,17 +87,17 @@
     <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
         <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Target Omzet Bulan Ini</p>
-            <div data-donut='[{"value":87,"color":"#C9A24D","label":"Tercapai"},{"value":13,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Target" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+            <div data-donut='[{"value":87,"color":"#8B1E3F","label":"Tercapai"},{"value":13,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Target" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
             <p class="text-[11px] text-on-surface-variant mt-1">Rp 10,9B dari target Rp 12,5B</p>
         </div>
         <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Kepuasan Pelanggan</p>
-            <div data-donut='[{"value":92,"color":"#795905","label":"Puas"},{"value":8,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Rating 4,8 / 5" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+            <div data-donut='[{"value":92,"color":"#8B1E3F","label":"Puas"},{"value":8,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Rating 4,8 / 5" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
             <p class="text-[11px] text-on-surface-variant mt-1">Dari 2.140 ulasan bulan ini</p>
         </div>
         <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">SLA Respons Komplain</p>
-            <div data-donut='[{"value":78,"color":"#E9CE8A","label":"Tepat SLA"},{"value":22,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Target 24 Jam" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+            <div data-donut='[{"value":78,"color":"#c03a5a","label":"Tepat SLA"},{"value":22,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Target 24 Jam" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
             <p class="text-[11px] text-on-surface-variant mt-1">Rata-rata balasan dalam 5 jam</p>
         </div>
     </div>
@@ -174,7 +174,7 @@
         <ul class="flex flex-col gap-4">
             <li class="flex items-center justify-between group cursor-pointer pb-4 border-b border-muted-border last:border-0 last:pb-0">
                 <div class="flex items-center gap-4">
-                    <div class="w-11 h-11 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shrink-0 shadow-sm">
+                    <div class="w-11 h-11 rounded-full bg-secondary-container flex items-center justify-center text-white shrink-0 shadow-sm">
                         <span class="material-symbols-outlined">store_mall_directory</span>
                     </div>
                     <div>
@@ -307,7 +307,7 @@
                 data: {
                     labels: data.labels,
                     datasets: [
-                        { label: 'Volume Transaksi', data: data.transaksi, borderColor: '#C9A24D', backgroundColor: 'rgba(201, 162, 77, 0.12)', fill: true, tension: 0.38, borderWidth: 2, pointBackgroundColor: '#C9A24D', pointRadius: 3 },
+                        { label: 'Volume Transaksi', data: data.transaksi, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.12)', fill: true, tension: 0.38, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 },
                         { label: 'Jumlah Pesanan', data: data.pesanan, borderColor: c.tick, backgroundColor: 'transparent', fill: false, tension: 0.38, borderWidth: 2, pointBackgroundColor: c.tick, pointRadius: 3, yAxisID: 'y1' }
                     ]
                 },

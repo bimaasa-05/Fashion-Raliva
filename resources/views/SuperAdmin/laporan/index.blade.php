@@ -190,10 +190,10 @@
                 datasets: [{
                     label: 'Pendapatan',
                     data: @json($chartData),
-                    borderColor: '#C9A24D',
-                    backgroundColor: 'rgba(201, 162, 77, 0.1)',
+                    borderColor: '#8B1E3F',
+                    backgroundColor: 'rgba(139, 30, 63, 0.1)',
                     borderWidth: 2,
-                    pointBackgroundColor: '#C9A24D',
+                    pointBackgroundColor: '#8B1E3F',
                     pointBorderColor: '#fff',
                     pointBorderWidth: 2,
                     pointRadius: 4,

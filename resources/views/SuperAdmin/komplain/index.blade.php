@@ -144,7 +144,7 @@
                                             <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'eskalasi', '{{ $kode }}')" class="inline-block">
                                                 @csrf
                                                 <button type="submit" title="Eskalasi"
-                                                    class="w-8 h-8 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent hover:text-on-gold-accent transition-colors">
+                                                    class="w-8 h-8 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent hover:text-white transition-colors">
                                                     <span class="material-symbols-outlined text-sm">emergency</span>
                                                 </button>
                                             </form>
@@ -219,7 +219,7 @@
                             @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES], true) && ! $c->eskalasi_oleh_sa)
                                 <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'eskalasi', '{{ $kode }}')" class="shrink-0">
                                     @csrf
-                                    <button type="submit" title="Eskalasi" class="min-h-11 w-11 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent hover:text-on-gold-accent transition-colors rounded-lg">
+                                    <button type="submit" title="Eskalasi" class="min-h-11 w-11 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent hover:text-white transition-colors rounded-lg">
                                         <span class="material-symbols-outlined text-[18px]">emergency</span>
                                     </button>
                                 </form>
@@ -247,30 +247,30 @@
 
     <div class="min-h-full lg:h-full flex flex-col justify-end lg:flex-row lg:justify-end" onclick="if(event.target===this) closeChatModal()">
 
-    <div id="chat-panel" class="flex flex-col w-full lg:w-[560px] lg:max-w-full bg-surface-container-low border-t lg:border-t-0 lg:border-l border-muted-border rounded-t-3xl lg:rounded-none max-h-[85dvh] lg:max-h-full lg:h-full overflow-hidden" onclick="event.stopPropagation()">
-        <div class="flex items-center justify-between gap-3 px-6 py-4 border-b border-muted-border shrink-0">
-            <div class="min-w-0">
-                <h3 class="font-title-lg text-title-lg text-on-surface truncate" id="chat-subject">-</h3>
-                <p class="font-mono text-on-surface-variant text-xs mt-0.5" id="chat-kode">-</p>
+    <div id="chat-panel" class="flex flex-col w-full md:w-[520px] lg:w-[560px] xl:w-[600px] md:max-w-[88vw] lg:max-w-full bg-surface-container-low border-t md:border lg:border-t-0 lg:border-l border-muted-border rounded-t-3xl md:rounded-2xl lg:rounded-none max-h-[85dvh] md:max-h-[78dvh] lg:max-h-full lg:h-full overflow-hidden md:shadow-2xl lg:shadow-none" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between gap-2 lg:gap-3 pl-6 pr-3 lg:px-6 py-3.5 lg:py-4 border-b border-muted-border shrink-0 bg-surface-container-low overflow-visible" id="chat-header">
+            <div class="min-w-0 flex-1">
+                <h3 class="font-title-md text-title-md text-on-surface truncate leading-tight" id="chat-subject">-</h3>
+                <p class="font-mono text-on-surface-variant text-xs mt-0.5 truncate" id="chat-kode">-</p>
             </div>
-            <button type="button" onclick="closeChatModal()" class="p-2.5 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors shrink-0" title="Tutup">
+            <button type="button" onclick="closeChatModal()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors shrink-0" title="Tutup" aria-label="Tutup">
                 <span class="material-symbols-outlined text-[20px]">close</span>
             </button>
         </div>
 
-        <div class="flex-1 overflow-y-auto px-6 py-6 space-y-4 min-h-0" id="chat-messages">
+        <div class="flex-1 overflow-y-auto px-4 lg:px-6 py-4 lg:py-6 space-y-3 min-h-0" id="chat-messages" style="overscroll-behavior: contain;">
             <div class="flex justify-center items-center py-8">
                 <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
             </div>
         </div>
 
-        <div id="chat-input-area" class="relative px-6 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-muted-border bg-surface-container-lowest/60 hidden shrink-0 w-full">
-            <div class="flex items-end gap-3 w-full">
+        <div id="chat-input-area" class="relative px-3 lg:px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] hidden shrink-0 w-full bg-transparent">
+            <div id="chat-composer" class="flex items-end gap-1 lg:gap-1.5 bg-surface-container-lowest border border-[rgba(0,0,0,0.06)] rounded-[26px] lg:rounded-[28px] px-2 lg:px-2.5 py-2 lg:py-2.5 shadow-sm transition-colors duration-150 focus-within:border-secondary w-full">
                 <textarea id="chat-input" rows="1" maxlength="2000" placeholder="Tulis pesan..."
-                    class="flex-1 min-w-0 w-full bg-surface-container-low border border-muted-border rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface placeholder-on-surface-variant/50 resize-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                    onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
-                <button type="button" onclick="sendMessage()" id="chat-send"
-                    class="w-12 h-12 flex items-center justify-center bg-gold-accent text-on-gold-accent shrink-0 hover:opacity-80 transition-opacity btn-premium disabled:opacity-40 rounded-full">
+                    class="flex-1 min-w-0 bg-transparent border-0 outline-none resize-none px-1 py-2.5 font-body-md text-sm text-on-surface placeholder-on-surface-variant/70"
+                    onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}" aria-label="Tulis pesan"></textarea>
+                <button type="button" onclick="sendMessage()" id="chat-send" aria-label="Kirim pesan" title="Kirim"
+                    class="w-11 h-11 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 active:scale-[0.96] transition-all disabled:opacity-40 rounded-full">
                     <span class="material-symbols-outlined text-[20px]">send</span>
                 </button>
             </div>
@@ -308,8 +308,9 @@
 </div>
 @endsection
 
-@push('styles')
+    @push('styles')
 <style>
+    #chat-messages { overscroll-behavior: contain; }
     @keyframes raliva-chat-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
     @keyframes raliva-chat-backdrop-out { from { opacity: 1; } to { opacity: 0; } }
     @keyframes raliva-chat-sheet-in-mobile { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -409,12 +410,12 @@
     }
 
     function fmtTs(value) {
-        return new Date(value).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
+        return new Date(value).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
     }
 
     function chatMenuMarkup(id, btnColor) {
         return '<span class="relative shrink-0 chat-menu-wrap">' +
-            '<button type="button" data-menu-btn="' + id + '" onclick="toggleChatMenu(' + id + ')" class="chat-menu-btn ' + btnColor + ' lg:opacity-0 lg:group-hover:opacity-100 transition-opacity cursor-pointer rounded-full w-7 h-7 flex items-center justify-center" title="…"><span class="material-symbols-outlined text-[17px]">more_horiz</span></button>' +
+            '<button type="button" data-menu-btn="' + id + '" onclick="toggleChatMenu(' + id + ')" class="chat-menu-btn ' + btnColor + ' lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100 focus:opacity-100 transition-opacity cursor-pointer rounded-full w-7 h-7 flex items-center justify-center" title="…"><span class="material-symbols-outlined text-[17px]">more_horiz</span></button>' +
             '<span data-menu="' + id + '" class="chat-menu hidden absolute right-0 top-full mt-1 min-w-[170px] z-30 rounded-xl border border-outline-variant bg-surface-container-high py-1 shadow-xl">';
     }
 
@@ -423,31 +424,36 @@
         el.innerHTML = messages.map(m => {
             const mine = m.sender_id === myId;
             const align = mine ? 'justify-end' : 'justify-start';
+            const time = mine ? 'text-white/40' : 'text-on-surface-variant/50';
+            const bubble = mine ? 'bg-secondary text-white' : 'bg-surface-container-low';
+            const meta = mine ? 'text-white/60' : 'text-on-surface-variant';
+            const edited = m.edited_at ? ' <span class="italic">(diedit)</span>' : '';
             if (m.deleted) {
-                const delBubble = mine ? 'bg-deep-onyx/20 border-on-surface/25' : 'bg-transparent border-outline-variant';
-                const delText = mine ? 'text-on-primary/60' : 'text-on-surface-variant/70';
-                const delBtn = mine ? 'text-on-primary/50 hover:text-on-primary' : 'text-on-surface-variant hover:text-on-surface';
+                const delBubble = mine ? 'bg-secondary text-white' : 'bg-surface-container-low';
+                const delText = mine ? 'text-white' : 'text-error';
+                const delBtn = mine ? 'text-white/50 hover:text-white' : 'text-on-surface-variant hover:text-on-surface';
                 const menu = chatMenuMarkup(m.complaint_message_id, delBtn) +
                     '<button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>' +
                     '</span></span>';
                 return '<div class="flex ' + align + ' group chat-msg" data-mid="' + m.complaint_message_id + '">' +
-                    '<div class="max-w-[80%] rounded-xl px-4 py-2 border border-dashed ' + delBubble + '">' +
+                    '<div class="max-w-[82%] lg:max-w-[72%] rounded-2xl px-3.5 lg:px-4 pt-2.5 pb-5 relative ' + delBubble + ' shadow-sm" data-bubble>' +
                     '<div class="flex items-center justify-between gap-2">' +
-                    '<p class="font-body-md text-sm italic ' + delText + '">Pesan ini telah dihapus</p>' +
+                    '<p class="font-body-md text-sm italic flex items-center gap-1.5 ' + delText + '"><span class="material-symbols-outlined text-[16px] leading-none shrink-0">block</span>' + escapeHtml('Pesan ini telah dihapus') + '</p>' +
                     menu +
                     '</div>' +
-                    '<p class="text-[10px] mt-1 ' + (mine ? 'text-on-primary/40' : 'text-on-surface-variant/50') + '">' + fmtTs(m.created_at) + '</p>' +
+                    '<span class="absolute bottom-1.5 right-2.5 text-[10px] leading-none ' + time + '">' + fmtTs(m.created_at) + '</span>' +
                     '</div></div>';
             }
-            return '<div class="flex ' + align + '">' +
-                '<div class="max-w-[80%] rounded-xl p-4 ' + (mine ? 'bg-deep-onyx text-on-primary' : 'bg-surface-container-high text-on-surface') + '">' +
-                '<p class="text-xs mb-1 ' + (mine ? 'text-on-primary/60' : 'text-on-surface-variant') + '">' +
-                (mine ? 'Super Admin' : (m.sender?.role === 'customer' ? m.sender?.nama_lengkap : 'Toko')) +
-                '</p>' +
-                '<p class="font-body-md text-sm whitespace-pre-wrap">' + escapeHtml(m.pesan) + '</p>' +
-                '<p class="text-[10px] mt-2 ' + (mine ? 'text-on-primary/40' : 'text-on-surface-variant/50') + '">' +
-                fmtTs(m.created_at) + (m.edited_at ? ' <span class="italic">(diedit)</span>' : '') +
-                '</p>' +
+            const menu = '<span class="relative shrink-0 chat-menu-wrap"><button type="button" data-menu-btn="' + m.complaint_message_id + '" onclick="toggleChatMenu(' + m.complaint_message_id + ')" class="chat-menu-btn ' + (mine ? 'text-white/60 hover:text-white' : 'text-on-surface-variant hover:text-on-surface') + ' lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100 focus:opacity-100 transition-opacity cursor-pointer rounded-full w-7 h-7 flex items-center justify-center" title="…"><span class="material-symbols-outlined text-[17px]">more_horiz</span></button><span data-menu="' + m.complaint_message_id + '" class="chat-menu hidden absolute right-0 top-full mt-1 min-w-[170px] z-30 rounded-xl border border-outline-variant bg-surface-container-high py-1 shadow-xl"><button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button></span></span>';
+            const sender = mine ? 'Super Admin' : (m.sender?.role === 'customer' ? m.sender?.nama_lengkap : 'Toko');
+            return '<div class="flex ' + align + ' group chat-msg" data-mid="' + m.complaint_message_id + '">' +
+                '<div class="max-w-[82%] lg:max-w-[72%] rounded-2xl px-3.5 lg:px-4 pt-3 pb-5 relative ' + bubble + ' shadow-sm" data-bubble>' +
+                '<div class="flex items-start justify-between gap-2 mb-1">' +
+                '<p class="text-[11px] ' + meta + ' uppercase tracking-[0.06em] font-medium">' + escapeHtml(sender) + '</p>' +
+                menu +
+                '</div>' +
+                '<p class="font-body-md text-sm whitespace-pre-wrap break-words leading-relaxed" data-pesan>' + escapeHtml(m.pesan) + '</p>' +
+                '<span class="absolute bottom-1.5 right-2.5 text-[10px] leading-none ' + time + '">' + fmtTs(m.created_at) + edited + '</span>' +
                 '</div></div>';
         }).join('');
         el.scrollTop = el.scrollHeight;
@@ -500,7 +506,7 @@
             iconWrap.className = 'w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-5';
             iconSym.className = 'material-symbols-outlined text-gold-accent text-[28px]';
             iconSym.textContent = 'emergency';
-            submitBtn.className = 'flex-1 bg-gold-accent text-on-gold-accent font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium';
+            submitBtn.className = 'flex-1 bg-gold-accent text-white font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium';
             submitBtn.textContent = 'Ya, Eskalasi';
         } else {
             iconWrap.className = 'w-14 h-14 rounded-full bg-success/10 border border-success/25 flex items-center justify-center mx-auto mb-5';

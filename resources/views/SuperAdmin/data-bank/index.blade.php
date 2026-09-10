@@ -78,7 +78,7 @@
                     <div class="relative">
                         <div class="flex items-start justify-between mb-4">
                             <div class="w-14 h-14 rounded-full bg-secondary-container flex items-center justify-center group-hover:scale-105 transition-transform">
-                                <span class="material-symbols-outlined text-secondary text-[28px]">account_balance</span>
+                                <span class="material-symbols-outlined text-white text-[28px]">account_balance</span>
                             </div>
                             @if ($bank->status !== \App\Models\Bank::STATUS_AKTIF)
                                 <span class="inline-flex px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Non-aktif</span>

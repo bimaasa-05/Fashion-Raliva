@@ -56,7 +56,7 @@
             @if(isset($top3[0]))
             <div class="md:order-2 border-2 border-gold-accent rounded-xl p-6 flex flex-col items-center text-center gap-3 relative overflow-hidden bg-gradient-to-b from-gold-accent/10 to-transparent hero-glow">
                 <span class="absolute top-3 right-3 material-symbols-outlined text-gold-accent fill text-[28px]">workspace_premium</span>
-                <span class="w-12 h-12 rounded-full bg-gold-accent text-deep-onyx flex items-center justify-center font-title-md text-title-md font-bold shadow-lg">1</span>
+                <span class="w-12 h-12 rounded-full bg-gold-accent text-white flex items-center justify-center font-title-md text-title-md font-bold shadow-lg">1</span>
                 <div>
                     <p class="font-title-md text-title-md text-on-surface leading-snug">{{ $top3[0]->product->nama_produk ?? '-' }}</p>
                     <p class="text-on-surface-variant text-xs mt-0.5">{{ $top3[0]->store->nama_toko ?? '-' }}</p>
@@ -117,7 +117,7 @@
                             <td class="p-4 text-center text-on-surface-variant font-mono">{{ $loop->iteration }}</td>
                             <td class="p-4">
                                 @if($rank <= 3)
-                                    <span class="inline-flex w-8 h-8 rounded-full {{ $rank === 1 ? 'bg-gold-accent text-deep-onyx' : 'bg-surface-container-high border border-outline-variant text-on-surface' }} items-center justify-center font-bold">{{ $rank }}</span>
+                                    <span class="inline-flex w-8 h-8 rounded-full {{ $rank === 1 ? 'bg-gold-accent text-white' : 'bg-surface-container-high border border-outline-variant text-on-surface' }} items-center justify-center font-bold">{{ $rank }}</span>
                                 @else
                                     <span class="inline-flex w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant text-on-surface items-center justify-center font-bold text-sm">{{ $rank }}</span>
                                 @endif
@@ -159,7 +159,7 @@
                 <article class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
                     <div class="flex items-center justify-between gap-3 mb-3">
                         <div class="flex items-center gap-3">
-                            <span class="inline-flex w-9 h-9 rounded-full {{ $rank <= 3 ? ($rank === 1 ? 'bg-gold-accent text-deep-onyx' : 'bg-surface-container-high border border-outline-variant text-on-surface') : 'bg-surface-container-high border border-outline-variant text-on-surface' }} items-center justify-center font-bold shrink-0">{{ $rank }}</span>
+                            <span class="inline-flex w-9 h-9 rounded-full {{ $rank <= 3 ? ($rank === 1 ? 'bg-gold-accent text-white' : 'bg-surface-container-high border border-outline-variant text-on-surface') : 'bg-surface-container-high border border-outline-variant text-on-surface' }} items-center justify-center font-bold shrink-0">{{ $rank }}</span>
                             <div class="min-w-0">
                                 <p class="font-title-md text-title-md text-on-surface truncate">{{ $slot->product->nama_produk ?? '-' }}</p>
                                 <p class="text-on-surface-variant text-xs truncate">{{ $slot->store->nama_toko ?? '-' }}</p>
