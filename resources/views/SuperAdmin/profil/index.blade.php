@@ -13,7 +13,7 @@
     .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
 
     .text-gradient-gold {
-        background: linear-gradient(115deg, #a8823a 0%, #C9A24D 35%, #ecd398 55%, #C9A24D 80%, #a8823a 100%);
+        background: linear-gradient(115deg, #6D1428 0%, #8B1E3F 35%, #c03a5a 55%, #8B1E3F 80%, #6D1428 100%);
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
@@ -23,8 +23,8 @@
         content: '';
         position: absolute;
         inset: -30%;
-        background: radial-gradient(circle at 70% 30%, rgba(201, 162, 77, 0.14), transparent 45%),
-                    radial-gradient(circle at 15% 85%, rgba(201, 162, 77, 0.08), transparent 40%);
+        background: radial-gradient(circle at 70% 30%, rgba(139, 30, 63, 0.14), transparent 45%),
+                    radial-gradient(circle at 15% 85%, rgba(139, 30, 63, 0.08), transparent 40%);
         pointer-events: none;
     }
 
@@ -42,7 +42,7 @@
     .photo-preview { transition: all 0.2s ease; }
     .photo-preview:hover { transform: scale(1.02); }
     .photo-upload-label { transition: all 0.2s ease; }
-    .photo-upload-label:hover { background-color: rgba(201, 162, 77, 0.1); border-color: #C9A24D; }
+    .photo-upload-label:hover { background-color: rgba(139, 30, 63, 0.1); border-color: #8B1E3F; }
 </style>
 @endpush
 
@@ -137,7 +137,7 @@
                                 @if ($user->foto_profil_url)
                                     <img id="form-avatar-img" src="{{ $user->foto_profil_url }}" class="w-full h-full object-cover" alt="{{ $user->nama_lengkap }}" />
                                 @else
-                                    <span id="form-avatar-initial" class="font-title-lg text-title-lg text-secondary">{{ strtoupper(mb_substr($user->nama_lengkap, 0, 2)) }}</span>
+                                    <span id="form-avatar-initial" class="font-title-lg text-title-lg text-white">{{ strtoupper(mb_substr($user->nama_lengkap, 0, 2)) }}</span>
                                 @endif
                             </div>
                             <label for="foto_profil" class="photo-upload-label absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-gold-accent text-on-primary flex items-center justify-center cursor-pointer border-2 border-surface-container-lowest shadow hover:scale-105">

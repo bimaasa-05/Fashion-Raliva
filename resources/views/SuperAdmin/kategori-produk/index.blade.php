@@ -97,7 +97,7 @@
                     <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-secondary-container/20 to-transparent rounded-full -translate-y-8 translate-x-8" style="filter: blur(20px); opacity: 0.5;"></div>
                     <div class="relative flex items-start gap-4">
                         <div class="w-14 h-14 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                            <span class="material-symbols-outlined text-secondary text-[28px]">{{ $kategori->parent_id ? 'subdirectory_arrow_right' : 'folder' }}</span>
+                            <span class="material-symbols-outlined text-white text-[28px]">{{ $kategori->parent_id ? 'subdirectory_arrow_right' : 'folder' }}</span>
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 flex-wrap">

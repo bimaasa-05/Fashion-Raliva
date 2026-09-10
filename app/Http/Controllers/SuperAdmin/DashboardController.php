@@ -114,8 +114,8 @@ class DashboardController extends Controller
                 'ditolak' => $tokoDitolak,
             ],
             'komposisiTokoDonut' => [
-                ['value' => (int) $tokoAktif, 'color' => '#C9A24D', 'label' => 'Aktif'],
-                ['value' => (int) $tokoMenungguStatus, 'color' => '#E9CE8A', 'label' => 'Menunggu'],
+                ['value' => (int) $tokoAktif, 'color' => '#8B1E3F', 'label' => 'Aktif'],
+                ['value' => (int) $tokoMenungguStatus, 'color' => '#c03a5a', 'label' => 'Menunggu'],
                 ['value' => (int) $tokoNonaktif + (int) $tokoDitolak, 'color' => '#BA1A26', 'label' => 'Nonaktif/Ditolak'],
             ],
             'topToko' => $topToko,

@@ -723,7 +723,7 @@
             <p>{{ __('Total Payment') }}</p>
             <p id="co-total-bottom">Rp {{ number_format((float)$total, 0, ',', '.') }}</p>
         </div>
-        <form method="POST" action="{{ route('customer.checkout.store') }}" class="flex items-center gap-sm md:gap-md flex-1 min-w-0">
+        <form method="POST" action="{{ route('customer.checkout.store') }}" class="flex items-center justify-end gap-sm md:gap-md flex-1 min-w-0">
             @csrf
             <input type="hidden" name="address_id" value="{{ $address?->address_id }}"/>
             <input type="hidden" name="shipping" id="co-shipping-input" value="{{ $shipping }}"/>

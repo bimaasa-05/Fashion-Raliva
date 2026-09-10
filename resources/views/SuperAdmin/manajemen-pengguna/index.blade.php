@@ -13,7 +13,7 @@
     .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
 
     .text-gradient-gold {
-        background: linear-gradient(115deg, #a8823a 0%, #C9A24D 35%, #ecd398 55%, #C9A24D 80%, #a8823a 100%);
+        background: linear-gradient(115deg, #6D1428 0%, #8B1E3F 35%, #c03a5a 55%, #8B1E3F 80%, #6D1428 100%);
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
@@ -23,14 +23,14 @@
         content: '';
         position: absolute;
         inset: -30%;
-        background: radial-gradient(circle at 70% 30%, rgba(201, 162, 77, 0.14), transparent 45%),
-                    radial-gradient(circle at 15% 85%, rgba(201, 162, 77, 0.08), transparent 40%);
+        background: radial-gradient(circle at 70% 30%, rgba(139, 30, 63, 0.14), transparent 45%),
+                    radial-gradient(circle at 15% 85%, rgba(139, 30, 63, 0.08), transparent 40%);
         pointer-events: none;
     }
 
     .filter-chip { transition: all 0.2s ease; }
-    .filter-chip:hover { border-color: rgba(201, 162, 77, 0.5); color: #C9A24D; transform: translateY(-1px); }
-    .filter-chip.active { background-color: rgba(201, 162, 77, 0.15); border-color: rgba(201, 162, 77, 0.5); color: #C9A24D; }
+    .filter-chip:hover { border-color: rgba(139, 30, 63, 0.5); color: #8B1E3F; transform: translateY(-1px); }
+    .filter-chip.active { background-color: rgba(139, 30, 63, 0.15); border-color: rgba(139, 30, 63, 0.5); color: #8B1E3F; }
 
     /* ── Premium user cards ── */
     .user-card { position: relative; }
@@ -39,20 +39,20 @@
         position: absolute; inset: 0;
         border-radius: inherit;
         padding: 1px;
-        background: linear-gradient(140deg, rgba(201,162,77,0) 0%, rgba(201,162,77,0.45) 50%, rgba(201,162,77,0) 100%);
+        background: linear-gradient(140deg, rgba(139, 30, 63,0) 0%, rgba(139, 30, 63,0.45) 50%, rgba(139, 30, 63,0) 100%);
         -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
         -webkit-mask-composite: xor; mask-composite: exclude;
         opacity: 0; transition: opacity .3s ease; pointer-events: none;
     }
     .user-card:hover::before { opacity: 1; }
     .user-avatar-ring {
-        background: linear-gradient(135deg, rgba(201,162,77,0.25), rgba(120,89,5,0.10));
-        box-shadow: 0 6px 18px -6px rgba(201,162,77,0.5);
+        background: linear-gradient(135deg, rgba(139, 30, 63,0.25), rgba(139, 30, 63,0.10));
+        box-shadow: 0 6px 18px -6px rgba(139, 30, 63,0.5);
     }
     .role-badge {
-        background: linear-gradient(135deg, rgba(201,162,77,0.16), rgba(201,162,77,0.05));
-        border: 1px solid rgba(201,162,77,0.30);
-        color: #C9A24D;
+        background: linear-gradient(135deg, rgba(139, 30, 63,0.16), rgba(139, 30, 63,0.05));
+        border: 1px solid rgba(139, 30, 63,0.30);
+        color: #8B1E3F;
     }
     @keyframes pulseDot {
         0%   { box-shadow: 0 0 0 0 rgba(20,160,90,0.55); }
@@ -85,7 +85,7 @@
 
     <!-- Hero Section -->
     <section class="relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl card-premium hero-glow">
-        <span class="material-symbols-outlined fill absolute -right-6 -bottom-10 text-[220px] text-gold-accent/[0.06] pointer-events-none select-none" aria-hidden="true">group</span>
+        <span class="material-symbols-outlined fill absolute -right-6 -bottom-10 text-[220px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">group</span>
         <div class="relative z-10 p-8 md:p-12">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div class="flex-1 min-w-0">
@@ -113,7 +113,7 @@
                     </div>
                     <p class="font-body-md text-body-md text-on-surface-variant max-w-lg">Kelola akun pengguna, tetapkan peran, dan pantau status seluruh anggota platform.</p>
                 </div>
-                <button type="button" onclick="openCreateModal()" class="bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase px-8 py-4 tracking-widest rounded-lg hover:bg-tertiary-container transition-colors btn-premium inline-flex items-center gap-2 shrink-0">
+                <button type="button" onclick="openCreateModal()" class="bg-gold-accent text-white font-label-sm text-[11px] uppercase px-8 py-4 tracking-widest rounded-lg hover:opacity-90 transition-opacity btn-premium inline-flex items-center gap-2 shrink-0">
                     <span class="material-symbols-outlined text-[18px]">person_add</span>
                     Tambah Pengguna
                 </button>
@@ -267,7 +267,7 @@
     <div class="p-6 space-y-6">
         <div class="flex items-center gap-4">
             <div id="drawer-avatar" class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0 border-2 border-surface-container-lowest shadow-sm overflow-hidden">
-                <span id="drawer-initial" class="font-title-lg text-title-lg text-secondary"></span>
+                <span id="drawer-initial" class="font-title-lg text-title-lg text-white"></span>
             </div>
             <div class="flex-1 min-w-0">
                 <h4 id="drawer-name" class="font-title-md text-title-md text-on-surface truncate"></h4>
@@ -457,7 +457,7 @@
         } else {
             const span = document.createElement('span');
             span.id = 'drawer-initial';
-            span.className = 'font-title-lg text-title-lg text-secondary';
+            span.className = 'font-title-lg text-title-lg text-white';
             span.textContent = data.initial;
             avatar.appendChild(span);
         }

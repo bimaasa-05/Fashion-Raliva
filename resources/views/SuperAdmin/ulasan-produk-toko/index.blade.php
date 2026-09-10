@@ -9,12 +9,12 @@
 <style>
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .filter-chip { transition: all 0.2s ease; }
-    .filter-chip:hover { border-color: rgba(201, 162, 77, 0.5); color: #C9A24D; transform: translateY(-1px); }
-    .filter-chip.active { background-color: rgba(201, 162, 77, 0.15); border-color: rgba(201, 162, 77, 0.5); color: #C9A24D; }
+    .filter-chip:hover { border-color: rgba(139, 30, 63, 0.5); color: #8B1E3F; transform: translateY(-1px); }
+    .filter-chip.active { background-color: rgba(139, 30, 63, 0.15); border-color: rgba(139, 30, 63, 0.5); color: #8B1E3F; }
     .review-card { transition: all 0.3s ease; }
-    .review-card:hover { border-color: rgba(201, 162, 77, 0.5); box-shadow: 0 8px 25px -5px rgba(201, 162, 77, 0.15); transform: translateY(-2px); }
-    .star { color: #C9A24D; }
-    .star-empty { color: rgba(201, 162, 77, 0.2); }
+    .review-card:hover { border-color: rgba(139, 30, 63, 0.5); box-shadow: 0 8px 25px -5px rgba(139, 30, 63, 0.15); transform: translateY(-2px); }
+    .star { color: #8B1E3F; }
+    .star-empty { color: rgba(139, 30, 63, 0.2); }
 </style>
 @endpush
 

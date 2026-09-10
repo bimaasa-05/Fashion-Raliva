@@ -9,7 +9,7 @@
 <style>
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .slot-row { transition: all 0.2s ease; }
-    .slot-row:hover { background-color: rgba(201, 162, 77, 0.04); }
+    .slot-row:hover { background-color: rgba(139, 30, 63, 0.04); }
 </style>
 @endpush
 
