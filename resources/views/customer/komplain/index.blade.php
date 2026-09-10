@@ -371,6 +371,37 @@
     #chat-select-bar.animate-out { animation: chatSelOut .2s ease both; }
     @keyframes chatSelIn { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     @keyframes chatSelOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(100%); opacity: 0; } }
+    #chat-input, #chat-edit-input {
+        resize: none;
+        min-height: 40px;
+        overflow-y: hidden;
+        overflow-x: hidden;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        word-break: break-word;
+        scrollbar-width: thin;
+    }
+    #chat-input {
+        background: transparent;
+        border: 0;
+        outline: none;
+        box-shadow: none;
+        transition: height 130ms cubic-bezier(.22, 1, .36, 1);
+    }
+    #chat-input.chat-input--scroll, #chat-edit-input.chat-input--scroll {
+        overflow-y: auto;
+    }
+    #chat-input::-webkit-scrollbar, #chat-edit-input::-webkit-scrollbar {
+        width: 4px;
+    }
+    #chat-input::-webkit-scrollbar-thumb, #chat-edit-input::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, .2);
+        border-radius: 9999px;
+    }
+    html.theme-dark #chat-input::-webkit-scrollbar-thumb,
+    html.theme-dark #chat-edit-input::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, .2);
+    }
 </style>
 <!-- Chat Komplain Modal (ala Super Admin; warna RALIVA) -->
 <div class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
@@ -422,17 +453,17 @@
                     <div class="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div>
                 </div>
             </div>
-            <div class="relative px-6 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-[var(--border-soft)] bg-surface-container-lowest/60 shrink-0" id="chat-input-area">
-                <div id="chat-emoji-panel" class="hidden absolute bottom-full mb-3 left-6 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-outline-variant bg-surface-container-high p-3 shadow-xl"></div>
-                <div id="chat-composer" class="flex items-end gap-2 lg:gap-3">
-                    <button type="button" onclick="toggleEmojiPanel()" id="chat-emoji-toggle" aria-label="{{ __('Emoji') }}" title="{{ __('Emoji') }}" class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0">
+            <div class="relative px-4 lg:px-6 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shrink-0" id="chat-input-area">
+                <div id="chat-emoji-panel" class="hidden absolute bottom-full mb-3 left-4 lg:left-6 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-outline-variant bg-surface-container-high p-3 shadow-xl"></div>
+                <div id="chat-composer" class="flex items-end gap-1.5 bg-surface-container-lowest border border-[var(--border-soft)] rounded-[24px] px-2 py-2 shadow-sm transition-colors duration-150 focus-within:border-secondary">
+                    <button type="button" onclick="toggleEmojiPanel()" id="chat-emoji-toggle" aria-label="{{ __('Emoji') }}" title="{{ __('Emoji') }}" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0">
                         <span class="material-symbols-outlined text-[20px]">mood</span>
                     </button>
                     <textarea id="chat-input" rows="1" maxlength="2000" placeholder="{{ __('Tulis pesan...') }}"
-                        class="flex-1 bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant resize-none focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors"
+                        class="flex-1 min-w-0 bg-transparent border-0 outline-none resize-none px-1 py-2.5 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant"
                         onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
                     <button type="button" onclick="sendMessage()" id="chat-send"
-                        class="w-12 h-12 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 transition-opacity disabled:opacity-40 rounded-full">
+                        class="w-10 h-10 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 transition-opacity disabled:opacity-40 rounded-full">
                         <span class="material-symbols-outlined text-[20px]">send</span>
                     </button>
                 </div>
@@ -573,6 +604,13 @@
         container.classList.add('raliva-chat-in');
         panel.classList.add('raliva-chat-in-sheet');
         document.body.style.overflow = 'hidden';
+
+        if (window.autoGrowChatInput) {
+            requestAnimationFrame(function () {
+                autoGrowChatInput(document.getElementById('chat-input'));
+                autoGrowChatInput(document.getElementById('chat-edit-input'));
+            });
+        }
 
         loadMessages();
         if (currentChat.polling) clearInterval(currentChat.polling);
@@ -1103,6 +1141,9 @@
         input.disabled = false;
         if (saveBtn) saveBtn.disabled = false;
         document.getElementById('chat-edit-dialog').classList.remove('hidden');
+        if (window.autoGrowChatInput) {
+            requestAnimationFrame(function () { autoGrowChatInput(input); });
+        }
         setTimeout(function () {
             input.focus();
             input.setSelectionRange(input.value.length, input.value.length);
@@ -1112,6 +1153,8 @@
     function closeEditDialog() {
         closeEditEmojiPanel();
         chatEditMsgId = null;
+        const editInput = document.getElementById('chat-edit-input');
+        if (editInput) editInput.style.height = '';
         document.getElementById('chat-edit-dialog').classList.add('hidden');
     }
 
@@ -1260,6 +1303,46 @@
         if (btn) btn.classList.remove('text-secondary', 'bg-surface-container-high');
     }
 
+    (function () {
+        function getChatMetrics(el) {
+            const cs = getComputedStyle(el);
+            const lh = parseFloat(cs.lineHeight) || 20;
+            const pad = (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0);
+            const border = (parseFloat(cs.borderTopWidth) || 0) + (parseFloat(cs.borderBottomWidth) || 0);
+            const isBorderBox = cs.boxSizing === 'border-box';
+            const maxScroll = lh * 5 + pad;
+            const maxHeight = isBorderBox ? maxScroll + border : maxScroll;
+            const minHeight = Math.min(maxHeight, lh + pad + (isBorderBox ? border : 0));
+            return { lh, pad, border, isBorderBox, maxScroll, maxHeight, minHeight };
+        }
+        function autoGrow(el) {
+            if (!el) return;
+            const m = getChatMetrics(el);
+            el.style.height = 'auto';
+            let h = el.scrollHeight + (m.isBorderBox ? m.border : 0);
+            if (h <= m.maxHeight) {
+                el.style.height = (h < m.minHeight ? m.minHeight : h) + 'px';
+                el.classList.remove('chat-input--scroll');
+            } else {
+                el.style.height = m.maxHeight + 'px';
+                el.classList.add('chat-input--scroll');
+            }
+        }
+        ['chat-input', 'chat-edit-input'].forEach(function (id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', function () { autoGrow(el); });
+            el.addEventListener('paste', function () { requestAnimationFrame(function () { autoGrow(el); }); });
+            if (el.offsetParent !== null) {
+                autoGrow(el);
+            } else {
+                const m = getChatMetrics(el);
+                el.style.height = m.minHeight + 'px';
+            }
+        });
+        window.autoGrowChatInput = autoGrow;
+    })();
+
     function insertEmojiTo(btn) {
         const panel = btn.closest('[data-input-id]');
         const input = panel ? document.getElementById(panel.dataset.inputId) : null;
@@ -1325,6 +1408,7 @@
 
         document.getElementById('chat-send').disabled = true;
         input.value = '';
+        if (window.autoGrowChatInput) autoGrowChatInput(input);
 
         try {
             const url = '{{ route('customer.komplain.messages.store', ':id:') }}'.replace(':id:', currentChat.id);
@@ -1347,6 +1431,7 @@
                 }
             } else {
                 input.value = pesan;
+                if (window.autoGrowChatInput) requestAnimationFrame(function () { autoGrowChatInput(input); });
                 let msg = 'Gagal mengirim pesan';
                 try {
                     const data = await resp.json();
@@ -1357,6 +1442,7 @@
             }
         } catch (_) {
             input.value = pesan;
+            if (window.autoGrowChatInput) requestAnimationFrame(function () { autoGrowChatInput(input); });
         } finally {
             document.getElementById('chat-send').disabled = false;
         }
