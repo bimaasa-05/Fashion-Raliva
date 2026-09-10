@@ -86,7 +86,7 @@
                 data-slot-full="{{ $product->slot_full ? '1' : '0' }}">
                 <div class="relative w-full aspect-[3/4] bg-surface-container-low mb-element-gap overflow-hidden rounded-lg">
                     @if ($product->images->first())
-                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ asset('storage/' . $product->images->first()->file_gambar) }}" alt="{{ $product->nama_produk }}" />
+                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ filter_var($product->images->first()->file_gambar, FILTER_VALIDATE_URL) ? $product->images->first()->file_gambar : asset($product->images->first()->file_gambar) }}" alt="{{ $product->nama_produk }}" />
                     @else
                         <div class="w-full h-full flex items-center justify-center bg-surface-container-high">
                             <span class="material-symbols-outlined text-[42px] text-on-surface-variant/40">checkroom</span>
