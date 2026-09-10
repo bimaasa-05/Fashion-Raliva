@@ -27,6 +27,14 @@ class PeringkatIklanController extends Controller
         $slotAktif = (clone $slotsQuery)->where('status', 'aktif')->count();
         $rataRataBid = $slotAktif > 0 ? $totalPendapatan / $slotAktif : 0;
 
+        $top3 = (clone $slotsQuery)
+            ->where('status', AdSlot::STATUS_AKTIF)
+            ->whereNotNull('tanggal_mulai')
+            ->whereNotNull('tanggal_selesai')
+            ->whereDate('tanggal_mulai', '<=', now()->toDateString())
+            ->whereDate('tanggal_selesai', '>=', now()->toDateString())
+            ->limit(3)->get();
+
         $slots = $slotsQuery->paginate(20)->withQueryString();
 
         $products = Product::with('store:store_id,nama_toko')
@@ -46,6 +54,7 @@ class PeringkatIklanController extends Controller
 
         return view('SuperAdmin.peringkat.peringkat-iklan', [
             'slots' => $slots,
+            'top3' => $top3,
             'totalPendapatan' => $totalPendapatan,
             'slotAktif' => $slotAktif,
             'rataRataBid' => $rataRataBid,
