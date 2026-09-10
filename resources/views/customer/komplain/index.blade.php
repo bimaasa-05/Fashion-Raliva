@@ -734,8 +734,8 @@
             const selLast = '';
 
             if (m.deleted) {
-                const delBubble = mine ? 'bg-secondary/20 border-white/25' : 'bg-error/[0.06] border-error/30';
-                const delText = mine ? 'text-white/60' : 'text-error';
+                const delBubble = mine ? 'bg-secondary text-white' : 'bg-surface-container-low';
+                const delText = mine ? 'text-white' : 'text-error';
                 const delBtn = mine ? 'text-white/50 hover:text-white' : 'text-on-surface-variant hover:text-on-surface';
                 let delMenu = '';
                 if (actionsOn) {
@@ -745,12 +745,12 @@
                 }
                 return '<div class="' + rowClass + '" data-mid="' + m.complaint_message_id + '">' +
                     selFirst +
-                    '<div class="max-w-[85%] md:max-w-[70%] rounded-xl px-4 py-2 border border-dashed ' + delBubble + '" data-bubble>' +
+                    '<div class="max-w-[85%] md:max-w-[70%] rounded-xl px-4 pt-2.5 pb-5 relative ' + delBubble + '" data-bubble>' +
                     '<div class="flex items-center justify-between gap-2">' +
-                    '<p class="font-body-sm text-body-sm italic ' + delText + '">' + escapeHtml('Pesan ini telah dihapus') + '</p>' +
+                    '<p class="font-body-sm text-body-sm italic flex items-center gap-1.5 ' + delText + '"><span class="material-symbols-outlined text-[16px] leading-none shrink-0">block</span>' + escapeHtml('Pesan ini telah dihapus') + '</p>' +
                     delMenu +
                     '</div>' +
-                    '<p class="text-[10px] mt-1 ' + time + '">' + formatTime(m.created_at) + '</p>' +
+                    '<span class="absolute bottom-1.5 right-2 text-[10px] leading-none ' + time + '">' + formatTime(m.created_at) + '</span>' +
                     '</div>' + selLast + '</div>';
             }
 
@@ -768,13 +768,13 @@
 
             return '<div class="' + rowClass + '" data-mid="' + m.complaint_message_id + '">' +
                 selFirst +
-                '<div class="max-w-[85%] md:max-w-[70%] rounded-xl px-4 py-3 ' + bubble + '" data-bubble>' +
+                '<div class="max-w-[85%] md:max-w-[70%] rounded-xl px-4 pt-3 pb-5 relative ' + bubble + '" data-bubble>' +
                 '<div class="flex items-start justify-between gap-2 mb-1">' +
                 '<p class="text-xs ' + meta + ' uppercase tracking-wider">' + escapeHtml(sender) + '</p>' +
                 menu +
                 '</div>' +
                 '<p class="font-body-sm text-body-sm whitespace-pre-wrap break-words" data-pesan>' + escapeHtml(m.pesan) + '</p>' +
-                '<p class="text-[10px] mt-2 ' + time + '">' + formatTime(m.created_at) + edited + '</p>' +
+                '<span class="absolute bottom-1.5 right-2 text-[10px] leading-none ' + time + '">' + formatTime(m.created_at) + edited + '</span>' +
                 '</div>' + selLast + '</div>';
         }).join('');
         applySelectionUI();
@@ -792,7 +792,7 @@
     function formatTime(value) {
         const d = new Date(value);
         if (isNaN(d.getTime())) return '';
-        return d.toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        return d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
     }
 
     function escapeHtml(text) {
@@ -1066,7 +1066,7 @@
         });
         const text = rows.map(function (m) {
             const sender = (m.sender_id === myId) ? 'Anda' : (m.sender ? m.sender.nama_lengkap : 'Toko');
-            return '[' + sender + '] ' + formatTime(m.created_at) + '\n' + m.pesan;
+            return '[' + sender + '] ' + new Date(m.created_at).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + '\n' + m.pesan;
         }).join('\n\n');
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(text).then(function () {
