@@ -74,13 +74,30 @@
                     </div>
 
                     @if ($bukti)
-                        <div class="border border-muted-border rounded-lg bg-surface-container-low p-4 flex items-center justify-between mb-4">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <span class="material-symbols-outlined text-on-surface-variant">receipt_long</span>
-                                <span class="font-body-md text-sm text-on-surface truncate">{{ \Illuminate\Support\Str::afterLast($bukti->file_bukti, '/') }}</span>
+                        @php
+                            $buktiUrl = asset('storage/' . ltrim($bukti->file_bukti, '/'));
+                            $buktiExt = strtolower(pathinfo($bukti->file_bukti, PATHINFO_EXTENSION));
+                            $buktiIsImage = in_array($buktiExt, ['jpg', 'jpeg', 'png', 'webp', 'gif'], true);
+                        @endphp
+                        <div class="border border-muted-border rounded-lg bg-surface-container-low p-4 mb-4">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <span class="material-symbols-outlined text-on-surface-variant">receipt_long</span>
+                                    <span class="font-body-md text-sm text-on-surface truncate">{{ \Illuminate\Support\Str::afterLast($bukti->file_bukti, '/') }}</span>
+                                </div>
+                                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase shrink-0 ml-2">{{ $bukti->uploaded_at?->translatedFormat('d M H:i') }}</span>
                             </div>
-                            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase shrink-0 ml-2">{{ $bukti->uploaded_at?->translatedFormat('d M H:i') }}</span>
+                            @if ($buktiIsImage)
+                                <a href="{{ $buktiUrl }}" target="_blank" rel="noopener" class="block mt-3 rounded-lg overflow-hidden border border-outline-variant">
+                                    <img src="{{ $buktiUrl }}" alt="Bukti pembayaran" class="w-full max-h-72 object-contain bg-surface-container-lowest" loading="lazy" />
+                                </a>
+                            @endif
+                            <a href="{{ $buktiUrl }}" target="_blank" rel="noopener" class="mt-3 inline-flex items-center gap-2 px-4 py-2 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">visibility</span>Lihat Bukti
+                            </a>
                         </div>
+                    @else
+                        <p class="text-xs text-on-surface-variant border border-dashed border-outline-variant rounded-lg px-4 py-3 mb-4 text-center">Belum ada bukti diunggah.</p>
                     @endif
 
                     @if ($activeTab !== 'menunggu' && $verifTerakhir)
