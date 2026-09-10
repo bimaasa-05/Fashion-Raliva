@@ -89,7 +89,7 @@
                 @php
                     $sku = $item->variants->first()?->sku ?? '-';
                     $status = $item->status;
-                    $fotos = $item->images->map(fn ($img) => asset('storage/' . $img->file_gambar))->values()->all();
+                    $fotos = $item->images->map(fn ($img) => filter_var($img->file_gambar, FILTER_VALIDATE_URL) ? $img->file_gambar : asset($img->file_gambar))->values()->all();
                 @endphp
                 <article data-reveal data-mod-row data-status="{{ $status === 'aktif' ? 'disetujui' : $status }}" data-produk-id="{{ $item->product_id }}" data-produk-nama="{{ $item->nama_produk }}" data-produk-sku="{{ $sku }}" data-produk-created="{{ $item->created_at->translatedFormat('d M Y') }}" data-produk-harga="Rp {{ number_format((float) $item->harga_dasar, 0, ',', '.') }}" data-produk-kategori="{{ $item->category?->nama_kategori ?? '-' }}" data-produk-tipe="{{ ucfirst($item->tipe_produk) }}" data-produk-varian="{{ $item->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}" data-produk-deskripsi="{{ $item->deskripsi }}" data-produk-status="{{ $status }}" data-produk-verified="{{ $item->owner_verified_at ? '1' : '0' }}" data-produk-alasan="{{ $status === 'ditolak' ? ($item->alasan_penolakan ?? '') : '' }}" data-produk-images='@json($fotos)' class="group bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium flex flex-col">
                     <div class="relative aspect-[4/3] bg-surface-container-low overflow-hidden" data-produk-gallery>
