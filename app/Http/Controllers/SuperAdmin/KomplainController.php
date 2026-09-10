@@ -14,26 +14,27 @@ class KomplainController extends Controller
 {
     public function index(Request $request)
     {
-        $complaints = Complaint::query()
+        $query = Complaint::query()
             ->with(['user:user_id,nama_lengkap', 'store:store_id,nama_toko,owner_id'])
             ->orderByRaw("CASE status WHEN 'open' THEN 0 WHEN 'diproses' THEN 1 ELSE 2 END")
-            ->orderByDesc('dibuat_pada')
-            ->get()
-            ->map(function (Complaint $complaint) {
-                $complaint->eskalasi_oleh_sa = $complaint->messages()
-                    ->where('sender_id', ActivityLogger::resolveActorId())
-                    ->exists();
-
-                return $complaint;
-            });
+            ->orderByDesc('dibuat_pada');
 
         $stats = [
-            'semua' => $complaints->count(),
-            'open' => $complaints->where('status', Complaint::STATUS_OPEN)->count(),
-            'diproses' => $complaints->where('status', Complaint::STATUS_DIPROSES)->count(),
-            'selesai' => $complaints->where('status', Complaint::STATUS_SELESAI)->count(),
-            'ditutup' => $complaints->where('status', Complaint::STATUS_DITUTUP)->count(),
+            'semua' => Complaint::count(),
+            'open' => Complaint::where('status', Complaint::STATUS_OPEN)->count(),
+            'diproses' => Complaint::where('status', Complaint::STATUS_DIPROSES)->count(),
+            'selesai' => Complaint::where('status', Complaint::STATUS_SELESAI)->count(),
+            'ditutup' => Complaint::where('status', Complaint::STATUS_DITUTUP)->count(),
         ];
+
+        $complaints = $query->paginate(20)->withQueryString();
+        $complaints->getCollection()->transform(function (Complaint $complaint) {
+            $complaint->eskalasi_oleh_sa = $complaint->messages()
+                ->where('sender_id', ActivityLogger::resolveActorId())
+                ->exists();
+
+            return $complaint;
+        });
 
         return view('SuperAdmin.komplain.index', [
             'complaints' => $complaints,

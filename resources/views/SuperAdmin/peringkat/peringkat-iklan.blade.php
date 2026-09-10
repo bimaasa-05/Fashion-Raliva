@@ -128,7 +128,7 @@
                             <td class="p-4 text-center text-on-surface-variant whitespace-nowrap">{{ \Carbon\Carbon::parse($slot->tanggal_mulai)->locale('id')->translatedFormat('d M') }} – {{ \Carbon\Carbon::parse($slot->tanggal_selesai)->locale('id')->translatedFormat('d M Y') }}</td>
                             <td class="p-4 text-center"><span class="inline-flex items-center gap-1 px-2 py-1 rounded-full {{ $st[1] }} text-[10px] font-bold uppercase border">{{ $st[0] }}</span></td>
                             <td class="p-4 text-right">
-                                <form action="{{ route('superadmin.peringkat-iklan.hapus', $slot) }}" method="POST" onsubmit="return confirm('Hapus slot iklan ini?')">
+                                <form action="{{ route('superadmin.peringkat-iklan.hapus', $slot) }}" method="POST" onsubmit="return openConfirmPeringkat(event, 'Hapus slot iklan ini?')">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="px-3 py-1.5 border border-error/30 rounded-lg text-[11px] font-label-sm uppercase tracking-wider text-error hover:bg-error/10 transition-colors">Hapus</button>
                                 </form>
@@ -177,7 +177,7 @@
                             <dd class="text-on-surface-variant text-xs text-right whitespace-nowrap">{{ \Carbon\Carbon::parse($slot->tanggal_mulai)->locale('id')->translatedFormat('d M') }} – {{ \Carbon\Carbon::parse($slot->tanggal_selesai)->locale('id')->translatedFormat('d M Y') }}</dd>
                         </div>
                     </dl>
-                    <form action="{{ route('superadmin.peringkat-iklan.hapus', $slot) }}" method="POST" onsubmit="return confirm('Hapus slot iklan ini?')">
+                    <form action="{{ route('superadmin.peringkat-iklan.hapus', $slot) }}" method="POST" onsubmit="return openConfirmPeringkat(event, 'Hapus slot iklan ini?')">
                         @csrf @method('DELETE')
                         <button type="submit" class="w-full min-h-11 inline-flex items-center justify-center gap-2 border border-error/30 rounded-lg text-[11px] font-label-sm uppercase tracking-wider text-error hover:bg-error/10 transition-colors">
                             <span class="material-symbols-outlined text-[16px]">delete</span>Hapus
@@ -188,6 +188,9 @@
                 <p class="text-center text-on-surface-variant py-10">Belum ada slot iklan terdaftar.</p>
             @endforelse
         </div>
+        @if ($slots->hasPages())
+            <div class="mt-6 flex justify-center">{{ $slots->links() }}</div>
+        @endif
     </section>
 
     <!-- Modal Daftarkan Slot Iklan -->
@@ -243,4 +246,46 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Konfirmasi Hapus Slot Iklan -->
+<div id="confirmPeringkatModal" class="fixed inset-0 z-[75] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeConfirmPeringkat()">
+    <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
+        <div class="p-8">
+            <div class="w-14 h-14 rounded-full bg-error/10 border border-error/20 flex items-center justify-center mx-auto mb-5">
+                <span class="material-symbols-outlined text-error text-[28px]">delete</span>
+            </div>
+            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Hapus slot iklan?</h3>
+            <p id="confirm-peringkat-desc" class="text-on-surface-variant text-sm text-center mb-4">Hapus slot iklan ini?</p>
+            <div class="flex space-x-3">
+                <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeConfirmPeringkat()">Batal</button>
+                <button type="button" id="confirm-peringkat-submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-error/90 transition-colors rounded-lg">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+    let _pendingPeringkatForm = null;
+    function openConfirmPeringkat(e, msg) {
+        e.preventDefault();
+        _pendingPeringkatForm = e.target;
+        document.getElementById('confirm-peringkat-desc').textContent = msg || 'Hapus slot iklan ini?';
+        const m = document.getElementById('confirmPeringkatModal');
+        m.classList.remove('hidden'); m.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        return false;
+    }
+    function closeConfirmPeringkat() {
+        const m = document.getElementById('confirmPeringkatModal');
+        if (m) { m.classList.add('hidden'); m.classList.remove('flex'); document.body.style.overflow = ''; }
+        _pendingPeringkatForm = null;
+    }
+    document.getElementById('confirm-peringkat-submit')?.addEventListener('click', () => {
+        if (_pendingPeringkatForm) _pendingPeringkatForm.submit();
+        closeConfirmPeringkat();
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeConfirmPeringkat(); });
+</script>
+@endpush

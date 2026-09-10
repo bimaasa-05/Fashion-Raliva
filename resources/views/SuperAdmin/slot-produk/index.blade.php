@@ -220,6 +220,9 @@
                     <p class="text-on-surface-variant font-body-md text-sm">Tidak ada toko yang cocok.</p>
                     <button type="button" onclick="resetFilter()" class="mt-1 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Reset Filter</button>
                 </div>
+                @if ($stores->hasPages())
+                    <div class="mt-6 flex justify-center">{{ $stores->links() }}</div>
+                @endif
             </div>
         </section>
     @endif
@@ -264,6 +267,9 @@
                         <p class="col-span-full text-center text-on-surface-variant py-12">Belum ada paket slot. Tambahkan paket berbayar untuk pemilik toko.</p>
                     @endforelse
                 </div>
+                @if ($packages->hasPages())
+                    <div class="mt-6 flex justify-center">{{ $packages->links() }}</div>
+                @endif
             </div>
         </section>
     @endif
@@ -359,6 +365,9 @@
                         <p class="text-center text-on-surface-variant py-12">Belum ada permintaan tambah slot.</p>
                     @endforelse
                 </div>
+                @if ($purchaseRequests->hasPages())
+                    <div class="mt-6 flex justify-center">{{ $purchaseRequests->links() }}</div>
+                @endif
             </div>
         </section>
     @endif

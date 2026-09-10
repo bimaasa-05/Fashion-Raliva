@@ -14,22 +14,24 @@ class PengirimanController extends Controller
 {
     public function index()
     {
-        $shipments = Shipment::with([
+        $query = Shipment::with([
             'order:order_id,nomor_order,store_id',
             'order.store:store_id,nama_toko',
             'order.checkout.user:user_id,nama_lengkap',
             'courier:courier_id,nama_kurir',
             'shippingService:shipping_service_id,nama_layanan',
-        ])->orderByDesc('shipments.created_at')->get();
+        ])->orderByDesc('shipments.created_at');
 
         $stats = [
-            'semua' => $shipments->count(),
-            'pending' => $shipments->where('status', 'pending')->count(),
-            'diproses' => $shipments->where('status', 'diproses')->count(),
-            'dikirim' => $shipments->where('status', 'dikirim')->count(),
-            'diterima' => $shipments->where('status', 'diterima')->count(),
-            'gagal' => $shipments->where('status', 'gagal')->count(),
+            'semua' => Shipment::count(),
+            'pending' => Shipment::where('status', 'pending')->count(),
+            'diproses' => Shipment::where('status', 'diproses')->count(),
+            'dikirim' => Shipment::where('status', 'dikirim')->count(),
+            'diterima' => Shipment::where('status', 'diterima')->count(),
+            'gagal' => Shipment::where('status', 'gagal')->count(),
         ];
+
+        $shipments = $query->paginate(20)->withQueryString();
 
         return view('SuperAdmin.pengiriman.index', [
             'shipments' => $shipments,

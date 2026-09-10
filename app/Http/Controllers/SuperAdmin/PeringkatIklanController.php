@@ -13,13 +13,14 @@ class PeringkatIklanController extends Controller
 {
     public function index()
     {
-        $slots = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko'])
-            ->orderByDesc('nominal_bid')
-            ->get();
+        $slotsQuery = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko'])
+            ->orderByDesc('nominal_bid');
 
-        $totalPendapatan = (float) $slots->where('status', 'aktif')->sum('nominal_bid');
-        $slotAktif = $slots->where('status', 'aktif')->count();
+        $totalPendapatan = (float) (clone $slotsQuery)->where('status', 'aktif')->sum('nominal_bid');
+        $slotAktif = (clone $slotsQuery)->where('status', 'aktif')->count();
         $rataRataBid = $slotAktif > 0 ? $totalPendapatan / $slotAktif : 0;
+
+        $slots = $slotsQuery->paginate(20)->withQueryString();
 
         $products = Product::with('store:store_id,nama_toko')
             ->orderBy('nama_produk')
