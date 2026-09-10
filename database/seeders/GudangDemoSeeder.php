@@ -25,8 +25,25 @@ class GudangDemoSeeder extends Seeder
      */
     public function run(): void
     {
+        // Pemilik toko: pakai Owner yang sudah ada, atau buatkan akun demo.
+        // (Hardcode owner_id=4 menyebabkan FK violation bila user 4 tidak ada.)
+        $ownerRoleId = \App\Models\Role::where('nama_role', 'Owner')->value('role_id');
+        if (! $ownerRoleId) {
+            $this->command?->error('Role Owner belum ada. Jalankan seeder role terlebih dahulu.');
+            return;
+        }
+        $owner = User::where('role_id', $ownerRoleId)->orderBy('user_id')->first()
+            ?? User::create([
+                'nama_lengkap' => 'Owner Demo',
+                'email' => 'owner.demo@raliva.test',
+                'password' => 'password',
+                'role_id' => $ownerRoleId,
+                'nomor_telepon' => '081234000010',
+                'status' => 'aktif',
+            ]);
+
         $store = Store::firstOrCreate(['store_id' => 1], [
-            'owner_id' => 4,
+            'owner_id' => $owner->user_id,
             'nama_toko' => 'Raliva Atelier Jakarta',
             'alamat' => 'Jl. Kemang Raya No. 21, Jakarta Selatan',
             'status' => 'aktif',
@@ -45,8 +62,20 @@ class GudangDemoSeeder extends Seeder
         // Tugaskan seluruh user Gudang ke kedua gudang (status aktif).
         $gudangUsers = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Gudang'))->get();
         if ($gudangUsers->isEmpty()) {
-            $this->command?->warn('Tidak ada user dengan role Gudang. Lewati penugasan staf.');
+            $gudangRoleId = \App\Models\Role::where('nama_role', 'Gudang')->value('role_id');
+            if (! $gudangRoleId) {
+                $this->command?->error('Role Gudang belum ada. Jalankan seeder role terlebih dahulu.');
+                return;
+            }
+            $demoGudang = User::firstOrCreate(
+                ['email' => 'gudang.demo@raliva.test'],
+                ['nama_lengkap' => 'Staf Gudang Demo', 'password' => 'password', 'role_id' => $gudangRoleId, 'nomor_telepon' => '081234000011', 'status' => 'aktif']
+            );
+            $gudangUsers = collect([$demoGudang]);
+            $this->command?->warn('Tidak ada user Gudang — dibuatkan akun demo gudang.demo@raliva.test.');
         }
+        // Aktor pencatat pergerakan/pemindahan: selalu user yang benar-benar ada.
+        $actorId = $gudangUsers->first()->user_id;
         foreach ($gudangUsers as $user) {
             foreach ([$wh1->warehouse_id, $wh2->warehouse_id] as $whId) {
                 WarehouseStaff::firstOrCreate(
@@ -54,6 +83,26 @@ class GudangDemoSeeder extends Seeder
                     ['tanggal_penugasan' => now()->subMonths(3), 'status' => 'aktif']
                 );
             }
+        }
+
+        // Amankan re-run: hapus order demo milik seeder ini (RQ-%) beserta checkout-nya.
+        // Batal dengan pesan jelas bila sudah ada pembayaran/pengiriman atau order lain yang mengunci varian.
+        $rqOrders = \App\Models\Order::where('nomor_order', 'like', 'RQ-%')->get();
+        if ($rqOrders->isNotEmpty()) {
+            $rqCheckoutIds = $rqOrders->pluck('checkout_id')->all();
+            $rqOrderIds = $rqOrders->pluck('order_id')->all();
+            $terkunci = \App\Models\Payment::whereIn('checkout_id', $rqCheckoutIds)->exists()
+                || \App\Models\Shipment::whereIn('order_id', $rqOrderIds)->exists();
+            if ($terkunci) {
+                $this->command?->error('Order demo (RQ-%) sudah memiliki pembayaran/pengiriman. Hapus manual atau migrate:fresh bila ingin seed ulang.');
+                return;
+            }
+            \App\Models\Order::whereIn('order_id', $rqOrderIds)->delete();
+            \App\Models\Checkout::whereIn('checkout_id', $rqCheckoutIds)->delete();
+        }
+        if (\App\Models\OrderItem::count() > 0) {
+            $this->command?->error('Masih ada order item yang mereferensikan varian produk. Seeder dibatalkan agar data order tidak rusak.');
+            return;
         }
 
         // Bersihkan data persediaan lama agar seeding deterministik.
@@ -68,6 +117,19 @@ class GudangDemoSeeder extends Seeder
             'Kemeja', 'Kaos', 'Celana', 'Jaket & Hoodie', 'Dress', 'Aksesori',
         ])->get()->keyBy('nama_kategori');
 
+        foreach (['Kemeja', 'Kaos', 'Celana', 'Jaket & Hoodie', 'Dress', 'Aksesori'] as $namaKategori) {
+            if (! isset($categories[$namaKategori])) {
+                $categories[$namaKategori] = Category::firstOrCreate(
+                    ['nama_kategori' => $namaKategori],
+                    ['deskripsi' => 'Kategori ' . $namaKategori, 'status' => Category::STATUS_AKTIF]
+                );
+            }
+        }
+
+        if ($categories->isEmpty()) {
+            $this->command?->error('Kategori tidak tersedia dan gagal dibuat.');
+            return;
+        }
         $cat = fn (string $name) => ($categories[$name] ?? $categories->first())->category_id;
 
         $seed = [
@@ -143,7 +205,7 @@ class GudangDemoSeeder extends Seeder
                     'sumber_tipe' => StockMovement::SUMBER_PRODUCTION_RESULT,
                     'sumber_id' => null,
                     'alasan' => 'Stok awal produksi',
-                    'dibuat_oleh' => $gudangUsers->first()->user_id ?? 1,
+                    'dibuat_oleh' => $actorId,
                     'created_at' => now()->subDays(20 + $idx),
                 ];
                 if ($stokWh2 > 0) {
@@ -155,7 +217,7 @@ class GudangDemoSeeder extends Seeder
                         'sumber_tipe' => StockMovement::SUMBER_PRODUCTION_RESULT,
                         'sumber_id' => null,
                         'alasan' => 'Stok awal produksi',
-                        'dibuat_oleh' => $gudangUsers->first()->user_id ?? 1,
+                        'dibuat_oleh' => $actorId,
                         'created_at' => now()->subDays(18 + $idx),
                     ];
                 }
@@ -172,7 +234,7 @@ class GudangDemoSeeder extends Seeder
                     'sumber_tipe' => StockMovement::SUMBER_ORDER_ITEM,
                     'sumber_id' => null,
                     'alasan' => 'Pemenuhan pesanan',
-                    'dibuat_oleh' => $gudangUsers->first()->user_id ?? 1,
+                    'dibuat_oleh' => $actorId,
                     'created_at' => now()->subDays(5 + $idx),
                 ];
                 // kurangi stok agar konsisten
@@ -190,7 +252,7 @@ class GudangDemoSeeder extends Seeder
                     'sumber_tipe' => StockMovement::SUMBER_MANUAL,
                     'sumber_id' => null,
                     'alasan' => 'Pemeriksaan fisik: selisih +2',
-                    'dibuat_oleh' => $gudangUsers->first()->user_id ?? 1,
+                    'dibuat_oleh' => $actorId,
                     'created_at' => now()->subDays(2 + $idx),
                 ];
                 WarehouseStock::where('warehouse_id', $wh1->warehouse_id)
@@ -203,7 +265,7 @@ class GudangDemoSeeder extends Seeder
         $transfer = StockTransfer::create([
             'from_warehouse_id' => $wh1->warehouse_id,
             'to_warehouse_id' => $wh2->warehouse_id,
-            'requested_by' => $gudangUsers->first()->user_id ?? 1,
+            'requested_by' => $actorId,
             'approved_by' => null,
             'status' => StockTransfer::STATUS_RECEIVED,
             'diminta_pada' => now()->subDays(3),
@@ -223,7 +285,7 @@ class GudangDemoSeeder extends Seeder
             'sumber_tipe' => StockMovement::SUMBER_STOCK_TRANSFER,
             'sumber_id' => $transfer->stock_transfer_id,
             'alasan' => 'Pemindahan ke Gudang Cabang Jakarta',
-            'dibuat_oleh' => $gudangUsers->first()->user_id ?? 1,
+            'dibuat_oleh' => $actorId,
             'created_at' => now()->subDays(3),
         ];
         $movements[] = [
@@ -234,7 +296,7 @@ class GudangDemoSeeder extends Seeder
             'sumber_tipe' => StockMovement::SUMBER_STOCK_TRANSFER,
             'sumber_id' => $transfer->stock_transfer_id,
             'alasan' => 'Penerimaan dari Gudang Utama Bandung',
-            'dibuat_oleh' => $gudangUsers->first()->user_id ?? 1,
+            'dibuat_oleh' => $actorId,
             'created_at' => now()->subDays(2),
         ];
 
@@ -247,7 +309,7 @@ class GudangDemoSeeder extends Seeder
         $customer = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Customer'))->first()
             ?? \App\Models\User::firstOrCreate(
                 ['email' => 'pelanggan.demo@raliva.test'],
-                ['nama_lengkap' => 'Pelanggan Demo', 'password' => \Illuminate\Support\Facades\Hash::make('password'), 'role_id' => \App\Models\Role::where('nama_role', 'Customer')->value('role_id'), 'nomor_telepon' => '081234000099', 'status' => 'aktif']
+                ['nama_lengkap' => 'Pelanggan Demo', 'password' => 'password', 'role_id' => \App\Models\Role::where('nama_role', 'Customer')->value('role_id'), 'nomor_telepon' => '081234000099', 'status' => 'aktif']
             );
 
         $requestVariantIds = \App\Models\WarehouseStock::where('warehouse_id', $wh1->warehouse_id)
