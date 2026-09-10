@@ -87,3 +87,27 @@ Urutan halaman mengikuti alur belanja, dan **semua data ditampilkan langsung dar
 - Pemformatan harga: `Rp {{ number_format($x, 0, ',', '.') }}`.
 - Gambar produk: `filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)`, fallback `picsum.photos`.
 - Verifikasi CRUD manual dilakukan via `php artisan tinker` dengan `view()->share('errors', new \Illuminate\Support\ViewErrorBag)` sebelum render view.
+
+---
+
+## 6. Alur Super Admin (Observability & Moderasi)
+
+Super Admin = pengawasan platform. **7 halaman bersifat read-only (observability)** — aksi ada di Admin/Gudang: `Data Pesanan`, `Data Pembayaran`, `Saldo Toko`, `Stok`, `Gudang`, `Produksi`, `Laporan` ringkas. Contoh: saldo toko hanya membaca `Wallet.saldo_tersedia/tertahan`, mutasi dilakukan via `Permintaan Penarikan` (`pending→disetujui→dibayar`).
+
+### 6.1 Manajemen Pengguna — cascade Owner
+- `PUT /superadmin/manajemen-pengguna/{user}/nonaktifkan` toggle `aktif ↔ nonaktif` (`ManajemenPenggunaController:350`). Jika role `Owner`, ikut update `Store.status`, `StoreStaff.status`, `User staff` (`whereHas storeAssignments`). UI drawer menampilkan modal konfirmasi dengan rincian cascade (`confirmNonaktifkanModal`) sebelum submit.
+
+### 6.2 Manajemen Toko — auto efek
+- `POST /superadmin/manajemen-toko/{toko}/setujui` (`ManajemenTokoController:68`) `pending/ditolak → aktif` **otomatis** verifikasi dokumen pending (`terverifikasi`) dan grant `5 slot awal` bila kosong (`SlotService::setFreeQuota`). Infotip di modal menjelaskan hal ini.
+
+### 6.3 Kategori Toko & Produk
+- `POST /superadmin/kategori/toko` (`StoreCategoryController:13`) menghormati field `status` (`aktif/nonaktif`) saat create; `POST /superadmin/kategori/toko/{id}/hapus` dibatalkan bila masih dipakai toko.
+
+### 6.4 Store Staff — status manual
+- `PUT /superadmin/store-staff/{staff}` (`StoreStaffController:137`) ubah `aktif↔nonaktif` via tombol **Simpan** (tidak auto-submit). Validasi duplikat pair `store+user`.
+
+### 6.5 Refund — wajib bukti
+- `POST /superadmin/pengembalian-dana/{refund}/selesaikan` (`PengembalianDanaController:112`) `disetujui → selesai` **wajib** `file_bukti` (JPG/PNG/PDF ≤5MB) + `deskripsi_bukti`, disimpan `bukti-refund/{id}` disk `public`, `DB::transaction` lock `Wallet.saldo_tersedia`, `decrement` + `WalletTransaction JENIS_REFUND_KELUAR`, update `file_bukti/bukti_diupload_pada`. `POST …/tolak` butuh `alasan min10`.
+
+### 6.6 Laporan & Riwayat
+- `GET /superadmin/laporan/export?period=7|30|90|365` & `GET /superadmin/riwayat-aktivitas/export?kategori=...` stream CSV BOM (`response()->stream`, `fputcsv`). Riwayat pakai `kategori` (`pengguna/toko/produk/keuangan/sistem`) via `aksi LIKE`.

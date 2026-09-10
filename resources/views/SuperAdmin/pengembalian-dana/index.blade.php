@@ -268,13 +268,27 @@
     @elseif ($refund->status === 'disetujui')
     <div id="modal-selesaikan-{{ $refund->refund_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-        <form method="POST" action="{{ route('superadmin.pengembalian-dana.selesaikan', $refund->refund_id) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+        <form method="POST" action="{{ route('superadmin.pengembalian-dana.selesaikan', $refund->refund_id) }}" enctype="multipart/form-data" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
             @csrf
             <div class="w-14 h-14 rounded-full bg-secondary-container/20 flex items-center justify-center mx-auto mb-5">
                 <span class="material-symbols-outlined text-secondary text-[28px]">payments</span>
             </div>
             <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Tandai Selesai?</h3>
-            <p class="text-sm text-on-surface-variant text-center">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> akan ditandai <span class="font-bold text-on-surface">selesai</span> dan Customer dikonfirmasi dana telah dikirim.</p>
+            <p class="text-sm text-on-surface-variant text-center mb-4">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> akan ditandai <span class="font-bold text-on-surface">selesai</span> dan Customer dikonfirmasi dana telah dikirim.</p>
+            <div class="space-y-4 mb-2 text-left">
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">Bukti Transfer <span class="text-error">*</span></label>
+                    <input type="file" name="file_bukti" required accept=".jpg,.jpeg,.png,.pdf" class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:font-label-sm file:uppercase file:tracking-widest file:cursor-pointer border border-muted-border rounded-lg p-1 focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent" />
+                    <p class="text-[11px] text-on-surface-variant mt-1">Wajib dilampirkan sebagai bukti transparansi (JPG, PNG, atau PDF, maks 5MB).</p>
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">Deskripsi Bukti</label>
+                    <input type="text" name="deskripsi_bukti" maxlength="1000" placeholder="Contoh: Transfer BCA dari rekening platform Raliva" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent placeholder-on-surface-variant/50" />
+                </div>
+                @if ($refund->file_bukti)
+                    <p class="text-xs"><a href="{{ asset('storage/' . $refund->file_bukti) }}" target="_blank" class="text-gold-accent hover:underline inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> Lihat bukti sebelumnya</a></p>
+                @endif
+            </div>
             <div class="flex gap-3 mt-6">
                 <button type="button" data-modal-close class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded-full hover:bg-surface-container-low transition-colors">
                     <span class="material-symbols-outlined text-[16px] leading-none">close</span>

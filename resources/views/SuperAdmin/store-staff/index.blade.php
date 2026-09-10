@@ -149,13 +149,14 @@
                                 </td>
                                 <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $s->tanggal_penugasan?->translatedFormat('d M Y') ?? '-' }}</td>
                                 <td class="py-3.5 px-4 text-center">
-                                    <form method="POST" action="{{ route('superadmin.store-staff.update', $s->store_staff_id) }}" class="inline-flex">
+                                    <form method="POST" action="{{ route('superadmin.store-staff.update', $s->store_staff_id) }}" class="inline-flex items-center gap-1.5">
                                         @csrf
                                         @method('PUT')
-                                        <select name="status" onchange="this.form.submit()" class="bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ $s->status === 'aktif' ? 'text-secondary border-secondary/30' : 'text-error border-error/30' }}">
+                                        <select name="status" class="bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ $s->status === 'aktif' ? 'text-secondary border-secondary/30' : 'text-error border-error/30' }}">
                                             <option value="aktif" {{ $s->status === 'aktif' ? 'selected' : '' }}>Aktif</option>
                                             <option value="nonaktif" {{ $s->status === 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
                                         </select>
+                                        <button type="submit" class="inline-flex items-center px-2 py-1 rounded-md bg-deep-onyx text-on-primary text-[10px] font-bold uppercase tracking-wider hover:bg-black transition-colors">Simpan</button>
                                     </form>
                                 </td>
                                 <td class="py-3.5 px-4 text-right">
@@ -215,13 +216,14 @@
                             </div>
                         </dl>
                         <div class="flex items-center gap-gutter">
-                            <form method="POST" action="{{ route('superadmin.store-staff.update', $s->store_staff_id) }}" class="shrink-0">
+                            <form method="POST" action="{{ route('superadmin.store-staff.update', $s->store_staff_id) }}" class="flex items-center gap-1.5 shrink-0">
                                 @csrf
                                 @method('PUT')
-                                <select name="status" onchange="this.form.submit()" class="bg-transparent border border-muted-border rounded-lg px-2 py-2 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ $s->status === 'aktif' ? 'text-secondary border-secondary/30' : 'text-error border-error/30' }}">
+                                <select name="status" class="bg-transparent border border-muted-border rounded-lg px-2 py-2 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ $s->status === 'aktif' ? 'text-secondary border-secondary/30' : 'text-error border-error/30' }}">
                                     <option value="aktif" {{ $s->status === 'aktif' ? 'selected' : '' }}>Aktif</option>
                                     <option value="nonaktif" {{ $s->status === 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
                                 </select>
+                                <button type="submit" class="inline-flex items-center px-2.5 py-2 rounded-lg bg-deep-onyx text-on-primary text-[10px] font-bold uppercase tracking-wider">Simpan</button>
                             </form>
                             <button type="button" onclick="openDetail({{ $s->store_staff_id }})" class="flex-1 min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
                                 <span class="material-symbols-outlined text-[16px]">visibility</span>Detail

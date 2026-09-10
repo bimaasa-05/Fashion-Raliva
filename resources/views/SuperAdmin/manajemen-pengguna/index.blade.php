@@ -313,11 +313,28 @@
                 <button type="submit" class="w-full py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Simpan Perubahan</button>
             </form>
 
-            <form method="POST" action="" id="nonaktifkan-form">
+            <form method="POST" action="" id="nonaktifkan-form" onsubmit="return openConfirmNonaktifkan(event)">
                 @csrf
                 @method('PUT')
                 <button type="submit" id="nonaktifkan-btn" class="w-full py-3 border border-error text-error font-label-sm text-[11px] uppercase tracking-widest rounded hover:bg-error/10 transition-colors">Nonaktifkan</button>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Konfirmasi Nonaktifkan/Aktifkan (cascade info) -->
+<div id="confirmNonaktifkanModal" class="fixed inset-0 z-[75] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeConfirmNonaktifkan()">
+    <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
+        <div class="p-8">
+            <div id="confirm-nonaktifkan-icon" class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
+                <span id="confirm-nonaktifkan-icon-sym" class="material-symbols-outlined text-error text-[28px]">block</span>
+            </div>
+            <h3 id="confirm-nonaktifkan-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">Nonaktifkan Pengguna?</h3>
+            <p id="confirm-nonaktifkan-desc" class="text-on-surface-variant text-sm text-center mb-4">Status akan diubah dan efek cascade akan dijelaskan di sini.</p>
+            <div class="flex space-x-3">
+                <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeConfirmNonaktifkan()">Batal</button>
+                <button type="button" id="confirm-nonaktifkan-submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Lanjutkan</button>
+            </div>
         </div>
     </div>
 </div>
@@ -883,7 +900,69 @@
             closeUserDetail();
             closeUserModal();
             closeHapusModal();
+            closeConfirmNonaktifkan();
         }
+    });
+
+    let _pendingNonaktifkanForm = null;
+    function openConfirmNonaktifkan(e) {
+        e.preventDefault();
+        const form = e.target.closest('form') || document.getElementById('nonaktifkan-form');
+        const btn = document.getElementById('nonaktifkan-btn');
+        const isAktif = (btn.textContent.trim() === 'Nonaktifkan');
+        const nama = (document.getElementById('drawer-name')?.textContent || '').trim() || 'pengguna ini';
+        const role = (document.getElementById('drawer-role')?.textContent || '').trim();
+        const isOwner = role.toLowerCase() === 'owner';
+        const tokoVisible = document.getElementById('drawer-toko-section') && !document.getElementById('drawer-toko-section').classList.contains('hidden');
+        const tokoCount = document.querySelectorAll('#drawer-toko-list > *').length;
+
+        const titleEl = document.getElementById('confirm-nonaktifkan-title');
+        const descEl = document.getElementById('confirm-nonaktifkan-desc');
+        const iconWrap = document.getElementById('confirm-nonaktifkan-icon');
+        const iconSym = document.getElementById('confirm-nonaktifkan-icon-sym');
+        const submitBtn = document.getElementById('confirm-nonaktifkan-submit');
+        const modal = document.getElementById('confirmNonaktifkanModal');
+
+        if (isAktif) {
+            titleEl.textContent = 'Nonaktifkan Pengguna?';
+            if (isOwner) {
+                const info = tokoCount > 0 ? tokoCount + ' toko' : 'toko';
+                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> akan menjadi <span class="font-bold text-error">nonaktif</span>. Jika ini akun <span class="font-bold">Owner</span>, <span class="font-bold">' + info + ' & staff terkait akan ikut dinonaktifkan</span> (bisa diaktifkan lagi).';
+            } else {
+                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> akan menjadi <span class="font-bold text-error">nonaktif</span>.';
+            }
+            iconWrap.className = 'w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5';
+            iconSym.className = 'material-symbols-outlined text-error text-[28px]';
+            iconSym.textContent = 'block';
+            submitBtn.className = 'flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium';
+            submitBtn.textContent = 'Ya, Nonaktifkan';
+        } else {
+            titleEl.textContent = 'Aktifkan Pengguna?';
+            if (isOwner) {
+                const info = tokoCount > 0 ? tokoCount + ' toko' : 'toko';
+                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> akan menjadi <span class="font-bold text-success">aktif</span>. Jika ini akun <span class="font-bold">Owner</span>, <span class="font-bold">' + info + ' & staff terkait akan ikut diaktifkan</span>.';
+            } else {
+                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> akan menjadi <span class="font-bold text-success">aktif</span>.';
+            }
+            iconWrap.className = 'w-14 h-14 rounded-full bg-success/10 border border-success/25 flex items-center justify-center mx-auto mb-5';
+            iconSym.className = 'material-symbols-outlined text-success text-[28px]';
+            iconSym.textContent = 'check_circle';
+            submitBtn.className = 'flex-1 bg-success text-white font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium';
+            submitBtn.textContent = 'Ya, Aktifkan';
+        }
+
+        _pendingNonaktifkanForm = form;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        return false;
+    }
+    function closeConfirmNonaktifkan() {
+        const modal = document.getElementById('confirmNonaktifkanModal');
+        if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+        _pendingNonaktifkanForm = null;
+    }
+    document.getElementById('confirm-nonaktifkan-submit')?.addEventListener('click', () => {
+        if (_pendingNonaktifkanForm) _pendingNonaktifkanForm.submit();
     });
 </script>
 @endpush
