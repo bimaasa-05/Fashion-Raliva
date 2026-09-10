@@ -13,7 +13,7 @@ class DataProdukController extends Controller
     public function index(Request $request)
     {
         $q = $request->input('q');
-        $products = Product::with(['category', 'store', 'variants'])
+        $products = Product::with(['category', 'store', 'variants', 'images' => fn ($qq) => $qq->orderBy('urutan')])
             ->when($q, fn ($query) => $query->where('nama_produk', 'like', "%{$q}%"))
             ->orderByDesc('product_id')
             ->paginate(12);
@@ -95,7 +95,6 @@ class DataProdukController extends Controller
                         'file_gambar' => $path,
                         'urutan' => $idx,
                     ]);
-                    if ($idx === 0) $product->update(['gambar_utama' => $path]);
                 }
             }
         }

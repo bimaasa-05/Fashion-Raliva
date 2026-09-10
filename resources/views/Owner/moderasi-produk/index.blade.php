@@ -88,10 +88,15 @@
                         : ($status === 'ditolak' ? 'Produk ditolak moderator. Silakan perbaiki sesuai panduan dan ajukan ulang.' : 'Tayang publik sejak '.$item->created_at->translatedFormat('d M Y').'.');
                 @endphp
                 <article data-reveal data-mod-row data-status="{{ $status === 'aktif' ? 'disetujui' : $status }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 card-premium">
+                    @php $firstImgO = $item->images->first(); $imgSrcO = $firstImgO ? (filter_var($firstImgO->file_gambar, FILTER_VALIDATE_URL) ? $firstImgO->file_gambar : asset('storage/' . ltrim($firstImgO->file_gambar, '/'))) : null; @endphp
                     <div class="flex flex-col md:flex-row md:items-start gap-4 justify-between">
                         <div class="flex items-start gap-4 min-w-0">
-                            <div class="w-12 aspect-[4/5] rounded-md bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0">
-                                <span class="material-symbols-outlined text-[22px] text-on-surface-variant">checkroom</span>
+                            <div class="w-12 aspect-[4/5] rounded-md bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0 overflow-hidden">
+                                @if($imgSrcO)
+                                    <img src="{{ $imgSrcO }}" alt="{{ $item->nama_produk }}" loading="lazy" class="w-full h-full object-cover" />
+                                @else
+                                    <span class="material-symbols-outlined text-[22px] text-on-surface-variant">checkroom</span>
+                                @endif
                             </div>
                             <div class="min-w-0">
                                 <p class="font-bold text-on-surface">{{ $item->nama_produk }}</p>

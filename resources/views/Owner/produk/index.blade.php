@@ -101,11 +101,16 @@
                 </thead>
                 <tbody>
                     @forelse ($products as $p)
+                        @php $firstImg = $p->images->first(); $imgSrc = $firstImg ? (filter_var($firstImg->file_gambar, FILTER_VALIDATE_URL) ? $firstImg->file_gambar : asset('storage/' . ltrim($firstImg->file_gambar, '/'))) : null; @endphp
                         <tr data-table-row data-kategori="{{ $p->category?->nama_kategori }}" data-status-produk="{{ $p->status }}" class="border-b border-muted-border last:border-0">
                             <td class="py-3.5 px-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-11 h-14 rounded-md bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0 overflow-hidden">
-                                        <span class="material-symbols-outlined text-[22px] text-on-surface-variant">checkroom</span>
+                                        @if($imgSrc)
+                                            <img src="{{ $imgSrc }}" alt="{{ $p->nama_produk }}" loading="lazy" class="w-full h-full object-cover" />
+                                        @else
+                                            <span class="material-symbols-outlined text-[22px] text-on-surface-variant">checkroom</span>
+                                        @endif
                                     </div>
                                     <div class="min-w-0">
                                         <p class="font-bold text-on-surface truncate">{{ $p->nama_produk }}</p>

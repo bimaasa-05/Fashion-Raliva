@@ -54,10 +54,11 @@
         @else
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter">
             @foreach ($products as $p)
+            @php $firstImgA = $p->images->first(); $imgSrcA = $firstImgA ? (filter_var($firstImgA->file_gambar, FILTER_VALIDATE_URL) ? $firstImgA->file_gambar : asset('storage/' . ltrim($firstImgA->file_gambar, '/'))) : null; @endphp
             <div class="border border-muted-border rounded-lg overflow-hidden card-premium">
                 <div class="aspect-[4/3] bg-surface-container-low overflow-hidden">
-                    @if ($p->gambar_utama)
-                        <img class="w-full h-full object-cover" alt="{{ $p->nama_produk }}" src="{{ asset('storage/'.$p->gambar_utama) }}" />
+                    @if ($imgSrcA)
+                        <img class="w-full h-full object-cover" alt="{{ $p->nama_produk }}" src="{{ $imgSrcA }}" loading="lazy" />
                     @else
                         <div class="w-full h-full flex items-center justify-center text-on-surface-variant"><span class="material-symbols-outlined text-[40px]">inventory_2</span></div>
                     @endif
