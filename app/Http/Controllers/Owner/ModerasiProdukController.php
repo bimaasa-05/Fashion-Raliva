@@ -16,7 +16,7 @@ class ModerasiProdukController extends Controller
     {
         $storeId = OwnerContext::firstStoreId();
 
-        $products = Product::with(['category', 'variants', 'images'])
+        $products = Product::with(['category', 'variants', 'images' => fn ($q) => $q->orderBy('urutan')])
             ->where('store_id', $storeId)
             ->whereIn('status', ['pending', 'ditolak', 'aktif'])
             ->orderByRaw("CASE status WHEN 'pending' THEN 1 WHEN 'ditolak' THEN 2 ELSE 3 END")

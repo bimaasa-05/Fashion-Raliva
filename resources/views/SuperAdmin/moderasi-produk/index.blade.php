@@ -10,13 +10,11 @@
 @php
     $tabs = [
         \App\Models\Product::STATUS_PENDING => ['label' => 'Menunggu', 'icon' => 'pending'],
-        \App\Models\Product::STATUS_AKTIF => ['label' => 'Disetujui', 'icon' => 'task_alt'],
         \App\Models\Product::STATUS_DITOLAK => ['label' => 'Ditolak', 'icon' => 'block'],
     ];
 
     $statusIconMap = [
         \App\Models\Product::STATUS_PENDING => 'pending',
-        \App\Models\Product::STATUS_AKTIF => 'task_alt',
         \App\Models\Product::STATUS_DITOLAK => 'gpp_bad',
     ];
 @endphp
@@ -46,6 +44,9 @@
                     {{ strtoupper($tab['label']) }} ({{ $stats[$key] ?? 0 }})
                 </a>
             @endforeach
+        </div>
+        <div class="flex justify-center pt-1">
+            <a href="{{ route('superadmin.produk') }}" class="text-xs text-gold-accent hover:underline inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> Lihat produk disetujui di Data Produk</a>
         </div>
 
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 pt-4">
@@ -80,13 +81,18 @@
                 data-reason="{{ $product->alasan_penolakan }}"
                 data-tipe="{{ ucfirst($product->tipe_produk) }}"
                 data-variants="{{ $product->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}"
+                data-images="{{ htmlspecialchars(json_encode($product->images->pluck('file_gambar')->values()), ENT_QUOTES, 'UTF-8') }}"
                 data-slot-total="{{ $product->slot_total }}"
                 data-slot-used="{{ $product->slot_used }}"
                 data-slot-available="{{ $product->slot_available }}"
                 data-slot-full="{{ $product->slot_full ? '1' : '0' }}">
                 <div class="relative w-full aspect-[3/4] bg-surface-container-low mb-element-gap overflow-hidden rounded-lg">
-                    @if ($product->images->first())
-                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ asset('storage/' . $product->images->first()->file_gambar) }}" alt="{{ $product->nama_produk }}" />
+                    @php $firstImg = $product->images->first(); $imgSrc = $firstImg ? (filter_var($firstImg->file_gambar, FILTER_VALIDATE_URL) ? $firstImg->file_gambar : asset('storage/' . ltrim($firstImg->file_gambar, '/'))) : null; $imgCount = $product->images->count(); @endphp
+                    @if ($imgSrc)
+                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ $imgSrc }}" alt="{{ $product->nama_produk }}" loading="lazy" />
+                        @if($imgCount > 1)
+                            <span class="absolute top-2 left-2 bg-deep-onyx text-on-primary text-[10px] font-bold px-1.5 py-0.5 rounded">+{{ $imgCount - 1 }}</span>
+                        @endif
                     @else
                         <div class="w-full h-full flex items-center justify-center bg-surface-container-high">
                             <span class="material-symbols-outlined text-[42px] text-on-surface-variant/40">checkroom</span>
@@ -132,11 +138,46 @@
 
         const img = card.querySelector('img');
         const imgEl = document.getElementById('mod-img');
-        if (img) {
+        const thumbsEl = document.getElementById('mod-thumbs');
+        let gallery = [];
+        try { gallery = JSON.parse(card.getAttribute('data-images') || '[]'); } catch(e) { gallery = []; }
+        function resolveSrc(src) {
+            if (!src) return '';
+            if (src.startsWith('http')) return src;
+            if (src.startsWith('/')) return src;
+            if (src.startsWith('storage/')) return '/' + src;
+            return '/storage/' + src.replace(/^\/+/, '');
+        }
+        if (gallery.length > 0) {
+            const firstSrc = resolveSrc(gallery[0]);
+            imgEl.src = firstSrc;
+            imgEl.classList.remove('hidden');
+            imgEl.parentElement.classList.remove('hidden');
+        } else if (img) {
             imgEl.src = img.src;
             imgEl.classList.remove('hidden');
         } else {
             imgEl.classList.add('hidden');
+        }
+        if (thumbsEl) {
+            thumbsEl.innerHTML = '';
+            if (gallery.length > 1) {
+                thumbsEl.classList.remove('hidden');
+                gallery.forEach((src, idx) => {
+                    const resolved = resolveSrc(src);
+                    const thumb = document.createElement('img');
+                    thumb.src = resolved;
+                    thumb.className = 'w-14 h-14 object-cover rounded border cursor-pointer hover:border-gold-accent transition-colors ' + (idx === 0 ? 'border-gold-accent ring-1 ring-gold-accent' : 'border-muted-border');
+                    thumb.loading = 'lazy';
+                    thumb.onclick = () => {
+                        imgEl.src = resolved;
+                        Array.from(thumbsEl.children).forEach((c, i) => c.className = 'w-14 h-14 object-cover rounded border cursor-pointer hover:border-gold-accent transition-colors ' + (i === idx ? 'border-gold-accent ring-1 ring-gold-accent' : 'border-muted-border'));
+                    };
+                    thumbsEl.appendChild(thumb);
+                });
+            } else {
+                thumbsEl.classList.add('hidden');
+            }
         }
 
         const reasonBox = document.getElementById('mod-reason-box');
@@ -275,7 +316,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
             <div class="grid md:grid-cols-2 gap-0">
-                <div class="bg-surface-container-low min-h-[220px]"><img id="mod-img" class="w-full h-full object-cover" src="" alt="Foto produk" /></div>
+                <div class="bg-surface-container-low min-h-[220px] flex flex-col">
+                    <img id="mod-img" class="w-full h-[220px] object-cover flex-shrink-0" src="" alt="Foto produk" />
+                    <div id="mod-thumbs" class="hidden flex gap-1.5 p-2 overflow-x-auto bg-surface-container-low border-t border-muted-border"></div>
+                </div>
                 <div class="p-6 space-y-4">
                     <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Tipe Produk</span><span id="mod-tipe" class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">-</span></div>
                     <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Kategori</span><span id="mod-category" class="font-body-md text-body-md text-on-surface">-</span></div>

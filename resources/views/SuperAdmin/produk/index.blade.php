@@ -58,10 +58,11 @@
 
     <!-- Products Table -->
     <div class="overflow-x-auto hidden md:block">
-        <table class="w-full min-w-[850px] premium-table">
+        <table class="w-full min-w-[950px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
                     <th class="p-4 text-center w-12">No.</th>
+                    <th class="p-4 text-left">Foto</th>
                     <th class="p-4 text-left">Produk</th>
                     <th class="p-4 text-left">Toko</th>
                     <th class="p-4 text-left">Kategori</th>
@@ -82,9 +83,24 @@
                             'arsip' => ['Arsip', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
                             default => [ucfirst($produk->status), 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
                         };
+                        $firstImg = $produk->images->first();
+                        $imgSrc = $firstImg ? (filter_var($firstImg->file_gambar, FILTER_VALIDATE_URL) ? $firstImg->file_gambar : asset('storage/' . ltrim($firstImg->file_gambar, '/'))) : null;
+                        $imgCount = $produk->images->count();
                     @endphp
                     <tr data-table-row data-status="{{ $produk->status }}" data-search="{{ strtolower($produk->nama_produk.' '.($produk->store->nama_toko ?? '').' '.($produk->category->nama_kategori ?? '')) }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-4 text-center text-on-surface-variant font-mono row-num"></td>
+                        <td class="p-4">
+                            <div class="relative w-12 h-12 rounded-lg overflow-hidden bg-surface-container-low border border-muted-border shrink-0">
+                                @if($imgSrc)
+                                    <img src="{{ $imgSrc }}" alt="{{ $produk->nama_produk }}" loading="lazy" class="w-full h-full object-cover" />
+                                    @if($imgCount > 1)
+                                        <span class="absolute bottom-0 right-0 bg-deep-onyx text-on-primary text-[9px] font-bold px-1 py-0.5 rounded-tl">+{{ $imgCount - 1 }}</span>
+                                    @endif
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center text-on-surface-variant/40"><span class="material-symbols-outlined text-[20px]">checkroom</span></div>
+                                @endif
+                            </div>
+                        </td>
                         <td class="p-4 text-on-surface">{{ $produk->nama_produk }}</td>
                         <td class="p-4 text-on-surface">{{ $produk->store->nama_toko ?? '-' }}</td>
                         <td class="p-4 text-on-surface-variant">{{ $produk->category->nama_kategori ?? '-' }}</td>
@@ -94,11 +110,11 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="p-8 text-center text-on-surface-variant">Belum ada produk terdaftar di platform.</td>
+                        <td colspan="8" class="p-8 text-center text-on-surface-variant">Belum ada produk terdaftar di platform.</td>
                     </tr>
                 @endforelse
                 <tr id="empty-search" class="hidden">
-                    <td colspan="7" class="p-8 text-center">
+                    <td colspan="8" class="p-8 text-center">
                         <div class="flex flex-col items-center gap-2">
                             <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
                             <p class="text-on-surface-variant font-body-md text-sm">Tidak ada produk yang cocok.</p>
@@ -124,8 +140,19 @@
                 };
             @endphp
             <article data-table-row data-status="{{ $produk->status }}" data-search="{{ strtolower($produk->nama_produk.' '.($produk->store->nama_toko ?? '').' '.($produk->category->nama_kategori ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
-                <div class="flex items-start justify-between gap-3 mb-3">
-                    <div class="min-w-0">
+                @php $firstImgM = $produk->images->first(); $imgSrcM = $firstImgM ? (filter_var($firstImgM->file_gambar, FILTER_VALIDATE_URL) ? $firstImgM->file_gambar : asset('storage/' . ltrim($firstImgM->file_gambar, '/'))) : null; $imgCountM = $produk->images->count(); @endphp
+                <div class="flex items-start gap-4 mb-3">
+                    <div class="relative w-16 h-16 rounded-lg overflow-hidden bg-surface-container-low border border-muted-border shrink-0">
+                        @if($imgSrcM)
+                            <img src="{{ $imgSrcM }}" alt="{{ $produk->nama_produk }}" loading="lazy" class="w-full h-full object-cover" />
+                            @if($imgCountM > 1)
+                                <span class="absolute bottom-0 right-0 bg-deep-onyx text-on-primary text-[8px] font-bold px-1 py-0.5 rounded-tl">+{{ $imgCountM - 1 }}</span>
+                            @endif
+                        @else
+                            <div class="w-full h-full flex items-center justify-center text-on-surface-variant/30"><span class="material-symbols-outlined text-[20px]">checkroom</span></div>
+                        @endif
+                    </div>
+                    <div class="min-w-0 flex-1">
                         <p class="font-title-md text-title-md text-on-surface leading-tight">{{ $produk->nama_produk }}</p>
                         <p class="text-on-surface-variant text-xs mt-0.5">{{ $produk->store->nama_toko ?? '-' }}</p>
                         <span class="mt-1 inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ ucfirst($produk->tipe_produk) }}</span>

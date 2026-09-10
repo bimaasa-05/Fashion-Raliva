@@ -91,11 +91,16 @@
                     $status = $item->status;
                     $fotos = $item->images->map(fn ($img) => asset('storage/' . $img->file_gambar))->values()->all();
                 @endphp
-                <article data-reveal data-mod-row data-status="{{ $status === 'aktif' ? 'disetujui' : $status }}" data-produk-id="{{ $item->product_id }}" data-produk-nama="{{ $item->nama_produk }}" data-produk-sku="{{ $sku }}" data-produk-created="{{ $item->created_at->translatedFormat('d M Y') }}" data-produk-harga="Rp {{ number_format((float) $item->harga_dasar, 0, ',', '.') }}" data-produk-kategori="{{ $item->category?->nama_kategori ?? '-' }}" data-produk-tipe="{{ ucfirst($item->tipe_produk) }}" data-produk-varian="{{ $item->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}" data-produk-deskripsi="{{ $item->deskripsi }}" data-produk-status="{{ $status }}" data-produk-verified="{{ $item->owner_verified_at ? '1' : '0' }}" data-produk-alasan="{{ $status === 'ditolak' ? ($item->alasan_penolakan ?? '') : '' }}" data-produk-images='@json($fotos)' class="group bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium flex flex-col">
-                    <div class="relative aspect-[4/3] bg-surface-container-low overflow-hidden" data-produk-gallery>
-                        @if (count($fotos))
-                            <div class="block w-full h-full" data-produk-main>
-                                <img src="{{ $fotos[0] }}" alt="{{ $item->nama_produk }}" data-produk-main-img class="w-full h-full object-cover transition-opacity duration-300" loading="lazy" />
+                <article data-reveal data-mod-row data-status="{{ $status === 'aktif' ? 'disetujui' : $status }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 card-premium">
+                    @php $firstImgO = $item->images->first(); $imgSrcO = $firstImgO ? (filter_var($firstImgO->file_gambar, FILTER_VALIDATE_URL) ? $firstImgO->file_gambar : asset('storage/' . ltrim($firstImgO->file_gambar, '/'))) : null; @endphp
+                    <div class="flex flex-col md:flex-row md:items-start gap-4 justify-between">
+                        <div class="flex items-start gap-4 min-w-0">
+                            <div class="w-12 aspect-[4/5] rounded-md bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0 overflow-hidden">
+                                @if($imgSrcO)
+                                    <img src="{{ $imgSrcO }}" alt="{{ $item->nama_produk }}" loading="lazy" class="w-full h-full object-cover" />
+                                @else
+                                    <span class="material-symbols-outlined text-[22px] text-on-surface-variant">checkroom</span>
+                                @endif
                             </div>
                         @else
                             <div class="w-full h-full flex items-center justify-center">
