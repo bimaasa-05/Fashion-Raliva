@@ -21,7 +21,7 @@ class ProductSeeder extends Seeder
             return;
         }
 
-        $cat = fn (string $name) => Category::where('nama_kategori', $name)->whereNotNull('parent_id')->value('category_id');
+        $cat = fn(string $name) => Category::where('nama_kategori', $name)->whereNotNull('parent_id')->value('category_id');
 
         $products = [
             [
@@ -31,7 +31,7 @@ class ProductSeeder extends Seeder
                 'category' => $cat('Blouse'),
                 'warna' => ['White', 'Black', 'Beige'],
                 'ukuran' => ['S', 'M', 'L', 'XL'],
-                'images' => ['https://picsum.photos/seed/shirt1/900/1200', 'https://picsum.photos/seed/shirt1b/900/1200'],
+                'images' => ['assets/seeders/1.jfif', 'assets/seeders/2.jfif'],
             ],
             [
                 'nama_produk' => 'Straight Fit Pants',
@@ -40,7 +40,7 @@ class ProductSeeder extends Seeder
                 'category' => $cat('Celana'),
                 'warna' => ['Ivory', 'Black'],
                 'ukuran' => ['S', 'M', 'L'],
-                'images' => ['https://picsum.photos/seed/pants1/900/1200', 'https://picsum.photos/seed/pants1b/900/1200'],
+                'images' => ['assets/seeders/3.jfif', 'assets/seeders/4.jfif'],
             ],
             [
                 'nama_produk' => 'Relaxed Blazer',
@@ -49,7 +49,7 @@ class ProductSeeder extends Seeder
                 'category' => $cat('Kemeja'),
                 'warna' => ['Muted Sand', 'Charcoal'],
                 'ukuran' => ['S', 'M', 'L'],
-                'images' => ['https://picsum.photos/seed/blazer1/900/1200', 'https://picsum.photos/seed/blazer1b/900/1200'],
+                'images' => ['assets/seeders/5.jfif', 'assets/seeders/6.jfif'],
             ],
             [
                 'nama_produk' => 'Pleated Midi Skirt',
@@ -58,7 +58,7 @@ class ProductSeeder extends Seeder
                 'category' => $cat('Rok'),
                 'warna' => ['Warm Sand', 'Black'],
                 'ukuran' => ['S', 'M', 'L', 'XL'],
-                'images' => ['https://picsum.photos/seed/skirt1/900/1200', 'https://picsum.photos/seed/skirt1b/900/1200'],
+                'images' => ['assets/seeders/7.jfif', 'assets/seeders/8.jfif'],
             ],
             [
                 'nama_produk' => 'Linen Blend Shirt',
@@ -67,7 +67,7 @@ class ProductSeeder extends Seeder
                 'category' => $cat('Kemeja'),
                 'warna' => ['White'],
                 'ukuran' => ['S', 'M', 'L'],
-                'images' => ['https://picsum.photos/seed/shirt3/900/1200', 'https://picsum.photos/seed/shirt3b/900/1200'],
+                'images' => ['assets/seeders/9.jfif', 'assets/seeders/10.jfif'],
             ],
             [
                 'nama_produk' => 'Signature Tote Bag',
@@ -76,7 +76,7 @@ class ProductSeeder extends Seeder
                 'category' => $cat('Tote Bag'),
                 'warna' => ['Ivory', 'Taupe'],
                 'ukuran' => ['One Size'],
-                'images' => ['https://picsum.photos/seed/tote1/900/1200', 'https://picsum.photos/seed/tote1b/900/1200'],
+                'images' => ['assets/seeders/11.jfif', 'assets/seeders/12.jfif'],
             ],
             [
                 'nama_produk' => 'Minimalist Cap',
@@ -85,7 +85,7 @@ class ProductSeeder extends Seeder
                 'category' => $cat('Topi'),
                 'warna' => ['Black', 'Sand'],
                 'ukuran' => ['One Size'],
-                'images' => ['https://picsum.photos/seed/cap1/900/1200', 'https://picsum.photos/seed/cap1b/900/1200'],
+                'images' => ['assets/seeders/13.jfif', 'assets/seeders/14.jfif'],
             ],
             [
                 'nama_produk' => 'Silk Blend Dress',
@@ -94,7 +94,7 @@ class ProductSeeder extends Seeder
                 'category' => $cat('Dress'),
                 'warna' => ['Blush', 'Black'],
                 'ukuran' => ['S', 'M', 'L'],
-                'images' => ['https://picsum.photos/seed/dress1/900/1200', 'https://picsum.photos/seed/dress1b/900/1200'],
+                'images' => ['assets/seeders/15.jfif', 'assets/seeders/16.jfif'],
             ],
         ];
 
@@ -125,7 +125,7 @@ class ProductSeeder extends Seeder
                             'ukuran' => $ukuran,
                         ],
                         [
-                            'sku' => 'RLV-'.str_pad((string) $product->product_id, 4, '0', STR_PAD_LEFT).'-'.str_pad((string) $variantCounter, 2, '0', STR_PAD_LEFT),
+                            'sku' => 'RLV-' . str_pad((string) $product->product_id, 4, '0', STR_PAD_LEFT) . '-' . str_pad((string) $variantCounter, 2, '0', STR_PAD_LEFT),
                             'harga' => $data['harga_dasar'],
                             'status' => ProductVariant::STATUS_AKTIF,
                         ]
@@ -144,6 +144,6 @@ class ProductSeeder extends Seeder
             }
         }
 
-        $this->command->info('ProductSeeder selesai: '.count($products).' produk dibuat.');
+        $this->command->info('ProductSeeder selesai: ' . count($products) . ' produk dibuat.');
     }
 }
