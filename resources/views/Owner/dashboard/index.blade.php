@@ -296,7 +296,7 @@
                 data: {
                     labels: data.labels,
                     datasets: [
-                        { label: 'Penjualan', data: data.penjualan, borderColor: '#C9A24D', backgroundColor: 'rgba(201, 162, 77, 0.12)', fill: true, tension: 0.38, borderWidth: 2, pointBackgroundColor: '#C9A24D', pointRadius: 3 },
+                        { label: 'Penjualan', data: data.penjualan, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.12)', fill: true, tension: 0.38, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 },
                         { label: 'Jumlah Pesanan', data: data.pesanan, borderColor: c.tick, backgroundColor: 'transparent', fill: false, tension: 0.38, borderWidth: 2, pointBackgroundColor: c.tick, pointRadius: 3, yAxisID: 'y1' }
                     ]
                 },
