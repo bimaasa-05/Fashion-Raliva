@@ -52,7 +52,7 @@ class ManajemenPenggunaController extends Controller
             $query->where('status', $request->status);
         }
 
-        $users = $query->orderBy('nama_lengkap')->get();
+        $users = $query->orderBy('nama_lengkap')->paginate(20)->withQueryString();
         $roles = Role::where('status', 'aktif')->get();
 
         $stats = [

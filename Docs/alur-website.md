@@ -111,3 +111,6 @@ Super Admin = pengawasan platform. **7 halaman bersifat read-only (observability
 
 ### 6.6 Laporan & Riwayat
 - `GET /superadmin/laporan/export?period=7|30|90|365` & `GET /superadmin/riwayat-aktivitas/export?kategori=...` stream CSV BOM (`response()->stream`, `fputcsv`). Riwayat pakai `kategori` (`pengguna/toko/produk/keuangan/sistem`) via `aksi LIKE`.
+
+### 6.7 Glosarium status bilingual (alias)
+- `requested` = `menunggu` (menunggu keputusan) — refund (`Refund:17`) `requested` tampil “Menunggu Keputusan”; `produksi: requested` tampil “Menunggu” (`produksi/index.blade.php:11`); `komplain open:21` alias `baru/menunggu` tampil “Terbuka”. DB tetap `requested/open`, label Indonesia di `$badgeMap` sebagai alias tanpa migrasi.

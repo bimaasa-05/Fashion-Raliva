@@ -246,6 +246,9 @@
                 <button type="button" onclick="resetUserFilters()" class="mt-3 px-5 py-2 rounded-lg border border-gold-accent/40 text-gold-accent font-label-sm text-[11px] uppercase tracking-widest hover:bg-gold-accent/10 transition-colors">Reset Filter</button>
             </div>
         </div>
+        @if ($users->hasPages())
+            <div class="mt-6 flex justify-center">{{ $users->links() }}</div>
+        @endif
     </section>
 </div>
 

@@ -10,6 +10,7 @@
 @php
     $badgeMap = [
         'open' => ['label' => 'Terbuka', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/20'],
+        'menunggu' => ['label' => 'Terbuka', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/20'],
         'baru' => ['label' => 'Baru', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/20'],
         'diproses' => ['label' => 'Diproses', 'class' => 'bg-surface-container-high text-on-surface border-outline-variant'],
         'selesai' => ['label' => 'Selesai', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
@@ -140,7 +141,7 @@
 
                                     @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES, \App\Models\Complaint::STATUS_ESKALASI, 'baru'], true))
                                         @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES], true) && ! $c->eskalasi_oleh_sa)
-                                            <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" class="inline-block">
+                                            <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'eskalasi', '{{ $kode }}')" class="inline-block">
                                                 @csrf
                                                 <button type="submit" title="Eskalasi"
                                                     class="w-8 h-8 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent hover:text-on-gold-accent transition-colors">
@@ -148,7 +149,7 @@
                                                 </button>
                                             </form>
                                         @endif
-                                        <form method="POST" action="{{ route('superadmin.komplain.tutup', $c->complaint_id) }}" class="inline-block">
+                                        <form method="POST" action="{{ route('superadmin.komplain.tutup', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'tutup', '{{ $kode }}')" class="inline-block">
                                             @csrf
                                             <button type="submit" title="Tutup Komplain"
                                                 class="w-8 h-8 flex items-center justify-center border border-outline text-on-surface hover:bg-surface-container-high transition-colors">
@@ -216,14 +217,14 @@
 
                         @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES, \App\Models\Complaint::STATUS_ESKALASI, 'baru'], true))
                             @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES], true) && ! $c->eskalasi_oleh_sa)
-                                <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" class="shrink-0">
+                                <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'eskalasi', '{{ $kode }}')" class="shrink-0">
                                     @csrf
                                     <button type="submit" title="Eskalasi" class="min-h-11 w-11 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent hover:text-on-gold-accent transition-colors rounded-lg">
                                         <span class="material-symbols-outlined text-[18px]">emergency</span>
                                     </button>
                                 </form>
                             @endif
-                            <form method="POST" action="{{ route('superadmin.komplain.tutup', $c->complaint_id) }}" class="shrink-0">
+                            <form method="POST" action="{{ route('superadmin.komplain.tutup', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'tutup', '{{ $kode }}')" class="shrink-0">
                                 @csrf
                                 <button type="submit" title="Tutup Komplain" class="min-h-11 w-11 flex items-center justify-center border border-outline text-on-surface hover:bg-surface-container-high transition-colors rounded-lg">
                                     <span class="material-symbols-outlined text-[18px]">check_circle</span>
@@ -286,6 +287,22 @@
             <button type="button" onclick="closeDeleteDialog()" class="w-full text-left px-4 py-3 mt-1 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
                 <span class="font-body-md text-sm text-secondary">Batal</span>
             </button>
+        </div>
+    </div>
+    <!-- Modal Konfirmasi Komplain (eskalasi/tutup) -->
+    <div id="confirmKomplainModal" class="hidden fixed inset-0 z-[75] items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeConfirmKomplain()">
+        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
+            <div class="p-8">
+                <div id="confirm-komplain-icon" class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-5">
+                    <span id="confirm-komplain-icon-sym" class="material-symbols-outlined text-gold-accent text-[28px]">help</span>
+                </div>
+                <h3 id="confirm-komplain-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">Konfirmasi</h3>
+                <p id="confirm-komplain-desc" class="text-on-surface-variant text-sm text-center mb-4">Lanjutkan aksi ini?</p>
+                <div class="flex space-x-3">
+                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeConfirmKomplain()">Batal</button>
+                    <button type="button" id="confirm-komplain-submit" class="flex-1 bg-deep-onyx text-on-primary font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-black transition-colors rounded-lg btn-premium">Ya, Lanjutkan</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -469,6 +486,42 @@
         document.getElementById('chat-delete-dialog').classList.add('hidden');
     }
 
+    let _pendingKomplainForm = null;
+    function openConfirmKomplain(e, aksi, kode) {
+        e.preventDefault();
+        _pendingKomplainForm = e.target;
+        const isEskalasi = aksi === 'eskalasi';
+        document.getElementById('confirm-komplain-title').textContent = isEskalasi ? 'Eskalasi Komplain?' : 'Tutup Komplain?';
+        document.getElementById('confirm-komplain-desc').textContent = (isEskalasi ? 'Eskalasi ' : 'Tutup ') + kode + (isEskalasi ? ' ke Owner?' : ' (status akan menjadi selesai)?');
+        const iconWrap = document.getElementById('confirm-komplain-icon');
+        const iconSym = document.getElementById('confirm-komplain-icon-sym');
+        const submitBtn = document.getElementById('confirm-komplain-submit');
+        if (isEskalasi) {
+            iconWrap.className = 'w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-5';
+            iconSym.className = 'material-symbols-outlined text-gold-accent text-[28px]';
+            iconSym.textContent = 'emergency';
+            submitBtn.className = 'flex-1 bg-gold-accent text-on-gold-accent font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium';
+            submitBtn.textContent = 'Ya, Eskalasi';
+        } else {
+            iconWrap.className = 'w-14 h-14 rounded-full bg-success/10 border border-success/25 flex items-center justify-center mx-auto mb-5';
+            iconSym.className = 'material-symbols-outlined text-success text-[28px]';
+            iconSym.textContent = 'check_circle';
+            submitBtn.className = 'flex-1 bg-success text-white font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium';
+            submitBtn.textContent = 'Ya, Tutup';
+        }
+        const m = document.getElementById('confirmKomplainModal');
+        m.classList.remove('hidden'); m.classList.add('flex');
+        return false;
+    }
+    function closeConfirmKomplain() {
+        const m = document.getElementById('confirmKomplainModal');
+        if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
+        _pendingKomplainForm = null;
+    }
+    document.getElementById('confirm-komplain-submit')?.addEventListener('click', () => {
+        if (_pendingKomplainForm) _pendingKomplainForm.submit();
+    });
+
     async function deleteMessage() {
         const id = deleteDialogMsgId;
         if (!id) return;
@@ -547,6 +600,8 @@
 
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') {
+            const ck = document.getElementById('confirmKomplainModal');
+            if (ck && !ck.classList.contains('hidden')) { closeConfirmKomplain(); return; }
             if (chatMenuId !== null) { closeChatMenu(); return; }
             const dlg = document.getElementById('chat-delete-dialog');
             if (dlg && !dlg.classList.contains('hidden')) { closeDeleteDialog(); return; }

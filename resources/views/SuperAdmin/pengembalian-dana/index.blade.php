@@ -10,6 +10,7 @@
 @php
     $badgeMap = [
         'requested' => ['label' => 'Menunggu Keputusan', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+        'menunggu' => ['label' => 'Menunggu Keputusan', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
         'disetujui' => ['label' => 'Disetujui', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
         'selesai' => ['label' => 'Selesai', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
         'ditolak' => ['label' => 'Ditolak', 'class' => 'bg-error/10 text-error border-error/20'],
@@ -84,7 +85,7 @@
                     </button>
                 </div>
                 <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-                    <span id="result-count">{{ $refunds->count() }}</span> refund
+                    <span id="result-count">{{ $refunds->total() }}</span> refund
                 </p>
             </div>
         </div>
@@ -235,6 +236,9 @@
             @endforelse
             <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada refund yang cocok.</p>
         </div>
+        @if ($refunds->hasPages())
+            <div class="mt-6 flex justify-center">{{ $refunds->links() }}</div>
+        @endif
     </section>
 </div>
 
