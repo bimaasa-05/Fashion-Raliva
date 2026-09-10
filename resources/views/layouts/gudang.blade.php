@@ -7,7 +7,8 @@
     <title>RALIVA - @yield('title', 'Gudang')</title>
     @include('partials.theme-head')
 </head>
-<body class="text-on-background font-body-md antialiased min-h-screen flex flex-col md:flex-row">
+<body class="text-on-background font-body-md antialiased min-h-screen flex flex-col">
+    <div id="app-shell" class="flex-1 min-w-0 flex flex-col md:flex-row">
     <!-- Mobile Nav (TopAppBar) -->
     <header class="md:hidden flex justify-between items-center w-full px-container-margin h-16 bg-surface border-b border-outline-variant sticky top-0 z-40">
         <button id="sidebar-toggle" class="text-on-surface hover:opacity-80 transition-opacity">
@@ -46,7 +47,7 @@
     </header>
 
     <!-- Side Navigation Drawer -->
-    <aside id="sidebar" class="flex fixed md:sticky top-0 left-0 z-50 flex-col h-screen pt-4 pb-[88px] md:pb-section-gap px-container-margin w-72 border-r border-sidebar-border bg-sidebar -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out">
+    <aside id="sidebar" class="flex fixed md:sticky md:self-start top-0 left-0 z-50 flex-col h-screen shrink-0 pt-4 pb-[88px] md:pb-section-gap px-container-margin w-72 border-r border-sidebar-border bg-sidebar -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out">
         <div class="sidebar-head flex items-center justify-between gap-3 pt-1 pb-3">
             <div class="flex items-center gap-3 min-w-0">
                 <img src="{{ asset('images/logo-raliva.png') }}" alt="Logo Raliva" class="w-11 h-11 rounded-xl shrink-0" />
@@ -84,7 +85,7 @@
                 <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-gold-accent text-white text-[10px] font-bold uppercase tracking-wider truncate shadow-sm mt-1">{{ $sbRoleG }}</span>
             </div>
         </div>
-        <nav class="sidebar-scroll flex-1 overflow-y-auto">
+        <nav class="sidebar-scroll flex-1 min-h-0 overflow-y-auto">
             @include('partials.sidebar-menu-gudang')
         </nav>
     </aside>
@@ -129,6 +130,7 @@
             @yield('content')
         </div>
     </main>
+    </div>
 
     <!-- Bottom Nav Bar (Mobile) -->
     @include('partials.bottom-nav', ['items' => [

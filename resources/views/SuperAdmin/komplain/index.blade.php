@@ -87,7 +87,7 @@
                     </button>
                 </div>
                 <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-                    <span id="result-count">{{ $complaints->count() }}</span> komplain
+                    <span id="result-count">{{ $complaints->total() }}</span> komplain
                 </p>
             </div>
         </div>
@@ -238,6 +238,9 @@
             @endforelse
             <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada komplain yang cocok.</p>
         </div>
+        @if ($complaints->hasPages())
+            <div class="mt-6 flex justify-center">{{ $complaints->links() }}</div>
+        @endif
     </section>
 </div>
 

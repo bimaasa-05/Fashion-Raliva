@@ -33,31 +33,35 @@ class ManajemenTokoController extends Controller
             Store::STATUS_DITOLAK => Store::where('status', Store::STATUS_DITOLAK)->count(),
         ];
 
-        $stores = Store::query()
+        $storesQuery = Store::query()
             ->with('owner:user_id,nama_lengkap,email')
             ->withCount(['products', 'orders'])
             ->with('documents')
             ->when($status !== 'semua', fn ($query) => $query->where('status', $status))
             ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'aktif' THEN 1 WHEN 'nonaktif' THEN 2 ELSE 3 END")
-            ->orderByDesc('created_at')
-            ->get()
-            ->map(function (Store $store) use ($ratings) {
-                return (object) [
-                    'model' => $store,
-                    'initial' => static::initials($store->nama_toko),
-                    'owner_nama' => $store->owner->nama_lengkap ?? '-',
-                    'joined' => $store->created_at?->translatedFormat('d M Y') ?? '-',
-                    'location' => static::shortLocation($store->alamat),
-                    'products_count' => $store->products_count,
-                    'orders_count' => $store->orders_count,
-                    'rating' => $ratings->get($store->store_id),
-                    'deskripsi' => $store->deskripsi,
-                    'dokumen' => $store->documents,
-                ];
-            });
+            ->orderByDesc('created_at');
+
+        $paginated = $storesQuery->paginate(20)->withQueryString();
+
+        $stores = collect($paginated->items())->map(function (Store $store) use ($ratings) {
+            return (object) [
+                'model' => $store,
+                'initial' => static::initials($store->nama_toko),
+                'owner_nama' => $store->owner->nama_lengkap ?? '-',
+                'joined' => $store->created_at?->translatedFormat('d M Y') ?? '-',
+                'location' => static::shortLocation($store->alamat),
+                'products_count' => $store->products_count,
+                'orders_count' => $store->orders_count,
+                'rating' => $ratings->get($store->store_id),
+                'deskripsi' => $store->deskripsi,
+                'dokumen' => $store->documents,
+            ];
+        });
+
+        $paginated->setCollection($stores);
 
         return view('SuperAdmin.manajemen-toko.index', [
-            'stores' => $stores,
+            'stores' => $paginated,
             'stats' => $stats,
             'activeStatus' => in_array($status, ['semua', Store::STATUS_PENDING, Store::STATUS_AKTIF, Store::STATUS_NONAKTIF, Store::STATUS_DITOLAK], true)
                 ? $status

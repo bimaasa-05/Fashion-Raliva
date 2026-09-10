@@ -26,9 +26,9 @@ class KomplainController extends Controller
         return view('Admin.komplain.index', compact('complaints'));
     }
 
-    public function balas(Request $request, Complaint $complaint): RedirectResponse
+    public function balas(Request $request, Complaint $komplain): RedirectResponse
     {
-        if (! in_array($complaint->order?->store_id, AdminContext::assignedStoreIds())) {
+        if (! in_array($komplain->order?->store_id, AdminContext::assignedStoreIds())) {
             abort(403);
         }
 
@@ -37,45 +37,45 @@ class KomplainController extends Controller
         ]);
 
         ComplaintMessage::create([
-            'complaint_id' => $complaint->complaint_id,
+            'complaint_id' => $komplain->complaint_id,
             'sender_id' => Auth::id(),
             'pesan' => $request->input('pesan'),
             'lampiran' => null,
         ]);
 
-        if ($complaint->status === Complaint::STATUS_OPEN) {
-            $complaint->update(['status' => Complaint::STATUS_DIPROSES]);
+        if ($komplain->status === Complaint::STATUS_OPEN) {
+            $komplain->update(['status' => Complaint::STATUS_DIPROSES]);
         }
 
-        if ($complaint->user_id) {
+        if ($komplain->user_id) {
             Notification::create([
-                'user_id' => $complaint->user_id,
+                'user_id' => $komplain->user_id,
                 'aktor_id' => Auth::id(),
                 'tipe' => Notification::TIPE_KOMPLAIN,
                 'judul' => 'Komplain Dibalas Admin',
-                'pesan' => sprintf('Komplain #%s mendapat balasan dari toko.', $complaint->kode ?? $complaint->complaint_id),
+                'pesan' => sprintf('Komplain #%s mendapat balasan dari toko.', $komplain->kode ?? $komplain->complaint_id),
                 'url' => route('customer.order-tracking'),
             ]);
         }
-        Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Komplain Dibalas', sprintf('Balasan komplain #%s terkirim ke customer.', $complaint->kode ?? $complaint->complaint_id), route('admin.komplain'));
+        Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Komplain Dibalas', sprintf('Balasan komplain #%s terkirim ke customer.', $komplain->kode ?? $komplain->complaint_id), route('admin.komplain'));
 
         return back()->with('success', 'Balasan terkirim ke customer.');
     }
 
-    public function eskalasi(Request $request, Complaint $complaint): RedirectResponse
+    public function eskalasi(Request $request, Complaint $komplain): RedirectResponse
     {
-        if (! in_array($complaint->order?->store_id, AdminContext::assignedStoreIds())) {
+        if (! in_array($komplain->order?->store_id, AdminContext::assignedStoreIds())) {
             abort(403);
         }
 
-        if ($complaint->status === Complaint::STATUS_SELESAI || $complaint->status === Complaint::STATUS_DITUTUP) {
+        if ($komplain->status === Complaint::STATUS_SELESAI || $komplain->status === Complaint::STATUS_DITUTUP) {
             return back()->with('error', 'Komplain sudah ditutup.');
         }
 
-        $complaint->update(['status' => Complaint::STATUS_ESKALASI]);
+        $komplain->update(['status' => Complaint::STATUS_ESKALASI]);
 
         // Beritahu Owner toko terkait (eskalasi butuh keputusan final Owner).
-        $ownerId = $complaint->order?->store?->owner_id
+        $ownerId = $komplain->order?->store?->owner_id
             ?? User::whereHas('role', fn ($q) => $q->where('nama_role', 'Owner'))->first()?->user_id;
         if ($ownerId) {
             Notification::create([
@@ -83,8 +83,8 @@ class KomplainController extends Controller
                 'aktor_id' => Auth::id(),
                 'tipe' => Notification::TIPE_KOMPLAIN,
                 'judul' => 'Eskalasi Komplain',
-                'pesan' => "Komplain #{$complaint->complaint_id} dieskalasi ke Anda untuk keputusan final.",
-                'url' => route('owner.ulasan'),
+                'pesan' => "Komplain #{$komplain->complaint_id} dieskalasi ke Anda untuk keputusan final.",
+                'url' => route('owner.komplain.messages', $komplain->complaint_id),
             ]);
         }
 

@@ -44,7 +44,7 @@ class PengajuanTokoController extends Controller
         // Validasi dokumen SEBELUM menulis store ke database, agar tidak ada store
         // pending yang tercipta tanpa dokumen yang layak diverifikasi.
         $jenisList = ['ktp', 'npwp', 'foto_depan', 'siu'];
-        $presentFiles = collect($jenisList)->filter(fn ($jenis) => $request->hasFile($jenis))->keys()->all();
+        $presentFiles = collect($jenisList)->filter(fn ($jenis) => $request->hasFile($jenis))->values()->all();
 
         if (! $presentFiles) {
             return back()->with('error', 'Pilih minimal satu dokumen untuk diunggah.')->withInput();
@@ -71,9 +71,18 @@ class PengajuanTokoController extends Controller
                 'nomor_telepon' => ['sometimes', 'string', 'max:20'],
                 'deskripsi' => ['nullable', 'string', 'max:1000'],
             ]);
+        } elseif ($store->status === Store::STATUS_DITOLAK) {
+            // Izinkan perbaikan data toko saat ditolak -> reset ke pending
+            $validatedStore = $request->validate([
+                'nama_toko' => ['sometimes', 'string', 'max:150'],
+                'kategori' => ['nullable', 'string', 'max:100', Rule::exists('store_categories', 'nama_kategori')->where('status', StoreCategory::STATUS_AKTIF)],
+                'alamat' => ['sometimes', 'string', 'max:500'],
+                'nomor_telepon' => ['sometimes', 'string', 'max:20'],
+                'deskripsi' => ['nullable', 'string', 'max:1000'],
+            ]);
         }
 
-        DB::transaction(function () use ($user, $store, $isNew, $isRevising, $storeFields, $presentFiles, $request) {
+        DB::transaction(function () use ($user, &$store, $isNew, $isRevising, $storeFields, $presentFiles, $request) {
             if ($isNew) {
                 $store = Store::create([
                     'owner_id' => $user->user_id,
@@ -113,7 +122,7 @@ class PengajuanTokoController extends Controller
                 'url' => route('superadmin.manajemen-toko'),
             ]);
         }
-        \App\Models\Notification::fireSelf(\App\Models\Notification::TIPE_SISTEM, 'Pengajuan Toko Terkirim', sprintf('%d dokumen toko "%s" terunggah dan menunggu verifikasi Super Admin.', $uploaded, $store->nama_toko), route('owner.pengajuan-toko'));
+        \App\Models\Notification::fireSelf(\App\Models\Notification::TIPE_SISTEM, 'Pengajuan Toko Terkirim', sprintf('%d dokumen toko "%s" terunggah dan menunggu verifikasi Super Admin.', count($presentFiles), $store->nama_toko), route('owner.pengajuan-toko'));
 
         return redirect()->route('owner.pengajuan-toko')
             ->with('success', count($presentFiles) . ' dokumen berhasil diunggah dan menunggu verifikasi.');

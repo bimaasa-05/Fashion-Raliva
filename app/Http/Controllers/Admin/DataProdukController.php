@@ -75,7 +75,7 @@ class DataProdukController extends Controller
                 'tipe' => \App\Models\Notification::TIPE_PROMO,
                 'judul' => 'Produk Baru Diajukan',
                 'pesan' => sprintf('Produk "%s" diajukan dan menunggu verifikasi Owner.', $product->nama_produk),
-                'url' => route('owner.produk'),
+                'url' => route('owner.moderasi-produk'),
             ]);
         }
         \App\Models\Notification::fireSelf(

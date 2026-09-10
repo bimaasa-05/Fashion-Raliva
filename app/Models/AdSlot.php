@@ -15,10 +15,23 @@ class AdSlot extends Model
 
     public const STATUS_DITUNDA = 'ditunda';
 
+    public const PAYMENT_MENUNGGU = 'menunggu_verifikasi';
+
+    public const PAYMENT_TERVERIFIKASI = 'terverifikasi';
+
+    public const PAYMENT_DITOLAK = 'ditolak';
+
     protected $fillable = [
         'product_id',
         'store_id',
         'nominal_bid',
+        'payment_status',
+        'metode_pembayaran',
+        'file_bukti',
+        'platform_bank_account_id',
+        'paid_at',
+        'handled_by',
+        'alasan_penolakan',
         'tanggal_mulai',
         'tanggal_selesai',
         'status',
@@ -30,6 +43,7 @@ class AdSlot extends Model
             'nominal_bid' => 'decimal:2',
             'tanggal_mulai' => 'date',
             'tanggal_selesai' => 'date',
+            'paid_at' => 'datetime',
         ];
     }
 
@@ -41,5 +55,15 @@ class AdSlot extends Model
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class, 'store_id', 'store_id');
+    }
+
+    public function bankAccount(): BelongsTo
+    {
+        return $this->belongsTo(PlatformBankAccount::class, 'platform_bank_account_id', 'platform_bank_account_id');
+    }
+
+    public function handler(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'handled_by', 'user_id');
     }
 }

@@ -30,16 +30,17 @@ class SlotProdukController extends Controller
             });
         }
 
-        $stores = $query->orderBy('nama_toko')->get(['store_id', 'nama_toko', 'owner_id', 'status']);
-        $summary = SlotService::summaries($stores);
+        $queryForSummary = clone $query;
+        $stores = $query->orderBy('nama_toko')->paginate(20, ['store_id', 'nama_toko', 'owner_id', 'status'])->withQueryString();
+        $summary = SlotService::summaries($queryForSummary->get(['store_id', 'nama_toko', 'owner_id', 'status']));
 
-        $packages = ProductSlotPackage::withCount('subscriptions')->orderByDesc('slot_package_id')->get();
+        $packages = ProductSlotPackage::withCount('subscriptions')->orderByDesc('slot_package_id')->paginate(20)->withQueryString();
 
         $purchaseRequests = SlotPurchaseRequest::with(['store:store_id,nama_toko', 'handler:user_id,nama_lengkap'])
             ->orderByRaw('CASE status WHEN "pending" THEN 0 ELSE 1 END')
             ->orderByDesc('diajukan_pada')
-            ->get();
-        $pendingCount = $purchaseRequests->where('status', SlotPurchaseRequest::STATUS_PENDING)->count();
+            ->paginate(20)->withQueryString();
+        $pendingCount = SlotPurchaseRequest::where('status', SlotPurchaseRequest::STATUS_PENDING)->count();
 
         $grantLog = SlotGrant::with(['store:store_id,nama_toko', 'creator:user_id,nama_lengkap'])
             ->orderByDesc('slot_grant_id')
