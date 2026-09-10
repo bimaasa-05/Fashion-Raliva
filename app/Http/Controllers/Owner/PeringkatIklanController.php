@@ -7,6 +7,7 @@ use App\Models\AdSlot;
 use App\Models\PaymentMethod;
 use App\Models\PlatformBankAccount;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Support\OwnerContext;
 use App\Support\PeringkatService;
 use Illuminate\Http\Request;
@@ -37,9 +38,8 @@ class PeringkatIklanController extends Controller
 
         $rekenings = PlatformBankAccount::with('bank')->where('status', PlatformBankAccount::STATUS_AKTIF)->orderBy('nomor_rekening')->get();
         $metode = PaymentMethod::where('status', PaymentMethod::STATUS_AKTIF)->orderBy('nama_metode')->get();
-
-        $tiers = \App\Support\PeringkatService::defaultTiers();
-        $raw = \App\Models\Setting::get(\App\Models\Setting::PERINGKAT_TIER, null);
+        $tiers = PeringkatService::defaultTiers();
+        $raw = Setting::get(Setting::PERINGKAT_TIER, null);
         if ($raw) {
             $decoded = json_decode($raw, true);
             if (is_array($decoded) && $decoded !== []) $tiers = $decoded;
