@@ -10,6 +10,7 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>/* Global Hide Scrollbar — customer auth */ ::-webkit-scrollbar{display:none!important;width:0!important;height:0!important} *{-ms-overflow-style:none!important;scrollbar-width:none!important}</style>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
