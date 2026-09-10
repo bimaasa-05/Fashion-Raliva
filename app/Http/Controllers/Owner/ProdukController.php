@@ -23,7 +23,7 @@ class ProdukController extends Controller
     {
         $storeId = OwnerContext::firstStoreId();
 
-        $query = Product::with(['category', 'variants', 'images'])
+        $query = Product::with(['category', 'variants', 'images' => fn ($q) => $q->orderBy('urutan')])
             ->where('store_id', $storeId);
 
         if ($q = trim((string) $request->input('q'))) {

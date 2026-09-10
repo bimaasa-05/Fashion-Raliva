@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 data: {
                     labels: data.labels,
                     datasets: [
-                        { label: 'Pendapatan', data: data.pendapatan, backgroundColor: 'rgba(201, 162, 77, 0.85)', borderRadius: 4, maxBarThickness: 34 },
+                        { label: 'Pendapatan', data: data.pendapatan, backgroundColor: 'rgba(139, 30, 63, 0.85)', borderRadius: 4, maxBarThickness: 34 },
                         { type: 'line', label: 'Refund', data: data.refund, borderColor: '#BA1A1A', backgroundColor: 'transparent', tension: 0.35, borderWidth: 2, pointBackgroundColor: '#BA1A1A', pointRadius: 3 }
                     ]
                 },
@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     type: 'bar',
                     data: {
                         labels: @json(array_column($top, 'nama')),
-                        datasets: [{ label: 'Terjual (pcs)', data: @json(array_column($top, 'terjual')), backgroundColor: ['#C9A24D', 'rgba(201,162,77,.75)', 'rgba(201,162,77,.55)', 'rgba(201,162,77,.4)', 'rgba(201,162,77,.25)'], borderRadius: 4 }]
+                        datasets: [{ label: 'Terjual (pcs)', data: @json(array_column($top, 'terjual')), backgroundColor: ['#8B1E3F', 'rgba(139,30,63,.75)', 'rgba(139,30,63,.55)', 'rgba(139,30,63,.4)', 'rgba(139,30,63,.25)'], borderRadius: 4 }]
                     },
                     options: {
                         indexAxis: 'y',

@@ -17,15 +17,14 @@ class ModerasiProdukController extends Controller
 
         $stats = [
             Product::STATUS_PENDING => Product::where('status', Product::STATUS_PENDING)->count(),
-            Product::STATUS_AKTIF => Product::where('status', Product::STATUS_AKTIF)->count(),
             Product::STATUS_DITOLAK => Product::where('status', Product::STATUS_DITOLAK)->count(),
         ];
 
         $products = Product::query()
             ->with(['store:owner_id,store_id,nama_toko', 'category', 'images', 'variants'])
-            ->whereIn('status', [Product::STATUS_PENDING, Product::STATUS_AKTIF, Product::STATUS_DITOLAK])
+            ->whereIn('status', [Product::STATUS_PENDING, Product::STATUS_DITOLAK])
             ->when(
-                in_array($status, [Product::STATUS_PENDING, Product::STATUS_AKTIF, Product::STATUS_DITOLAK], true),
+                in_array($status, [Product::STATUS_PENDING, Product::STATUS_DITOLAK], true),
                 fn ($query) => $query->where('status', $status)
             )
             ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'ditolak' THEN 1 ELSE 2 END")
