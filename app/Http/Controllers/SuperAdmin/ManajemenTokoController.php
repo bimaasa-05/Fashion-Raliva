@@ -135,11 +135,15 @@ class ManajemenTokoController extends Controller
 
             Notification::create([
                 'user_id' => $toko->owner_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => Notification::TIPE_SISTEM,
                 'judul' => 'Toko Disetujui',
                 'pesan' => sprintf('Selamat! Toko "%s" telah disetujui dan kini aktif di Raliva.', $toko->nama_toko),
+                'url' => route('owner.data-toko'),
             ]);
         });
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Toko Disetujui', sprintf('Toko "%s" disetujui.', $toko->nama_toko), route('superadmin.manajemen-toko'));
 
         return back()->with('toast', [
             'message' => sprintf('Toko %s disetujui dan kini aktif.', $toko->nama_toko),
@@ -181,10 +185,14 @@ class ManajemenTokoController extends Controller
 
         Notification::create([
             'user_id' => $toko->owner_id,
+            'aktor_id' => ActivityLogger::resolveActorId(),
             'tipe' => Notification::TIPE_SISTEM,
             'judul' => 'Pengajuan Toko Ditolak',
             'pesan' => sprintf('Pengajuan toko "%s" ditolak. Alasan: %s', $toko->nama_toko, $data['alasan']),
+            'url' => route('owner.data-toko'),
         ]);
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Toko Ditolak', sprintf('Toko "%s" ditolak.', $toko->nama_toko), route('superadmin.manajemen-toko'));
 
         return back()->with('toast', [
             'message' => sprintf('Toko %s ditolak. Alasan dikirim ke pemilik toko.', $toko->nama_toko),
@@ -216,10 +224,14 @@ class ManajemenTokoController extends Controller
 
         Notification::create([
             'user_id' => $toko->owner_id,
+            'aktor_id' => ActivityLogger::resolveActorId(),
             'tipe' => Notification::TIPE_SISTEM,
             'judul' => 'Toko Ditangguhkan',
             'pesan' => sprintf('Toko "%s" ditangguhkan oleh platform. Hubungi dukungan Raliva untuk informasi lebih lanjut.', $toko->nama_toko),
+            'url' => route('owner.data-toko'),
         ]);
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Toko Ditangguhkan', sprintf('Toko "%s" ditangguhkan.', $toko->nama_toko), route('superadmin.manajemen-toko'));
 
         return back()->with('toast', [
             'message' => sprintf('Toko %s ditangguhkan.', $toko->nama_toko),
@@ -251,10 +263,14 @@ class ManajemenTokoController extends Controller
 
         Notification::create([
             'user_id' => $toko->owner_id,
+            'aktor_id' => ActivityLogger::resolveActorId(),
             'tipe' => Notification::TIPE_SISTEM,
             'judul' => 'Toko Diaktifkan Kembali',
             'pesan' => sprintf('Toko "%s" telah diaktifkan kembali dan dapat beroperasi normal.', $toko->nama_toko),
+            'url' => route('owner.data-toko'),
         ]);
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Toko Diaktifkan Kembali', sprintf('Toko "%s" diaktifkan kembali.', $toko->nama_toko), route('superadmin.manajemen-toko'));
 
         return back()->with('toast', [
             'message' => sprintf('Toko %s diaktifkan kembali.', $toko->nama_toko),
@@ -293,10 +309,14 @@ class ManajemenTokoController extends Controller
 
         Notification::create([
             'user_id' => $toko->owner_id,
+            'aktor_id' => ActivityLogger::resolveActorId(),
             'tipe' => Notification::TIPE_SISTEM,
             'judul' => 'Dokumen Disetujui',
             'pesan' => sprintf('Dokumen %s toko "%s" disetujui oleh Super Admin.', $this->jenisLabel($dokumen->jenis), $toko->nama_toko),
+            'url' => route('owner.data-toko'),
         ]);
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Dokumen Disetujui', sprintf('Dokumen %s toko "%s" disetujui.', $this->jenisLabel($dokumen->jenis), $toko->nama_toko), route('superadmin.manajemen-toko'));
 
         return back()->with('toast', [
             'message' => sprintf('Dokumen %s disetujui.', $this->jenisLabel($dokumen->jenis)),
@@ -342,10 +362,14 @@ class ManajemenTokoController extends Controller
 
         Notification::create([
             'user_id' => $toko->owner_id,
+            'aktor_id' => ActivityLogger::resolveActorId(),
             'tipe' => Notification::TIPE_SISTEM,
             'judul' => 'Dokumen Ditolak',
             'pesan' => sprintf('Dokumen %s toko "%s" ditolak. Alasan: %s', $this->jenisLabel($dokumen->jenis), $toko->nama_toko, $data['alasan']),
+            'url' => route('owner.data-toko'),
         ]);
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Dokumen Ditolak', sprintf('Dokumen %s toko "%s" ditolak.', $this->jenisLabel($dokumen->jenis), $toko->nama_toko), route('superadmin.manajemen-toko'));
 
         return back()->with('toast', [
             'message' => sprintf('Dokumen %s ditolak.', $this->jenisLabel($dokumen->jenis)),

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Promotion;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
@@ -67,6 +68,8 @@ class PromoPlatformController extends Controller
             'Membuat promo platform baru: '.$promo->nama_promo
         );
 
+        Notification::fireSelf(Notification::TIPE_PROMO, 'Promo Dibuat', 'Promo "'.$promo->nama_promo.'" dibuat.', route('superadmin.promo-platform'));
+
         return back()->with('toast', [
             'message' => 'Promo "'.$promo->nama_promo.'" berhasil dibuat.',
             'icon' => 'task_alt',
@@ -119,6 +122,8 @@ class PromoPlatformController extends Controller
             'Memperbarui promo: '.$promo->nama_promo
         );
 
+        Notification::fireSelf(Notification::TIPE_PROMO, 'Promo Diperbarui', 'Promo "'.$promo->nama_promo.'" diperbarui.', route('superadmin.promo-platform'));
+
         return back()->with('toast', [
             'message' => 'Promo "'.$promo->nama_promo.'" berhasil diperbarui.',
             'icon' => 'task_alt',
@@ -139,6 +144,8 @@ class PromoPlatformController extends Controller
         );
 
         $promo->delete();
+
+        Notification::fireSelf(Notification::TIPE_PROMO, 'Promo Dihapus', 'Promo "'.$nama.'" dihapus.', route('superadmin.promo-platform'));
 
         return back()->with('toast', [
             'message' => 'Promo "'.$nama.'" berhasil dihapus.',

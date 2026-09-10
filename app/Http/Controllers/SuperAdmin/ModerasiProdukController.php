@@ -93,12 +93,15 @@ class ModerasiProdukController extends Controller
 
         if ($produk->store) {
             Notification::create([
-                'user_id' => $produk->store->owner_id,
-                'tipe' => Notification::TIPE_SISTEM,
-                'judul' => 'Produk Disetujui',
-                'pesan' => sprintf('Produk "%s" telah disetujui moderasi dan kini dapat tampil di Raliva.', $produk->nama_produk),
-            ]);
+                    'user_id' => $produk->store->owner_id,
+                    'aktor_id' => ActivityLogger::resolveActorId(),
+                    'tipe' => Notification::TIPE_SISTEM,
+                    'judul' => 'Produk Disetujui',
+                    'pesan' => sprintf('Produk "%s" telah disetujui moderasi dan kini dapat tampil di Raliva.', $produk->nama_produk),
+                    'url' => route('owner.produk'),
+                ]);
         }
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Produk Disetujui', sprintf('Produk "%s" disetujui.' , $produk->nama_produk), route('superadmin.moderasi-produk'));
 
         return back()->with('toast', [
             'message' => sprintf('Produk %s disetujui dan kini dapat tampil.', $produk->nama_produk),
@@ -141,11 +144,14 @@ class ModerasiProdukController extends Controller
         if ($produk->store) {
             Notification::create([
                 'user_id' => $produk->store->owner_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => Notification::TIPE_SISTEM,
                 'judul' => 'Produk Ditolak Moderasi',
                 'pesan' => sprintf('Produk "%s" ditolak moderasi. Alasan: %s. Silakan perbaiki lalu kirim ulang.', $produk->nama_produk, $data['alasan']),
+                'url' => route('owner.produk'),
             ]);
         }
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Produk Ditolak', sprintf('Produk "%s" ditolak moderasi.', $produk->nama_produk), route('superadmin.moderasi-produk'));
 
         return back()->with('toast', [
             'message' => sprintf('Produk %s ditolak. Alasan dikirim ke pemilik toko.', $produk->nama_produk),

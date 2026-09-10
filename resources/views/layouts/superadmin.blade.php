@@ -23,7 +23,7 @@
 <html class="light" lang="id">
 <head>
     <meta charset="utf-8" />
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="user-id" content="{{ Auth::id() }}" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>RALIVA - @yield('title', 'Super Admin')</title>
     @include('partials.theme-head')
@@ -163,6 +163,7 @@
     ]])
 
     @stack('modals')
+    @include('partials.notification-popup')
     @include('partials.layout-scripts')
     @include('partials.ui-scripts')
     <script>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bank;
+use App\Models\Notification;
 use App\Models\PlatformBankAccount;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
@@ -72,6 +73,8 @@ class DataBankController extends Controller
             sprintf('Menambahkan bank "%s" — rekening %s a.n. %s.', $bank->nama_bank, $data['nomor_rekening'], $data['nama_pemilik'])
         );
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Bank Ditambahkan', 'Bank "'.$bank->nama_bank.'" ditambahkan.', route('superadmin.data-bank'));
+
         return back()->with('toast', [
             'message' => 'Bank "'.$bank->nama_bank.'" berhasil ditambahkan.',
             'icon' => 'task_alt',
@@ -129,6 +132,8 @@ class DataBankController extends Controller
             sprintf('Mengubah bank "%s" → "%s".', $lama['nama_bank'], $bank->nama_bank)
         );
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Bank Diubah', 'Bank "'.$bank->nama_bank.'" diperbarui.', route('superadmin.data-bank'));
+
         return back()->with('toast', [
             'message' => 'Perubahan bank "'.$bank->nama_bank.'" berhasil disimpan.',
             'icon' => 'task_alt',
@@ -160,6 +165,8 @@ class DataBankController extends Controller
 
         $bank->platformBankAccounts()->delete();
         $bank->delete();
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Bank Dihapus', 'Bank "'.$lama['nama_bank'].'" dihapus.', route('superadmin.data-bank'));
 
         return back()->with('toast', [
             'message' => 'Bank "'.$lama['nama_bank'].'" berhasil dihapus.',

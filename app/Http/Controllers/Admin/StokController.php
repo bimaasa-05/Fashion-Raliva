@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\WarehouseStock;
 use App\Support\AdminContext;
 use Illuminate\Http\RedirectResponse;
@@ -33,6 +34,8 @@ class StokController extends Controller
         ]);
 
         $warehouseStock->update($data);
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Stok Diperbarui', sprintf('Stok "%s" kini %d.', $warehouseStock->productVariant?->product?->nama_produk ?? 'Produk', $data['jumlah_stok']), route('admin.stok'));
 
         return back()->with('success', 'Stok diperbarui.');
     }

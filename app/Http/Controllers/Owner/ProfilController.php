@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -42,7 +43,12 @@ class ProfilController extends Controller
 
         $user->update($data);
 
-        return redirect()->route('owner.profil')->with('success', 'Profil berhasil diperbarui.');
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Profil Diperbarui', 'Data profil Anda berhasil diperbarui.', route('owner.profil'));
+
+        return redirect()->route('owner.profil')->with('toast', [
+            'message' => 'Profil berhasil diperbarui.',
+            'icon' => 'task_alt',
+        ]);
     }
 
     public function updatePassword(Request $request)
@@ -62,7 +68,12 @@ class ProfilController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        return redirect()->route('owner.profil')->with('success', 'Kata sandi berhasil diperbarui.');
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Kata Sandi Diperbarui', 'Kata sandi akun Anda berhasil diperbarui.', route('owner.profil'));
+
+        return redirect()->route('owner.profil')->with('toast', [
+            'message' => 'Kata sandi berhasil diperbarui.',
+            'icon' => 'task_alt',
+        ]);
     }
 
     public function updatePhoto(Request $request)
@@ -81,8 +92,13 @@ class ProfilController extends Controller
             }
             $path = $request->file('foto_profil')->store('profil', 'public');
             $user->update(['foto_profil' => $path]);
+
+            Notification::fireSelf(Notification::TIPE_SISTEM, 'Foto Profil Diperbarui', 'Foto profil Anda berhasil diperbarui.', route('owner.profil'));
         }
 
-        return back()->with('success', 'Foto profil berhasil diperbarui.');
+        return back()->with('toast', [
+            'message' => 'Foto profil berhasil diperbarui.',
+            'icon' => 'task_alt',
+        ]);
     }
 }

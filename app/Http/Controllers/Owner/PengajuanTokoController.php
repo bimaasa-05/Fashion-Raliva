@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Models\Store;
 use App\Models\StoreDocument;
+use App\Models\StoreCategory;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class PengajuanTokoController extends Controller
 {
@@ -18,8 +20,11 @@ class PengajuanTokoController extends Controller
         $documents = $store
             ? StoreDocument::where('store_id', $store->store_id)->get()
             : collect();
+        $storeCategories = StoreCategory::where('status', StoreCategory::STATUS_AKTIF)
+            ->orderBy('nama_kategori')
+            ->pluck('nama_kategori');
 
-        return view('Owner.pengajuan-toko.index', compact('store', 'documents'));
+        return view('Owner.pengajuan-toko.index', compact('store', 'documents', 'storeCategories'));
     }
 
     public function store(Request $request)
@@ -53,6 +58,7 @@ class PengajuanTokoController extends Controller
         if ($isNew) {
             $storeFields = $request->validate([
                 'nama_toko' => ['required', 'string', 'max:150'],
+                'kategori' => ['nullable', 'string', 'max:100', Rule::exists('store_categories', 'nama_kategori')->where('status', StoreCategory::STATUS_AKTIF)],
                 'alamat' => ['required', 'string', 'max:500'],
                 'nomor_telepon' => ['required', 'string', 'max:20'],
                 'deskripsi' => ['nullable', 'string', 'max:1000'],
@@ -60,6 +66,7 @@ class PengajuanTokoController extends Controller
         } elseif ($isRevising) {
             $storeFields = $request->validate([
                 'nama_toko' => ['sometimes', 'string', 'max:150'],
+                'kategori' => ['nullable', 'string', 'max:100', Rule::exists('store_categories', 'nama_kategori')->where('status', StoreCategory::STATUS_AKTIF)],
                 'alamat' => ['sometimes', 'string', 'max:500'],
                 'nomor_telepon' => ['sometimes', 'string', 'max:20'],
                 'deskripsi' => ['nullable', 'string', 'max:1000'],
@@ -92,6 +99,21 @@ class PengajuanTokoController extends Controller
                 );
             }
         });
+
+        $sa = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
+            ->where('status', \App\Models\User::STATUS_AKTIF)
+            ->first();
+        if ($sa) {
+            \App\Models\Notification::create([
+                'user_id' => $sa->user_id,
+                'aktor_id' => $user->user_id,
+                'tipe' => \App\Models\Notification::TIPE_SISTEM,
+                'judul' => 'Pengajuan Toko Baru',
+                'pesan' => sprintf('Owner %s mengajukan/merubah dokumen toko "%s" dan menunggu verifikasi.', $user->nama_lengkap ?? '-', $store->nama_toko),
+                'url' => route('superadmin.manajemen-toko'),
+            ]);
+        }
+        \App\Models\Notification::fireSelf(\App\Models\Notification::TIPE_SISTEM, 'Pengajuan Toko Terkirim', sprintf('%d dokumen toko "%s" terunggah dan menunggu verifikasi Super Admin.', $uploaded, $store->nama_toko), route('owner.pengajuan-toko'));
 
         return redirect()->route('owner.pengajuan-toko')
             ->with('success', count($presentFiles) . ' dokumen berhasil diunggah dan menunggu verifikasi.');

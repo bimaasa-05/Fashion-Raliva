@@ -791,6 +791,30 @@ class RalivaDemoSeeder extends Seeder
             Supplier::updateOrCreate(['email' => $s['email']], $s);
         }
 
+        // Riwayat barang masuk dari supplier (kolom Supplier di halaman Stok SuperAdmin)
+        $supIds = Supplier::pluck('supplier_id', 'nama_supplier')->all();
+        if ($supIds !== [] && WarehouseStock::exists()) {
+            $supplierMovements = [];
+            $stockSamples = WarehouseStock::orderBy('warehouse_stock_id')->take(50)->get();
+            $supNames = array_keys($supIds);
+            foreach ($stockSamples as $si => $ws) {
+                $supplierName = $supNames[$si % count($supNames)];
+                $supplierMovements[] = [
+                    'warehouse_id' => $ws->warehouse_id,
+                    'product_variant_id' => $ws->product_variant_id,
+                    'tipe_pergerakan' => StockMovement::TIPE_MASUK,
+                    'jumlah' => 10,
+                    'sumber_tipe' => StockMovement::SUMBER_SUPPLIER,
+                    'sumber_id' => $supIds[$supplierName],
+                    'alasan' => 'Barang masuk dari '.$supplierName,
+                    'dibuat_oleh' => $firstGudangId,
+                    'created_at' => now()->subDays(7 + $si),
+                ];
+                $ws->update(['supplier_id' => $supIds[$supplierName]]);
+            }
+            StockMovement::insert($supplierMovements);
+        }
+
         // ════════════════════════════════════════════════════════════════
         //  18. PEMBAYARAN + BUKTI + REFUND
         // ════════════════════════════════════════════════════════════════

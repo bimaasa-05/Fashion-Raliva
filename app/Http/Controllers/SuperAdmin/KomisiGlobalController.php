@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Commission;
+use App\Models\Notification;
 use App\Models\Setting;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
@@ -96,6 +97,8 @@ class KomisiGlobalController extends Controller
             ['nilai' => $nilaiBaru],
             sprintf('Mengubah tarif komisi global dari %s%% menjadi %s%%.%s', number_format((float) $nilaiLama, 0, ',', '.'), number_format((float) $nilaiBaru, 0, ',', '.'), $data['catatan'] ? ' Catatan: '.$data['catatan'] : '')
         );
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Tarif Komisi Diubah', sprintf('Tarif komisi global menjadi %s%%.', number_format((float) $nilaiBaru, 0, ',', '.')), route('superadmin.komisi-global'));
 
         return back()->with('toast', [
             'message' => 'Tarif komisi global berhasil diperbarui menjadi '.number_format((float) $nilaiBaru, 0, ',', '.').'%.',

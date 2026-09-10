@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Support\ActivityLogger;
 use App\Support\AdminContext;
 use Illuminate\Http\Request;
 
@@ -35,7 +36,7 @@ class DataProdukController extends Controller
             'nama_produk' => 'required|string|max:255',
             'harga_dasar' => 'required|numeric|min:0',
             'category_id' => 'nullable|exists:categories,category_id',
-            'tipe_produk' => 'nullable|string|max:50',
+            'tipe_produk' => 'sometimes|string|in:regular,preorder,made_to_order',
             'deskripsi' => 'nullable|string|max:2000',
             'foto_produk' => 'nullable|array|max:8',
             'foto_produk.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -61,10 +62,28 @@ class DataProdukController extends Controller
             'nama_produk' => $data['nama_produk'],
             'deskripsi' => $data['deskripsi'] ?? null,
             'harga_dasar' => $data['harga_dasar'],
-            'tipe_produk' => $data['tipe_produk'] ?? null,
+            'tipe_produk' => $data['tipe_produk'] ?? Product::TIPE_REGULAR,
             'status' => Product::STATUS_PENDING,
             'alasan_penolakan' => 'Menunggu persetujuan Owner.',
         ]);
+
+        $store = \App\Models\Store::find($storeId);
+        if ($store && $store->owner_id) {
+            \App\Models\Notification::create([
+                'user_id' => $store->owner_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => \App\Models\Notification::TIPE_PROMO,
+                'judul' => 'Produk Baru Diajukan',
+                'pesan' => sprintf('Produk "%s" diajukan dan menunggu verifikasi Owner.', $product->nama_produk),
+                'url' => route('owner.produk'),
+            ]);
+        }
+        \App\Models\Notification::fireSelf(
+            \App\Models\Notification::TIPE_PROMO,
+            'Produk Diajukan',
+            sprintf('Produk "%s" diajukan ke Owner untuk verifikasi.', $product->nama_produk),
+            route('admin.produk')
+        );
 
         // Handle foto upload
         if ($request->hasFile('foto_produk')) {

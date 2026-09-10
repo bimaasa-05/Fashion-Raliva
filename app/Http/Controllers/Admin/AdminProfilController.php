@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +31,8 @@ class AdminProfilController extends Controller
 
         $user->update($data);
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Profil Diperbarui', 'Data profil Anda berhasil diperbarui.', route('admin.profil'));
+
         return back()->with('success', 'Profil berhasil diperbarui.');
     }
 
@@ -48,6 +51,8 @@ class AdminProfilController extends Controller
         $path = $request->file('foto_profil')->store('avatars', 'public');
         $user->update(['foto_profil' => $path]);
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Foto Profil Diperbarui', 'Foto profil Anda berhasil diperbarui.', route('admin.profil'));
+
         return back()->with('success', 'Foto profil diperbarui.');
     }
 
@@ -65,6 +70,8 @@ class AdminProfilController extends Controller
         }
 
         $user->update(['password' => Hash::make($data['password'])]);
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Kata Sandi Diperbarui', 'Kata sandi akun Anda berhasil diperbarui.', route('admin.profil'));
 
         return back()->with('success', 'Password berhasil diubah.');
     }

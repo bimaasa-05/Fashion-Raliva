@@ -63,5 +63,12 @@ class AppServiceProvider extends ServiceProvider
         Blade::if('permission', function (string $kode) {
             return Auth::check() && Auth::user()->hasPermission($kode);
         });
+
+        // Sediakan notifikasi terbaru + jumlah belum dibaca untuk semua layout
+        // (superadmin, admin, owner, gudang, produksi) lewat partial notification-panel.
+        \Illuminate\Support\Facades\View::composer(
+            ['partials.notification-panel'],
+            \App\View\Composers\NotificationComposer::class
+        );
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Review;
 use App\Support\ActivityLogger;
 
@@ -59,6 +60,19 @@ class UlasanProdukTokoController extends Controller
             sprintf('Menonaktifkan ulasan produk "%s" dari pengguna "%s".', $review->product->nama_produk ?? '-', $review->user->nama_lengkap ?? '-')
         );
 
+        if ($review->user_id !== auth()->id()) {
+            Notification::create([
+                'user_id' => $review->user_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Ulasan Dinonaktifkan',
+                'pesan' => sprintf('Ulasan Anda pada produk "%s" dinonaktifkan oleh moderasi.', $review->product->nama_produk ?? '-'),
+                'url' => route('customer.reviews'),
+            ]);
+        }
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Ulasan Dinonaktifkan', 'Ulasan berhasil dinonaktifkan.', route('superadmin.ulasan-produk-toko'));
+
         return back()->with('toast', [
             'message' => 'Ulasan berhasil dinonaktifkan.',
             'icon' => 'task_alt',
@@ -79,6 +93,19 @@ class UlasanProdukTokoController extends Controller
             $review->toArray(),
             sprintf('Mengaktifkan kembali ulasan produk "%s" dari pengguna "%s".', $review->product->nama_produk ?? '-', $review->user->nama_lengkap ?? '-')
         );
+
+        if ($review->user_id !== auth()->id()) {
+            Notification::create([
+                'user_id' => $review->user_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Ulasan Diaktifkan Kembali',
+                'pesan' => sprintf('Ulasan Anda pada produk "%s" diaktifkan kembali.', $review->product->nama_produk ?? '-'),
+                'url' => route('customer.reviews'),
+            ]);
+        }
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Ulasan Diaktifkan Kembali', 'Ulasan berhasil diaktifkan kembali.', route('superadmin.ulasan-produk-toko'));
 
         return back()->with('toast', [
             'message' => 'Ulasan berhasil diaktifkan kembali.',

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Gudang;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
+use App\Models\Role;
 use App\Models\StockMovement;
 use App\Models\StockTransfer;
 use App\Models\StockTransferItem;
 use App\Models\Warehouse;
 use App\Models\WarehouseStock;
+use App\Services\NotificationService;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -149,6 +152,16 @@ class PemindahanStokController extends Controller
             ['to_warehouse_id' => $data['to_warehouse_id'], 'product_variant_id' => $data['product_variant_id'], 'jumlah' => $data['jumlah']],
             sprintf('Pemindahan %d unit dari "%s" ke gudang tujuan.', $data['jumlah'], $warehouse->nama_gudang)
         );
+
+        NotificationService::sendToRole(
+            Role::ADMIN,
+            Notification::TIPE_SISTEM,
+            'Permintaan Pemindahan Stok',
+            sprintf('Pemindahan %d unit diajukan dari gudang "%s".', $data['jumlah'], $warehouse->nama_gudang),
+            auth()->id(),
+            route('admin.koordinasi-gudang')
+        );
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemindahan Stok Diajukan', sprintf('Permintaan pemindahan %d unit berhasil dibuat.', $data['jumlah']), route('gudang.dashboard'));
 
         return back()->with('toast', ['message' => 'Permintaan pemindahan berhasil dibuat.', 'icon' => 'task_alt']);
     }

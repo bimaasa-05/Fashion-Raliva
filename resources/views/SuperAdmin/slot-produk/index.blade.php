@@ -82,10 +82,27 @@
                             <p class="text-xs text-on-surface-variant mt-0.5">Kuota gratis otomatis untuk toko yang baru disetujui. Saat ini <span class="font-bold text-on-surface">{{ number_format($slotAwalDefault) }} slot</span>. Kuota toko yang sudah ada tidak terpengaruh.</p>
                         </div>
                     </div>
-                    <form method="POST" action="{{ route('superadmin.slot-produk.default') }}" class="flex items-center gap-2">
+                    <form method="POST" action="{{ route('superadmin.slot-produk.default') }}" onsubmit="return openConfirmSlot(event, 'Slot awal toko baru akan diubah. Lanjutkan?')" class="flex items-center gap-2">
                         @csrf
                         @method('PUT')
                         <input type="number" name="slot_awal" min="0" max="100000" value="{{ $slotAwalDefault }}" required class="w-28 bg-transparent border border-muted-border rounded-lg px-3 py-2 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" aria-label="Jumlah slot awal" />
+                        <button type="submit" class="py-2 px-4 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium whitespace-nowrap">Simpan</button>
+                    </form>
+                </div>
+
+                <!-- Harga Per Slot (default global) -->
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 bg-surface-container-low border border-muted-border rounded-lg p-4">
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-[20px] text-gold-accent mt-0.5">payments</span>
+                        <div>
+                            <p class="font-bold text-on-surface">Harga Per Slot Fleksibel</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">Harga satuan untuk pembelian slot fleksibel oleh Owner. Saat ini <span class="font-bold text-on-surface">Rp {{ number_format($hargaPerSlot) }}</span> per slot. Total = jumlah slot × harga satuan.</p>
+                        </div>
+                    </div>
+                    <form method="POST" action="{{ route('superadmin.slot-produk.harga-per-slot') }}" onsubmit="return openConfirmSlot(event, 'Harga per slot akan diubah. Lanjutkan?')" class="flex items-center gap-2">
+                        @csrf
+                        @method('PUT')
+                        <input type="number" name="harga_per_slot" min="100" max="100000" value="{{ $hargaPerSlot }}" required class="w-32 bg-transparent border border-muted-border rounded-lg px-3 py-2 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" aria-label="Harga per slot" />
                         <button type="submit" class="py-2 px-4 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium whitespace-nowrap">Simpan</button>
                     </form>
                 </div>
@@ -236,7 +253,7 @@
                                 <li class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">check_circle</span>{{ number_format($paket->jumlah_slot) }} slot produk</li>
                                 <li class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">check_circle</span>{{ number_format($paket->durasi_hari) }} hari masa berlaku</li>
                             </ul>
-                            <form method="POST" action="{{ route('superadmin.slot-produk.paket.toggle', $paket->slot_package_id) }}">
+                            <form method="POST" action="{{ route('superadmin.slot-produk.paket.toggle', $paket->slot_package_id) }}" onsubmit="return openConfirmSlot(event, '{{ $paket->status === \App\Models\ProductSlotPackage::STATUS_AKTIF ? 'Nonaktifkan paket ini?' : 'Aktifkan paket ini?' }}')">
                                 @csrf
                                 <button type="submit" class="w-full min-h-11 rounded-lg border text-xs font-semibold transition-colors {{ $paket->status === \App\Models\ProductSlotPackage::STATUS_AKTIF ? 'border-error/40 text-error hover:bg-error/10' : 'border-success/40 text-success hover:bg-success/10' }}">
                                     {{ $paket->status === \App\Models\ProductSlotPackage::STATUS_AKTIF ? 'Nonaktifkan' : 'Aktifkan' }}
@@ -269,10 +286,16 @@
                                 \App\Models\SlotPurchaseRequest::STATUS_DITOLAK => 'bg-error/10 text-error border-error/30',
                                 default => 'bg-gold-accent/10 text-gold-accent border-gold-accent/20',
                             };
+                            $payVerified = $rmt->payment_status === \App\Models\SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI;
+                            $payBadge = match ($rmt->payment_status) {
+                                \App\Models\SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI => 'bg-success/10 text-success border-success/20',
+                                \App\Models\SlotPurchaseRequest::PEMBAYARAN_DITOLAK => 'bg-error/10 text-error border-error/30',
+                                default => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
+                            };
                         @endphp
                         <article class="slot-row border border-muted-border rounded-lg p-5 card-premium" data-status="{{ $rmt->status }}">
-                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                <div class="flex items-start gap-3 min-w-0">
+                            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                                <div class="flex items-start gap-3 min-w-0 lg:max-w-xl">
                                     <div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0">
                                         <span class="material-symbols-outlined text-[20px] text-gold-accent">request_quote</span>
                                     </div>
@@ -280,8 +303,15 @@
                                         <div class="flex flex-wrap items-center gap-2">
                                             <p class="font-title-md text-title-md text-on-surface">{{ $rmt->store->nama_toko ?? '-' }}</p>
                                             <span class="inline-flex px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ $badge }}">{{ $rmt->status }}</span>
+                                            <span class="inline-flex px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ $payBadge }}">Bayar: {{ str_replace('_', ' ', $rmt->payment_status ?? '-') }}</span>
                                         </div>
-                                        <p class="text-sm text-on-surface mt-1"><span class="font-semibold">{{ number_format($rmt->jumlah_slot) }} slot</span> • diajukan {{ $rmt->diajukan_pada?->translatedFormat('d M Y, H:i') ?? '-' }}</p>
+                                        <p class="text-sm text-on-surface mt-1">
+                                            <span class="font-semibold">{{ number_format($rmt->jumlah_slot) }} slot</span>
+                                            • total <span class="font-bold text-gold-accent">Rp {{ number_format((float) $rmt->total_harga, 0, ',', '.') }}</span>
+                                            (satuan Rp {{ number_format((float) $rmt->harga_per_slot, 0, ',', '.') }})
+                                            @if ($rmt->metode_pembayaran) • {{ $rmt->metode_pembayaran }} @endif
+                                        </p>
+                                        <p class="text-xs text-on-surface-variant mt-0.5">diajukan {{ $rmt->diajukan_pada?->translatedFormat('d M Y, H:i') ?? '-' }}</p>
                                         @if ($rmt->alasan)
                                             <p class="text-sm text-on-surface-variant mt-1">Alasan: {{ $rmt->alasan }}</p>
                                         @endif
@@ -304,10 +334,22 @@
                                 </div>
                                 @if ($isPending)
                                     <div class="flex flex-col sm:flex-row gap-2 shrink-0">
-                                        <button type="button" onclick="openTolakModal({{ $rmt->slot_purchase_id }}, '{{ addslashes($rmt->store->nama_toko ?? '-') }}')" class="min-h-11 px-5 rounded-lg border border-error/40 text-error text-xs font-semibold hover:bg-error/10 transition-colors">Tolak</button>
-                                        <form method="POST" action="{{ route('superadmin.slot-produk.permintaan.setujui', $rmt->slot_purchase_id) }}" onsubmit="return confirm('Setujui dan tambahkan {{ $rmt->jumlah_slot }} slot untuk toko ini?')">
+                                        @if (! $payVerified)
+                                            <form method="POST" action="{{ route('superadmin.slot-produk.permintaan.verifikasi', $rmt->slot_purchase_id) }}" onsubmit="return openConfirmSlot(event, 'Verifikasi pembayaran ini?')">
+                                                @csrf
+                                                <button type="submit" class="min-h-11 px-4 rounded-lg border border-gold-accent/40 text-gold-accent text-xs font-semibold hover:bg-gold-accent/10 transition-colors inline-flex items-center justify-center gap-1.5 w-full sm:w-auto">
+                                                    <span class="material-symbols-outlined text-[15px]">done_all</span>Verifikasi Bayar
+                                                </button>
+                                            </form>
+                                        @endif
+                                        <button type="button" onclick="openTolakModal({{ $rmt->slot_purchase_id }}, '{{ addslashes($rmt->store->nama_toko ?? '-') }}')" class="min-h-11 px-4 rounded-lg border border-error/40 text-error text-xs font-semibold hover:bg-error/10 transition-colors inline-flex items-center justify-center gap-1.5 w-full sm:w-auto">
+                                            <span class="material-symbols-outlined text-[15px]">block</span>Tolak
+                                        </button>
+                                        <form method="POST" action="{{ route('superadmin.slot-produk.permintaan.setujui', $rmt->slot_purchase_id) }}" onsubmit="return openConfirmSlot(event, 'Setujui dan tambahkan {{ $rmt->jumlah_slot }} slot (Rp {{ number_format((float) $rmt->total_harga, 0, ',', '.') }}) untuk toko ini?')">
                                             @csrf
-                                            <button type="submit" class="w-full min-h-11 px-5 rounded-lg bg-deep-onyx text-on-primary text-xs font-semibold hover:bg-black transition-colors btn-premium">Setujui & Tambah Slot</button>
+                                            <button type="submit" class="w-full min-h-11 px-4 rounded-lg bg-deep-onyx text-on-primary text-xs font-semibold hover:bg-black transition-colors btn-premium inline-flex items-center justify-center gap-1.5 {{ $payVerified ? '' : 'opacity-50 cursor-not-allowed' }}" {{ $payVerified ? '' : 'disabled' }}>
+                                                <span class="material-symbols-outlined text-[15px]">check_circle</span>Setujui & Tambah Slot
+                                            </button>
                                         </form>
                                     </div>
                                 @endif
@@ -414,6 +456,23 @@
         </form>
     </div>
 </div>
+
+<!-- Modal Konfirmasi Slot (reusable) -->
+<div id="confirmSlotModal" class="fixed inset-0 z-[75] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeConfirmSlot()">
+    <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
+        <div class="p-8">
+            <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-5">
+                <span class="material-symbols-outlined text-gold-accent text-[28px]">help</span>
+            </div>
+            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Konfirmasi</h3>
+            <p id="confirm-slot-desc" class="text-on-surface-variant text-sm text-center mb-4">Lanjutkan aksi ini?</p>
+            <div class="flex space-x-3">
+                <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeConfirmSlot()">Batal</button>
+                <button type="button" id="confirm-slot-submit" class="flex-1 bg-deep-onyx text-on-primary font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-black transition-colors rounded-lg btn-premium">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -431,6 +490,7 @@
             document.querySelectorAll('[id^="modal-"]').forEach(m => {
                 if (!m.classList.contains('hidden')) { m.classList.add('hidden'); document.body.style.overflow = ''; }
             });
+            closeConfirmSlot();
         }
     });
 
@@ -444,6 +504,26 @@
         document.getElementById('tolak-form').action = '{{ route('superadmin.slot-produk.permintaan.tolak', ':id:') }}'.replace(':id:', id);
         openModal('modal-tolak');
     }
+
+    let _pendingSlotForm = null;
+    function openConfirmSlot(e, msg) {
+        e.preventDefault();
+        _pendingSlotForm = e.target;
+        document.getElementById('confirm-slot-desc').textContent = msg;
+        const m = document.getElementById('confirmSlotModal');
+        m.classList.remove('hidden'); m.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        return false;
+    }
+    function closeConfirmSlot() {
+        const m = document.getElementById('confirmSlotModal');
+        if (m) { m.classList.add('hidden'); m.classList.remove('flex'); document.body.style.overflow = ''; }
+        _pendingSlotForm = null;
+    }
+    document.getElementById('confirm-slot-submit')?.addEventListener('click', () => {
+        if (_pendingSlotForm) _pendingSlotForm.submit();
+        closeConfirmSlot();
+    });
 
     function applyFilter() {
         const search = document.getElementById('searchInput').value.toLowerCase().trim();

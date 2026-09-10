@@ -10,9 +10,12 @@
 @php
     $badgeMap = [
         'open' => ['label' => 'Terbuka', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/20'],
+        'menunggu' => ['label' => 'Terbuka', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/20'],
+        'baru' => ['label' => 'Baru', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/20'],
         'diproses' => ['label' => 'Diproses', 'class' => 'bg-surface-container-high text-on-surface border-outline-variant'],
         'selesai' => ['label' => 'Selesai', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
         'ditutup' => ['label' => 'Ditutup', 'class' => 'bg-error/10 text-error border-error/20'],
+        'escalated' => ['label' => 'Eskalasi', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
     ];
 @endphp
 
@@ -136,9 +139,9 @@
                                         Buka
                                     </button>
 
-                                    @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES]))
-                                        @if (! $c->eskalasi_oleh_sa)
-                                            <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" class="inline-block">
+                                    @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES, \App\Models\Complaint::STATUS_ESKALASI, 'baru'], true))
+                                        @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES], true) && ! $c->eskalasi_oleh_sa)
+                                            <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'eskalasi', '{{ $kode }}')" class="inline-block">
                                                 @csrf
                                                 <button type="submit" title="Eskalasi"
                                                     class="w-8 h-8 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent hover:text-on-gold-accent transition-colors">
@@ -146,7 +149,7 @@
                                                 </button>
                                             </form>
                                         @endif
-                                        <form method="POST" action="{{ route('superadmin.komplain.tutup', $c->complaint_id) }}" class="inline-block">
+                                        <form method="POST" action="{{ route('superadmin.komplain.tutup', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'tutup', '{{ $kode }}')" class="inline-block">
                                             @csrf
                                             <button type="submit" title="Tutup Komplain"
                                                 class="w-8 h-8 flex items-center justify-center border border-outline text-on-surface hover:bg-surface-container-high transition-colors">
@@ -212,16 +215,16 @@
                             <span class="material-symbols-outlined text-[16px]">chat</span>Buka
                         </button>
 
-                        @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES]))
-                            @if (! $c->eskalasi_oleh_sa)
-                                <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" class="shrink-0">
+                        @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES, \App\Models\Complaint::STATUS_ESKALASI, 'baru'], true))
+                            @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES], true) && ! $c->eskalasi_oleh_sa)
+                                <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'eskalasi', '{{ $kode }}')" class="shrink-0">
                                     @csrf
                                     <button type="submit" title="Eskalasi" class="min-h-11 w-11 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent hover:text-on-gold-accent transition-colors rounded-lg">
                                         <span class="material-symbols-outlined text-[18px]">emergency</span>
                                     </button>
                                 </form>
                             @endif
-                            <form method="POST" action="{{ route('superadmin.komplain.tutup', $c->complaint_id) }}" class="shrink-0">
+                            <form method="POST" action="{{ route('superadmin.komplain.tutup', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'tutup', '{{ $kode }}')" class="shrink-0">
                                 @csrf
                                 <button type="submit" title="Tutup Komplain" class="min-h-11 w-11 flex items-center justify-center border border-outline text-on-surface hover:bg-surface-container-high transition-colors rounded-lg">
                                     <span class="material-symbols-outlined text-[18px]">check_circle</span>
@@ -242,37 +245,37 @@
 <div class="hidden fixed inset-0 z-[55] bg-black/60 backdrop-blur-sm"
      id="chat-container" onclick="if(event.target===this) closeChatModal()">
 
-    <div class="p-4 lg:p-8 flex items-end justify-end">
-        <button type="button" onclick="closeChatModal()" class="p-3 rounded-full bg-surface-container-high/80 text-on-surface hover:bg-surface-container-high transition-colors lg:mt-4" title="Tutup">
-            <span class="material-symbols-outlined text-[20px]">close</span>
-        </button>
-    </div>
+    <div class="min-h-full lg:h-full flex flex-col justify-end lg:flex-row lg:justify-end" onclick="if(event.target===this) closeChatModal()">
 
-    <div class="flex flex-col bg-surface-container-low border-l border-muted-border lg:h-full overflow-hidden" onclick="event.stopPropagation()">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-muted-border">
-            <div>
-                <h3 class="font-title-lg text-title-lg text-on-surface" id="chat-subject">-</h3>
-                <p class="font-mono text-on-surface-variant text-xs" id="chat-kode">-</p>
+    <div id="chat-panel" class="flex flex-col w-full lg:w-[560px] lg:max-w-full bg-surface-container-low border-t lg:border-t-0 lg:border-l border-muted-border rounded-t-3xl lg:rounded-none max-h-[85dvh] lg:max-h-full lg:h-full overflow-hidden" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between gap-3 px-6 py-4 border-b border-muted-border shrink-0">
+            <div class="min-w-0">
+                <h3 class="font-title-lg text-title-lg text-on-surface truncate" id="chat-subject">-</h3>
+                <p class="font-mono text-on-surface-variant text-xs mt-0.5" id="chat-kode">-</p>
             </div>
+            <button type="button" onclick="closeChatModal()" class="p-2.5 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors shrink-0" title="Tutup">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
         </div>
 
-        <div class="flex-1 overflow-y-auto px-6 py-6 space-y-4" id="chat-messages">
+        <div class="flex-1 overflow-y-auto px-6 py-6 space-y-4 min-h-0" id="chat-messages">
             <div class="flex justify-center items-center py-8">
                 <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
             </div>
         </div>
 
-        <div class="px-6 py-4 border-t border-muted-border bg-surface-container-lowest/60 hidden" id="chat-input-area">
-            <div class="flex items-end gap-3">
+        <div id="chat-input-area" class="relative px-6 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-muted-border bg-surface-container-lowest/60 hidden shrink-0 w-full">
+            <div class="flex items-end gap-3 w-full">
                 <textarea id="chat-input" rows="1" maxlength="2000" placeholder="Tulis pesan..."
-                    class="flex-1 bg-surface-container-low border border-muted-border rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface placeholder-on-surface-variant/50 resize-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                    class="flex-1 min-w-0 w-full bg-surface-container-low border border-muted-border rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface placeholder-on-surface-variant/50 resize-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                     onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
                 <button type="button" onclick="sendMessage()" id="chat-send"
-                    class="w-12 h-12 flex items-center justify-center bg-gold-accent text-on-gold-accent shrink-0 hover:opacity-80 transition-opacity btn-premium disabled:opacity-40">
+                    class="w-12 h-12 flex items-center justify-center bg-gold-accent text-on-gold-accent shrink-0 hover:opacity-80 transition-opacity btn-premium disabled:opacity-40 rounded-full">
                     <span class="material-symbols-outlined text-[20px]">send</span>
                 </button>
             </div>
         </div>
+    </div>
     </div>
     <div id="chat-delete-dialog" class="hidden fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeDeleteDialog();}">
         <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-outline-variant shadow-2xl" onclick="event.stopPropagation()">
@@ -286,25 +289,67 @@
             </button>
         </div>
     </div>
+    <!-- Modal Konfirmasi Komplain (eskalasi/tutup) -->
+    <div id="confirmKomplainModal" class="hidden fixed inset-0 z-[75] items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeConfirmKomplain()">
+        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
+            <div class="p-8">
+                <div id="confirm-komplain-icon" class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-5">
+                    <span id="confirm-komplain-icon-sym" class="material-symbols-outlined text-gold-accent text-[28px]">help</span>
+                </div>
+                <h3 id="confirm-komplain-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">Konfirmasi</h3>
+                <p id="confirm-komplain-desc" class="text-on-surface-variant text-sm text-center mb-4">Lanjutkan aksi ini?</p>
+                <div class="flex space-x-3">
+                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeConfirmKomplain()">Batal</button>
+                    <button type="button" id="confirm-komplain-submit" class="flex-1 bg-deep-onyx text-on-primary font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-black transition-colors rounded-lg btn-premium">Ya, Lanjutkan</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 
+@push('styles')
+<style>
+    @keyframes raliva-chat-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes raliva-chat-backdrop-out { from { opacity: 1; } to { opacity: 0; } }
+    @keyframes raliva-chat-sheet-in-mobile { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    @keyframes raliva-chat-sheet-out-mobile { from { transform: translateY(0); } to { transform: translateY(100%); } }
+    @keyframes raliva-chat-sheet-in-desktop { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    @keyframes raliva-chat-sheet-out-desktop { from { transform: translateX(0); } to { transform: translateX(100%); } }
+    .raliva-chat-in { animation: raliva-chat-backdrop-in .2s ease-out both; }
+    .raliva-chat-out { animation: raliva-chat-backdrop-out .2s ease-in both; }
+    .raliva-chat-in-sheet { animation: raliva-chat-sheet-in-mobile .28s cubic-bezier(.22,.68,.34,1) both; }
+    .raliva-chat-out-sheet { animation: raliva-chat-sheet-out-mobile .28s cubic-bezier(.22,1,.36,1) both; }
+    @media (min-width: 1024px) {
+        .raliva-chat-in-sheet { animation-name: raliva-chat-sheet-in-desktop; }
+        .raliva-chat-out-sheet { animation-name: raliva-chat-sheet-out-desktop; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .raliva-chat-in, .raliva-chat-out, .raliva-chat-in-sheet, .raliva-chat-out-sheet { animation: none; }
+    }
+</style>
+@endpush
+
 @push('scripts')
 <script>
-    let currentChat = { id: null, polling: null };
+    let currentChat = { id: null, polling: null, closing: false };
     const myId = {{ Auth::id() }};
 
     function openChatModal(id, kode, subject, isOpen) {
         currentChat.id = id;
+        currentChat.closing = false;
         document.getElementById('chat-kode').textContent = kode;
         document.getElementById('chat-subject').textContent = subject;
         const inputArea = document.getElementById('chat-input-area');
         inputArea.classList.add('hidden');
 
         const container = document.getElementById('chat-container');
-        container.classList.remove('hidden');
-        if (window.innerWidth >= 1024) container.style.display = 'grid';
-        container.style.gridTemplateColumns = '1fr 560px';
+        const panel = document.getElementById('chat-panel');
+        container.classList.remove('hidden', 'raliva-chat-out');
+        panel.classList.remove('raliva-chat-out-sheet');
+        void container.offsetWidth;
+        container.classList.add('raliva-chat-in');
+        panel.classList.add('raliva-chat-in-sheet');
         document.body.style.overflow = 'hidden';
 
         loadMessages();
@@ -315,14 +360,27 @@
 
     function closeChatModal() {
         const container = document.getElementById('chat-container');
-        container.classList.add('hidden');
-        container.style.display = '';
-        container.style.gridTemplateColumns = '';
+        if (currentChat.closing || container.classList.contains('hidden')) return;
+        currentChat.closing = true;
         document.body.style.overflow = '';
         if (currentChat.polling) clearInterval(currentChat.polling);
         currentChat.id = null;
         closeChatMenu();
         closeDeleteDialog();
+
+        const panel = document.getElementById('chat-panel');
+        container.classList.remove('raliva-chat-in');
+        panel.classList.remove('raliva-chat-in-sheet');
+        void container.offsetWidth;
+        container.classList.add('raliva-chat-out');
+        panel.classList.add('raliva-chat-out-sheet');
+        setTimeout(function () {
+            if (!currentChat.closing) return;
+            container.classList.add('hidden');
+            container.classList.remove('raliva-chat-out');
+            panel.classList.remove('raliva-chat-out-sheet');
+            currentChat.closing = false;
+        }, 320);
     }
 
     async function loadMessages() {
@@ -428,6 +486,42 @@
         document.getElementById('chat-delete-dialog').classList.add('hidden');
     }
 
+    let _pendingKomplainForm = null;
+    function openConfirmKomplain(e, aksi, kode) {
+        e.preventDefault();
+        _pendingKomplainForm = e.target;
+        const isEskalasi = aksi === 'eskalasi';
+        document.getElementById('confirm-komplain-title').textContent = isEskalasi ? 'Eskalasi Komplain?' : 'Tutup Komplain?';
+        document.getElementById('confirm-komplain-desc').textContent = (isEskalasi ? 'Eskalasi ' : 'Tutup ') + kode + (isEskalasi ? ' ke Owner?' : ' (status akan menjadi selesai)?');
+        const iconWrap = document.getElementById('confirm-komplain-icon');
+        const iconSym = document.getElementById('confirm-komplain-icon-sym');
+        const submitBtn = document.getElementById('confirm-komplain-submit');
+        if (isEskalasi) {
+            iconWrap.className = 'w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-5';
+            iconSym.className = 'material-symbols-outlined text-gold-accent text-[28px]';
+            iconSym.textContent = 'emergency';
+            submitBtn.className = 'flex-1 bg-gold-accent text-on-gold-accent font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium';
+            submitBtn.textContent = 'Ya, Eskalasi';
+        } else {
+            iconWrap.className = 'w-14 h-14 rounded-full bg-success/10 border border-success/25 flex items-center justify-center mx-auto mb-5';
+            iconSym.className = 'material-symbols-outlined text-success text-[28px]';
+            iconSym.textContent = 'check_circle';
+            submitBtn.className = 'flex-1 bg-success text-white font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium';
+            submitBtn.textContent = 'Ya, Tutup';
+        }
+        const m = document.getElementById('confirmKomplainModal');
+        m.classList.remove('hidden'); m.classList.add('flex');
+        return false;
+    }
+    function closeConfirmKomplain() {
+        const m = document.getElementById('confirmKomplainModal');
+        if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
+        _pendingKomplainForm = null;
+    }
+    document.getElementById('confirm-komplain-submit')?.addEventListener('click', () => {
+        if (_pendingKomplainForm) _pendingKomplainForm.submit();
+    });
+
     async function deleteMessage() {
         const id = deleteDialogMsgId;
         if (!id) return;
@@ -506,6 +600,8 @@
 
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') {
+            const ck = document.getElementById('confirmKomplainModal');
+            if (ck && !ck.classList.contains('hidden')) { closeConfirmKomplain(); return; }
             if (chatMenuId !== null) { closeChatMenu(); return; }
             const dlg = document.getElementById('chat-delete-dialog');
             if (dlg && !dlg.classList.contains('hidden')) { closeDeleteDialog(); return; }

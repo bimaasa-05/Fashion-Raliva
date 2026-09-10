@@ -47,9 +47,11 @@ class ModerasiProdukController extends Controller
         if ($sa) {
             Notification::create([
                 'user_id' => $sa->user_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => Notification::TIPE_SISTEM,
                 'judul' => 'Produk Terverifikasi Owner',
                 'pesan' => "Produk {$product->nama_produk} sudah diverifikasi Owner, menunggu persetujuan SuperAdmin.",
+                'url' => route('superadmin.moderasi-produk'),
             ]);
         }
         return back()->with('success', 'Produk diverifikasi, menunggu SuperAdmin.');

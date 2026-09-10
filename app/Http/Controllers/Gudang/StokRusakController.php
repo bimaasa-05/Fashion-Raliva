@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Gudang;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
+use App\Models\Role;
 use App\Models\StockDamage;
 use App\Models\StockMovement;
 use App\Models\WarehouseStock;
+use App\Services\NotificationService;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -105,6 +108,16 @@ class StokRusakController extends Controller
             ['product_variant_id' => $data['product_variant_id'], 'jumlah_rusak' => $data['jumlah_rusak']],
             sprintf('Laporan stok rusak %d unit di gudang "%s".', $data['jumlah_rusak'], $warehouse->nama_gudang)
         );
+
+        NotificationService::sendToRole(
+            Role::ADMIN,
+            Notification::TIPE_SISTEM,
+            'Laporan Stok Rusak',
+            sprintf('%d unit stok rusak dilaporkan di gudang "%s".', $data['jumlah_rusak'], $warehouse->nama_gudang),
+            auth()->id(),
+            route('admin.stok')
+        );
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Stok Rusak Dilaporkan', sprintf('%d unit stok rusak dilaporkan di gudang "%s".', $data['jumlah_rusak'], $warehouse->nama_gudang), route('gudang.dashboard'));
 
         return back()->with('toast', ['message' => 'Stok rusak berhasil dilaporkan.', 'icon' => 'task_alt']);
     }

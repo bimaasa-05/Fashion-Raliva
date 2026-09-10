@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Courier;
+use App\Models\Notification;
 use App\Models\ShippingService;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
@@ -56,6 +57,8 @@ class KurirController extends Controller
             sprintf('Menambahkan kurir "%s" (%s).', $kurir->nama_kurir, $kurir->kode_kurir)
         );
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Kurir Ditambahkan', 'Kurir "'.$kurir->nama_kurir.'" ditambahkan.', route('superadmin.kurir'));
+
         return back()->with('toast', [
             'message' => 'Kurir "'.$kurir->nama_kurir.'" berhasil ditambahkan.',
             'icon' => 'task_alt',
@@ -88,6 +91,8 @@ class KurirController extends Controller
             sprintf('Mengubah kurir "%s" → "%s".', $lama['nama_kurir'], $kurir->nama_kurir)
         );
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Kurir Diubah', 'Kurir "'.$kurir->nama_kurir.'" diperbarui.', route('superadmin.kurir'));
+
         return back()->with('toast', [
             'message' => 'Perubahan kurir "'.$kurir->nama_kurir.'" berhasil disimpan.',
             'icon' => 'task_alt',
@@ -118,6 +123,8 @@ class KurirController extends Controller
         );
 
         $kurir->delete();
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Kurir Dihapus', 'Kurir "'.$lama['nama_kurir'].'" dihapus.', route('superadmin.kurir'));
 
         return back()->with('toast', [
             'message' => 'Kurir "'.$lama['nama_kurir'].'" berhasil dihapus.',
@@ -165,6 +172,8 @@ class KurirController extends Controller
             sprintf('Menambahkan layanan "%s" ke kurir "%s".', $layanan->nama_layanan, $kurir->nama_kurir)
         );
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Layanan Kurir Ditambahkan', 'Layanan "'.$layanan->nama_layanan.'" ditambahkan ke '.$kurir->nama_kurir.'.', route('superadmin.kurir'));
+
         return back()->with('toast', [
             'message' => 'Layanan "'.$layanan->nama_layanan.'" berhasil ditambahkan ke '.$kurir->nama_kurir.'.',
             'icon' => 'task_alt',
@@ -207,6 +216,8 @@ class KurirController extends Controller
             sprintf('Mengubah layanan "%s" → "%s".', $lama['nama_layanan'], $layanan->nama_layanan)
         );
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Layanan Kurir Diubah', 'Layanan "'.$layanan->nama_layanan.'" diperbarui.', route('superadmin.kurir'));
+
         return back()->with('toast', [
             'message' => 'Perubahan layanan "'.$layanan->nama_layanan.'" berhasil disimpan.',
             'icon' => 'task_alt',
@@ -237,6 +248,8 @@ class KurirController extends Controller
         );
 
         $layanan->delete();
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Layanan Kurir Dihapus', 'Layanan "'.$lama['nama_layanan'].'" dihapus.', route('superadmin.kurir'));
 
         return back()->with('toast', [
             'message' => 'Layanan "'.$lama['nama_layanan'].'" berhasil dihapus.',

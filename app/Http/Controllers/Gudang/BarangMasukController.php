@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Gudang;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
+use App\Models\Role;
 use App\Models\StockMovement;
 use App\Models\Supplier;
 use App\Models\WarehouseStock;
+use App\Services\NotificationService;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,19 +22,21 @@ class BarangMasukController extends Controller
         $warehouses = $this->assignedWarehouses();
         $warehouse = $this->activeWarehouse();
 
-        $items = collect();
+        $q = $request->query('q');
+        $supplierId = $request->query('supplier_id');
+
+        $items = StockMovement::with(['productVariant.product', 'creator', 'supplier'])
+            ->whereIn('tipe_pergerakan', [StockMovement::TIPE_MASUK, StockMovement::TIPE_MUTASI_MASUK])
+            ->when($q, fn ($query) => $query->whereHas('productVariant.product', fn ($pq) => $pq->where('nama_produk', 'like', '%'.$q.'%')))
+            ->when($supplierId, fn ($query) => $query->where('sumber_tipe', StockMovement::SUMBER_SUPPLIER)->where('sumber_id', $supplierId));
+
         if ($warehouse) {
-            $q = $request->query('q');
-            $supplierId = $request->query('supplier_id');
-            $items = StockMovement::with(['productVariant.product', 'creator', 'supplier'])
-                ->where('warehouse_id', $warehouse->warehouse_id)
-                ->whereIn('tipe_pergerakan', [StockMovement::TIPE_MASUK, StockMovement::TIPE_MUTASI_MASUK])
-                ->when($q, fn ($query) => $query->whereHas('productVariant.product', fn ($pq) => $pq->where('nama_produk', 'like', '%'.$q.'%')))
-                ->when($supplierId, fn ($query) => $query->where('sumber_tipe', StockMovement::SUMBER_SUPPLIER)->where('sumber_id', $supplierId))
-                ->orderByDesc('created_at')
-                ->paginate(15)
-                ->withQueryString();
+            $items->where('warehouse_id', $warehouse->warehouse_id);
+        } else {
+            $items->whereRaw('1 = 0');
         }
+
+        $items = $items->orderByDesc('created_at')->paginate(15)->withQueryString();
 
         return view('Gudang.barang-masuk.index', [
             'warehouses' => $warehouses,
@@ -71,7 +76,7 @@ class BarangMasukController extends Controller
         ]);
 
         DB::transaction(function () use ($warehouse, $data) {
-            WarehouseStock::updateOrCreate(
+            $stock = WarehouseStock::updateOrCreate(
                 ['warehouse_id' => $warehouse->warehouse_id, 'product_variant_id' => $data['product_variant_id']],
                 ['jumlah_stok' => DB::raw('jumlah_stok + '.$data['jumlah'])]
             );
@@ -86,6 +91,8 @@ class BarangMasukController extends Controller
                 'alasan' => $data['alasan'] ?? 'Barang masuk dari supplier',
                 'dibuat_oleh' => auth()->id(),
             ]);
+
+            $stock->update(['supplier_id' => $data['supplier_id']]);
         });
 
         ActivityLogger::log(
@@ -96,6 +103,16 @@ class BarangMasukController extends Controller
             ['product_variant_id' => $data['product_variant_id'], 'supplier_id' => $data['supplier_id'], 'jumlah' => $data['jumlah']],
             sprintf('Barang masuk %d unit ke gudang "%s".', $data['jumlah'], $warehouse->nama_gudang)
         );
+
+        NotificationService::sendToRole(
+            Role::ADMIN,
+            Notification::TIPE_SISTEM,
+            'Barang Masuk',
+            sprintf('%d unit barang masuk ke gudang "%s".', $data['jumlah'], $warehouse->nama_gudang),
+            auth()->id(),
+            route('admin.stok')
+        );
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Barang Masuk Dicatat', sprintf('%d unit barang masuk dicatat di gudang "%s".', $data['jumlah'], $warehouse->nama_gudang), route('gudang.dashboard'));
 
         return back()->with('toast', ['message' => 'Barang masuk berhasil dicatat.', 'icon' => 'task_alt']);
     }

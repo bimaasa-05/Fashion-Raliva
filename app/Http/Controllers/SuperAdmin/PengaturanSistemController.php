@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Setting;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
@@ -72,6 +73,8 @@ class PengaturanSistemController extends Controller
             'Memperbarui pengaturan sistem platform.'
         );
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pengaturan Sistem Diperbarui', 'Pengaturan sistem platform berhasil disimpan.', route('superadmin.pengaturan-sistem'));
+
         return back()->with('toast', [
             'message' => 'Pengaturan sistem berhasil disimpan.',
             'icon' => 'task_alt',
@@ -107,6 +110,8 @@ class PengaturanSistemController extends Controller
             ['nilai_baru' => $data],
             'Memperbarui Syarat & Ketentuan dan Kebijakan Privasi platform.'
         );
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Dokumen Legal Diperbarui', 'Syarat & Ketentuan dan Kebijakan Privasi diperbarui.', route('superadmin.pengaturan-sistem'));
 
         return back()->with('toast', [
             'message' => 'Konten Syarat & Ketentuan dan Kebijakan Privasi berhasil disimpan.',

@@ -4,6 +4,10 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Notification;
+use App\Models\Complaint;
+use App\Models\StoreCategory;
+use App\Models\StoreExpense;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 
@@ -18,8 +22,25 @@ class KategoriProdukController extends Controller
             ->orderBy('nama_kategori')
             ->get();
 
+        $kategoriKomplain = Complaint::selectRaw('kategori, COUNT(*) as total')
+            ->groupBy('kategori')
+            ->orderBy('kategori')
+            ->get();
+
+        $kategoriPengeluaran = StoreExpense::selectRaw('kategori, COUNT(*) as total, SUM(nominal) as total_nominal')
+            ->groupBy('kategori')
+            ->orderBy('kategori')
+            ->get();
+
+        $kategoriToko = StoreCategory::withCount('stores')
+            ->orderBy('nama_kategori')
+            ->get();
+
         return view('SuperAdmin.kategori-produk.index', [
             'categories' => $categories,
+            'kategoriKomplain' => $kategoriKomplain,
+            'kategoriPengeluaran' => $kategoriPengeluaran,
+            'kategoriToko' => $kategoriToko,
             'parents' => Category::whereNull('parent_id')->where('status', Category::STATUS_AKTIF)->orderBy('nama_kategori')->get(['category_id', 'nama_kategori']),
             'stats' => [
                 'total' => $categories->count(),
@@ -52,6 +73,8 @@ class KategoriProdukController extends Controller
             ['nama_kategori' => $kategori->nama_kategori, 'parent_id' => $kategori->parent_id],
             sprintf('Menambahkan kategori "%s"%s.', $kategori->nama_kategori, $kategori->parent ? " di bawah \"{$kategori->parent->nama_kategori}\"" : '')
         );
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Kategori Ditambahkan', "Kategori \"{$kategori->nama_kategori}\" ditambahkan.", route('superadmin.kategori-produk'));
 
         return back()->with('toast', [
             'message' => "Kategori \"{$kategori->nama_kategori}\" berhasil ditambahkan.",
@@ -98,6 +121,8 @@ class KategoriProdukController extends Controller
             sprintf('Mengubah kategori "%s" menjadi "%s".', $lama['nama_kategori'], $kategori->nama_kategori)
         );
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Kategori Diubah', "Kategori \"{$kategori->nama_kategori}\" diperbarui.", route('superadmin.kategori-produk'));
+
         return back()->with('toast', [
             'message' => "Perubahan kategori \"{$kategori->nama_kategori}\" berhasil disimpan.",
             'icon' => 'task_alt',
@@ -136,6 +161,8 @@ class KategoriProdukController extends Controller
         );
 
         $kategori->delete();
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Kategori Dihapus', "Kategori \"{$lama['nama_kategori']}\" dihapus.", route('superadmin.kategori-produk'));
 
         return back()->with('toast', [
             'message' => "Kategori \"{$lama['nama_kategori']}\" berhasil dihapus.",

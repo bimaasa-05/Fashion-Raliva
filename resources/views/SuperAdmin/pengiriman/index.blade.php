@@ -126,7 +126,7 @@
                                     <form method="POST" action="{{ route('superadmin.pengiriman.status', $s->shipment_id) }}" class="inline-flex">
                                         @csrf
                                         @method('PUT')
-                                        <select name="status" onchange="if(confirm('Ubah status pengiriman ini?')) this.form.submit(); else this.value='{{ $s->status }}';" class="bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant', } }}">
+                                        <select name="status" data-prev="{{ $s->status }}" onchange="openConfirmPengiriman(this)" class="bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant', } }}">
                                             <option value="pending" {{ $s->status === 'pending' ? 'selected' : '' }}>Pending</option>
                                             <option value="diproses" {{ $s->status === 'diproses' ? 'selected' : '' }}>Diproses</option>
                                             <option value="dikirim" {{ $s->status === 'dikirim' ? 'selected' : '' }}>Dikirim</option>
@@ -188,7 +188,7 @@
                             <form method="POST" action="{{ route('superadmin.pengiriman.status', $s->shipment_id) }}" class="shrink-0">
                                 @csrf
                                 @method('PUT')
-                                <select name="status" onchange="if(confirm('Ubah status pengiriman ini?')) this.form.submit(); else this.value='{{ $s->status }}';" class="bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant', } }}">
+                                <select name="status" data-prev="{{ $s->status }}" onchange="openConfirmPengiriman(this)" class="bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant', } }}">
                                     <option value="pending" {{ $s->status === 'pending' ? 'selected' : '' }}>Pending</option>
                                     <option value="diproses" {{ $s->status === 'diproses' ? 'selected' : '' }}>Diproses</option>
                                     <option value="dikirim" {{ $s->status === 'dikirim' ? 'selected' : '' }}>Dikirim</option>
@@ -308,6 +308,23 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Konfirmasi Ubah Status Pengiriman -->
+<div id="confirmPengirimanModal" class="fixed inset-0 z-[75] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeConfirmPengiriman()">
+    <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
+        <div class="p-8">
+            <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-5">
+                <span class="material-symbols-outlined text-gold-accent text-[28px]">local_shipping</span>
+            </div>
+            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Ubah status pengiriman?</h3>
+            <p class="text-on-surface-variant text-sm text-center mb-4">Status akan diubah menjadi <span id="confirm-pengiriman-status" class="font-bold text-on-surface">-</span>.</p>
+            <div class="flex space-x-3">
+                <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeConfirmPengiriman()">Batal</button>
+                <button type="button" id="confirm-pengiriman-submit" class="flex-1 bg-deep-onyx text-on-primary font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-black transition-colors rounded-lg btn-premium">Ya, Ubah</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -415,8 +432,35 @@
         document.body.style.overflow = '';
     }
 
+    let _pendingPengirimanSelect = null;
+    function openConfirmPengiriman(sel) {
+        _pendingPengirimanSelect = sel;
+        const label = sel.options[sel.selectedIndex]?.text?.trim() || sel.value;
+        document.getElementById('confirm-pengiriman-status').textContent = label;
+        const m = document.getElementById('confirmPengirimanModal');
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+    }
+    function closeConfirmPengiriman() {
+        const m = document.getElementById('confirmPengirimanModal');
+        if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
+        if (_pendingPengirimanSelect) {
+            _pendingPengirimanSelect.value = _pendingPengirimanSelect.dataset.prev;
+            _pendingPengirimanSelect = null;
+        }
+    }
+    document.getElementById('confirm-pengiriman-submit')?.addEventListener('click', () => {
+        if (_pendingPengirimanSelect) {
+            const f = _pendingPengirimanSelect.closest('form');
+            _pendingPengirimanSelect = null;
+            if (f) f.submit();
+        }
+        const m = document.getElementById('confirmPengirimanModal');
+        if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
+    });
+
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeModal();
+        if (e.key === 'Escape') { closeModal(); closeConfirmPengiriman(); }
     });
 </script>
 @endpush

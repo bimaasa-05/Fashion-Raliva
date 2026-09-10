@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Supplier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,6 +42,8 @@ class SupplierController extends Controller
 
         Supplier::create($data);
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Supplier Ditambahkan', sprintf('Supplier "%s" berhasil ditambahkan.', $data['nama_supplier']), route('admin.supplier'));
+
         return back()->with('success', 'Supplier ditambahkan.');
     }
 
@@ -59,12 +62,16 @@ class SupplierController extends Controller
 
         $supplier->update($data);
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Supplier Diperbarui', sprintf('Data supplier "%s" berhasil diperbarui.', $supplier->nama_supplier), route('admin.supplier'));
+
         return back()->with('success', 'Supplier diperbarui.');
     }
 
     public function destroy(Supplier $supplier): RedirectResponse
     {
         $supplier->delete();
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Supplier Dihapus', sprintf('Supplier "%s" telah dihapus.', $supplier->nama_supplier), route('admin.supplier'));
 
         return back()->with('success', 'Supplier dihapus.');
     }

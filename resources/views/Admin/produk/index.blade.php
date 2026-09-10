@@ -43,7 +43,7 @@
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                     <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari produk..." class="raliva-search" />
                 </form>
-                <button type="button" data-drawer-open="drawer-form-produk" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
+                <button type="button" data-modal-open="modal-form-produk" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
                     <span class="material-symbols-outlined text-[18px]">add</span> Tambah
                 </button>
             </div>
@@ -125,12 +125,13 @@
 </div>
 @endforeach
 
-{{-- Drawer Form Produk — sesuai demo --}}
-<div id="drawer-overlay" class="fixed inset-0 bg-black/50 z-[70] hidden opacity-0 transition-opacity duration-300"></div>
-<div id="drawer-form-produk" data-drawer-panel class="fixed inset-y-0 right-0 z-[80] w-full max-w-xl bg-surface-container-lowest border-l border-muted-border shadow-xl translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
-    <div class="flex items-center justify-between px-6 py-5 border-b border-muted-border shrink-0">
+{{-- Modal Form Produk — tengah, pola data-modal --}}
+<div id="modal-form-produk" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto w-full max-w-xl bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl flex flex-col max-h-[90vh] overflow-y-auto">
+    <div class="sticky top-0 bg-surface-container-lowest z-10 flex items-center justify-between px-6 py-5 border-b border-muted-border shrink-0">
         <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Produk Baru</h3>
-        <button type="button" data-drawer-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+        <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
             <span class="material-symbols-outlined">close</span>
         </button>
     </div>
@@ -160,6 +161,14 @@
             <div>
                 <label for="fp-deskripsi" class="block raliva-label mb-2">Deskripsi</label>
                 <textarea id="fp-deskripsi" name="deskripsi" rows="3" placeholder="Bahan, potongan, keunggulan produk..." class="raliva-textarea"></textarea>
+            </div>
+            <div>
+                <label for="fp-tipe" class="block raliva-label mb-2">Tipe Produk</label>
+                <select id="fp-tipe" name="tipe_produk" required class="raliva-select">
+                    <option value="regular">Regular</option>
+                    <option value="preorder">Preorder</option>
+                    <option value="made_to_order">Made to Order</option>
+                </select>
             </div>
             <div class="grid grid-cols-2 gap-gutter">
                 <div>
@@ -215,12 +224,13 @@
         </div>
 
         <div class="sticky bottom-0 -mx-6 px-6 py-4 bg-surface-container-lowest border-t border-muted-border flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
-            <button type="button" data-drawer-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+            <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
             <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined text-[16px]">check_circle</span>Simpan Produk
             </button>
         </div>
     </form>
+    </div>
 </div>
 @push('scripts')
 <script>

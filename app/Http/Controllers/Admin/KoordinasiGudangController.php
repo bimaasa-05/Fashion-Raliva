@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Order;
+use App\Models\Role;
 use App\Models\StockTransfer;
 use App\Models\Warehouse;
+use App\Services\NotificationService;
 use App\Support\AdminContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -72,6 +75,16 @@ class KoordinasiGudangController extends Controller
                 'catatan' => 'Pesanan ' . ($order->nomor_order ?? $order->order_id),
             ]);
         }
+
+        NotificationService::sendToRole(
+            Role::GUDANG,
+            Notification::TIPE_SISTEM,
+            'Permintaan Pengambilan Stok',
+            sprintf('Pengambilan stok untuk pesanan %s dikirim ke Gudang.', $order->nomor_order ?? ('#' . $order->order_id)),
+            Auth::id(),
+            route('gudang.dashboard')
+        );
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Permintaan Pengambilan Dikirim', sprintf('Permintaan pengambilan stok pesanan %s dikirim ke Gudang.', $order->nomor_order ?? ('#' . $order->order_id)), route('admin.koordinasi-gudang'));
 
         return back()->with('success', 'Permintaan pengambilan dikirim ke Gudang.');
     }

@@ -47,6 +47,18 @@ class KomplainController extends Controller
             $complaint->update(['status' => Complaint::STATUS_DIPROSES]);
         }
 
+        if ($complaint->user_id) {
+            Notification::create([
+                'user_id' => $complaint->user_id,
+                'aktor_id' => Auth::id(),
+                'tipe' => Notification::TIPE_KOMPLAIN,
+                'judul' => 'Komplain Dibalas Admin',
+                'pesan' => sprintf('Komplain #%s mendapat balasan dari toko.', $complaint->kode ?? $complaint->complaint_id),
+                'url' => route('customer.order-tracking'),
+            ]);
+        }
+        Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Komplain Dibalas', sprintf('Balasan komplain #%s terkirim ke customer.', $complaint->kode ?? $complaint->complaint_id), route('admin.komplain'));
+
         return back()->with('success', 'Balasan terkirim ke customer.');
     }
 
@@ -68,9 +80,11 @@ class KomplainController extends Controller
         if ($ownerId) {
             Notification::create([
                 'user_id' => $ownerId,
+                'aktor_id' => Auth::id(),
                 'tipe' => Notification::TIPE_KOMPLAIN,
                 'judul' => 'Eskalasi Komplain',
                 'pesan' => "Komplain #{$complaint->complaint_id} dieskalasi ke Anda untuk keputusan final.",
+                'url' => route('owner.ulasan'),
             ]);
         }
 
