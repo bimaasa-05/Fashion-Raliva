@@ -80,35 +80,16 @@
     </section>
     @endif
 
-    <!-- Pengaturan Tier Peringkat (fair auto-period) -->
-    <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
-        <h2 class="font-title-md text-title-md text-on-surface premium-heading">Pengaturan Tier Peringkat</h2>
-        <p class="text-xs text-on-surface-variant mt-1">Atur nominal ↔ durasi. Periode dihitung <span class="font-bold text-on-surface">sejak disetujui</span> (fair). Kosongkan Max = ∞.</p>
-        <form method="POST" action="{{ route('superadmin.peringkat-iklan.tier') }}" class="mt-4 space-y-3">
-            @csrf @method('PUT')
-            <div id="tier-rows" class="space-y-2">
-                @foreach($tiers as $i => $t)
-                    <div class="grid grid-cols-3 gap-2 items-end">
-                        <div>
-                            <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Min (Rp)</label>
-                            <input type="number" name="tiers[{{ $i }}][min]" value="{{ $t['min'] }}" min="0" required class="w-full bg-transparent border border-muted-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold-accent" />
-                        </div>
-                        <div>
-                            <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Max (Rp, kosong=∞)</label>
-                            <input type="number" name="tiers[{{ $i }}][max]" value="{{ $t['max'] ?? '' }}" min="0" class="w-full bg-transparent border border-muted-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold-accent" placeholder="∞" />
-                        </div>
-                        <div>
-                            <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Hari</label>
-                            <input type="number" name="tiers[{{ $i }}][hari]" value="{{ $t['hari'] }}" min="1" max="365" required class="w-full bg-transparent border border-muted-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold-accent" />
-                        </div>
-                    </div>
-                @endforeach
+    <div class="flex items-center justify-between gap-4 p-4 border border-gold-accent/20 bg-gold-accent/5 rounded-lg">
+        <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-gold-accent mt-0.5 text-[20px]">tune</span>
+            <div>
+                <p class="font-bold text-sm text-on-surface">Tier Peringkat Diatur di Pengaturan Sistem</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">Nominal ↔ durasi dihitung sejak disetujui (fair). Kelola di Pengaturan → Tier Peringkat Iklan.</p>
             </div>
-            <div class="flex justify-end">
-                <button type="submit" class="py-2.5 px-6 bg-deep-onyx text-on-primary text-xs font-bold uppercase tracking-widest rounded btn-premium">Simpan Tier</button>
-            </div>
-        </form>
-    </section>
+        </div>
+        <a href="{{ route('superadmin.pengaturan-sistem') }}" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">Kelola Tier</a>
+    </div>
 
     <!-- Tabel Peringkat -->
     <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium">

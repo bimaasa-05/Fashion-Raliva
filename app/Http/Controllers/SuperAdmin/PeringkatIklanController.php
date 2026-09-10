@@ -7,6 +7,7 @@ use App\Models\AdSlot;
 use App\Models\Notification;
 use App\Models\PlatformBankAccount;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Support\ActivityLogger;
@@ -34,8 +35,8 @@ class PeringkatIklanController extends Controller
 
         $rekenings = PlatformBankAccount::with('bank')->where('status', PlatformBankAccount::STATUS_AKTIF)->orderBy('nomor_rekening')->get();
 
-        $tiers = \App\Support\PeringkatService::defaultTiers();
-        $raw = \App\Models\Setting::get(\App\Models\Setting::PERINGKAT_TIER, null);
+        $tiers = PeringkatService::defaultTiers();
+        $raw = Setting::get(Setting::PERINGKAT_TIER, null);
         if ($raw) {
             $decoded = json_decode($raw, true);
             if (is_array($decoded) && $decoded !== []) {
@@ -52,35 +53,6 @@ class PeringkatIklanController extends Controller
             'rekenings' => $rekenings,
             'tiers' => $tiers,
         ]);
-    }
-
-    public function updateTier(Request $request)
-    {
-        $data = $request->validate([
-            'tiers' => 'required|array|min:1',
-            'tiers.*.min' => 'required|integer|min:100000',
-            'tiers.*.max' => 'nullable|integer|min:100000',
-            'tiers.*.hari' => 'required|integer|min:1|max:365',
-        ]);
-
-        $tiers = collect($data['tiers'])->sortBy('min')->values()->all();
-
-        foreach ($tiers as $i => $t) {
-            if ($i > 0) {
-                $prevMax = $tiers[$i - 1]['max'];
-                if ($prevMax !== null && $t['min'] <= $prevMax) {
-                    return back()->with('toast', ['message' => 'Tier tumpang tindih pada baris '.($i + 1).'.', 'icon' => 'gpp_maybe']);
-                }
-            }
-            if ($t['max'] !== null && $t['max'] < $t['min']) {
-                return back()->with('toast', ['message' => 'Max harus >= min pada baris '.($i + 1).'.', 'icon' => 'gpp_maybe']);
-            }
-        }
-
-        \App\Models\Setting::set(\App\Models\Setting::PERINGKAT_TIER, json_encode($tiers));
-        \App\Support\ActivityLogger::log('setting.peringkat_tier.update', \App\Models\Setting::class, 0, null, $tiers, 'Mengubah tier peringkat iklan.');
-
-        return back()->with('toast', ['message' => 'Tier peringkat berhasil diperbarui.', 'icon' => 'task_alt']);
     }
 
     public function store(Request $request)
@@ -201,7 +173,7 @@ class PeringkatIklanController extends Controller
                         'jumlah' => (float) $slot->nominal_bid,
                         'saldo_sebelum' => $saldoSebelum,
                         'saldo_sesudah' => $saldoSebelum,
-                        'keterangan' => sprintf('Biaya iklan peringkat "%s" Rp %s periode %s s/d %s.', $slot->product->nama_produk ?? '-', number_format((float) $slot->nominal_bid, 0, ',', '.'), $slot->tanggal_mulai?->format('d M Y') ?? '-', $slot->tanggal_selesai?->format('d M Y') ?? '-'),
+                        'keterangan' => sprintf('Biaya iklan peringkat "%s" Rp %s periode %s s/d %s.', $slot->product->nama_produk ?? '-', number_format((float) $slot->nominal_bid, 0, ',', '.'), $slot->tanggal_mulai ? \Illuminate\Support\Carbon::parse($slot->tanggal_mulai)->translatedFormat('d M Y') : '-', $slot->tanggal_selesai ? \Illuminate\Support\Carbon::parse($slot->tanggal_selesai)->translatedFormat('d M Y') : '-'),
                     ]);
                 }
 
@@ -227,7 +199,7 @@ class PeringkatIklanController extends Controller
                 'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => Notification::TIPE_PROMO,
                 'judul' => 'Iklan Disetujui',
-                'pesan' => sprintf('Iklan "%s" disetujui dan aktif peringkat %s s/d %s.', $slot->product->nama_produk ?? '-', $slot->tanggal_mulai?->format('d M Y') ?? '-', $slot->tanggal_selesai?->format('d M Y') ?? '-'),
+                'pesan' => sprintf('Iklan "%s" disetujui dan aktif peringkat %s s/d %s.', $slot->product->nama_produk ?? '-', $slot->tanggal_mulai ? \Illuminate\Support\Carbon::parse($slot->tanggal_mulai)->translatedFormat('d M Y') : '-', $slot->tanggal_selesai ? \Illuminate\Support\Carbon::parse($slot->tanggal_selesai)->translatedFormat('d M Y') : '-'),
                 'url' => route('owner.peringkat-iklan'),
             ]);
         }
