@@ -86,13 +86,16 @@
                 data-slot-full="{{ $product->slot_full ? '1' : '0' }}">
                 <div class="relative w-full aspect-[3/4] bg-surface-container-low mb-element-gap overflow-hidden rounded-lg">
                     @if ($product->images->first())
-                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ asset($product->images->first()->file_gambar) }}" alt="{{ $product->nama_produk }}" />
+                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ asset('storage/' . $product->images->first()->file_gambar) }}" alt="{{ $product->nama_produk }}" />
                     @else
                         <div class="w-full h-full flex items-center justify-center bg-surface-container-high">
                             <span class="material-symbols-outlined text-[42px] text-on-surface-variant/40">checkroom</span>
                         </div>
                     @endif
                     <div class="absolute top-2 right-2 p-1 bg-surface/80 rounded"><span class="material-symbols-outlined text-[18px] text-on-surface">{{ $statusIconMap[$product->status] ?? 'pending' }}</span></div>
+                    @if ($product->owner_verified_at)
+                        <div class="absolute top-2 left-2 px-2 py-1 bg-gold-accent/90 text-white text-[9px] font-bold uppercase tracking-widest rounded">✓ Owner</div>
+                    @endif
                     @if ($product->status === \App\Models\Product::STATUS_DITOLAK)
                         <div class="absolute bottom-2 left-2 right-2 px-2 py-1 bg-error/90 text-on-error text-[9px] font-bold uppercase tracking-widest rounded text-center">Ditolak • Lihat Alasan</div>
                     @endif
