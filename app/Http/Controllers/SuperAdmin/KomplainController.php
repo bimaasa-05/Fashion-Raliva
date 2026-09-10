@@ -186,7 +186,7 @@ class KomplainController extends Controller
 
     public function tutup(Request $request, Complaint $komplain)
     {
-        if (! in_array($komplain->status, [Complaint::STATUS_OPEN, Complaint::STATUS_DIPROSES], true)) {
+        if (! in_array($komplain->status, [Complaint::STATUS_OPEN, Complaint::STATUS_DIPROSES, Complaint::STATUS_ESKALASI, 'baru'], true)) {
             return back()->with('toast', [
                 'message' => 'Komplain ini sudah ditutup atau selesai.',
                 'icon' => 'gpp_maybe',
@@ -200,7 +200,7 @@ class KomplainController extends Controller
         $lama = $komplain->only(['status']);
 
         $komplain->update([
-            'status' => Complaint::STATUS_DITUTUP,
+            'status' => Complaint::STATUS_SELESAI,
             'diselesaikan_pada' => now(),
         ]);
 
@@ -226,7 +226,7 @@ class KomplainController extends Controller
             Complaint::class,
             $komplain->complaint_id,
             $lama,
-            ['status' => Complaint::STATUS_DITUTUP],
+            ['status' => Complaint::STATUS_SELESAI],
             sprintf('Menutup komplain "%s".', $komplain->subjek)
         );
 

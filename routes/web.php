@@ -268,8 +268,10 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/kurir/layanan/{layanan}/update', [KurirController::class, 'updateLayanan'])->name('kurir.layanan.update');
     Route::post('/kurir/layanan/{layanan}/hapus', [KurirController::class, 'hapusLayanan'])->name('kurir.layanan.hapus');
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
+    Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
     Route::get('/peringkat', [PeringkatController::class, 'index'])->name('peringkat');
     Route::get('/riwayat-aktivitas', [RiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
+    Route::get('/riwayat-aktivitas/export', [RiwayatAktivitasController::class, 'export'])->name('riwayat-aktivitas.export');
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
     Route::post('/notifikasi/tandai-dibaca', [NotifikasiController::class, 'markRead'])->name('notifikasi.tandai-dibaca');
     Route::get('/pengaturan-sistem', [PengaturanSistemController::class, 'index'])->name('pengaturan-sistem');

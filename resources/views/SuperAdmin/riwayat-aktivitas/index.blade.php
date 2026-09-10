@@ -70,6 +70,9 @@
         <div class="flex items-center gap-2 mb-3">
             <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
             <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Kategori</span>
+            <a href="{{ route('superadmin.riwayat-aktivitas.export', ['kategori' => request('kategori')]) }}" class="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 border border-muted-border rounded-lg text-[11px] font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
+                <span class="material-symbols-outlined text-[16px]">download</span> Export CSV
+            </a>
         </div>
         <div class="flex overflow-x-auto filter-scroll pb-2 -mx-gutter px-gutter md:mx-0 md:px-0 space-x-4">
             @foreach(['semua' => 'Semua Aktivitas', 'pengguna' => 'Pengguna', 'toko' => 'Toko', 'produk' => 'Produk', 'keuangan' => 'Keuangan', 'sistem' => 'Sistem'] as $key => $label)
