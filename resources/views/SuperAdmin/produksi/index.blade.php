@@ -8,7 +8,8 @@
 
 @php
     $statusBadgeMap = [
-        'requested' => ['label' => 'Requested', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+        'requested' => ['label' => 'Menunggu', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+        'menunggu' => ['label' => 'Menunggu', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
         'diproses' => ['label' => 'Diproduksi', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
         'menunggu_qc' => ['label' => 'Menunggu QC', 'class' => 'bg-info/10 text-info border-info/20'],
         'selesai' => ['label' => 'Selesai', 'class' => 'bg-success/10 text-success border-success/20'],

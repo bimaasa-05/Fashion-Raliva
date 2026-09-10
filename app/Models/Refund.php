@@ -34,6 +34,9 @@ class Refund extends Model
         'jumlah',
         'status',
         'alasan_penolakan',
+        'file_bukti',
+        'deskripsi_bukti',
+        'bukti_diupload_pada',
         'diajukan_pada',
         'selesai_pada',
     ];
@@ -43,6 +46,7 @@ class Refund extends Model
         return [
             'diajukan_pada' => 'datetime',
             'selesai_pada' => 'datetime',
+            'bukti_diupload_pada' => 'datetime',
         ];
     }
 
