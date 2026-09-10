@@ -80,6 +80,36 @@
     </section>
     @endif
 
+    <!-- Pengaturan Tier Peringkat (fair auto-period) -->
+    <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
+        <h2 class="font-title-md text-title-md text-on-surface premium-heading">Pengaturan Tier Peringkat</h2>
+        <p class="text-xs text-on-surface-variant mt-1">Atur nominal ↔ durasi. Periode dihitung <span class="font-bold text-on-surface">sejak disetujui</span> (fair). Kosongkan Max = ∞.</p>
+        <form method="POST" action="{{ route('superadmin.peringkat-iklan.tier') }}" class="mt-4 space-y-3">
+            @csrf @method('PUT')
+            <div id="tier-rows" class="space-y-2">
+                @foreach($tiers as $i => $t)
+                    <div class="grid grid-cols-3 gap-2 items-end">
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Min (Rp)</label>
+                            <input type="number" name="tiers[{{ $i }}][min]" value="{{ $t['min'] }}" min="0" required class="w-full bg-transparent border border-muted-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold-accent" />
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Max (Rp, kosong=∞)</label>
+                            <input type="number" name="tiers[{{ $i }}][max]" value="{{ $t['max'] ?? '' }}" min="0" class="w-full bg-transparent border border-muted-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold-accent" placeholder="∞" />
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Hari</label>
+                            <input type="number" name="tiers[{{ $i }}][hari]" value="{{ $t['hari'] }}" min="1" max="365" required class="w-full bg-transparent border border-muted-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-gold-accent" />
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="py-2.5 px-6 bg-deep-onyx text-on-primary text-xs font-bold uppercase tracking-widest rounded btn-premium">Simpan Tier</button>
+            </div>
+        </form>
+    </section>
+
     <!-- Tabel Peringkat -->
     <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium">
         <div class="flex items-center justify-between px-6 pt-6 pb-4 flex-wrap gap-3">
@@ -125,13 +155,31 @@
                             <td class="p-4 font-medium text-on-surface">{{ $slot->product->nama_produk ?? '-' }}</td>
                             <td class="p-4 text-on-surface-variant">{{ $slot->store->nama_toko ?? '-' }}</td>
                             <td class="p-4 text-right font-title-md text-sm {{ $rank === 1 ? 'text-gold-accent' : 'text-on-surface' }} font-bold">Rp {{ number_format((float)$slot->nominal_bid, 0, ',', '.') }}</td>
-                            <td class="p-4 text-center text-on-surface-variant whitespace-nowrap">{{ \Carbon\Carbon::parse($slot->tanggal_mulai)->locale('id')->translatedFormat('d M') }} – {{ \Carbon\Carbon::parse($slot->tanggal_selesai)->locale('id')->translatedFormat('d M Y') }}</td>
-                            <td class="p-4 text-center"><span class="inline-flex items-center gap-1 px-2 py-1 rounded-full {{ $st[1] }} text-[10px] font-bold uppercase border">{{ $st[0] }}</span></td>
+                            <td class="p-4 text-center text-on-surface-variant whitespace-nowrap">{{ $slot->tanggal_mulai ? \Carbon\Carbon::parse($slot->tanggal_mulai)->locale('id')->translatedFormat('d M') : '-' }} – {{ $slot->tanggal_selesai ? \Carbon\Carbon::parse($slot->tanggal_selesai)->locale('id')->translatedFormat('d M Y') : 'Menunggu' }}</td>
+                            <td class="p-4 text-center"><span class="inline-flex items-center gap-1 px-2 py-1 rounded-full {{ $st[1] }} text-[10px] font-bold uppercase border">{{ $st[0] }}</span>@if($slot->status === 'ditunda')<div class="mt-1"><span class="inline-flex px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ $slot->payment_status === 'terverifikasi' ? 'bg-success/10 text-success border-success/20' : ($slot->payment_status === 'ditolak' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/20') }}">{{ $slot->payment_status ?? 'menunggu_verifikasi' }}</span></div>@if($slot->bankAccount)<div class="text-[10px] text-on-surface-variant mt-1">{{ $slot->bankAccount->bank->nama_bank ?? '' }} • {{ $slot->bankAccount->nomor_rekening }}</div>@endif @if($slot->file_bukti)<div class="mt-1"><a href="{{ asset('storage/' . $slot->file_bukti) }}" target="_blank" class="text-[10px] text-gold-accent hover:underline">Lihat Bukti</a></div>@endif @endif</td>
                             <td class="p-4 text-right">
-                                <form action="{{ route('superadmin.peringkat-iklan.hapus', $slot) }}" method="POST" onsubmit="return openConfirmPeringkat(event, 'Hapus slot iklan ini?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="px-3 py-1.5 border border-error/30 rounded-lg text-[11px] font-label-sm uppercase tracking-wider text-error hover:bg-error/10 transition-colors">Hapus</button>
-                                </form>
+                                @if($slot->status === 'ditunda' && $slot->payment_status === 'menunggu_verifikasi')
+                                    <div class="flex items-center justify-end gap-1 flex-wrap">
+                                        <form action="{{ route('superadmin.peringkat-iklan.verifikasi', $slot) }}" method="POST" onsubmit="return openConfirmPeringkat(event, 'Verifikasi pembayaran iklan ini?')" class="inline-block">
+                                            @csrf
+                                            <button type="submit" class="px-2 py-1.5 border border-gold-accent/40 rounded-lg text-[10px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">Verifikasi</button>
+                                        </form>
+                                        <button type="button" onclick="openTolakIklan({{ $slot->ad_slot_id }})" class="px-2 py-1.5 border border-error/30 rounded-lg text-[10px] font-bold uppercase text-error hover:bg-error/10">Tolak</button>
+                                    </div>
+                                @elseif($slot->status === 'ditunda' && $slot->payment_status === 'terverifikasi')
+                                    <div class="flex items-center justify-end gap-1 flex-wrap">
+                                        <form action="{{ route('superadmin.peringkat-iklan.setujui', $slot) }}" method="POST" onsubmit="return openConfirmPeringkat(event, 'Setujui dan aktifkan iklan ini? Biaya Rp {{ number_format((float) $slot->nominal_bid, 0, ',', '.') }} akan dicatat.')" class="inline-block">
+                                            @csrf
+                                            <button type="submit" class="px-2 py-1.5 bg-deep-onyx text-on-primary rounded-lg text-[10px] font-bold uppercase hover:bg-black">Setujui</button>
+                                        </form>
+                                        <button type="button" onclick="openTolakIklan({{ $slot->ad_slot_id }})" class="px-2 py-1.5 border border-error/30 rounded-lg text-[10px] font-bold uppercase text-error hover:bg-error/10">Tolak</button>
+                                    </div>
+                                @else
+                                    <form action="{{ route('superadmin.peringkat-iklan.hapus', $slot) }}" method="POST" onsubmit="return openConfirmPeringkat(event, 'Hapus slot iklan ini?')">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="px-3 py-1.5 border border-error/30 rounded-lg text-[11px] font-label-sm uppercase tracking-wider text-error hover:bg-error/10 transition-colors">Hapus</button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @empty
@@ -174,15 +222,51 @@
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">Periode</dt>
-                            <dd class="text-on-surface-variant text-xs text-right whitespace-nowrap">{{ \Carbon\Carbon::parse($slot->tanggal_mulai)->locale('id')->translatedFormat('d M') }} – {{ \Carbon\Carbon::parse($slot->tanggal_selesai)->locale('id')->translatedFormat('d M Y') }}</dd>
+                            <dd class="text-on-surface-variant text-xs text-right whitespace-nowrap">{{ $slot->tanggal_mulai ? \Carbon\Carbon::parse($slot->tanggal_mulai)->locale('id')->translatedFormat('d M') : '-' }} – {{ $slot->tanggal_selesai ? \Carbon\Carbon::parse($slot->tanggal_selesai)->locale('id')->translatedFormat('d M Y') : 'Menunggu' }}</dd>
                         </div>
+                        @if($slot->status === 'ditunda')
+                            <div class="flex justify-between gap-3">
+                                <dt class="text-on-surface-variant">Pembayaran</dt>
+                                <dd class="text-right"><span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $slot->payment_status === 'terverifikasi' ? 'bg-success/10 text-success border-success/20' : ($slot->payment_status === 'ditolak' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/20') }}">{{ $slot->payment_status ?? 'menunggu_verifikasi' }}</span></dd>
+                            </div>
+                            @if($slot->bankAccount)
+                                <div class="flex justify-between gap-3">
+                                    <dt class="text-on-surface-variant">Rekening</dt>
+                                    <dd class="text-xs text-right">{{ $slot->bankAccount->bank->nama_bank ?? '' }} {{ $slot->bankAccount->nomor_rekening }}</dd>
+                                </div>
+                            @endif
+                            @if($slot->file_bukti)
+                                <div class="flex justify-between gap-3">
+                                    <dt class="text-on-surface-variant">Bukti</dt>
+                                    <dd class="text-right"><a href="{{ asset('storage/' . $slot->file_bukti) }}" target="_blank" class="text-xs text-gold-accent hover:underline">Lihat Bukti</a></dd>
+                                </div>
+                            @endif
+                        @endif
                     </dl>
-                    <form action="{{ route('superadmin.peringkat-iklan.hapus', $slot) }}" method="POST" onsubmit="return openConfirmPeringkat(event, 'Hapus slot iklan ini?')">
+                    @if($slot->status === 'ditunda' && $slot->payment_status === 'menunggu_verifikasi')
+                        <div class="grid grid-cols-2 gap-2">
+                            <form action="{{ route('superadmin.peringkat-iklan.verifikasi', $slot) }}" method="POST" onsubmit="return openConfirmPeringkat(event, 'Verifikasi pembayaran iklan ini?')" class="inline-block">
+                                @csrf
+                                <button type="submit" class="w-full min-h-11 inline-flex items-center justify-center gap-2 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">Verifikasi</button>
+                            </form>
+                            <button type="button" onclick="openTolakIklan({{ $slot->ad_slot_id }})" class="w-full min-h-11 inline-flex items-center justify-center gap-2 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">Tolak</button>
+                        </div>
+                    @elseif($slot->status === 'ditunda' && $slot->payment_status === 'terverifikasi')
+                        <div class="grid grid-cols-2 gap-2">
+                            <form action="{{ route('superadmin.peringkat-iklan.setujui', $slot) }}" method="POST" onsubmit="return openConfirmPeringkat(event, 'Setujui dan aktifkan iklan ini?')" class="inline-block">
+                                @csrf
+                                <button type="submit" class="w-full min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary rounded-lg text-[11px] font-bold uppercase">Setujui</button>
+                            </form>
+                            <button type="button" onclick="openTolakIklan({{ $slot->ad_slot_id }})" class="w-full min-h-11 inline-flex items-center justify-center gap-2 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">Tolak</button>
+                        </div>
+                    @else
+                        <form action="{{ route('superadmin.peringkat-iklan.hapus', $slot) }}" method="POST" onsubmit="return openConfirmPeringkat(event, 'Hapus slot iklan ini?')">
                         @csrf @method('DELETE')
                         <button type="submit" class="w-full min-h-11 inline-flex items-center justify-center gap-2 border border-error/30 rounded-lg text-[11px] font-label-sm uppercase tracking-wider text-error hover:bg-error/10 transition-colors">
                             <span class="material-symbols-outlined text-[16px]">delete</span>Hapus
                         </button>
                     </form>
+                    @endif
                 </article>
             @empty
                 <p class="text-center text-on-surface-variant py-10">Belum ada slot iklan terdaftar.</p>
@@ -220,23 +304,43 @@
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="nominal_bid">Nominal Bayaran (Rp)</label>
                         <input type="number" min="100000" step="50000" id="nominal_bid" name="nominal_bid" value="{{ old('nominal_bid', 1000000) }}" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
-                        <p class="text-xs text-on-surface-variant mt-1.5">Minimal Rp 100.000 — nominal tertinggi menduduki peringkat 1.</p>
+                        <p class="text-xs text-on-surface-variant mt-1.5">Minimal Rp 100.000 — nominal tertinggi menduduki peringkat 1. <span id="sa-preview-hari" class="font-bold text-gold-accent"></span></p>
                         @error('nominal_bid')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
                     <div>
-                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="tanggal_mulai">Mulai Berlaku</label>
-                        <input type="date" id="tanggal_mulai" name="tanggal_mulai" value="{{ old('tanggal_mulai') }}" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
+                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="tanggal_mulai">Mulai Berlaku <span class="text-xs normal-case text-on-surface-variant/60">(opsional, auto jika kosong)</span></label>
+                        <input type="date" id="tanggal_mulai" name="tanggal_mulai" value="{{ old('tanggal_mulai') }}" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
                         @error('tanggal_mulai')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="tanggal_selesai">Berakhir</label>
-                    <input type="date" id="tanggal_selesai" name="tanggal_selesai" value="{{ old('tanggal_selesai') }}" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="tanggal_selesai">Berakhir <span class="text-xs normal-case text-on-surface-variant/60">(opsional)</span></label>
+                    <input type="date" id="tanggal_selesai" name="tanggal_selesai" value="{{ old('tanggal_selesai') }}" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
                     @error('tanggal_selesai')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
+                </div>
+                <div class="flex items-start gap-3 p-4 border border-gold-accent/30 bg-gold-accent/5 rounded-lg">
+                    <span class="material-symbols-outlined text-gold-accent mt-0.5 text-[20px]">schedule</span>
+                    <div class="flex-1">
+                        <p class="font-label-sm text-label-sm text-on-surface uppercase">Durasi Otomatis (Fair)</p>
+                        <p class="text-xs text-on-surface-variant mt-1">Periode aktif dihitung <span class="font-bold text-on-surface">sejak disetujui</span>. Tier: 100k-499k→7 hari, 500k-999k→14 hari, 1jt-1,99jt→30 hari, ≥2jt→60 hari.</p>
+                    </div>
                 </div>
                 <div class="flex items-start gap-3 p-4 border border-gold-accent/30 bg-gold-accent/5 rounded-lg">
                     <span class="material-symbols-outlined text-gold-accent mt-0.5 text-[20px]">info</span>
                     <p class="font-body-md text-xs text-on-surface-variant">Setelah disimpan, produk langsung naik ke peringkat sesuai urutan nominal dan tampil teratas di katalog pelanggan.</p>
+                </div>
+                <div class="flex items-start gap-3 p-4 border border-gold-accent/30 bg-gold-accent/5 rounded-lg">
+                    <span class="material-symbols-outlined text-gold-accent mt-0.5 text-[20px]">account_balance</span>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-label-sm text-label-sm text-on-surface uppercase">Rekening Tujuan Transfer</p>
+                        @forelse($rekenings ?? [] as $rek)
+                            <div class="mt-2 flex items-center gap-2 text-sm"><span class="material-symbols-outlined text-[16px] text-on-surface-variant">credit_card</span><span class="font-mono">{{ $rek->bank->nama_bank ?? $rek->bank_id }} • {{ $rek->nomor_rekening }}</span></div>
+                            <div class="flex items-center gap-2 text-sm text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">person</span><span>a.n. {{ $rek->nama_pemilik }}</span></div>
+                        @empty
+                            <p class="text-xs text-on-surface-variant/60 italic mt-1">Belum ada rekening platform — isi di Data Bank.</p>
+                        @endforelse
+                        <p class="text-xs text-on-surface-variant mt-2">Transfer sesuai nominal bid, bukti diverifikasi di Tahap 2.</p>
+                    </div>
                 </div>
                 <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
                     <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
@@ -263,6 +367,31 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Tolak Iklan -->
+<div id="tolakIklanModal" class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-black/50" onclick="closeTolakIklan()"></div>
+    <div class="relative mx-auto w-full max-w-md mt-[10vh] bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[80vh] overflow-y-auto">
+        <div class="flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <p class="raliva-label text-error">Tolak Pengajuan</p>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">Tolak Iklan</h3>
+            </div>
+            <button type="button" onclick="closeTolakIklan()" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <form id="tolak-iklan-form" method="POST" action="" class="p-6 space-y-5">
+            @csrf
+            <div>
+                <label class="block raliva-label mb-2">Alasan Penolakan</label>
+                <textarea name="alasan" rows="3" minlength="10" maxlength="1000" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error transition-colors" placeholder="Minimal 10 karakter"></textarea>
+            </div>
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+                <button type="button" onclick="closeTolakIklan()" class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="submit" class="py-3 px-6 bg-error text-on-error text-sm font-semibold rounded flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[16px]">block</span>Tolak</button>
+            </div>
+        </form>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -286,6 +415,40 @@
         if (_pendingPeringkatForm) _pendingPeringkatForm.submit();
         closeConfirmPeringkat();
     });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeConfirmPeringkat(); });
+    function openTolakIklan(id) {
+        const form = document.getElementById('tolak-iklan-form');
+        form.action = '{{ route('superadmin.peringkat-iklan.tolak', ':id:') }}'.replace(':id:', id);
+        document.getElementById('tolakIklanModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeTolakIklan() {
+        document.getElementById('tolakIklanModal').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+    function peringkatHariSA(nominal) {
+        nominal = parseInt(nominal) || 0;
+        const tiers = @json($tiers ?? []);
+        for (const t of tiers) {
+            const min = parseInt(t.min) || 0;
+            const max = t.max === null || t.max === '' ? null : parseInt(t.max);
+            const hari = parseInt(t.hari) || 7;
+            if (nominal >= min && (max === null || nominal <= max)) return hari;
+        }
+        if (nominal >= 2000000) return 60;
+        if (nominal >= 1000000) return 30;
+        if (nominal >= 500000) return 14;
+        if (nominal >= 100000) return 7;
+        return 7;
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('nominal_bid');
+        const preview = document.getElementById('sa-preview-hari');
+        function updatePreview() {
+            const h = peringkatHariSA(input?.value);
+            if (preview) preview.textContent = '→ ' + h + ' hari (sejak disetujui)';
+        }
+        if (input) { input.addEventListener('input', updatePreview); updatePreview(); }
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeConfirmPeringkat(); closeTolakIklan(); } });
 </script>
 @endpush

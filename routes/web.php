@@ -255,6 +255,10 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::delete('/promo-platform/{promo}', [PromoPlatformController::class, 'destroy'])->name('promo-platform.destroy');
     Route::get('/peringkat-iklan', [PeringkatIklanController::class, 'index'])->name('peringkat-iklan');
     Route::post('/peringkat-iklan', [PeringkatIklanController::class, 'store'])->name('peringkat-iklan.store');
+    Route::put('/peringkat-iklan/tier', [PeringkatIklanController::class, 'updateTier'])->name('peringkat-iklan.tier');
+    Route::post('/peringkat-iklan/{slot}/verifikasi', [PeringkatIklanController::class, 'verifikasiPembayaran'])->name('peringkat-iklan.verifikasi');
+    Route::post('/peringkat-iklan/{slot}/setujui', [PeringkatIklanController::class, 'setujui'])->name('peringkat-iklan.setujui');
+    Route::post('/peringkat-iklan/{slot}/tolak', [PeringkatIklanController::class, 'tolak'])->name('peringkat-iklan.tolak');
     Route::delete('/peringkat-iklan/{slot}', [PeringkatIklanController::class, 'destroy'])->name('peringkat-iklan.hapus');
     Route::get('/data-bank', [DataBankController::class, 'index'])->name('data-bank');
     Route::post('/data-bank', [DataBankController::class, 'store'])->name('data-bank.store');
@@ -398,6 +402,8 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/produk', [OwnerProdukController::class, 'index'])->name('produk');
     Route::get('/kelola-slot', [KelolaSlotController::class, 'index'])->name('kelola-slot');
     Route::post('/kelola-slot', [KelolaSlotController::class, 'store'])->name('kelola-slot.request');
+    Route::get('/peringkat-iklan', [\App\Http\Controllers\Owner\PeringkatIklanController::class, 'index'])->name('peringkat-iklan');
+    Route::post('/peringkat-iklan', [\App\Http\Controllers\Owner\PeringkatIklanController::class, 'store'])->name('peringkat-iklan.request');
     Route::post('/paket-slot/{paket}/beli', [OwnerPaketSlotController::class, 'purchase'])->name('paket-slot.beli');
     Route::get('/pesanan', [OwnerPesananController::class, 'index'])->name('pesanan');
     Route::post('/pesanan/{order}/forward', [OwnerPesananController::class, 'forward'])->name('pesanan.forward');

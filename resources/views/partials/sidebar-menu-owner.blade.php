@@ -21,6 +21,7 @@
                 ['route' => 'owner.data-pelanggan', 'icon' => 'groups', 'text' => 'Data Pelanggan'],
                 ['route' => 'owner.kelola-slot', 'icon' => 'storage', 'text' => 'Kelola Slot'],
                 ['route' => 'owner.paket-slot', 'icon' => 'package_2', 'text' => 'Paket Slot'],
+                ['route' => 'owner.peringkat-iklan', 'icon' => 'workspace_premium', 'text' => 'Iklan Peringkat'],
             ],
         ],
         [
