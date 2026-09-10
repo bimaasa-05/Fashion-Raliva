@@ -734,8 +734,8 @@
             const selLast = '';
 
             if (m.deleted) {
-                const delBubble = mine ? 'bg-secondary/20 border-white/25' : 'bg-transparent border-outline-variant';
-                const delText = mine ? 'text-white/60' : 'text-on-surface-variant/70';
+                const delBubble = mine ? 'bg-secondary/20 border-white/25' : 'bg-error/[0.06] border-error/30';
+                const delText = mine ? 'text-white/60' : 'text-error';
                 const delBtn = mine ? 'text-white/50 hover:text-white' : 'text-on-surface-variant hover:text-on-surface';
                 let delMenu = '';
                 if (actionsOn) {
