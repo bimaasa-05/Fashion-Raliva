@@ -115,17 +115,17 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Target Penerimaan Hari Ini</p>
-                <div data-donut='[{"value":{{ $targetPenerimaan["pct"] ?? 0 }},"color":"#C9A24D","label":"Tercapai"},{"value":{{ 100 - ($targetPenerimaan["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Target" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <div data-donut='[{"value":{{ $targetPenerimaan["pct"] ?? 0 }},"color":"#8B1E3F","label":"Tercapai"},{"value":{{ 100 - ($targetPenerimaan["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Target" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
                 <p class="text-[11px] text-on-surface-variant mt-1">{{ $targetPenerimaan["masuk"] ?? 0 }} dari {{ $targetPenerimaan["target"] ?? 0 }} unit hari ini</p>
             </div>
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Akurasi Stok</p>
-                <div data-donut='[{"value":{{ $akurasi["pct"] ?? 0 }},"color":"#795905","label":"Akurat"},{"value":{{ 100 - ($akurasi["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Akurasi" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <div data-donut='[{"value":{{ $akurasi["pct"] ?? 0 }},"color":"#8B1E3F","label":"Akurat"},{"value":{{ 100 - ($akurasi["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Akurasi" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
                 <p class="text-[11px] text-on-surface-variant mt-1">{{ $akurasi["tersedia"] ?? 0 }} dari {{ $akurasi["total"] ?? 0 }} varian stok tersedia</p>
             </div>
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">SLA Pemenuhan Pesanan</p>
-                <div data-donut='[{"value":{{ $sla["pct"] ?? 0 }},"color":"#E9CE8A","label":"Tepat SLA"},{"value":{{ 100 - ($sla["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Stok Tersedia" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <div data-donut='[{"value":{{ $sla["pct"] ?? 0 }},"color":"#c03a5a","label":"Tepat SLA"},{"value":{{ 100 - ($sla["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Stok Tersedia" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
                 <p class="text-[11px] text-on-surface-variant mt-1">{{ $sla["tersedia"] ?? 0 }} dari {{ $sla["total"] ?? 0 }} pesanan stok tersedia</p>
             </div>
         </div>
@@ -162,7 +162,7 @@
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">donut_small</span>
             </div>
             <p class="text-on-surface-variant font-body-md text-xs mb-4">Sebaran kondisi {{ $stats->total_produk ?? 0 }} produk.</p>
-            <div data-donut='[{"value":{{ $statusDist['aman'] ?? 0 }},"color":"#C9A24D","label":"Aman"},{"value":{{ $statusDist['menipis'] ?? 0 }},"color":"#E9CE8A","label":"Menipis"},{"value":{{ $statusDist['kritis'] ?? 0 }},"color":"#BA1A26","label":"Kritis"},{"value":{{ $statusDist['habis'] ?? 0 }},"color":"#7f1010","label":"Habis"}]' data-donut-label="Produk"></div>
+            <div data-donut='[{"value":{{ $statusDist['aman'] ?? 0 }},"color":"#8B1E3F","label":"Aman"},{"value":{{ $statusDist['menipis'] ?? 0 }},"color":"#c03a5a","label":"Menipis"},{"value":{{ $statusDist['kritis'] ?? 0 }},"color":"#BA1A26","label":"Kritis"},{"value":{{ $statusDist['habis'] ?? 0 }},"color":"#7f1010","label":"Habis"}]' data-donut-label="Produk"></div>
             <a href="{{ route('gudang.stok') }}" class="block text-center mt-5 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Data Stok</a>
         </section>
     </div>
@@ -340,7 +340,7 @@
             data: {
                 labels: data.labels,
                 datasets: [
-                    { label: 'Barang Masuk', data: data.masuk, borderColor: '#C9A24D', backgroundColor: 'rgba(201, 162, 77, 0.1)', fill: true, tension: 0.35, borderWidth: 2, pointBackgroundColor: '#C9A24D', pointRadius: 3 },
+                    { label: 'Barang Masuk', data: data.masuk, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.1)', fill: true, tension: 0.35, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 },
                     { label: 'Barang Keluar', data: data.keluar, borderColor: tickColor, backgroundColor: 'transparent', fill: false, tension: 0.35, borderWidth: 2, pointBackgroundColor: tickColor, pointRadius: 3 }
                 ]
             },
