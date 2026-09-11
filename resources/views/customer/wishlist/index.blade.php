@@ -335,7 +335,7 @@
 <button id="wl-search-toggle" aria-label="{{ __('Search wishlist') }}" class="wl-header-item hover:opacity-80 transition-opacity flex items-center justify-center relative" onclick="toggleWishlistSearch()" type="button">
 <span class="material-symbols-outlined text-[22px]" data-icon="search">search</span>
 </button>
-<a href="{{ route('customer.chart') }}" aria-label="{{ __('Cart') }}" class="wl-header-item relative hover:opacity-80 transition-opacity flex items-center justify-center">
+<a href="{{ route('customer.chart', ['from' => 'wishlist']) }}" aria-label="{{ __('Cart') }}" class="wl-header-item relative hover:opacity-80 transition-opacity flex items-center justify-center">
 <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
 <span class="cart-badge absolute -top-1 -right-1 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
 </a>
