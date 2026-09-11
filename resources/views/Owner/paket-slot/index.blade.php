@@ -38,6 +38,11 @@
             </div>
         </div>
     @endif
+    {{-- Penanda halaman: Kelola Slot / Paket Slot --}}
+    <div data-reveal class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 max-w-full overflow-x-auto">
+        <a href="{{ route('owner.kelola-slot') }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ request()->routeIs('owner.kelola-slot') ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">Kelola Slot</a>
+        <a href="{{ route('owner.paket-slot') }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ request()->routeIs('owner.paket-slot') ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">Paket Slot</a>
+    </div>
     {{-- Paket Aktif --}}
     <section data-reveal class="bg-deep-onyx text-on-primary rounded-lg p-6 md:p-8 relative overflow-hidden">
         <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[140px] text-on-primary/5 pointer-events-none select-none" aria-hidden="true">workspace_premium</span>
