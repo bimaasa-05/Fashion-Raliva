@@ -73,7 +73,7 @@
         @forelse ($stores as $item)
             @php
                 $store = $item->model;
-                $badge = $badgeMap[$store->status];
+                $badge = $badgeMap[$store->status] ?? $badgeMap[\App\Models\Store::STATUS_PENDING];
                 $isSuspended = $store->status === \App\Models\Store::STATUS_NONAKTIF;
                 $isPending = $store->status === \App\Models\Store::STATUS_PENDING;
             @endphp
@@ -224,20 +224,30 @@
 
         if (d.status === 'pending') {
             mainBtn.textContent = 'Setujui Toko';
+            mainBtn.dataset.confirm = 'false';
             mainBtn.classList.remove('hidden');
             mainForm.action = actionUrls.setujui(d.id);
             rejectBtn.classList.remove('hidden');
             document.getElementById('store-action-info')?.classList.remove('hidden');
         } else if (d.status === 'aktif') {
             mainBtn.textContent = 'Tangguhkan Toko';
+            mainBtn.dataset.confirm = 'false';
             mainBtn.classList.remove('hidden');
             mainForm.action = actionUrls.tangguhkan(d.id);
             rejectBtn.classList.add('hidden');
             document.getElementById('store-action-info')?.classList.add('hidden');
         } else if (d.status === 'nonaktif') {
             mainBtn.textContent = 'Aktifkan Kembali';
+            mainBtn.dataset.confirm = 'false';
             mainBtn.classList.remove('hidden');
             mainForm.action = actionUrls.aktifkan(d.id);
+            rejectBtn.classList.add('hidden');
+            document.getElementById('store-action-info')?.classList.add('hidden');
+        } else if (d.status === 'ditolak') {
+            mainBtn.textContent = 'Pulihkan & Setujui';
+            mainBtn.dataset.confirm = 'true';
+            mainBtn.classList.remove('hidden');
+            mainForm.action = actionUrls.setujui(d.id);
             rejectBtn.classList.add('hidden');
             document.getElementById('store-action-info')?.classList.add('hidden');
         } else {
@@ -258,6 +268,16 @@
         modal.classList.add('hidden');
         modal.classList.remove('flex');
         document.body.style.overflow = '';
+    }
+
+    function confirmStoreAction() {
+        if (document.getElementById('store-action-main').dataset.confirm === 'true') {
+            if (! confirm('Pulihkan dan setujui toko yang sebelumnya ditolak ini?')) {
+                return false;
+            }
+        }
+        closeStoreModal();
+        return true;
     }
 
     function openRejectModal() {
@@ -524,7 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="flex gap-3 w-full sm:w-auto">
                 <button id="store-action-reject" type="button" onclick="openRejectModal()" class="flex-1 sm:flex-none px-6 py-3 border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-wider rounded-lg hover:bg-error/10 transition-colors">Tolak</button>
-                <form id="store-action-form" method="POST" action="" onsubmit="closeStoreModal()">
+                <form id="store-action-form" method="POST" action="" onsubmit="return confirmStoreAction()">
                     @csrf
                     <button id="store-action-main" type="submit" class="w-full sm:w-auto px-8 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-lg btn-premium">Setujui Toko</button>
                 </form>
