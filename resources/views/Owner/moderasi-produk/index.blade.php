@@ -98,7 +98,7 @@
                     $fotos = $item->images->map(fn ($img) => $normFoto($img->file_gambar))->values()->all();
                 @endphp
                 <article data-reveal data-mod-row data-status="{{ $status === 'aktif' ? 'disetujui' : $status }}" data-produk-id="{{ $item->product_id }}" data-produk-nama="{{ $item->nama_produk }}" data-produk-sku="{{ $sku }}" data-produk-created="{{ $item->created_at->translatedFormat('d M Y') }}" data-produk-harga="Rp {{ number_format((float) $item->harga_dasar, 0, ',', '.') }}" data-produk-kategori="{{ $item->category?->nama_kategori ?? '-' }}" data-produk-tipe="{{ ucfirst($item->tipe_produk) }}" data-produk-varian="{{ $item->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}" data-produk-deskripsi="{{ $item->deskripsi }}" data-produk-status="{{ $status }}" data-produk-verified="{{ $item->owner_verified_at ? '1' : '0' }}" data-produk-alasan="{{ $status === 'ditolak' ? ($item->alasan_penolakan ?? '') : '' }}" data-produk-images='@json($fotos)' class="group bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium flex flex-col">
-                    <div class="relative aspect-[4/3] bg-surface-container-low overflow-hidden" data-produk-gallery>
+                    <div class="relative aspect-[3/4] bg-surface-container-low overflow-hidden" data-produk-gallery>
                         @if (count($fotos))
                             <div class="block w-full h-full" data-produk-main>
                                 <img src="{{ $fotos[0] }}" alt="{{ $item->nama_produk }}" data-produk-main-img class="w-full h-full object-cover transition-opacity duration-300" loading="lazy" />
@@ -124,7 +124,7 @@
                     @if (count($fotos) > 1)
                         <div class="flex gap-2 px-4 pt-3 overflow-x-auto" data-produk-strip>
                             @foreach ($fotos as $i => $f)
-                                <button type="button" data-produk-pin="{{ $i }}" aria-label="Tampilkan foto {{ $i + 1 }} dari {{ $item->nama_produk }}" aria-pressed="{{ $i === 0 ? 'true' : 'false' }}" class="h-14 w-16 shrink-0 rounded-md overflow-hidden border transition-colors {{ $i === 0 ? 'border-gold-accent ring-2 ring-gold-accent/30' : 'border-outline-variant hover:border-gold-accent' }}">
+                                <button type="button" data-produk-pin="{{ $i }}" aria-label="Tampilkan foto {{ $i + 1 }} dari {{ $item->nama_produk }}" aria-pressed="{{ $i === 0 ? 'true' : 'false' }}" class="h-16 w-20 shrink-0 rounded-md overflow-hidden border transition-colors {{ $i === 0 ? 'border-gold-accent ring-2 ring-gold-accent/30' : 'border-outline-variant hover:border-gold-accent' }}">
                                     <img src="{{ $f }}" alt="" class="w-full h-full object-cover" loading="lazy" />
                                 </button>
                             @endforeach
@@ -203,6 +203,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 t.classList.toggle('bg-deep-onyx', active);
                 t.classList.toggle('text-on-primary', active);
                 t.classList.toggle('text-on-surface-variant', !active);
+                t.classList.toggle('hover:text-on-surface', !active);
             });
             const target = tab.getAttribute('data-mod-tab');
             let visible = 0;
@@ -232,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function(){
             </button>
         </div>
         <div class="p-6 space-y-5">
-            <div id="detail-main-wrap" class="rounded-lg overflow-hidden border border-outline-variant bg-surface-container-high h-64 flex items-center justify-center">
+            <div id="detail-main-wrap" class="rounded-lg overflow-hidden border border-outline-variant bg-surface-container-high aspect-[3/4] max-h-[60vh] w-full flex items-center justify-center">
                 <img id="detail-main-img" class="w-full h-full object-cover" src="" alt="Foto produk" />
                 <div id="detail-noimg" class="hidden flex-col items-center gap-2 text-on-surface-variant">
                     <span class="material-symbols-outlined text-[40px]">checkroom</span>
