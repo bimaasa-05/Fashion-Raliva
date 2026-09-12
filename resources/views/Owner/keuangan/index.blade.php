@@ -204,8 +204,10 @@
                 </div>
                 <div>
                     <label class="block raliva-label mb-2">Nominal (Rp)</label>
-                    <input name="nominal" type="text" inputmode="numeric" data-rupiah required placeholder="5.000.000" class="raliva-input" />
-                    <p data-rupiah-hint class="text-xs text-gold-accent font-bold mt-1.5">Rp 0</p>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-on-surface-variant pointer-events-none">Rp</span>
+                        <input name="nominal" type="text" inputmode="numeric" data-rupiah required placeholder="5.000.000" class="raliva-input" style="padding-left:2.75rem" />
+                    </div>
                 </div>
                 <div class="md:col-span-2">
                     <label class="block raliva-label mb-2">Tanggal</label>
@@ -258,8 +260,10 @@
                 </div>
                 <div>
                     <label class="block raliva-label mb-2">Nominal (Rp)</label>
-                    <input name="nominal" type="text" inputmode="numeric" data-rupiah required placeholder="500.000" class="raliva-input" />
-                    <p data-rupiah-hint class="text-xs text-gold-accent font-bold mt-1.5">Rp 0</p>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-on-surface-variant pointer-events-none">Rp</span>
+                        <input name="nominal" type="text" inputmode="numeric" data-rupiah required placeholder="500.000" class="raliva-input" style="padding-left:2.75rem" />
+                    </div>
                 </div>
                 <div>
                     <label class="block raliva-label mb-2">Tanggal</label>
@@ -395,8 +399,6 @@
         if (!el) return;
         const digits = el.value.replace(/\D/g, '').slice(0, 15);
         el.value = digits ? new Intl.NumberFormat('id-ID').format(digits) : '';
-        const hint = el.closest('form')?.querySelector('[data-rupiah-hint]');
-        if (hint) hint.textContent = 'Rp ' + (el.value || '0');
     });
     document.addEventListener('submit', (e) => {
         if (!(e.target instanceof HTMLFormElement)) return;
