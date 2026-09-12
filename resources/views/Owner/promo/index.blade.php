@@ -3,7 +3,7 @@
 @section('title', 'Promo Toko')
 
 @section('header-title', 'Promo Toko')
-@section('header-badge', '3 Aktif')
+@section('header-badge', ($counts['aktif'] ?? 0) . ' Aktif')
 @section('header-subtitle', 'Buat dan kelola promo khusus untuk pelanggan toko Anda.')
 
 @section('content')
@@ -104,10 +104,10 @@
 
                     <div class="flex items-center gap-2 pt-1 mt-auto">
                         <button type="button" data-modal-open="modal-detail-promo-{{ $promo->promotion_id }}" class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Detail</button>
-                        <button type="button" data-modal-open="modal-edit-promo-{{ $promo->promotion_id }}" class="px-4 py-2.5 bg-gold-accent/10 border border-gold-accent/30 text-gold-accent rounded-lg text-xs font-bold hover:bg-gold-accent hover:text-white transition-colors">Edit</button>
+                        <button type="button" data-modal-open="modal-edit-promo-{{ $promo->promotion_id }}" class="px-4 py-2.5 bg-gold-accent/10 border border-gold-accent/30 text-gold-accent rounded-lg text-xs font-bold hover:border-gold-accent transition-colors">Edit</button>
                         <form method="POST" action="{{ route('owner.promo.toggle', $promo) }}" class="inline">
                             @csrf
-                            <button type="submit" class="px-3 py-2.5 {{ $promo->status==='aktif' ? 'bg-secondary text-white' : 'bg-surface-container-low border border-muted-border text-on-surface-variant' }} rounded-lg text-xs font-bold transition-colors" title="{{ $promo->status==='aktif' ? 'Nonaktifkan' : 'Aktifkan' }}">{{ $promo->status==='aktif' ? 'Aktif' : 'Off' }}</button>
+                            <button type="submit" class="px-3 py-2.5 {{ $promo->status==='aktif' ? 'bg-secondary text-white' : 'bg-surface-container-low border border-muted-border text-on-surface-variant' }} rounded-lg text-xs font-bold transition-colors" title="{{ $promo->status==='aktif' ? 'Nonaktifkan' : 'Aktifkan' }}">{{ $promo->status==='aktif' ? 'Nonaktifkan' : 'Aktifkan' }}</button>
                         </form>
                         <form method="POST" action="{{ route('owner.promo.destroy', $promo) }}" onsubmit="return confirm('Hapus promo {{ $promo->kode_promo }}?')" class="inline">
                             @csrf @method('DELETE')
