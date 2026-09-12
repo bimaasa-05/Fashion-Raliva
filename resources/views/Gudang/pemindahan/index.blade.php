@@ -102,9 +102,19 @@
                             <td class="p-4 text-center text-on-surface whitespace-nowrap">{{ $t->requester->nama_lengkap ?? '-' }}</td>
                             <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass[$t->status] ?? 'bg-surface-container-high text-on-surface-variant border-outline-variant' }} text-[10px] font-bold uppercase border">{{ $status }}</span></td>
                             <td class="p-4 text-center">
-                                <button type="button" data-modal-open="pm-detail-{{ $loop->iteration }}" title="Lihat Detail" class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface-variant hover:text-gold-accent hover:border-gold-accent transition-colors">
-                                    <span class="material-symbols-outlined text-[18px]">visibility</span>
-                                </button>
+                                <div class="inline-flex items-center justify-center gap-2">
+                                    @if (in_array($t->status, ['approved', 'in_transit']) && $t->to_warehouse_id === (int) $warehouse->warehouse_id)
+                                        <form method="POST" action="{{ route('gudang.pemindahan.terima', $t->stock_transfer_id) }}">
+                                            @csrf
+                                            <button type="submit" title="Terima di gudang ini" class="px-3 h-9 rounded-lg bg-secondary/15 text-secondary border border-secondary/30 flex items-center justify-center gap-1 text-[11px] font-bold uppercase tracking-widest hover:bg-secondary/25 transition-colors">
+                                                <span class="material-symbols-outlined text-[16px]">inventory</span>Terima
+                                            </button>
+                                        </form>
+                                    @endif
+                                    <button type="button" data-modal-open="pm-detail-{{ $loop->iteration }}" title="Lihat Detail" class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface-variant hover:text-gold-accent hover:border-gold-accent transition-colors">
+                                        <span class="material-symbols-outlined text-[18px]">visibility</span>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -148,6 +158,14 @@
                         </div>
                     </dl>
 
+                    @if (in_array($t->status, ['approved', 'in_transit']) && $t->to_warehouse_id === (int) $warehouse->warehouse_id)
+                        <form method="POST" action="{{ route('gudang.pemindahan.terima', $t->stock_transfer_id) }}" class="mb-3">
+                            @csrf
+                            <button type="submit" class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg bg-secondary/15 text-secondary border border-secondary/30 text-xs font-bold uppercase tracking-widest hover:bg-secondary/25 transition-colors">
+                                <span class="material-symbols-outlined text-[18px]">inventory</span>Terima di Gudang Ini
+                            </button>
+                        </form>
+                    @endif
                     <button type="button" data-modal-open="pm-detail-{{ $loop->iteration }}" class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
                         <span class="material-symbols-outlined text-[18px]">visibility</span>Lihat Detail
                     </button>
@@ -203,7 +221,16 @@
                     <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Jumlah</dt><dd class="text-gold-accent font-bold">{{ $t->items->sum('jumlah') }} unit</dd></div>
                     <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Petugas</dt><dd class="text-on-surface">{{ $t->requester->nama_lengkap ?? '-' }}</dd></div>
                     <div class="flex justify-between gap-4 items-start"><dt class="text-on-surface-variant">Status</dt><dd><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass[$t->status] ?? '' }} text-[10px] font-bold uppercase border">{{ $status }}</span></dd></div>
+                    @if ($t->status === 'cancelled' && $t->alasan_penolakan)
+                        <div class="flex justify-between gap-4 items-start"><dt class="text-on-surface-variant">Alasan Ditolak</dt><dd class="text-error text-right max-w-[60%]">{{ $t->alasan_penolakan }}</dd></div>
+                    @endif
                 </dl>
+                @if (in_array($t->status, ['approved', 'in_transit']) && $t->to_warehouse_id === (int) $warehouse->warehouse_id)
+                    <form method="POST" action="{{ route('gudang.pemindahan.terima', $t->stock_transfer_id) }}">
+                        @csrf
+                        <button type="submit" class="w-full mt-6 py-3 bg-secondary/15 text-secondary border border-secondary/30 font-label-sm text-[11px] uppercase tracking-widest rounded hover:bg-secondary/25 transition-colors">Terima Pemindahan</button>
+                    </form>
+                @endif
                 <button type="button" data-modal-close class="w-full mt-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tutup</button>
             </div>
         </div>
