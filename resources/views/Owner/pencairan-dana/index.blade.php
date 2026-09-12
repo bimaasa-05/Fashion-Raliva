@@ -69,7 +69,8 @@
             @csrf
             <div>
                 <label class="block raliva-label mb-2">Jumlah Pencairan</label>
-                <input name="jumlah" type="number" min="100000" required class="raliva-input" placeholder="100000" />
+                <input name="jumlah" type="text" inputmode="numeric" data-rupiah required class="raliva-input" placeholder="100.000" />
+                <p data-rupiah-hint class="text-xs text-gold-accent font-bold mt-1.5">Rp 0</p>
             </div>
             <div>
                 <label class="block raliva-label mb-2">Rekening Tujuan</label>
@@ -116,6 +117,20 @@ document.addEventListener('DOMContentLoaded', function(){
     el.setAttribute('disabled','');
     el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
   });
+});
+
+/* Format ribuan live untuk input nominal (ketik 1000000 → 1.000.000 + hint Rp). */
+document.addEventListener('input', (e) => {
+    const el = e.target?.closest?.('[data-rupiah]');
+    if (!el) return;
+    const digits = el.value.replace(/\D/g, '').slice(0, 15);
+    el.value = digits ? new Intl.NumberFormat('id-ID').format(digits) : '';
+    const hint = el.closest('form')?.querySelector('[data-rupiah-hint]');
+    if (hint) hint.textContent = 'Rp ' + (el.value || '0');
+});
+document.addEventListener('submit', (e) => {
+    if (!(e.target instanceof HTMLFormElement)) return;
+    e.target.querySelectorAll('[data-rupiah]').forEach((el) => { el.value = el.value.replace(/\./g, ''); });
 });
 </script>
 @endpush
