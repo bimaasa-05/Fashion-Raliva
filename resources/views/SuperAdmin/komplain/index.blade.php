@@ -1387,15 +1387,21 @@
         input.setSelectionRange(pos, pos);
     }
 
-    // Klik di dalam modal (wallpaper, pesan, input) tapi di luar form → tutup form
+    // Klik di dalam modal (wallpaper, pesan, input) tapi di luar form → tutup form (titik tiga header/chat + search + emoji)
     document.getElementById('chat-content')?.addEventListener('click', function (e) {
         if (chatMoreOpen && !e.target.closest('#chat-more-wrap')) closeChatMoreMenu();
         if (chatMenuId !== null && !e.target.closest('[data-menu]') && !e.target.closest('[data-menu-btn]')) closeChatMenu();
         if (chatSearchOpen && !e.target.closest('#chat-search-panel') && !e.target.closest('#chat-search-toggle')) closeChatSearch();
+        const ep = document.getElementById('chat-emoji-panel');
+        if (ep && !ep.classList.contains('hidden') && !e.target.closest('#chat-emoji-panel') && !e.target.closest('#chat-emoji-toggle')) closeEmojiPanel();
+        const eep = document.getElementById('chat-edit-emoji-panel');
+        if (eep && !eep.classList.contains('hidden') && !e.target.closest('#chat-edit-emoji-panel') && !e.target.closest('#chat-edit-emoji-toggle')) closeEditEmojiPanel();
     });
     document.getElementById('chat-messages')?.addEventListener('click', function (e) {
         if (chatMoreOpen) closeChatMoreMenu();
         if (chatMenuId !== null && !e.target.closest('[data-menu]') && !e.target.closest('[data-menu-btn]')) closeChatMenu();
+        const ep2 = document.getElementById('chat-emoji-panel');
+        if (ep2 && !ep2.classList.contains('hidden') && !e.target.closest('#chat-emoji-panel') && !e.target.closest('#chat-emoji-toggle')) closeEmojiPanel();
     });
     document.addEventListener('click', function (ev) {
         if (ev.target.closest) {
