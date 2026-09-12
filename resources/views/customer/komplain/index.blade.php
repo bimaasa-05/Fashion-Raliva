@@ -1434,8 +1434,19 @@
         input.setSelectionRange(pos, pos);
     }
 
+    // Klik di dalam modal (wallpaper, pesan, input) tapi di luar form → tutup form
+    document.getElementById('chat-content')?.addEventListener('click', function (e) {
+        if (chatMoreOpen && !e.target.closest('#chat-more-wrap')) closeChatMoreMenu();
+        if (chatMenuId !== null && !e.target.closest('[data-menu]') && !e.target.closest('[data-menu-btn]')) closeChatMenu();
+        if (chatSearchOpen && !e.target.closest('#chat-search-panel') && !e.target.closest('#chat-search-toggle')) closeChatSearch();
+    });
+    document.getElementById('chat-messages')?.addEventListener('click', function (e) {
+        if (chatMoreOpen) closeChatMoreMenu();
+        if (chatMenuId !== null && !e.target.closest('[data-menu]') && !e.target.closest('[data-menu-btn]')) closeChatMenu();
+    });
     document.addEventListener('click', function (ev) {
         if (ev.target.closest) {
+            if (chatSearchOpen && !ev.target.closest('#chat-search-panel') && !ev.target.closest('#chat-search-toggle') && !ev.target.closest('#chat-search-close')) closeChatSearch();
             if (chatMoreOpen && !ev.target.closest('#chat-more-wrap')) closeChatMoreMenu();
             if (chatSelMode) {
                 const row = ev.target.closest('.chat-msg');
