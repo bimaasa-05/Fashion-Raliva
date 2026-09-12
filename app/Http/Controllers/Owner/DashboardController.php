@@ -173,34 +173,40 @@ class DashboardController extends Controller
      */
     protected function salesChart(?int $storeId, array $paidStatuses): array
     {
-        $build = fn (int $days, string $group) => Order::query()
-            ->where('store_id', $storeId)
-            ->whereIn('status', $paidStatuses)
-            ->whereDate('created_at', '>=', Carbon::today()->subDays($days))
-            ->select(
-                DB::raw("DATE(created_at) as label"),
-                DB::raw('SUM(grand_total) as penjualan'),
-                DB::raw('COUNT(*) as pesanan')
-            )
-            ->groupBy('label')
-            ->orderBy('label')
-            ->get()
-            ->map(function ($row) use ($group) {
-                return [
-                    'label' => $group === 'day'
-                        ? Carbon::parse($row->label)->translatedFormat('D')
-                        : $row->label,
-                    'penjualan' => (float) $row->penjualan,
-                    'pesanan' => (int) $row->pesanan,
-                ];
-            })
-            ->values()
-            ->all();
+        $build = function (int $days) use ($storeId, $paidStatuses) {
+            $start = Carbon::today()->subDays($days - 1);
+            $rows = Order::query()
+                ->where('store_id', $storeId)
+                ->whereIn('status', $paidStatuses)
+                ->whereDate('created_at', '>=', $start)
+                ->select(
+                    DB::raw('DATE(created_at) as label'),
+                    DB::raw('SUM(grand_total) as penjualan'),
+                    DB::raw('COUNT(*) as pesanan')
+                )
+                ->groupBy('label')
+                ->orderBy('label')
+                ->get()
+                ->keyBy('label');
+
+            $labels = [];
+            $penjualan = [];
+            $pesanan = [];
+            for ($i = 0; $i < $days; $i++) {
+                $date = $start->copy()->addDays($i);
+                $row = $rows->get($date->toDateString());
+                $labels[] = $date->translatedFormat('d M');
+                $penjualan[] = (float) ($row->penjualan ?? 0);
+                $pesanan[] = (int) ($row->pesanan ?? 0);
+            }
+
+            return ['labels' => $labels, 'penjualan' => $penjualan, 'pesanan' => $pesanan];
+        };
 
         return [
-            '7' => $build(7, 'day'),
-            '30' => $build(30, 'day'),
-            '90' => $build(90, 'day'),
+            '7' => $build(7),
+            '30' => $build(30),
+            '90' => $build(90),
         ];
     }
 }
