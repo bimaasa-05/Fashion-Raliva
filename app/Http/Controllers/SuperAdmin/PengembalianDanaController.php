@@ -138,37 +138,47 @@ class PengembalianDanaController extends Controller
 
         $refund->loadMissing(['order.store']);
 
-        $lama = $refund->only(['status']);
-
-        $store = $refund->order?->store;
-
         try {
-            DB::transaction(function () use ($refund, $path, $data, $lama, $store) {
-                if ($store) {
-                    $wallet = Wallet::where('store_id', $store->store_id)->lockForUpdate()->first();
+            $store = $refund->order?->store;
 
-                    if ($wallet) {
-                        $saldoSebelum = (float) $wallet->saldo_tersedia;
+            if (! $store) {
+                throw new \RuntimeException('Pesanan tidak terhubung ke toko, refund tidak dapat diselesaikan.');
+            }
 
-                        if ($saldoSebelum < (float) $refund->jumlah) {
-                            throw new \RuntimeException('Saldo toko tidak cukup untuk refund.');
-                        }
+            $lama = $refund->only(['status']);
 
-                        $wallet->decrement('saldo_tersedia', (float) $refund->jumlah);
+            DB::transaction(function () use ($refund, $store, $path, $data, $lama) {
+                $locked = Refund::whereKey($refund->refund_id)->lockForUpdate()->first();
 
-                        WalletTransaction::create([
-                            'wallet_id' => $wallet->wallet_id,
-                            'refund_id' => $refund->refund_id,
-                            'jenis_transaksi' => WalletTransaction::JENIS_REFUND_KELUAR,
-                            'jumlah' => (float) $refund->jumlah,
-                            'saldo_sebelum' => $saldoSebelum,
-                            'saldo_sesudah' => $saldoSebelum - (float) $refund->jumlah,
-                            'keterangan' => sprintf('Refund %s untuk pesanan %s.', $refund->order->nomor_order ?? '-', $refund->tipe_refund),
-                        ]);
-                    }
+                if (! $locked || $locked->status !== Refund::STATUS_DISETUJUI) {
+                    throw new \RuntimeException('Status refund sudah berubah oleh pihak lain.');
                 }
 
-                $refund->update([
+                $wallet = Wallet::where('store_id', $store->store_id)->lockForUpdate()->first();
+
+                if (! $wallet) {
+                    throw new \RuntimeException('Wallet toko tidak ditemukan, refund dibatalkan.');
+                }
+
+                $saldoSebelum = (float) $wallet->saldo_tersedia;
+
+                if ($saldoSebelum < (float) $locked->jumlah) {
+                    throw new \RuntimeException('Saldo toko tidak cukup untuk refund.');
+                }
+
+                $wallet->decrement('saldo_tersedia', (float) $locked->jumlah);
+
+                WalletTransaction::create([
+                    'wallet_id' => $wallet->wallet_id,
+                    'refund_id' => $locked->refund_id,
+                    'jenis_transaksi' => WalletTransaction::JENIS_REFUND_KELUAR,
+                    'jumlah' => (float) $locked->jumlah,
+                    'saldo_sebelum' => $saldoSebelum,
+                    'saldo_sesudah' => $saldoSebelum - (float) $locked->jumlah,
+                    'keterangan' => sprintf('Refund %s untuk pesanan %s.', $locked->order->nomor_order ?? '-', $locked->tipe_refund),
+                ]);
+
+                $locked->update([
                     'status' => Refund::STATUS_SELESAI,
                     'selesai_pada' => now(),
                     'file_bukti' => $path,
@@ -184,6 +194,17 @@ class PengembalianDanaController extends Controller
             if (str_contains($e->getMessage(), 'Saldo toko tidak cukup')) {
                 return back()->with('toast', [
                     'message' => 'Saldo toko tidak cukup untuk menyelesaikan refund ini.',
+                    'icon' => 'gpp_maybe',
+                ]);
+            }
+
+            if (
+                str_contains($e->getMessage(), 'tidak terhubung ke toko')
+                || str_contains($e->getMessage(), 'Wallet toko tidak ditemukan')
+                || str_contains($e->getMessage(), 'sudah berubah')
+            ) {
+                return back()->with('toast', [
+                    'message' => 'Refund tidak dapat diselesaikan: '.$e->getMessage(),
                     'icon' => 'gpp_maybe',
                 ]);
             }

@@ -13,6 +13,7 @@ use App\Support\ActivityLogger;
 use App\Support\SlotService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SlotProdukController extends Controller
 {
@@ -312,32 +313,53 @@ class SlotProdukController extends Controller
             ]);
         }
 
-        SlotService::grant(
-            $rmt->store_id,
-            $rmt->jumlah_slot,
-            SlotGrant::TIPE_BELI,
-            $rmt->alasan ?: 'Pembelian slot produk',
-            $rmt->slot_purchase_id,
-            SlotPurchaseRequest::class
-        );
+        try {
+            DB::transaction(function () use ($rmt) {
+                $locked = SlotPurchaseRequest::whereKey($rmt->slot_purchase_id)->lockForUpdate()->first();
 
-        $lama = $rmt->only(['status']);
-        $rmt->update([
-            'status' => SlotPurchaseRequest::STATUS_DISETUJUI,
-            'handled_by' => Auth::id(),
-        ]);
+                if (! $locked || $locked->status !== SlotPurchaseRequest::STATUS_PENDING || $locked->payment_status !== SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI) {
+                    throw new \RuntimeException('Permintaan sudah diproses oleh pihak lain.');
+                }
 
-        ActivityLogger::log(
-            'slot.purchase.approve',
-            SlotPurchaseRequest::class,
-            $rmt->slot_purchase_id,
-            $lama,
-            $rmt->only(['status', 'handled_by']),
-            sprintf('Menyetujui pembelian %d slot untuk toko %s.', $rmt->jumlah_slot, $rmt->store->nama_toko ?? '-')
-        );
+                if (SlotGrant::where('ref_id', $locked->slot_purchase_id)
+                    ->where('ref_type', SlotPurchaseRequest::class)
+                    ->exists()) {
+                    throw new \RuntimeException('Slot untuk permintaan ini sudah pernah diberikan.');
+                }
 
-        $this->notifyOwner($rmt->store, 'Pembelian Slot Disetujui', sprintf('Pembelian %d slot produk untuk toko "%s" telah disetujui.', $rmt->jumlah_slot, $rmt->store->nama_toko ?? '-'));
-        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pembelian Slot Disetujui', sprintf('%d slot disetujui untuk toko "%s".', $rmt->jumlah_slot, $rmt->store->nama_toko ?? '-'), route('superadmin.slot-produk'));
+                SlotService::grant(
+                    $locked->store_id,
+                    $locked->jumlah_slot,
+                    SlotGrant::TIPE_BELI,
+                    $locked->alasan ?: 'Pembelian slot produk',
+                    $locked->slot_purchase_id,
+                    SlotPurchaseRequest::class
+                );
+
+                $lama = $locked->only(['status']);
+                $locked->update([
+                    'status' => SlotPurchaseRequest::STATUS_DISETUJUI,
+                    'handled_by' => Auth::id(),
+                ]);
+
+                ActivityLogger::log(
+                    'slot.purchase.approve',
+                    SlotPurchaseRequest::class,
+                    $locked->slot_purchase_id,
+                    $lama,
+                    $locked->only(['status', 'handled_by']),
+                    sprintf('Menyetujui pembelian %d slot untuk toko %s.', $locked->jumlah_slot, $locked->store->nama_toko ?? '-')
+                );
+
+                $this->notifyOwner($locked->store, 'Pembelian Slot Disetujui', sprintf('Pembelian %d slot produk untuk toko "%s" telah disetujui.', $locked->jumlah_slot, $locked->store->nama_toko ?? '-'));
+                Notification::fireSelf(Notification::TIPE_SISTEM, 'Pembelian Slot Disetujui', sprintf('%d slot disetujui untuk toko "%s".', $locked->jumlah_slot, $locked->store->nama_toko ?? '-'), route('superadmin.slot-produk'));
+            });
+        } catch (\Throwable $e) {
+            return back()->with('toast', [
+                'message' => 'Gagal menyetujui pembelian slot: '.$e->getMessage(),
+                'icon' => 'gpp_maybe',
+            ]);
+        }
 
         return back()->with('toast', [
             'message' => sprintf('%d slot disetujui dan ditambahkan ke toko.', $rmt->jumlah_slot),

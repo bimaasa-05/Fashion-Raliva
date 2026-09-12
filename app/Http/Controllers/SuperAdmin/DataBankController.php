@@ -8,6 +8,7 @@ use App\Models\Notification;
 use App\Models\PlatformBankAccount;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DataBankController extends Controller
 {
@@ -51,29 +52,33 @@ class DataBankController extends Controller
             'status.required' => 'Status wajib dipilih.',
         ]);
 
-        $bank = Bank::create([
-            'nama_bank' => $data['nama_bank'],
-            'kode_bank' => $data['kode_bank'],
-            'status' => $data['status'],
-        ]);
+        $bank = DB::transaction(function () use ($data) {
+            $bank = Bank::create([
+                'nama_bank' => $data['nama_bank'],
+                'kode_bank' => $data['kode_bank'],
+                'status' => $data['status'],
+            ]);
 
-        PlatformBankAccount::create([
-            'bank_id' => $bank->bank_id,
-            'nomor_rekening' => $data['nomor_rekening'],
-            'nama_pemilik' => $data['nama_pemilik'],
-            'status' => $data['status'],
-        ]);
+            PlatformBankAccount::create([
+                'bank_id' => $bank->bank_id,
+                'nomor_rekening' => $data['nomor_rekening'],
+                'nama_pemilik' => $data['nama_pemilik'],
+                'status' => $data['status'],
+            ]);
 
-        ActivityLogger::log(
-            'bank.create',
-            Bank::class,
-            $bank->bank_id,
-            null,
-            ['nama_bank' => $bank->nama_bank, 'kode_bank' => $bank->kode_bank, 'nomor_rekening' => $data['nomor_rekening']],
-            sprintf('Menambahkan bank "%s" — rekening %s a.n. %s.', $bank->nama_bank, $data['nomor_rekening'], $data['nama_pemilik'])
-        );
+            ActivityLogger::log(
+                'bank.create',
+                Bank::class,
+                $bank->bank_id,
+                null,
+                ['nama_bank' => $bank->nama_bank, 'kode_bank' => $bank->kode_bank, 'nomor_rekening' => $data['nomor_rekening']],
+                sprintf('Menambahkan bank "%s" — rekening %s a.n. %s.', $bank->nama_bank, $data['nomor_rekening'], $data['nama_pemilik'])
+            );
 
-        Notification::fireSelf(Notification::TIPE_SISTEM, 'Bank Ditambahkan', 'Bank "'.$bank->nama_bank.'" ditambahkan.', route('superadmin.data-bank'));
+            Notification::fireSelf(Notification::TIPE_SISTEM, 'Bank Ditambahkan', 'Bank "'.$bank->nama_bank.'" ditambahkan.', route('superadmin.data-bank'));
+
+            return $bank;
+        });
 
         return back()->with('toast', [
             'message' => 'Bank "'.$bank->nama_bank.'" berhasil ditambahkan.',
@@ -102,37 +107,39 @@ class DataBankController extends Controller
         $lama = $bank->only(['nama_bank', 'kode_bank', 'status']);
         $rekeningLama = $bank->platformBankAccounts->first();
 
-        $bank->update([
-            'nama_bank' => $data['nama_bank'],
-            'kode_bank' => $data['kode_bank'],
-            'status' => $data['status'],
-        ]);
-
-        if ($rekeningLama) {
-            $rekeningLama->update([
-                'nomor_rekening' => $data['nomor_rekening'],
-                'nama_pemilik' => $data['nama_pemilik'],
+        DB::transaction(function () use ($bank, $data, $lama, $rekeningLama) {
+            $bank->update([
+                'nama_bank' => $data['nama_bank'],
+                'kode_bank' => $data['kode_bank'],
                 'status' => $data['status'],
             ]);
-        } else {
-            PlatformBankAccount::create([
-                'bank_id' => $bank->bank_id,
-                'nomor_rekening' => $data['nomor_rekening'],
-                'nama_pemilik' => $data['nama_pemilik'],
-                'status' => $data['status'],
-            ]);
-        }
 
-        ActivityLogger::log(
-            'bank.update',
-            Bank::class,
-            $bank->bank_id,
-            $lama,
-            ['nama_bank' => $bank->nama_bank, 'kode_bank' => $bank->kode_bank, 'nomor_rekening' => $data['nomor_rekening']],
-            sprintf('Mengubah bank "%s" → "%s".', $lama['nama_bank'], $bank->nama_bank)
-        );
+            if ($rekeningLama) {
+                $rekeningLama->update([
+                    'nomor_rekening' => $data['nomor_rekening'],
+                    'nama_pemilik' => $data['nama_pemilik'],
+                    'status' => $data['status'],
+                ]);
+            } else {
+                PlatformBankAccount::create([
+                    'bank_id' => $bank->bank_id,
+                    'nomor_rekening' => $data['nomor_rekening'],
+                    'nama_pemilik' => $data['nama_pemilik'],
+                    'status' => $data['status'],
+                ]);
+            }
 
-        Notification::fireSelf(Notification::TIPE_SISTEM, 'Bank Diubah', 'Bank "'.$bank->nama_bank.'" diperbarui.', route('superadmin.data-bank'));
+            ActivityLogger::log(
+                'bank.update',
+                Bank::class,
+                $bank->bank_id,
+                $lama,
+                ['nama_bank' => $bank->nama_bank, 'kode_bank' => $bank->kode_bank, 'nomor_rekening' => $data['nomor_rekening']],
+                sprintf('Mengubah bank "%s" → "%s".', $lama['nama_bank'], $bank->nama_bank)
+            );
+
+            Notification::fireSelf(Notification::TIPE_SISTEM, 'Bank Diubah', 'Bank "'.$bank->nama_bank.'" diperbarui.', route('superadmin.data-bank'));
+        });
 
         return back()->with('toast', [
             'message' => 'Perubahan bank "'.$bank->nama_bank.'" berhasil disimpan.',
@@ -154,19 +161,21 @@ class DataBankController extends Controller
         $lama = $bank->only(['nama_bank', 'kode_bank', 'status']);
         $rekening = $bank->platformBankAccounts->pluck('nomor_rekening')->implode(', ');
 
-        ActivityLogger::log(
-            'bank.delete',
-            Bank::class,
-            $bank->bank_id,
-            $lama,
-            null,
-            sprintf('Menghapus bank "%s"%s.', $bank->nama_bank, $rekening ? " — rekening {$rekening}" : '')
-        );
+        DB::transaction(function () use ($bank, $lama, $rekening) {
+            ActivityLogger::log(
+                'bank.delete',
+                Bank::class,
+                $bank->bank_id,
+                $lama,
+                null,
+                sprintf('Menghapus bank "%s"%s.', $bank->nama_bank, $rekening ? " — rekening {$rekening}" : '')
+            );
 
-        $bank->platformBankAccounts()->delete();
-        $bank->delete();
+            $bank->platformBankAccounts()->delete();
+            $bank->delete();
 
-        Notification::fireSelf(Notification::TIPE_SISTEM, 'Bank Dihapus', 'Bank "'.$lama['nama_bank'].'" dihapus.', route('superadmin.data-bank'));
+            Notification::fireSelf(Notification::TIPE_SISTEM, 'Bank Dihapus', 'Bank "'.$lama['nama_bank'].'" dihapus.', route('superadmin.data-bank'));
+        });
 
         return back()->with('toast', [
             'message' => 'Bank "'.$lama['nama_bank'].'" berhasil dihapus.',

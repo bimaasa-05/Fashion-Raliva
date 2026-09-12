@@ -19,6 +19,14 @@ class Shipment extends Model
 
     public const STATUS_GAGAL = 'gagal';
 
+    public const ALLOWED_TRANSITIONS = [
+        self::STATUS_PENDING => [self::STATUS_DIPROSES, self::STATUS_DIKIRIM, self::STATUS_GAGAL],
+        self::STATUS_DIPROSES => [self::STATUS_DIKIRIM, self::STATUS_GAGAL],
+        self::STATUS_DIKIRIM => [self::STATUS_DITERIMA, self::STATUS_GAGAL],
+        self::STATUS_DITERIMA => [],
+        self::STATUS_GAGAL => [self::STATUS_PENDING, self::STATUS_DIPROSES],
+    ];
+
     protected $fillable = [
         'order_id',
         'courier_id',
@@ -43,6 +51,11 @@ class Shipment extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class, 'order_id', 'order_id');
+    }
+
+    public function canTransitionTo(string $statusBaru): bool
+    {
+        return in_array($statusBaru, self::ALLOWED_TRANSITIONS[$this->status] ?? [], true);
     }
 
     public function courier(): BelongsTo
