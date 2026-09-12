@@ -214,6 +214,13 @@
                     @if ($r->alasan_penolakan)<p class="text-sm text-error">{{ $r->alasan_penolakan }}</p>@endif
                 </div>
             @endif
+            @if ($r->file_bukti_request)
+                <a href="{{ asset('storage/' . ltrim($r->file_bukti_request, '/')) }}" target="_blank" rel="noopener" class="flex items-center justify-between gap-3 border border-gold-accent/30 bg-gold-accent/5 rounded-lg px-4 py-3">
+                    <span class="font-body-md text-sm text-on-surface truncate">Foto bukti barang dari customer</span>
+                    <span class="material-symbols-outlined text-gold-accent">visibility</span>
+                </a>
+                @if ($r->deskripsi_bukti_request)<p class="text-xs text-on-surface-variant">{{ $r->deskripsi_bukti_request }}</p>@endif
+            @endif
             @if ($r->file_bukti)
                 <a href="{{ asset('storage/' . ltrim($r->file_bukti, '/')) }}" target="_blank" rel="noopener" class="flex items-center justify-between gap-3 border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low">
                     <span class="font-body-md text-sm text-on-surface truncate">Bukti transfer penyelesaian</span>
@@ -284,6 +291,13 @@
                     <p class="text-xs text-on-surface-variant mb-1">Ditangani oleh {{ $r->reviewer?->nama_lengkap ?? '-' }}</p>
                     @if ($r->alasan_penolakan)<p class="text-sm text-error">{{ $r->alasan_penolakan }}</p>@endif
                 </div>
+            @endif
+            @if ($r->file_bukti_request)
+                <a href="{{ asset('storage/' . ltrim($r->file_bukti_request, '/')) }}" target="_blank" rel="noopener" class="flex items-center justify-between gap-3 border border-gold-accent/30 bg-gold-accent/5 rounded-lg px-4 py-3">
+                    <span class="font-body-md text-sm text-on-surface truncate">Foto bukti barang dari customer</span>
+                    <span class="material-symbols-outlined text-gold-accent">visibility</span>
+                </a>
+                @if ($r->deskripsi_bukti_request)<p class="text-xs text-on-surface-variant">{{ $r->deskripsi_bukti_request }}</p>@endif
             @endif
             @if ($r->file_bukti)
                 <a href="{{ asset('storage/' . ltrim($r->file_bukti, '/')) }}" target="_blank" rel="noopener" class="flex items-center justify-between gap-3 border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low">
