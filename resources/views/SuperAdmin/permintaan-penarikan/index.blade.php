@@ -115,25 +115,26 @@
                         <th class="p-6">Info Bank</th>
                         <th class="p-6 text-center">Status</th>
                         <th class="p-6 text-center">Dibayar</th>
-                        <th class="p-6 text-right">Aksi</th>
+                        <th class="p-6 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
                     @forelse ($withdrawals as $w)
                         @php
-                            $badge = $badgeMap[$w->status];
-                            $initial = strtoupper(substr(collect(preg_split('/\s+/', trim($w->store->nama_toko ?? '')))->map(fn ($k) => mb_substr($k, 0, 1))->implode(''), 0, 2));
+                            $badge = $badgeMap[$w->status] ?? $badgeMap['pending'];
+                            $initialStore = $w->store?->nama_toko;
+                            $initial = strtoupper(substr(collect(preg_split('/\s+/', trim($initialStore ?? '')))->map(fn ($k) => mb_substr($k, 0, 1))->implode(''), 0, 2)) ?: '?';
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors group"
-                            data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store->nama_toko ?? '').' '.($w->store->owner->nama_lengkap ?? '').' '.($w->bankAccount?->bank?->nama_bank ?? '')) }}"
-                            data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store->nama_toko }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}">
+                            data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store?->nama_toko ?? '').' '.($w->store?->owner?->nama_lengkap ?? '').' '.($w->bankAccount?->bank?->nama_bank ?? '')) }}"
+                            data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store?->nama_toko ?? '-' }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}">
                             <td class="p-6 text-center text-on-surface-variant font-mono row-num"></td>
                             <td class="p-6">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center font-label-sm shrink-0">{{ $initial }}</div>
                                     <div>
-                                        <p class="font-title-md text-title-md text-primary">{{ $w->store->nama_toko }}</p>
-                                        <p class="text-on-surface-variant">{{ $w->store->owner->nama_lengkap ?? '-' }}</p>
+                                        <p class="font-title-md text-title-md text-primary">{{ $w->store?->nama_toko ?? '-' }}</p>
+                                        <p class="text-on-surface-variant">{{ $w->store?->owner?->nama_lengkap ?? '-' }}</p>
                                     </div>
                                 </div>
                             </td>
@@ -205,16 +206,17 @@
         <div class="md:hidden grid grid-cols-1 gap-gutter">
             @forelse ($withdrawals as $w)
                 @php
-                    $badge = $badgeMap[$w->status];
-                    $initial = strtoupper(substr(collect(preg_split('/\s+/', trim($w->store->nama_toko ?? '')))->map(fn ($k) => mb_substr($k, 0, 1))->implode(''), 0, 2));
+                    $badge = $badgeMap[$w->status] ?? $badgeMap['pending'];
+                    $initialStore = $w->store?->nama_toko;
+                    $initial = strtoupper(substr(collect(preg_split('/\s+/', trim($initialStore ?? '')))->map(fn ($k) => mb_substr($k, 0, 1))->implode(''), 0, 2)) ?: '?';
                 @endphp
-                <article data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store->nama_toko ?? '').' '.($w->store->owner->nama_lengkap ?? '').' '.($w->bankAccount?->bank?->nama_bank ?? '')) }}" data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store->nama_toko }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                <article data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store?->nama_toko ?? '').' '.($w->store?->owner?->nama_lengkap ?? '').' '.($w->bankAccount?->bank?->nama_bank ?? '')) }}" data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store?->nama_toko ?? '-' }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-10 h-10 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center font-label-sm shrink-0">{{ $initial }}</div>
                             <div class="min-w-0">
-                                <p class="font-title-md text-title-md text-primary truncate">{{ $w->store->nama_toko }}</p>
-                                <p class="text-on-surface-variant truncate">{{ $w->store->owner->nama_lengkap ?? '-' }}</p>
+                                <p class="font-title-md text-title-md text-primary truncate">{{ $w->store?->nama_toko ?? '-' }}</p>
+                                <p class="text-on-surface-variant truncate">{{ $w->store?->owner?->nama_lengkap ?? '-' }}</p>
                             </div>
                         </div>
                         <span class="inline-flex items-center px-2.5 py-1 rounded {{ $badge['class'] }} text-[10px] font-bold uppercase shrink-0">{{ $badge['label'] }}</span>

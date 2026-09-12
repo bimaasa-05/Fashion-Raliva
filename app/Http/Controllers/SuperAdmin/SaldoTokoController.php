@@ -12,11 +12,11 @@ class SaldoTokoController extends Controller
     {
         $wallets = Wallet::with('store:store_id,nama_toko')
             ->orderByDesc('saldo_tersedia')
-            ->get();
+            ->paginate(20)->withQueryString();
 
-        $totalTersedia = (float) $wallets->sum('saldo_tersedia');
-        $totalTertahan = (float) $wallets->sum('saldo_tertahan');
-        $jumlahToko = $wallets->count();
+        $totalTersedia = (float) Wallet::sum('saldo_tersedia');
+        $totalTertahan = (float) Wallet::sum('saldo_tertahan');
+        $jumlahToko = Wallet::count();
 
         $transactions = WalletTransaction::with(['wallet.store:store_id,nama_toko'])
             ->orderByDesc('created_at')

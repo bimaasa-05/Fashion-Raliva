@@ -9,6 +9,7 @@ use App\Models\Shipment;
 use App\Support\ActivityLogger;
 use App\Support\WalletService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PengirimanController extends Controller
 {
@@ -46,23 +47,62 @@ class PengirimanController extends Controller
         ]);
 
         $newStatus = $validated['status'];
-        $old = $pengiriman->only(['status', 'dikirim_pada', 'diterima_pada']);
 
-        $updateData = ['status' => $newStatus];
+        try {
+            DB::transaction(function () use ($pengiriman, $newStatus) {
+                $locked = Shipment::whereKey($pengiriman->shipment_id)->lockForUpdate()->first();
 
-        match ($newStatus) {
-            'dikirim' => $updateData['dikirim_pada'] = now(),
-            'diterima' => $updateData['diterima_pada'] = now(),
-            'pending', 'diproses' => $updateData += ['dikirim_pada' => null, 'diterima_pada' => null],
-            default => null,
-        };
+                if (! $locked) {
+                    throw new \RuntimeException('Pengiriman tidak ditemukan.');
+                }
 
-        $pengiriman->update($updateData);
+                if (! $locked->canTransitionTo($newStatus)) {
+                    throw new \RuntimeException(sprintf('Status pengiriman tidak dapat diubah dari "%s" menjadi "%s".', $locked->status, $newStatus));
+                }
 
-        if ($newStatus === 'diterima' && $pengiriman->order) {
-            $pengiriman->order->update(['status' => Order::STATUS_SELESAI]);
-            WalletService::creditOrder($pengiriman->order);
+                if ($newStatus === Shipment::STATUS_DIKIRIM && empty(trim((string) $locked->nomor_resi))) {
+                    throw new \RuntimeException('Nomor resi wajib diisi terlebih dahulu sebelum menandai dikirim.');
+                }
+
+                $old = $locked->only(['status', 'dikirim_pada', 'diterima_pada']);
+
+                $updateData = ['status' => $newStatus];
+
+                match ($newStatus) {
+                    Shipment::STATUS_DIKIRIM => $updateData['dikirim_pada'] = now(),
+                    Shipment::STATUS_DITERIMA => $updateData['diterima_pada'] = now(),
+                    Shipment::STATUS_PENDING, Shipment::STATUS_DIPROSES => $updateData += ['dikirim_pada' => null, 'diterima_pada' => null],
+                    default => null,
+                };
+
+                $locked->update($updateData);
+
+                if ($newStatus === Shipment::STATUS_DITERIMA) {
+                    $order = $locked->order()->lockForUpdate()->first();
+
+                    if ($order && $order->status !== Order::STATUS_SELESAI) {
+                        $order->update(['status' => Order::STATUS_SELESAI]);
+                        WalletService::creditOrder($order);
+                    }
+                }
+
+                ActivityLogger::log(
+                    'sa.shipment.status',
+                    Shipment::class,
+                    $locked->shipment_id,
+                    $old,
+                    $updateData,
+                    sprintf('Mengubah status pengiriman pesanan %s dari "%s" ke "%s".', $locked->order->nomor_order ?? '-', $old['status'], $newStatus)
+                );
+            });
+        } catch (\Throwable $e) {
+            return back()->with('toast', [
+                'message' => 'Status pengiriman tidak dapat diperbarui: '.$e->getMessage(),
+                'icon' => 'gpp_maybe',
+            ]);
         }
+
+        $pengiriman->refresh();
 
         if ($pengiriman->order?->checkout?->user_id) {
             Notification::create([
@@ -74,15 +114,6 @@ class PengirimanController extends Controller
                 'url' => route('customer.order-tracking'),
             ]);
         }
-
-        ActivityLogger::log(
-            'sa.shipment.status',
-            Shipment::class,
-            $pengiriman->shipment_id,
-            $old,
-            $updateData,
-            sprintf('Mengubah status pengiriman pesanan %s dari "%s" ke "%s".', $pengiriman->order->nomor_order ?? '-', $old['status'], $newStatus)
-        );
 
         Notification::fireSelf(Notification::TIPE_PENGIRIMAN, 'Status Pengiriman Diperbarui', sprintf('Status pengiriman pesanan %s diubah ke "%s".', $pengiriman->order->nomor_order ?? '-', ucfirst($newStatus)), route('superadmin.pengiriman'));
 

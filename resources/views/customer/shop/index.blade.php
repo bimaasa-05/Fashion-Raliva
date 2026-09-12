@@ -416,7 +416,7 @@
 @endforeach
     </div>
         <!-- Shop Actions (Cart · Sort) -->
-        <a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart') }}" class="shop-action-btn relative order-2 border border-outline-variant hover:text-secondary hover:border-secondary transition-colors">
+        <a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart', ['from' => 'shop']) }}" class="shop-action-btn relative order-2 border border-outline-variant hover:text-secondary hover:border-secondary transition-colors">
             <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
             <span class="cart-badge absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
         </a>

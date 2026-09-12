@@ -16,22 +16,24 @@ class KomplainController extends Controller
     {
         $query = Complaint::query()
             ->with(['user:user_id,nama_lengkap', 'store:store_id,nama_toko,owner_id'])
-            ->orderByRaw("CASE status WHEN 'open' THEN 0 WHEN 'diproses' THEN 1 ELSE 2 END")
+            ->orderByRaw("CASE status WHEN 'open' THEN 0 WHEN 'diproses' THEN 1 WHEN 'escalated' THEN 2 ELSE 3 END")
             ->orderByDesc('dibuat_pada');
 
         $stats = [
             'semua' => Complaint::count(),
             'open' => Complaint::where('status', Complaint::STATUS_OPEN)->count(),
             'diproses' => Complaint::where('status', Complaint::STATUS_DIPROSES)->count(),
+            Complaint::STATUS_ESKALASI => Complaint::where('status', Complaint::STATUS_ESKALASI)->count(),
             'selesai' => Complaint::where('status', Complaint::STATUS_SELESAI)->count(),
             'ditutup' => Complaint::where('status', Complaint::STATUS_DITUTUP)->count(),
         ];
 
         $complaints = $query->paginate(20)->withQueryString();
         $complaints->getCollection()->transform(function (Complaint $complaint) {
-            $complaint->eskalasi_oleh_sa = $complaint->messages()
-                ->where('sender_id', ActivityLogger::resolveActorId())
-                ->exists();
+            $complaint->eskalasi_oleh_sa = $complaint->status === Complaint::STATUS_ESKALASI
+                || $complaint->messages()
+                    ->where('pesan', 'like', 'Komplain ini dieskalasikan%')
+                    ->exists();
 
             return $complaint;
         });
@@ -54,6 +56,44 @@ class KomplainController extends Controller
             ->values();
 
         return response()->json($messages);
+    }
+
+    public function updateMessage(Request $request, Complaint $komplain, ComplaintMessage $message)
+    {
+        if ($message->complaint_id !== $komplain->complaint_id) {
+            abort(404);
+        }
+
+        if ($message->deleted_at) {
+            return response()->json(['message' => 'Pesan sudah dihapus.'], 422);
+        }
+
+        if (in_array($komplain->status, [Complaint::STATUS_SELESAI, Complaint::STATUS_DITUTUP], true)) {
+            return response()->json(['message' => 'Komplain ini sudah selesai dan tidak dapat diubah.'], 422);
+        }
+
+        if ($message->sender_id !== Auth::id() && $message->sender_id !== ActivityLogger::resolveActorId()) {
+            return response()->json(['message' => 'Hanya pemilik pesan yang dapat mengedit.'], 403);
+        }
+
+        if ($message->created_at->lt(now()->subMinutes(15))) {
+            return response()->json(['message' => 'Pesan hanya dapat diedit dalam 15 menit pertama setelah dikirim.'], 422);
+        }
+
+        $data = $request->validate([
+            'pesan' => 'required|string|min:3|max:2000',
+        ], [
+            'pesan.required' => 'Pesan wajib diisi.',
+            'pesan.min' => 'Pesan minimal 3 karakter.',
+            'pesan.max' => 'Pesan maksimal 2000 karakter.',
+        ]);
+
+        $message->update([
+            'pesan' => $data['pesan'],
+            'edited_at' => now(),
+        ]);
+
+        return response()->json($message->toChatArray(Auth::id()));
     }
 
     public function destroyMessage(Request $request, Complaint $komplain, ComplaintMessage $message)

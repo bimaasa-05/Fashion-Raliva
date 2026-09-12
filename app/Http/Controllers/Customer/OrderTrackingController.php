@@ -82,19 +82,30 @@ class OrderTrackingController extends Controller
                 ->with('toast', ['message' => 'Pesanan tidak dapat dikonfirmasi pada status ini.', 'icon' => 'info']);
         }
 
-        DB::transaction(function () use ($order) {
-            $order->update(['status' => Order::STATUS_SELESAI]);
-            WalletService::creditOrder($order);
+        try {
+            DB::transaction(function () use ($order) {
+                $locked = Order::whereKey($order->order_id)->lockForUpdate()->first();
 
-            if ($order->store && $order->store->owner_id) {
-                Notification::create([
-                    'user_id' => $order->store->owner_id,
-                    'tipe' => Notification::TIPE_ORDER,
-                    'judul' => 'Pesanan Selesai',
-                    'pesan' => sprintf('Pesanan %s telah dikonfirmasi diterima oleh customer.', $order->nomor_order),
-                ]);
-            }
-        });
+                if (! $locked || $locked->status !== Order::STATUS_DIKIRIM) {
+                    throw new \RuntimeException('Pesanan sudah dikonfirmasi atau tidak berstatus dikirim.');
+                }
+
+                $locked->update(['status' => Order::STATUS_SELESAI]);
+                WalletService::creditOrder($locked);
+
+                if ($locked->store && $locked->store->owner_id) {
+                    Notification::create([
+                        'user_id' => $locked->store->owner_id,
+                        'tipe' => Notification::TIPE_ORDER,
+                        'judul' => 'Pesanan Selesai',
+                        'pesan' => sprintf('Pesanan %s telah dikonfirmasi diterima oleh customer.', $locked->nomor_order),
+                    ]);
+                }
+            });
+        } catch (\Throwable $e) {
+            return redirect()->route('customer.order-tracking', ['order' => $order->order_id])
+                ->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
+        }
 
         return redirect()->route('customer.order-tracking', ['order' => $order->order_id])
             ->with('toast', ['message' => 'Pesanan dikonfirmasi diterima. Terima kasih!', 'icon' => 'task_alt']);

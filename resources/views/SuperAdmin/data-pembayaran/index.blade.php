@@ -78,7 +78,7 @@
                     </button>
                 </div>
                 <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-                    <span id="result-count">{{ $payments->count() }}</span> transaksi
+                    <span id="result-count">{{ $stats['semua'] }}</span> transaksi
                 </p>
             </div>
         </div>
@@ -200,6 +200,9 @@
             @endforelse
             <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada transaksi yang cocok.</p>
         </div>
+        @if ($payments->hasPages())
+            <div class="mt-6 flex justify-center">{{ $payments->links() }}</div>
+        @endif
     </section>
 </div>
 
