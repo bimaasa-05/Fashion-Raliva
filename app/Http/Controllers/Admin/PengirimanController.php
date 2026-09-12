@@ -22,7 +22,7 @@ class PengirimanController extends Controller
             ->whereIn('store_id', $storeIds)
             ->where('status', Order::STATUS_DIPROSES)
             ->whereDoesntHave('shipments')
-            ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap'])
+            ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap', 'items'])
             ->orderByDesc('created_at')
             ->get();
 
