@@ -86,19 +86,19 @@
 <section>
     <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
         <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
-            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Target Omzet Bulan Ini</p>
-            <div data-donut='[{"value":87,"color":"#8B1E3F","label":"Tercapai"},{"value":13,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Target" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-            <p class="text-[11px] text-on-surface-variant mt-1">Rp 10,9B dari target Rp 12,5B</p>
+            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Omzet Bulan Ini vs Bulan Lalu</p>
+            <div data-donut='[{"value":{{ $targetOmzet['persen'] }},"color":"#8B1E3F","label":"Tercapai"},{"value":{{ 100 - $targetOmzet['persen'] }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Bulan Lalu" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+            <p class="text-[11px] text-on-surface-variant mt-1">Rp {{ number_format($targetOmzet['bulanIni'], 0, ',', '.') }} dari Rp {{ number_format($targetOmzet['bulanLalu'], 0, ',', '.') }} bulan lalu</p>
         </div>
         <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Kepuasan Pelanggan</p>
-            <div data-donut='[{"value":92,"color":"#8B1E3F","label":"Puas"},{"value":8,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Rating 4,8 / 5" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-            <p class="text-[11px] text-on-surface-variant mt-1">Dari 2.140 ulasan bulan ini</p>
+            <div data-donut='[{"value":{{ $kepuasan['persen'] }},"color":"#8B1E3F","label":"Puas"},{"value":{{ 100 - $kepuasan['persen'] }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Rating {{ $kepuasan['rata'] > 0 ? number_format($kepuasan['rata'], 1, ',', '.') : '-' }} / 5" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+            <p class="text-[11px] text-on-surface-variant mt-1">Dari {{ number_format($kepuasan['total'], 0, ',', '.') }} ulasan</p>
         </div>
         <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">SLA Respons Komplain</p>
-            <div data-donut='[{"value":78,"color":"#c03a5a","label":"Tepat SLA"},{"value":22,"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Target 24 Jam" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-            <p class="text-[11px] text-on-surface-variant mt-1">Rata-rata balasan dalam 5 jam</p>
+            <div data-donut='[{"value":{{ $sla['persen'] }},"color":"#c03a5a","label":"Tepat SLA"},{"value":{{ 100 - $sla['persen'] }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Target 24 Jam" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+            <p class="text-[11px] text-on-surface-variant mt-1">Rata-rata balasan dalam {{ $sla['rataJam'] !== null ? $sla['rataJam'].' jam' : '-' }}</p>
         </div>
     </div>
 </section>
@@ -111,7 +111,7 @@
         <div class="h-48" data-bars='@json($chartPesananBars)' data-bars-suffix=""></div>
         <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[14px] text-gold-accent">insights</span>
-            Pertumbuhan konsisten — Agustus tertinggi dengan 1.248 pesanan (+5,8% vs Juli).
+            Pesanan bulan {{ $bulanTertinggi['label'] }} tertinggi dengan {{ number_format($bulanTertinggi['jumlah'], 0, ',', '.') }} pesanan.
         </p>
     </section>
 
@@ -226,7 +226,7 @@
                             <span class="material-symbols-outlined text-sm text-gold-accent">{{ $icon }}</span>
                         </div>
                         <div>
-                            <p class="font-body-md text-on-surface">{!! $act['deskripsi'] ?? '-' !!}</p>
+                            <p class="font-body-md text-on-surface">{{ $act['deskripsi'] ?? '-' }}</p>
                             <p class="text-on-surface-variant text-sm mt-0.5">{{ $act['waktu'] }}</p>
                         </div>
                     </div>
