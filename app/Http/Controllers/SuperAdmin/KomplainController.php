@@ -56,6 +56,44 @@ class KomplainController extends Controller
         return response()->json($messages);
     }
 
+    public function updateMessage(Request $request, Complaint $komplain, ComplaintMessage $message)
+    {
+        if ($message->complaint_id !== $komplain->complaint_id) {
+            abort(404);
+        }
+
+        if ($message->deleted_at) {
+            return response()->json(['message' => 'Pesan sudah dihapus.'], 422);
+        }
+
+        if (in_array($komplain->status, [Complaint::STATUS_SELESAI, Complaint::STATUS_DITUTUP], true)) {
+            return response()->json(['message' => 'Komplain ini sudah selesai dan tidak dapat diubah.'], 422);
+        }
+
+        if ($message->sender_id !== Auth::id() && $message->sender_id !== ActivityLogger::resolveActorId()) {
+            return response()->json(['message' => 'Hanya pemilik pesan yang dapat mengedit.'], 403);
+        }
+
+        if ($message->created_at->lt(now()->subMinutes(15))) {
+            return response()->json(['message' => 'Pesan hanya dapat diedit dalam 15 menit pertama setelah dikirim.'], 422);
+        }
+
+        $data = $request->validate([
+            'pesan' => 'required|string|min:3|max:2000',
+        ], [
+            'pesan.required' => 'Pesan wajib diisi.',
+            'pesan.min' => 'Pesan minimal 3 karakter.',
+            'pesan.max' => 'Pesan maksimal 2000 karakter.',
+        ]);
+
+        $message->update([
+            'pesan' => $data['pesan'],
+            'edited_at' => now(),
+        ]);
+
+        return response()->json($message->toChatArray(Auth::id()));
+    }
+
     public function destroyMessage(Request $request, Complaint $komplain, ComplaintMessage $message)
     {
         if ($message->complaint_id !== $komplain->complaint_id) {
