@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\WarehouseStock;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PelangganRequestController extends Controller
 {
@@ -141,39 +142,65 @@ class PelangganRequestController extends Controller
             'hasil.in' => 'Hasil pengecekan tidak valid.',
         ]);
 
-        $order = Order::where('order_id', $data['order_id'])->with(['items.productVariant', 'checkout.user'])->firstOrFail();
+        try {
+            DB::transaction(function () use ($warehouse, $data) {
+                $order = Order::where('order_id', $data['order_id'])
+                    ->where('store_id', $warehouse->store_id)
+                    ->whereIn('status', [Order::STATUS_DIBAYAR, Order::STATUS_DIPROSES])
+                    ->with(['items.productVariant', 'checkout.user'])
+                    ->lockForUpdate()
+                    ->first();
 
-        $labelMap = [
-            'tersedia' => 'Tersedia — Siap diproses',
-            'diteruskan' => 'Diteruskan ke Produksi',
-            'tidak_tersedia' => 'Tidak Tersedia — Bahan kosong',
-        ];
+                if (! $order) {
+                    throw new \RuntimeException('Order tidak ditemukan atau di luar gudang Anda.');
+                }
 
-        $order->update([
-            'status_ketersediaan' => $data['hasil'],
-            'catatan_gudang' => $data['catatan'] ?? null,
-            'dicek_gudang_pada' => now(),
-        ]);
+                $labelMap = [
+                    'tersedia' => 'Tersedia — Siap diproses',
+                    'diteruskan' => 'Diteruskan ke Produksi',
+                    'tidak_tersedia' => 'Tidak Tersedia — Bahan kosong',
+                ];
 
-        ActivityLogger::log(
-            'stock.request.confirm',
-            Order::class,
-            $order->order_id,
-            null,
-            ['hasil' => $data['hasil'], 'catatan' => $data['catatan']],
-            sprintf('Konfirmasi ketersediaan untuk order %s: %s.', $order->nomor_order, $labelMap[$data['hasil']] ?? $data['hasil'])
-        );
+                if ($order->status_ketersediaan === $data['hasil'] && ($order->catatan_gudang ?? null) === ($data['catatan'] ?? null)) {
+                    return;
+                }
 
-        $userId = $order->checkout?->user_id;
-        if ($userId) {
-            Notification::create([
-                'user_id' => $userId,
-                'aktor_id' => ActivityLogger::resolveActorId(),
-                'tipe' => Notification::TIPE_ORDER,
-                'judul' => 'Status Ketersediaan Bahan',
-                'pesan' => sprintf('Pengecekan bahan untuk order %s: %s.', $order->nomor_order, $labelMap[$data['hasil']] ?? $data['hasil']),
-                'url' => route('customer.order-tracking'),
-            ]);
+                $affected = Order::where('order_id', $order->order_id)
+                    ->update([
+                        'status_ketersediaan' => $data['hasil'],
+                        'catatan_gudang' => $data['catatan'] ?? null,
+                        'dicek_gudang_pada' => now(),
+                    ]);
+
+                if ($affected === 0) {
+                    throw new \RuntimeException('Gagal menyimpan konfirmasi.');
+                }
+
+                ActivityLogger::log(
+                    'stock.request.confirm',
+                    Order::class,
+                    $order->order_id,
+                    null,
+                    ['hasil' => $data['hasil'], 'catatan' => $data['catatan'] ?? null],
+                    sprintf('Konfirmasi ketersediaan untuk order %s: %s.', $order->nomor_order, $labelMap[$data['hasil']] ?? $data['hasil'])
+                );
+
+                $userId = $order->checkout?->user_id;
+                if ($userId) {
+                    Notification::create([
+                        'user_id' => $userId,
+                        'aktor_id' => ActivityLogger::resolveActorId(),
+                        'tipe' => Notification::TIPE_ORDER,
+                        'judul' => 'Status Ketersediaan Bahan',
+                        'pesan' => sprintf('Pengecekan bahan untuk order %s: %s.', $order->nomor_order, $labelMap[$data['hasil']] ?? $data['hasil']),
+                        'url' => route('customer.order-tracking'),
+                    ]);
+                }
+            }, 5);
+        } catch (\RuntimeException $e) {
+            return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
+        } catch (\Throwable $e) {
+            return back()->with('toast', ['message' => 'Gagal menyimpan konfirmasi.', 'icon' => 'error']);
         }
 
         return back()->with('toast', ['message' => 'Konfirmasi ketersediaan berhasil dikirim.', 'icon' => 'task_alt']);

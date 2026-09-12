@@ -360,6 +360,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->grou
     Route::post('/permintaan-produksi', [PermintaanProduksiController::class, 'store'])->name('permintaan-produksi.store');
     Route::get('/koordinasi-gudang', [KoordinasiGudangController::class, 'index'])->name('koordinasi-gudang');
     Route::post('/koordinasi-gudang/kirim', [KoordinasiGudangController::class, 'kirim'])->name('koordinasi-gudang.kirim');
+    Route::post('/koordinasi-gudang/{stockTransfer}/setujui', [KoordinasiGudangController::class, 'setujui'])->name('koordinasi-gudang.setujui');
+    Route::post('/koordinasi-gudang/{stockTransfer}/tolak', [KoordinasiGudangController::class, 'tolak'])->name('koordinasi-gudang.tolak');
     Route::get('/profil', [AdminProfilController::class, 'index'])->name('profil');
     Route::put('/profil', [AdminProfilController::class, 'update'])->name('profil.update');
     Route::post('/profil/foto', [AdminProfilController::class, 'updatePhoto'])->name('profil.foto');
@@ -438,6 +440,8 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/laporan', [OwnerLaporanController::class, 'index'])->name('laporan');
     Route::get('/laporan/export', [OwnerLaporanController::class, 'export'])->name('laporan.export');
     Route::get('/gudang', [OwnerGudangController::class, 'index'])->name('gudang');
+    Route::post('/gudang/{stockTransfer}/setujui', [KoordinasiGudangController::class, 'setujui'])->name('gudang.setujui');
+    Route::post('/gudang/{stockTransfer}/tolak', [KoordinasiGudangController::class, 'tolak'])->name('gudang.tolak');
     Route::get('/komplain', [OwnerKomplainController::class, 'index'])->name('komplain');
     Route::get('/komplain/{komplain}/messages', [OwnerKomplainController::class, 'messages'])->name('komplain.messages');
     Route::post('/komplain/{komplain}/balas', [OwnerKomplainController::class, 'balas'])->name('komplain.balas');

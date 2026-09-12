@@ -93,9 +93,7 @@ class PemindahanStokController extends Controller
             ->where('product_variant_id', $data['product_variant_id'])
             ->first();
 
-        if (! $stok || $stok->jumlah_stok < $data['jumlah']) {
-            return back()->with('toast', ['message' => 'Stok tidak mencukupi untuk dipindahkan.', 'icon' => 'gpp_maybe']);
-        }
+        $stokCukup = $stok && $stok->jumlah_stok >= $data['jumlah'];
 
         DB::transaction(function () use ($warehouse, $data) {
             $transfer = StockTransfer::create([
@@ -112,6 +110,10 @@ class PemindahanStokController extends Controller
                 'jumlah' => $data['jumlah'],
             ]);
         });
+
+        if (! $stokCukup) {
+            return back()->with('toast', ['message' => 'Permintaan dibuat, tetapi stok gudang asal saat ini tidak mencukupi dan akan dicek saat persetujuan.', 'icon' => 'gpp_maybe']);
+        }
 
         ActivityLogger::log(
             'stock.transfer',
@@ -330,6 +332,113 @@ class PemindahanStokController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemindahan Dibatalkan', 'Permintaan pemindahan stok dibatalkan.', route('gudang.dashboard'));
 
         return back()->with('toast', ['message' => 'Pemindahan dibatalkan.', 'icon' => 'task_alt']);
+    }
+
+    public function terima(StockTransfer $stockTransfer)
+    {
+        if (! auth()->user()->hasPermission('warehouse.transfer')) {
+            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+        }
+
+        $warehouse = $this->activeWarehouse();
+
+        if (! $warehouse) {
+            return back()->with('toast', ['message' => 'Tidak ada gudang aktif.', 'icon' => 'gpp_maybe']);
+        }
+
+        try {
+            DB::transaction(function () use ($warehouse, $stockTransfer) {
+                $transfer = StockTransfer::with('items')
+                    ->where('stock_transfer_id', $stockTransfer->stock_transfer_id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $transfer || $transfer->to_warehouse_id !== $warehouse->warehouse_id) {
+                    throw new \RuntimeException('Pemindahan ini bukan untuk gudang aktif Anda.');
+                }
+
+                if (! $transfer->canTransitionTo(StockTransfer::STATUS_RECEIVED)) {
+                    throw new \RuntimeException('Pemindahan tidak dapat diterima pada status ini.');
+                }
+
+                foreach ($transfer->items as $item) {
+                    $target = WarehouseStock::where('warehouse_id', $warehouse->warehouse_id)
+                        ->where('product_variant_id', $item->product_variant_id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if ($target) {
+                        $updated = WarehouseStock::where('warehouse_stock_id', $target->warehouse_stock_id)
+                            ->increment('jumlah_stok', (int) $item->jumlah);
+
+                        if ($updated === 0) {
+                            throw new \RuntimeException('Gagal menambah stok gudang tujuan.');
+                        }
+                    } else {
+                        WarehouseStock::create([
+                            'warehouse_id' => $warehouse->warehouse_id,
+                            'product_variant_id' => $item->product_variant_id,
+                            'jumlah_stok' => $item->jumlah,
+                        ]);
+                    }
+
+                    StockMovement::create([
+                        'warehouse_id' => $warehouse->warehouse_id,
+                        'product_variant_id' => $item->product_variant_id,
+                        'tipe_pergerakan' => StockMovement::TIPE_MUTASI_MASUK,
+                        'jumlah' => $item->jumlah,
+                        'sumber_tipe' => StockMovement::SUMBER_STOCK_TRANSFER,
+                        'sumber_id' => $transfer->stock_transfer_id,
+                        'alasan' => 'Pemindahan stok masuk',
+                        'dibuat_oleh' => auth()->id(),
+                    ]);
+                }
+
+                $affected = StockTransfer::where('stock_transfer_id', $transfer->stock_transfer_id)
+                    ->update([
+                        'status' => StockTransfer::STATUS_RECEIVED,
+                        'diterima_pada' => now(),
+                    ]);
+
+                if ($affected === 0) {
+                    throw new \RuntimeException('Gagal memperbarui status pemindahan.');
+                }
+            }, 5);
+        } catch (\RuntimeException $e) {
+            return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
+        } catch (\Throwable $e) {
+            return back()->with('toast', ['message' => 'Gagal menerima pemindahan.', 'icon' => 'error']);
+        }
+
+        ActivityLogger::log(
+            'stock.transfer.received',
+            StockTransfer::class,
+            $stockTransfer->stock_transfer_id,
+            null,
+            ['transfer_id' => $stockTransfer->stock_transfer_id],
+            sprintf('Pemindahan #TRF-%d diterima di gudang "%s".', $stockTransfer->stock_transfer_id, $warehouse->nama_gudang)
+        );
+
+        NotificationService::sendToRole(
+            Role::ADMIN,
+            Notification::TIPE_SISTEM,
+            'Pemindahan Stok Diterima',
+            sprintf('Pemindahan #TRF-%d diterima di gudang "%s".', $stockTransfer->stock_transfer_id, $warehouse->nama_gudang),
+            auth()->id(),
+            route('admin.koordinasi-gudang')
+        );
+
+        if ($stockTransfer->requested_by) {
+            Notification::create([
+                'user_id' => $stockTransfer->requested_by,
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Pemindahan Stok Diterima',
+                'pesan' => sprintf('Pemindahan #TRF-%d telah diterima di gudang "%s".', $stockTransfer->stock_transfer_id, $warehouse->nama_gudang),
+                'url' => route('gudang.pemindahan'),
+            ]);
+        }
+
+        return back()->with('toast', ['message' => 'Pemindahan berhasil diterima.', 'icon' => 'task_alt']);
     }
 
     private function getProductsForWarehouse($warehouse)

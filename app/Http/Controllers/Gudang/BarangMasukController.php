@@ -75,25 +75,48 @@ class BarangMasukController extends Controller
             'jumlah.min' => 'Jumlah minimal 1.',
         ]);
 
-        DB::transaction(function () use ($warehouse, $data) {
-            $stock = WarehouseStock::updateOrCreate(
-                ['warehouse_id' => $warehouse->warehouse_id, 'product_variant_id' => $data['product_variant_id']],
-                ['jumlah_stok' => DB::raw('jumlah_stok + '.$data['jumlah'])]
-            );
+        try {
+            DB::transaction(function () use ($warehouse, $data) {
+                $stock = WarehouseStock::where('warehouse_id', $warehouse->warehouse_id)
+                    ->where('product_variant_id', $data['product_variant_id'])
+                    ->lockForUpdate()
+                    ->first();
 
-            StockMovement::create([
-                'warehouse_id' => $warehouse->warehouse_id,
-                'product_variant_id' => $data['product_variant_id'],
-                'tipe_pergerakan' => StockMovement::TIPE_MASUK,
-                'jumlah' => $data['jumlah'],
-                'sumber_tipe' => StockMovement::SUMBER_SUPPLIER,
-                'sumber_id' => $data['supplier_id'],
-                'alasan' => $data['alasan'] ?? 'Barang masuk dari supplier',
-                'dibuat_oleh' => auth()->id(),
-            ]);
+                if ($stock) {
+                    $updated = WarehouseStock::where('warehouse_stock_id', $stock->warehouse_stock_id)
+                        ->increment('jumlah_stok', (int) $data['jumlah']);
 
-            $stock->update(['supplier_id' => $data['supplier_id']]);
-        });
+                    if ($updated === 0) {
+                        throw new \RuntimeException('Gagal memperbarui stok barang masuk.');
+                    }
+
+                    WarehouseStock::where('warehouse_stock_id', $stock->warehouse_stock_id)
+                        ->update(['supplier_id' => $data['supplier_id']]);
+                } else {
+                    WarehouseStock::create([
+                        'warehouse_id' => $warehouse->warehouse_id,
+                        'product_variant_id' => $data['product_variant_id'],
+                        'jumlah_stok' => $data['jumlah'],
+                        'supplier_id' => $data['supplier_id'],
+                    ]);
+                }
+
+                StockMovement::create([
+                    'warehouse_id' => $warehouse->warehouse_id,
+                    'product_variant_id' => $data['product_variant_id'],
+                    'tipe_pergerakan' => StockMovement::TIPE_MASUK,
+                    'jumlah' => $data['jumlah'],
+                    'sumber_tipe' => StockMovement::SUMBER_SUPPLIER,
+                    'sumber_id' => $data['supplier_id'],
+                    'alasan' => $data['alasan'] ?? 'Barang masuk dari supplier',
+                    'dibuat_oleh' => auth()->id(),
+                ]);
+            }, 5);
+        } catch (\RuntimeException $e) {
+            return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
+        } catch (\Throwable $e) {
+            return back()->with('toast', ['message' => 'Gagal mencatat barang masuk.', 'icon' => 'error']);
+        }
 
         ActivityLogger::log(
             'stock.in',
