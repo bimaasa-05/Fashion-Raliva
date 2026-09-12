@@ -357,6 +357,13 @@
     }
     html.theme-dark #chat-content::before { background: rgba(0,0,0,.18); }
     #chat-content > * { position: relative; z-index: 1; }
+    #chat-edit-wallpaper {
+        background-image: url('/images/wallpaper-chat.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: #171717;
+    }
     .chat-header-item { transition: opacity .3s ease, transform .3s ease; }
     .chat-header-hidden { opacity: 0; transform: translateY(-6px); pointer-events: none; }
     #chat-search-panel { opacity: 0; transform: translateX(20px); pointer-events: none; transition: opacity .3s cubic-bezier(.22,1,.36,1), transform .3s cubic-bezier(.22,1,.36,1); z-index: 30; }
@@ -549,7 +556,7 @@
                 </button>
                 <h3 class="font-title-md text-title-md text-on-surface">{{ __('Edit pesan') }}</h3>
             </div>
-            <div id="chat-edit-wallpaper" class="raliva-doodle flex-1 min-h-[150px] sm:min-h-[220px] flex items-center justify-end px-6 py-8">
+            <div id="chat-edit-wallpaper" class="flex-1 min-h-[150px] sm:min-h-[220px] flex items-center justify-end px-6 py-8">
                 <div class="max-w-[90%] rounded-xl px-4 py-2.5 bg-secondary text-white">
                     <p class="text-xs mb-1 text-white/60 uppercase tracking-wider">{{ __('Anda') }}</p>
                     <p id="chat-edit-preview" class="font-body-sm text-body-sm whitespace-pre-wrap break-words">-</p>
