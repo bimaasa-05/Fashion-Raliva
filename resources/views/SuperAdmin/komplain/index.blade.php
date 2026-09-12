@@ -272,6 +272,12 @@
                         <button type="button" onclick="resetWallpaper()" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer flex items-center gap-2">
                             <span class="material-symbols-outlined text-[19px]">restart_alt</span>Reset Wallpaper
                         </button>
+                        <button type="button" onclick="selectMessagesMode()" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[19px]">check_box</span>Select Messages
+                        </button>
+                        <button type="button" onclick="openExportChat()" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[19px]">ios_share</span>Ekspor Chat
+                        </button>
                     </div>
                 </div>
                 <button type="button" onclick="closeChatModal()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors shrink-0" title="Tutup" aria-label="Tutup">
@@ -311,6 +317,22 @@
                         <span class="material-symbols-outlined text-[20px]">send</span>
                     </button>
                 </div>
+                <div id="chat-select-bar" class="hidden items-center gap-2 lg:gap-3 py-1 overflow-x-auto" aria-label="Select messages">
+                    <button type="button" onclick="exitSelectMessages()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Keluar seleksi" aria-label="Keluar seleksi">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                    <span id="chat-sel-count" class="font-body-md text-body-md text-on-surface-variant shrink-0 whitespace-nowrap">0 selected</span>
+                    <div class="flex-1 min-w-0"></div>
+                    <button type="button" onclick="copySelectedMessages()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Salin" aria-label="Salin">
+                        <span class="material-symbols-outlined text-[20px]">content_copy</span>
+                    </button>
+                    <button type="button" onclick="confirmDeleteSelected()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Hapus" aria-label="Hapus">
+                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                    </button>
+                    <button type="button" onclick="downloadSelectedMessages()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Unduh" aria-label="Unduh">
+                        <span class="material-symbols-outlined text-[20px]">download</span>
+                    </button>
+                </div>
                 <p id="chat-closed-note" class="hidden text-center font-body-sm text-body-sm text-on-surface-variant pt-4">Komplain telah selesai dan tidak dapat dibalas lagi.</p>
             </div>
         </div>
@@ -320,13 +342,53 @@
     <div id="chat-delete-dialog" class="hidden fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeDeleteDialog();}">
         <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-outline-variant shadow-2xl" onclick="event.stopPropagation()">
             <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">Hapus pesan ini?</p>
-            <button type="button" data-del-per="me" onclick="deleteMessage()" class="w-full text-left px-4 py-3 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
+            <button type="button" data-del-per="me" onclick="deleteMessage(deleteDialogMsgId,'me')" class="w-full text-left px-4 py-3 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
                 <span class="block font-body-md text-sm text-on-surface">Hapus untuk diri sendiri</span>
                 <span class="block font-body-md text-sm text-on-surface-variant/80">Pesan hanya dihapus dari perangkat Anda</span>
             </button>
             <button type="button" onclick="closeDeleteDialog()" class="w-full text-left px-4 py-3 mt-1 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
                 <span class="font-body-md text-sm text-secondary">Batal</span>
             </button>
+        </div>
+    </div>
+    <div id="chat-sel-delete-dialog" class="hidden fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeSelDeleteDialog();}">
+        <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-outline-variant shadow-2xl" onclick="event.stopPropagation()">
+            <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">Hapus <span id="chat-sel-del-count" class="text-on-surface">-</span>?</p>
+            <p class="font-body-sm text-body-sm text-on-surface-variant px-4 pb-2">Pesan hanya dihapus dari akun Anda.</p>
+            <button type="button" onclick="deleteSelectedMessages()" class="w-full text-left px-4 py-3 mt-1 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
+                <span class="font-body-md text-body-sm text-on-surface">Hapus untuk diri sendiri</span>
+            </button>
+            <button type="button" onclick="closeSelDeleteDialog()" class="w-full text-left px-4 py-3 mt-1 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
+                <span class="font-body-md text-body-sm text-secondary">Batal</span>
+            </button>
+        </div>
+    </div>
+    <div id="chat-edit-dialog" class="hidden fixed inset-0 z-[80] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeEditDialog();}">
+        <div class="w-full sm:max-w-lg bg-surface-container-low rounded-t-3xl sm:rounded-2xl border border-outline-variant shadow-2xl overflow-hidden flex flex-col max-h-[90dvh]" onclick="event.stopPropagation()">
+            <div class="flex items-center gap-3 px-5 py-4 border-b border-[var(--border-soft)] shrink-0">
+                <button type="button" onclick="closeEditDialog()" class="p-2 -ml-2 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer" title="Tutup">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+                <h3 class="font-title-md text-title-md text-on-surface">Edit pesan</h3>
+            </div>
+            <div id="chat-edit-wallpaper" class="flex-1 min-h-[150px] sm:min-h-[220px] flex items-center justify-end px-6 py-8">
+                <div class="max-w-[90%] rounded-xl px-4 py-2.5 bg-secondary text-white">
+                    <p class="text-xs mb-1 text-white/60 uppercase tracking-wider">Anda</p>
+                    <p id="chat-edit-preview" class="font-body-sm text-body-sm whitespace-pre-wrap break-words">-</p>
+                </div>
+            </div>
+            <div class="relative border-t border-[var(--border-soft)] bg-surface-container-lowest/60 px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] shrink-0">
+                <div id="chat-edit-emoji-panel" class="hidden absolute bottom-full mb-3 left-5 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-outline-variant bg-surface-container-high p-3 shadow-xl"></div>
+                <div class="flex items-end gap-2 lg:gap-3">
+                    <button type="button" onclick="toggleEditEmojiPanel()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Emoji" aria-label="Emoji">
+                        <span class="material-symbols-outlined text-[20px]">mood</span>
+                    </button>
+                    <textarea id="chat-edit-input" rows="1" maxlength="2000" class="flex-1 bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant resize-none focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors" onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();saveEditMessage();}"></textarea>
+                    <button type="button" onclick="saveEditMessage()" class="w-11 h-11 lg:w-12 lg:h-12 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 transition-opacity disabled:opacity-40 rounded-full" title="Simpan">
+                        <span class="material-symbols-outlined text-[20px]">check</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     <!-- Modal Konfirmasi Komplain (eskalasi/tutup) -->
@@ -390,6 +452,14 @@
         background-color: #171717;
     }
     #chat-messages { overscroll-behavior: contain; }
+    #chat-messages.chat-selecting .chat-sel-box { display: inline-flex; }
+    .chat-selecting .chat-msg { cursor: pointer; user-select: none; -webkit-user-select: none; }
+    .chat-sel-box { display: none; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0; color: var(--on-surface-variant); }
+    .chat-msg.sel-selected .chat-sel-box { background-color: var(--chrome-accent, #8B1E3F); color: #fff; }
+    .chat-msg.sel-selected .chat-sel-box .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+    #chat-input-area.chat-selecting #chat-composer { display: none; }
+    #chat-input-area.chat-selecting #chat-select-bar { display: flex; }
+    #chat-select-bar { display: none; }
     @keyframes raliva-chat-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
     @keyframes raliva-chat-backdrop-out { from { opacity: 1; } to { opacity: 0; } }
     @keyframes raliva-chat-sheet-in-mobile { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -534,7 +604,148 @@
     document.addEventListener('click', function (ev) {
         if (!ev.target.closest('#chat-more-wrap')) closeChatMoreMenu();
         if (!ev.target.closest('#chat-emoji-panel') && !ev.target.closest('#chat-emoji-toggle')) document.getElementById('chat-emoji-panel')?.classList.add('hidden');
+        if (!ev.target.closest('#chat-edit-emoji-panel') && !ev.target.closest('#chat-edit-emoji-toggle')) document.getElementById('chat-edit-emoji-panel')?.classList.add('hidden');
     });
+
+    // Select mode & edit (sync customer)
+    let chatSelMode = false;
+    let chatSelIds = new Set();
+    let editMsgId = null;
+    function selectMessagesMode() {
+        closeChatMoreMenu();
+        chatSelMode = true;
+        chatSelIds.clear();
+        document.getElementById('chat-messages')?.classList.add('chat-selecting');
+        document.getElementById('chat-input-area')?.classList.add('chat-selecting');
+        updateSelCount();
+    }
+    function exitSelectMessages() {
+        chatSelMode = false;
+        chatSelIds.clear();
+        document.getElementById('chat-messages')?.classList.remove('chat-selecting');
+        document.getElementById('chat-input-area')?.classList.remove('chat-selecting');
+        document.querySelectorAll('#chat-messages .chat-msg').forEach(el => el.classList.remove('sel-selected'));
+        updateSelCount();
+    }
+    function toggleSelectMessage(id) {
+        if (chatSelIds.has(id)) chatSelIds.delete(id);
+        else chatSelIds.add(id);
+        const row = document.querySelector('[data-mid="'+id+'"]');
+        if (row) {
+            row.classList.toggle('sel-selected', chatSelIds.has(id));
+            const icon = row.querySelector('[data-sel-box] .material-symbols-outlined');
+            if (icon) icon.textContent = chatSelIds.has(id) ? 'check_box' : 'check_box_outline_blank';
+        }
+        updateSelCount();
+    }
+    function updateSelCount() {
+        const el = document.getElementById('chat-sel-count');
+        if (el) el.textContent = chatSelIds.size + ' selected';
+        const bar = document.getElementById('chat-select-bar');
+        if (bar) { bar.classList.toggle('hidden', !chatSelMode); bar.classList.toggle('flex', chatSelMode); }
+        const comp = document.getElementById('chat-composer');
+        if (comp) comp.classList.toggle('hidden', chatSelMode);
+    }
+    function copySelectedMessages() {
+        const texts = [];
+        chatSelIds.forEach(id => {
+            const el = document.querySelector('[data-mid="'+id+'"] [data-pesan]');
+            if (el) texts.push(el.textContent);
+        });
+        if (texts.length) navigator.clipboard.writeText(texts.join('\n\n')).then(()=>{});
+        exitSelectMessages();
+    }
+    function confirmDeleteSelected() {
+        const c = document.getElementById('chat-sel-del-count');
+        if (c) c.textContent = chatSelIds.size + ' pesan';
+        document.getElementById('chat-sel-delete-dialog')?.classList.remove('hidden');
+    }
+    function closeSelDeleteDialog() { document.getElementById('chat-sel-delete-dialog')?.classList.add('hidden'); }
+    async function deleteSelectedMessages() {
+        closeSelDeleteDialog();
+        for (const id of Array.from(chatSelIds)) {
+            await fetch('{{ route('superadmin.komplain.messages.destroy', [':cid:', ':mid:']) }}'.replace(':cid:', currentChat.id).replace(':mid:', id), {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify({ per: 'me' })
+            });
+        }
+        exitSelectMessages();
+        loadMessages();
+    }
+    function downloadSelectedMessages() {
+        const texts = [];
+        chatSelIds.forEach(id => {
+            const el = document.querySelector('[data-mid="'+id+'"] [data-pesan]');
+            const time = document.querySelector('[data-mid="'+id+'"] .text-\[10px\]')?.textContent || '';
+            if (el) texts.push('['+time+'] ' + el.textContent);
+        });
+        if (!texts.length) return;
+        const blob = new Blob([texts.join('\n\n')], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'chat-'+currentChat.id+'.txt'; a.click(); URL.revokeObjectURL(url);
+        exitSelectMessages();
+    }
+    function openEditDialog(id, text) {
+        editMsgId = id;
+        document.getElementById('chat-edit-preview').textContent = text;
+        document.getElementById('chat-edit-input').value = text;
+        document.getElementById('chat-edit-dialog').classList.remove('hidden');
+        document.getElementById('chat-edit-input')?.focus();
+    }
+    function closeEditDialog() {
+        editMsgId = null;
+        document.getElementById('chat-edit-dialog')?.classList.add('hidden');
+        document.getElementById('chat-edit-emoji-panel')?.classList.add('hidden');
+    }
+    function toggleEditEmojiPanel() {
+        const p = document.getElementById('chat-edit-emoji-panel');
+        if (!p) return;
+        p.classList.toggle('hidden');
+        if (!p.dataset.loaded) {
+            const emojis = ['😀','😂','😍','😭','😡','👍','🙏','🔥','❤️','✨','😊','🤔','😎','🥺','🫡','👏','🎉','💯'];
+            p.innerHTML = emojis.map(e => '<button type="button" onclick="insertEditEmoji(\''+e+'\')" class="w-9 h-9 flex items-center justify-center hover:bg-surface-container-low rounded-lg text-lg">'+e+'</button>').join('');
+            p.dataset.loaded='1'; p.classList.add('grid','grid-cols-6','gap-1');
+        }
+    }
+    function insertEditEmoji(e) {
+        const input = document.getElementById('chat-edit-input');
+        if (!input) return;
+        const s = input.selectionStart || input.value.length;
+        const ee = input.selectionEnd || s;
+        input.value = input.value.slice(0,s)+e+input.value.slice(ee);
+        input.focus(); input.selectionStart = input.selectionEnd = s+e.length;
+        document.getElementById('chat-edit-preview').textContent = input.value;
+    }
+    document.getElementById('chat-edit-input')?.addEventListener('input', function(){ document.getElementById('chat-edit-preview').textContent = this.value || '-'; });
+    async function saveEditMessage() {
+        if (!editMsgId || !currentChat.id) return;
+        const pesan = document.getElementById('chat-edit-input').value.trim();
+        if (!pesan) return;
+        const url = '{{ route('superadmin.komplain.messages.destroy', [':cid:', ':mid:']) }}'.replace(':cid:', currentChat.id).replace(':mid:', editMsgId);
+        // Use same destroy+store pattern as customer edit (delete then store) or PUT if available
+        try {
+            const resp = await fetch('{{ route('superadmin.komplain.messages.store', ':id:') }}'.replace(':id:', currentChat.id), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify({ pesan: pesan, _method: 'PUT', message_id: editMsgId })
+            });
+            closeEditDialog();
+            if (resp.ok) loadMessages();
+        } catch(_) { closeEditDialog(); }
+    }
+    function openExportChat() {
+        closeChatMoreMenu();
+        const texts = [];
+        document.querySelectorAll('#chat-messages .chat-msg [data-pesan]').forEach(el => {
+            const time = el.closest('.chat-msg')?.querySelector('.text-\\[10px\\]')?.textContent || '';
+            texts.push('['+time+'] ' + el.textContent);
+        });
+        if (!texts.length) return;
+        const blob = new Blob([texts.join('\n\n')], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'chat-'+currentChat.id+'.txt'; a.click(); URL.revokeObjectURL(url);
+    }
 
     function openChatModal(id, kode, subject, isOpen) {
         currentChat.id = id;
@@ -648,9 +859,15 @@
                     '<span class="absolute bottom-1.5 right-2.5 text-[10px] leading-none ' + time + '">' + fmtTs(m.created_at) + '</span>' +
                     '</div></div>';
             }
-            const menu = '<span class="relative shrink-0 chat-menu-wrap"><button type="button" data-menu-btn="' + m.complaint_message_id + '" onclick="toggleChatMenu(' + m.complaint_message_id + ')" class="chat-menu-btn ' + (mine ? 'text-white/60 hover:text-white' : 'text-on-surface-variant hover:text-on-surface') + ' lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100 focus:opacity-100 transition-opacity cursor-pointer rounded-full w-7 h-7 flex items-center justify-center" title="…"><span class="material-symbols-outlined text-[17px]">more_horiz</span></button><span data-menu="' + m.complaint_message_id + '" class="chat-menu hidden absolute right-0 top-full mt-1 min-w-[170px] z-30 rounded-xl border border-outline-variant bg-surface-container-high py-1 shadow-xl"><button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button></span></span>';
-            const sender = mine ? 'Super Admin' : (m.sender?.role === 'customer' ? m.sender?.nama_lengkap : 'Toko');
-            return '<div class="flex ' + align + ' group chat-msg" data-mid="' + m.complaint_message_id + '">' +
+            let menu = '';
+            if (mine) {
+                menu = '<span class="relative shrink-0 chat-menu-wrap"><button type="button" data-menu-btn="' + m.complaint_message_id + '" onclick="toggleChatMenu(' + m.complaint_message_id + ')" class="chat-menu-btn text-white/60 hover:text-white lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100 focus:opacity-100 transition-opacity cursor-pointer rounded-full w-7 h-7 flex items-center justify-center" title="…"><span class="material-symbols-outlined text-[17px]">more_horiz</span></button><span data-menu="' + m.complaint_message_id + '" class="chat-menu hidden absolute right-0 top-full mt-1 min-w-[170px] z-30 rounded-xl border border-outline-variant bg-surface-container-high py-1 shadow-xl"><button type="button" onclick="openEditDialog(' + m.complaint_message_id + ', \'' + escapeHtml(m.pesan).replace(/\'/g, "\\\'") + '\')" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">edit</span>Edit</button><button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button></span></span>';
+            } else {
+                menu = '<span class="relative shrink-0 chat-menu-wrap"><button type="button" data-menu-btn="' + m.complaint_message_id + '" onclick="toggleChatMenu(' + m.complaint_message_id + ')" class="chat-menu-btn text-on-surface-variant hover:text-on-surface lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100 focus:opacity-100 transition-opacity cursor-pointer rounded-full w-7 h-7 flex items-center justify-center" title="…"><span class="material-symbols-outlined text-[17px]">more_horiz</span></button><span data-menu="' + m.complaint_message_id + '" class="chat-menu hidden absolute right-0 top-full mt-1 min-w-[170px] z-30 rounded-xl border border-outline-variant bg-surface-container-high py-1 shadow-xl"><button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button></span></span>';
+            }
+            const sender = mine ? 'Anda' : (m.sender?.role === 'customer' ? m.sender?.nama_lengkap : 'Toko');
+            return '<div class="flex ' + align + ' group chat-msg" data-mid="' + m.complaint_message_id + '" onclick="if(chatSelMode) toggleSelectMessage(' + m.complaint_message_id + ')" style="cursor:' + (chatSelMode ? 'pointer' : 'default') + '">' +
+                '<span class="chat-sel-box mr-2 self-center hidden" data-sel-box><span class="material-symbols-outlined text-[18px]">check_box_outline_blank</span></span>' +
                 '<div class="max-w-[82%] lg:max-w-[72%] rounded-2xl px-3.5 lg:px-4 pt-3 pb-5 relative ' + bubble + ' shadow-sm" data-bubble>' +
                 '<div class="flex items-start justify-between gap-2 mb-1">' +
                 '<p class="text-[11px] ' + meta + ' uppercase tracking-[0.06em] font-medium">' + escapeHtml(sender) + '</p>' +
