@@ -144,25 +144,43 @@ class PeringkatIklanController extends Controller
 
         try {
             DB::transaction(function () use ($slot) {
-                $wallet = Wallet::where('store_id', $slot->store_id)->lockForUpdate()->first();
+                $locked = AdSlot::whereKey($slot->ad_slot_id)->lockForUpdate()->first();
 
-                if ($wallet) {
-                    $saldoSebelum = (float) $wallet->saldo_tersedia;
-
-                    WalletTransaction::create([
-                        'wallet_id' => $wallet->wallet_id,
-                        'ad_slot_id' => $slot->ad_slot_id,
-                        'jenis_transaksi' => WalletTransaction::JENIS_BIAYA_IKLAN,
-                        'jumlah' => (float) $slot->nominal_bid,
-                        'saldo_sebelum' => $saldoSebelum,
-                        'saldo_sesudah' => $saldoSebelum,
-                        'keterangan' => sprintf('Biaya iklan peringkat "%s" Rp %s periode %s s/d %s.', $slot->product->nama_produk ?? '-', number_format((float) $slot->nominal_bid, 0, ',', '.'), $slot->tanggal_mulai ? \Illuminate\Support\Carbon::parse($slot->tanggal_mulai)->translatedFormat('d M Y') : '-', $slot->tanggal_selesai ? \Illuminate\Support\Carbon::parse($slot->tanggal_selesai)->translatedFormat('d M Y') : '-'),
-                    ]);
+                if (! $locked || $locked->status !== AdSlot::STATUS_DITUNDA || $locked->payment_status !== AdSlot::PAYMENT_TERVERIFIKASI) {
+                    throw new \RuntimeException('Status slot sudah berubah oleh pihak lain.');
                 }
 
-                $hari = PeringkatService::resolveHari((int) $slot->nominal_bid);
+                if (! $locked->store_id) {
+                    throw new \RuntimeException('Slot tidak terhubung ke toko.');
+                }
 
-                $slot->update([
+                $wallet = Wallet::where('store_id', $locked->store_id)->lockForUpdate()->first();
+
+                if (! $wallet) {
+                    throw new \RuntimeException('Wallet toko tidak ditemukan, saldo tidak dapat dipotong.');
+                }
+
+                $saldoSebelum = (float) $wallet->saldo_tersedia;
+
+                if ($saldoSebelum < (float) $locked->nominal_bid) {
+                    throw new \RuntimeException('Saldo toko tidak cukup untuk biaya iklan.');
+                }
+
+                $wallet->decrement('saldo_tersedia', (float) $locked->nominal_bid);
+
+                WalletTransaction::create([
+                    'wallet_id' => $wallet->wallet_id,
+                    'ad_slot_id' => $locked->ad_slot_id,
+                    'jenis_transaksi' => WalletTransaction::JENIS_BIAYA_IKLAN,
+                    'jumlah' => (float) $locked->nominal_bid,
+                    'saldo_sebelum' => $saldoSebelum,
+                    'saldo_sesudah' => $saldoSebelum - (float) $locked->nominal_bid,
+                    'keterangan' => sprintf('Biaya iklan peringkat "%s" Rp %s periode %s s/d %s.', $locked->product->nama_produk ?? '-', number_format((float) $locked->nominal_bid, 0, ',', '.'), $locked->tanggal_mulai ? \Illuminate\Support\Carbon::parse($locked->tanggal_mulai)->translatedFormat('d M Y') : '-', $locked->tanggal_selesai ? \Illuminate\Support\Carbon::parse($locked->tanggal_selesai)->translatedFormat('d M Y') : '-'),
+                ]);
+
+                $hari = PeringkatService::resolveHari((int) $locked->nominal_bid);
+
+                $locked->update([
                     'status' => AdSlot::STATUS_AKTIF,
                     'tanggal_mulai' => now()->toDateString(),
                     'tanggal_selesai' => now()->addDays($hari)->toDateString(),
@@ -172,6 +190,8 @@ class PeringkatIklanController extends Controller
         } catch (\Throwable $e) {
             return back()->with('toast', ['message' => 'Gagal menyetujui iklan: '.$e->getMessage(), 'icon' => 'gpp_maybe']);
         }
+
+        $slot->refresh();
 
         ActivityLogger::log('ad_slot.approve', AdSlot::class, $slot->ad_slot_id, ['status' => AdSlot::STATUS_DITUNDA], ['status' => AdSlot::STATUS_AKTIF], 'Menyetujui iklan peringkat Rp '.number_format((float) $slot->nominal_bid, 0, ',', '.'));
 

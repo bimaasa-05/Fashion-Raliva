@@ -108,19 +108,17 @@
                 </div>
 
                 <!-- Filters -->
-                <div class="md:hidden mb-6">
-                    <button type="button" data-filter-toggle class="inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors w-full">
-                        <span class="material-symbols-outlined text-[18px]">tune</span>Filter
-                        <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
-                    </button>
-                </div>
-                <div data-filter-panel class="hidden md:flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
+                <form method="GET" action="{{ route('superadmin.slot-produk') }}" class="flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
+                    <input type="hidden" name="section" value="kuota" />
                     <div class="relative flex-1 min-w-[220px]">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                        <input type="text" id="searchInput" placeholder="Cari nama toko..." class="w-full bg-transparent border border-muted-border rounded-lg pl-10 pr-4 py-2.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" oninput="applyFilter()" />
+                        <input type="text" id="searchInput" name="q" value="{{ request('q') }}" placeholder="Cari nama toko..." oninput="if(this.value.length > 2 || this.value.length === 0) this.form.submit()" class="w-full bg-transparent border border-muted-border rounded-lg pl-10 pr-4 py-2.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
                     </div>
-                    <button type="button" onclick="resetFilter()" class="py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Reset</button>
-                </div>
+                    <button type="submit" class="py-2.5 px-4 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium whitespace-nowrap">Cari</button>
+                    @if (request('q'))
+                        <a href="{{ route('superadmin.slot-produk', ['section' => 'kuota']) }}" class="py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Reset</a>
+                    @endif
+                </form>
 
                 <!-- Table -->
                 <div id="table-wrap" class="overflow-x-auto hidden md:block">
@@ -210,16 +208,10 @@
                             </div>
                         </article>
                     @empty
-                        <p class="text-center text-on-surface-variant py-10">Belum ada toko.</p>
+                        <p class="text-center text-on-surface-variant py-10">Tidak ada toko yang cocok.</p>
                     @endforelse
-                    <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada toko yang cocok.</p>
                 </div>
 
-                <div id="empty-search" class="hidden flex-col items-center py-12 text-center gap-3">
-                    <div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center"><span class="material-symbols-outlined text-[28px] text-on-surface-variant">search_off</span></div>
-                    <p class="text-on-surface-variant font-body-md text-sm">Tidak ada toko yang cocok.</p>
-                    <button type="button" onclick="resetFilter()" class="mt-1 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Reset Filter</button>
-                </div>
                 @if ($stores->hasPages())
                     <div class="mt-6 flex justify-center">{{ $stores->links() }}</div>
                 @endif
@@ -240,6 +232,18 @@
                         <span class="material-symbols-outlined text-[18px]">add</span>Tambah Paket
                     </button>
                 </div>
+
+                <form method="GET" action="{{ route('superadmin.slot-produk') }}" class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+                    <input type="hidden" name="section" value="paket" />
+                    <div class="relative flex-1 min-w-[220px]">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
+                        <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari nama paket..." oninput="if(this.value.length > 2 || this.value.length === 0) this.form.submit()" class="w-full bg-transparent border border-muted-border rounded-lg pl-10 pr-4 py-2.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
+                    </div>
+                    <button type="submit" class="py-2.5 px-4 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium whitespace-nowrap">Cari</button>
+                    @if (request('q'))
+                        <a href="{{ route('superadmin.slot-produk', ['section' => 'paket']) }}" class="py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Reset</a>
+                    @endif
+                </form>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
                     @forelse ($packages as $paket)
@@ -282,6 +286,18 @@
                     <h2 class="font-title-md text-title-md text-on-surface premium-heading">Permintaan Tambah Slot</h2>
                     <p class="text-xs text-on-surface-variant mt-0.5">Pemilik toko mengajukan pembelian slot saat kuota habis. Pastikan bukti pembayaran sebelum menyetujui.</p>
                 </div>
+
+                <form method="GET" action="{{ route('superadmin.slot-produk') }}" class="flex flex-col sm:flex-row sm:items-center gap-3 mt-6 mb-6">
+                    <input type="hidden" name="section" value="permintaan" />
+                    <div class="relative flex-1 min-w-[220px]">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
+                        <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari toko, alasan, atau jumlah slot..." oninput="if(this.value.length > 2 || this.value.length === 0) this.form.submit()" class="w-full bg-transparent border border-muted-border rounded-lg pl-10 pr-4 py-2.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
+                    </div>
+                    <button type="submit" class="py-2.5 px-4 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium whitespace-nowrap">Cari</button>
+                    @if (request('q'))
+                        <a href="{{ route('superadmin.slot-produk', ['section' => 'permintaan']) }}" class="py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Reset</a>
+                    @endif
+                </form>
 
                 <div class="mt-6 space-y-gutter">
                     @forelse ($purchaseRequests as $rmt)
@@ -534,24 +550,5 @@
         closeConfirmSlot();
     });
 
-    function applyFilter() {
-        const search = document.getElementById('searchInput').value.toLowerCase().trim();
-        const rows = document.querySelectorAll('.slot-row');
-        let visible = 0;
-        rows.forEach(row => {
-            const show = !search || (row.dataset.name || '').includes(search);
-            row.style.display = show ? '' : 'none';
-            if (show) visible++;
-        });
-        document.getElementById('empty-search').style.display = visible === 0 ? 'flex' : 'none';
-        const em = document.getElementById('empty-search-mobile');
-        if (em) em.style.display = visible === 0 ? 'block' : 'none';
-        const tw = document.getElementById('table-wrap');
-        if (tw) tw.style.display = (visible === 0) ? 'none' : '';
-    }
-    function resetFilter() {
-        document.getElementById('searchInput').value = '';
-        applyFilter();
-    }
-</script>
+    </script>
 @endpush

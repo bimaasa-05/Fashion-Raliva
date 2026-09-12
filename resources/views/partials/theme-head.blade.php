@@ -32,6 +32,7 @@
                     "on-primary-fixed-variant": "#474646",
                     "on-secondary-fixed": "#261a00",
                     "error": "rgb(var(--c-error) / <alpha-value>)",
+                    "success": "rgb(var(--c-success) / <alpha-value>)",
                     "on-primary-container": "rgb(var(--c-on-muted) / <alpha-value>)",
                     "tertiary": "rgb(var(--c-primary) / <alpha-value>)",
                     "surface-container-lowest": "rgb(var(--c-sc-lowest) / <alpha-value>)",
@@ -129,6 +130,7 @@
         --c-deep-onyx: 17 17 17;
         --c-on-primary: 255 255 255;
         --c-secondary: 121 89 5;
+        --c-success: 46 125 50;
         --c-error: 186 26 26;
         --c-on-error: 255 255 255;
         --c-error-container: 255 218 214;
@@ -165,6 +167,7 @@
         --c-deep-onyx: 240 238 238;
         --c-on-primary: 17 17 17;
         --c-secondary: 235 193 104;
+        --c-success: 76 175 80;
         --c-error: 255 179 171;
         --c-on-error: 60 14 12;
         --c-error-container: 93 26 22;

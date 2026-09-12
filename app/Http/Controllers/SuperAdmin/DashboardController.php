@@ -12,6 +12,7 @@ use App\Models\Refund;
 use App\Models\Store;
 use App\Models\User;
 use App\Models\Payment;
+use App\Models\Review;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -93,6 +94,58 @@ class DashboardController extends Controller
             '90' => $this->chartRange(90),
         ];
 
+        // Target omzet: omzet bulan berjalan vs bulan lalu
+        $omzetBulanIni = (float) Order::whereIn('status', [
+            Order::STATUS_DIBAYAR,
+            Order::STATUS_DIPROSES,
+            Order::STATUS_DIKIRIM,
+            Order::STATUS_SELESAI,
+        ])->where('created_at', '>=', now()->startOfMonth())->sum('grand_total');
+        $omzetBulanLalu = (float) Order::whereIn('status', [
+            Order::STATUS_DIBAYAR,
+            Order::STATUS_DIPROSES,
+            Order::STATUS_DIKIRIM,
+            Order::STATUS_SELESAI,
+        ])->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->startOfMonth()])->sum('grand_total');
+        $targetOmzetPct = (int) round(($omzetBulanLalu > 0 ? $omzetBulanIni / $omzetBulanLalu : ($omzetBulanIni > 0 ? 1 : 0)) * 100);
+
+        // Kepuasan pelanggan dari review aktif
+        $totalUlasan = Review::where('status', Review::STATUS_AKTIF)->count();
+        $rataRating = (float) Review::where('status', Review::STATUS_AKTIF)->avg('rating');
+        $ulasanPuas = Review::where('status', Review::STATUS_AKTIF)->where('rating', '>=', 4)->count();
+        $kepuasanPct = $totalUlasan > 0 ? (int) round($ulasanPuas / $totalUlasan * 100) : 0;
+
+        // SLA respons komplain: balasan pertama dalam 24 jam
+        $responses = DB::table('complaint_messages as cm')
+            ->join('complaints as c', 'c.complaint_id', '=', 'cm.complaint_id')
+            ->selectRaw('cm.complaint_id, MIN(cm.created_at) as first_reply')
+            ->whereNull('cm.deleted_at')
+            ->groupBy('cm.complaint_id')
+            ->get()
+            ->mapWithKeys(fn ($r) => [$r->complaint_id => $r->first_reply]);
+
+        $slaTotal = 0;
+        $slaTepat = 0;
+        $slaRataJam = null;
+        if ($responses->isNotEmpty()) {
+            $diffs = Complaint::whereIn('complaint_id', $responses->keys())
+                ->whereNotNull('dibuat_pada')
+                ->get(['complaint_id', 'dibuat_pada'])
+                ->map(fn (Complaint $c) => (float) now()->parse($responses[$c->complaint_id])->diffInHours(now()->parse($c->dibuat_pada)));
+
+            $slaTotal = $diffs->count();
+            $slaTepat = $diffs->filter(fn ($d) => $d <= 24)->count();
+            $slaRataJam = $slaTotal > 0 ? round($diffs->avg(), 1) : null;
+        }
+        $slaPct = $slaTotal > 0 ? (int) round($slaTepat / $slaTotal * 100) : 0;
+
+        // Bulan dengan pesanan tertinggi (6 bulan terakhir)
+        $maxBar = collect($chartPesananBars)->sortByDesc('value')->first();
+        $bulanTertinggi = [
+            'label' => $maxBar['label'] ?? '-',
+            'jumlah' => (int) ($maxBar['value'] ?? 0),
+        ];
+
         return view('SuperAdmin.dashboard', [
             'kpi' => [
                 'pengguna' => $totalPengguna,
@@ -127,6 +180,23 @@ class DashboardController extends Controller
             'chartPesananBars' => $chartPesananBars,
             'chartTransaksi' => $chartTransaksi,
             'rangeData' => $rangeData,
+            'targetOmzet' => [
+                'bulanIni' => $omzetBulanIni,
+                'bulanLalu' => $omzetBulanLalu,
+                'persen' => min(max($targetOmzetPct, 0), 100),
+            ],
+            'kepuasan' => [
+                'rata' => $rataRating,
+                'persen' => $kepuasanPct,
+                'total' => $totalUlasan,
+            ],
+            'sla' => [
+                'persen' => $slaPct,
+                'rataJam' => $slaRataJam,
+                'total' => $slaTotal,
+                'tepat' => $slaTepat,
+            ],
+            'bulanTertinggi' => $bulanTertinggi,
         ]);
     }
 

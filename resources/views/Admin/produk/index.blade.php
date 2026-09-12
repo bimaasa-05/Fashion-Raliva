@@ -54,7 +54,7 @@
         @else
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter">
             @foreach ($products as $p)
-            @php $firstImgA = $p->images->first(); $imgSrcA = $firstImgA ? (filter_var($firstImgA->file_gambar, FILTER_VALIDATE_URL) ? $firstImgA->file_gambar : asset('storage/' . ltrim($firstImgA->file_gambar, '/'))) : null; @endphp
+            @php $firstImgA = $p->images->first(); $rawImgA = $firstImgA?->file_gambar; $imgSrcA = $rawImgA ? (filter_var($rawImgA, FILTER_VALIDATE_URL) ? $rawImgA : (str_starts_with(ltrim($rawImgA, '/'), 'assets/') ? asset(ltrim($rawImgA, '/')) : asset('storage/' . ltrim($rawImgA, '/')))) : null; @endphp
             <div class="border border-muted-border rounded-lg overflow-hidden card-premium">
                 <div class="aspect-[4/3] bg-surface-container-low overflow-hidden">
                     @if ($imgSrcA)
@@ -96,6 +96,27 @@
             <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
         </div>
         <div class="p-6 space-y-4">
+            @php $galImgsA = $p->images->map(function ($gi) { $r = $gi->file_gambar; return filter_var($r, FILTER_VALIDATE_URL) ? $r : (str_starts_with(ltrim($r, '/'), 'assets/') ? asset(ltrim($r, '/')) : asset('storage/' . ltrim($r, '/'))); })->values()->all(); @endphp
+            @if (count($galImgsA))
+                <div>
+                    <div class="rounded-lg overflow-hidden border border-outline-variant bg-surface-container-low h-56">
+                        <img src="{{ $galImgsA[0] }}" alt="{{ $p->nama_produk }}" class="w-full h-full object-cover" loading="lazy" />
+                    </div>
+                    @if (count($galImgsA) > 1)
+                        <div class="grid grid-cols-4 gap-2 mt-2">
+                            @foreach ($galImgsA as $gi)
+                                <div class="h-16 rounded-lg overflow-hidden border border-outline-variant bg-surface-container-low">
+                                    <img src="{{ $gi }}" alt="" class="w-full h-full object-cover" loading="lazy" />
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            @else
+                <div class="rounded-lg bg-surface-container-low border border-outline-variant h-40 flex items-center justify-center text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[40px]">inventory_2</span>
+                </div>
+            @endif
             <div class="bg-surface-container-low rounded-lg p-4">
                 <p class="text-[10px] uppercase text-on-surface-variant mb-1">Deskripsi</p>
                 <p class="font-body-md text-sm text-on-surface">{{ $p->deskripsi ?: '—' }}</p>

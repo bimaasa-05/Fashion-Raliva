@@ -25,7 +25,7 @@
 <div class="space-y-section-gap">
     <section>
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Komplain</h2>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-gutter">
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Terbuka</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">{{ $stats['open'] }}</span>
@@ -36,16 +36,17 @@
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['diproses'] }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">sedang di follow-up</span>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Selesai</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['selesai'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">ditutup oleh sistem</span>
-            </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Ditutup</span>
+<div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">support_agent</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Ditutup</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['ditutup'] }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">ditutup manual</span>
+            </div>
+            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Eskalasi</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-error/15 fill pointer-events-none select-none" aria-hidden="true">emergency</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">{{ $stats['escalated'] }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">ditonjolkan ke Owner</span>
             </div>
         </div>
     </section>
@@ -72,6 +73,7 @@
                     <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
                     <button type="button" data-chip="open" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Terbuka ({{ $stats['open'] }})</button>
                     <button type="button" data-chip="diproses" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Diproses ({{ $stats['diproses'] }})</button>
+                    <button type="button" data-chip="escalated" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Eskalasi ({{ $stats['escalated'] }})</button>
                     <button type="button" data-chip="selesai" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Selesai ({{ $stats['selesai'] }})</button>
                     <button type="button" data-chip="ditutup" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditutup ({{ $stats['ditutup'] }})</button>
                 </div>

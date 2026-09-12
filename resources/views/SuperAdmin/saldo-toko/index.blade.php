@@ -40,7 +40,7 @@
                 </button>
             </div>
             <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-                <span id="wallet-result-count">{{ $wallets->count() }}</span> toko
+                <span id="wallet-result-count">{{ $jumlahToko }}</span> toko
             </p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter">
@@ -62,6 +62,9 @@
                 </div>
             @endforelse
         </div>
+        @if ($wallets->hasPages())
+            <div class="mt-6 flex justify-center">{{ $wallets->links() }}</div>
+        @endif
         <p id="wallet-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-8">Tidak ada toko yang cocok.</p>
     </section>
 

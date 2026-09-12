@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\WarehouseStaff;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class ManajemenPenggunaController extends Controller
@@ -356,74 +357,111 @@ class ManajemenPenggunaController extends Controller
             ]);
         }
 
-        $baru = $user->status === User::STATUS_AKTIF ? User::STATUS_NONAKTIF : User::STATUS_AKTIF;
-        $lama = $user->status;
-
-        $user->update(['status' => $baru]);
-
-        ActivityLogger::log(
-            'user.status.update',
-            User::class,
-            $user->user_id,
-            ['status' => $lama],
-            ['status' => $baru],
-            sprintf('Mengubah status "%s" dari %s menjadi %s.', $user->nama_lengkap, $lama, $baru)
-        );
-
-        if ((int) $user->user_id !== (int) auth()->id()) {
-            Notification::create([
-                'user_id' => $user->user_id,
-                'aktor_id' => ActivityLogger::resolveActorId(),
-                'tipe' => Notification::TIPE_SISTEM,
-                'judul' => 'Status Akun Diubah',
-                'pesan' => sprintf('Status akun Anda diubah menjadi %s.', $baru === User::STATUS_AKTIF ? 'aktif' : 'nonaktif'),
-                'url' => route('customer.account'),
+        if (! in_array($user->status, [User::STATUS_AKTIF, User::STATUS_NONAKTIF], true)) {
+            return back()->with('toast', [
+                'message' => 'Hanya pengguna berstatus aktif atau nonaktif yang dapat diubah melalui tombol ini.',
+                'icon' => 'gpp_maybe',
             ]);
         }
 
-        if ($user->role && $user->role->nama_role === Role::OWNER) {
-            $tokoCount = Store::where('owner_id', $user->user_id)->count();
+        $cascade = DB::transaction(function () use ($user) {
+            $locked = User::whereKey($user->user_id)->lockForUpdate()->first();
 
-            Store::where('owner_id', $user->user_id)
+            if (! $locked || ! in_array($locked->status, [User::STATUS_AKTIF, User::STATUS_NONAKTIF], true)) {
+                return back()->with('toast', [
+                    'message' => 'Status pengguna sudah berubah oleh pihak lain.',
+                    'icon' => 'gpp_maybe',
+                ]);
+            }
+
+            $baru = $locked->status === User::STATUS_AKTIF ? User::STATUS_NONAKTIF : User::STATUS_AKTIF;
+            $lama = $locked->status;
+
+            $locked->update(['status' => $baru]);
+
+            ActivityLogger::log(
+                'user.status.update',
+                User::class,
+                $locked->user_id,
+                ['status' => $lama],
+                ['status' => $baru],
+                sprintf('Mengubah status "%s" dari %s menjadi %s.', $locked->nama_lengkap, $lama, $baru)
+            );
+
+            if ((int) $locked->user_id !== (int) auth()->id()) {
+                Notification::create([
+                    'user_id' => $locked->user_id,
+                    'aktor_id' => ActivityLogger::resolveActorId(),
+                    'tipe' => Notification::TIPE_SISTEM,
+                    'judul' => 'Status Akun Diubah',
+                    'pesan' => sprintf('Status akun Anda diubah menjadi %s.', $baru === User::STATUS_AKTIF ? 'aktif' : 'nonaktif'),
+                    'url' => route('customer.account'),
+                ]);
+            }
+
+            if (! $locked->role || $locked->role->nama_role !== Role::OWNER) {
+                Notification::fireSelf(Notification::TIPE_SISTEM, 'Status Pengguna Diubah', sprintf('Status "%s" menjadi %s.', $locked->nama_lengkap, $baru), route('superadmin.manajemen-pengguna'));
+
+                return [
+                    'status' => $baru,
+                    'toko' => 0,
+                    'staff' => 0,
+                ];
+            }
+
+            $tokoCount = Store::where('owner_id', $locked->user_id)
+                ->whereIn('status', [Store::STATUS_AKTIF, Store::STATUS_NONAKTIF])
                 ->update(['status' => $baru]);
 
-            $staffUsers = User::whereHas('storeAssignments.store', fn ($q) => $q->where('owner_id', $user->user_id))
-                ->where('user_id', '!=', $user->user_id)
+            StoreStaff::whereHas('store', fn ($q) => $q->where('owner_id', $locked->user_id))
+                ->whereIn('status', [StoreStaff::STATUS_AKTIF, StoreStaff::STATUS_NONAKTIF])
+                ->update(['status' => $baru]);
+
+            $staffUsers = User::whereHas('storeAssignments.store', fn ($q) => $q->where('owner_id', $locked->user_id))
+                ->where('user_id', '!=', $locked->user_id)
+                ->whereIn('status', [User::STATUS_AKTIF, User::STATUS_NONAKTIF])
                 ->get();
 
-            StoreStaff::whereHas('store', fn ($q) => $q->where('owner_id', $user->user_id))
-                ->update(['status' => $baru]);
+            $staffCount = $staffUsers->count();
 
             if ($staffUsers->isNotEmpty()) {
                 User::whereIn('user_id', $staffUsers->pluck('user_id'))
                     ->update(['status' => $baru]);
             }
 
-            $staffCount = $staffUsers->count();
-
             if ($tokoCount > 0 || $staffCount > 0) {
                 ActivityLogger::log(
                     'owner.cascade.update',
                     User::class,
-                    $user->user_id,
+                    $locked->user_id,
                     [],
                     ['stores' => $tokoCount, 'staff' => $staffCount, 'status' => $baru],
-                    sprintf('Cascade %s: %d toko, %d staff turut di%s.', $user->nama_lengkap, $tokoCount, $staffCount, $baru === 'aktif' ? 'aktifkan' : 'nonaktifkan')
+                    sprintf('Cascade %s: %d toko, %d staff turut di%s.', $locked->nama_lengkap, $tokoCount, $staffCount, $baru === 'aktif' ? 'aktifkan' : 'nonaktifkan')
                 );
             }
 
-            Notification::fireSelf(Notification::TIPE_SISTEM, 'Status & Cascade Diubah', sprintf('Status "%s" menjadi %s (cascade %d staff, %d toko).', $user->nama_lengkap, $baru, $staffCount, $tokoCount), route('superadmin.manajemen-pengguna'));
+            Notification::fireSelf(Notification::TIPE_SISTEM, 'Status & Cascade Diubah', sprintf('Status "%s" menjadi %s (cascade %d staff, %d toko).', $locked->nama_lengkap, $baru, $staffCount, $tokoCount), route('superadmin.manajemen-pengguna'));
 
+            return [
+                'status' => $baru,
+                'toko' => $tokoCount,
+                'staff' => $staffCount,
+            ];
+        });
+
+        if (! is_array($cascade)) {
+            return $cascade;
+        }
+
+        if ($cascade['toko'] > 0 || $cascade['staff'] > 0) {
             return back()->with('toast', [
-                'message' => 'Status "'.$user->nama_lengkap.'" berhasil diubah menjadi '.$baru.($staffCount > 0 ? ' (+'.$staffCount.' staff & '.$tokoCount.' toko turut di'.$baru.')' : '').'.',
+                'message' => 'Status "'.$user->nama_lengkap.'" berhasil diubah menjadi '.$cascade['status'].' (+'.$cascade['staff'].' staff & '.$cascade['toko'].' toko turut di'.$cascade['status'].').',
                 'icon' => 'task_alt',
             ]);
         }
 
-        Notification::fireSelf(Notification::TIPE_SISTEM, 'Status Pengguna Diubah', sprintf('Status "%s" menjadi %s.', $user->nama_lengkap, $baru), route('superadmin.manajemen-pengguna'));
-
         return back()->with('toast', [
-            'message' => 'Status "'.$user->nama_lengkap.'" berhasil diubah menjadi '.$baru.'.',
+            'message' => 'Status "'.$user->nama_lengkap.'" berhasil diubah menjadi '.$cascade['status'].'.',
             'icon' => 'task_alt',
         ]);
     }

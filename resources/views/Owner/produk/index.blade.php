@@ -107,7 +107,7 @@
                 </thead>
                 <tbody>
                     @forelse ($products as $p)
-                        @php $firstImg = $p->images->first(); $imgSrc = $firstImg ? (filter_var($firstImg->file_gambar, FILTER_VALIDATE_URL) ? $firstImg->file_gambar : asset('storage/' . ltrim($firstImg->file_gambar, '/'))) : null; @endphp
+                        @php $firstImg = $p->images->first(); $rawImg = $firstImg?->file_gambar; $imgSrc = $rawImg ? (filter_var($rawImg, FILTER_VALIDATE_URL) ? $rawImg : (str_starts_with(ltrim($rawImg, '/'), 'assets/') ? asset(ltrim($rawImg, '/')) : asset('storage/' . ltrim($rawImg, '/')))) : null; @endphp
                         <tr data-table-row data-kategori="{{ $p->category?->nama_kategori }}" data-status-produk="{{ $p->status }}" class="border-b border-muted-border last:border-0">
                             <td class="py-3.5 px-4">
                                 <div class="flex items-center gap-3">
@@ -216,6 +216,27 @@
             </button>
         </div>
         <div class="p-6 space-y-4">
+            @php $galImgs = $p->images->map(function ($gi) { $r = $gi->file_gambar; return filter_var($r, FILTER_VALIDATE_URL) ? $r : (str_starts_with(ltrim($r, '/'), 'assets/') ? asset(ltrim($r, '/')) : asset('storage/' . ltrim($r, '/'))); })->values()->all(); @endphp
+            @if (count($galImgs))
+                <div>
+                    <div class="rounded-lg overflow-hidden border border-outline-variant bg-surface-container-high h-56">
+                        <img src="{{ $galImgs[0] }}" alt="{{ $p->nama_produk }}" class="w-full h-full object-cover" loading="lazy" />
+                    </div>
+                    @if (count($galImgs) > 1)
+                        <div class="grid grid-cols-4 gap-2 mt-2">
+                            @foreach ($galImgs as $gi)
+                                <div class="h-16 rounded-lg overflow-hidden border border-outline-variant bg-surface-container-high">
+                                    <img src="{{ $gi }}" alt="" class="w-full h-full object-cover" loading="lazy" />
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            @else
+                <div class="rounded-lg bg-surface-container-high border border-outline-variant h-40 flex items-center justify-center text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[40px]">checkroom</span>
+                </div>
+            @endif
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-surface-container-low rounded-lg p-3">
                     <p class="text-[10px] uppercase text-on-surface-variant">Harga Dasar</p>
@@ -309,7 +330,7 @@
                     <div class="grid grid-cols-4 gap-2">
                         @foreach ($p->images as $img)
                             <div class="h-20 rounded-lg overflow-hidden border border-outline-variant bg-surface-container-high">
-                                <img src="{{ filter_var($img->file_gambar, FILTER_VALIDATE_URL) ? $img->file_gambar : asset($img->file_gambar) }}" alt="Foto produk" class="w-full h-full object-cover" loading="lazy" />
+                                <img src="{{ filter_var($img->file_gambar, FILTER_VALIDATE_URL) ? $img->file_gambar : (str_starts_with(ltrim($img->file_gambar, '/'), 'assets/') ? asset(ltrim($img->file_gambar, '/')) : asset('storage/' . ltrim($img->file_gambar, '/'))) }}" alt="Foto produk" class="w-full h-full object-cover" loading="lazy" />
                             </div>
                         @endforeach
                     </div>

@@ -134,9 +134,6 @@
         </button>
         <span class="font-display-lg text-headline-md tracking-widest text-on-surface">RALIVA</span>
         <div class="flex items-center gap-2">
-            <button type="button" class="theme-toggle text-on-surface hover:opacity-80 transition-opacity" aria-label="Ganti tema">
-                <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
-            </button>
             @include('partials.notification-panel', ['lihatSemuaRoute' => 'admin.notifikasi'])
             @php $adminHeaderUserM = Auth::user(); @endphp
             @include('partials.profile-menu', ['compact' => true, 'name' => $adminHeaderUserM?->nama_lengkap ?? 'Admin Toko', 'role' => $adminHeaderUserM?->role?->nama_role ?? 'Admin Toko', 'profilRoute' => 'admin.profil', 'showPengaturan' => false])
@@ -181,6 +178,18 @@
         <nav class="sidebar-scroll flex-1 min-h-0 overflow-y-auto">
             @include('partials.sidebar-menu-admin')
         </nav>
+        <div class="shrink-0 border-t border-sidebar-border/70 mt-2 pt-2">
+            <button type="button" class="theme-toggle w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-on-sidebar hover:bg-gold-accent/10 transition-colors" aria-label="Ganti tema">
+                <span class="material-symbols-outlined text-[20px] text-gold-accent/80 shrink-0" data-theme-icon>light_mode</span>
+                <span data-sidebar-text class="min-w-0 flex-1 text-left">
+                    <span class="block text-[13px] font-semibold leading-tight">Tampilan</span>
+                    <span class="block text-[11px] opacity-60">Terang / Gelap</span>
+                </span>
+                <span data-sidebar-text class="relative shrink-0 w-10 h-6 rounded-full bg-sidebar-border/60 dark:bg-gold-accent/50 transition-colors" aria-hidden="true">
+                    <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-surface shadow transition-transform dark:translate-x-4"></span>
+                </span>
+            </button>
+        </div>
     </aside>
 
     <!-- Mobile Sidebar Overlay -->
@@ -200,9 +209,6 @@
                 <p class="text-on-surface-variant font-body-md text-sm mt-0.5">@yield('header-subtitle', 'Ini yang terjadi hari ini.')</p>
             </div>
             <div class="flex items-center gap-6">
-                <button type="button" class="theme-toggle text-on-surface hover:text-secondary transition-colors" aria-label="Ganti tema">
-                    <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
-                </button>
                 @include('partials.notification-panel', ['lihatSemuaRoute' => 'admin.notifikasi'])
                 @php $adminHeaderUserD = Auth::user(); @endphp
                 @include('partials.profile-menu', ['name' => $adminHeaderUserD?->nama_lengkap ?? 'Admin Toko', 'role' => $adminHeaderUserD?->role?->nama_role ?? 'Admin Toko', 'profilRoute' => 'admin.profil', 'showPengaturan' => false])
