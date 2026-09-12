@@ -148,6 +148,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('/order-tracking', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'index'])->name('order-tracking');
 
         Route::post('/order-tracking/{order}/confirm', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'confirm'])->name('order-tracking.confirm');
+        Route::post('/refund', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'storeRefund'])->name('refund.store');
 
         Route::get('/komplain', [\App\Http\Controllers\Customer\KomplainController::class, 'index'])->name('komplain');
         Route::get('/komplain/create', [\App\Http\Controllers\Customer\KomplainController::class, 'create'])->name('komplain.create');
@@ -329,6 +330,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->grou
     Route::post('/pesanan', [AdminDataPesananController::class, 'store'])->name('pesanan.store');
     Route::post('/pesanan/{pesanan}/proses', [AdminDataPesananController::class, 'proses'])->name('pesanan.proses');
     Route::post('/pesanan/{pesanan}/batalkan', [AdminDataPesananController::class, 'batalkan'])->name('pesanan.batalkan');
+    Route::put('/pesanan/{pesanan}/items', [AdminDataPesananController::class, 'updateItems'])->name('pesanan.items.update');
     Route::get('/verifikasi-pembayaran', [VerifikasiPembayaranController::class, 'index'])->name('verifikasi-pembayaran');
     Route::post('/verifikasi-pembayaran/{pembayaran}/setujui', [VerifikasiPembayaranController::class, 'setujui'])->name('verifikasi-pembayaran.setujui');
     Route::post('/verifikasi-pembayaran/{pembayaran}/tolak', [VerifikasiPembayaranController::class, 'tolak'])->name('verifikasi-pembayaran.tolak');
@@ -386,6 +388,9 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang'])->g
     Route::post('/barang-masuk', [GudangBarangMasukController::class, 'store'])->name('barang-masuk.store')->middleware('permission:warehouse.stock_in');
     Route::post('/barang-keluar', [GudangBarangKeluarController::class, 'store'])->name('barang-keluar.store')->middleware('permission:warehouse.stock_out');
     Route::post('/pemindahan', [GudangPemindahanStokController::class, 'store'])->name('pemindahan.store')->middleware('permission:warehouse.transfer');
+    Route::post('/pemindahan/{transfer}/approve', [GudangPemindahanStokController::class, 'approve'])->name('pemindahan.approve')->middleware('permission:warehouse.transfer');
+    Route::post('/pemindahan/{transfer}/receive', [GudangPemindahanStokController::class, 'receive'])->name('pemindahan.receive')->middleware('permission:warehouse.transfer');
+    Route::post('/pemindahan/{transfer}/cancel', [GudangPemindahanStokController::class, 'cancel'])->name('pemindahan.cancel')->middleware('permission:warehouse.transfer');
     Route::post('/pemeriksaan', [GudangPemeriksaanStokController::class, 'store'])->name('pemeriksaan.store')->middleware('permission:warehouse.stock_adjust');
     Route::post('/stok-rusak', [GudangStokRusakController::class, 'store'])->name('stok-rusak.store')->middleware('permission:warehouse.damage');
     Route::post('/notifikasi/tandai-dibaca', [GudangNotifikasiController::class, 'markRead'])->name('notifikasi.tandai-dibaca');
@@ -466,6 +471,7 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
 Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi'])->group(function () {
     Route::get('/dashboard', [ProduksiDashboardController::class, 'index'])->name('dashboard');
     Route::get('/permintaan-produksi', [ProduksiPermintaanController::class, 'index'])->name('permintaan-produksi');
+    Route::post('/permintaan-produksi/{productionOrder}/status', [ProduksiPermintaanController::class, 'updateStatus'])->name('permintaan-produksi.status');
     Route::get('/data-produksi', [ProduksiDataController::class, 'index'])->name('data-produksi');
     Route::get('/pemeriksaan-kualitas', [ProduksiPemeriksaanController::class, 'index'])->name('pemeriksaan-kualitas');
     Route::get('/produk-selesai', [ProduksiProdukSelesaiController::class, 'index'])->name('produk-selesai');
