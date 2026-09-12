@@ -240,15 +240,23 @@
             @csrf
             <div>
                 <label class="block raliva-label mb-2">Nama Lengkap</label>
-                <input name="nama_lengkap" type="text" required placeholder="Budi Santoso" class="raliva-input" />
+                <input name="nama_lengkap" type="text" required maxlength="150" value="{{ old('nama_lengkap') }}" placeholder="Budi Santoso" class="raliva-input" />
+                @error('nama_lengkap') <p class="text-xs text-error mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block raliva-label mb-2">Email</label>
-                <input name="email" type="email" required placeholder="budi@raliva.com" class="raliva-input" />
+                <input name="email" type="email" required value="{{ old('email') }}" placeholder="budi@raliva.com" class="raliva-input" />
+                @error('email') <p class="text-xs text-error mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block raliva-label mb-2">Password Sementara</label>
-                <input name="password" type="password" required minlength="6" placeholder="Min. 6 karakter" class="raliva-input" />
+                <div class="relative">
+                    <input id="karyawan-password" name="password" type="password" required minlength="8" placeholder="Min. 8 karakter" class="raliva-input pr-11" />
+                    <button type="button" id="karyawan-password-toggle" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors" aria-label="Tampilkan password">
+                        <span class="material-symbols-outlined text-[20px]">visibility</span>
+                    </button>
+                </div>
+                @error('password') <p class="text-xs text-error mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block raliva-label mb-2">Role</label>
@@ -306,6 +314,15 @@ document.addEventListener('DOMContentLoaded', function(){
             const el = document.getElementById('target-karyawan-name');
             if (el && window.targetKaryawan) el.textContent = window.targetKaryawan;
         });
+    });
+    const pwInput = document.getElementById('karyawan-password');
+    const pwToggle = document.getElementById('karyawan-password-toggle');
+    pwToggle?.addEventListener('click', () => {
+        const show = pwInput.type === 'password';
+        pwInput.type = show ? 'text' : 'password';
+        const icon = pwToggle.querySelector('.material-symbols-outlined');
+        if (icon) icon.textContent = show ? 'visibility_off' : 'visibility';
+        pwToggle.setAttribute('aria-label', show ? 'Sembunyikan password' : 'Tampilkan password');
     });
 </script>
 @endpush
