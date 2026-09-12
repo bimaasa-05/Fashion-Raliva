@@ -106,6 +106,9 @@
                             @if (in_array($pesanan->status, [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_DIPROSES], true))
                                 <button type="button" data-modal-open="modal-batalkan-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Batalkan</button>
                             @endif
+                            @if (in_array($pesanan->status, [\App\Models\Order::STATUS_PENDING_PAYMENT, \App\Models\Order::STATUS_DIBAYAR], true) && $pesanan->shipments->isEmpty() && ! $pesanan->checkout?->payment)
+                                <button type="button" data-modal-open="modal-edit-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">Edit</button>
+                            @endif
                             <button type="button" data-modal-open="modal-detail-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
                         </td>
                     </tr>
@@ -171,6 +174,66 @@
         </div>
     </div>
 </div>
+@if (in_array($pesanan->status, [\App\Models\Order::STATUS_PENDING_PAYMENT, \App\Models\Order::STATUS_DIBAYAR], true) && $pesanan->shipments->isEmpty() && ! $pesanan->checkout?->payment)
+<div id="modal-edit-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <form method="POST" action="{{ route('admin.pesanan.items.update', $pesanan->order_id) }}" class="relative mx-auto w-[calc(100%-2rem)] max-w-xl bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
+        @csrf @method('PUT')
+        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <p class="raliva-label text-gold-accent">Edit Item Pesanan</p>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $pesanan->nomor_order ?? ('#'.$pesanan->order_id) }}</h3>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors shrink-0" aria-label="Tutup">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 space-y-3">
+            <p class="text-xs text-on-surface-variant">Ubah jumlah, hapus item, atau tambah varian. Total dihitung ulang otomatis. Hanya selama belum dibayar &amp; belum dikirim.</p>
+            @foreach ($pesanan->items as $it)
+                <div class="border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low space-y-2.5" data-edit-row>
+                    <input type="hidden" name="items[{{ $loop->index }}][order_item_id]" value="{{ $it->order_item_id }}" />
+                    <input type="hidden" name="items[{{ $loop->index }}][product_variant_id]" value="{{ $it->product_variant_id }}" />
+                    <div class="flex items-start justify-between gap-3">
+                        <p class="font-bold text-on-surface text-sm leading-snug min-w-0 flex-1" title="{{ $it->nama_produk_snapshot }}">{{ $it->nama_produk_snapshot }}</p>
+                        <label class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-error/20 text-xs text-error shrink-0 cursor-pointer hover:bg-error/10 transition-colors" title="Centang untuk hapus item ini">
+                            <input type="checkbox" name="removed[]" value="{{ $it->order_item_id }}" class="accent-red-500" /> Hapus
+                        </label>
+                    </div>
+                    <p class="text-xs text-on-surface-variant">{{ $it->productVariant?->sku ?? '-' }} &#8226; Rp {{ number_format((float) $it->harga_snapshot, 0, ',', '.') }} / pcs</p>
+                    <div class="flex items-end justify-between gap-3 pt-1">
+                        <label class="block">
+                            <span class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Qty</span>
+                            <input type="number" name="items[{{ $loop->index }}][quantity]" value="{{ $it->quantity }}" min="1" max="100" required class="raliva-input w-24 py-2 text-center shrink-0" />
+                        </label>
+                        <p class="text-sm font-bold text-gold-accent whitespace-nowrap pb-2">Rp {{ number_format((float) $it->harga_snapshot * $it->quantity, 0, ',', '.') }}</p>
+                    </div>
+                </div>
+            @endforeach
+            <div class="border border-dashed border-outline-variant rounded-lg px-4 py-3 space-y-2.5">
+                <p class="raliva-label">Tambah Varian</p>
+                <select name="items[new][product_variant_id]" class="raliva-select w-full min-w-0">
+                    <option value="">— Pilih varian —</option>
+                    @foreach (($variants ?? collect()) as $v)
+                        <option value="{{ $v->product_variant_id }}">{{ $v->product?->nama_produk ?? '-' }} — {{ $v->warna }} {{ $v->ukuran }} (stok {{ $v->warehouseStocks->sum('jumlah_stok') }})</option>
+                    @endforeach
+                </select>
+                <div class="flex items-end justify-between gap-3">
+                    <label class="block">
+                        <span class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Qty</span>
+                        <input type="number" name="items[new][quantity]" value="1" min="1" max="100" class="raliva-input w-24 py-2 text-center shrink-0" />
+                    </label>
+                    <p class="text-xs text-on-surface-variant pb-2">Dihitung saat disimpan</p>
+                </div>
+            </div>
+        </div>
+        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex gap-3">
+            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+            <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded-lg btn-premium">Simpan Perubahan</button>
+        </div>
+    </form>
+</div>
+@endif
 @if ($pesanan->status === \App\Models\Order::STATUS_DIBAYAR)
 <div id="modal-proses-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
