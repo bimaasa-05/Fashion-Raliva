@@ -25,7 +25,7 @@
             </span>
         </div>
         <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Total Pendapatan</span>
-        <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">Rp {{ number_format($totalPendapatan / 1000, 0, ',', '.') }}JT</span>
+        <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</span>
         <span class="text-on-surface-variant text-xs">Semua transaksi berhasil</span>
     </div>
 
@@ -47,7 +47,7 @@
             </span>
         </div>
         <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Komisi Raliva</span>
-        <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold leading-tight">Rp {{ number_format($komisiRaliva / 1000, 0, ',', '.') }}JT</span>
+        <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold leading-tight">Rp {{ number_format($komisiRaliva, 0, ',', '.') }}</span>
         <span class="text-on-surface-variant text-xs">Total komisi terkumpul</span>
     </div>
 

@@ -68,6 +68,7 @@
     --color-on-primary-fixed-variant: #474646;
     --color-on-secondary-fixed: #261a00;
     --color-error: rgb(var(--c-error));
+    --color-success: rgb(var(--c-success));
     --color-on-primary-container: rgb(var(--c-on-muted));
     --color-tertiary: rgb(var(--c-primary));
     --color-surface-container-lowest: rgb(var(--c-sc-lowest));

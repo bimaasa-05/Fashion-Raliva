@@ -392,17 +392,25 @@ class ManajemenTokoController extends Controller
         };
     }
 
-    private static function initials(string $nama): string
+    private static function initials(?string $nama): string
     {
+        if ($nama === null || trim($nama) === '') {
+            return '-';
+        }
+
         $words = preg_split('/\s+/', trim($nama)) ?: [];
 
         return strtoupper(substr(collect($words)->map(fn ($w) => mb_substr($w, 0, 1))->implode(''), 0, 2));
     }
 
-    private static function shortLocation(string $alamat): string
+    private static function shortLocation(?string $alamat): string
     {
+        if ($alamat === null || trim($alamat) === '') {
+            return '-';
+        }
+
         $parts = array_map('trim', explode(',', $alamat));
 
-        return end($parts) ?: $alamat;
+        return $parts ? (end($parts) ?: $alamat) : $alamat;
     }
 }

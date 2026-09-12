@@ -18,7 +18,7 @@ class PengembalianDanaController extends Controller
     {
         $query = Refund::query()
             ->with(['order.store', 'payment', 'requester'])
-            ->orderByRaw("CASE status WHEN 'requested' THEN 0 WHEN 'disetujui' THEN 1 ELSE 2 END")
+            ->orderByRaw("CASE status WHEN 'requested' THEN 0 WHEN 'disetujui' THEN 1 WHEN 'escalated' THEN 2 ELSE 3 END")
             ->orderByDesc('diajukan_pada');
 
         $stats = [
@@ -26,6 +26,7 @@ class PengembalianDanaController extends Controller
             'requested' => Refund::where('status', Refund::STATUS_REQUESTED)->count(),
             'nominal_menunggu' => (float) Refund::where('status', Refund::STATUS_REQUESTED)->sum('jumlah'),
             'disetujui' => Refund::where('status', Refund::STATUS_DISETUJUI)->count(),
+            Refund::STATUS_ESKALASI => Refund::where('status', Refund::STATUS_ESKALASI)->count(),
             'selesai' => Refund::where('status', Refund::STATUS_SELESAI)->count(),
             'ditolak' => Refund::where('status', Refund::STATUS_DITOLAK)->count(),
         ];

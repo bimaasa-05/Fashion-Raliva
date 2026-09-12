@@ -30,6 +30,8 @@ class PengaturanSistemController extends Controller
                 'min_pencairan' => Setting::get(Setting::MIN_PENCAIRAN, '50000'),
                 'mode_maintenance' => Setting::get(Setting::MODE_MAINTENANCE, '0'),
                 'moderasi_otomatis' => Setting::get(Setting::MODERASI_OTOMATIS, '1'),
+                'maks_pengajuan_pencairan' => Setting::get('maks_pengajuan_pencairan', '3'),
+                'batas_waktu_refund' => Setting::get('batas_waktu_refund', '7'),
             ],
             'tiers' => $tiers,
         ]);
@@ -38,46 +40,49 @@ class PengaturanSistemController extends Controller
     public function updateSettings(Request $request)
     {
         $data = $request->validate([
-            'nama_platform' => 'required|string|max:100',
-            'email_support' => 'required|email|max:100',
-            'komisi_persen_default' => 'required|numeric|min:0|max:100',
-            'biaya_layanan' => 'required|numeric|min:0',
-            'min_pencairan' => 'required|numeric|min:0',
-            'mode_maintenance' => 'nullable|in:0,1',
-            'moderasi_otomatis' => 'nullable|in:0,1',
-            'maks_pengajuan_pencairan' => 'nullable|numeric|min:1',
-            'batas_waktu_refund' => 'nullable|numeric|min:1',
+            'nama_platform' => 'sometimes|required|string|max:100',
+            'email_support' => 'sometimes|required|email|max:100',
+            'komisi_persen_default' => 'sometimes|required|numeric|min:0|max:100',
+            'biaya_layanan' => 'sometimes|required|numeric|min:0',
+            'min_pencairan' => 'sometimes|required|numeric|min:0',
+            'mode_maintenance' => 'sometimes|nullable|in:0,1',
+            'moderasi_otomatis' => 'sometimes|nullable|in:0,1',
+            'maks_pengajuan_pencairan' => 'sometimes|nullable|numeric|min:1',
+            'batas_waktu_refund' => 'sometimes|nullable|numeric|min:1',
         ]);
 
-        $old = [
-            'nama_platform' => Setting::get(Setting::NAMA_PLATFORM),
-            'email_support' => Setting::get(Setting::EMAIL_SUPPORT),
-            'komisi_persen_default' => Setting::get(Setting::KOMISI_PERSEN_DEFAULT),
-            'biaya_layanan' => Setting::get(Setting::BIAYA_LAYANAN),
-            'min_pencairan' => Setting::get(Setting::MIN_PENCAIRAN),
+        $map = [
+            'nama_platform' => Setting::NAMA_PLATFORM,
+            'email_support' => Setting::EMAIL_SUPPORT,
+            'komisi_persen_default' => Setting::KOMISI_PERSEN_DEFAULT,
+            'biaya_layanan' => Setting::BIAYA_LAYANAN,
+            'min_pencairan' => Setting::MIN_PENCAIRAN,
+            'mode_maintenance' => Setting::MODE_MAINTENANCE,
+            'moderasi_otomatis' => Setting::MODERASI_OTOMATIS,
+            'maks_pengajuan_pencairan' => 'maks_pengajuan_pencairan',
+            'batas_waktu_refund' => 'batas_waktu_refund',
         ];
 
-        Setting::set(Setting::NAMA_PLATFORM, $data['nama_platform']);
-        Setting::set(Setting::EMAIL_SUPPORT, $data['email_support']);
-        Setting::set(Setting::KOMISI_PERSEN_DEFAULT, (string) $data['komisi_persen_default']);
-        Setting::set(Setting::BIAYA_LAYANAN, (string) $data['biaya_layanan']);
-        Setting::set(Setting::MIN_PENCAIRAN, (string) $data['min_pencairan']);
-        Setting::set(Setting::MODE_MAINTENANCE, $data['mode_maintenance'] ?? '0');
-        Setting::set(Setting::MODERASI_OTOMATIS, $data['moderasi_otomatis'] ?? '1');
-
-        if (isset($data['maks_pengajuan_pencairan'])) {
-            Setting::set('maks_pengajuan_pencairan', (string) $data['maks_pengajuan_pencairan']);
+        $lama = [];
+        $baru = [];
+        foreach ($map as $field => $key) {
+            if (! array_key_exists($field, $data)) continue;
+            $value = (string) $data[$field];
+            $lama[$field] = Setting::get($key);
+            Setting::set($key, $value);
+            $baru[$field] = $value;
         }
-        if (isset($data['batas_waktu_refund'])) {
-            Setting::set('batas_waktu_refund', (string) $data['batas_waktu_refund']);
+
+        if (empty($baru)) {
+            return back()->with('toast', ['message' => 'Tidak ada pengaturan yang dikirim.', 'icon' => 'info']);
         }
 
         ActivityLogger::log(
             'setting.system.update',
             Setting::class,
             null,
-            ['nilai_lama' => $old],
-            ['nilai_baru' => $data],
+            ['nilai_lama' => $lama],
+            ['nilai_baru' => $baru],
             'Memperbarui pengaturan sistem platform.'
         );
 

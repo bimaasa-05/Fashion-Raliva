@@ -15,6 +15,9 @@
 @endpush
 
 @section('content')
+@php
+    /** @var \Illuminate\Pagination\LengthAwarePaginator $notifications */
+@endphp
 @include('partials.flash-toast')
 
 <div class="space-y-section-gap">
@@ -70,6 +73,7 @@
             <ul id="notif-list" class="divide-y divide-muted-border">
                 @forelse ($notifications as $item)
                     @php
+                        /** @var \App\Models\Notification $item */
                         $m = $meta[$item->tipe] ?? ['icon' => 'info', 'tone' => 'info', 'label' => 'Sistem'];
                         $unread = is_null($item->dibaca_pada);
                         $relTime = $item->created_at?->diffForHumans() ?? '-';
@@ -90,7 +94,7 @@
                             @endif
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="font-body-md text-sm text-on-surface {{ $unread ? 'font-semibold' : '' }} notif-text">{!! $item->pesan !!}</p>
+                            <p class="font-body-md text-sm text-on-surface {{ $unread ? 'font-semibold' : '' }} notif-text">{{ $item->pesan }}</p>
                             <div class="flex items-center gap-3 mt-1.5 flex-wrap">
                                 <span class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">{{ $relTime }}</span>
                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ $m['label'] }}</span>
