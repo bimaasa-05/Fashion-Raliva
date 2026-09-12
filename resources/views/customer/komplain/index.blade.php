@@ -598,6 +598,7 @@
 <script>
     let currentChat = { id: null, polling: null, done: false, closing: false };
     const myId = {{ Auth::id() }};
+    const myRole = "{{ Auth::user()->role->nama_role ?? '' }}";
 
     function openChatFromCard(el) {
         const card = el.closest('[data-complaint-card]');
@@ -753,7 +754,7 @@
         }
 
         el.innerHTML = messages.map(function (m) {
-            const mine = m.sender_id === myId;
+            const mine = String(m.sender_id) === String(myId);
             const sender = mine ? 'Anda' : (m.sender ? m.sender.nama_lengkap : 'Toko');
             const time = mine ? 'text-white/40' : 'text-on-surface-variant/50';
             const bubble = mine ? 'bg-secondary text-white' : 'bg-surface-container-low';
@@ -1097,7 +1098,7 @@
             return chatSelIds.has(parseInt(m.complaint_message_id, 10)) && m.pesan;
         });
         const text = rows.map(function (m) {
-            const sender = (m.sender_id === myId) ? 'Anda' : (m.sender ? m.sender.nama_lengkap : 'Toko');
+            const sender = (String(m.sender_id) === String(myId)) ? 'Anda' : (m.sender ? m.sender.nama_lengkap : 'Toko');
             return '[' + sender + '] ' + new Date(m.created_at).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + '\n' + m.pesan;
         }).join('\n\n');
         if (navigator.clipboard && navigator.clipboard.writeText) {
