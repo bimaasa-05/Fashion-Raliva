@@ -204,7 +204,8 @@
                 </div>
                 <div>
                     <label class="block raliva-label mb-2">Nominal (Rp)</label>
-                    <input name="nominal" type="number" min="1" required placeholder="5000000" class="raliva-input" />
+                    <input name="nominal" type="text" inputmode="numeric" data-rupiah required placeholder="5.000.000" class="raliva-input" />
+                    <p data-rupiah-hint class="text-xs text-gold-accent font-bold mt-1.5">Rp 0</p>
                 </div>
                 <div class="md:col-span-2">
                     <label class="block raliva-label mb-2">Tanggal</label>
@@ -257,7 +258,8 @@
                 </div>
                 <div>
                     <label class="block raliva-label mb-2">Nominal (Rp)</label>
-                    <input name="nominal" type="number" min="1" required placeholder="500000" class="raliva-input" />
+                    <input name="nominal" type="text" inputmode="numeric" data-rupiah required placeholder="500.000" class="raliva-input" />
+                    <p data-rupiah-hint class="text-xs text-gold-accent font-bold mt-1.5">Rp 0</p>
                 </div>
                 <div>
                     <label class="block raliva-label mb-2">Tanggal</label>
@@ -313,6 +315,7 @@
             b.classList.toggle('bg-deep-onyx', isActive);
             b.classList.toggle('text-on-primary', isActive);
             b.classList.toggle('text-on-surface-variant', !isActive);
+            b.classList.toggle('hover:text-on-surface', !isActive);
         });
         document.querySelectorAll('[data-saldo-panel]').forEach((p) => {
             p.classList.toggle('hidden', p.getAttribute('data-saldo-panel') !== name);
@@ -328,7 +331,7 @@
 
     const initSaldoFromHash = () => {
         const h = location.hash.replace('#', '');
-        if (['pengeluaran'].includes(h)) setSaldoTab(h);
+        if (['ringkasan', 'pemasukan', 'pengeluaran'].includes(h)) setSaldoTab(h);
     };
     window.addEventListener('hashchange', initSaldoFromHash);
 
@@ -384,6 +387,20 @@
             const input = document.getElementById('wd-nominal');
             if (input) input.value = btn.getAttribute('data-quick');
         });
+    });
+
+    /* Format ribuan live untuk input nominal (ketik 1000000 → 1.000.000 + hint Rp). */
+    document.addEventListener('input', (e) => {
+        const el = e.target?.closest?.('[data-rupiah]');
+        if (!el) return;
+        const digits = el.value.replace(/\D/g, '').slice(0, 15);
+        el.value = digits ? new Intl.NumberFormat('id-ID').format(digits) : '';
+        const hint = el.closest('form')?.querySelector('[data-rupiah-hint]');
+        if (hint) hint.textContent = 'Rp ' + (el.value || '0');
+    });
+    document.addEventListener('submit', (e) => {
+        if (!(e.target instanceof HTMLFormElement)) return;
+        e.target.querySelectorAll('[data-rupiah]').forEach((el) => { el.value = el.value.replace(/\./g, ''); });
     });
 </script>
 @endpush
