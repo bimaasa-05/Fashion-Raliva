@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
 use App\Support\ActivityLogger;
+use App\Support\AdminContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,10 +14,17 @@ class DataCustomerController extends Controller
 {
     public function index()
     {
-        $customers = User::withCount('orders')
+        $roleId = Role::where('nama_role', Role::CUSTOMER)->value('role_id');
+        $storeIds = AdminContext::assignedStoreIds();
+
+        $customers = User::withCount(['orders as total_pesanan'])
             ->withSum('orders', 'grand_total')
             ->with(['orders' => fn ($q) => $q->latest()->limit(5), 'reviews' => fn ($q) => $q->latest()->limit(5)])
-            ->where('role_id', Role::CUSTOMER)
+            ->where('role_id', $roleId)
+            ->where(function ($q) use ($storeIds) {
+                $q->whereHas('orders', fn ($qq) => $qq->whereIn('store_id', $storeIds))
+                    ->orWhereDoesntHave('orders');
+            })
             ->orderByDesc('created_at')
             ->paginate(20);
 

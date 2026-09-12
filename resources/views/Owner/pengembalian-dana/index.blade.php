@@ -2,6 +2,7 @@
     $tab = $activeTab ?? 'pengajuan';
     $tabs = [
         'pengajuan' => 'Pengajuan',
+        'eskalasi' => 'Eskalasi',
         'disetujui' => 'Disetujui',
         'ditolak' => 'Ditolak',
         'selesai' => 'Selesai',
@@ -17,6 +18,11 @@
 
 @section('content')
 <div class="space-y-section-gap">
+    {{-- Penanda halaman: Komplain / Pengembalian Dana --}}
+    <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 max-w-full overflow-x-auto">
+        <a href="{{ route('owner.komplain') }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ request()->routeIs('owner.komplain*') && ! request()->routeIs('owner.pengembalian-dana') ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">Komplain</a>
+        <a href="{{ route('owner.pengembalian-dana') }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ request()->routeIs('owner.pengembalian-dana') ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">Pengembalian Dana</a>
+    </div>
     @if(! \App\Support\OwnerContext::currentStore())
         <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
@@ -37,7 +43,7 @@
         </div>
     @endif
 
-    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium card-static">
         <div class="flex flex-wrap gap-2 mb-6">
             @foreach ($tabs as $key => $label)
                 <a href="{{ route('owner.pengembalian-dana', ['tab' => $key]) }}"

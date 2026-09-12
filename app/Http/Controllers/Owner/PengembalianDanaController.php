@@ -26,12 +26,14 @@ class PengembalianDanaController extends Controller
 
         $stats = [
             'pengajuan' => (clone $base)->whereIn('status', [Refund::STATUS_REQUESTED, Refund::STATUS_ESKALASI])->count(),
+            'eskalasi' => (clone $base)->where('status', Refund::STATUS_ESKALASI)->count(),
             'disetujui' => (clone $base)->where('status', Refund::STATUS_DISETUJUI)->count(),
             'ditolak' => (clone $base)->where('status', Refund::STATUS_DITOLAK)->count(),
             'selesai' => (clone $base)->where('status', Refund::STATUS_SELESAI)->count(),
         ];
 
         $refunds = match ($tab) {
+            'eskalasi' => (clone $base)->where('status', Refund::STATUS_ESKALASI)->orderByDesc('diajukan_pada')->get(),
             'disetujui' => (clone $base)->where('status', Refund::STATUS_DISETUJUI)->orderByDesc('diajukan_pada')->get(),
             'ditolak' => (clone $base)->where('status', Refund::STATUS_DITOLAK)->orderByDesc('diajukan_pada')->get(),
             'selesai' => (clone $base)->where('status', Refund::STATUS_SELESAI)->orderByDesc('diajukan_pada')->get(),
@@ -41,7 +43,7 @@ class PengembalianDanaController extends Controller
         return view('Owner.pengembalian-dana.index', [
             'stats' => $stats,
             'refunds' => $refunds,
-            'activeTab' => in_array($tab, ['pengajuan', 'disetujui', 'ditolak', 'selesai'], true) ? $tab : 'pengajuan',
+            'activeTab' => in_array($tab, ['pengajuan', 'eskalasi', 'disetujui', 'ditolak', 'selesai'], true) ? $tab : 'pengajuan',
         ]);
     }
 

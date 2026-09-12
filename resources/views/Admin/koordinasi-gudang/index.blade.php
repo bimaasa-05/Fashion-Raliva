@@ -21,10 +21,10 @@
             @forelse ($pesananDiambil as $o)
             <div class="border border-muted-border rounded-lg p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <p class="font-mono text-sm text-on-surface-variant">{{ $o->kode_pesanan ?? ('#'.$o->order_id) }} • {{ $o->checkout?->user?->nama_lengkap ?? '-' }}</p>
+                    <p class="font-mono text-sm text-on-surface-variant">{{ $o->nomor_order ?? ('#'.$o->order_id) }} • {{ $o->checkout?->user?->nama_lengkap ?? '-' }}</p>
                     <p class="font-title-md text-title-md text-on-surface mt-1">
                         @foreach ($o->items as $it)
-                            {{ $it->productVariant?->product?->nama_produk ?? '-' }} ({{ $it->jumlah }})@if (!$loop->last), @endif
+                            {{ $it->productVariant?->product?->nama_produk ?? '-' }} ({{ $it->quantity }})@if (!$loop->last), @endif
                         @endforeach
                     </p>
                     <p class="font-body-md text-sm text-on-surface-variant mt-1">Status: {{ ucfirst($o->status) }}</p>
@@ -38,7 +38,7 @@
                     @csrf
                     <input type="hidden" name="order_id" value="{{ $o->order_id }}" />
                     <p class="raliva-label text-gold-accent">Kirim Permintaan</p>
-                    <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">Pesanan {{ $o->kode_pesanan ?? ('#'.$o->order_id) }}</h3>
+                    <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">Pesanan {{ $o->nomor_order ?? ('#'.$o->order_id) }}</h3>
                     <p class="text-sm text-on-surface-variant mt-3">Kirim permintaan pengambilan barang ke Gudang untuk pesanan ini?</p>
                     <div class="flex gap-3 mt-6">
                         <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>

@@ -255,6 +255,31 @@
 
     @include('partials.notification-popup')
     @include('partials.layout-scripts')
+    <script>
+        /* Handler modal khusus layout Owner (terisolasi, tanpa identifier global). */
+        (function () {
+            document.querySelectorAll('[data-modal-open]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var modal = document.getElementById(btn.getAttribute('data-modal-open'));
+                    if (modal) modal.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+            document.querySelectorAll('[data-modal-close]').forEach(function (el) {
+                el.addEventListener('click', function () {
+                    var modal = el.closest('[data-modal]');
+                    if (modal) modal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                });
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('[data-modal]').forEach(function (m) { m.classList.add('hidden'); });
+                    document.body.style.overflow = '';
+                }
+            });
+        })();
+    </script>
 
     <script>
         const ralivaToast = document.getElementById('raliva-toast');
