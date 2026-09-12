@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Support\ActivityLogger;
 use App\Support\AdminContext;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class DataCustomerController extends Controller
 {
@@ -43,14 +42,13 @@ class DataCustomerController extends Controller
             'nama_lengkap' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:150', 'unique:users,email'],
             'nomor_telepon' => ['nullable', 'string', 'max:20'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
         $customer = User::create([
             'nama_lengkap' => $data['nama_lengkap'],
             'email' => $data['email'],
             'nomor_telepon' => $data['nomor_telepon'] ?? null,
-            'password' => Hash::make($data['password']),
+            'password' => \Illuminate\Support\Str::random(16),
             'role_id' => $roleId,
             'email_verified_at' => now(),
             'status' => User::STATUS_AKTIF,
@@ -61,7 +59,7 @@ class DataCustomerController extends Controller
             'aktor_id' => ActivityLogger::resolveActorId(),
             'tipe' => \App\Models\Notification::TIPE_SISTEM,
             'judul' => 'Akun Customer Dibuat',
-            'pesan' => sprintf('Akun dengan email %s telah dibuat oleh Admin toko.', $customer->email),
+            'pesan' => sprintf('Akun dengan email %s telah dibuat oleh Admin toko. Password dibuat otomatis, gunakan menu Lupa Password untuk masuk pertama kali.', $customer->email),
             'url' => route('customer.account'),
         ]);
         \App\Models\Notification::fireSelf(
