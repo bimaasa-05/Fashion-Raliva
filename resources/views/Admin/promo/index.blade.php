@@ -49,8 +49,10 @@
                     @endif
                 </div>
                 <p class="font-body-md text-sm text-on-surface-variant flex-1">{{ $p->deskripsi ?: '—' }}</p>
-                <div class="pt-4 border-t border-muted-border flex justify-between items-center">
+                <div class="pt-4 border-t border-muted-border flex justify-between items-center gap-2">
                     <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">Dibuat oleh Owner</span>
+                    <div class="flex items-center gap-2 shrink-0">
+                    <button type="button" data-modal-open="modal-detail-promo-{{ $p->promotion_id }}" class="px-4 py-2 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:border-gold-accent transition-colors">Detail</button>
                     <form method="POST" action="{{ route('admin.promo.toggle', $p) }}">
                         @csrf
                         @if ($p->status === 'aktif')
@@ -59,6 +61,33 @@
                             <button type="submit" class="px-4 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors btn-premium">Aktifkan</button>
                         @endif
                     </form>
+                    </div>
+                </div>
+            </div>
+            <div id="modal-detail-promo-{{ $p->promotion_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+                <div class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
+                    <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+                        <div class="min-w-0">
+                            <p class="raliva-label text-gold-accent">Detail Promo</p>
+                            <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $p->kode_promo }}</h3>
+                            <p class="text-on-surface-variant font-body-md text-xs mt-1">{{ $p->nama_promo }}</p>
+                        </div>
+                        <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors shrink-0" aria-label="Tutup">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div><dt class="raliva-label">Status</dt><dd class="font-bold text-on-surface mt-1 capitalize">{{ $p->status }}</dd></div>
+                            <div><dt class="raliva-label">Jenis Diskon</dt><dd class="text-on-surface mt-1">{{ $p->tipe_diskon === 'persen' ? 'Diskon '.$p->nilai_diskon.'%' : 'Diskon Rp '.number_format($p->nilai_diskon,0,',','.') }}</dd></div>
+                            <div><dt class="raliva-label">Minimal Belanja</dt><dd class="text-on-surface mt-1">{{ $p->minimal_pembelian ? 'Rp '.number_format($p->minimal_pembelian,0,',','.') : 'Tanpa minimum' }}</dd></div>
+                            <div><dt class="raliva-label">Maksimal Diskon</dt><dd class="text-on-surface mt-1">{{ $p->maksimal_diskon ? 'Rp '.number_format($p->maksimal_diskon,0,',','.') : '-' }}</dd></div>
+                            <div><dt class="raliva-label">Mulai</dt><dd class="text-on-surface mt-1">{{ $p->mulai_pada?->translatedFormat('d M Y') ?? '-' }}</dd></div>
+                            <div><dt class="raliva-label">Berakhir</dt><dd class="text-on-surface mt-1">{{ $p->berakhir_pada?->translatedFormat('d M Y') ?? '-' }}</dd></div>
+                            <div class="sm:col-span-2"><dt class="raliva-label">Deskripsi</dt><dd class="text-on-surface mt-1">{{ $p->deskripsi ?: '—' }}</dd></div>
+                        </dl>
+                    </div>
                 </div>
             </div>
             @endforeach
