@@ -249,7 +249,7 @@
 </div>
 
 <!-- Chat Komplain Modal (synced identical to Customer) -->
-<div class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
+<div class="hidden fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
     <div class="min-h-full lg:h-full flex flex-col justify-end lg:flex-row lg:justify-end" onclick="if(event.target===this) closeChatModal()">
         <div id="chat-panel" class="flex flex-col bg-surface-container-low border-t md:border lg:border-t-0 lg:border-l border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-t-3xl md:rounded-2xl lg:rounded-none max-h-[85dvh] md:max-h-[78dvh] lg:max-h-full lg:h-full w-full md:w-[520px] lg:w-[560px] xl:w-[600px] md:max-w-[88vw] lg:max-w-full md:mx-auto lg:mx-0 overflow-hidden md:shadow-2xl lg:shadow-none" onclick="event.stopPropagation()">
             <div class="relative flex items-center justify-between gap-2 lg:gap-3 pl-6 pr-3 lg:px-6 py-3.5 lg:py-4 border-b border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shrink-0 bg-surface-container-low z-10 overflow-visible" id="chat-header">
@@ -600,6 +600,8 @@
         container.classList.add('raliva-chat-in');
         panel.classList.add('raliva-chat-in-sheet');
         document.body.style.overflow = 'hidden';
+        const sidebarSA = document.getElementById('sidebar');
+        if (sidebarSA) { sidebarSA.style.filter = 'blur(2px)'; sidebarSA.style.pointerEvents = 'none'; sidebarSA.style.opacity = '0.7'; }
 
         if (window.autoGrowChatInput) {
             requestAnimationFrame(function () {
@@ -626,6 +628,8 @@
         closeEditDialog();
         closeEmojiPanel();
         document.body.style.overflow = '';
+        const sidebarSA2 = document.getElementById('sidebar');
+        if (sidebarSA2) { sidebarSA2.style.filter = ''; sidebarSA2.style.pointerEvents = ''; sidebarSA2.style.opacity = ''; }
         if (currentChat.polling) clearInterval(currentChat.polling);
         currentChat.id = null;
 
