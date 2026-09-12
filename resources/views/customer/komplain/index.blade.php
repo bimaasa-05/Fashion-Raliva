@@ -339,7 +339,7 @@
         background-image: radial-gradient(circle at 1.5px 1.5px, rgba(255, 255, 255, .07) 1.5px, transparent 0);
     }
     #chat-content {
-        background-image: url('/images/wallpaper-chat-white.jfif');
+        background-image: url('/images/wallpaper-chat-white.png');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -362,7 +362,7 @@
     html.theme-dark #chat-content::before { background: rgba(0,0,0,.12); }
     #chat-content > * { position: relative; z-index: 1; }
     #chat-edit-wallpaper {
-        background-image: url('/images/wallpaper-chat-white.jfif');
+        background-image: url('/images/wallpaper-chat-white.png');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
