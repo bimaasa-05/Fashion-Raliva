@@ -67,7 +67,16 @@
 <div data-table-scope class="px-container-margin flex-grow">
     <div id="moderasi-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-gutter gap-y-container-margin">
         @forelse ($products as $product)
-            <div class="group cursor-pointer flex flex-col transition-transform duration-300 hover:-translate-y-1"
+            @php
+                $normFoto = function ($raw) {
+                    if (filter_var($raw, FILTER_VALIDATE_URL)) return $raw;
+                    $raw = ltrim($raw, '/');
+                    if (str_starts_with($raw, 'assets/')) return asset($raw);
+                    return asset('storage/' . $raw);
+                };
+                $fotos = $product->images->map(fn ($img) => $normFoto($img->file_gambar))->values()->all();
+            @endphp
+            <div class="group cursor-pointer bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium flex flex-col"
                 onclick="openDetailModal(this)"
                 data-table-row
                 data-search="{{ strtolower($product->nama_produk.' '.($product->store->nama_toko ?? '').' '.($product->category->nama_kategori ?? '').' '.$product->tipe_produk.' '.$product->deskripsi) }}"
@@ -82,21 +91,20 @@
                 data-tipe="{{ ucfirst($product->tipe_produk) }}"
                 data-variants="{{ $product->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}"
                 data-images='{{ json_encode($product->images->pluck('file_gambar')->values(), JSON_UNESCAPED_SLASHES) }}'
+                data-produk-images='@json($fotos)'
                 data-slot-total="{{ $product->slot_total }}"
                 data-slot-used="{{ $product->slot_used }}"
                 data-slot-available="{{ $product->slot_available }}"
                 data-slot-full="{{ $product->slot_full ? '1' : '0' }}">
-                <div class="relative w-full aspect-[3/4] bg-surface-container-low mb-element-gap overflow-hidden rounded-lg isolate">
-                    @php $imgs = $product->images; $imgCount = $imgs->count(); @endphp
-                    @forelse ($imgs as $i => $img)
-                        <img data-card-slide class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 {{ $i === 0 ? 'opacity-100' : 'opacity-0' }}" src="{{ filter_var($img->file_gambar, FILTER_VALIDATE_URL) ? $img->file_gambar : asset('storage/' . ltrim($img->file_gambar, '/')) }}" alt="{{ $product->nama_produk }} — foto {{ $i + 1 }}" loading="lazy" />
-                    @empty
+                <div class="relative w-full aspect-[4/3] bg-surface-container-low overflow-hidden rounded-lg isolate" data-produk-gallery>
+                    @if (count($fotos))
+                        <div class="block w-full h-full" data-produk-main>
+                            <img src="{{ $fotos[0] }}" alt="{{ $product->nama_produk }}" data-produk-main-img class="w-full h-full object-cover transition-opacity duration-300" loading="lazy" />
+                        </div>
+                    @else
                         <div class="w-full h-full flex items-center justify-center bg-surface-container-high">
                             <span class="material-symbols-outlined text-[42px] text-on-surface-variant/40">checkroom</span>
                         </div>
-                    @endforelse
-                    @if($imgCount > 1)
-                        <span class="absolute top-2 left-2 bg-deep-onyx text-on-primary text-[10px] font-bold px-1.5 py-0.5 rounded">+{{ $imgCount - 1 }}</span>
                     @endif
                     <div class="absolute top-2 right-2 p-1 bg-surface/80 rounded"><span class="material-symbols-outlined text-[18px] text-on-surface">{{ $statusIconMap[$product->status] ?? 'pending' }}</span></div>
                     @if ($product->owner_verified_at)
@@ -106,7 +114,26 @@
                         <div class="absolute bottom-2 left-2 right-2 px-2 py-1 bg-error/90 text-on-error text-[9px] font-bold uppercase tracking-widest rounded text-center">Ditolak • Lihat Alasan</div>
                     @endif
                 </div>
-                <div class="flex flex-col flex-grow"><span class="font-label-sm text-label-sm text-on-surface-variant mb-1">{{ strtoupper($product->store->nama_toko ?? '-') }}</span><h3 class="font-body-md text-body-md text-on-surface leading-tight mb-1 truncate">{{ $product->nama_produk }}</h3><div class="font-body-md text-body-md text-on-surface mt-auto">Rp {{ number_format($product->harga_dasar, 0, ',', '.') }}</div><div class="flex items-center gap-1.5 flex-wrap mt-2"><span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ ucfirst($product->tipe_produk) }}</span>@if ($product->status === \App\Models\Product::STATUS_PENDING)<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ $product->slot_full ? 'bg-error/10 text-error border-error/30' : 'bg-success/10 text-success border-success/20' }}">{{ $product->slot_full ? 'Kuota Penuh' : 'Slot ' . $product->slot_available . '/' . $product->slot_total }}</span>@endif</div></div>
+                @if (count($fotos) > 1)
+                    <div class="flex gap-2 px-4 pt-3 overflow-x-auto" data-produk-strip>
+                        @foreach ($fotos as $i => $f)
+                            <button type="button" data-produk-pin="{{ $i }}" aria-label="Tampilkan foto {{ $i + 1 }} dari {{ $product->nama_produk }}" aria-pressed="{{ $i === 0 ? 'true' : 'false' }}" class="h-14 w-16 shrink-0 rounded-md overflow-hidden border transition-colors {{ $i === 0 ? 'border-gold-accent ring-2 ring-gold-accent/30' : 'border-outline-variant hover:border-gold-accent' }}">
+                                <img src="{{ $f }}" alt="" class="w-full h-full object-cover" loading="lazy" />
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+                <div class="flex flex-col flex-grow px-4 pb-4 pt-2 gap-1">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">{{ strtoupper($product->store->nama_toko ?? '-') }}</span>
+                    <h3 class="font-body-md text-body-md font-semibold text-on-surface leading-tight truncate">{{ $product->nama_produk }}</h3>
+                    <div class="font-body-md text-body-md font-bold text-gold-accent mt-0.5">Rp {{ number_format($product->harga_dasar, 0, ',', '.') }}</div>
+                    <div class="flex items-center gap-1.5 flex-wrap mt-2 pt-2 border-t border-muted-border">
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ ucfirst($product->tipe_produk) }}</span>
+                        @if ($product->status === \App\Models\Product::STATUS_PENDING)
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ $product->slot_full ? 'bg-error/10 text-error border-error/30' : 'bg-success/10 text-success border-success/20' }}">{{ $product->slot_full ? 'Kuota Penuh' : 'Slot ' . $product->slot_available . '/' . $product->slot_total }}</span>
+                        @endif
+                    </div>
+                </div>
             </div>
         @empty
             <p id="moderasi-kosong" class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-16">Belum ada produk pada status ini.</p>
@@ -288,6 +315,68 @@ document.addEventListener('DOMContentLoaded', () => {
     const countEl = document.getElementById('moderasi-result-count');
     const emptySearch = document.getElementById('moderasi-empty-search');
 
+    // === Galeri kartu: pilih foto via thumbnail & cycle saat hover (seperti Owner) ===
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const cardTimers = new Map();
+    const stopCardCycle = (card) => {
+        const t = cardTimers.get(card);
+        if (t) { clearInterval(t); cardTimers.delete(card); }
+    };
+    const stopAllCardCycles = () => cardTimers.forEach((t, card) => stopCardCycle(card));
+    const paintCardPhoto = (card, index) => {
+        const mainImg = card.querySelector('[data-produk-main-img]');
+        const urls = card._galleryUrls || [];
+        if (!mainImg || !urls.length) return;
+        const i = Math.min(Math.max(index, 0), urls.length - 1);
+        if (card._galleryShown === i && mainImg.getAttribute('src') === urls[i]) return;
+        card._galleryShown = i;
+        mainImg.onload = () => { mainImg.style.opacity = ''; };
+        mainImg.style.opacity = '0';
+        mainImg.src = urls[i];
+        mainImg.alt = (card.dataset.name || 'Foto produk') + ' — foto ' + (i + 1);
+        card.querySelectorAll('[data-produk-pin]').forEach((th) => {
+            const active = parseInt(th.dataset.produkPin || '0', 10) === i;
+            th.setAttribute('aria-pressed', active ? 'true' : 'false');
+            th.classList.toggle('border-gold-accent', active);
+            th.classList.toggle('ring-2', active);
+            th.classList.toggle('ring-gold-accent/30', active);
+            th.classList.toggle('border-outline-variant', !active);
+        });
+    };
+
+    rows.forEach((card) => {
+        let urls = [];
+        try { urls = JSON.parse(card.dataset.produkImages || '[]'); } catch (e) { urls = []; }
+        if (urls.length <= 1) return;
+        card._galleryUrls = urls;
+        card._galleryPinned = 0;
+        card._galleryShown = 0;
+        card.querySelectorAll('[data-produk-pin]').forEach((th) => {
+            th.addEventListener('click', (event) => {
+                event.stopPropagation();
+                card._galleryPinned = parseInt(th.dataset.produkPin || '0', 10);
+                stopCardCycle(card);
+                paintCardPhoto(card, card._galleryPinned);
+            });
+        });
+        if (reduceMotion) return;
+        const gallery = card.querySelector('[data-produk-gallery]');
+        if (!gallery) return;
+        gallery.addEventListener('mouseenter', () => {
+            stopCardCycle(card);
+            let i = card._galleryPinned;
+            cardTimers.set(card, setInterval(() => {
+                if (card.classList.contains('hidden')) return;
+                i = (i + 1) % urls.length;
+                paintCardPhoto(card, i);
+            }, 1200));
+        });
+        gallery.addEventListener('mouseleave', () => {
+            stopCardCycle(card);
+            paintCardPhoto(card, card._galleryPinned);
+        });
+    });
+
     function applyFilter() {
         const term = searchInput.value.trim().toLowerCase();
         let visible = 0;
@@ -301,6 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         countEl.textContent = visible;
         emptySearch.classList.toggle('hidden', visible > 0 || rows.length === 0);
+        stopAllCardCycles();
     }
 
     let debounce;
@@ -317,26 +407,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     applyFilter();
-
-    // === Auto-rotate foto kartu (crossfade 3s seperti hero) + pause saat hover ===
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        rows.forEach((row) => {
-            const slides = row.querySelectorAll('[data-card-slide]');
-            if (slides.length < 2) return;
-            let idx = 0;
-            let timer = setInterval(tick, 3000);
-            function tick() {
-                slides[idx].style.opacity = '0';
-                idx = (idx + 1) % slides.length;
-                slides[idx].style.opacity = '1';
-            }
-            row.addEventListener('mouseenter', () => clearInterval(timer));
-            row.addEventListener('mouseleave', () => {
-                clearInterval(timer);
-                timer = setInterval(tick, 3000);
-            });
-        });
-    }
 });
 </script>
 @endpush
@@ -389,10 +459,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="shrink-0 border-t border-muted-border px-6 py-4 bg-surface/95 backdrop-blur flex gap-3">
             <p id="mod-action-note" class="hidden flex-1 self-center text-xs text-on-surface-variant italic">Keputusan sudah diambil untuk produk ini.</p>
             <p id="mod-action-slotfull" class="hidden flex-1 self-center text-xs text-error font-semibold">Kuota slot toko penuh — setujui hanya setelah slot ditambah.</p>
-            <button id="mod-action-reject" type="button" onclick="openRejectModal()" class="hidden flex-1 py-3 bg-transparent border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-widest hover:bg-error/10 transition-colors rounded-lg">Tolak</button>
-            <form id="approve-product-form" method="POST" action="" onsubmit="closeDetailModal()">
+            <button id="mod-action-reject" type="button" onclick="openRejectModal()" class="hidden flex-1 py-3 bg-transparent border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-widest hover:bg-error/10 transition-colors rounded-lg inline-flex items-center justify-center gap-1.5"><span class="material-symbols-outlined text-[18px]">block</span>Tolak</button>
+            <form id="approve-product-form" class="flex-1" method="POST" action="" onsubmit="closeDetailModal()">
                 @csrf
-                <button id="mod-action-approve" type="submit" class="hidden w-full py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest hover:bg-black transition-colors rounded-lg btn-premium">Setujui Produk</button>
+                <button id="mod-action-approve" type="submit" class="hidden w-full py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest hover:bg-black transition-colors rounded-lg btn-premium inline-flex items-center justify-center gap-1.5"><span class="material-symbols-outlined text-[18px]">verified</span>Setujui Produk</button>
             </form>
         </div>
     </div>
