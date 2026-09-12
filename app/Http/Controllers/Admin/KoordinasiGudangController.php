@@ -23,7 +23,7 @@ class KoordinasiGudangController extends Controller
 
         $pesananDiambil = Order::with(['checkout.user', 'items.productVariant.product'])
             ->whereIn('store_id', $storeIds)
-            ->whereIn('status', ['diproses', 'dikemas'])
+            ->whereIn('status', ['diproses'])
             ->orderByDesc('order_id')
             ->limit(10)
             ->get();
