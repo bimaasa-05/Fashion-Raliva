@@ -22,7 +22,7 @@
                             <div>
                                 <p class="font-mono text-sm text-on-surface-variant">{{ $pesanan->nomor_order }} &#8226; {{ $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</p>
                                 <p class="font-title-md text-title-md text-on-surface mt-1">{{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->implode(', '), 60) }}</p>
-                                <p class="font-body-md text-sm text-on-surface-variant mt-1">Tujuan: {{ $pesanan->store?->nama_toko }} &#8226; Ongkir: Rp {{ number_format((float) $pesanan->total_ongkir, 0, ',', '.') }}</p>
+                                <p class="font-body-md text-sm text-on-surface-variant mt-1">Penerima: {{ $pesanan->checkout?->user?->nama_lengkap ?? '-' }} &#8226; Ongkir: Rp {{ number_format((float) $pesanan->total_ongkir, 0, ',', '.') }}</p>
                             </div>
                             <div class="flex flex-col sm:flex-row gap-3 shrink-0">
                                 <select name="courier_id" required data-kurir-select
@@ -78,7 +78,7 @@
                                 \App\Models\Shipment::STATUS_DITERIMA => ['label' => 'Diterima', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
                                 \App\Models\Shipment::STATUS_GAGAL => ['label' => 'Gagal', 'class' => 'bg-error/10 text-error border-error/20'],
                             ];
-                            $badge = $badgeMap[$shipment->status];
+                            $badge = $badgeMap[$shipment->status] ?? ['label' => ucfirst($shipment->status), 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'];
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                             <td class="p-4">
