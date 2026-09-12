@@ -335,6 +335,10 @@
 <button id="wl-search-toggle" aria-label="{{ __('Search wishlist') }}" class="wl-header-item hover:opacity-80 transition-opacity flex items-center justify-center relative" onclick="toggleWishlistSearch()" type="button">
 <span class="material-symbols-outlined text-[22px]" data-icon="search">search</span>
 </button>
+<a href="{{ route('customer.chart', ['from' => 'wishlist']) }}" aria-label="{{ __('Cart') }}" class="wl-header-item relative hover:opacity-80 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
+<span class="cart-badge absolute -top-1 -right-1 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
+</a>
 </div>
 </header>
 <div id="wl-search-panel" class="fixed top-0 inset-x-0 lg:left-72 z-[55] h-16 bg-[var(--chrome-bg)] text-[var(--chrome-text)] border-b border-[var(--chrome-border)] flex items-center gap-sm px-container-margin">
@@ -349,9 +353,8 @@
 </div>
 <!-- Main Content -->
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
-<!-- Wishlist Header (Super-Admin style premium card, aksen Burgundy) -->
-<section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<!-- Wishlist — Saved Items + Grid digabung dalam 1 premium card (aksen Burgundy) -->
+<div class="mx-auto max-w-[1400px] px-container-margin pt-xl reveal-up">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="flex items-center justify-between gap-md">
 <div>
@@ -366,12 +369,7 @@
 </div>
 <span class="material-symbols-outlined text-secondary text-[30px] shrink-0" data-icon="favorite" data-weight="fill">favorite</span>
 </div>
-</div>
-</div>
-</section>
-<!-- Wishlist Grid (wrapped in Super-Admin style premium card, aksen Burgundy) -->
-<div class="mx-auto max-w-[1400px] px-container-margin">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
+<div class="mt-md">
 <div class="grid grid-cols-2 md:grid-cols-4 gap-gutter" id="wishlist-grid">
 @forelse ($items as $item)
 @php
@@ -382,7 +380,7 @@
 @endphp
 <div class="flex flex-col group" data-wishlist-item data-product-id="{{ $p?->product_id }}">
 <a href="{{ $p ? route('customer.shop.produk-detail', $p->product_id) : '#' }}" class="flex flex-col group cursor-pointer">
-<div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden rounded-lg">
+<div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden rounded-lg w-[94%] mx-auto">
 <img loading="lazy" decoding="async" alt="{{ $p?->nama_produk ?? '' }}" class="object-cover w-full h-full " src="{{ $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/product/900/1200' }}"/>
 <button type="button" aria-label="{{ __('Remove from wishlist') }}" data-wishlist-remove data-product-id="{{ $p?->product_id }}" class="absolute top-2 right-2 p-2 rounded-full bg-black/15 backdrop-blur-sm text-white hover:bg-black/30 hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite" data-weight="fill">favorite</span>
@@ -415,6 +413,7 @@
 <a href="{{ route('customer.shop') }}" class="btn-gold mt-sm font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest transition-colors">{{ __('EXPLORE PRODUCTS') }}</a>
 </div>
 @endforelse
+</div>
 </div>
 </div>
 </div>
