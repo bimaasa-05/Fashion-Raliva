@@ -108,13 +108,17 @@
 
                     @if ($activeTab === 'menunggu')
                         <div class="flex gap-3">
+                            <button type="button" data-modal-open="modal-detail-{{ $pembayaran->payment_id }}"
+                                class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:border-gold-accent transition-colors">Detail</button>
                             <button type="button" data-modal-open="modal-tolak-{{ $pembayaran->payment_id }}"
                                 class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error/20 transition-colors">Tolak</button>
                             <button type="button" data-modal-open="modal-setujui-{{ $pembayaran->payment_id }}"
                                 class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-black transition-colors btn-premium">Setujui</button>
                         </div>
                     @else
-                        <p class="text-center text-on-surface-variant text-xs uppercase tracking-widest py-2 border-t border-muted-border">Diverifikasi oleh {{ $verifTerakhir?->verifier?->nama_lengkap ?? '-' }} &#8226; {{ $verifTerakhir?->diverifikasi_pada?->translatedFormat('d M Y H:i') }}</p>
+                        <button type="button" data-modal-open="modal-detail-{{ $pembayaran->payment_id }}"
+                            class="w-full py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:border-gold-accent transition-colors">Detail</button>
+                        <p class="text-center text-on-surface-variant text-xs uppercase tracking-widest py-2 border-t border-muted-border mt-3">Diverifikasi oleh {{ $verifTerakhir?->verifier?->nama_lengkap ?? '-' }} &#8226; {{ $verifTerakhir?->diverifikasi_pada?->translatedFormat('d M Y H:i') }}</p>
                     @endif
                 </div>
                 @if ($activeTab === 'menunggu')
@@ -152,6 +156,66 @@
                     </form>
                 </div>
                 @endif
+                <div id="modal-detail-{{ $pembayaran->payment_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+                    <div class="relative mx-auto w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
+                        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+                            <div class="min-w-0">
+                                <p class="raliva-label text-gold-accent">Detail Pembayaran</p>
+                                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">#CKT-{{ str_pad((string) $pembayaran->checkout_id, 4, '0', STR_PAD_LEFT) }}</h3>
+                                <p class="text-on-surface-variant font-body-md text-xs mt-1">{{ $pembayaran->checkout?->user?->nama_lengkap ?? '-' }} &#8226; {{ $orderUtama?->store?->nama_toko ?? '-' }} &#8226; {{ $pembayaran->paymentMethod?->nama_metode ?? '-' }}</p>
+                            </div>
+                            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors shrink-0" aria-label="Tutup">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            @php $detailOrders = $pembayaran->checkout?->orders ?? collect(); $detailTotal = $detailOrders->sum('grand_total'); @endphp
+                            <div>
+                                <p class="raliva-label mb-2">Item Dibeli ({{ $detailOrders->flatMap->items->count() }})</p>
+                                <div class="space-y-2">
+                                    @forelse ($detailOrders as $dOrder)
+                                        @foreach ($dOrder->items as $dItem)
+                                            <div class="flex items-start justify-between gap-3 border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low">
+                                                <div class="min-w-0">
+                                                    <p class="font-bold text-on-surface text-sm truncate">{{ $dItem->nama_produk_snapshot }}</p>
+                                                    <p class="text-xs text-on-surface-variant mt-0.5">{{ $dItem->productVariant?->sku ?? '-' }}@if($dItem->productVariant?->warna || $dItem->productVariant?->ukuran) &#8226; {{ trim(($dItem->productVariant?->warna ?? '') . ' ' . ($dItem->productVariant?->ukuran ?? '')) }}@endif &#8226; {{ $dOrder->nomor_order }}</p>
+                                                </div>
+                                                <p class="text-xs text-on-surface-variant whitespace-nowrap shrink-0">{{ $dItem->quantity }} &times; Rp {{ number_format((float) $dItem->harga_snapshot, 0, ',', '.') }}</p>
+                                            </div>
+                                        @endforeach
+                                    @empty
+                                        <p class="text-xs text-on-surface-variant border border-dashed border-outline-variant rounded-lg px-4 py-3 text-center">Tidak ada item pada checkout ini.</p>
+                                    @endforelse
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="border border-muted-border rounded-lg px-4 py-3">
+                                    <p class="text-xs text-on-surface-variant">Total Tagihan</p>
+                                    <p class="font-bold text-on-surface mt-1">Rp {{ number_format((float) $detailTotal, 0, ',', '.') }}</p>
+                                </div>
+                                <div class="border border-muted-border rounded-lg px-4 py-3">
+                                    <p class="text-xs text-on-surface-variant">Nominal Dibayar</p>
+                                    <p class="font-bold text-gold-accent mt-1">Rp {{ number_format((float) $pembayaran->jumlah, 0, ',', '.') }}</p>
+                                </div>
+                            </div>
+                            @if ((float) $pembayaran->jumlah !== (float) $detailTotal)
+                                <p class="text-xs text-error border border-error/20 bg-error/5 rounded-lg px-4 py-3">Nominal tidak sama dengan total tagihan (selisih Rp {{ number_format(abs((float) $pembayaran->jumlah - (float) $detailTotal), 0, ',', '.') }}).</p>
+                            @endif
+                            <div>
+                                <p class="raliva-label mb-2">Bukti ({{ $pembayaran->proofs->count() }})</p>
+                                @forelse ($pembayaran->proofs as $pf)
+                                    <a href="{{ asset('storage/' . ltrim($pf->file_bukti, '/')) }}" target="_blank" rel="noopener" class="flex items-center justify-between gap-3 border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low mb-2">
+                                        <span class="font-body-md text-sm text-on-surface truncate">{{ \Illuminate\Support\Str::afterLast($pf->file_bukti, '/') }}</span>
+                                        <span class="text-on-surface-variant font-label-sm text-[10px] uppercase shrink-0">{{ $pf->uploaded_at?->translatedFormat('d M H:i') }}</span>
+                                    </a>
+                                @empty
+                                    <p class="text-xs text-on-surface-variant border border-dashed border-outline-variant rounded-lg px-4 py-3 text-center">Belum ada bukti diunggah.</p>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                </div>
             @empty
                 <p class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada pembayaran pada tab ini.</p>
             @endforelse
