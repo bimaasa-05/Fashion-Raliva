@@ -37,6 +37,9 @@ class Refund extends Model
         'file_bukti',
         'deskripsi_bukti',
         'bukti_diupload_pada',
+        'file_bukti_request',
+        'deskripsi_bukti_request',
+        'bukti_request_diupload_pada',
         'diajukan_pada',
         'selesai_pada',
     ];
@@ -47,6 +50,7 @@ class Refund extends Model
             'diajukan_pada' => 'datetime',
             'selesai_pada' => 'datetime',
             'bukti_diupload_pada' => 'datetime',
+            'bukti_request_diupload_pada' => 'datetime',
         ];
     }
 
