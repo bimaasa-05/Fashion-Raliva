@@ -20,6 +20,14 @@ class StockTransfer extends Model
 
     public const STATUS_CANCELLED = 'cancelled';
 
+    public const ALLOWED_TRANSITIONS = [
+        self::STATUS_REQUESTED => [self::STATUS_APPROVED, self::STATUS_CANCELLED],
+        self::STATUS_APPROVED => [self::STATUS_RECEIVED, self::STATUS_CANCELLED],
+        self::STATUS_IN_TRANSIT => [self::STATUS_RECEIVED, self::STATUS_CANCELLED],
+        self::STATUS_RECEIVED => [],
+        self::STATUS_CANCELLED => [],
+    ];
+
     protected $fillable = [
         'from_warehouse_id',
         'to_warehouse_id',
@@ -28,6 +36,8 @@ class StockTransfer extends Model
         'status',
         'diminta_pada',
         'diterima_pada',
+        'alasan_penolakan',
+        'dibatalkan_pada',
     ];
 
     protected function casts(): array
@@ -35,7 +45,13 @@ class StockTransfer extends Model
         return [
             'diminta_pada' => 'datetime',
             'diterima_pada' => 'datetime',
+            'dibatalkan_pada' => 'datetime',
         ];
+    }
+
+    public function canTransitionTo(string $statusBaru): bool
+    {
+        return in_array($statusBaru, self::ALLOWED_TRANSITIONS[$this->status] ?? [], true);
     }
 
     public function fromWarehouse(): BelongsTo

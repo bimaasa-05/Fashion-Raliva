@@ -66,27 +66,40 @@ class BarangKeluarController extends Controller
             'jumlah.min' => 'Jumlah minimal 1.',
         ]);
 
-        $stok = WarehouseStock::where('warehouse_id', $warehouse->warehouse_id)
-            ->where('product_variant_id', $data['product_variant_id'])
-            ->first();
+        try {
+            DB::transaction(function () use ($warehouse, $data) {
+                $stok = WarehouseStock::where('warehouse_id', $warehouse->warehouse_id)
+                    ->where('product_variant_id', $data['product_variant_id'])
+                    ->lockForUpdate()
+                    ->first();
 
-        if (! $stok || $stok->jumlah_stok < $data['jumlah']) {
-            return back()->with('toast', ['message' => 'Stok tidak mencukupi.', 'icon' => 'gpp_maybe']);
+                if (! $stok || $stok->jumlah_stok < $data['jumlah']) {
+                    throw new \RuntimeException('Stok tidak mencukupi.');
+                }
+
+                $affected = WarehouseStock::where('warehouse_stock_id', $stok->warehouse_stock_id)
+                    ->where('jumlah_stok', '>=', $data['jumlah'])
+                    ->decrement('jumlah_stok', $data['jumlah']);
+
+                if ($affected === 0) {
+                    throw new \RuntimeException('Stok tidak mencukupi.');
+                }
+
+                StockMovement::create([
+                    'warehouse_id' => $warehouse->warehouse_id,
+                    'product_variant_id' => $data['product_variant_id'],
+                    'tipe_pergerakan' => StockMovement::TIPE_KELUAR,
+                    'jumlah' => $data['jumlah'],
+                    'sumber_tipe' => StockMovement::SUMBER_MANUAL,
+                    'alasan' => $data['alasan'] ?? 'Barang keluar manual',
+                    'dibuat_oleh' => auth()->id(),
+                ]);
+            }, 5);
+        } catch (\RuntimeException $e) {
+            return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
+        } catch (\Throwable $e) {
+            return back()->with('toast', ['message' => 'Gagal mencatat barang keluar.', 'icon' => 'error']);
         }
-
-        DB::transaction(function () use ($warehouse, $data, $stok) {
-            $stok->decrement('jumlah_stok', $data['jumlah']);
-
-            StockMovement::create([
-                'warehouse_id' => $warehouse->warehouse_id,
-                'product_variant_id' => $data['product_variant_id'],
-                'tipe_pergerakan' => StockMovement::TIPE_KELUAR,
-                'jumlah' => $data['jumlah'],
-                'sumber_tipe' => StockMovement::SUMBER_MANUAL,
-                'alasan' => $data['alasan'] ?? 'Barang keluar manual',
-                'dibuat_oleh' => auth()->id(),
-            ]);
-        });
 
         ActivityLogger::log(
             'stock.out',
