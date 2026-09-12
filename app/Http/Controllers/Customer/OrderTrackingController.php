@@ -93,6 +93,12 @@ class OrderTrackingController extends Controller
                 $locked->update(['status' => Order::STATUS_SELESAI]);
                 WalletService::creditOrder($locked);
 
+                $locked->shipments()->where('status', \App\Models\Shipment::STATUS_DIKIRIM)->lockForUpdate()->get()->each(function ($shipment) {
+                    if ($shipment->canTransitionTo(\App\Models\Shipment::STATUS_DITERIMA)) {
+                        $shipment->update(['status' => \App\Models\Shipment::STATUS_DITERIMA, 'diterima_pada' => now()]);
+                    }
+                });
+
                 if ($locked->store && $locked->store->owner_id) {
                     Notification::create([
                         'user_id' => $locked->store->owner_id,
@@ -109,5 +115,58 @@ class OrderTrackingController extends Controller
 
         return redirect()->route('customer.order-tracking', ['order' => $order->order_id])
             ->with('toast', ['message' => 'Pesanan dikonfirmasi diterima. Terima kasih!', 'icon' => 'task_alt']);
+    }
+
+    /**
+     * Pengajuan refund oleh customer beserta foto bukti barang.
+     */
+    public function storeRefund(Request $request)
+    {
+        $order = Auth::user()->orders()->with('checkout.payment')->findOrFail((int) $request->input('order_id'));
+
+        if (! in_array($order->status, [Order::STATUS_DIKIRIM, Order::STATUS_SELESAI], true)) {
+            return back()->with('toast', ['message' => 'Refund hanya dapat diajukan untuk pesanan yang sudah dikirim atau selesai.', 'icon' => 'info']);
+        }
+
+        if (\App\Models\Refund::where('order_id', $order->order_id)->whereIn('status', [\App\Models\Refund::STATUS_REQUESTED, \App\Models\Refund::STATUS_ESKALASI, \App\Models\Refund::STATUS_DISETUJUI])->exists()) {
+            return back()->with('toast', ['message' => 'Pesanan ini sudah memiliki pengajuan refund aktif.', 'icon' => 'info']);
+        }
+
+        $data = $request->validate([
+            'tipe_refund' => ['required', 'in:full,partial'],
+            'jumlah' => ['required', 'numeric', 'min:1', 'max:' . (float) $order->grand_total],
+            'alasan' => ['required', 'string', 'min:20', 'max:2000'],
+            'file_bukti_request' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:4096'],
+            'deskripsi_bukti_request' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $path = $request->file('file_bukti_request')->store('bukti-refund-request/' . $order->order_id, 'public');
+
+        $refund = \App\Models\Refund::create([
+            'order_id' => $order->order_id,
+            'payment_id' => $order->checkout?->payment?->payment_id,
+            'requested_by' => Auth::id(),
+            'tipe_refund' => $data['tipe_refund'],
+            'alasan' => $data['alasan'],
+            'jumlah' => $data['jumlah'],
+            'status' => \App\Models\Refund::STATUS_REQUESTED,
+            'diajukan_pada' => now(),
+            'file_bukti_request' => $path,
+            'deskripsi_bukti_request' => $data['deskripsi_bukti_request'] ?? null,
+            'bukti_request_diupload_pada' => now(),
+        ]);
+
+        if ($order->store?->owner_id) {
+            Notification::create([
+                'user_id' => $order->store->owner_id,
+                'tipe' => Notification::TIPE_ORDER,
+                'judul' => 'Pengajuan Refund Baru',
+                'pesan' => sprintf('Customer mengajukan refund %s untuk pesanan %s.', $refund->kode, $order->nomor_order),
+                'url' => route('owner.pengembalian-dana'),
+            ]);
+        }
+
+        return redirect()->route('customer.order-tracking', ['order' => $order->order_id])
+            ->with('toast', ['message' => 'Pengajuan refund terkirim, menunggu diproses toko.', 'icon' => 'task_alt']);
     }
 }
