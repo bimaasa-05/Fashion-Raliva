@@ -251,34 +251,71 @@
     <div class="min-h-full lg:h-full flex flex-col justify-end lg:flex-row lg:justify-end" onclick="if(event.target===this) closeChatModal()">
 
     <div id="chat-panel" class="flex flex-col w-full md:w-[520px] lg:w-[560px] xl:w-[600px] md:max-w-[88vw] lg:max-w-full bg-surface-container-low border-t md:border lg:border-t-0 lg:border-l border-muted-border rounded-t-3xl md:rounded-2xl lg:rounded-none max-h-[85dvh] md:max-h-[78dvh] lg:max-h-full lg:h-full overflow-hidden md:shadow-2xl lg:shadow-none" onclick="event.stopPropagation()">
-        <div class="flex items-center justify-between gap-2 lg:gap-3 pl-6 pr-3 lg:px-6 py-3.5 lg:py-4 border-b border-muted-border shrink-0 bg-surface-container-low overflow-visible" id="chat-header">
-            <div class="min-w-0 flex-1">
+        <div class="relative flex items-center justify-between gap-2 lg:gap-3 pl-6 pr-3 lg:px-6 py-3.5 lg:py-4 border-b border-muted-border shrink-0 bg-surface-container-low z-10 overflow-visible" id="chat-header">
+            <div class="min-w-0 flex-1" id="chat-header-title">
                 <h3 class="font-title-md text-title-md text-on-surface truncate leading-tight" id="chat-subject">-</h3>
                 <p class="font-mono text-on-surface-variant text-xs mt-0.5 truncate" id="chat-kode">-</p>
             </div>
-            <button type="button" onclick="closeChatModal()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors shrink-0" title="Tutup" aria-label="Tutup">
-                <span class="material-symbols-outlined text-[20px]">close</span>
-            </button>
-        </div>
-
-        <div class="flex-1 overflow-y-auto px-4 lg:px-6 py-4 lg:py-6 space-y-3 min-h-0" id="chat-messages" style="overscroll-behavior: contain;">
-            <div class="flex justify-center items-center py-8">
-                <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <div class="flex items-center gap-2 lg:gap-3 shrink-0" id="chat-header-actions">
+                <span id="chat-status" class="hidden inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border bg-surface-container-high text-on-surface-variant border-outline-variant shrink-0 whitespace-nowrap"></span>
+                <button type="button" onclick="toggleChatSearch()" id="chat-search-toggle" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Cari pesan" aria-label="Cari pesan">
+                    <span class="material-symbols-outlined text-[20px]">search</span>
+                </button>
+                <div class="relative shrink-0" id="chat-more-wrap">
+                    <button type="button" onclick="toggleChatMoreMenu()" id="chat-more-btn" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Menu" aria-label="Menu">
+                        <span class="material-symbols-outlined text-[20px]">more_vert</span>
+                    </button>
+                    <div id="chat-more-menu" class="hidden absolute right-0 top-full mt-2 min-w-[220px] rounded-xl border border-outline-variant bg-surface-container-high shadow-xl z-40 py-1.5">
+                        <button type="button" onclick="openWallpaperPicker()" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[19px]">wallpaper</span>Ganti Wallpaper
+                        </button>
+                        <button type="button" onclick="resetWallpaper()" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[19px]">restart_alt</span>Reset Wallpaper
+                        </button>
+                    </div>
+                </div>
+                <button type="button" onclick="closeChatModal()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors shrink-0" title="Tutup" aria-label="Tutup">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+            <div id="chat-search-panel" class="absolute inset-0 hidden items-center gap-2 lg:gap-3 px-6 bg-surface-container-low">
+                <button type="button" onclick="toggleChatSearch()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Tutup pencarian" aria-label="Tutup pencarian">
+                    <span class="material-symbols-outlined text-[20px]">search</span>
+                </button>
+                <input id="chat-search-input" type="text" inputmode="search" autocomplete="off" placeholder="Cari pesan..." class="flex-1 min-w-0 bg-transparent font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/70 border-b border-[var(--border-soft)] focus:border-secondary py-2 outline-none"/>
+                <button type="button" onclick="clearChatSearch()" class="hidden w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" id="chat-search-clear" title="Hapus pencarian" aria-label="Hapus pencarian">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+                <span id="chat-search-count" class="font-label-sm text-label-sm text-on-surface-variant shrink-0 hidden"></span>
             </div>
         </div>
 
-        <div id="chat-input-area" class="relative px-3 lg:px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] hidden shrink-0 w-full bg-transparent">
-            <div id="chat-composer" class="flex items-end gap-1 lg:gap-1.5 bg-surface-container-lowest border border-[rgba(0,0,0,0.06)] rounded-[26px] lg:rounded-[28px] px-2 lg:px-2.5 py-2 lg:py-2.5 shadow-sm transition-colors duration-150 focus-within:border-secondary w-full">
-                <textarea id="chat-input" rows="1" maxlength="2000" placeholder="Tulis pesan..."
-                    class="flex-1 min-w-0 bg-transparent border-0 outline-none resize-none px-1 py-2.5 font-body-md text-sm text-on-surface placeholder-on-surface-variant/70"
-                    onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}" aria-label="Tulis pesan"></textarea>
-                <button type="button" onclick="sendMessage()" id="chat-send" aria-label="Kirim pesan" title="Kirim"
-                    class="w-11 h-11 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 active:scale-[0.96] transition-all disabled:opacity-40 rounded-full">
-                    <span class="material-symbols-outlined text-[20px]">send</span>
-                </button>
+        <div class="relative flex-1 flex flex-col min-h-0 overflow-hidden" id="chat-content">
+            <div class="flex-1 overflow-y-auto px-4 lg:px-6 py-4 lg:py-6 space-y-3 min-h-0 bg-transparent" id="chat-messages" style="overscroll-behavior: contain;">
+                <div class="flex justify-center items-center py-8">
+                    <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                </div>
+            </div>
+
+            <div id="chat-input-area" class="relative px-3 lg:px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] hidden shrink-0 w-full bg-transparent">
+                <div id="chat-emoji-panel" class="hidden absolute bottom-full mb-3 left-3 lg:left-4 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-outline-variant bg-surface-container-high p-3 shadow-xl"></div>
+                <div id="chat-composer" class="flex items-end gap-1 lg:gap-1.5 bg-surface-container-lowest border border-[rgba(0,0,0,0.06)] rounded-[26px] lg:rounded-[28px] px-2 lg:px-2.5 py-2 lg:py-2.5 shadow-sm transition-colors duration-150 focus-within:border-secondary w-full">
+                    <button type="button" onclick="toggleEmojiPanel()" id="chat-emoji-toggle" aria-label="Emoji" title="Emoji" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0">
+                        <span class="material-symbols-outlined text-[20px]">mood</span>
+                    </button>
+                    <textarea id="chat-input" rows="1" maxlength="2000" placeholder="Tulis pesan..."
+                        class="flex-1 min-w-0 bg-transparent border-0 outline-none resize-none px-1 py-2.5 font-body-md text-sm text-on-surface placeholder-on-surface-variant/70"
+                        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}" aria-label="Tulis pesan"></textarea>
+                    <button type="button" onclick="sendMessage()" id="chat-send" aria-label="Kirim pesan" title="Kirim"
+                        class="w-11 h-11 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 active:scale-[0.96] transition-all disabled:opacity-40 rounded-full">
+                        <span class="material-symbols-outlined text-[20px]">send</span>
+                    </button>
+                </div>
+                <p id="chat-closed-note" class="hidden text-center font-body-sm text-body-sm text-on-surface-variant pt-4">Komplain telah selesai dan tidak dapat dibalas lagi.</p>
             </div>
         </div>
     </div>
+    <input type="file" id="chat-wallpaper-input" accept="image/*" class="hidden">
     </div>
     <div id="chat-delete-dialog" class="hidden fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeDeleteDialog();}">
         <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-outline-variant shadow-2xl" onclick="event.stopPropagation()">
@@ -313,6 +350,45 @@
 
     @push('styles')
 <style>
+    #chat-content {
+        background-image: url('/images/wallpaper-chat-white.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: #F8F6F2;
+        position: relative;
+        isolation: isolate;
+    }
+    html.theme-dark #chat-content, .dark #chat-content {
+        background-image: url('/images/wallpaper-chat-black.png');
+        background-color: #171717;
+    }
+    #chat-content[style*="background-image"] {
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+    }
+    #chat-content::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(248,246,242,0.55);
+        pointer-events: none;
+        z-index: 0;
+    }
+    html.theme-dark #chat-content::before, .dark #chat-content::before { background: rgba(0,0,0,.28); }
+    #chat-content > * { position: relative; z-index: 1; }
+    #chat-edit-wallpaper {
+        background-image: url('/images/wallpaper-chat-white.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: #F8F6F2;
+    }
+    html.theme-dark #chat-edit-wallpaper, .dark #chat-edit-wallpaper {
+        background-image: url('/images/wallpaper-chat-black.png');
+        background-color: #171717;
+    }
     #chat-messages { overscroll-behavior: contain; }
     @keyframes raliva-chat-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
     @keyframes raliva-chat-backdrop-out { from { opacity: 1; } to { opacity: 0; } }
@@ -338,6 +414,127 @@
 <script>
     let currentChat = { id: null, polling: null, closing: false };
     const myId = {{ Auth::id() }};
+
+    // Wallpaper (sync with customer)
+    function openWallpaperPicker() {
+        closeChatMoreMenu();
+        const input = document.getElementById('chat-wallpaper-input');
+        if (input) input.click();
+    }
+    function applyWallpaper(url, persist) {
+        const layer = document.getElementById('chat-content');
+        if (!layer) return;
+        if (url) {
+            layer.style.backgroundImage = "url('" + url.replace(/'/g, "\\'") + "')";
+            layer.style.backgroundSize = 'cover';
+            layer.style.backgroundPosition = 'center';
+        } else {
+            layer.style.backgroundImage = '';
+            layer.style.backgroundSize = '';
+            layer.style.backgroundPosition = '';
+        }
+        if (persist) {
+            try { localStorage.setItem('raliva_sa_wallpaper', url || ''); } catch (_) {}
+        }
+    }
+    function resetWallpaper() {
+        applyWallpaper('', true);
+        closeChatMoreMenu();
+    }
+    function initWallpaper() {
+        let saved = '';
+        try { saved = localStorage.getItem('raliva_sa_wallpaper') || ''; } catch (_) {}
+        if (saved) applyWallpaper(saved, false);
+    }
+    document.addEventListener('change', function (ev) {
+        if (ev.target && ev.target.id !== 'chat-wallpaper-input') return;
+        const file = ev.target.files && ev.target.files[0];
+        ev.target.value = '';
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function () { applyWallpaper(reader.result, true); };
+        reader.readAsDataURL(file);
+    });
+    document.addEventListener('DOMContentLoaded', initWallpaper);
+
+    // Search & more menu (sync customer)
+    function toggleChatSearch() {
+        const panel = document.getElementById('chat-search-panel');
+        const title = document.getElementById('chat-header-title');
+        const actions = document.getElementById('chat-header-actions');
+        if (!panel) return;
+        const opening = panel.classList.contains('hidden');
+        if (opening) {
+            panel.classList.remove('hidden'); panel.classList.add('flex');
+            if (title) title.classList.add('hidden');
+            if (actions) actions.classList.add('hidden');
+            document.getElementById('chat-search-input')?.focus();
+        } else {
+            panel.classList.add('hidden'); panel.classList.remove('flex');
+            if (title) title.classList.remove('hidden');
+            if (actions) actions.classList.remove('hidden');
+            clearChatSearch();
+        }
+    }
+    function clearChatSearch() {
+        const input = document.getElementById('chat-search-input');
+        const count = document.getElementById('chat-search-count');
+        const clearBtn = document.getElementById('chat-search-clear');
+        if (input) input.value = '';
+        if (count) { count.textContent = ''; count.classList.add('hidden'); }
+        if (clearBtn) clearBtn.classList.add('hidden');
+        document.querySelectorAll('#chat-messages .chat-msg').forEach(el => el.style.display = '');
+    }
+    function toggleChatMoreMenu() {
+        const menu = document.getElementById('chat-more-menu');
+        if (!menu) return;
+        menu.classList.toggle('hidden');
+    }
+    function closeChatMoreMenu() {
+        document.getElementById('chat-more-menu')?.classList.add('hidden');
+    }
+    function toggleEmojiPanel() {
+        const panel = document.getElementById('chat-emoji-panel');
+        if (!panel) return;
+        panel.classList.toggle('hidden');
+        if (!panel.classList.contains('hidden') && !panel.dataset.loaded) {
+            const emojis = ['😀','😂','😍','😭','😡','👍','🙏','🔥','❤️','✨','😊','🤔','😎','🥺','🫡','👏','🎉','💯'];
+            panel.innerHTML = emojis.map(e => '<button type="button" onclick="insertEmoji(\''+e+'\')" class="w-9 h-9 flex items-center justify-center hover:bg-surface-container-low rounded-lg text-lg">'+e+'</button>').join('');
+            panel.dataset.loaded = '1';
+            panel.classList.add('grid','grid-cols-6','gap-1');
+        }
+    }
+    function insertEmoji(e) {
+        const input = document.getElementById('chat-input');
+        if (!input) return;
+        const start = input.selectionStart || input.value.length;
+        const end = input.selectionEnd || start;
+        input.value = input.value.slice(0, start) + e + input.value.slice(end);
+        input.focus();
+        input.selectionStart = input.selectionEnd = start + e.length;
+    }
+    document.getElementById('chat-search-input')?.addEventListener('input', function () {
+        const q = this.value.trim().toLowerCase();
+        const clearBtn = document.getElementById('chat-search-clear');
+        const count = document.getElementById('chat-search-count');
+        if (clearBtn) clearBtn.classList.toggle('hidden', !q);
+        let shown = 0, total = 0;
+        document.querySelectorAll('#chat-messages .chat-msg').forEach(el => {
+            total++;
+            const txt = (el.querySelector('[data-pesan]')?.textContent || '').toLowerCase();
+            const ok = !q || txt.includes(q);
+            el.style.display = ok ? '' : 'none';
+            if (ok) shown++;
+        });
+        if (count) {
+            if (q) { count.textContent = shown + ' / ' + total; count.classList.remove('hidden'); }
+            else { count.textContent = ''; count.classList.add('hidden'); }
+        }
+    });
+    document.addEventListener('click', function (ev) {
+        if (!ev.target.closest('#chat-more-wrap')) closeChatMoreMenu();
+        if (!ev.target.closest('#chat-emoji-panel') && !ev.target.closest('#chat-emoji-toggle')) document.getElementById('chat-emoji-panel')?.classList.add('hidden');
+    });
 
     function openChatModal(id, kode, subject, isOpen) {
         currentChat.id = id;
@@ -371,6 +568,10 @@
         currentChat.id = null;
         closeChatMenu();
         closeDeleteDialog();
+        closeChatMoreMenu();
+        document.getElementById('chat-emoji-panel')?.classList.add('hidden');
+        const sp = document.getElementById('chat-search-panel');
+        if (sp && !sp.classList.contains('hidden')) toggleChatSearch();
 
         const panel = document.getElementById('chat-panel');
         container.classList.remove('raliva-chat-in');
