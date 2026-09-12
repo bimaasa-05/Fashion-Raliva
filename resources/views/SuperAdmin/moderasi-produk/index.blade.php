@@ -81,22 +81,22 @@
                 data-reason="{{ $product->alasan_penolakan }}"
                 data-tipe="{{ ucfirst($product->tipe_produk) }}"
                 data-variants="{{ $product->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}"
-                data-images="{{ htmlspecialchars(json_encode($product->images->pluck('file_gambar')->values()), ENT_QUOTES, 'UTF-8') }}"
+                data-images='{{ json_encode($product->images->pluck('file_gambar')->values(), JSON_UNESCAPED_SLASHES) }}'
                 data-slot-total="{{ $product->slot_total }}"
                 data-slot-used="{{ $product->slot_used }}"
                 data-slot-available="{{ $product->slot_available }}"
                 data-slot-full="{{ $product->slot_full ? '1' : '0' }}">
-                <div class="relative w-full aspect-[3/4] bg-surface-container-low mb-element-gap overflow-hidden rounded-lg">
-                    @php $firstImg = $product->images->first(); $imgSrc = $firstImg ? (filter_var($firstImg->file_gambar, FILTER_VALIDATE_URL) ? $firstImg->file_gambar : asset('storage/' . ltrim($firstImg->file_gambar, '/'))) : null; $imgCount = $product->images->count(); @endphp
-                    @if ($imgSrc)
-                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ $imgSrc }}" alt="{{ $product->nama_produk }}" loading="lazy" />
-                        @if($imgCount > 1)
-                            <span class="absolute top-2 left-2 bg-deep-onyx text-on-primary text-[10px] font-bold px-1.5 py-0.5 rounded">+{{ $imgCount - 1 }}</span>
-                        @endif
-                    @else
+                <div class="relative w-full aspect-[3/4] bg-surface-container-low mb-element-gap overflow-hidden rounded-lg isolate">
+                    @php $imgs = $product->images; $imgCount = $imgs->count(); @endphp
+                    @forelse ($imgs as $i => $img)
+                        <img data-card-slide class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 {{ $i === 0 ? 'opacity-100' : 'opacity-0' }}" src="{{ filter_var($img->file_gambar, FILTER_VALIDATE_URL) ? $img->file_gambar : asset('storage/' . ltrim($img->file_gambar, '/')) }}" alt="{{ $product->nama_produk }} — foto {{ $i + 1 }}" loading="lazy" />
+                    @empty
                         <div class="w-full h-full flex items-center justify-center bg-surface-container-high">
                             <span class="material-symbols-outlined text-[42px] text-on-surface-variant/40">checkroom</span>
                         </div>
+                    @endforelse
+                    @if($imgCount > 1)
+                        <span class="absolute top-2 left-2 bg-deep-onyx text-on-primary text-[10px] font-bold px-1.5 py-0.5 rounded">+{{ $imgCount - 1 }}</span>
                     @endif
                     <div class="absolute top-2 right-2 p-1 bg-surface/80 rounded"><span class="material-symbols-outlined text-[18px] text-on-surface">{{ $statusIconMap[$product->status] ?? 'pending' }}</span></div>
                     @if ($product->owner_verified_at)
@@ -119,6 +119,15 @@
 @push('scripts')
 <script>
     let activeProductCard = null;
+    let activeGallery = [];
+
+    function resolveSrc(src) {
+        if (!src) return '';
+        if (src.startsWith('http')) return src;
+        if (src.startsWith('/')) return src;
+        if (src.startsWith('storage/')) return '/' + src;
+        return '/storage/' + src.replace(/^\/+/, '');
+    }
 
     const productActionUrls = {
         setujui: (id) => '{{ route('superadmin.moderasi-produk.setujui', ':id:') }}'.replace(':id:', id),
@@ -141,43 +150,41 @@
         const thumbsEl = document.getElementById('mod-thumbs');
         let gallery = [];
         try { gallery = JSON.parse(card.getAttribute('data-images') || '[]'); } catch(e) { gallery = []; }
-        function resolveSrc(src) {
-            if (!src) return '';
-            if (src.startsWith('http')) return src;
-            if (src.startsWith('/')) return src;
-            if (src.startsWith('storage/')) return '/' + src;
-            return '/storage/' + src.replace(/^\/+/, '');
-        }
+        activeGallery = gallery;
+        const photoCountEl = document.getElementById('mod-photo-count');
+        const photoCounterEl = document.getElementById('mod-photo-counter');
+        if (photoCountEl) photoCountEl.textContent = gallery.length;
+
         if (gallery.length > 0) {
-            const firstSrc = resolveSrc(gallery[0]);
-            imgEl.src = firstSrc;
+            imgEl.src = resolveSrc(gallery[0]);
             imgEl.classList.remove('hidden');
-            imgEl.parentElement.classList.remove('hidden');
+            if (photoCounterEl) photoCounterEl.textContent = '1/' + gallery.length;
         } else if (img) {
             imgEl.src = img.src;
             imgEl.classList.remove('hidden');
+            if (photoCounterEl) photoCounterEl.textContent = '0';
         } else {
             imgEl.classList.add('hidden');
+            if (photoCounterEl) photoCounterEl.textContent = '0';
         }
+
         if (thumbsEl) {
             thumbsEl.innerHTML = '';
-            if (gallery.length > 1) {
-                thumbsEl.classList.remove('hidden');
-                gallery.forEach((src, idx) => {
-                    const resolved = resolveSrc(src);
-                    const thumb = document.createElement('img');
-                    thumb.src = resolved;
-                    thumb.className = 'w-14 h-14 object-cover rounded border cursor-pointer hover:border-gold-accent transition-colors ' + (idx === 0 ? 'border-gold-accent ring-1 ring-gold-accent' : 'border-muted-border');
-                    thumb.loading = 'lazy';
-                    thumb.onclick = () => {
-                        imgEl.src = resolved;
-                        Array.from(thumbsEl.children).forEach((c, i) => c.className = 'w-14 h-14 object-cover rounded border cursor-pointer hover:border-gold-accent transition-colors ' + (i === idx ? 'border-gold-accent ring-1 ring-gold-accent' : 'border-muted-border'));
-                    };
-                    thumbsEl.appendChild(thumb);
-                });
-            } else {
-                thumbsEl.classList.add('hidden');
-            }
+            gallery.forEach((src, idx) => {
+                const resolved = resolveSrc(src);
+                const thumb = document.createElement('img');
+                thumb.src = resolved;
+                thumb.alt = 'Foto ' + (idx + 1);
+                thumb.loading = 'lazy';
+                thumb.className = 'aspect-square w-full object-cover rounded-lg border cursor-pointer hover:border-gold-accent transition-colors ' + (idx === 0 ? 'border-gold-accent ring-2 ring-gold-accent' : 'border-muted-border');
+                thumb.onclick = () => {
+                    imgEl.src = resolved;
+                    if (photoCounterEl) photoCounterEl.textContent = (idx + 1) + '/' + gallery.length;
+                    openLightbox(resolved);
+                    Array.from(thumbsEl.children).forEach((c, i) => c.className = 'aspect-square w-full object-cover rounded-lg border cursor-pointer hover:border-gold-accent transition-colors ' + (i === idx ? 'border-gold-accent ring-2 ring-gold-accent' : 'border-muted-border'));
+                };
+                thumbsEl.appendChild(thumb);
+            });
         }
 
         const reasonBox = document.getElementById('mod-reason-box');
@@ -219,6 +226,7 @@
         const modal = document.getElementById('detailModal');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
+        closeLightbox();
         document.body.style.overflow = '';
     }
 
@@ -238,8 +246,32 @@
         modal.classList.remove('flex');
     }
 
+    function openLightbox(src) {
+        if (!src) return;
+        const lb = document.getElementById('lightbox');
+        document.getElementById('lightbox-img').src = src;
+        const lbCounter = document.getElementById('lightbox-counter');
+        if (lbCounter) {
+            const found = activeGallery.findIndex((s) => resolveSrc(s) === src);
+            const num = found >= 0 ? found + 1 : 1;
+            lbCounter.textContent = num + '/' + (activeGallery.length || 1);
+        }
+        lb.classList.remove('hidden');
+        lb.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        const lb = document.getElementById('lightbox');
+        if (!lb || lb.classList.contains('hidden')) return;
+        lb.classList.add('hidden');
+        lb.classList.remove('flex');
+        const detailOpen = !document.getElementById('detailModal').classList.contains('hidden');
+        document.body.style.overflow = detailOpen ? 'hidden' : '';
+    }
+
     document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') { closeDetailModal(); closeRejectModal(); }
+        if (event.key === 'Escape') { closeLightbox(); closeDetailModal(); closeRejectModal(); }
     });
 </script>
 @endpush
@@ -285,6 +317,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     applyFilter();
+
+    // === Auto-rotate foto kartu (crossfade 3s seperti hero) + pause saat hover ===
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        rows.forEach((row) => {
+            const slides = row.querySelectorAll('[data-card-slide]');
+            if (slides.length < 2) return;
+            let idx = 0;
+            let timer = setInterval(tick, 3000);
+            function tick() {
+                slides[idx].style.opacity = '0';
+                idx = (idx + 1) % slides.length;
+                slides[idx].style.opacity = '1';
+            }
+            row.addEventListener('mouseenter', () => clearInterval(timer));
+            row.addEventListener('mouseleave', () => {
+                clearInterval(timer);
+                timer = setInterval(tick, 3000);
+            });
+        });
+    }
 });
 </script>
 @endpush
@@ -316,9 +368,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
             <div class="grid md:grid-cols-2 gap-0">
-                <div class="bg-surface-container-low min-h-[220px] flex flex-col">
-                    <img id="mod-img" class="w-full h-[220px] object-cover flex-shrink-0" src="" alt="Foto produk" />
-                    <div id="mod-thumbs" class="hidden flex gap-1.5 p-2 overflow-x-auto bg-surface-container-low border-t border-muted-border"></div>
+                <div class="bg-surface-container-low min-h-[220px] p-3 flex flex-col gap-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Foto Produk (<span id="mod-photo-count">0</span>)</span>
+                        <span id="mod-photo-counter" class="font-body-md text-body-md font-bold text-gold-accent">-</span>
+                    </div>
+                    <img id="mod-img" class="w-full h-[280px] object-cover rounded-lg cursor-zoom-in border border-muted-border" src="" alt="Foto produk" onclick="openLightbox(this.src)" />
+                    <div id="mod-thumbs" class="grid grid-cols-3 gap-2"></div>
                 </div>
                 <div class="p-6 space-y-4">
                     <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Tipe Produk</span><span id="mod-tipe" class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">-</span></div>
@@ -340,6 +396,13 @@ document.addEventListener('DOMContentLoaded', () => {
             </form>
         </div>
     </div>
+</div>
+
+<!-- Lightbox Foto -->
+<div class="fixed inset-0 z-[80] hidden items-center justify-center p-4 bg-black/80" id="lightbox" onclick="if (event.target === this) closeLightbox()">
+    <img id="lightbox-img" class="max-w-[90vw] max-h-[90vh] object-contain rounded-lg" src="" alt="Foto produk" />
+    <span id="lightbox-counter" class="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-xs font-bold bg-black/50 px-2.5 py-1 rounded-full">-</span>
+    <button type="button" class="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors z-10" onclick="closeLightbox()"><span class="material-symbols-outlined">close</span></button>
 </div>
 
 <!-- Reject Reason Modal -->

@@ -90,11 +90,22 @@
                     <tr data-table-row data-status="{{ $produk->status }}" data-search="{{ strtolower($produk->nama_produk.' '.($produk->store->nama_toko ?? '').' '.($produk->category->nama_kategori ?? '')) }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-4 text-center text-on-surface-variant font-mono row-num"></td>
                         <td class="p-4">
-                            <div class="relative w-12 h-12 rounded-lg overflow-hidden bg-surface-container-low border border-muted-border shrink-0">
+                            <div class="relative w-12 h-12 rounded-lg overflow-hidden bg-surface-container-low border border-muted-border shrink-0 cursor-pointer hover:ring-2 hover:ring-gold-accent/50 transition-all"
+                                 data-name="{{ $produk->nama_produk }}"
+                                 data-store="{{ $produk->store->nama_toko ?? '-' }}"
+                                 data-price="Rp {{ number_format((float) $produk->harga_dasar, 0, ',', '.') }}"
+                                 data-category="{{ $produk->category->nama_kategori ?? '-' }}"
+                                 data-tipe="{{ ucfirst($produk->tipe_produk) }}"
+                                 data-variants="{{ $produk->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}"
+                                 data-desc="{{ $produk->deskripsi }}"
+                                 data-status-label="{{ $statusLabel[0] }}"
+                                 data-images='{{ json_encode($produk->images->pluck('file_gambar')->values(), JSON_UNESCAPED_SLASHES) }}'
+                                 onclick="openProdukGallery(this)"
+                                 title="Lihat semua foto">
                                 @if($imgSrc)
-                                    <img src="{{ $imgSrc }}" alt="{{ $produk->nama_produk }}" loading="lazy" class="w-full h-full object-cover" />
+                                    <img src="{{ $imgSrc }}" alt="{{ $produk->nama_produk }}" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
                                     @if($imgCount > 1)
-                                        <span class="absolute bottom-0 right-0 bg-deep-onyx text-on-primary text-[9px] font-bold px-1 py-0.5 rounded-tl">+{{ $imgCount - 1 }}</span>
+                                        <span class="absolute bottom-0 right-0 bg-deep-onyx text-on-primary text-[9px] font-bold px-1 py-0.5 rounded-tl pointer-events-none">+{{ $imgCount - 1 }}</span>
                                     @endif
                                 @else
                                     <div class="w-full h-full flex items-center justify-center text-on-surface-variant/40"><span class="material-symbols-outlined text-[20px]">checkroom</span></div>
@@ -142,11 +153,22 @@
             <article data-table-row data-status="{{ $produk->status }}" data-search="{{ strtolower($produk->nama_produk.' '.($produk->store->nama_toko ?? '').' '.($produk->category->nama_kategori ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
                 @php $firstImgM = $produk->images->first(); $imgSrcM = $firstImgM ? (filter_var($firstImgM->file_gambar, FILTER_VALIDATE_URL) ? $firstImgM->file_gambar : asset('storage/' . ltrim($firstImgM->file_gambar, '/'))) : null; $imgCountM = $produk->images->count(); @endphp
                 <div class="flex items-start gap-4 mb-3">
-                    <div class="relative w-16 h-16 rounded-lg overflow-hidden bg-surface-container-low border border-muted-border shrink-0">
+                    <div class="relative w-16 h-16 rounded-lg overflow-hidden bg-surface-container-low border border-muted-border shrink-0 cursor-pointer hover:ring-2 hover:ring-gold-accent/50 transition-all"
+                         data-name="{{ $produk->nama_produk }}"
+                         data-store="{{ $produk->store->nama_toko ?? '-' }}"
+                         data-price="Rp {{ number_format((float) $produk->harga_dasar, 0, ',', '.') }}"
+                         data-category="{{ $produk->category->nama_kategori ?? '-' }}"
+                         data-tipe="{{ ucfirst($produk->tipe_produk) }}"
+                         data-variants="{{ $produk->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}"
+                         data-desc="{{ $produk->deskripsi }}"
+                         data-status-label="{{ $statusLabel[0] }}"
+                         data-images='{{ json_encode($produk->images->pluck('file_gambar')->values(), JSON_UNESCAPED_SLASHES) }}'
+                         onclick="openProdukGallery(this)"
+                         title="Lihat semua foto">
                         @if($imgSrcM)
-                            <img src="{{ $imgSrcM }}" alt="{{ $produk->nama_produk }}" loading="lazy" class="w-full h-full object-cover" />
+                            <img src="{{ $imgSrcM }}" alt="{{ $produk->nama_produk }}" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
                             @if($imgCountM > 1)
-                                <span class="absolute bottom-0 right-0 bg-deep-onyx text-on-primary text-[8px] font-bold px-1 py-0.5 rounded-tl">+{{ $imgCountM - 1 }}</span>
+                                <span class="absolute bottom-0 right-0 bg-deep-onyx text-on-primary text-[8px] font-bold px-1 py-0.5 rounded-tl pointer-events-none">+{{ $imgCountM - 1 }}</span>
                             @endif
                         @else
                             <div class="w-full h-full flex items-center justify-center text-on-surface-variant/30"><span class="material-symbols-outlined text-[20px]">checkroom</span></div>
@@ -177,6 +199,8 @@
     </div>
 </section>
 @endsection
+
+@include('partials.product-gallery-modal')
 
 @push('scripts')
 <script>

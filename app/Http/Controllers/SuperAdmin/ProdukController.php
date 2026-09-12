@@ -11,7 +11,7 @@ class ProdukController extends Controller
     public function index(Request $request)
     {
         $products = Product::query()
-            ->with(['store:store_id,nama_toko', 'category:category_id,nama_kategori', 'images' => fn ($q) => $q->orderBy('urutan')])
+            ->with(['store:store_id,nama_toko', 'category:category_id,nama_kategori', 'images' => fn ($q) => $q->orderBy('urutan'), 'variants'])
             ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'ditolak' THEN 1 WHEN 'nonaktif' THEN 2 ELSE 3 END")
             ->orderByDesc('updated_at')
             ->get();
