@@ -2,6 +2,7 @@
     $tab = $activeTab ?? 'pengajuan';
     $tabs = [
         'pengajuan' => 'Pengajuan',
+        'eskalasi' => 'Eskalasi',
         'disetujui' => 'Disetujui',
         'ditolak' => 'Ditolak',
         'selesai' => 'Selesai',
