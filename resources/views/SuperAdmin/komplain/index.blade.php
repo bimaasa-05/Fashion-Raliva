@@ -279,9 +279,6 @@
                             </button>
                         </div>
                     </div>
-                    <button type="button" onclick="closeChatModal()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Tutup" aria-label="Tutup">
-                        <span class="material-symbols-outlined text-[20px]">close</span>
-                    </button>
                 </div>
                 <div id="chat-search-panel" class="absolute inset-0 flex items-center gap-2 lg:gap-3 px-6">
                     <button type="button" id="chat-search-close" onclick="toggleChatSearch()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Tutup pencarian" aria-label="Tutup pencarian">
