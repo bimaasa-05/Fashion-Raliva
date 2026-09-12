@@ -20,8 +20,7 @@
                 ['route' => 'owner.moderasi-produk', 'icon' => 'inventory_2', 'text' => 'Moderasi Produk'],
                 ['route' => 'owner.promo', 'icon' => 'local_offer', 'text' => 'Promo Toko'],
                 ['route' => 'owner.data-pelanggan', 'icon' => 'groups', 'text' => 'Data Pelanggan'],
-                ['route' => 'owner.kelola-slot', 'icon' => 'storage', 'text' => 'Kelola Slot'],
-                ['route' => 'owner.paket-slot', 'icon' => 'package_2', 'text' => 'Paket Slot'],
+                ['route' => 'owner.kelola-slot', 'aliases' => ['owner.paket-slot'], 'icon' => 'storage', 'text' => 'Management Slot'],
                 ['route' => 'owner.peringkat-iklan', 'icon' => 'workspace_premium', 'text' => 'Iklan Peringkat'],
             ],
         ],
@@ -30,6 +29,8 @@
             'items' => [
                 ['route' => 'owner.pesanan', 'icon' => 'shopping_bag', 'text' => 'Data Pesanan'],
                 ['route' => 'owner.ulasan', 'icon' => 'star', 'text' => 'Ulasan & Penilaian'],
+                ['route' => 'owner.komplain', 'icon' => 'support_agent', 'text' => 'Komplain'],
+                ['route' => 'owner.pengembalian-dana', 'icon' => 'assignment_return', 'text' => 'Pengembalian Dana'],
             ],
         ],
         [
@@ -53,7 +54,7 @@
     @foreach ($menuGroups as $group)
         @php
             $collapsible = count($group['items']) >= 3;
-            $isActive = collect($group['items'])->contains(fn ($item) => request()->routeIs($item['route']));
+            $isActive = collect($group['items'])->contains(fn ($item) => request()->routeIs($item['route'], ...($item['aliases'] ?? [])));
         @endphp
         <div class="space-y-1 {{ $loop->first ? '' : 'pt-4' }}">
             @if ($collapsible)
@@ -69,13 +70,13 @@
                     <div class="{{ $collapsible ? 'space-y-1' : '' }}">
                 @foreach ($group['items'] as $item)
                     <a class="group flex items-center gap-2.5 py-2.5 transition-all duration-200
-                        @if(request()->routeIs($item['route']))
+                        @if(request()->routeIs($item['route'], ...($item['aliases'] ?? [])))
                             pl-3 pr-[28px] mr-[-16px] rounded-l-lg bg-gold-accent/10 text-gold-accent border-l-[3px] border-gold-accent
                         @else
                             px-3 rounded-lg text-on-sidebar/80 hover:bg-sidebar-hover hover:text-on-sidebar border-l-[3px] border-transparent
                         @endif"
                         href="{{ route($item['route']) }}">
-                        <span class="material-symbols-outlined text-[20px] @if(request()->routeIs($item['route'])) fill text-gold-accent @else text-on-sidebar/60 @endif transition-colors">
+                        <span class="material-symbols-outlined text-[20px] @if(request()->routeIs($item['route'], ...($item['aliases'] ?? []))) fill text-gold-accent @else text-on-sidebar/60 @endif transition-colors">
                             {{ $item['icon'] }}
                         </span>
                         <span class="sidebar-tip">{{ $item['text'] }}</span>
