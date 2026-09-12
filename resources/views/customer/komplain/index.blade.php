@@ -339,13 +339,14 @@
         background-image: radial-gradient(circle at 1.5px 1.5px, rgba(255, 255, 255, .07) 1.5px, transparent 0);
     }
     #chat-content {
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-color: transparent;
-        position: relative;
-        isolation: isolate;
-    }
+    background-image: url('/images/wallpaper-chat.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #171717;
+    position: relative;
+    isolation: isolate;
+}
     #chat-content::before {
         content: '';
         position: absolute;
