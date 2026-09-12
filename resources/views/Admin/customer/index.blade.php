@@ -160,7 +160,7 @@
                         @foreach ($c->orders as $o)
                             <a href="{{ route('admin.pesanan') }}?cari={{ $o->nomor_order ?? $o->order_id }}" class="flex items-center justify-between gap-3 bg-surface-container-low rounded-lg p-3 hover:border-gold-accent border border-transparent transition-colors">
                                 <span class="text-on-surface font-mono text-sm">{{ $o->nomor_order ?? ('#'.$o->order_id) }}</span>
-                                <span class="text-gold-accent font-bold text-sm">Rp {{ number_format((float) ($o->total_harga ?? 0), 0, ',', '.') }}</span>
+                                <span class="text-gold-accent font-bold text-sm">Rp {{ number_format((float) ($o->grand_total ?? 0), 0, ',', '.') }}</span>
                             </a>
                         @endforeach
                     </div>
