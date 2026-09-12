@@ -145,7 +145,7 @@ class KomplainController extends Controller
 
         $lama = $komplain->only(['status']);
 
-        $komplain->update(['status' => Complaint::STATUS_DIPROSES]);
+        $komplain->update(['status' => Complaint::STATUS_ESKALASI]);
 
         $actorId = ActivityLogger::resolveActorId();
 
@@ -173,7 +173,7 @@ class KomplainController extends Controller
             Complaint::class,
             $komplain->complaint_id,
             $lama,
-            ['status' => Complaint::STATUS_DIPROSES],
+            ['status' => Complaint::STATUS_ESKALASI],
             sprintf('Mengeskalasi komplain "%s" ke Owner toko %s.', $komplain->subjek, $komplain->store->nama_toko ?? '-')
         );
 
