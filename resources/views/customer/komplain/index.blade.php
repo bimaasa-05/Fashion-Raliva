@@ -339,29 +339,37 @@
         background-image: radial-gradient(circle at 1.5px 1.5px, rgba(255, 255, 255, .07) 1.5px, transparent 0);
     }
     #chat-content {
-    background-image: url('/images/wallpaper-chat-black.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-color: #171717;
-    position: relative;
-    isolation: isolate;
-}
+        background-image: url('/images/wallpaper-chat-white.jfif');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: #F8F6F2;
+        position: relative;
+        isolation: isolate;
+    }
+    html.theme-dark #chat-content {
+        background-image: url('/images/wallpaper-chat-black.png');
+        background-color: #171717;
+    }
     #chat-content::before {
         content: '';
         position: absolute;
         inset: 0;
-        background: rgba(255,255,255,.06);
+        background: rgba(255,255,255,.04);
         pointer-events: none;
         z-index: 0;
     }
-    html.theme-dark #chat-content::before { background: rgba(0,0,0,.18); }
+    html.theme-dark #chat-content::before { background: rgba(0,0,0,.12); }
     #chat-content > * { position: relative; z-index: 1; }
     #chat-edit-wallpaper {
-        background-image: url('/images/wallpaper-chat-black.png');
+        background-image: url('/images/wallpaper-chat-white.jfif');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
+        background-color: #F8F6F2;
+    }
+    html.theme-dark #chat-edit-wallpaper {
+        background-image: url('/images/wallpaper-chat-black.png');
         background-color: #171717;
     }
     .chat-header-item { transition: opacity .3s ease, transform .3s ease; }
