@@ -7,6 +7,7 @@ use App\Models\Notification;
 use App\Models\Setting;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PengaturanSistemController extends Controller
 {
@@ -42,7 +43,7 @@ class PengaturanSistemController extends Controller
         $data = $request->validate([
             'nama_platform' => 'sometimes|required|string|max:100',
             'email_support' => 'sometimes|required|email|max:100',
-            'komisi_persen_default' => 'sometimes|required|numeric|min:0|max:100',
+            'komisi_persen_default' => 'sometimes|required|numeric|min:0|max:15',
             'biaya_layanan' => 'sometimes|required|numeric|min:0',
             'min_pencairan' => 'sometimes|required|numeric|min:0',
             'mode_maintenance' => 'sometimes|nullable|in:0,1',
@@ -65,28 +66,40 @@ class PengaturanSistemController extends Controller
 
         $lama = [];
         $baru = [];
-        foreach ($map as $field => $key) {
-            if (! array_key_exists($field, $data)) continue;
-            $value = (string) $data[$field];
-            $lama[$field] = Setting::get($key);
-            Setting::set($key, $value);
-            $baru[$field] = $value;
-        }
+        DB::transaction(function () use ($map, $data, &$lama, &$baru) {
+            foreach ($map as $field => $key) {
+                if (! array_key_exists($field, $data)) {
+                    continue;
+                }
+
+                $value = (string) $data[$field];
+
+                Setting::where('kunci', $key)->lockForUpdate()->get();
+
+                $lama[$field] = Setting::get($key);
+                Setting::set($key, $value);
+                $baru[$field] = $value;
+            }
+
+            if (empty($baru)) {
+                return;
+            }
+
+            ActivityLogger::log(
+                'setting.system.update',
+                Setting::class,
+                null,
+                ['nilai_lama' => $lama],
+                ['nilai_baru' => $baru],
+                'Memperbarui pengaturan sistem platform.'
+            );
+
+            Notification::fireSelf(Notification::TIPE_SISTEM, 'Pengaturan Sistem Diperbarui', 'Pengaturan sistem platform berhasil disimpan.', route('superadmin.pengaturan-sistem'));
+        });
 
         if (empty($baru)) {
             return back()->with('toast', ['message' => 'Tidak ada pengaturan yang dikirim.', 'icon' => 'info']);
         }
-
-        ActivityLogger::log(
-            'setting.system.update',
-            Setting::class,
-            null,
-            ['nilai_lama' => $lama],
-            ['nilai_baru' => $baru],
-            'Memperbarui pengaturan sistem platform.'
-        );
-
-        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pengaturan Sistem Diperbarui', 'Pengaturan sistem platform berhasil disimpan.', route('superadmin.pengaturan-sistem'));
 
         return back()->with('toast', [
             'message' => 'Pengaturan sistem berhasil disimpan.',
