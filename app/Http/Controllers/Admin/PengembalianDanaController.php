@@ -14,12 +14,12 @@ class PengembalianDanaController extends Controller
 {
     public function index()
     {
-        $pengajuan = Refund::with(['order', 'requester', 'items'])
+        $pengajuan = Refund::with(['order.store', 'requester', 'items.orderItem.productVariant.product', 'payment'])
             ->whereIn('status', [Refund::STATUS_REQUESTED, Refund::STATUS_ESKALASI])
             ->orderByDesc('diajukan_pada')
             ->get();
 
-        $riwayat = Refund::with(['order', 'requester', 'reviewer'])
+        $riwayat = Refund::with(['order.store', 'requester', 'reviewer', 'items.orderItem.productVariant.product', 'payment'])
             ->whereNotIn('status', [Refund::STATUS_REQUESTED, Refund::STATUS_ESKALASI])
             ->orderByDesc('diajukan_pada')
             ->paginate(15);
