@@ -21,7 +21,7 @@ class VerifikasiPembayaranController extends Controller
 
         $base = Payment::query()
             ->whereIn('checkout_id', Order::whereIn('store_id', AdminContext::assignedStoreIds())->select('checkout_id'))
-            ->with(['checkout.user:user_id,nama_lengkap', 'checkout.orders.store:store_id,nama_toko', 'paymentMethod', 'proofs', 'verifications.verifier']);
+            ->with(['checkout.user:user_id,nama_lengkap', 'checkout.orders.store:store_id,nama_toko', 'checkout.orders.items.productVariant.product', 'paymentMethod', 'proofs', 'verifications.verifier']);
 
         $stats = [
             'menunggu' => (clone $base)->where('status', Payment::STATUS_MENUNGGU_VERIFIKASI)->count(),
