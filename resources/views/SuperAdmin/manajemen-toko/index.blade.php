@@ -315,11 +315,11 @@
             const catatan = rejected && d.catatan ? '<p class="text-xs text-on-surface-variant mt-2">' + d.catatan + '</p>' : '';
             const metaLabelSafe = meta.label.replace(/'/g, "\\'");
             const actions = verified ? ''
-                : '<div class="flex gap-2">'
+                : '<div class="flex gap-2 flex-wrap shrink-0">'
                     + '<form method="POST" action="' + actionUrls.dokumenSetujui(storeId, d.id) + '">@csrf<button type="submit" class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-secondary/40 text-secondary hover:bg-secondary/10">Setujui</button></form>'
                     + '<button type="button" onclick="openDocRejectModal(\'' + storeId + '\',' + d.id + ',\'' + metaLabelSafe + '\')" class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-error/40 text-error hover:bg-error/10">Tolak</button>'
                     + '</div>';
-            html += '<div class="bg-surface-container-low border border-muted-border rounded-lg p-4">'
+            html += '<div class="bg-surface-container-low border border-muted-border rounded-lg p-4 min-w-0">'
                 + '<div class="flex items-start gap-3">'
                 + '<div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[18px]">' + meta.icon + '</span></div>'
                 + '<div class="min-w-0 flex-1">'
@@ -329,8 +329,8 @@
                 + '</div>'
                 + '<span class="inline-flex shrink-0 items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border ' + badgeClass + '"><span class="material-symbols-outlined fill text-[12px]">' + badgeIcon + '</span>' + badgeLabel + '</span>'
                 + '</div>'
-                + '<div class="flex items-center justify-between mt-4 pt-3 border-t border-muted-border">'
-                + '<a href="' + previewUrl(d.path) + '" target="_blank" rel="noopener" class="text-[11px] font-bold uppercase tracking-wider text-gold-accent inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span>Lihat</a>'
+                + '<div class="flex items-center justify-between mt-4 pt-3 border-t border-muted-border gap-2 flex-wrap">'
+                + '<a href="' + previewUrl(d.path) + '" target="_blank" rel="noopener" class="text-[11px] font-bold uppercase tracking-wider text-gold-accent inline-flex items-center gap-1 whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">visibility</span>Lihat</a>'
                 + actions
                 + '</div>'
                 + '</div>';
@@ -502,9 +502,9 @@ document.addEventListener('DOMContentLoaded', () => {
             </section>
 
             <section>
-                <div class="flex items-center justify-between mb-4 gap-3">
-                    <h4 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Dokumen Toko</h4>
-                    <button id="btn-open-all-docs" type="button" onclick="openAllDocs()" class="hidden items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-gold-accent/40 text-gold-accent hover:bg-gold-accent/10 transition-colors">
+                <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
+                    <h4 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading min-w-0">Dokumen Toko</h4>
+                    <button id="btn-open-all-docs" type="button" onclick="openAllDocs()" class="hidden items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-gold-accent/40 text-gold-accent hover:bg-gold-accent/10 transition-colors whitespace-nowrap">
                         <span class="material-symbols-outlined text-[14px]">folder_open</span>Lihat Semua Sertifikat
                     </button>
                 </div>
