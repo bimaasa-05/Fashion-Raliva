@@ -55,7 +55,7 @@ class KaryawanController extends Controller
         $validated = $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:6'],
+            'password' => ['required', 'string', 'min:8'],
             'role' => ['required', 'in:admin,produksi,gudang'],
         ]);
 
