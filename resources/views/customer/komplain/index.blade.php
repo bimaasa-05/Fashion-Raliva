@@ -255,7 +255,7 @@
 <span class="material-symbols-outlined text-[18px]">add</span>{{ __('Ajukan Komplain') }}
 </a>
 </div>
-<div class="space-y-glue">
+<div class="space-y-4 md:space-y-6">
 @forelse ($complaints as $c)
     @php
         $statusLabel = match ($c->status) {
