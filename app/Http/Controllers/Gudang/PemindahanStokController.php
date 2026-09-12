@@ -111,37 +111,6 @@ class PemindahanStokController extends Controller
                 'product_variant_id' => $data['product_variant_id'],
                 'jumlah' => $data['jumlah'],
             ]);
-
-            WarehouseStock::where('warehouse_id', $warehouse->warehouse_id)
-                ->where('product_variant_id', $data['product_variant_id'])
-                ->decrement('jumlah_stok', $data['jumlah']);
-
-            StockMovement::create([
-                'warehouse_id' => $warehouse->warehouse_id,
-                'product_variant_id' => $data['product_variant_id'],
-                'tipe_pergerakan' => StockMovement::TIPE_MUTASI_KELUAR,
-                'jumlah' => $data['jumlah'],
-                'sumber_tipe' => StockMovement::SUMBER_STOCK_TRANSFER,
-                'sumber_id' => $transfer->stock_transfer_id,
-                'alasan' => $data['catatan'] ?? 'Pemindahan stok keluar',
-                'dibuat_oleh' => auth()->id(),
-            ]);
-
-            WarehouseStock::updateOrCreate(
-                ['warehouse_id' => $data['to_warehouse_id'], 'product_variant_id' => $data['product_variant_id']],
-                ['jumlah_stok' => DB::raw('jumlah_stok + '.$data['jumlah'])]
-            );
-
-            StockMovement::create([
-                'warehouse_id' => $data['to_warehouse_id'],
-                'product_variant_id' => $data['product_variant_id'],
-                'tipe_pergerakan' => StockMovement::TIPE_MUTASI_MASUK,
-                'jumlah' => $data['jumlah'],
-                'sumber_tipe' => StockMovement::SUMBER_STOCK_TRANSFER,
-                'sumber_id' => $transfer->stock_transfer_id,
-                'alasan' => $data['catatan'] ?? 'Pemindahan stok masuk',
-                'dibuat_oleh' => auth()->id(),
-            ]);
         });
 
         ActivityLogger::log(
@@ -150,20 +119,217 @@ class PemindahanStokController extends Controller
             $warehouse->warehouse_id,
             null,
             ['to_warehouse_id' => $data['to_warehouse_id'], 'product_variant_id' => $data['product_variant_id'], 'jumlah' => $data['jumlah']],
-            sprintf('Pemindahan %d unit dari "%s" ke gudang tujuan.', $data['jumlah'], $warehouse->nama_gudang)
+            sprintf('Mengajukan pemindahan %d unit dari "%s" (menunggu persetujuan gudang tujuan).', $data['jumlah'], $warehouse->nama_gudang)
         );
 
         NotificationService::sendToRole(
             Role::ADMIN,
             Notification::TIPE_SISTEM,
             'Permintaan Pemindahan Stok',
-            sprintf('Pemindahan %d unit diajukan dari gudang "%s".', $data['jumlah'], $warehouse->nama_gudang),
+            sprintf('Pemindahan %d unit diajukan dari gudang "%s", menunggu persetujuan.', $data['jumlah'], $warehouse->nama_gudang),
             auth()->id(),
             route('admin.koordinasi-gudang')
         );
-        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemindahan Stok Diajukan', sprintf('Permintaan pemindahan %d unit berhasil dibuat.', $data['jumlah']), route('gudang.dashboard'));
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemindahan Stok Diajukan', sprintf('Permintaan pemindahan %d unit berhasil dibuat, menunggu persetujuan gudang tujuan.', $data['jumlah']), route('gudang.dashboard'));
 
-        return back()->with('toast', ['message' => 'Permintaan pemindahan berhasil dibuat.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => 'Permintaan pemindahan berhasil dibuat, menunggu persetujuan.', 'icon' => 'task_alt']);
+    }
+
+    public function approve(Request $request, StockTransfer $transfer)
+    {
+        if (! auth()->user()->hasPermission('warehouse.transfer')) {
+            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+        }
+
+        $warehouse = $this->activeWarehouse();
+
+        if (! $warehouse) {
+            return back()->with('toast', ['message' => 'Tidak ada gudang aktif.', 'icon' => 'gpp_maybe']);
+        }
+
+        if ((int) $transfer->to_warehouse_id !== (int) $warehouse->warehouse_id) {
+            return back()->with('toast', ['message' => 'Hanya gudang tujuan yang dapat menyetujui pemindahan.', 'icon' => 'gpp_maybe']);
+        }
+
+        if ($transfer->status !== StockTransfer::STATUS_REQUESTED) {
+            return back()->with('toast', ['message' => 'Pemindahan tidak berstatus diajukan.', 'icon' => 'gpp_maybe']);
+        }
+
+        try {
+            DB::transaction(function () use ($transfer, $warehouse) {
+                $locked = StockTransfer::with('items')
+                    ->where('stock_transfer_id', $transfer->stock_transfer_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                if ($locked->status !== StockTransfer::STATUS_REQUESTED) {
+                    throw new \RuntimeException('Status pemindahan sudah berubah.');
+                }
+
+                foreach ($locked->items as $item) {
+                    $stok = WarehouseStock::where('warehouse_id', $locked->from_warehouse_id)
+                        ->where('product_variant_id', $item->product_variant_id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (! $stok || $stok->jumlah_stok < $item->jumlah) {
+                        throw new \RuntimeException('Stok gudang asal tidak mencukupi untuk pemindahan ini.');
+                    }
+                }
+
+                foreach ($locked->items as $item) {
+                    WarehouseStock::where('warehouse_id', $locked->from_warehouse_id)
+                        ->where('product_variant_id', $item->product_variant_id)
+                        ->decrement('jumlah_stok', $item->jumlah);
+
+                    StockMovement::create([
+                        'warehouse_id' => $locked->from_warehouse_id,
+                        'product_variant_id' => $item->product_variant_id,
+                        'tipe_pergerakan' => StockMovement::TIPE_MUTASI_KELUAR,
+                        'jumlah' => $item->jumlah,
+                        'sumber_tipe' => StockMovement::SUMBER_STOCK_TRANSFER,
+                        'sumber_id' => $locked->stock_transfer_id,
+                        'alasan' => 'Pemindahan stok keluar (disetujui)',
+                        'dibuat_oleh' => auth()->id(),
+                    ]);
+                }
+
+                $locked->update(['status' => StockTransfer::STATUS_APPROVED, 'approved_by' => auth()->id()]);
+            });
+        } catch (\Throwable $e) {
+            return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
+        }
+
+        ActivityLogger::log('stock.transfer.approve', StockTransfer::class, $transfer->stock_transfer_id, ['status' => StockTransfer::STATUS_REQUESTED], ['status' => StockTransfer::STATUS_APPROVED], sprintf('Menyetujui pemindahan ke "%s".', $warehouse->nama_gudang));
+        NotificationService::sendToRole(Role::ADMIN, Notification::TIPE_SISTEM, 'Pemindahan Disetujui', sprintf('Pemindahan ke gudang "%s" disetujui.', $warehouse->nama_gudang), auth()->id(), route('admin.koordinasi-gudang'));
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemindahan Disetujui', 'Pemindahan stok disetujui, menunggu penerimaan barang.', route('gudang.dashboard'));
+
+        return back()->with('toast', ['message' => 'Pemindahan disetujui, stok keluar dicatat.', 'icon' => 'task_alt']);
+    }
+
+    public function receive(Request $request, StockTransfer $transfer)
+    {
+        if (! auth()->user()->hasPermission('warehouse.transfer')) {
+            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+        }
+
+        $warehouse = $this->activeWarehouse();
+
+        if (! $warehouse) {
+            return back()->with('toast', ['message' => 'Tidak ada gudang aktif.', 'icon' => 'gpp_maybe']);
+        }
+
+        if ((int) $transfer->to_warehouse_id !== (int) $warehouse->warehouse_id) {
+            return back()->with('toast', ['message' => 'Hanya gudang tujuan yang dapat menerima pemindahan.', 'icon' => 'gpp_maybe']);
+        }
+
+        if ($transfer->status !== StockTransfer::STATUS_APPROVED) {
+            return back()->with('toast', ['message' => 'Pemindahan belum disetujui.', 'icon' => 'gpp_maybe']);
+        }
+
+        try {
+            DB::transaction(function () use ($transfer, $warehouse) {
+                $locked = StockTransfer::with('items')
+                    ->where('stock_transfer_id', $transfer->stock_transfer_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                if ($locked->status !== StockTransfer::STATUS_APPROVED) {
+                    throw new \RuntimeException('Status pemindahan sudah berubah.');
+                }
+
+                foreach ($locked->items as $item) {
+                    WarehouseStock::updateOrCreate(
+                        ['warehouse_id' => $locked->to_warehouse_id, 'product_variant_id' => $item->product_variant_id],
+                        ['jumlah_stok' => DB::raw('jumlah_stok + '.$item->jumlah)]
+                    );
+
+                    StockMovement::create([
+                        'warehouse_id' => $locked->to_warehouse_id,
+                        'product_variant_id' => $item->product_variant_id,
+                        'tipe_pergerakan' => StockMovement::TIPE_MUTASI_MASUK,
+                        'jumlah' => $item->jumlah,
+                        'sumber_tipe' => StockMovement::SUMBER_STOCK_TRANSFER,
+                        'sumber_id' => $locked->stock_transfer_id,
+                        'alasan' => 'Penerimaan pemindahan stok',
+                        'dibuat_oleh' => auth()->id(),
+                    ]);
+                }
+
+                $locked->update(['status' => StockTransfer::STATUS_RECEIVED, 'diterima_pada' => now()]);
+            });
+        } catch (\Throwable $e) {
+            return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
+        }
+
+        ActivityLogger::log('stock.transfer.receive', StockTransfer::class, $transfer->stock_transfer_id, ['status' => StockTransfer::STATUS_APPROVED], ['status' => StockTransfer::STATUS_RECEIVED], sprintf('Menerima pemindahan di "%s".', $warehouse->nama_gudang));
+        NotificationService::sendToRole(Role::ADMIN, Notification::TIPE_SISTEM, 'Pemindahan Diterima', sprintf('Pemindahan ke gudang "%s" telah diterima.', $warehouse->nama_gudang), auth()->id(), route('admin.koordinasi-gudang'));
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemindahan Diterima', 'Barang pemindahan stok telah diterima.', route('gudang.dashboard'));
+
+        return back()->with('toast', ['message' => 'Pemindahan diterima, stok masuk dicatat.', 'icon' => 'task_alt']);
+    }
+
+    public function cancel(Request $request, StockTransfer $transfer)
+    {
+        if (! auth()->user()->hasPermission('warehouse.transfer')) {
+            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+        }
+
+        $warehouse = $this->activeWarehouse();
+
+        if (! $warehouse) {
+            return back()->with('toast', ['message' => 'Tidak ada gudang aktif.', 'icon' => 'gpp_maybe']);
+        }
+
+        if ((int) $transfer->from_warehouse_id !== (int) $warehouse->warehouse_id) {
+            return back()->with('toast', ['message' => 'Hanya gudang asal yang dapat membatalkan pemindahan.', 'icon' => 'gpp_maybe']);
+        }
+
+        if (! in_array($transfer->status, [StockTransfer::STATUS_REQUESTED, StockTransfer::STATUS_APPROVED], true)) {
+            return back()->with('toast', ['message' => 'Pemindahan yang sudah diterima tidak dapat dibatalkan.', 'icon' => 'gpp_maybe']);
+        }
+
+        try {
+            DB::transaction(function () use ($transfer) {
+                $locked = StockTransfer::with('items')
+                    ->where('stock_transfer_id', $transfer->stock_transfer_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                if (! in_array($locked->status, [StockTransfer::STATUS_REQUESTED, StockTransfer::STATUS_APPROVED], true)) {
+                    throw new \RuntimeException('Status pemindahan sudah berubah.');
+                }
+
+                if ($locked->status === StockTransfer::STATUS_APPROVED) {
+                    foreach ($locked->items as $item) {
+                        WarehouseStock::updateOrCreate(
+                            ['warehouse_id' => $locked->from_warehouse_id, 'product_variant_id' => $item->product_variant_id],
+                            ['jumlah_stok' => DB::raw('jumlah_stok + '.$item->jumlah)]
+                        );
+
+                        StockMovement::create([
+                            'warehouse_id' => $locked->from_warehouse_id,
+                            'product_variant_id' => $item->product_variant_id,
+                            'tipe_pergerakan' => StockMovement::TIPE_MUTASI_MASUK,
+                            'jumlah' => $item->jumlah,
+                            'sumber_tipe' => StockMovement::SUMBER_STOCK_TRANSFER,
+                            'sumber_id' => $locked->stock_transfer_id,
+                            'alasan' => 'Pengembalian stok atas pembatalan pemindahan',
+                            'dibuat_oleh' => auth()->id(),
+                        ]);
+                    }
+                }
+
+                $locked->update(['status' => StockTransfer::STATUS_CANCELLED]);
+            });
+        } catch (\Throwable $e) {
+            return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
+        }
+
+        ActivityLogger::log('stock.transfer.cancel', StockTransfer::class, $transfer->stock_transfer_id, null, ['status' => StockTransfer::STATUS_CANCELLED], 'Membatalkan pemindahan stok.');
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemindahan Dibatalkan', 'Permintaan pemindahan stok dibatalkan.', route('gudang.dashboard'));
+
+        return back()->with('toast', ['message' => 'Pemindahan dibatalkan.', 'icon' => 'task_alt']);
     }
 
     private function getProductsForWarehouse($warehouse)
