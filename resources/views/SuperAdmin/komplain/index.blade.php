@@ -251,8 +251,8 @@
 <!-- Chat Komplain Modal (synced identical to Customer) -->
 <div class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
     <div class="min-h-full lg:h-full flex flex-col justify-end lg:flex-row lg:justify-end" onclick="if(event.target===this) closeChatModal()">
-        <div id="chat-panel" class="flex flex-col bg-surface-container-low border-t md:border lg:border-t-0 lg:border-l border-[var(--border-soft)] rounded-t-3xl md:rounded-2xl lg:rounded-none max-h-[85dvh] md:max-h-[78dvh] lg:max-h-full lg:h-full w-full md:w-[520px] lg:w-[560px] xl:w-[600px] md:max-w-[88vw] lg:max-w-full md:mx-auto lg:mx-0 overflow-hidden md:shadow-2xl lg:shadow-none" onclick="event.stopPropagation()">
-            <div class="relative flex items-center justify-between gap-2 lg:gap-3 pl-6 pr-3 lg:px-6 py-3.5 lg:py-4 border-b border-[var(--border-soft)] shrink-0 bg-surface-container-low z-10 overflow-visible" id="chat-header">
+        <div id="chat-panel" class="flex flex-col bg-surface-container-low border-t md:border lg:border-t-0 lg:border-l border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-t-3xl md:rounded-2xl lg:rounded-none max-h-[85dvh] md:max-h-[78dvh] lg:max-h-full lg:h-full w-full md:w-[520px] lg:w-[560px] xl:w-[600px] md:max-w-[88vw] lg:max-w-full md:mx-auto lg:mx-0 overflow-hidden md:shadow-2xl lg:shadow-none" onclick="event.stopPropagation()">
+            <div class="relative flex items-center justify-between gap-2 lg:gap-3 pl-6 pr-3 lg:px-6 py-3.5 lg:py-4 border-b border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shrink-0 bg-surface-container-low z-10 overflow-visible" id="chat-header">
                 <div class="min-w-0 flex-1 chat-header-item" id="chat-header-title">
                     <h3 class="font-title-md text-title-md text-on-surface truncate leading-tight" id="chat-subject">-</h3>
                     <p class="font-mono text-on-surface-variant text-xs mt-0.5 truncate" id="chat-kode">-</p>
@@ -266,7 +266,7 @@
                         <button type="button" onclick="toggleChatMoreMenu()" id="chat-more-btn" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Menu" aria-label="Menu">
                             <span class="material-symbols-outlined text-[20px]">more_vert</span>
                         </button>
-                        <div id="chat-more-menu" class="hidden absolute right-0 top-full mt-2 min-w-[220px] rounded-xl border border-outline-variant bg-surface-container-high shadow-xl z-40 py-1.5">
+                        <div id="chat-more-menu" class="hidden absolute right-0 top-full mt-2 min-w-[220px] rounded-xl border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] bg-surface-container-high shadow-xl z-40 py-1.5">
                             <button type="button" onclick="openWallpaperPicker()" id="chat-more-item-wallpaper" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
                                 <span class="material-symbols-outlined text-[19px]">wallpaper</span>Ganti Wallpaper
                             </button>
@@ -286,7 +286,7 @@
                     <button type="button" id="chat-search-close" onclick="toggleChatSearch()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Tutup pencarian" aria-label="Tutup pencarian">
                         <span class="material-symbols-outlined text-[20px]">search</span>
                     </button>
-                    <input id="chat-search-input" type="text" inputmode="search" autocomplete="off" placeholder="Cari pesan..." class="flex-1 min-w-0 bg-transparent font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/70 border-b border-[var(--border-soft)] focus:border-secondary py-2"/>
+                    <input id="chat-search-input" type="text" inputmode="search" autocomplete="off" placeholder="Cari pesan..." class="flex-1 min-w-0 bg-transparent font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/70 border-b border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] focus:border-secondary py-2"/>
                     <button type="button" id="chat-search-clear" onclick="clearChatSearch()" class="hidden w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Hapus pencarian" aria-label="Hapus pencarian">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
@@ -300,7 +300,7 @@
                 </div>
             </div>
             <div class="relative px-3 lg:px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] shrink-0 bg-transparent" id="chat-input-area">
-                <div id="chat-emoji-panel" class="hidden absolute bottom-full mb-3 left-3 lg:left-4 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-outline-variant bg-surface-container-high p-3 shadow-xl"></div>
+                <div id="chat-emoji-panel" class="hidden absolute bottom-full mb-3 left-3 lg:left-4 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] bg-surface-container-high p-3 shadow-xl"></div>
                 <div id="chat-composer" class="flex items-end gap-1 lg:gap-1.5 bg-surface-container-lowest dark:bg-[#1c1c1c] border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-[26px] lg:rounded-[28px] px-2 lg:px-2.5 py-2 lg:py-2.5 shadow-sm transition-colors duration-150 focus-within:border-secondary">
                     <button type="button" onclick="toggleEmojiPanel()" id="chat-emoji-toggle" aria-label="Emoji" title="Emoji" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0">
                         <span class="material-symbols-outlined text-[20px]">mood</span>
@@ -336,7 +336,7 @@
     </div>
     <input type="file" id="chat-wallpaper-input" accept="image/*" class="hidden">
     <div id="chat-delete-dialog" class="hidden fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeDeleteDialog();}">
-        <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-outline-variant shadow-2xl" onclick="event.stopPropagation()">
+        <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shadow-2xl" onclick="event.stopPropagation()">
             <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">Hapus pesan ini?</p>
             <button type="button" id="chat-del-opt-all" data-del-per="all" onclick="deleteMessage(deleteDialogMsgId,'all')" class="w-full text-left px-4 py-3 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
                 <span class="block font-body-sm text-body-sm text-on-surface">Hapus untuk semua orang</span>
@@ -352,7 +352,7 @@
         </div>
     </div>
     <div id="chat-sel-delete-dialog" class="hidden fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeSelDeleteDialog();}">
-        <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-outline-variant shadow-2xl" onclick="event.stopPropagation()">
+        <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shadow-2xl" onclick="event.stopPropagation()">
             <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">Hapus <span id="chat-sel-del-count" class="text-on-surface">-</span>?</p>
             <p class="font-body-sm text-body-sm text-on-surface-variant px-4 pb-2">Pesan hanya dihapus dari akun Anda.</p>
             <button type="button" data-sel-del-ok onclick="deleteSelectedMessages()" class="w-full text-left px-4 py-3 mt-1 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
@@ -364,8 +364,8 @@
         </div>
     </div>
     <div id="chat-edit-dialog" class="hidden fixed inset-0 z-[80] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeEditDialog();}">
-        <div class="w-full sm:max-w-lg bg-surface-container-low rounded-t-3xl sm:rounded-2xl border border-outline-variant shadow-2xl overflow-hidden flex flex-col max-h-[90dvh]" onclick="event.stopPropagation()">
-            <div class="flex items-center gap-3 px-5 py-4 border-b border-[var(--border-soft)] shrink-0">
+        <div class="w-full sm:max-w-lg bg-surface-container-low rounded-t-3xl sm:rounded-2xl border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shadow-2xl overflow-hidden flex flex-col max-h-[90dvh]" onclick="event.stopPropagation()">
+            <div class="flex items-center gap-3 px-5 py-4 border-b border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shrink-0">
                 <button type="button" onclick="closeEditDialog()" class="p-2 -ml-2 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer" title="Tutup">
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </button>
@@ -377,13 +377,13 @@
                     <p id="chat-edit-preview" class="font-body-sm text-body-sm whitespace-pre-wrap break-words">-</p>
                 </div>
             </div>
-            <div class="relative border-t border-[var(--border-soft)] bg-surface-container-lowest/60 px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] shrink-0">
-                <div id="chat-edit-emoji-panel" class="hidden absolute bottom-full mb-3 left-5 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-outline-variant bg-surface-container-high p-3 shadow-xl"></div>
+            <div class="relative border-t border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] bg-surface-container-lowest/60 px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] shrink-0">
+                <div id="chat-edit-emoji-panel" class="hidden absolute bottom-full mb-3 left-5 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] bg-surface-container-high p-3 shadow-xl"></div>
                 <div class="flex items-end gap-2 lg:gap-3">
                     <button type="button" onclick="toggleEditEmojiPanel()" id="chat-edit-emoji-toggle" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Emoji" aria-label="Emoji">
                         <span class="material-symbols-outlined text-[20px]">mood</span>
                     </button>
-                    <textarea id="chat-edit-input" rows="1" maxlength="2000" class="flex-1 bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant resize-none focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors" onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();saveEditMessage();}"></textarea>
+                    <textarea id="chat-edit-input" rows="1" maxlength="2000" class="flex-1 bg-surface-container-low border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-lg px-4 py-3 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant resize-none focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors" onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();saveEditMessage();}"></textarea>
                     <button type="button" onclick="saveEditMessage()" id="chat-edit-save" class="w-11 h-11 lg:w-12 lg:h-12 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 transition-opacity disabled:opacity-40 rounded-full" title="Simpan">
                         <span class="material-symbols-outlined text-[20px]">check</span>
                     </button>
@@ -453,7 +453,7 @@
         position: relative;
         isolation: isolate;
     }
-    html.theme-dark #chat-content {
+    html.theme-dark #chat-content, .dark #chat-content {
         background-image: url('/images/wallpaper-chat-black.png');
         background-color: #171717;
     }
@@ -465,7 +465,7 @@
         pointer-events: none;
         z-index: 0;
     }
-    html.theme-dark #chat-content::before { background: rgba(0,0,0,.12); }
+    html.theme-dark #chat-content::before, .dark #chat-content::before { background: rgba(0,0,0,.12); }
     #chat-content > * { position: relative; z-index: 1; }
     #chat-edit-wallpaper {
         background-image: url('/images/wallpaper-chat-white.png');
@@ -474,7 +474,7 @@
         background-repeat: no-repeat;
         background-color: #F8F6F2;
     }
-    html.theme-dark #chat-edit-wallpaper {
+    html.theme-dark #chat-edit-wallpaper, .dark #chat-edit-wallpaper {
         background-image: url('/images/wallpaper-chat-black.png');
         background-color: #171717;
     }
@@ -690,7 +690,7 @@
     function chatMenuMarkup(id, btnColor) {
         return '<span class="relative shrink-0 chat-menu-wrap">' +
             '<button type="button" data-menu-btn="' + id + '" onclick="toggleChatMenu(' + id + ')" class="chat-menu-btn ' + btnColor + ' lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100 focus:opacity-100 transition-opacity cursor-pointer rounded-full w-7 h-7 flex items-center justify-center" title="…"><span class="material-symbols-outlined text-[17px]">more_horiz</span></button>' +
-            '<span data-menu="' + id + '" class="chat-menu hidden absolute right-0 top-full mt-1 min-w-[170px] z-30 rounded-xl border border-outline-variant bg-surface-container-high py-1 shadow-xl">';
+            '<span data-menu="' + id + '" class="chat-menu hidden absolute right-0 top-full mt-1 min-w-[170px] z-30 rounded-xl border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] bg-surface-container-high py-1 shadow-xl">';
     }
 
     function renderMessages(messages) {
