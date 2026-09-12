@@ -442,7 +442,7 @@
     }
 </style>
 <!-- Chat Komplain Modal (ala Super Admin; warna RALIVA) -->
-<div class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
+<div class="hidden fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
     <div class="min-h-full lg:h-full flex flex-col justify-end lg:flex-row lg:justify-end" onclick="if(event.target===this) closeChatModal()">
         <div id="chat-panel" class="flex flex-col bg-surface-container-low border-t md:border lg:border-t-0 lg:border-l border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-t-3xl md:rounded-2xl lg:rounded-none max-h-[85dvh] md:max-h-[78dvh] lg:max-h-full lg:h-full w-full md:w-[520px] lg:w-[560px] xl:w-[600px] md:max-w-[88vw] lg:max-w-full md:mx-auto lg:mx-0 overflow-hidden md:shadow-2xl lg:shadow-none" onclick="event.stopPropagation()">
             <div class="relative flex items-center justify-between gap-2 lg:gap-3 pl-6 pr-3 lg:px-6 py-3.5 lg:py-4 border-b border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shrink-0 bg-surface-container-low z-10 overflow-visible" id="chat-header">
@@ -645,6 +645,11 @@
         container.classList.add('raliva-chat-in');
         panel.classList.add('raliva-chat-in-sheet');
         document.body.style.overflow = 'hidden';
+        // Blur & disable sidebar like Super Admin
+        const drawer = document.getElementById('drawer-panel');
+        if (drawer) { drawer.style.filter = 'blur(2px)'; drawer.style.pointerEvents = 'none'; drawer.style.opacity = '0.7'; }
+        const drawerOverlay = document.getElementById('drawer-overlay');
+        if (drawerOverlay) drawerOverlay.classList.add('hidden');
 
         if (window.autoGrowChatInput) {
             requestAnimationFrame(function () {
@@ -671,6 +676,8 @@
         closeEditDialog();
         closeEmojiPanel();
         document.body.style.overflow = '';
+        const drawer2 = document.getElementById('drawer-panel');
+        if (drawer2) { drawer2.style.filter = ''; drawer2.style.pointerEvents = ''; drawer2.style.opacity = ''; }
         if (currentChat.polling) clearInterval(currentChat.polling);
         currentChat.id = null;
 
