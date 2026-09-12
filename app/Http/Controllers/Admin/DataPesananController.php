@@ -5,9 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Payment;
+use App\Models\ProductVariant;
 use App\Support\ActivityLogger;
 use App\Support\AdminContext;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DataPesananController extends Controller
 {
@@ -262,6 +266,172 @@ class DataPesananController extends Controller
         return back()->with('toast', [
             'message' => "Pesanan {$pesanan->nomor_order} dibatalkan.",
             'icon' => 'block',
+        ]);
+    }
+
+    public function updateItems(Request $request, Order $pesanan)
+    {
+        if (! AdminContext::canAccessStore($pesanan->store_id)) {
+            return back()->with('toast', ['message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.', 'icon' => 'gpp_maybe']);
+        }
+
+        if (! in_array($pesanan->status, [Order::STATUS_PENDING_PAYMENT, Order::STATUS_DIBAYAR], true)) {
+            return back()->with('toast', ['message' => 'Hanya pesanan Menunggu Pembayaran atau Dibayar yang dapat diubah.', 'icon' => 'gpp_maybe']);
+        }
+
+        $pesanan->loadMissing(['checkout.payment', 'shipments']);
+
+        if ($pesanan->checkout?->payment || Payment::where('checkout_id', $pesanan->checkout_id)->exists()) {
+            return back()->with('toast', ['message' => 'Pesanan sudah memiliki pembayaran, tidak dapat diubah.', 'icon' => 'gpp_maybe']);
+        }
+
+        if ($pesanan->shipments->isNotEmpty() || $pesanan->shipments()->exists()) {
+            return back()->with('toast', ['message' => 'Pesanan sudah memiliki pengiriman, tidak dapat diubah.', 'icon' => 'gpp_maybe']);
+        }
+
+        $data = $request->validate([
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.order_item_id' => ['nullable', 'integer', 'exists:order_items,order_item_id'],
+            'items.*.product_variant_id' => ['nullable', 'integer', 'exists:product_variants,product_variant_id'],
+            'items.*.quantity' => ['required', 'integer', 'min:1', 'max:100'],
+            'removed' => ['sometimes', 'array'],
+            'removed.*' => ['integer', 'exists:order_items,order_item_id'],
+        ]);
+
+        $lamaItems = $pesanan->items()->get()->map(fn ($it) => $it->only(['order_item_id', 'product_variant_id', 'quantity', 'subtotal']))->all();
+        $lamaTotal = $pesanan->only(['subtotal', 'grand_total']);
+
+        DB::transaction(function () use ($pesanan, $data, &$baruItems, &$baruTotal) {
+            $order = Order::with(['checkout.payment', 'shipments', 'items'])
+                ->where('order_id', $pesanan->order_id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if (! in_array($order->status, [Order::STATUS_PENDING_PAYMENT, Order::STATUS_DIBAYAR], true)) {
+                throw new \RuntimeException('Status pesanan berubah, tidak dapat diubah.');
+            }
+
+            if ($order->checkout?->payment || Payment::where('checkout_id', $order->checkout_id)->exists()) {
+                throw new \RuntimeException('Pesanan sudah memiliki pembayaran, tidak dapat diubah.');
+            }
+
+            if ($order->shipments->isNotEmpty()) {
+                throw new \RuntimeException('Pesanan sudah memiliki pengiriman, tidak dapat diubah.');
+            }
+
+            $removed = collect($data['removed'] ?? [])->map(fn ($id) => (int) $id)->all();
+
+            $merged = [];
+            foreach ($data['items'] as $row) {
+                if (empty($row['product_variant_id'])) {
+                    continue;
+                }
+                $variantId = (int) $row['product_variant_id'];
+                $qty = max(1, (int) $row['quantity']);
+                $merged[$variantId] = [
+                    'qty' => ($merged[$variantId]['qty'] ?? 0) + $qty,
+                    'order_item_id' => $row['order_item_id'] ?? null,
+                ];
+            }
+
+            if (empty($merged)) {
+                throw new \RuntimeException('Minimal 1 item tersisa; hapus via Batalkan.');
+            }
+
+            $variants = ProductVariant::with(['product:product_id,store_id,nama_produk,harga_dasar', 'warehouseStocks'])
+                ->whereIn('product_variant_id', array_keys($merged))
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('product_variant_id');
+
+            $prepared = [];
+            $subtotal = 0;
+            foreach ($merged as $variantId => $line) {
+                $variant = $variants->get($variantId);
+
+                if (! $variant || (int) $variant->product?->store_id !== (int) $order->store_id) {
+                    throw new \RuntimeException('Varian tidak valid untuk toko ini.');
+                }
+
+                $stok = (int) $variant->warehouseStocks->sum('jumlah_stok');
+
+                if ($line['qty'] > $stok) {
+                    $nama = $variant->product?->nama_produk ?? 'Produk';
+                    throw new \RuntimeException("Stok {$nama} hanya tersisa {$stok}.");
+                }
+
+                $harga = (float) ($variant->harga ?? $variant->product?->harga_dasar ?? 0);
+                $sub = $harga * $line['qty'];
+                $subtotal += $sub;
+                $prepared[] = [
+                    'variant' => $variant,
+                    'qty' => $line['qty'],
+                    'harga' => $harga,
+                    'sub' => $sub,
+                    'order_item_id' => $line['order_item_id'],
+                    'nama' => $variant->product?->nama_produk ?? 'Produk',
+                ];
+            }
+
+            $existingIds = $order->items->pluck('order_item_id')->all();
+            $keepIds = [];
+
+            foreach ($prepared as $p) {
+                $row = null;
+
+                if ($p['order_item_id'] && in_array($p['order_item_id'], $existingIds, true)) {
+                    $row = OrderItem::where('order_item_id', $p['order_item_id'])->first();
+                }
+
+                if ($row) {
+                    $row->update([
+                        'product_variant_id' => $p['variant']->product_variant_id,
+                        'nama_produk_snapshot' => $p['nama'],
+                        'harga_snapshot' => $p['harga'],
+                        'quantity' => $p['qty'],
+                        'subtotal' => $p['sub'],
+                        'total' => $p['sub'],
+                    ]);
+                } else {
+                    $row = OrderItem::create([
+                        'order_id' => $order->order_id,
+                        'product_variant_id' => $p['variant']->product_variant_id,
+                        'nama_produk_snapshot' => $p['nama'],
+                        'harga_snapshot' => $p['harga'],
+                        'quantity' => $p['qty'],
+                        'subtotal' => $p['sub'],
+                        'diskon' => 0,
+                        'total' => $p['sub'],
+                    ]);
+                }
+
+                $keepIds[] = $row->order_item_id;
+            }
+
+            $dropIds = array_values(array_diff(array_merge($existingIds, $removed), $keepIds));
+            if ($dropIds) {
+                OrderItem::whereIn('order_item_id', $dropIds)->delete();
+            }
+
+            $order->update(['subtotal' => $subtotal, 'grand_total' => $subtotal]);
+
+            $checkout = $order->checkout;
+            if ($checkout) {
+                $siblingTotal = Order::where('checkout_id', $checkout->checkout_id)->sum('grand_total');
+                $checkout->update(['subtotal' => $siblingTotal, 'grand_total' => $siblingTotal]);
+            }
+
+            $baruItems = OrderItem::where('order_id', $order->order_id)->get()->map(fn ($it) => $it->only(['order_item_id', 'product_variant_id', 'quantity', 'subtotal']))->all();
+            $baruTotal = ['subtotal' => $subtotal, 'grand_total' => $subtotal];
+        });
+
+        ActivityLogger::log('admin.order.items.update', Order::class, $pesanan->order_id, ['items' => $lamaItems, 'total' => $lamaTotal], ['items' => $baruItems ?? [], 'total' => $baruTotal ?? []], sprintf('Mengubah item pesanan %s.', $pesanan->nomor_order));
+        $this->notifyCustomer($pesanan, 'Pesanan Diperbarui', sprintf('Pesanan %s diperbarui oleh toko.', $pesanan->nomor_order));
+        Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Diperbarui', sprintf('Pesanan %s berhasil diperbarui.', $pesanan->nomor_order), route('admin.pesanan'));
+
+        return back()->with('toast', [
+            'message' => "Pesanan {$pesanan->nomor_order} diperbarui.",
+            'icon' => 'task_alt',
         ]);
     }
 
