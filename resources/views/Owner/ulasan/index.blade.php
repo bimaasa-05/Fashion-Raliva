@@ -151,6 +151,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 t.classList.toggle('bg-deep-onyx', active);
                 t.classList.toggle('text-on-primary', active);
                 t.classList.toggle('text-on-surface-variant', !active);
+                t.classList.toggle('hover:text-on-surface', !active);
             });
             const target = tab.getAttribute('data-review-tab');
             document.querySelectorAll('[data-review-card]').forEach((card) => {
