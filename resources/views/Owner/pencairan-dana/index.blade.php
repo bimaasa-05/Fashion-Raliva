@@ -69,8 +69,10 @@
             @csrf
             <div>
                 <label class="block raliva-label mb-2">Jumlah Pencairan</label>
-                <input name="jumlah" type="text" inputmode="numeric" data-rupiah required class="raliva-input" placeholder="100.000" />
-                <p data-rupiah-hint class="text-xs text-gold-accent font-bold mt-1.5">Rp 0</p>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-on-surface-variant pointer-events-none">Rp</span>
+                    <input name="jumlah" type="text" inputmode="numeric" data-rupiah required class="raliva-input" style="padding-left:2.75rem" placeholder="100.000" />
+                </div>
             </div>
             <div>
                 <label class="block raliva-label mb-2">Rekening Tujuan</label>
@@ -124,10 +126,8 @@ document.addEventListener('input', (e) => {
     const el = e.target?.closest?.('[data-rupiah]');
     if (!el) return;
     const digits = el.value.replace(/\D/g, '').slice(0, 15);
-    el.value = digits ? new Intl.NumberFormat('id-ID').format(digits) : '';
-    const hint = el.closest('form')?.querySelector('[data-rupiah-hint]');
-    if (hint) hint.textContent = 'Rp ' + (el.value || '0');
-});
+        el.value = digits ? new Intl.NumberFormat('id-ID').format(digits) : '';
+    });
 document.addEventListener('submit', (e) => {
     if (!(e.target instanceof HTMLFormElement)) return;
     e.target.querySelectorAll('[data-rupiah]').forEach((el) => { el.value = el.value.replace(/\./g, ''); });
