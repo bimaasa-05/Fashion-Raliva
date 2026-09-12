@@ -734,8 +734,8 @@
 
     function chatMenuMarkup(id, btnColor) {
         return '<span class="relative shrink-0 chat-menu-wrap">' +
-            '<button type="button" data-menu-btn="' + id + '" onclick="toggleChatMenu(' + id + ')" class="chat-menu-btn ' + btnColor + ' lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100 focus:opacity-100 transition-opacity cursor-pointer rounded-full w-7 h-7 flex items-center justify-center" title="…"><span class="material-symbols-outlined text-[17px]">more_horiz</span></button>' +
-            '<span data-menu="' + id + '" class="chat-menu hidden absolute right-0 top-full mt-1 min-w-[170px] z-30 rounded-xl border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] bg-surface-container-high py-1 shadow-xl">';
+            '<button type="button" data-menu-btn="' + id + '" onclick="event.stopPropagation();toggleChatMenu(' + id + ')" class="chat-menu-btn ' + btnColor + ' lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100 focus:opacity-100 transition-opacity cursor-pointer rounded-full w-7 h-7 flex items-center justify-center" title="…"><span class="material-symbols-outlined text-[17px]">more_horiz</span></button>' +
+            '<span data-menu="' + id + '" class="chat-menu hidden absolute right-0 top-full mt-1 min-w-[150px] max-w-[160px] z-30 rounded-xl border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] bg-surface-container-high py-1 shadow-xl">';
     }
 
     function renderMessages(messages) {
@@ -773,7 +773,7 @@
                 let delMenu = '';
                 if (actionsOn) {
                     delMenu = chatMenuMarkup(m.complaint_message_id, delBtn) +
-                        '<button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ',true)" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>' +
+                        '<button type="button" onclick="event.stopPropagation();openDeleteDialog(' + m.complaint_message_id + ',true)" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>' +
                         '</span></span>';
                 }
                 return '<div class="' + rowClass + '" data-mid="' + m.complaint_message_id + '">' +
@@ -793,9 +793,9 @@
                 const canEdit = mine && chatEditAllowed(m.created_at);
                 let items = '';
                 if (canEdit) {
-                    items += '<button type="button" onclick="openEditDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">edit</span>' + escapeHtml('Edit pesan') + '</button>';
+                    items += '<button type="button" onclick="event.stopPropagation();openEditDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">edit</span>' + escapeHtml('Edit pesan') + '</button>';
                 }
-                items += '<button type="button" onclick="openDeleteDialog(' + m.complaint_message_id + ',' + (canAll ? 'false' : 'true') + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>';
+                items += '<button type="button" onclick="event.stopPropagation();openDeleteDialog(' + m.complaint_message_id + ',' + (canAll ? 'false' : 'true') + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>';
                 menu = chatMenuMarkup(m.complaint_message_id, mine ? 'text-white/60 hover:text-white' : 'text-on-surface-variant hover:text-on-surface') + items + '</span></span>';
             }
 
@@ -854,11 +854,35 @@
 
     function toggleChatMenu(id) {
         const menu = document.querySelector('[data-menu="' + id + '"]');
-        if (!menu) return;
+        const btn = document.querySelector('[data-menu-btn="' + id + '"]');
+        const panel = document.getElementById('chat-panel');
+        if (!menu || !btn || !panel) return;
         const opening = menu.classList.contains('hidden');
         closeChatMenu();
         if (opening) {
             closeChatMoreMenu();
+            const btnRect = btn.getBoundingClientRect();
+            const panelRect = panel.getBoundingClientRect();
+            menu.style.position = 'fixed';
+            let top = btnRect.bottom + 6;
+            let left = btnRect.right - 150;
+            // Keep inside panel horizontally
+            if (left < panelRect.left + 8) left = panelRect.left + 8;
+            if (left + 150 > panelRect.right - 8) left = panelRect.right - 158;
+            // Flip above if near bottom of panel
+            if (top + 80 > panelRect.bottom - 8) {
+                top = btnRect.top - 52;
+                if (top < panelRect.top + 8) top = panelRect.top + 8;
+            }
+            // Keep inside viewport vertically
+            if (top + 80 > window.innerHeight - 8) top = window.innerHeight - 88;
+            if (top < 8) top = 8;
+            menu.style.top = top + 'px';
+            menu.style.left = left + 'px';
+            menu.style.right = 'auto';
+            menu.style.zIndex = '9999';
+            menu.style.minWidth = '150px';
+            menu.style.maxWidth = '160px';
             menu.classList.remove('hidden');
             chatMenuId = id;
         }
@@ -867,7 +891,16 @@
     function closeChatMenu() {
         if (chatMenuId === null) return;
         const menu = document.querySelector('[data-menu="' + chatMenuId + '"]');
-        if (menu) menu.classList.add('hidden');
+        if (menu) {
+            menu.classList.add('hidden');
+            menu.style.position = '';
+            menu.style.top = '';
+            menu.style.left = '';
+            menu.style.right = '';
+            menu.style.zIndex = '';
+            menu.style.minWidth = '';
+            menu.style.maxWidth = '';
+        }
         chatMenuId = null;
     }
 
