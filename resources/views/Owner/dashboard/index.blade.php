@@ -346,6 +346,7 @@
             b.classList.toggle('bg-deep-onyx', isActive);
             b.classList.toggle('text-on-primary', isActive);
             b.classList.toggle('text-on-surface-variant', !isActive);
+            b.classList.toggle('hover:text-on-surface', !isActive);
         });
     };
 
