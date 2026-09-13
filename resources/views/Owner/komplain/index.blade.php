@@ -781,14 +781,24 @@ document.addEventListener('DOMContentLoaded', function(){
         closeChatMenu();
         if (opening) {
             closeChatMoreMenu();
+            const scroller = document.getElementById('chat-messages');
+            if (scroller) {
+                const scrollerRect = scroller.getBoundingClientRect();
+                const rowBtnRect = btn.getBoundingClientRect();
+                if (rowBtnRect.bottom > scrollerRect.bottom) {
+                    scroller.scrollTop += (rowBtnRect.bottom - scrollerRect.bottom) + 12;
+                }
+            }
             const btnRect = btn.getBoundingClientRect();
             const panelRect = panel.getBoundingClientRect();
+            const composerEl = document.getElementById('chat-input-area');
+            const composerTop = composerEl ? composerEl.getBoundingClientRect().top : panelRect.bottom;
             menu.style.position = 'fixed';
             let top = btnRect.bottom + 6;
             let left = btnRect.right - 150;
             if (left < panelRect.left + 8) left = panelRect.left + 8;
             if (left + 150 > panelRect.right - 8) left = panelRect.right - 158;
-            if (top + 80 > panelRect.bottom - 8) {
+            if (top + 80 > composerTop - 6 || top + 80 > panelRect.bottom - 8) {
                 top = btnRect.top - 52;
                 if (top < panelRect.top + 8) top = panelRect.top + 8;
             }
