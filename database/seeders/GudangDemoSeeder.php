@@ -133,25 +133,25 @@ class GudangDemoSeeder extends Seeder
         $cat = fn (string $name) => ($categories[$name] ?? $categories->first())->category_id;
 
         $seed = [
-            ['Oversized Linen Shirt', 'Kemeja', 'KEM', [['S', 12], ['M', 20], ['L', 8], ['XL', 6]], 180000, 289000, 15],
-            ['Straight Fit Pants', 'Celana', 'CEL', [['28', 14], ['30', 12], ['32', 9], ['34', 7]], 210000, 329000, 20],
-            ['Relaxed Blazer', 'Jaket & Hoodie', 'BLZ', [['M', 18], ['L', 16]], 320000, 549000, 12],
-            ['Knit Cardigan Rajut', 'Jaket & Hoodie', 'RDG', [['S', 10], ['M', 14], ['L', 10]], 185000, 299000, 10],
-            ['Midi Dress Linen', 'Dress', 'DRS', [['S', 20], ['M', 22], ['L', 16]], 220000, 389000, 15],
-            ['Basic T-Shirt Cotton', 'Kaos', 'KSL', [['S', 40], ['M', 52], ['L', 30], ['XL', 20]], 55000, 99000, 40],
-            ['Denim Jacket Classic', 'Jaket & Hoodie', 'JKT', [['M', 10], ['L', 8], ['XL', 6]], 280000, 459000, 10],
-            ['Pleated Skirt', 'Dress', 'RKT', [['S', 12], ['M', 10], ['L', 5]], 165000, 275000, 10],
-            ['Wide Leg Trousers', 'Celana', 'CLT', [['28', 4], ['30', 6], ['32', 3]], 175000, 295000, 15],
-            ['Hoodie Fleece Premium', 'Jaket & Hoodie', 'HDD', [['M', 28], ['L', 22], ['XL', 13]], 210000, 359000, 20],
-            ['Silk Scarf', 'Aksesori', 'SYL', [['One Size', 5]], 95000, 185000, 15],
-            ['Leather Belt', 'Aksesori', 'IKT', [['85-105 cm', 30], ['90-110 cm', 28]], 110000, 199000, 25],
+            ['Oversized Linen Shirt', 'Kemeja', 'KEM', ['White', 'Beige', 'Black'], [['S', 12], ['M', 20], ['L', 8], ['XL', 6]], 180000, 289000, 15],
+            ['Straight Fit Pants', 'Celana', 'CEL', ['Ivory', 'Black', 'Navy'], [['28', 14], ['30', 12], ['32', 9], ['34', 7]], 210000, 329000, 20],
+            ['Relaxed Blazer', 'Jaket & Hoodie', 'BLZ', ['Charcoal', 'Navy'], [['M', 18], ['L', 16]], 320000, 549000, 12],
+            ['Knit Cardigan Rajut', 'Jaket & Hoodie', 'RDG', ['Cream', 'Grey', 'Camel'], [['S', 10], ['M', 14], ['L', 10]], 185000, 299000, 10],
+            ['Midi Dress Linen', 'Dress', 'DRS', ['Sand', 'Black', 'Sage'], [['S', 20], ['M', 22], ['L', 16]], 220000, 389000, 15],
+            ['Basic T-Shirt Cotton', 'Kaos', 'KSL', ['White', 'Black', 'Grey'], [['S', 40], ['M', 52], ['L', 30], ['XL', 20]], 55000, 99000, 40],
+            ['Denim Jacket Classic', 'Jaket & Hoodie', 'JKT', ['Indigo', 'Washed', 'Black'], [['M', 10], ['L', 8], ['XL', 6]], 280000, 459000, 10],
+            ['Pleated Skirt', 'Dress', 'RKT', ['Black', 'Beige', 'Navy'], [['S', 12], ['M', 10], ['L', 5]], 165000, 275000, 10],
+            ['Wide Leg Trousers', 'Celana', 'CLT', ['Ivory', 'Khaki', 'Olive'], [['28', 4], ['30', 6], ['32', 3]], 175000, 295000, 15],
+            ['Hoodie Fleece Premium', 'Jaket & Hoodie', 'HDD', ['Grey', 'Black', 'Cream'], [['M', 28], ['L', 22], ['XL', 13]], 210000, 359000, 20],
+            ['Silk Scarf', 'Aksesori', 'SYL', ['Ivory', 'Blush', 'Black'], [['One Size', 5]], 95000, 185000, 15],
+            ['Leather Belt', 'Aksesori', 'IKT', ['Black', 'Brown'], [['85-105 cm', 30], ['90-110 cm', 28]], 110000, 199000, 25],
         ];
 
         $movements = [];
         $transfers = [];
 
         foreach ($seed as $idx => $row) {
-            [$nama, $kategori, $prefix, $variants, $hpp, $harga, $min] = $row;
+            [$nama, $kategori, $prefix, $warnas, $ukuranVariants, $hpp, $harga, $min] = $row;
 
             $product = Product::create([
                 'store_id' => $store->store_id,
@@ -164,15 +164,18 @@ class GudangDemoSeeder extends Seeder
             ]);
 
             $variantIds = [];
-            foreach ($variants as $vi => [$warna, $stokAwal]) {
-                $variant = ProductVariant::create([
-                    'product_id' => $product->product_id,
-                    'sku' => $prefix . '-' . str_pad($idx + 1, 3, '0') . '-' . ($vi + 1),
-                    'warna' => $warna,
-                    'ukuran' => null,
-                    'harga' => $harga,
-                    'status' => 'aktif',
-                ]);
+            $vi = 0;
+            foreach ($warnas as $warna) {
+                foreach ($ukuranVariants as [$ukuran, $stokAwal]) {
+                    $vi++;
+                    $variant = ProductVariant::create([
+                        'product_id' => $product->product_id,
+                        'sku' => $prefix . '-' . str_pad($idx + 1, 3, '0') . '-' . str_pad($vi, 2, '0', STR_PAD_LEFT),
+                        'warna' => $warna,
+                        'ukuran' => $ukuran,
+                        'harga' => $harga,
+                        'status' => 'aktif',
+                    ]);
                 $variantIds[] = $variant;
 
                 // Sebar stok ke gudang 1 dan sebagian ke gudang 2.
@@ -220,6 +223,7 @@ class GudangDemoSeeder extends Seeder
                         'dibuat_oleh' => $actorId,
                         'created_at' => now()->subDays(18 + $idx),
                     ];
+                }
                 }
             }
 
