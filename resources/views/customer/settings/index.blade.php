@@ -267,6 +267,7 @@
   .reveal-up.is-visible { opacity:1; transform:none; }
   @media (prefers-reduced-motion: reduce) { .reveal-up { opacity:1; transform:none; transition:none; } }
 </style>
+  <noscript><style>.reveal-up{opacity:1 !important;transform:none !important;}</style></noscript>
   </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg lg:pl-72">
 <!-- TopAppBar -->
@@ -367,6 +368,22 @@
 </div>
 </section>
 </main>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var els = document.querySelectorAll('.reveal-up');
+    if (els.length) {
+        if (!('IntersectionObserver' in window)) {
+            els.forEach(function (e) { e.classList.add('is-visible'); });
+        } else {
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); } });
+            }, { threshold: 0.08 });
+            els.forEach(function (e) { io.observe(e); });
+            setTimeout(function () { els.forEach(function (e) { e.classList.add('is-visible'); }); }, 800);
+        }
+    }
+});
+</script>
 <script>
         function onThemeToggle(cb) {
             document.documentElement.classList.toggle('theme-dark', cb.checked);
