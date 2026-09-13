@@ -131,21 +131,34 @@ Route::prefix('customer')->name('customer.')->group(function () {
 
     Route::get('/search', [\App\Http\Controllers\Customer\SearchController::class, 'index'])->name('search');
 
+    // Guest-friendly checkout (Review -> Bayar -> Selesai) — publik, branch di controller
+    Route::get('/checkout', [\App\Http\Controllers\Customer\CheckoutController::class, 'index'])->name('checkout');
+    Route::post('/checkout', [\App\Http\Controllers\Customer\CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/checkout/{checkout}/payment', [\App\Http\Controllers\Customer\CheckoutController::class, 'payment'])->name('checkout.payment');
+    Route::post('/checkout/{checkout}/payment', [\App\Http\Controllers\Customer\CheckoutController::class, 'uploadProof'])->name('checkout.payment.upload');
+    Route::get('/checkout/{checkout}/selesai', [\App\Http\Controllers\Customer\CheckoutController::class, 'selesai'])->name('checkout.selesai');
+
+    // Cek Resi publik — tamu bisa lacak tanpa login
+    Route::get('/cek-resi', [\App\Http\Controllers\Customer\CekResiController::class, 'index'])->name('cek-resi');
+    Route::post('/cek-resi', [\App\Http\Controllers\Customer\CekResiController::class, 'search'])->name('cek-resi.search');
+
+    // My Account — publik branching (guest => teaser, member => index)
+    Route::get('/account', [\App\Http\Controllers\Customer\AccountController::class, 'index'])->name('account');
+
+    // Cart add — guest-friendly: JSON toast "Masuk untuk memakai keranjang, atau klik Beli Sekarang."
+    Route::post('/cart/add', [\App\Http\Controllers\Customer\CartController::class, 'add'])->name('cart.add');
+
     Route::middleware('role:Customer')->group(function () {
         Route::resource('address', \App\Http\Controllers\Customer\AddressController::class)->except(['show']);
         Route::post('/address/{address}/set-default', [\App\Http\Controllers\Customer\AddressController::class, 'setDefault'])->name('customer.address.set-default');
         Route::get('/chart', [\App\Http\Controllers\Customer\CartController::class, 'index'])->name('chart');
 
-        Route::post('/cart/add', [\App\Http\Controllers\Customer\CartController::class, 'add'])->name('cart.add');
         Route::patch('/cart/{cartItem}', [\App\Http\Controllers\Customer\CartController::class, 'update'])->name('cart.update');
         Route::delete('/cart/{cartItem}', [\App\Http\Controllers\Customer\CartController::class, 'destroy'])->name('cart.destroy');
 
-        Route::get('/checkout', [\App\Http\Controllers\Customer\CheckoutController::class, 'index'])->name('checkout');
-        Route::post('/checkout', [\App\Http\Controllers\Customer\CheckoutController::class, 'store'])->name('checkout.store');
-        Route::get('/checkout/{checkout}/payment', [\App\Http\Controllers\Customer\CheckoutController::class, 'payment'])->name('checkout.payment');
-        Route::post('/checkout/{checkout}/payment', [\App\Http\Controllers\Customer\CheckoutController::class, 'uploadProof'])->name('checkout.payment.upload');
-
         Route::get('/order-tracking', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'index'])->name('order-tracking');
+
+        Route::get('/pesanan', [\App\Http\Controllers\Customer\OrderController::class, 'index'])->name('orders');
 
         Route::post('/order-tracking/{order}/confirm', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'confirm'])->name('order-tracking.confirm');
         Route::post('/refund', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'storeRefund'])->name('refund.store');
@@ -157,10 +170,6 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::post('/komplain/{komplain}/messages', [\App\Http\Controllers\Customer\KomplainController::class, 'storeMessage'])->name('komplain.messages.store');
         Route::patch('/komplain/{komplain}/messages/{message}', [\App\Http\Controllers\Customer\KomplainController::class, 'updateMessage'])->name('komplain.messages.update');
         Route::delete('/komplain/{komplain}/messages/{message}', [\App\Http\Controllers\Customer\KomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy')->withTrashed();
-
-        Route::get('/account', function () {
-            return view('customer.account.index');
-        })->name('account');
 
         Route::get('/account/edit', function () {
             return view('customer.account.edit');

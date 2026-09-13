@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - {{ __('Checkout') }}</title>
+<title>RALIVA - {{ __('Checkout') }} — {{ __('Review') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -255,7 +255,6 @@
         border: none;
         margin: 1.25rem 0;
     }
-    /* Item scroller utility */
     .co-scroll {
         overflow-x: auto;
         scrollbar-width: thin;
@@ -265,99 +264,36 @@
     .co-scroll::-webkit-scrollbar { height: 5px; }
     .co-scroll::-webkit-scrollbar-track { background: transparent; }
     .co-scroll::-webkit-scrollbar-thumb { background: var(--chrome-accent); border-radius: 999px; }
-    .co-field {
-        display: flex;
-        align-items: center;
-        gap: 0.875rem;
-        padding: 0.875rem 0;
-        min-height: 3.5rem;
-    }
-    .co-field + .co-field {
-        border-top: 1px solid var(--border-soft);
-    }
-    .co-field:hover {
-        background: var(--surface-warm);
-        border-radius: 0.375rem;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-    }
-    .co-icon {
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 0.5rem;
-        background: var(--surface-warm);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        color: var(--text-muted);
-        border: 1px solid var(--border-soft);
-        transition: background .18s ease, color .18s ease, border-color .18s ease;
-    }
-    .co-field:hover .co-icon {
-        background: #F3F0EA;
-        color: #8B1E3F;
-        border-color: #8B1E3F;
-    }
-    html.theme-dark .co-icon {
-        background: var(--surface-warm);
-        color: var(--text-muted);
-        border-color: var(--border-soft);
-    }
-    html.theme-dark .co-field:hover .co-icon {
-        background: #201f1e;
-        color: #8B1E3F;
-        border-color: #8B1E3F;
-    }
-    .co-label {
-        font-family: 'Manrope', sans-serif;
-        font-size: 15px;
-        font-weight: 500;
-        color: var(--on-surface);
-        flex: 0 0 auto;
-        min-width: 0;
-    }
-    .co-input-wrap {
-        flex: 1;
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.15rem;
-    }
     .co-input {
         width: 100%;
-        background: transparent;
-        border: none;
-        border-bottom: 1.5px solid var(--border-soft);
-        padding: 0.2rem 0;
+        background: var(--surface-warm);
+        border: 1px solid var(--border-soft);
+        border-radius: 0.5rem;
+        padding: 0.65rem 0.9rem;
         font-family: 'Manrope', sans-serif;
-        font-size: 15px;
-        font-weight: 400;
+        font-size: 14px;
         color: var(--on-surface);
         outline: none;
-        transition: border-color .18s ease, color .18s ease;
+        transition: border-color .18s ease, background .18s ease;
     }
-    .co-input::placeholder {
-        color: var(--text-muted);
-        opacity: 0.7;
-    }
-    .co-input:focus {
-        border-bottom-color: #8B1E3F;
-        color: #8B1E3F;
-    }
-    html.theme-dark .co-input:focus {
-        border-bottom-color: #8B1E3F;
-        color: #8B1E3F;
-    }
-    .co-helper {
+    .co-input:focus { border-color: #8B1E3F; background: #fff; }
+    html.theme-dark .co-input:focus { background:#262524; }
+    .co-input.is-error { border-color: #ba1a1a; }
+    .co-textarea {
+        width: 100%;
+        background: var(--surface-warm);
+        border: 1px solid var(--border-soft);
+        border-radius: 0.5rem;
+        padding: 0.65rem 0.9rem;
         font-family: 'Manrope', sans-serif;
-        font-size: 12px;
-        font-weight: 400;
-        color: var(--text-muted);
-        padding-left: 3.375rem;
-        line-height: 1.4;
+        font-size: 14px;
+        color: var(--on-surface);
+        outline: none;
+        resize: vertical;
+        transition: border-color .18s ease, background .18s ease;
     }
-    /* Shipping option */
+    .co-textarea:focus { border-color: #8B1E3F; background: #fff; }
+    html.theme-dark .co-textarea:focus { background:#262524; }
     .co-ship-option {
         display: flex;
         align-items: center;
@@ -384,48 +320,6 @@
     .co-ship-option + .co-ship-option {
         margin-top: 0.5rem;
     }
-    /* Payment method grid */
-    .co-payment-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.75rem;
-    }
-    .co-payment-btn {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 0.4rem;
-        padding: 1rem;
-        border: 1px solid var(--border-soft);
-        border-radius: 0.5rem;
-        background: var(--surface-warm);
-        cursor: pointer;
-        transition: background .18s ease, border-color .18s ease, color .18s ease;
-        font-family: 'Manrope', sans-serif;
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--text-muted);
-    }
-    .co-payment-btn:hover {
-        background: #ECE7DF;
-        border-color: #8B1E3F;
-        color: #8B1E3F;
-    }
-    .co-payment-btn.selected {
-        border-color: #8B1E3F;
-        background: rgba(139, 30, 63, .07);
-        color: #8B1E3F;
-        font-weight: 600;
-        box-shadow: inset 0 0 0 1px rgba(139, 30, 63, .15);
-    }
-    .co-payment-btn.selected .material-symbols-outlined {
-        color: #8B1E3F;
-    }
-    .co-payment-btn .material-symbols-outlined {
-        font-size: 1.5rem;
-    }
-    /* Order summary */
     .co-summary-row {
         display: flex;
         justify-content: space-between;
@@ -443,7 +337,6 @@
         padding-top: 0.75rem;
         margin-top: 0.5rem;
     }
-    /* Bottom action bar wrapper (positioning only; visual card = .co-bottom-bar-card below) */
     .co-bottom-bar {
         position: fixed;
         bottom: 0;
@@ -451,293 +344,266 @@
         right: 0;
         z-index: 50;
     }
-    html.theme-dark .co-ship-option:hover,
-    html.theme-dark .co-payment-btn:hover {
-        background: #262524;
-        border-color: #8B1E3F;
-        color: #8B1E3F;
-    }
-    html.theme-dark .co-ship-option.selected,
-    html.theme-dark .co-payment-btn.selected {
-        background: rgba(139, 30, 63, .18);
-        border-color: #8B1E3F;
-        color: #ffc2c9;
-        box-shadow: inset 0 0 0 1px rgba(139, 30, 63, .4);
-    }
-    html.theme-dark .co-ship-option.selected p:first-of-type,
-    html.theme-dark .co-payment-btn.selected .material-symbols-outlined {
-        color: #ffc2c9;
-    }
-    /* Desktop: keep the fixed bar clear of the fixed sidebar (lg:left-72 = 288px) */
-    @media (min-width: 1024px) {
-        .co-bottom-bar {
-            left: 288px;
-            right: 0;
-        }
-    }
-    .co-bottom-bar .summary {
-        flex: 1 1 0%;
-        min-width: 0;
-    }
-    .co-bottom-bar .summary p:first-child {
-        font-family: 'Manrope', sans-serif;
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: var(--text-muted);
-    }
-    .co-bottom-bar .summary p:last-child {
-        font-family: 'Manrope', sans-serif;
-        font-size: 18px;
-        font-weight: 600;
-        color: var(--on-surface);
-    }
-    .co-bottom-bar .btn-place {
-        padding: 0.75rem 1.5rem;
-        font-family: 'Manrope', sans-serif;
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #ffffff;
-        background: #8B1E3F;
-        border: none;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        transition: background .18s ease, transform .12s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-    }
-    .co-bottom-bar .btn-place:hover {
-        background: #6D1428;
-    }
-    .co-bottom-bar .btn-place:active {
-        transform: scale(0.985);
-    }
-
-    /* Responsive */
-    @media (max-width: 639px) {
-        .co-field {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.35rem;
-            padding: 0.8rem 0;
-        }
-        .co-field + .co-field {
-            border-top: 1px solid var(--border-soft);
-        }
-        .co-icon {
-            width: 2rem;
-            height: 2rem;
-        }
-        .co-label {
-            font-size: 14px;
-        }
-        .co-helper {
-            padding-left: 0;
-        }
-        .co-input {
-            width: 100%;
-            border-bottom: 1.5px solid var(--border-soft);
-        }
-        .co-payment-grid {
-            grid-template-columns: 1fr;
-        }
-        .co-bottom-bar {
-            bottom: 72px;
-        }
-        .co-bottom-bar .summary p:last-child {
-            font-size: 16px;
-        }
-    }
+    html.theme-dark .co-ship-option:hover { background: #262524; border-color: #8B1E3F; color: #8B1E3F; }
+    html.theme-dark .co-ship-option.selected { background: rgba(139, 30, 63, .18); border-color: #8B1E3F; color: #ffc2c9; box-shadow: inset 0 0 0 1px rgba(139, 30, 63, .4); }
+    html.theme-dark .co-ship-option.selected p:first-of-type { color: #ffc2c9; }
+    @media (min-width: 1024px) { .co-bottom-bar { left: 288px; right: 0; } }
+    .co-bottom-bar .summary { flex: 1 1 0%; min-width: 0; }
+    .co-bottom-bar .summary p:first-child { font-family: 'Manrope', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+    .co-bottom-bar .summary p:last-child { font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 600; color: var(--on-surface); }
+    .co-bottom-bar .btn-place { padding: 0.75rem 1.5rem; font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #ffffff; background: #8B1E3F; border: none; border-radius: 0.5rem; cursor: pointer; transition: background .18s ease, transform .12s ease; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
+    .co-bottom-bar .btn-place:hover { background: #6D1428; }
+    .co-bottom-bar .btn-place:active { transform: scale(0.985); }
+    .co-bottom-bar .btn-place:disabled { opacity:.45; cursor:not-allowed; }
+    @media (max-width: 639px) { .co-bottom-bar { bottom: 72px; } .co-bottom-bar .summary p:last-child { font-size: 16px; } }
+    /* stepper */
+    .co-stepper { display:flex; align-items:center; justify-content:center; gap:.5rem; }
+    .co-step { display:flex; align-items:center; gap:.45rem; font-family:'Manrope',sans-serif; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+    .co-step .num { width:28px; height:28px; border-radius:9999px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; border:1.5px solid var(--border-soft); background: var(--surface-warm); color: var(--text-muted); }
+    .co-step.active .num { background:#8B1E3F; border-color:#8B1E3F; color:#fff; }
+    .co-step.done .num { background:#8B1E3F; border-color:#8B1E3F; color:#fff; }
+    .co-step.active { color:#8B1E3F; }
+    .co-step:not(.active):not(.done) { color: var(--text-muted); }
+    .co-step-line { width:32px; height:1px; background:var(--border-soft); }
+    .co-step-line.done { background:#8B1E3F; }
 </style>
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[168px] md:pb-[104px] lg:pl-72">
 
+@php
+    $isGuest = ! auth()->check();
+    $authUser = auth()->user();
+    // Prefill dari address default / user untuk member; tamu kosong
+    $prefill = [
+        'nama_penerima' => old('nama_penerima', $isGuest ? '' : ($authUser->nama_lengkap ?? $address?->nama_penerima ?? '')),
+        'nomor_telepon' => old('nomor_telepon', $isGuest ? '' : ($authUser->nomor_telepon ?? $address?->nomor_telepon ?? '')),
+        'email_pelanggan' => old('email_pelanggan', $isGuest ? '' : ($authUser->email ?? '')),
+        'alamat' => old('alamat', $isGuest ? '' : ($address?->alamat ?? '')),
+        'kota' => old('kota', $isGuest ? '' : ($address?->kota ?? '')),
+        'provinsi' => old('provinsi', $isGuest ? '' : ($address?->provinsi ?? '')),
+        'kode_pos' => old('kode_pos', $isGuest ? '' : ($address?->kode_pos ?? '')),
+        'catatan' => old('catatan', ''),
+    ];
+@endphp
+
 <!-- TopAppBar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-    <a href="{{ route('customer.chart') }}" aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+    <a href="{{ $buyId > 0 ? route('customer.shop.produk-detail', $buyId) : route('customer.chart') }}" aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
         <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
     </a>
-    <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('CHECKOUT') }}</h1>
+    <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('Review') }}</h1>
     <div class="w-10"></div>
 </header>
 
-<!-- Main Content -->
-<main class="pt-16 pb-[72px] w-full overflow-x-hidden">
+<form id="checkout-review-form" method="POST" action="{{ route('customer.checkout.store') }}" class="flex flex-col flex-1 min-h-0">
+@csrf
+@if ($buyId > 0)
+<input type="hidden" name="buy" value="{{ $buyId }}"/>
+@endif
+<input type="hidden" name="shipping" id="co-shipping-input" value="{{ $shipping }}"/>
 
-    {{-- Outer wrapper: same as account/index, address/edit --}}
+<!-- Main Content -->
+<main class="pt-6 pb-[72px] w-full overflow-x-hidden">
     <div class="mx-auto max-w-[1400px] px-container-margin">
 
+        {{-- Stepper --}}
+        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center reveal-up">
+            <div class="co-stepper">
+                <span class="co-step active"><span class="num">1</span> {{ __('Review') }}</span>
+                <span class="co-step-line"></span>
+                <span class="co-step"><span class="num">2</span> {{ __('Bayar') }}</span>
+                <span class="co-step-line"></span>
+                <span class="co-step"><span class="num">3</span> {{ __('Selesai') }}</span>
+            </div>
+        </div>
+
+        @if ($errors->any())
+        <div class="bg-error-container border border-error/20 rounded-xl p-md mb-md">
+            <p class="font-body-sm text-body-sm text-on-error-container font-semibold mb-xs">{{ __('Periksa kembali isian Anda:') }}</p>
+            <ul class="list-disc list-inside font-body-sm text-body-sm text-on-error-container">
+                @foreach ($errors->all() as $e)<li>{{ $e }}</li>@endforeach
+            </ul>
+        </div>
+        @endif
+        @if (session('toast'))
+        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-md mb-md flex items-center gap-sm">
+            <span class="material-symbols-outlined text-secondary">info</span>
+            <p class="font-body-sm text-body-sm text-on-surface-variant">{{ session('toast')['message'] ?? session('toast') }}</p>
+        </div>
+        @endif
+
         {{-- Page Title Card --}}
-        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium mb-lg md:mb-xl text-center md:text-left reveal-up">
+        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium mb-lg reveal-up">
             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('ORDER') }}</p>
-            <h2 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ __('Checkout') }}</h2>
+            <h2 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ __('Review Pesanan') }}</h2>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Periksa data pemesan, catatan, dan rincian pesanan sebelum melanjutkan ke pembayaran. Akun akan dibuat otomatis saat lanjut.') }}</p>
         </div>
 
-        {{-- Form Card: ONE card contains all sections --}}
-        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+        <div class="grid grid-cols-1 lg:grid-cols-[1.65fr_.95fr] gap-lg items-start">
 
-            {{-- ========== DELIVERY ADDRESS ========== --}}
-            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('DELIVERY ADDRESS') }}</p>
+            {{-- LEFT: Data Pemesan + Catatan + Items + Shipping --}}
+            <div class="space-y-lg">
 
-            @if($address)
-            <div class="flex items-start gap-md py-md">
-                <div class="co-icon mt-0.5">
-                    <span class="material-symbols-outlined">location_on</span>
-                </div>
-                <div class="min-w-0 flex-1 flex flex-col gap-1">
-                    <p class="font-body-sm text-body-sm text-on-surface font-semibold">{{ $address->nama_penerima }}</p>
-                    <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">{{ trim(implode(', ', array_filter([
-                        $address->alamat,
-                        $address->kota,
-                        $address->provinsi,
-                        $address->kode_pos,
-                    ]))) }}</p>
-                    <p class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[16px]">call</span>
-                        {{ $address->nomor_telepon }}
-                    </p>
-                </div>
-                <a href="{{ route('customer.address.index') }}" class="font-label-caps text-label-caps text-[var(--chrome-accent)] hover:underline underline-offset-2 shrink-0">{{ __('Edit') }}</a>
-            </div>
-            @else
-            <div class="flex flex-col items-center justify-center py-lg text-center gap-1">
-                <span class="material-symbols-outlined text-5xl text-outline-variant mb-xs">location_off</span>
-                <p class="font-body-md text-body-md text-on-surface-variant">{{ __('Anda belum memiliki alamat pengiriman.') }}</p>
-                <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">{{ __('Tambahkan alamat terlebih dahulu untuk melanjutkan checkout.') }}</p>
-                <a href="{{ route('customer.address.create') }}" class="btn-gold inline-flex items-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest shadow-lg">
-                    <span class="material-symbols-outlined text-[20px]">add</span>
-                    {{ __('Tambah Alamat') }}
-                </a>
-            </div>
-            @endif
+                {{-- ========== DATA PEMESAN ========== --}}
+                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+                    <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('DATA PEMESAN') }}</p>
+                    <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Data Pemesan') }}</h3>
 
-            <hr class="co-divider"/>
-
-            {{-- ========== ORDER ITEMS ========== --}}
-            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('ORDER ITEMS') }}</p>
-
-            <div class="flex gap-sm overflow-x-auto co-scroll">
-@forelse ($items as $i)
-@php
-    $pv = $i->productVariant;
-    $pr = $pv?->product;
-    $img = $pr?->images->first()?->file_gambar ?? '';
-    $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/checkout/600/800';
-@endphp
-                <div class="flex-shrink-0 w-64 flex items-center gap-sm bg-surface-container border border-[var(--border-soft)] rounded-xl p-sm">
-                    <div class="flex-shrink-0 w-16 h-20 bg-surface-container-high rounded-lg overflow-hidden">
-                        <img class="w-full h-full object-cover" loading="lazy" alt="{{ $pr?->nama_produk ?? __('Produk') }}" src="{{ $imgUrl }}"/>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                        <label class="flex flex-col gap-1.5">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Nama Lengkap') }} <span class="text-error">*</span></span>
+                            <input name="nama_penerima" value="{{ $prefill['nama_penerima'] }}" required maxlength="150" class="co-input @error('nama_penerima') is-error @enderror" placeholder="{{ __('Nama penerima') }}"/>
+                            @error('nama_penerima')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
+                        </label>
+                        <label class="flex flex-col gap-1.5">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('No. Telepon / WhatsApp') }} <span class="text-error">*</span></span>
+                            <input name="nomor_telepon" value="{{ $prefill['nomor_telepon'] }}" required maxlength="30" class="co-input @error('nomor_telepon') is-error @enderror" placeholder="08xxxxxxxxxx"/>
+                            @error('nomor_telepon')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
+                        </label>
+                        <label class="flex flex-col gap-1.5 md:col-span-2">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Email') }} <span class="text-error">*</span></span>
+                            <input name="email_pelanggan" type="email" value="{{ $prefill['email_pelanggan'] }}" required maxlength="150" class="co-input @error('email_pelanggan') is-error @enderror" placeholder="nama@email.com"/>
+                            @error('email_pelanggan')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
+                            <span class="font-label-sm text-label-sm text-on-surface-variant/70">{{ __('Dipakai sebagai username akun. Password default: Raliva123') }}</span>
+                        </label>
+                        <label class="flex flex-col gap-1.5 md:col-span-2">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Alamat') }} <span class="text-error">*</span></span>
+                            <textarea name="alamat" required rows="2" class="co-textarea @error('alamat') is-error @enderror" placeholder="{{ __('Jl. ...') }}">{{ $prefill['alamat'] }}</textarea>
+                            @error('alamat')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
+                        </label>
+                        <label class="flex flex-col gap-1.5">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Kota') }} <span class="text-error">*</span></span>
+                            <input name="kota" value="{{ $prefill['kota'] }}" required maxlength="100" class="co-input @error('kota') is-error @enderror" placeholder="{{ __('Kota') }}"/>
+                            @error('kota')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
+                        </label>
+                        <label class="flex flex-col gap-1.5">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Provinsi') }} <span class="text-error">*</span></span>
+                            <input name="provinsi" value="{{ $prefill['provinsi'] }}" required maxlength="100" class="co-input @error('provinsi') is-error @enderror" placeholder="{{ __('Provinsi') }}"/>
+                            @error('provinsi')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
+                        </label>
+                        <label class="flex flex-col gap-1.5">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Kode Pos') }} <span class="text-error">*</span></span>
+                            <input name="kode_pos" value="{{ $prefill['kode_pos'] }}" required maxlength="20" class="co-input @error('kode_pos') is-error @enderror" placeholder="12345"/>
+                            @error('kode_pos')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
+                        </label>
                     </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="font-body-sm text-body-sm text-on-surface font-semibold truncate">{{ $pr?->nama_produk ?? __('Produk') }}</p>
-                        <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ trim(($pv?->warna ?? '') . ' · ' . ($pv?->ukuran ?? ''), ' ·') }}</p>
-                        <p class="font-body-sm text-body-sm text-on-surface mt-xs">Rp {{ number_format((float)$i->harga_snapshot, 0, ',', '.') }} <span class="text-on-surface-variant">×{{ $i->quantity }}</span></p>
+                    @if(!$isGuest && $address)
+                    <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-md flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">location_on</span> {{ __('Diisi otomatis dari alamat default. Ubah bila perlu.') }} <a href="{{ route('customer.address.index') }}" class="text-secondary underline underline-offset-2">{{ __('Kelola alamat') }}</a></p>
+                    @endif
+                </div>
+
+                {{-- ========== CATATAN OPSIONAL — terpisah ========== --}}
+                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+                    <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('CATATAN') }}</p>
+                    <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Catatan Opsional') }}</h3>
+                    <label class="flex flex-col gap-1.5">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Catatan untuk produk (mis. instruksi pengiriman)') }}</span>
+                        <textarea name="catatan" rows="3" maxlength="1000" class="co-textarea @error('catatan') is-error @enderror" placeholder="{{ __('cth. 1–2 produk dikirim duluan ke alamat ini') }}">{{ $prefill['catatan'] }}</textarea>
+                        @error('catatan')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
+                    </label>
+                </div>
+
+                {{-- ========== RINCIAN PESANAN ========== --}}
+                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+                    <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN PESANAN') }}</p>
+                    <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Rincian Pesanan') }}</h3>
+                    <div class="flex gap-sm overflow-x-auto co-scroll">
+                    @forelse ($items as $i)
+                    @php
+                        $pv = $i->productVariant;
+                        $pr = $pv?->product;
+                        $img = $pr?->images->first()?->file_gambar ?? '';
+                        $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/checkout/600/800';
+                    @endphp
+                        <div class="flex-shrink-0 w-64 flex items-center gap-sm bg-surface-container border border-[var(--border-soft)] rounded-xl p-sm">
+                            <div class="flex-shrink-0 w-16 h-20 bg-surface-container-high rounded-lg overflow-hidden">
+                                <img class="w-full h-full object-cover" loading="lazy" alt="{{ $pr?->nama_produk ?? __('Produk') }}" src="{{ $imgUrl }}"/>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="font-body-sm text-body-sm text-on-surface font-semibold truncate">{{ $pr?->nama_produk ?? __('Produk') }}</p>
+                                <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ trim(($pv?->warna ?? '') . ' · ' . ($pv?->ukuran ?? ''), ' ·') }}</p>
+                                <p class="font-body-sm text-body-sm text-on-surface mt-xs">Rp {{ number_format((float)$i->harga_snapshot, 0, ',', '.') }} <span class="text-on-surface-variant">×{{ $i->quantity }}</span></p>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="flex-shrink-0 w-full flex items-center justify-center py-lg text-center">
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $isGuest ? __('Pilih produk terlebih dahulu.') : __('Keranjang masih kosong.') }}</p>
+                        </div>
+                    @endforelse
                     </div>
                 </div>
-@empty
-                <div class="flex-shrink-0 w-full flex items-center justify-center py-lg text-center">
-                    <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Keranjang masih kosong.') }}</p>
-                </div>
-@endforelse
-            </div>
 
-            <hr class="co-divider"/>
-
-            {{-- ========== SHIPPING METHOD ========== --}}
-            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('SHIPPING METHOD') }}</p>
-
-            @foreach ($shippingOptions as $opt)
-@php $selectedShip = (int)$opt['ongkir'] === (int)$shipping; @endphp
-            <div class="co-ship-option{{ $selectedShip ? ' selected' : '' }}" data-shipping-ongkir="{{ $opt['ongkir'] }}">
-                <div class="flex items-center gap-sm">
-                    <div class="w-4 h-4 rounded-full border-2 border-secondary flex items-center justify-center">
-                        @if($selectedShip)<div class="w-2 h-2 rounded-full bg-secondary"></div>@endif
+                {{-- ========== SHIPPING METHOD ========== --}}
+                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+                    <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('SHIPPING METHOD') }}</p>
+                    <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Metode Pengiriman') }}</h3>
+                    @foreach ($shippingOptions as $opt)
+                    @php $selectedShip = (int)$opt['ongkir'] === (int)$shipping; @endphp
+                    <div class="co-ship-option{{ $selectedShip ? ' selected' : '' }}" data-shipping-ongkir="{{ $opt['ongkir'] }}">
+                        <div class="flex items-center gap-sm">
+                            <div class="w-4 h-4 rounded-full border-2 border-secondary flex items-center justify-center">
+                                @if($selectedShip)<div class="w-2 h-2 rounded-full bg-secondary"></div>@endif
+                            </div>
+                            <div>
+                                <p class="font-body-sm text-body-sm font-semibold">{{ __($opt['nama']) }}</p>
+                                <p class="font-label-sm text-label-sm text-on-surface-variant">{{ __($opt['estimasi']) }}</p>
+                            </div>
+                        </div>
+                        <span class="font-body-sm text-body-sm">{{ $opt['ongkir'] > 0 ? 'Rp ' . number_format((float)$opt['ongkir'], 0, ',', '.') : __('Free') }}</span>
                     </div>
-                    <div>
-                        <p class="font-body-sm text-body-sm font-semibold">{{ __($opt['nama']) }}</p>
-                        <p class="font-label-sm text-label-sm text-on-surface-variant">{{ __($opt['estimasi']) }}</p>
-                    </div>
+                    @endforeach
                 </div>
-                <span class="font-body-sm text-body-sm">{{ $opt['ongkir'] > 0 ? 'Rp ' . number_format((float)$opt['ongkir'], 0, ',', '.') : __('Free') }}</span>
-            </div>
-@endforeach
 
-            <hr class="co-divider"/>
-
-            {{-- ========== PAYMENT METHOD ========== --}}
-            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('PAYMENT METHOD') }}</p>
-
-            @php
-    $payIcons = [
-        \App\Models\PaymentMethod::KODE_QRIS => 'qr_code_2',
-        \App\Models\PaymentMethod::KODE_EWALLET => 'account_balance_wallet',
-        \App\Models\PaymentMethod::KODE_BANK_TRANSFER => 'account_balance',
-    ];
-@endphp
-            <div class="co-payment-grid">
-@foreach ($paymentMethods as $pm)
-                <button class="co-payment-btn{{ $loop->first ? ' selected' : '' }}" type="button" data-payment-method data-payment-id="{{ $pm->payment_method_id }}">
-                    <span class="material-symbols-outlined">{{ $payIcons[$pm->kode_metode] ?? 'payments' }}</span>
-                    {{ __($pm->nama_metode) }}
-                </button>
-@endforeach
             </div>
 
-            <hr class="co-divider"/>
-
-            {{-- ========== ORDER SUMMARY ========== --}}
-            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('ORDER SUMMARY') }}</p>
-
-            <div class="co-summary-row">
-                <span>Subtotal</span>
-                <span id="co-subtotal" data-subtotal="{{ $subtotal }}">Rp {{ number_format((float)$subtotal, 0, ',', '.') }}</span>
-            </div>
-            <div class="co-summary-row">
-                <span>Shipping</span>
-                <span id="co-shipping">Rp {{ number_format((float)$shipping, 0, ',', '.') }}</span>
-            </div>
-            <div class="co-summary-row">
-                <span>Tax</span>
-                <span>Rp {{ number_format((float)$tax, 0, ',', '.') }}</span>
-            </div>
-            <div class="co-summary-row total">
-                <span>Total Payment</span>
-                <span id="co-total">Rp {{ number_format((float)$total, 0, ',', '.') }}</span>
+            {{-- RIGHT: Rincian Harga --}}
+            <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up lg:sticky lg:top-20">
+                <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN HARGA') }}</p>
+                <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Rincian Harga') }}</h3>
+                <div class="co-summary-row">
+                    <span>Subtotal</span>
+                    <span id="co-subtotal" data-subtotal="{{ $subtotal }}">Rp {{ number_format((float)$subtotal, 0, ',', '.') }}</span>
+                </div>
+                <div class="co-summary-row">
+                    <span>Shipping</span>
+                    <span id="co-shipping">Rp {{ number_format((float)$shipping, 0, ',', '.') }}</span>
+                </div>
+                <div class="co-summary-row">
+                    <span>Tax</span>
+                    <span>Rp {{ number_format((float)$tax, 0, ',', '.') }}</span>
+                </div>
+                <div class="co-summary-row total">
+                    <span>Total Payment</span>
+                    <span id="co-total">Rp {{ number_format((float)$total, 0, ',', '.') }}</span>
+                </div>
+                <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Akun akan dibuat otomatis (password: Raliva123) saat lanjut ke pembayaran.') }}</p>
+                <div class="mt-md lg:hidden">
+                    <button type="submit" class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                        {{ __('Lanjut Ke Pembayaran') }}
+                    </button>
+                </div>
             </div>
 
         </div>
-
     </div>
 </main>
 
-{{-- Bottom Action Bar (mirrors customer/address toolbar card) --}}
-<div class="co-bottom-bar fixed bottom-0 left-0 right-0 lg:left-72 z-50 px-container-margin py-sm pb-safe">
+{{-- Bottom Action Bar (desktop) --}}
+<div class="co-bottom-bar fixed bottom-0 left-0 right-0 lg:left-72 z-50 px-container-margin py-sm pb-safe hidden lg:block">
     <div class="co-bottom-bar-card card-premium flex items-center gap-sm md:gap-md bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.18)]">
         <div class="summary flex-1 min-w-0">
             <p>{{ __('Total Payment') }}</p>
             <p id="co-total-bottom">Rp {{ number_format((float)$total, 0, ',', '.') }}</p>
         </div>
-        <form method="POST" action="{{ route('customer.checkout.store') }}" class="flex items-center justify-end gap-sm md:gap-md flex-1 min-w-0">
-            @csrf
-            <input type="hidden" name="address_id" value="{{ $address?->address_id }}"/>
-            <input type="hidden" name="shipping" id="co-shipping-input" value="{{ $shipping }}"/>
-            <input type="hidden" name="payment_method_id" id="co-payment-input" value="{{ $paymentMethods->first()?->payment_method_id }}"/>
-            @if ($buyId > 0)
-            <input type="hidden" name="buy" value="{{ $buyId }}"/>
-            @endif
-            <button type="submit" class="btn-place shrink-0" {{ $address ? '' : 'disabled' }} @if(!$address) title="{{ __('Anda belum memiliki alamat pengiriman.') }}" @endif>
-                <span class="material-symbols-outlined">check</span>
-                <span class="truncate">{{ __('PLACE ORDER') }}</span>
-            </button>
-        </form>
+        <button type="submit" class="btn-place shrink-0">
+            <span class="material-symbols-outlined">arrow_forward</span>
+            <span class="truncate">{{ __('Lanjut Ke Pembayaran') }}</span>
+        </button>
     </div>
 </div>
+
+</form>
 
 {{-- Drawer --}}
 @include('customer._partials.drawer')
@@ -767,10 +633,8 @@
             n = Math.round(Number(n) || 0);
             return 'Rp ' + n.toLocaleString('id-ID');
         }
-
         var subtotalEl = document.getElementById('co-subtotal');
         var subtotal = subtotalEl ? (parseFloat(subtotalEl.getAttribute('data-subtotal')) || 0) : 0;
-
         function refreshTotal(ongkir) {
             var total = subtotal + (parseFloat(ongkir) || 0);
             var shipEl = document.getElementById('co-shipping');
@@ -778,7 +642,6 @@
             if (shipEl) shipEl.textContent = rupiah(ongkir);
             totalEls.forEach(function (t) { t.textContent = rupiah(total); });
         }
-
         document.querySelectorAll('.co-ship-option').forEach(function (opt) {
             opt.addEventListener('click', function () {
                 document.querySelectorAll('.co-ship-option').forEach(function (o) { o.classList.remove('selected'); });
@@ -788,14 +651,9 @@
                 if (shipInput) shipInput.value = opt.getAttribute('data-shipping-ongkir');
             });
         });
-
-        document.querySelectorAll('[data-payment-method]').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                document.querySelectorAll('[data-payment-method]').forEach(function (b) { b.classList.remove('selected'); });
-                btn.classList.add('selected');
-                var payInput = document.getElementById('co-payment-input');
-                if (payInput) payInput.value = btn.getAttribute('data-payment-id');
-            });
+        // btn flash
+        document.querySelectorAll('.btn-gold,.btn-place').forEach(function(b){
+            b.addEventListener('click', function(){ b.classList.remove('flashing'); void b.offsetWidth; b.classList.add('flashing'); setTimeout(function(){ b.classList.remove('flashing'); },600); });
         });
     });
 </script>

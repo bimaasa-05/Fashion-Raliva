@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - {{ __('Checkout') }}</title>
+<title>RALIVA - {{ __('Checkout') }} — {{ __('Bayar') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -202,7 +202,7 @@
     html.theme-dark .peer:checked ~ .peer-checked\:bg-primary { background-color: #f2efec !important; }
 </style>
 <style>
-    /* ===== Premium cards + burgundy accents (same as account/index, address/edit) ===== */
+    /* ===== Premium cards + burgundy accents ===== */
     .card-premium { box-shadow:0 1px 2px rgb(17 17 17 / .04),0 12px 32px -16px rgb(17 17 17 / .16); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; }
     .card-premium:hover {  box-shadow:0 2px 4px rgb(17 17 17 / .05),0 20px 48px -20px rgb(17 17 17 / .22); border-color:rgba(139,30,63,.45); }
     html.theme-dark .card-premium { background-color:var(--surface-ivory); border-color:var(--border-soft); box-shadow:0 1px 2px rgb(0 0 0 / .3),0 8px 24px -12px rgb(0 0 0 / .5); }
@@ -215,7 +215,6 @@
     .reveal-up { opacity:0; transform:translateY(12px); transition:opacity .5s ease,transform .5s ease; }
     .reveal-up.is-visible { opacity:1; transform:none; }
     @media (prefers-reduced-motion: reduce) { .reveal-up { opacity:1; transform:none; transition:none; } }
-    /* ===== Primary solid button (burgundy + shimmer flash) ===== */
     .btn-gold { position: relative; overflow: hidden; background-color: var(--btn-gold-bg) !important; color: var(--btn-gold-text) !important; }
     .btn-gold::after { content:''; position:absolute; top:-10%; bottom:-10%; left:-80%; width:45%; background: rgba(255,255,255,.55); transform:skewX(-24deg); pointer-events:none; }
     .btn-gold:hover::after { animation: authFlash 1.4s linear infinite; }
@@ -223,359 +222,73 @@
     @keyframes authFlash { from { left:-80%; } to { left:135%; } }
     :root           { --btn-gold-bg:#8B1E3F; --btn-gold-text:#ffffff; }
     html.theme-dark { --btn-gold-bg:#6D1428; --btn-gold-text:#ffffff; }
-    /* ===== Drawer burgundy parity ===== */
     #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(139,30,63,.10); }
     html.theme-dark #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(163,38,63,.16); }
 </style>
 <style>
-    /* ===== Checkout scoped styles ===== */
-    .co-section-label {
-        font-family: 'Manrope', sans-serif;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.10em;
-        text-transform: uppercase;
-        color: var(--chrome-accent);
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        margin-bottom: 1rem;
-    }
-    .co-section-label::before {
-        content: '';
-        width: 28px;
-        height: 1px;
-        background: var(--chrome-accent);
-        opacity: .65;
-        flex-shrink: 0;
-    }
-    .co-divider {
-        height: 1px;
-        background: var(--border-soft);
-        border: none;
-        margin: 1.25rem 0;
-    }
-    /* Item scroller utility */
-    .co-scroll {
-        overflow-x: auto;
-        scrollbar-width: thin;
-        scrollbar-color: var(--chrome-accent) transparent;
-        padding-bottom: 0.875rem;
-    }
-    .co-scroll::-webkit-scrollbar { height: 5px; }
-    .co-scroll::-webkit-scrollbar-track { background: transparent; }
-    .co-scroll::-webkit-scrollbar-thumb { background: var(--chrome-accent); border-radius: 999px; }
-    .co-field {
-        display: flex;
-        align-items: center;
-        gap: 0.875rem;
-        padding: 0.875rem 0;
-        min-height: 3.5rem;
-    }
-    .co-field + .co-field {
-        border-top: 1px solid var(--border-soft);
-    }
-    .co-field:hover {
-        background: var(--surface-warm);
-        border-radius: 0.375rem;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-    }
-    .co-icon {
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 0.5rem;
-        background: var(--surface-warm);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        color: var(--text-muted);
-        border: 1px solid var(--border-soft);
-        transition: background .18s ease, color .18s ease, border-color .18s ease;
-    }
-    .co-field:hover .co-icon {
-        background: #F3F0EA;
-        color: #8B1E3F;
-        border-color: #8B1E3F;
-    }
-    html.theme-dark .co-icon {
-        background: var(--surface-warm);
-        color: var(--text-muted);
-        border-color: var(--border-soft);
-    }
-    html.theme-dark .co-field:hover .co-icon {
-        background: #201f1e;
-        color: #8B1E3F;
-        border-color: #8B1E3F;
-    }
-    .co-label {
-        font-family: 'Manrope', sans-serif;
-        font-size: 15px;
-        font-weight: 500;
-        color: var(--on-surface);
-        flex: 0 0 auto;
-        min-width: 0;
-    }
-    .co-input-wrap {
-        flex: 1;
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.15rem;
-    }
-    .co-input {
-        width: 100%;
-        background: transparent;
-        border: none;
-        border-bottom: 1.5px solid var(--border-soft);
-        padding: 0.2rem 0;
-        font-family: 'Manrope', sans-serif;
-        font-size: 15px;
-        font-weight: 400;
-        color: var(--on-surface);
-        outline: none;
-        transition: border-color .18s ease, color .18s ease;
-    }
-    .co-input::placeholder {
-        color: var(--text-muted);
-        opacity: 0.7;
-    }
-    .co-input:focus {
-        border-bottom-color: #8B1E3F;
-        color: #8B1E3F;
-    }
-    html.theme-dark .co-input:focus {
-        border-bottom-color: #8B1E3F;
-        color: #8B1E3F;
-    }
-    .co-helper {
-        font-family: 'Manrope', sans-serif;
-        font-size: 12px;
-        font-weight: 400;
-        color: var(--text-muted);
-        padding-left: 3.375rem;
-        line-height: 1.4;
-    }
-    /* Shipping option */
-    .co-ship-option {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--border-soft);
-        border-radius: 0.5rem;
-        cursor: pointer;
-        transition: background .18s ease, border-color .18s ease, color .18s ease;
-        background: var(--surface-warm);
-    }
-    .co-ship-option:hover {
-        background: #ECE7DF;
-        border-color: #8B1E3F;
-    }
-    .co-ship-option.selected {
-        border-color: #8B1E3F;
-        background: rgba(139, 30, 63, .07);
-        box-shadow: inset 0 0 0 1px rgba(139, 30, 63, .15);
-    }
-    .co-ship-option.selected p:first-of-type {
-        color: #8B1E3F;
-    }
-    .co-ship-option + .co-ship-option {
-        margin-top: 0.5rem;
-    }
-    /* Payment method grid */
-    .co-payment-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.75rem;
-    }
-    .co-payment-btn {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 0.4rem;
-        padding: 1rem;
-        border: 1px solid var(--border-soft);
-        border-radius: 0.5rem;
-        background: var(--surface-warm);
-        cursor: pointer;
-        transition: background .18s ease, border-color .18s ease, color .18s ease;
-        font-family: 'Manrope', sans-serif;
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--text-muted);
-    }
-    .co-payment-btn:hover {
-        background: #ECE7DF;
-        border-color: #8B1E3F;
-        color: #8B1E3F;
-    }
-    .co-payment-btn.selected {
-        border-color: #8B1E3F;
-        background: rgba(139, 30, 63, .07);
-        color: #8B1E3F;
-        font-weight: 600;
-        box-shadow: inset 0 0 0 1px rgba(139, 30, 63, .15);
-    }
-    .co-payment-btn.selected .material-symbols-outlined {
-        color: #8B1E3F;
-    }
-    .co-payment-btn .material-symbols-outlined {
-        font-size: 1.5rem;
-    }
-    /* Order summary */
-    .co-summary-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 0;
-        font-family: 'Manrope', sans-serif;
-        font-size: 14px;
-        color: var(--text-muted);
-    }
-    .co-summary-row.total {
-        font-size: 16px;
-        font-weight: 600;
-        color: var(--on-surface);
-        border-top: 1px solid var(--border-soft);
-        padding-top: 0.75rem;
-        margin-top: 0.5rem;
-    }
-    /* Bottom action bar wrapper (positioning only; visual card = .co-bottom-bar-card below) */
-    .co-bottom-bar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 50;
-    }
-    html.theme-dark .co-ship-option:hover,
-    html.theme-dark .co-payment-btn:hover {
-        background: #262524;
-        border-color: #8B1E3F;
-        color: #8B1E3F;
-    }
-    html.theme-dark .co-ship-option.selected,
-    html.theme-dark .co-payment-btn.selected {
-        background: rgba(139, 30, 63, .18);
-        border-color: #8B1E3F;
-        color: #ffc2c9;
-        box-shadow: inset 0 0 0 1px rgba(139, 30, 63, .4);
-    }
-    html.theme-dark .co-ship-option.selected p:first-of-type,
-    html.theme-dark .co-payment-btn.selected .material-symbols-outlined {
-        color: #ffc2c9;
-    }
-    /* Desktop: keep the fixed bar clear of the fixed sidebar (lg:left-72 = 288px) */
-    @media (min-width: 1024px) {
-        .co-bottom-bar {
-            left: 288px;
-            right: 0;
-        }
-    }
-    .co-bottom-bar .summary {
-        flex: 1 1 0%;
-        min-width: 0;
-    }
-    .co-bottom-bar .summary p:first-child {
-        font-family: 'Manrope', sans-serif;
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: var(--text-muted);
-    }
-    .co-bottom-bar .summary p:last-child {
-        font-family: 'Manrope', sans-serif;
-        font-size: 18px;
-        font-weight: 600;
-        color: var(--on-surface);
-    }
-    .co-bottom-bar .btn-place {
-        padding: 0.75rem 1.5rem;
-        font-family: 'Manrope', sans-serif;
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #ffffff;
-        background: #8B1E3F;
-        border: none;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        transition: background .18s ease, transform .12s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-    }
-    .co-bottom-bar .btn-place:hover {
-        background: #6D1428;
-    }
-    .co-bottom-bar .btn-place:active {
-        transform: scale(0.985);
-    }
-
-    /* Responsive */
-    @media (max-width: 639px) {
-        .co-field {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.35rem;
-            padding: 0.8rem 0;
-        }
-        .co-field + .co-field {
-            border-top: 1px solid var(--border-soft);
-        }
-        .co-icon {
-            width: 2rem;
-            height: 2rem;
-        }
-        .co-label {
-            font-size: 14px;
-        }
-        .co-helper {
-            padding-left: 0;
-        }
-        .co-input {
-            width: 100%;
-            border-bottom: 1.5px solid var(--border-soft);
-        }
-        .co-payment-grid {
-            grid-template-columns: 1fr;
-        }
-        .co-bottom-bar {
-            bottom: 72px;
-        }
-        .co-bottom-bar .summary p:last-child {
-            font-size: 16px;
-        }
-    }
+    .co-stepper { display:flex; align-items:center; justify-content:center; gap:.5rem; }
+    .co-step { display:flex; align-items:center; gap:.45rem; font-family:'Manrope',sans-serif; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+    .co-step .num { width:28px; height:28px; border-radius:9999px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; border:1.5px solid var(--border-soft); background: var(--surface-warm); color: var(--text-muted); }
+    .co-step.active .num { background:#8B1E3F; border-color:#8B1E3F; color:#fff; }
+    .co-step.done .num { background:#8B1E3F; border-color:#8B1E3F; color:#fff; }
+    .co-step.active { color:#8B1E3F; }
+    .co-step:not(.active):not(.done) { color: var(--text-muted); }
+    .co-step-line { width:32px; height:1px; background:var(--border-soft); }
+    .co-step-line.done { background:#8B1E3F; }
+    .pay-method { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.4rem; padding:1rem; border:1px solid var(--border-soft); border-radius:.75rem; background:var(--surface-warm); cursor:pointer; transition:background .18s,border-color .18s,color .18s; }
+    .pay-method:hover { background:#ECE7DF; border-color:#8B1E3F; color:#8B1E3F; }
+    .pay-method.selected { border-color:#8B1E3F; background:rgba(139,30,63,.08); color:#8B1E3F; font-weight:600; box-shadow:inset 0 0 0 1px rgba(139,30,63,.15); }
+    html.theme-dark .pay-method:hover { background:#262524; }
+    html.theme-dark .pay-method.selected { background:rgba(139,30,63,.18); color:#FFC2C9; }
+    .pay-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:.75rem; }
+    @media(min-width:768px){ .pay-grid{ grid-template-columns:repeat(3,1fr);} }
+    .detail-row { display:flex; justify-content:space-between; gap:.75rem; padding:.55rem 0; font-family:'Manrope',sans-serif; font-size:13px; color:var(--text-muted); }
+    .detail-row strong{ color:var(--on-surface); font-weight:600; }
+    .detail-row.total{ border-top:1px solid var(--border-soft); margin-top:.5rem; padding-top:.75rem; font-size:15px; font-weight:600; color:var(--on-surface); }
+    .banner-akun { background:#ecfdf5; border:1px solid #a7f3d0; color:#065f46; }
+    html.theme-dark .banner-akun{ background:rgba(16,185,129,.12); border-color:rgba(16,185,129,.35); color:#a7f3d0; }
 </style>
 </head>
-<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[168px] md:pb-[104px] lg:pl-72">
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] lg:pl-72">
+
+@php
+    $akunBaruEmail = session('akun_baru');
+@endphp
 
 <!-- TopAppBar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-    <a href="{{ route('customer.order-tracking') }}" aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+    <a href="{{ route('customer.checkout', request()->query('buy') ? ['buy'=>request()->query('buy')] : []) }}" aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
         <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
     </a>
-    <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('PEMBAYARAN') }}</h1>
+    <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('Bayar') }}</h1>
     <div class="w-10"></div>
 </header>
 
-<!-- Main Content -->
-<main class="pt-16 pb-[72px] w-full overflow-x-hidden">
+<main class="pt-6 pb-10 w-full overflow-x-hidden">
     <div class="mx-auto max-w-[1400px] px-container-margin">
 
-        {{-- Page Title Card --}}
-        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium mb-lg md:mb-xl text-center md:text-left reveal-up">
-            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('PAYMENT') }}</p>
-            <h2 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ __('Selesaikan Pembayaran') }}</h2>
+        {{-- Stepper --}}
+        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center reveal-up">
+            <div class="co-stepper">
+                <a href="{{ route('customer.checkout', request()->query('buy') ? ['buy'=>request()->query('buy')] : []) }}" class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Review') }}</a>
+                <span class="co-step-line done"></span>
+                <span class="co-step active"><span class="num">2</span> {{ __('Bayar') }}</span>
+                <span class="co-step-line"></span>
+                <span class="co-step"><span class="num">3</span> {{ __('Selesai') }}</span>
+            </div>
         </div>
+
+        {{-- Banner akun baru --}}
+        @if($akunBaruEmail)
+        <div class="banner-akun rounded-xl p-md mb-lg flex items-start gap-sm reveal-up">
+            <span class="material-symbols-outlined text-[22px] shrink-0 mt-0.5">celebration</span>
+            <div class="min-w-0">
+                <p class="font-body-sm text-body-sm font-semibold">{{ __('Akun berhasil dibuat!') }}</p>
+                <p class="font-body-sm text-body-sm mt-xs">{{ __('Email') }}: <strong>{{ $akunBaruEmail }}</strong> &nbsp;•&nbsp; {{ __('Password') }}: <strong>Raliva123</strong></p>
+                <p class="font-label-sm text-label-sm mt-xs opacity-80">{{ __('Simpan kredensial ini. Ubah password di') }} <a href="{{ route('customer.account.password') }}" class="underline underline-offset-2 font-semibold">{{ __('My Account → Ganti Password') }}</a>.</p>
+            </div>
+        </div>
+        @endif
 
         {{-- Status hint --}}
         @if ($payment->status === \App\Models\Payment::STATUS_MENUNGGU_VERIFIKASI)
@@ -586,7 +299,7 @@
         @elseif ($payment->status === \App\Models\Payment::STATUS_DITOLAK)
         <div class="bg-surface-container-low border border-error rounded-xl p-md mb-lg flex items-center gap-sm reveal-up">
             <span class="material-symbols-outlined text-error">error</span>
-            <p class="font-body-sm text-body-sm text-error">{{ __('Bukti pembayaran Anda ditolak. Silakan unggah ulang bukti yang benar di bawah.') }}</p>
+            <p class="font-body-sm text-body-sm text-error">{{ __('Bukti pembayaran Anda ditolak. Silakan pilih metode & unggah ulang bukti yang benar.') }}</p>
         </div>
         @elseif ($payment->status === \App\Models\Payment::STATUS_TERVERIFIKASI)
         <div class="bg-surface-container-low border border-outline-variant rounded-xl p-md mb-lg flex items-center gap-sm reveal-up">
@@ -595,62 +308,159 @@
         </div>
         @endif
 
-        {{-- Card: detail pembayaran --}}
-        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
-            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('DETAIL') }}</p>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-md mt-sm">
-                <div class="border border-outline-variant rounded-lg p-md">
-                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Nomor Pesanan') }}</p>
-                    <p class="font-body-lg text-body-lg font-semibold text-on-surface mt-xs">
-                        @foreach ($checkout->orders as $o)
-                            <span class="inline-block">{{ $o->nomor_order }}</span><br/>
-                        @endforeach
-                    </p>
-                </div>
-                <div class="border border-outline-variant rounded-lg p-md">
-                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Metode Pembayaran') }}</p>
-                    <p class="font-body-lg text-body-lg font-semibold text-on-surface mt-xs">{{ $payment->paymentMethod?->nama_metode }}</p>
-                </div>
-                <div class="border border-outline-variant rounded-lg p-md">
-                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Total Dibayar') }}</p>
-                    <p class="font-title-md text-title-md font-semibold text-[var(--chrome-accent)] mt-xs">Rp {{ number_format((float) $payment->jumlah, 0, ',', '.') }}</p>
-                </div>
-                <div class="border border-outline-variant rounded-lg p-md">
-                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Batas Waktu') }}</p>
-                    <p class="font-body-lg text-body-lg font-semibold text-on-surface mt-xs">{{ $payment->batas_waktu->format('d M Y, H:i') }}</p>
-                </div>
-            </div>
-
-            <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-lg">
-                {{ __('Transfer sesuai total di atas, lalu unggah bukti pembayaran untuk diverifikasi admin.') }}
-            </p>
+        @if ($errors->any())
+        <div class="bg-error-container border border-error/20 rounded-xl p-md mb-md">
+            <p class="font-body-sm text-body-sm text-on-error-container font-semibold mb-xs">{{ __('Periksa isian:') }}</p>
+            <ul class="list-disc list-inside font-body-sm text-body-sm text-on-error-container">
+                @foreach ($errors->all() as $e)<li>{{ $e }}</li>@endforeach
+            </ul>
         </div>
-
-        {{-- Card: upload bukti --}}
-        @if (in_array($payment->status, [\App\Models\Payment::STATUS_PENDING, \App\Models\Payment::STATUS_DITOLAK], true))
-        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium mt-lg reveal-up">
-            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('UPLOAD BUKTI') }}</p>
-            <form method="POST" action="{{ route('customer.checkout.payment.upload', $checkout->checkout_id) }}" enctype="multipart/form-data" class="mt-sm">
-                @csrf
-                <label class="flex flex-col items-center justify-center gap-sm border-2 border-dashed border-outline rounded-xl py-xl bg-surface-container-low cursor-pointer hover:border-secondary transition-colors text-center">
-                    <span class="material-symbols-outlined text-[40px] text-on-surface-variant">upload_file</span>
-                    <span class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Klik untuk memilih gambar bukti transfer (JPG/PNG)') }}</span>
-                    <input type="file" name="bukti" accept="image/jpeg,image/png" class="sr-only" required/>
-                </label>
-                @error('bukti')
-                <p class="font-label-sm text-label-sm text-error mt-xs">{{ $message }}</p>
-                @enderror
-                <button type="submit" class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest mt-md">
-                    <span class="material-symbols-outlined text-[20px]">task_alt</span>
-                    {{ __('Unggah Bukti Pembayaran') }}
-                </button>
-            </form>
+        @endif
+        @if (session('toast'))
+        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-md mb-md flex items-center gap-sm">
+            <span class="material-symbols-outlined text-secondary">info</span>
+            <p class="font-body-sm text-body-sm text-on-surface-variant">{{ session('toast')['message'] ?? session('toast') }}</p>
         </div>
         @endif
 
-        <div class="mt-lg flex justify-center">
-            <a href="{{ route('customer.order-tracking') }}" class="inline-flex items-center gap-2 px-xl py-3 rounded-full border border-outline-variant font-label-caps text-label-caps uppercase tracking-widest text-on-surface hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">
+        @if (in_array($payment->status, [\App\Models\Payment::STATUS_PENDING, \App\Models\Payment::STATUS_DITOLAK], true))
+        {{-- GRID 2 kolom: kiri form, kanan rincian --}}
+        <div class="grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-lg items-start">
+
+            {{-- KIRI --}}
+            <div class="space-y-lg">
+
+                {{-- Pilih Metode Pembayaran --}}
+                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+                    <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('METODE PEMBAYARAN') }}</p>
+                    <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Pilih Metode Pembayaran') }}</h3>
+
+                    <form id="form-bayar" method="POST" action="{{ route('customer.checkout.payment.upload', $checkout->checkout_id) }}" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="payment_method_id" id="input-payment-method" value="{{ old('payment_method_id', $payment->payment_method_id) }}"/>
+
+                        @if($paymentMethods->isEmpty())
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Belum ada metode pembayaran aktif. Hubungi admin.') }}</p>
+                        @else
+                        <div class="pay-grid" id="pay-grid">
+                            @foreach($paymentMethods as $pm)
+                            @php
+                                $isSelected = (string)old('payment_method_id', $payment->payment_method_id) === (string)$pm->payment_method_id;
+                                $icon = match($pm->kode_metode){
+                                    'qris' => 'qr_code_2',
+                                    'ewallet' => 'account_balance_wallet',
+                                    'bank_transfer' => 'account_balance',
+                                    default => 'payments'
+                                };
+                            @endphp
+                            <div class="pay-method{{ $isSelected ? ' selected' : '' }}" data-id="{{ $pm->payment_method_id }}" data-nama="{{ $pm->nama_metode }}">
+                                <span class="material-symbols-outlined text-[28px]">{{ $icon }}</span>
+                                <span class="text-center leading-tight text-sm">{{ $pm->nama_metode }}</span>
+                            </div>
+                            @endforeach
+                        </div>
+                        @endif
+                        @error('payment_method_id')<p class="font-label-sm text-label-sm text-error mt-sm">{{ $message }}</p>@enderror
+                        <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm" id="pay-selected-hint">
+                            @if(old('payment_method_id', $payment->payment_method_id)) {{ __('Metode terpilih akan ditampilkan di rincian.') }} @else {{ __('Pilih salah satu metode di atas.') }} @endif
+                        </p>
+
+                        {{-- Upload Bukti --}}
+                        <div class="mt-lg">
+                            <p class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-sm flex items-center gap-2"><span class="w-7 h-px bg-[var(--chrome-accent)] opacity-60"></span> {{ __('UPLOAD BUKTI') }}</p>
+                            <label id="dropzone" class="flex flex-col items-center justify-center gap-sm border-2 border-dashed border-outline rounded-xl py-xl bg-surface-container-low cursor-pointer hover:border-secondary transition-colors text-center px-md">
+                                <span class="material-symbols-outlined text-[40px] text-on-surface-variant">upload_file</span>
+                                <span class="font-body-sm text-body-sm text-on-surface-variant text-center">{{ __('Klik untuk memilih gambar bukti transfer (JPG/PNG, maks 4MB)') }}</span>
+                                <span id="file-name" class="font-label-sm text-label-sm text-secondary hidden"></span>
+                                <input type="file" name="bukti" id="input-bukti" accept="image/jpeg,image/png,image/jpg" class="sr-only" required/>
+                            </label>
+                            @error('bukti')<p class="font-label-sm text-label-sm text-error mt-xs">{{ $message }}</p>@enderror
+                        </div>
+
+                        <button type="submit" class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest mt-lg">
+                            <span class="material-symbols-outlined text-[20px]">task_alt</span>
+                            {{ __('Unggah Bukti Pembayaran') }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            {{-- KANAN: Rincian Pembayaran --}}
+            <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up lg:sticky lg:top-20">
+                <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN') }}</p>
+                <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Rincian Pembayaran') }}</h3>
+                <div class="detail-row">
+                    <span>{{ __('Nomor Pesanan') }}</span>
+                    <span class="text-right">@foreach($checkout->orders as $o)<strong class="block">{{ $o->nomor_order }}</strong>@endforeach</span>
+                </div>
+                <div class="detail-row">
+                    <span>{{ __('Metode') }}</span>
+                    <strong id="rincian-metode" class="text-right">{{ $payment->paymentMethod?->nama_metode ?? '—' }}</strong>
+                </div>
+                <div class="detail-row">
+                    <span>{{ __('Total Dibayar') }}</span>
+                    <strong class="text-[var(--chrome-accent)]">Rp {{ number_format((float)$payment->jumlah,0,',','.') }}</strong>
+                </div>
+                <div class="detail-row">
+                    <span>{{ __('Batas Waktu') }}</span>
+                    <strong>{{ $payment->batas_waktu?->format('d M Y, H:i') ?? '—' }}</strong>
+                </div>
+                <div class="detail-row">
+                    <span>{{ __('Status') }}</span>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+                        @if($payment->status==='pending') bg-amber-100 text-amber-800
+                        @elseif($payment->status==='menunggu_verifikasi') bg-blue-100 text-blue-800
+                        @elseif($payment->status==='terverifikasi') bg-emerald-100 text-emerald-800
+                        @elseif($payment->status==='ditolak') bg-red-100 text-red-800
+                        @else bg-surface-container text-on-surface-variant @endif
+                    ">{{ $payment->status }}</span>
+                </div>
+                <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-md">{{ __('Transfer sesuai total di atas, lalu unggah bukti pembayaran untuk diverifikasi admin.') }}</p>
+                @if($checkout->email_pelanggan)
+                <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Email pemesan') }}: {{ $checkout->email_pelanggan }}</p>
+                @endif
+            </div>
+        </div>
+        @else
+        {{-- Sudah upload — tampil detail saja + grid rincian --}}
+        <div class="grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-lg">
+            <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+                <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('DETAIL') }}</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-md mt-sm">
+                    <div class="border border-outline-variant rounded-lg p-md">
+                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Nomor Pesanan') }}</p>
+                        <p class="font-body-lg text-body-lg font-semibold text-on-surface mt-xs">
+                            @foreach ($checkout->orders as $o)<span class="inline-block">{{ $o->nomor_order }}</span><br/>@endforeach
+                        </p>
+                    </div>
+                    <div class="border border-outline-variant rounded-lg p-md">
+                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Metode Pembayaran') }}</p>
+                        <p class="font-body-lg text-body-lg font-semibold text-on-surface mt-xs">{{ $payment->paymentMethod?->nama_metode ?? '—' }}</p>
+                    </div>
+                    <div class="border border-outline-variant rounded-lg p-md">
+                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Total Dibayar') }}</p>
+                        <p class="font-title-md text-title-md font-semibold text-[var(--chrome-accent)] mt-xs">Rp {{ number_format((float) $payment->jumlah, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="border border-outline-variant rounded-lg p-md">
+                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Batas Waktu') }}</p>
+                        <p class="font-body-lg text-body-lg font-semibold text-on-surface mt-xs">{{ $payment->batas_waktu?->format('d M Y, H:i') ?? '—' }}</p>
+                    </div>
+                </div>
+                <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-lg">{{ __('Menunggu verifikasi admin. Kamu akan mendapat notifikasi bila disetujui.') }}</p>
+            </div>
+            <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up lg:sticky lg:top-20">
+                <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN') }}</p>
+                <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Rincian Pembayaran') }}</h3>
+                <div class="detail-row"><span>{{ __('Nomor Pesanan') }}</span><span class="text-right">@foreach($checkout->orders as $o)<strong class="block">{{ $o->nomor_order }}</strong>@endforeach</span></div>
+                <div class="detail-row"><span>{{ __('Metode') }}</span><strong class="text-right">{{ $payment->paymentMethod?->nama_metode ?? '—' }}</strong></div>
+                <div class="detail-row"><span>{{ __('Total') }}</span><strong class="text-[var(--chrome-accent)]">Rp {{ number_format((float)$payment->jumlah,0,',','.') }}</strong></div>
+                <div class="detail-row"><span>{{ __('Status') }}</span><span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">{{ $payment->status }}</span></div>
+            </div>
+        </div>
+        @endif
+
+        <div class="mt-lg flex flex-wrap justify-center gap-sm">
+            <a href="{{ $akunBaruEmail ? route('customer.checkout.selesai', $checkout->checkout_id) : route('customer.order-tracking') }}" class="inline-flex items-center gap-2 px-xl py-3 rounded-full border border-outline-variant font-label-caps text-label-caps uppercase tracking-widest text-on-surface hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">
                 <span class="material-symbols-outlined text-[18px]">local_shipping</span>
                 {{ __('Lihat Status Pesanan') }}
             </a>
@@ -671,13 +481,68 @@
         }
         var io = new IntersectionObserver(function (entries) {
             entries.forEach(function (en) {
-                if (en.isIntersecting) {
-                    en.target.classList.add('is-visible');
-                    io.unobserve(en.target);
-                }
+                if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); }
             });
         }, { threshold: 0.08 });
         els.forEach(function (e) { io.observe(e); });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        var grid = document.getElementById('pay-grid');
+        var input = document.getElementById('input-payment-method');
+        var rincian = document.getElementById('rincian-metode');
+        var hint = document.getElementById('pay-selected-hint');
+        if(grid && input){
+            grid.querySelectorAll('.pay-method').forEach(function(el){
+                el.addEventListener('click', function(){
+                    grid.querySelectorAll('.pay-method').forEach(function(o){o.classList.remove('selected')});
+                    el.classList.add('selected');
+                    input.value = el.getAttribute('data-id');
+                    if(rincian) rincian.textContent = el.getAttribute('data-nama')||'—';
+                    if(hint) hint.textContent = 'Metode terpilih: ' + (el.getAttribute('data-nama')||'');
+                });
+            });
+        }
+        var fileInput = document.getElementById('input-bukti');
+        var fileName = document.getElementById('file-name');
+        var dropzone = document.getElementById('dropzone');
+        if(fileInput && fileName){
+            fileInput.addEventListener('change', function(){
+                if(fileInput.files && fileInput.files[0]){
+                    fileName.textContent = fileInput.files[0].name;
+                    fileName.classList.remove('hidden');
+                    if(dropzone) dropzone.classList.add('border-secondary');
+                }
+            });
+            if(dropzone){
+                dropzone.addEventListener('dragover', function(e){ e.preventDefault(); dropzone.classList.add('border-secondary','bg-surface-container'); });
+                dropzone.addEventListener('dragleave', function(){ dropzone.classList.remove('border-secondary','bg-surface-container'); });
+                dropzone.addEventListener('drop', function(e){
+                    e.preventDefault();
+                    dropzone.classList.remove('bg-surface-container');
+                    if(e.dataTransfer.files && e.dataTransfer.files[0]){
+                        fileInput.files = e.dataTransfer.files;
+                        fileInput.dispatchEvent(new Event('change',{bubbles:true}));
+                    }
+                });
+            }
+        }
+        document.querySelectorAll('.btn-gold').forEach(function(b){
+            b.addEventListener('click', function(){ b.classList.remove('flashing'); void b.offsetWidth; b.classList.add('flashing'); setTimeout(function(){ b.classList.remove('flashing'); },600); });
+        });
+        // validasi sebelum submit: pastikan metode terpilih
+        var form = document.getElementById('form-bayar');
+        if(form){
+            form.addEventListener('submit', function(e){
+                var v = input ? input.value : '';
+                if(!v){
+                    e.preventDefault();
+                    alert('Pilih metode pembayaran terlebih dahulu.');
+                    if(grid) grid.scrollIntoView({behavior:'smooth',block:'center'});
+                }
+            });
+        }
     });
 </script>
 

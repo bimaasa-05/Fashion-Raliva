@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,6 +48,13 @@ class CartController extends Controller
      */
     public function add(Request $request): JsonResponse
     {
+        if (! Auth::check()) {
+            return response()->json(['status' => 'error', 'message' => 'Masuk untuk memakai keranjang, atau klik Beli Sekarang.'], 401);
+        }
+        if (Auth::user()->role?->nama_role !== Role::CUSTOMER) {
+            return response()->json(['status' => 'error', 'message' => 'Hanya customer yang dapat memakai keranjang.'], 403);
+        }
+
         try {
             $validated = $request->validate([
                 'product_variant_id' => 'required|integer|exists:product_variants,product_variant_id',

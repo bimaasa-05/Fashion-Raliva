@@ -43,6 +43,7 @@ class Order extends Model
         'tipe_order',
         'status_ketersediaan',
         'catatan_gudang',
+        'catatan',
         'dicek_gudang_pada',
     ];
 

@@ -332,6 +332,7 @@
   .reveal-up.is-visible { opacity:1; transform:none; }
   @media (prefers-reduced-motion: reduce) { .reveal-up { opacity:1; transform:none; transition:none; } }
 </style>
+  <noscript><style>.reveal-up{opacity:1 !important;transform:none !important;}</style></noscript>
   </head>
 <body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased selection:bg-secondary-container selection:text-on-secondary-container pb-[calc(72px+env(safe-area-inset-bottom))] lg:pl-72">
 <!-- Top App Bar -->
@@ -430,6 +431,22 @@
 </div>
 @include('customer._partials.drawer')
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var els = document.querySelectorAll('.reveal-up');
+    if (els.length) {
+        if (!('IntersectionObserver' in window)) {
+            els.forEach(function (e) { e.classList.add('is-visible'); });
+        } else {
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); } });
+            }, { threshold: 0.08 });
+            els.forEach(function (e) { io.observe(e); });
+            setTimeout(function () { els.forEach(function (e) { e.classList.add('is-visible'); }); }, 800);
+        }
+    }
+});
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('[data-edit-id]').forEach(function (btn) {

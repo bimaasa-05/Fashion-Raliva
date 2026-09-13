@@ -83,7 +83,7 @@
                 @forelse ($orders as $pesanan)
                     @php
                         $badge = $badgeMap[$pesanan->status] ?? ['label' => ucfirst($pesanan->status), 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'];
-                        $custName = $pesanan->checkout?->user?->nama_lengkap ?? '-';
+                        $custName = $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-';
                         $custId = $pesanan->checkout?->user_id;
                     @endphp
                     <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors"
@@ -133,7 +133,7 @@
             <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
         </div>
         <div class="p-6 space-y-4 font-body-md text-sm">
-            <div class="flex justify-between gap-4 pb-3 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Pelanggan</dt><dd class="text-on-surface text-right">{{ $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</dd></div>
+            <div class="flex justify-between gap-4 pb-3 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Pelanggan</dt><dd class="text-on-surface text-right">{{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }}@if($pesanan->checkout?->nomor_telepon)<br><span class="text-xs text-on-surface-variant">{{ $pesanan->checkout->nomor_telepon }}</span>@endif</dd></div>
             <div class="flex justify-between gap-4 pb-3 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Toko</dt><dd class="text-on-surface text-right">{{ $pesanan->store?->nama_toko ?? '-' }}</dd></div>
             <div>
                 <p class="text-[10px] uppercase text-on-surface-variant mb-2">Item Pesanan</p>

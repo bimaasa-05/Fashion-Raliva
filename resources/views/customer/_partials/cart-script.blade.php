@@ -40,12 +40,18 @@
         setTimeout(function () { toast.style.opacity = '0'; setTimeout(function () { toast.remove(); }, 350); }, 1800);
     }
 
+    var IS_GUEST_CART = {{ auth()->check() ? 'false' : 'true' }};
     // Handler global untuk semua tombol [data-cart-add]
     document.addEventListener('click', function (e) {
         var addBtn = e.target.closest('[data-cart-add]');
         if (addBtn) {
             e.preventDefault();
             e.stopPropagation();
+
+            if (IS_GUEST_CART) {
+                showToast('Masuk untuk memakai keranjang, atau klik Beli Sekarang.');
+                return;
+            }
 
             var variantId = addBtn.getAttribute('data-variant-id');
             if (!variantId) {
