@@ -163,7 +163,7 @@
                             <div class="min-w-0">
                                 <p class="raliva-label text-gold-accent">Detail Pembayaran</p>
                                 <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">#CKT-{{ str_pad((string) $pembayaran->checkout_id, 4, '0', STR_PAD_LEFT) }}</h3>
-                                <p class="text-on-surface-variant font-body-md text-xs mt-1">{{ $pembayaran->checkout?->user?->nama_lengkap ?? '-' }} &#8226; {{ $orderUtama?->store?->nama_toko ?? '-' }} &#8226; {{ $pembayaran->paymentMethod?->nama_metode ?? '-' }}</p>
+                                <p class="text-on-surface-variant font-body-md text-xs mt-1">{{ $pembayaran->checkout?->nama_penerima ?? $pembayaran->checkout?->user?->nama_lengkap ?? '-' }}@if($pembayaran->checkout?->nomor_telepon) • {{ $pembayaran->checkout->nomor_telepon }}@endif &#8226; {{ $orderUtama?->store?->nama_toko ?? '-' }} &#8226; {{ $pembayaran->paymentMethod?->nama_metode ?? '-' }}</p>
                             </div>
                             <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors shrink-0" aria-label="Tutup">
                                 <span class="material-symbols-outlined">close</span>
