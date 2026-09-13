@@ -244,16 +244,16 @@ class RalivaDemoSeeder extends Seeder
         $cat = fn (string $name) => ($categories[$name] ?? $categories->first())->category_id;
 
         $productSeed = [
-            ['Trench Coat Signature', 'Jaket & Hoodie', 'KEM', [['S', 8], ['M', 12], ['L', 6]], 420000, 750000],
-            ['Oversized Linen Shirt', 'Kemeja', 'KMS', [['S', 20], ['M', 24], ['L', 14]], 180000, 289000],
-            ['Wide Leg Trousers', 'Celana', 'CLT', [['28', 10], ['30', 14], ['L', 8]], 175000, 295000],
-            ['Midi Dress Linen', 'Dress', 'DRS', [['S', 16], ['M', 18], ['L', 12]], 220000, 389000],
-            ['Knit Cardigan Rajut', 'Jaket & Hoodie', 'RDG', [['S', 10], ['M', 14], ['L', 9]], 185000, 299000],
-            ['Silk Scarf Premium', 'Aksesoris', 'SYL', [['One Size', 30]], 95000, 185000],
-            ['Basic T-Shirt Cotton', 'Kaos', 'KSL', [['S', 40], ['M', 50], ['L', 30]], 55000, 99000],
-            ['Relaxed Blazer', 'Jaket & Hoodie', 'BLZ', [['M', 12], ['L', 10]], 320000, 549000],
-            ['Pleated Skirt', 'Rok', 'RKT', [['S', 12], ['M', 10], ['L', 6]], 165000, 275000],
-            ['Leather Belt', 'Ikat Pinggang', 'IKT', [['85-105 cm', 25], ['90-110 cm', 22]], 110000, 199000],
+            ['Trench Coat Signature', 'Jaket & Hoodie', 'KEM', ['Khaki', 'Black', 'Navy'], [['S', 8], ['M', 12], ['L', 6]], 420000, 750000],
+            ['Oversized Linen Shirt', 'Kemeja', 'KMS', ['White', 'Black', 'Beige'], [['S', 20], ['M', 24], ['L', 14]], 180000, 289000],
+            ['Wide Leg Trousers', 'Celana', 'CLT', ['Ivory', 'Black', 'Olive'], [['28', 10], ['30', 14], ['32', 8]], 175000, 295000],
+            ['Midi Dress Linen', 'Dress', 'DRS', ['Sand', 'Black', 'Sage'], [['S', 16], ['M', 18], ['L', 12]], 220000, 389000],
+            ['Knit Cardigan Rajut', 'Jaket & Hoodie', 'RDG', ['Cream', 'Grey', 'Camel'], [['S', 10], ['M', 14], ['L', 9]], 185000, 299000],
+            ['Silk Scarf Premium', 'Aksesoris', 'SYL', ['Ivory', 'Blush', 'Black'], [['One Size', 30]], 95000, 185000],
+            ['Basic T-Shirt Cotton', 'Kaos', 'KSL', ['White', 'Black', 'Grey'], [['S', 40], ['M', 50], ['L', 30]], 55000, 99000],
+            ['Relaxed Blazer', 'Jaket & Hoodie', 'BLZ', ['Charcoal', 'Khaki'], [['M', 12], ['L', 10]], 320000, 549000],
+            ['Pleated Skirt', 'Rok', 'RKT', ['Black', 'Beige', 'Navy'], [['S', 12], ['M', 10], ['L', 6]], 165000, 275000],
+            ['Leather Belt', 'Ikat Pinggang', 'IKT', ['Black', 'Brown'], [['85-105 cm', 25], ['90-110 cm', 22]], 110000, 199000],
         ];
 
         $products = [];
@@ -261,7 +261,7 @@ class RalivaDemoSeeder extends Seeder
         $firstGudangId = isset($staffModels['gudang@raliva.test']) ? $staffModels['gudang@raliva.test']->user_id : 1;
 
         foreach ($productSeed as $idx => $row) {
-            [$nama, $kategori, $prefix, $variants, $hpp, $harga] = $row;
+            [$nama, $kategori, $prefix, $warnas, $ukuranVariants, $hpp, $harga] = $row;
 
             $product = Product::updateOrCreate(
                 ['store_id' => $store->store_id, 'nama_produk' => $nama],
@@ -274,11 +274,14 @@ class RalivaDemoSeeder extends Seeder
                 ]
             );
 
-            foreach ($variants as $vi => [$warna, $stokAwal]) {
-                $variant = ProductVariant::updateOrCreate(
-                    ['product_id' => $product->product_id, 'sku' => $prefix.'-'.str_pad($idx + 1, 3, '0').'-'.($vi + 1)],
-                    ['warna' => $warna, 'ukuran' => null, 'harga' => $harga, 'status' => 'aktif']
-                );
+            $vi = 0;
+            foreach ($warnas as $warna) {
+                foreach ($ukuranVariants as [$ukuran, $stokAwal]) {
+                    $vi++;
+                    $variant = ProductVariant::updateOrCreate(
+                        ['product_id' => $product->product_id, 'sku' => $prefix.'-'.str_pad($idx + 1, 3, '0').'-'.str_pad($vi, 2, '0', STR_PAD_LEFT)],
+                        ['warna' => $warna, 'ukuran' => $ukuran, 'harga' => $harga, 'status' => 'aktif']
+                    );
 
                 // Stok: 70% gudang 1, 30% gudang 2
                 $stokWh1 = (int) round($stokAwal * 0.7);
@@ -319,6 +322,7 @@ class RalivaDemoSeeder extends Seeder
                         'dibuat_oleh' => $firstGudangId,
                         'created_at' => now()->subDays(18 + $idx),
                     ];
+                }
                 }
             }
             $products[] = $product;
@@ -598,11 +602,16 @@ class RalivaDemoSeeder extends Seeder
             if (! $cust) {
                 continue;
             }
-            $orderItem = OrderItem::whereHas('productVariant.product', fn ($q) => $q->where('product_id', $prod->product_id))->first();
+            $usedIds = Review::pluck('order_item_id')->all();
+            $orderItem = OrderItem::whereHas('productVariant.product', fn($q) => $q->where('product_id', $prod->product_id))->whereNotIn('order_item_id', $usedIds)->first()
+                ?? OrderItem::whereHas('productVariant.product', fn($q) => $q->where('store_id', $store->store_id))->whereNotIn('order_item_id', $usedIds)->first();
+            if (! $orderItem) {
+                continue;
+            }
             Review::updateOrCreate(
                 ['store_id' => $store->store_id, 'product_id' => $prod->product_id, 'user_id' => $cust->user_id],
                 [
-                    'order_item_id' => $orderItem?->order_item_id,
+                    'order_item_id' => $orderItem->order_item_id,
                     'rating' => $reviewsData[$ri][1],
                     'ulasan' => $reviewsData[$ri][0],
                     'status' => Review::STATUS_AKTIF,
