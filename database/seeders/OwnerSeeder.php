@@ -119,21 +119,21 @@ class OwnerSeeder extends Seeder
 
         // ---- PRODUK LENGKAP (25 produk, varian, status sebar untuk demo approval) ----
         $seed = [
-            ['Trench Coat Signature', 'Jaket & Hoodie', 'KEM', [['S', 8], ['M', 12], ['L', 6]], 420000, 750000, Product::STATUS_AKTIF],
-            ['Oversized Linen Shirt', 'Kemeja', 'KMS', [['S', 20], ['M', 24], ['L', 14]], 180000, 289000, Product::STATUS_AKTIF],
-            ['Wide Leg Trousers', 'Celana', 'CLT', [['28', 10], ['30', 14], ['32', 8]], 175000, 295000, Product::STATUS_AKTIF],
-            ['Midi Dress Linen', 'Dress', 'DRS', [['S', 16], ['M', 18], ['L', 12]], 220000, 389000, Product::STATUS_AKTIF],
-            ['Knit Cardigan Rajut', 'Jaket & Hoodie', 'RDG', [['S', 10], ['M', 14], ['L', 9]], 185000, 299000, Product::STATUS_AKTIF],
-            ['Silk Scarf Premium', 'Aksesoris', 'SYL', [['One Size', 30]], 95000, 185000, Product::STATUS_AKTIF],
-            ['Basic T-Shirt Cotton', 'Kaos', 'KSL', [['S', 40], ['M', 50], ['L', 30]], 55000, 99000, Product::STATUS_AKTIF],
-            ['Relaxed Blazer', 'Jaket & Hoodie', 'BLZ', [['M', 12], ['L', 10]], 320000, 549000, Product::STATUS_AKTIF],
-            ['Pleated Skirt', 'Rok', 'RKT', [['S', 12], ['M', 10], ['L', 6]], 165000, 275000, Product::STATUS_AKTIF],
-            ['Leather Belt', 'Ikat Pinggang', 'IKT', [['85-105 cm', 25], ['90-110 cm', 22]], 110000, 199000, Product::STATUS_AKTIF],
+            ['Trench Coat Signature', 'Jaket & Hoodie', 'KEM', ['Khaki', 'Black', 'Navy'], [['S', 8], ['M', 12], ['L', 6]], 420000, 750000, Product::STATUS_AKTIF],
+            ['Oversized Linen Shirt', 'Kemeja', 'KMS', ['White', 'Black', 'Beige'], [['S', 20], ['M', 24], ['L', 14]], 180000, 289000, Product::STATUS_AKTIF],
+            ['Wide Leg Trousers', 'Celana', 'CLT', ['Ivory', 'Black', 'Olive'], [['28', 10], ['30', 14], ['32', 8]], 175000, 295000, Product::STATUS_AKTIF],
+            ['Midi Dress Linen', 'Dress', 'DRS', ['Sand', 'Black', 'Sage'], [['S', 16], ['M', 18], ['L', 12]], 220000, 389000, Product::STATUS_AKTIF],
+            ['Knit Cardigan Rajut', 'Jaket & Hoodie', 'RDG', ['Cream', 'Grey', 'Camel'], [['S', 10], ['M', 14], ['L', 9]], 185000, 299000, Product::STATUS_AKTIF],
+            ['Silk Scarf Premium', 'Aksesoris', 'SYL', ['Ivory', 'Blush', 'Black'], [['One Size', 30]], 95000, 185000, Product::STATUS_AKTIF],
+            ['Basic T-Shirt Cotton', 'Kaos', 'KSL', ['White', 'Black', 'Grey'], [['S', 40], ['M', 50], ['L', 30]], 55000, 99000, Product::STATUS_AKTIF],
+            ['Relaxed Blazer', 'Jaket & Hoodie', 'BLZ', ['Charcoal', 'Khaki'], [['M', 12], ['L', 10]], 320000, 549000, Product::STATUS_AKTIF],
+            ['Pleated Skirt', 'Rok', 'RKT', ['Black', 'Beige', 'Navy'], [['S', 12], ['M', 10], ['L', 6]], 165000, 275000, Product::STATUS_AKTIF],
+            ['Leather Belt', 'Ikat Pinggang', 'IKT', ['Black', 'Brown'], [['85-105 cm', 25], ['90-110 cm', 22]], 110000, 199000, Product::STATUS_AKTIF],
         ];
 
         $products = [];
         foreach ($seed as $idx => $row) {
-            [$nama, $kategori, $prefix, $variants, $hpp, $harga, $status] = $row;
+            [$nama, $kategori, $prefix, $warnas, $ukuranVariants, $hpp, $harga, $status] = $row;
             $alasan = $status === Product::STATUS_DITOLAK ? 'Foto produk kurang jelas, mohon upload ulang dengan pencahayaan baik.' : null;
             $product = Product::updateOrCreate(
                 ['store_id' => $store->store_id, 'nama_produk' => $nama],
@@ -146,11 +146,15 @@ class OwnerSeeder extends Seeder
                     'alasan_penolakan' => $alasan,
                 ]
             );
-            foreach ($variants as $vi => [$warna, $stok]) {
-                ProductVariant::updateOrCreate(
-                    ['product_id' => $product->product_id, 'sku' => $prefix . '-' . str_pad($idx + 1, 3, '0') . '-' . ($vi + 1)],
-                    ['warna' => $warna, 'ukuran' => null, 'harga' => $harga, 'status' => 'aktif']
-                );
+            $vi = 0;
+            foreach ($warnas as $warna) {
+                foreach ($ukuranVariants as [$ukuran, $stok]) {
+                    $vi++;
+                    ProductVariant::updateOrCreate(
+                        ['product_id' => $product->product_id, 'sku' => $prefix . '-' . str_pad($idx + 1, 3, '0') . '-' . str_pad($vi, 2, '0', STR_PAD_LEFT)],
+                        ['warna' => $warna, 'ukuran' => $ukuran, 'harga' => $harga, 'status' => 'aktif']
+                    );
+                }
             }
             $products[] = $product;
         }
@@ -188,6 +192,7 @@ class OwnerSeeder extends Seeder
         ];
         $statuses = [Order::STATUS_SELESAI, Order::STATUS_DIKIRIM, Order::STATUS_DIPROSES, Order::STATUS_DIBAYAR, Order::STATUS_SELESAI, Order::STATUS_DIBATALKAN];
         $si = 0;
+        $allAvailableVariants = ProductVariant::whereHas('product', fn($q) => $q->where('store_id', $store->store_id))->get();
         foreach ($customerNames as $ci => [$cname, $cemail, $orderCount]) {
             $customer = User::updateOrCreate(
                 ['email' => $cemail],
@@ -200,8 +205,10 @@ class OwnerSeeder extends Seeder
                 ]
             );
             for ($o = 0; $o < $orderCount; $o++) {
-                $variant = ProductVariant::whereHas('product', fn($q) => $q->where('store_id', $store->store_id))->skip(($si) % 10)->first()
-                    ?? ProductVariant::first();
+                $variant = $allAvailableVariants->isNotEmpty()
+                    ? $allAvailableVariants->get($si % $allAvailableVariants->count())
+                    : ProductVariant::first();
+                if (! $variant) $variant = ProductVariant::whereHas('product', fn($q) => $q->where('store_id', $store->store_id))->first() ?? ProductVariant::first();
                 $qty = rand(1, 3);
                 $harga = (float) ($variant->harga ?? 100000);
                 $subtotal = $harga * $qty;
@@ -256,11 +263,16 @@ class OwnerSeeder extends Seeder
             if (! $cust) {
                 continue;
             }
-            $orderItem = OrderItem::whereHas('productVariant.product', fn($q) => $q->where('product_id', $prod->product_id))->first();
+            $usedIds = Review::pluck('order_item_id')->all();
+            $orderItem = OrderItem::whereHas('productVariant.product', fn($q) => $q->where('product_id', $prod->product_id))->whereNotIn('order_item_id', $usedIds)->first()
+                ?? OrderItem::whereHas('productVariant.product', fn($q) => $q->where('store_id', $store->store_id))->whereNotIn('order_item_id', $usedIds)->first();
+            if (! $orderItem) {
+                continue;
+            }
             Review::updateOrCreate(
                 ['store_id' => $store->store_id, 'product_id' => $prod->product_id, 'user_id' => $cust->user_id],
                 [
-                    'order_item_id' => $orderItem?->order_item_id,
+                    'order_item_id' => $orderItem->order_item_id,
                     'rating' => $reviews[$ri][1],
                     'ulasan' => $reviews[$ri][0],
                     'status' => Review::STATUS_AKTIF,
