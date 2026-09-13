@@ -410,6 +410,11 @@
 <span class="font-label-sm text-label-sm {{ $isCancelled ? 'text-error' : 'text-secondary' }} uppercase tracking-wider font-semibold">{{ $statusLabel }}</span>
 </div>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ $estDeliv ? __('Est. delivery:').' '.$estDeliv->format('M j, Y') : __('Menunggu konfirmasi pengiriman') }}</p>
+@if($shipment && $shipment->nomor_resi)
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ __('Resi') }}: <strong class="text-on-surface">{{ $shipment->nomor_resi }}</strong> @if($shipment->courier) • {{ $shipment->courier->nama_kurir }}@endif @if($shipment->shippingService) • {{ $shipment->shippingService->nama_layanan }}@endif</p>
+@elseif($shipment)
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ __('Ekspedisi') }}: {{ $shipment->courier?->nama_kurir ?? '-' }} @if($shipment->shippingService) • {{ $shipment->shippingService->nama_layanan }}@endif • {{ __('Status pengiriman') }}: {{ $shipment->status }}</p>
+@endif
 </div>
 </div>
 </div>
@@ -512,6 +517,25 @@ $active = ! $isCancelled && $step && $stepIndex === $step;
 </div>
 </form>
 </div>
+@if($shipment)
+<div class="mt-lg grid grid-cols-1 md:grid-cols-3 gap-md text-left">
+<div class="border border-outline-variant rounded-lg p-md bg-surface-container-low">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Ekspedisi') }}</p>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface mt-xs">{{ $shipment->courier?->nama_kurir ?? '-' }} @if($shipment->shippingService) • {{ $shipment->shippingService->nama_layanan }}@endif</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Estimasi') }}: {{ $shipment->estimasi_tiba?->format('d M Y') ?? '-' }} • {{ __('Ongkir') }} Rp {{ number_format((float)$shipment->ongkir,0,',','.') }}</p>
+</div>
+<div class="border border-outline-variant rounded-lg p-md bg-surface-container-low">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Nomor Resi') }}</p>
+<p class="font-title-md text-title-md font-semibold text-on-surface mt-xs break-all">{{ $shipment->nomor_resi ?: '-' }}</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">Status: {{ $shipment->status }}</p>
+</div>
+<div class="border border-outline-variant rounded-lg p-md bg-surface-container-low">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Waktu Pengiriman') }}</p>
+<p class="font-body-sm text-body-sm text-on-surface mt-xs">{{ __('Dikirim') }}: {{ $shipment->dikirim_pada?->format('d M Y, H:i') ?? '-' }}</p>
+<p class="font-body-sm text-body-sm text-on-surface">{{ __('Diterima') }}: {{ $shipment->diterima_pada?->format('d M Y, H:i') ?? '-' }}</p>
+</div>
+</div>
+@endif
 @endif
 @endif
 </div>
