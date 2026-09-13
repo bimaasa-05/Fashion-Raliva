@@ -29,7 +29,7 @@
             'items' => [
                 ['route' => 'owner.pesanan', 'icon' => 'shopping_bag', 'text' => 'Data Pesanan'],
                 ['route' => 'owner.ulasan', 'icon' => 'star', 'text' => 'Ulasan & Penilaian'],
-                ['route' => 'owner.komplain', 'aliases' => ['owner.komplain.messages', 'owner.pengembalian-dana'], 'icon' => 'move_up', 'text' => 'Eskalasi'],
+                ['route' => 'owner.komplain', 'aliases' => ['owner.pengembalian-dana'], 'icon' => 'move_up', 'text' => 'Eskalasi'],
             ],
         ],
         [
