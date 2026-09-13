@@ -147,7 +147,7 @@
                                             <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'eskalasi', '{{ $kode }}')" class="inline-block">
                                                 @csrf
                                                 <button type="submit" title="Eskalasi"
-                                                    class="w-8 h-8 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent hover:text-white transition-colors">
+                                                    class="w-8 h-8 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent/20 hover:border-gold-accent/50 transition-colors">
                                                     <span class="material-symbols-outlined text-sm">emergency</span>
                                                 </button>
                                             </form>
@@ -223,7 +223,7 @@
                             @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES], true) && ! $c->eskalasi_oleh_sa)
                                 <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'eskalasi', '{{ $kode }}')" class="shrink-0">
                                     @csrf
-                                    <button type="submit" title="Eskalasi" class="min-h-11 w-11 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent hover:text-white transition-colors rounded-lg">
+                                    <button type="submit" title="Eskalasi" class="min-h-11 w-11 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent/20 hover:border-gold-accent/50 transition-colors rounded-lg">
                                         <span class="material-symbols-outlined text-[18px]">emergency</span>
                                     </button>
                                 </form>
