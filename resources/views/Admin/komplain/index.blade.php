@@ -299,22 +299,6 @@
             </button>
         </div>
     </div>
-    <!-- Modal Konfirmasi Eskalasi (Admin) -->
-    <div id="confirmKomplainModal" class="hidden fixed inset-0 z-[75] items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeConfirmKomplain()">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <div id="confirm-komplain-icon" class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-5">
-                    <span id="confirm-komplain-icon-sym" class="material-symbols-outlined text-gold-accent text-[28px]">emergency</span>
-                </div>
-                <h3 id="confirm-komplain-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">Eskalasi Komplain?</h3>
-                <p id="confirm-komplain-desc" class="text-on-surface-variant text-sm text-center mb-4">Lanjutkan aksi ini?</p>
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeConfirmKomplain()">Batal</button>
-                    <button type="button" id="confirm-komplain-submit" class="flex-1 bg-gold-accent text-white font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Eskalasi</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <div id="chat-edit-dialog" class="hidden fixed inset-0 z-[80] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeEditDialog();}">
         <div class="w-full sm:max-w-lg bg-surface-container-low rounded-t-3xl sm:rounded-2xl border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shadow-2xl overflow-hidden flex flex-col max-h-[90dvh]" onclick="event.stopPropagation()">
             <div class="flex items-center gap-3 px-5 py-4 border-b border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shrink-0">
@@ -340,6 +324,23 @@
                         <span class="material-symbols-outlined text-[20px]">check</span>
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Modal Konfirmasi Eskalasi (Admin) --}}
+<div id="confirmKomplainModal" class="hidden fixed inset-0 z-[90] items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeConfirmKomplain()">
+    <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
+        <div class="p-8">
+            <div id="confirm-komplain-icon" class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-5">
+                <span id="confirm-komplain-icon-sym" class="material-symbols-outlined text-gold-accent text-[28px]">emergency</span>
+            </div>
+            <h3 id="confirm-komplain-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">Eskalasi Komplain?</h3>
+            <p id="confirm-komplain-desc" class="text-on-surface-variant text-sm text-center mb-4">Lanjutkan aksi ini?</p>
+            <div class="flex space-x-3">
+                <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeConfirmKomplain()">Batal</button>
+                <button type="button" id="confirm-komplain-submit" class="flex-1 bg-gold-accent text-white font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Eskalasi</button>
             </div>
         </div>
     </div>
