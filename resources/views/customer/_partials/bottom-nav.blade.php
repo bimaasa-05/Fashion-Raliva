@@ -32,9 +32,9 @@
         $bnItems = [
             ['label' => __('Home'), 'icon' => 'home', 'href' => route('customer.home'), 'active' => request()->routeIs('customer.home')],
             ['label' => __('Shop'), 'icon' => 'shopping_bag', 'href' => route('customer.shop'), 'active' => request()->routeIs('customer.shop') || request()->routeIs('customer.shop.produk-detail') || request()->routeIs('customer.shop.store') || request()->routeIs('customer.shop.store.riviews') || request()->routeIs('customer.shop.store.about')],
-            ['label' => __('Pesanan'), 'icon' => 'receipt_long', 'href' => auth()->check() ? route('customer.order-tracking') : route('login', ['redirect' => '/customer/order-tracking']), 'active' => request()->routeIs('customer.order-tracking')],
+            ['label' => __('Pesanan'), 'icon' => 'receipt_long', 'href' => auth()->check() ? route('customer.orders') : route('customer.cek-resi'), 'active' => request()->routeIs('customer.orders') || request()->routeIs('customer.order-tracking') || request()->routeIs('customer.cek-resi') || request()->routeIs('customer.cek-resi.search')],
             ['label' => __('Wishlist'), 'icon' => 'favorite', 'href' => auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => '/customer/wishlist']), 'active' => request()->routeIs('customer.wishlist')],
-            ['label' => __('Account'), 'icon' => 'person', 'href' => auth()->check() ? route('customer.account') : route('login', ['redirect' => '/customer/account']), 'active' => request()->routeIs('customer.account') || request()->routeIs('customer.account.edit') || request()->routeIs('customer.account.password') || request()->routeIs('customer.address')],
+            ['label' => __('Account'), 'icon' => 'person', 'href' => route('customer.account'), 'active' => request()->routeIs('customer.account') || request()->routeIs('customer.account.edit') || request()->routeIs('customer.account.password') || request()->routeIs('customer.address')],
         ];
     @endphp
     @foreach ($bnItems as $it)
