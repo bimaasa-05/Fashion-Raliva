@@ -124,7 +124,7 @@
                         <button type="button" data-modal-open="modal-komplain-{{ $c->complaint_id }}" class="py-2 px-4 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium">Lihat Detail</button>
                         <button type="button" onclick="openChatFromCard(this)" class="py-2 px-4 border border-muted-border text-on-surface rounded-lg text-xs font-semibold hover:border-gold-accent transition-colors">Buka Thread</button>
                         @if (in_array($key, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES], true))
-                            <button type="button" onclick="openEskalasiConfirm({{ $c->complaint_id }}, '{{ $kodeComplain }}')" class="py-2 px-4 border border-gold-accent/40 text-gold-accent rounded-lg text-xs font-semibold hover:bg-gold-accent hover:text-white transition-colors">Eskalasi</button>
+                            <button type="button" onclick="openEskalasiConfirm({{ $c->complaint_id }}, '{{ $kodeComplain }}')" class="py-2 px-4 border border-gold-accent/40 text-gold-accent rounded-lg text-xs font-semibold hover:bg-gold-accent/10 hover:border-gold-accent/70 hover:text-gold-accent transition-colors">Eskalasi</button>
                         @endif
                     </div>
                 </article>
