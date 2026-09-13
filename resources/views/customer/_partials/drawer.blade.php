@@ -102,7 +102,7 @@
             {{ __('Shop') }}
             <span class="material-symbols-outlined drawer-chevron text-[20px] text-[var(--chrome-text-faint)] ml-auto">chevron_right</span>
         </a>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.order-tracking') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.order-tracking') }}">
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.orders') || request()->routeIs('customer.order-tracking') || request()->routeIs('customer.cek-resi') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ auth()->check() ? route('customer.orders') : route('customer.cek-resi') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">local_mall</span>
             {{ __('Pesanan') }}
             <span class="material-symbols-outlined drawer-chevron text-[20px] text-[var(--chrome-text-faint)] ml-auto">chevron_right</span>
@@ -120,7 +120,7 @@
 </div>
 <div class="drawer-sec border-t border-[var(--chrome-border)]">
 <h3 class="font-label-caps text-label-caps text-[var(--chrome-text-faint)] uppercase tracking-widest px-lg pt-md pb-xs">Akun</h3>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.account') || request()->routeIs('customer.account.edit') || request()->routeIs('customer.account.password') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ auth()->check() ? route('customer.account') : route('login', ['redirect' => route('customer.account')]) }}">
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.account') || request()->routeIs('customer.account.edit') || request()->routeIs('customer.account.password') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.account') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">person</span>
             {{ __('My Account') }}
             <span class="material-symbols-outlined drawer-chevron text-[20px] text-[var(--chrome-text-faint)] ml-auto">chevron_right</span>
