@@ -75,38 +75,61 @@ class PemeriksaanStokController extends Controller
             'stok_fisik.min' => 'Stok fisik minimal 0.',
         ]);
 
-        $stok = WarehouseStock::where('warehouse_id', $warehouse->warehouse_id)
-            ->where('product_variant_id', $data['product_variant_id'])
-            ->first();
+        $stokSistem = 0;
+        $selisih = 0;
 
-        $stokSistem = $stok->jumlah_stok ?? 0;
-        $selisih = $data['stok_fisik'] - $stokSistem;
+        try {
+            DB::transaction(function () use ($warehouse, $data, &$stokSistem, &$selisih) {
+                $stok = WarehouseStock::where('warehouse_id', $warehouse->warehouse_id)
+                    ->where('product_variant_id', $data['product_variant_id'])
+                    ->lockForUpdate()
+                    ->first();
 
-        DB::transaction(function () use ($warehouse, $data, $stokSistem, $selisih, $stok) {
-            StockOpname::create([
-                'warehouse_id' => $warehouse->warehouse_id,
-                'product_variant_id' => $data['product_variant_id'],
-                'stok_sistem' => $stokSistem,
-                'stok_fisik' => $data['stok_fisik'],
-                'selisih' => $selisih,
-                'catatan' => $data['catatan'],
-                'dibuat_oleh' => auth()->id(),
-            ]);
+                $stokSistem = $stok->jumlah_stok ?? 0;
+                $selisih = $data['stok_fisik'] - $stokSistem;
 
-            if ($selisih != 0 && $stok) {
-                $stok->update(['jumlah_stok' => $data['stok_fisik']]);
-
-                StockMovement::create([
+                StockOpname::create([
                     'warehouse_id' => $warehouse->warehouse_id,
                     'product_variant_id' => $data['product_variant_id'],
-                    'tipe_pergerakan' => StockMovement::TIPE_PENYESUAIAN,
-                    'jumlah' => abs($selisih),
-                    'sumber_tipe' => StockMovement::SUMBER_MANUAL,
-                    'alasan' => sprintf('Penyesuaian stok opname: %d → %d (selisih %s%d)', $stokSistem, $data['stok_fisik'], $selisih > 0 ? '+' : '', $selisih),
+                    'stok_sistem' => $stokSistem,
+                    'stok_fisik' => $data['stok_fisik'],
+                    'selisih' => $selisih,
+                    'catatan' => $data['catatan'] ?? null,
                     'dibuat_oleh' => auth()->id(),
                 ]);
-            }
-        });
+
+                if ($selisih != 0) {
+                    if ($stok) {
+                        $affected = WarehouseStock::where('warehouse_stock_id', $stok->warehouse_stock_id)
+                            ->update(['jumlah_stok' => $data['stok_fisik']]);
+
+                        if ($affected === 0) {
+                            throw new \RuntimeException('Gagal menyesuaikan stok.');
+                        }
+                    } else {
+                        WarehouseStock::create([
+                            'warehouse_id' => $warehouse->warehouse_id,
+                            'product_variant_id' => $data['product_variant_id'],
+                            'jumlah_stok' => $data['stok_fisik'],
+                        ]);
+                    }
+
+                    StockMovement::create([
+                        'warehouse_id' => $warehouse->warehouse_id,
+                        'product_variant_id' => $data['product_variant_id'],
+                        'tipe_pergerakan' => StockMovement::TIPE_PENYESUAIAN,
+                        'jumlah' => abs($selisih),
+                        'sumber_tipe' => StockMovement::SUMBER_MANUAL,
+                        'alasan' => sprintf('Penyesuaian stok opname: %d → %d (selisih %s%d)', $stokSistem, $data['stok_fisik'], $selisih > 0 ? '+' : '', $selisih),
+                        'dibuat_oleh' => auth()->id(),
+                    ]);
+                }
+            }, 5);
+        } catch (\RuntimeException $e) {
+            return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
+        } catch (\Throwable $e) {
+            return back()->with('toast', ['message' => 'Gagal menyimpan pemeriksaan stok.', 'icon' => 'error']);
+        }
 
         ActivityLogger::log(
             'stock.opname',

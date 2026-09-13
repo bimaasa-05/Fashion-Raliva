@@ -70,35 +70,48 @@ class StokRusakController extends Controller
             'jumlah_rusak.min' => 'Jumlah rusak minimal 1.',
         ]);
 
-        $stok = WarehouseStock::where('warehouse_id', $warehouse->warehouse_id)
-            ->where('product_variant_id', $data['product_variant_id'])
-            ->first();
+        try {
+            DB::transaction(function () use ($warehouse, $data) {
+                $stok = WarehouseStock::where('warehouse_id', $warehouse->warehouse_id)
+                    ->where('product_variant_id', $data['product_variant_id'])
+                    ->lockForUpdate()
+                    ->first();
 
-        if (! $stok || $stok->jumlah_stok < $data['jumlah_rusak']) {
-            return back()->with('toast', ['message' => 'Stok tidak mencukupi untuk dilaporkan rusak.', 'icon' => 'gpp_maybe']);
+                if (! $stok || $stok->jumlah_stok < $data['jumlah_rusak']) {
+                    throw new \RuntimeException('Stok tidak mencukupi untuk dilaporkan rusak.');
+                }
+
+                $affected = WarehouseStock::where('warehouse_stock_id', $stok->warehouse_stock_id)
+                    ->where('jumlah_stok', '>=', $data['jumlah_rusak'])
+                    ->decrement('jumlah_stok', $data['jumlah_rusak']);
+
+                if ($affected === 0) {
+                    throw new \RuntimeException('Stok tidak mencukupi untuk dilaporkan rusak.');
+                }
+
+                StockDamage::create([
+                    'warehouse_id' => $warehouse->warehouse_id,
+                    'product_variant_id' => $data['product_variant_id'],
+                    'jumlah_rusak' => $data['jumlah_rusak'],
+                    'alasan' => $data['alasan'],
+                    'dibuat_oleh' => auth()->id(),
+                ]);
+
+                StockMovement::create([
+                    'warehouse_id' => $warehouse->warehouse_id,
+                    'product_variant_id' => $data['product_variant_id'],
+                    'tipe_pergerakan' => StockMovement::TIPE_KELUAR,
+                    'jumlah' => $data['jumlah_rusak'],
+                    'sumber_tipe' => StockMovement::SUMBER_MANUAL,
+                    'alasan' => $data['alasan'] ?? 'Stok rusak/dihapus',
+                    'dibuat_oleh' => auth()->id(),
+                ]);
+            }, 5);
+        } catch (\RuntimeException $e) {
+            return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
+        } catch (\Throwable $e) {
+            return back()->with('toast', ['message' => 'Gagal melaporkan stok rusak.', 'icon' => 'error']);
         }
-
-        DB::transaction(function () use ($warehouse, $data, $stok) {
-            StockDamage::create([
-                'warehouse_id' => $warehouse->warehouse_id,
-                'product_variant_id' => $data['product_variant_id'],
-                'jumlah_rusak' => $data['jumlah_rusak'],
-                'alasan' => $data['alasan'],
-                'dibuat_oleh' => auth()->id(),
-            ]);
-
-            $stok->decrement('jumlah_stok', $data['jumlah_rusak']);
-
-            StockMovement::create([
-                'warehouse_id' => $warehouse->warehouse_id,
-                'product_variant_id' => $data['product_variant_id'],
-                'tipe_pergerakan' => StockMovement::TIPE_KELUAR,
-                'jumlah' => $data['jumlah_rusak'],
-                'sumber_tipe' => StockMovement::SUMBER_MANUAL,
-                'alasan' => $data['alasan'] ?? 'Stok rusak/dihapus',
-                'dibuat_oleh' => auth()->id(),
-            ]);
-        });
 
         ActivityLogger::log(
             'stock.damage',

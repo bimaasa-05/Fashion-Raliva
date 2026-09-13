@@ -122,7 +122,55 @@
             @endforelse
     </section>
 
-    {{-- Ringkasan Stok Antar Gudang --}}
+{{-- Persetujuan Pemindahan Stok --}}
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading">Persetujuan Pemindahan Stok</h2>
+        </div>
+        <div class="space-y-gutter">
+            @forelse ($menungguPersetujuan as $t)
+            <div class="border border-muted-border rounded-lg p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="min-w-0">
+                    <p class="font-mono text-sm text-on-surface-variant">#TRF-{{ $t->stock_transfer_id }} • {{ $t->fromWarehouse?->nama_gudang ?? '-' }} → {{ $t->toWarehouse?->nama_gudang ?? '-' }}</p>
+                    <p class="font-title-md text-title-md text-on-surface mt-1">
+                        @foreach ($t->items as $it)
+                            {{ $it->productVariant?->product?->nama_produk ?? '-' }} ({{ $it->jumlah }})@if(!$loop->last), @endif
+                        @endforeach
+                    </p>
+                    <p class="font-body-md text-sm text-on-surface-variant mt-1">Diminta oleh {{ $t->requester?->nama_lengkap ?? '-' }} • {{ optional($t->diminta_pada)->translatedFormat('d M Y, H.i') ?? '-' }}</p>
+                </div>
+                <div class="flex gap-3 shrink-0">
+                    <form method="POST" action="{{ route('owner.gudang.setujui', $t->stock_transfer_id) }}">
+                        @csrf
+                        <button type="submit" class="px-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium whitespace-nowrap">Setujui</button>
+                    </form>
+                    <button type="button" data-modal-open="modal-tolak-{{ $t->stock_transfer_id }}" class="px-6 py-3 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors whitespace-nowrap">Tolak</button>
+                </div>
+            </div>
+
+            <div id="modal-tolak-{{ $t->stock_transfer_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+                <form method="POST" action="{{ route('owner.gudang.tolak', $t->stock_transfer_id) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+                    @csrf
+                    <p class="raliva-label text-gold-accent">Tolak Pemindahan</p>
+                    <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">#TRF-{{ $t->stock_transfer_id }}</h3>
+                    <label class="block mt-4">
+                        <span class="text-[10px] uppercase tracking-wider text-on-surface-variant">Alasan penolakan (min 10 karakter)</span>
+                        <textarea name="alasan" rows="3" required minlength="10" maxlength="500" class="mt-2 w-full bg-surface-container-low border border-muted-border rounded-lg px-3 py-2 text-sm text-on-surface focus:border-gold-accent focus:outline-none"></textarea>
+                    </label>
+                    <div class="flex gap-3 mt-6">
+                        <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
+                        <button type="submit" class="flex-1 py-2.5 bg-error text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:opacity-90 transition-colors">Tolak</button>
+                    </div>
+                </form>
+            </div>
+            @empty
+            <p class="text-on-surface-variant text-sm py-6 text-center">Tidak ada pemindahan menunggu persetujuan.</p>
+            @endforelse
+        </div>
+    </section>
+
+    {{--        Ringkasan Stok Antar Gudang --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Ringkasan Stok Kritis</h2>

@@ -101,10 +101,34 @@
                             <td class="p-4 text-center text-on-surface-variant whitespace-nowrap">{{ $t->diminta_pada?->format('d M Y • H:i') ?? '-' }}</td>
                             <td class="p-4 text-center text-on-surface whitespace-nowrap">{{ $t->requester->nama_lengkap ?? '-' }}</td>
                             <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass[$t->status] ?? 'bg-surface-container-high text-on-surface-variant border-outline-variant' }} text-[10px] font-bold uppercase border">{{ $status }}</span></td>
-                            <td class="p-4 text-center">
-                                <button type="button" data-modal-open="pm-detail-{{ $loop->iteration }}" title="Lihat Detail" class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface-variant hover:text-gold-accent hover:border-gold-accent transition-colors">
+                            <td class="p-4 text-center whitespace-nowrap">
+                                <button type="button" data-modal-open="pm-detail-{{ $loop->iteration }}" title="Lihat Detail" class="w-9 h-9 rounded-lg border border-muted-border items-center justify-center text-on-surface-variant hover:text-gold-accent hover:border-gold-accent transition-colors inline-flex">
                                     <span class="material-symbols-outlined text-[18px]">visibility</span>
                                 </button>
+                                @if ($t->status === 'requested' && (int) $t->to_warehouse_id === (int) $warehouse?->warehouse_id)
+                                    <form method="POST" action="{{ route('gudang.pemindahan.approve', $t) }}" class="inline">
+                                        @csrf
+                                        <button type="submit" title="Setujui" class="w-9 h-9 rounded-lg bg-secondary-container/20 border border-secondary/20 items-center justify-center text-secondary hover:opacity-80 transition-colors inline-flex">
+                                            <span class="material-symbols-outlined text-[18px]">check</span>
+                                        </button>
+                                    </form>
+                                @endif
+                                @if ($t->status === 'approved' && (int) $t->to_warehouse_id === (int) $warehouse?->warehouse_id)
+                                    <form method="POST" action="{{ route('gudang.pemindahan.receive', $t) }}" class="inline">
+                                        @csrf
+                                        <button type="submit" title="Terima barang" class="w-9 h-9 rounded-lg bg-deep-onyx items-center justify-center text-on-primary hover:opacity-90 transition-colors inline-flex">
+                                            <span class="material-symbols-outlined text-[18px]">inventory</span>
+                                        </button>
+                                    </form>
+                                @endif
+                                @if (in_array($t->status, ['requested', 'approved'], true) && (int) $t->from_warehouse_id === (int) $warehouse?->warehouse_id)
+                                    <form method="POST" action="{{ route('gudang.pemindahan.cancel', $t) }}" class="inline" onsubmit="return confirm('Batalkan pemindahan ini?')">
+                                        @csrf
+                                        <button type="submit" title="Batalkan" class="w-9 h-9 rounded-lg bg-error/10 border border-error/20 items-center justify-center text-error hover:bg-error/20 transition-colors inline-flex">
+                                            <span class="material-symbols-outlined text-[18px]">close</span>
+                                        </button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @empty
@@ -148,9 +172,35 @@
                         </div>
                     </dl>
 
+                    @if (in_array($t->status, ['approved', 'in_transit']) && $t->to_warehouse_id === (int) $warehouse->warehouse_id)
+                        <form method="POST" action="{{ route('gudang.pemindahan.terima', $t->stock_transfer_id) }}" class="mb-3">
+                            @csrf
+                            <button type="submit" class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg bg-secondary/15 text-secondary border border-secondary/30 text-xs font-bold uppercase tracking-widest hover:bg-secondary/25 transition-colors">
+                                <span class="material-symbols-outlined text-[18px]">inventory</span>Terima di Gudang Ini
+                            </button>
+                        </form>
+                    @endif
                     <button type="button" data-modal-open="pm-detail-{{ $loop->iteration }}" class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
                         <span class="material-symbols-outlined text-[18px]">visibility</span>Lihat Detail
                     </button>
+                    @if ($t->status === 'requested' && (int) $t->to_warehouse_id === (int) $warehouse?->warehouse_id)
+                        <form method="POST" action="{{ route('gudang.pemindahan.approve', $t) }}">
+                            @csrf
+                            <button type="submit" class="w-full min-h-11 mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-secondary-container/20 border border-secondary/20 text-xs font-semibold text-secondary">Setujui Pemindahan</button>
+                        </form>
+                    @endif
+                    @if ($t->status === 'approved' && (int) $t->to_warehouse_id === (int) $warehouse?->warehouse_id)
+                        <form method="POST" action="{{ route('gudang.pemindahan.receive', $t) }}">
+                            @csrf
+                            <button type="submit" class="w-full min-h-11 mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-deep-onyx text-xs font-semibold text-on-primary">Terima Barang</button>
+                        </form>
+                    @endif
+                    @if (in_array($t->status, ['requested', 'approved'], true) && (int) $t->from_warehouse_id === (int) $warehouse?->warehouse_id)
+                        <form method="POST" action="{{ route('gudang.pemindahan.cancel', $t) }}" onsubmit="return confirm('Batalkan pemindahan ini?')">
+                            @csrf
+                            <button type="submit" class="w-full min-h-11 mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-error/10 border border-error/20 text-xs font-semibold text-error">Batalkan</button>
+                        </form>
+                    @endif
                 </article>
             @empty
                 <p class="text-center text-on-surface-variant py-10">Belum ada pemindahan stok pada gudang ini.</p>
@@ -203,8 +253,35 @@
                     <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Jumlah</dt><dd class="text-gold-accent font-bold">{{ $t->items->sum('jumlah') }} unit</dd></div>
                     <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Petugas</dt><dd class="text-on-surface">{{ $t->requester->nama_lengkap ?? '-' }}</dd></div>
                     <div class="flex justify-between gap-4 items-start"><dt class="text-on-surface-variant">Status</dt><dd><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass[$t->status] ?? '' }} text-[10px] font-bold uppercase border">{{ $status }}</span></dd></div>
+                    @if ($t->status === 'cancelled' && $t->alasan_penolakan)
+                        <div class="flex justify-between gap-4 items-start"><dt class="text-on-surface-variant">Alasan Ditolak</dt><dd class="text-error text-right max-w-[60%]">{{ $t->alasan_penolakan }}</dd></div>
+                    @endif
                 </dl>
+                @if (in_array($t->status, ['approved', 'in_transit']) && $t->to_warehouse_id === (int) $warehouse->warehouse_id)
+                    <form method="POST" action="{{ route('gudang.pemindahan.terima', $t->stock_transfer_id) }}">
+                        @csrf
+                        <button type="submit" class="w-full mt-6 py-3 bg-secondary/15 text-secondary border border-secondary/30 font-label-sm text-[11px] uppercase tracking-widest rounded hover:bg-secondary/25 transition-colors">Terima Pemindahan</button>
+                    </form>
+                @endif
                 <button type="button" data-modal-close class="w-full mt-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tutup</button>
+                @if ($t->status === 'requested' && (int) $t->to_warehouse_id === (int) $warehouse?->warehouse_id)
+                    <form method="POST" action="{{ route('gudang.pemindahan.approve', $t) }}">
+                        @csrf
+                        <button type="submit" class="w-full mt-3 py-3 bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-[11px] uppercase tracking-widest rounded">Setujui Pemindahan</button>
+                    </form>
+                @endif
+                @if ($t->status === 'approved' && (int) $t->to_warehouse_id === (int) $warehouse?->warehouse_id)
+                    <form method="POST" action="{{ route('gudang.pemindahan.receive', $t) }}">
+                        @csrf
+                        <button type="submit" class="w-full mt-3 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Terima Barang</button>
+                    </form>
+                @endif
+                @if (in_array($t->status, ['requested', 'approved'], true) && (int) $t->from_warehouse_id === (int) $warehouse?->warehouse_id)
+                    <form method="POST" action="{{ route('gudang.pemindahan.cancel', $t) }}" onsubmit="return confirm('Batalkan pemindahan ini?')">
+                        @csrf
+                        <button type="submit" class="w-full mt-3 py-3 bg-error/10 border border-error/20 text-error font-label-sm text-[11px] uppercase tracking-widest rounded">Batalkan</button>
+                    </form>
+                @endif
             </div>
         </div>
     @endforeach

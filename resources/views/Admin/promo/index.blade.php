@@ -17,7 +17,7 @@
         <p class="font-body-md text-sm text-on-surface">Pembuatan promo baru memerlukan persetujuan Owner. Kamu dapat mengaktifkan/menonaktifkan promo yang sudah dibuat Owner.</p>
     </div>
 
-    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium card-static">
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Promo</h2>
         <div class="grid grid-cols-2 lg:grid-cols-3 gap-gutter mb-8">
             <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden"><span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">local_offer</span>
@@ -87,6 +87,17 @@
                             <div><dt class="raliva-label">Berakhir</dt><dd class="text-on-surface mt-1">{{ $p->berakhir_pada?->translatedFormat('d M Y') ?? '-' }}</dd></div>
                             <div class="sm:col-span-2"><dt class="raliva-label">Deskripsi</dt><dd class="text-on-surface mt-1">{{ $p->deskripsi ?: '—' }}</dd></div>
                         </dl>
+                    </div>
+                    <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex gap-3">
+                        <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+                        <form method="POST" action="{{ route('admin.promo.toggle', $p) }}" class="flex-1">
+                            @csrf
+                            @if ($p->status === 'aktif')
+                                <button type="submit" class="w-full py-2.5 border border-error/20 text-error font-label-sm text-label-sm uppercase rounded hover:bg-error/10 transition-colors">Nonaktifkan</button>
+                            @else
+                                <button type="submit" class="w-full py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase rounded hover:bg-tertiary-container transition-colors btn-premium">Aktifkan</button>
+                            @endif
+                        </form>
                     </div>
                 </div>
             </div>

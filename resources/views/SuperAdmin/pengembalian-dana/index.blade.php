@@ -291,6 +291,9 @@
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">Deskripsi Bukti</label>
                     <input type="text" name="deskripsi_bukti" maxlength="1000" placeholder="Contoh: Transfer BCA dari rekening platform Raliva" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent placeholder-on-surface-variant/50" />
                 </div>
+                @if ($refund->file_bukti_request)
+                    <p class="text-xs"><a href="{{ asset('storage/' . ltrim($refund->file_bukti_request, '/')) }}" target="_blank" class="text-gold-accent hover:underline inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> Foto bukti barang dari customer</a>@if ($refund->deskripsi_bukti_request)<span class="text-on-surface-variant"> — {{ $refund->deskripsi_bukti_request }}</span>@endif</p>
+                @endif
                 @if ($refund->file_bukti)
                     <p class="text-xs"><a href="{{ asset('storage/' . $refund->file_bukti) }}" target="_blank" class="text-gold-accent hover:underline inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> Lihat bukti sebelumnya</a></p>
                 @endif
