@@ -84,7 +84,7 @@ class KomplainController extends Controller
                 'tipe' => Notification::TIPE_KOMPLAIN,
                 'judul' => 'Eskalasi Komplain',
                 'pesan' => "Komplain #{$komplain->complaint_id} dieskalasi ke Anda untuk keputusan final.",
-                'url' => route('owner.komplain.messages', $komplain->complaint_id),
+                'url' => route('owner.komplain', ['open' => $komplain->complaint_id]),
             ]);
         }
 
