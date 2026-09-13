@@ -435,7 +435,9 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::get('/gudang', [OwnerGudangController::class, 'index'])->name('gudang');
     Route::get('/komplain', [OwnerKomplainController::class, 'index'])->name('komplain');
     Route::get('/komplain/{komplain}/messages', [OwnerKomplainController::class, 'messages'])->name('komplain.messages');
-    Route::post('/komplain/{komplain}/balas', [OwnerKomplainController::class, 'balas'])->name('komplain.balas');
+    Route::post('/komplain/{komplain}/messages', [OwnerKomplainController::class, 'storeMessage'])->name('komplain.messages.store');
+    Route::patch('/komplain/{komplain}/messages/{message}', [OwnerKomplainController::class, 'updateMessage'])->name('komplain.messages.update')->withTrashed();
+    Route::delete('/komplain/{komplain}/messages/{message}', [OwnerKomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy')->withTrashed();
     Route::get('/moderasi-produk', [OwnerModerasiProdukController::class, 'index'])->name('moderasi-produk');
     Route::post('/moderasi-produk/{product}/setujui', [OwnerModerasiProdukController::class, 'setujui'])->name('moderasi-produk.setujui');
     Route::post('/moderasi-produk/{product}/tolak', [OwnerModerasiProdukController::class, 'tolak'])->name('moderasi-produk.tolak');
