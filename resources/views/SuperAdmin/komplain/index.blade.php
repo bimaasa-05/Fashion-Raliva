@@ -313,7 +313,7 @@
                         <span class="material-symbols-outlined text-[20px]">send</span>
                     </button>
                 </div>
-                <div id="chat-select-bar" class="items-center gap-2 lg:gap-3 py-1 overflow-x-auto" aria-label="Select messages">
+                <div id="chat-select-bar" class="flex items-center gap-1 lg:gap-1.5 bg-surface-container-lowest dark:bg-[#1c1c1c] border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-[26px] lg:rounded-[28px] px-2 lg:px-2.5 py-2 lg:py-2.5 shadow-sm overflow-x-auto" aria-label="Select messages">
                     <button type="button" onclick="exitSelectMessages()" id="chat-sel-close" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Keluar seleksi" aria-label="Keluar seleksi">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
