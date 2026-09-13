@@ -20,9 +20,9 @@
                         @csrf
                         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                             <div>
-                                <p class="font-mono text-sm text-on-surface-variant">{{ $pesanan->nomor_order }} &#8226; {{ $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</p>
+                                <p class="font-mono text-sm text-on-surface-variant">{{ $pesanan->nomor_order }} &#8226; {{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</p>
                                 <p class="font-title-md text-title-md text-on-surface mt-1">{{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->implode(', '), 60) }}</p>
-                                <p class="font-body-md text-sm text-on-surface-variant mt-1">Penerima: {{ $pesanan->checkout?->user?->nama_lengkap ?? '-' }} &#8226; Ongkir: Rp {{ number_format((float) $pesanan->total_ongkir, 0, ',', '.') }}</p>
+                                <p class="font-body-md text-sm text-on-surface-variant mt-1">Penerima: {{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }} {{ $pesanan->checkout?->nomor_telepon ? '• '.$pesanan->checkout->nomor_telepon : '' }} &#8226; Ongkir: Rp {{ number_format((float) $pesanan->total_ongkir, 0, ',', '.') }}</p>
                             </div>
                             <div class="flex flex-col sm:flex-row gap-3 shrink-0">
                                 <select name="courier_id" required data-kurir-select
@@ -83,7 +83,7 @@
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                             <td class="p-4">
                                 <p class="font-mono text-on-surface">{{ $shipment->order?->nomor_order }}</p>
-                                <p class="text-xs text-on-surface-variant">{{ $shipment->order?->checkout?->user?->nama_lengkap ?? '-' }}</p>
+                                <p class="text-xs text-on-surface-variant">{{ $shipment->order?->checkout?->nama_penerima ?? $shipment->order?->checkout?->user?->nama_lengkap ?? '-' }}@if($shipment->order?->checkout?->nomor_telepon) • {{ $shipment->order->checkout->nomor_telepon }}@endif</p>
                             </td>
                             <td class="p-4 text-on-surface">
                                 {{ $shipment->courier?->nama_kurir ?? '-' }}
