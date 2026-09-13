@@ -147,7 +147,7 @@
                                             <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'eskalasi', '{{ $kode }}')" class="inline-block">
                                                 @csrf
                                                 <button type="submit" title="Eskalasi"
-                                                    class="w-8 h-8 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent hover:text-white transition-colors">
+                                                    class="w-8 h-8 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent/20 hover:border-gold-accent/50 transition-colors">
                                                     <span class="material-symbols-outlined text-sm">emergency</span>
                                                 </button>
                                             </form>
@@ -223,7 +223,7 @@
                             @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES], true) && ! $c->eskalasi_oleh_sa)
                                 <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'eskalasi', '{{ $kode }}')" class="shrink-0">
                                     @csrf
-                                    <button type="submit" title="Eskalasi" class="min-h-11 w-11 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent hover:text-white transition-colors rounded-lg">
+                                    <button type="submit" title="Eskalasi" class="min-h-11 w-11 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent/20 hover:border-gold-accent/50 transition-colors rounded-lg">
                                         <span class="material-symbols-outlined text-[18px]">emergency</span>
                                     </button>
                                 </form>
@@ -313,7 +313,7 @@
                         <span class="material-symbols-outlined text-[20px]">send</span>
                     </button>
                 </div>
-                <div id="chat-select-bar" class="items-center gap-2 lg:gap-3 py-1 overflow-x-auto" aria-label="Select messages">
+                <div id="chat-select-bar" class="flex items-center gap-1 lg:gap-1.5 bg-surface-container-lowest dark:bg-[#1c1c1c] border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-[26px] lg:rounded-[28px] px-2 lg:px-2.5 py-2 lg:py-2.5 shadow-sm overflow-x-auto" aria-label="Select messages">
                     <button type="button" onclick="exitSelectMessages()" id="chat-sel-close" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Keluar seleksi" aria-label="Keluar seleksi">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
@@ -820,14 +820,24 @@
         closeChatMenu();
         if (opening) {
             closeChatMoreMenu();
+            const scroller = document.getElementById('chat-messages');
+            if (scroller) {
+                const scrollerRect = scroller.getBoundingClientRect();
+                const rowBtnRect = btn.getBoundingClientRect();
+                if (rowBtnRect.bottom > scrollerRect.bottom) {
+                    scroller.scrollTop += (rowBtnRect.bottom - scrollerRect.bottom) + 12;
+                }
+            }
             const btnRect = btn.getBoundingClientRect();
             const panelRect = panel.getBoundingClientRect();
+            const composerEl = document.getElementById('chat-input-area');
+            const composerTop = composerEl ? composerEl.getBoundingClientRect().top : panelRect.bottom;
             menu.style.position = 'fixed';
             let top = btnRect.bottom + 6;
             let left = btnRect.right - 150;
             if (left < panelRect.left + 8) left = panelRect.left + 8;
             if (left + 150 > panelRect.right - 8) left = panelRect.right - 158;
-            if (top + 80 > panelRect.bottom - 8) {
+            if (top + 80 > composerTop - 6 || top + 80 > panelRect.bottom - 8) {
                 top = btnRect.top - 52;
                 if (top < panelRect.top + 8) top = panelRect.top + 8;
             }
