@@ -3,8 +3,8 @@
 @section('title', 'Komplain')
 
 @section('header-title', 'Komplain')
-@section('header-badge', $terbuka.' Terbuka')
-@section('header-subtitle', 'Pantau dan bantu tangani komplain customer toko Anda.')
+@section('header-badge', $eskalasiCount.' Eskalasi')
+@section('header-subtitle', 'Komplain yang dieskalasi Admin untuk keputusan final Anda.')
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
@@ -35,65 +35,17 @@
             </div>
         </div>
     @endif
-    {{-- Ringkasan --}}
-    <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
-        <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Komplain Terbuka</span>
-            <span class="raliva-figure text-[26px] text-error">{{ $terbuka }}</span>
-            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">support_agent</span>
-        </div>
-        <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Respons Toko</span>
-            <span class="raliva-figure text-[26px] text-gold-accent">{{ $menunggu }}</span>
-            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">schedule</span>
-        </div>
-        <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Selesai Bulan Ini</span>
-            <span class="raliva-figure text-[26px] text-secondary">{{ $selesaiBulanIni }}</span>
-            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">task_alt</span>
-        </div>
-        <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Resolution Rate</span>
-            <span class="raliva-figure text-[26px] text-on-surface"><span>{{ $resolution }}</span>%</span>
-            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">thumb_up</span>
-        </div>
-    </section>
-
-    {{-- Info Prioritas --}}
-    <section data-reveal class="bg-error/5 border border-error/25 rounded-lg px-6 py-4 flex items-start gap-3">
-        <span class="material-symbols-outlined text-[22px] text-error mt-0.5 shrink-0">priority_high</span>
-        <p class="font-body-md text-sm text-on-surface"><span class="font-bold">Respons wajib &le; 24 jam.</span> Komplain dengan prioritas tinggi yang tidak segera direspons dapat memengaruhi skor kualitas layanan toko.</p>
-    </section>
-
-    {{-- Daftar Komplain --}}
+    {{-- Daftar Komplain (hanya eskalasi) --}}
     <section data-table-scope>
         <div data-reveal class="flex items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Daftar Komplain</h2>
-            <select data-table-filter="status" class="raliva-select">
-                <option value="">Semua Status</option>
-                <option value="open">Komplain Baru</option>
-                <option value="diproses">Dalam Penanganan</option>
-                <option value="escalated">Eskalasi</option>
-                <option value="selesai">Selesai</option>
-            </select>
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Perlu Keputusan Anda</h2>
         </div>
 
         <div data-reveal-group class="space-y-gutter">
             @forelse ($complaints as $c)
                 @php
                     $key = $c->status;
-                    $statusLabel = match ($key) {
-                        'open' => 'Baru',
-                        'diproses' => 'Dalam Penanganan',
-                        'selesai' => 'Selesai',
-                        'escalated' => 'Eskalasi',
-                        'ditutup' => 'Ditutup',
-                        default => ucfirst($key),
-                    };
-                    $prio = $key === 'open' ? 'Tinggi' : ($key === 'diproses' ? 'Sedang' : 'Rendah');
-                    $prioClass = $prio === 'Tinggi'
-                        ? 'bg-error/10 text-error border-error/20'
-                        : ($prio === 'Sedang' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-surface-container-high text-on-surface-variant border-outline-variant');
+                    $statusLabel = 'Eskalasi';
                     $kodeComplain = 'KL-' . str_pad((string) $c->complaint_id, 10, '0', STR_PAD_LEFT);
                 @endphp
                 <article data-reveal data-komplain-row data-status="{{ $key }}"
@@ -118,14 +70,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-gutter shrink-0 self-start">
-                            <span class="inline-flex items-center px-2 py-1 rounded-full {{ $prioClass }} text-[9px] font-bold uppercase border">Prioritas {{ $prio }}</span>
-                            @if ($key === 'selesai')
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[9px] font-bold uppercase border border-secondary/20">Selesai</span>
-                            @elseif ($key === 'diproses')
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">Ditangani</span>
-                            @else
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20 animate-pulse">Baru</span>
-                            @endif
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">Eskalasi</span>
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-gutter mt-5 pt-4 border-t border-muted-border">
@@ -134,13 +79,8 @@
                     </div>
                 </article>
             @empty
-                <p class="text-on-surface-variant text-sm py-8 text-center">Belum ada komplain.</p>
+                <p class="text-on-surface-variant text-sm py-8 text-center">Belum ada komplain yang dieskalasi ke Anda.</p>
             @endforelse
-        </div>
-
-        <div data-empty-state class="hidden flex-col items-center py-12 text-center gap-3">
-            <span class="material-symbols-outlined text-[40px] text-on-surface-variant">inbox</span>
-            <p class="text-on-surface-variant font-body-md text-sm">Tidak ada komplain pada status ini.</p>
         </div>
     </section>
 </div>
