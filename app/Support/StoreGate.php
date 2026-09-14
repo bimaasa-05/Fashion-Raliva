@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Role;
+use App\Models\Setting;
 use App\Models\Store;
 use App\Models\StoreStaff;
 use App\Models\User;
@@ -68,6 +69,48 @@ class StoreGate
             ->where('status', Store::STATUS_NONAKTIF)
             ->pluck('nama_toko')
             ->all();
+    }
+
+    /**
+     * Model toko yang sedang ditangguhkan (untuk banner), termasuk batas waktu bila ada.
+     *
+     * @return Store[]
+     */
+    public static function suspendedStores(?User $user = null): array
+    {
+        $user ??= Auth::user();
+
+        if (! $user) {
+            return [];
+        }
+
+        $storeIds = static::storeIdsFor($user);
+
+        if ($storeIds === []) {
+            return [];
+        }
+
+        return Store::query()
+            ->whereIn('store_id', $storeIds)
+            ->where('status', Store::STATUS_NONAKTIF)
+            ->get(['store_id', 'nama_toko', 'ditangguhkan_sampai'])
+            ->all();
+    }
+
+    /**
+     * Nomor WhatsApp dukungan platform (untuk wa.me), normalisasi ke digit saja.
+     */
+    public static function supportWhatsapp(): ?string
+    {
+        $wa = Setting::get(Setting::WHATSAPP_SUPPORT, '');
+
+        if ($wa === null || $wa === '') {
+            return null;
+        }
+
+        $wa = preg_replace('/\D+/', '', $wa);
+
+        return $wa !== '' ? $wa : null;
     }
 
     /**

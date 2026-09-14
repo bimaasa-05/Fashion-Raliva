@@ -93,6 +93,7 @@
                 data-desc="{{ $store->deskripsi }}"
                 data-reason="{{ $store->alasan_penolakan }}"
                 data-phone="{{ $store->nomor_telepon ?? '-' }}"
+                data-sampai="{{ $item->ditangguhkan_sampai ?? '' }}"
                 data-dokumen='{{ $item->dokumen->map(fn ($d) => ["id" => $d->store_document_id, "jenis" => $d->jenis, "status" => $d->status, "path" => $d->path, "catatan" => $d->catatan])->toJson() }}'
                 onclick="openStoreModal(this)"
                 class="toko-card group bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden cursor-pointer card-premium">
@@ -230,12 +231,13 @@
             rejectBtn.classList.remove('hidden');
             document.getElementById('store-action-info')?.classList.remove('hidden');
         } else if (d.status === 'aktif') {
-            mainBtn.textContent = 'Tangguhkan Toko';
-            mainBtn.dataset.confirm = 'false';
-            mainBtn.classList.remove('hidden');
+            mainBtn.classList.add('hidden');
             mainForm.action = actionUrls.tangguhkan(d.id);
             rejectBtn.classList.add('hidden');
             document.getElementById('store-action-info')?.classList.add('hidden');
+            closeStoreModal();
+            openSuspendModal(d.id, d.name);
+            return;
         } else if (d.status === 'nonaktif') {
             mainBtn.textContent = 'Aktifkan Kembali';
             mainBtn.dataset.confirm = 'false';
@@ -243,6 +245,9 @@
             mainForm.action = actionUrls.aktifkan(d.id);
             rejectBtn.classList.add('hidden');
             document.getElementById('store-action-info')?.classList.add('hidden');
+            meta.verification = d.sampai
+                ? 'Ditangguhkan sementara — aktif kembali ' + d.sampai
+                : 'Ditangguhkan oleh Admin tanpa batas waktu';
         } else if (d.status === 'ditolak') {
             mainBtn.textContent = 'Pulihkan & Setujui';
             mainBtn.dataset.confirm = 'true';
@@ -430,8 +435,50 @@
         modal.classList.remove('flex');
     }
 
+    function openSuspendModal(storeId, storeName) {
+        document.getElementById('suspend-store-name').textContent = storeName;
+        document.getElementById('suspend-form').action = actionUrls.tangguhkan(storeId);
+        const permanen = document.querySelector('input[name="tipe_suspend"][value="permanen"]');
+        permanen.checked = true;
+        document.getElementById('sampai-input').value = '';
+        document.getElementById('sampai-input').disabled = true;
+        const modal = document.getElementById('suspend-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeSuspendModal() {
+        const modal = document.getElementById('suspend-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function confirmSuspend() {
+        const isSementara = document.querySelector('input[name="tipe_suspend"][value="sementara"]').checked;
+        if (isSementara) {
+            const sampai = document.getElementById('sampai-input').value;
+            if (! sampai) {
+                alert('Mohon pilih tanggal berakhirnya penangguhan.');
+                return false;
+            }
+            if (new Date(sampai) <= new Date()) {
+                alert('Batas waktu harus di masa depan.');
+                return false;
+            }
+            if (! confirm('Toko akan ditangguhkan sementara hingga ' + new Date(sampai).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}) + '. Lanjutkan?')) {
+                return false;
+            }
+        } else {
+            if (! confirm('Toko akan ditangguhkan secara permanen. Lanjutkan?')) {
+                return false;
+            }
+        }
+        closeSuspendModal();
+        return true;
+    }
+
     document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') { closeAllDocs(); closeStoreModal(); closeRejectModal(); closeDocRejectModal(); }
+        if (event.key === 'Escape') { closeAllDocs(); closeStoreModal(); closeRejectModal(); closeDocRejectModal(); closeSuspendModal(); }
     });
 </script>
 @endpush
@@ -652,5 +699,43 @@ document.addEventListener('DOMContentLoaded', () => {
             <div id="all-docs-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-gutter"></div>
         </div>
     </div>
+</div>
+
+<div aria-labelledby="suspend-title" aria-modal="true" role="dialog" class="fixed inset-0 z-[105] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="suspend-modal" onclick="if (event.target === this) closeSuspendModal()">
+    <form id="suspend-form" method="POST" action="" onsubmit="return confirmSuspend()">
+        @csrf
+        <div class="relative z-10 bg-surface-container-lowest w-full max-w-md border border-muted-border rounded-xl shadow-2xl overflow-hidden">
+            <div class="p-8">
+                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
+                    <span class="material-symbols-outlined text-error text-[28px]">block</span>
+                </div>
+                <h3 class="font-display-lg text-headline-lg-mobile text-center mb-2" id="suspend-title">Tangguhkan Toko</h3>
+                <p class="text-on-surface-variant text-sm text-center mb-6">Toko <span id="suspend-store-name" class="font-bold text-on-surface">-</span> akan ditangguhkan. Pilih jenis penangguhan:</p>
+
+                <div class="space-y-3 mb-6">
+                    <label class="flex items-start gap-3 p-3 border border-muted-border rounded-lg cursor-pointer hover:border-gold-accent/50 transition-colors has-[:checked]:border-error has-[:checked]:bg-error/5">
+                        <input type="radio" name="tipe_suspend" value="permanen" checked class="mt-0.5 accent-error" />
+                        <div>
+                            <p class="font-label-sm text-label-sm text-on-surface font-bold">Permanen</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">Toko akan ditangguhkan tanpa batas waktu. Hanya bisa diaktifkan kembali oleh Super Admin.</p>
+                        </div>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 border border-muted-border rounded-lg cursor-pointer hover:border-gold-accent/50 transition-colors has-[:checked]:border-error has-[:checked]:bg-error/5">
+                        <input type="radio" name="tipe_suspend" value="sementara" class="mt-0.5 accent-error" onchange="document.getElementById('sampai-input').disabled = this.value !== 'sementara'; if(this.value !== 'sementara') document.getElementById('sampai-input').value = '';" />
+                        <div class="flex-1">
+                            <p class="font-label-sm text-label-sm text-on-surface font-bold">Sementara (Berbatas Waktu)</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5 mb-3">Toko akan otomatis aktif kembali melewati batas waktu yang ditentukan.</p>
+                            <input type="datetime-local" id="sampai-input" name="sampai" disabled class="w-full bg-surface-container-low border border-muted-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error disabled:opacity-40" />
+                        </div>
+                    </label>
+                </div>
+
+                <div class="flex justify-end gap-3">
+                    <button type="button" class="px-4 py-2.5 text-on-surface-variant font-label-sm text-[11px] uppercase tracking-wider hover:text-on-surface transition-colors" onclick="closeSuspendModal()">Batal</button>
+                    <button type="submit" class="px-6 py-2.5 bg-error text-on-error font-label-sm text-[11px] uppercase tracking-wider rounded-lg hover:opacity-90 transition-opacity btn-premium">Konfirmasi Tangguhkan</button>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 @endpush

@@ -55,6 +55,7 @@ class ManajemenTokoController extends Controller
                 'rating' => $ratings->get($store->store_id),
                 'deskripsi' => $store->deskripsi,
                 'dokumen' => $store->documents,
+                'ditangguhkan_sampai' => $store->ditangguhkan_sampai?->translatedFormat('d F Y H:i'),
             ];
         });
 
@@ -92,6 +93,7 @@ class ManajemenTokoController extends Controller
             $toko->update([
                 'status' => Store::STATUS_AKTIF,
                 'alasan_penolakan' => null,
+                'ditangguhkan_sampai' => null,
             ]);
 
             $docsPending = StoreDocument::where('store_id', $toko->store_id)
@@ -213,17 +215,32 @@ class ManajemenTokoController extends Controller
             ]);
         }
 
-        $lama = $toko->only(['status']);
+        $data = $request->validate([
+            'sampai' => 'nullable|date|after:now',
+        ], [
+            'sampai.date' => 'Format batas waktu tidak valid.',
+            'sampai.after' => 'Batas waktu harus di masa depan.',
+        ]);
 
-        $toko->update(['status' => Store::STATUS_NONAKTIF]);
+        $lama = $toko->only(['status']);
+        $deadline = $data['sampai'] ?? null;
+
+        $toko->update([
+            'status' => Store::STATUS_NONAKTIF,
+            'ditangguhkan_sampai' => $deadline,
+        ]);
+
+        $labelDeadline = $deadline
+            ? sprintf(' sampai %s.', $toko->ditangguhkan_sampai->translatedFormat('d F Y H:i'))
+            : ' tanpa batas waktu.';
 
         ActivityLogger::log(
             'store.suspend',
             Store::class,
             $toko->store_id,
             $lama,
-            ['status' => Store::STATUS_NONAKTIF],
-            sprintf('Menangguhkan toko "%s".', $toko->nama_toko)
+            ['status' => Store::STATUS_NONAKTIF, 'ditangguhkan_sampai' => $deadline],
+            sprintf('Menangguhkan toko "%s"%s', $toko->nama_toko, $labelDeadline)
         );
 
         Notification::create([
@@ -231,14 +248,16 @@ class ManajemenTokoController extends Controller
             'aktor_id' => ActivityLogger::resolveActorId(),
             'tipe' => Notification::TIPE_SISTEM,
             'judul' => 'Toko Ditangguhkan',
-            'pesan' => sprintf('Toko "%s" ditangguhkan oleh platform. Hubungi dukungan Raliva untuk informasi lebih lanjut.', $toko->nama_toko),
+            'pesan' => $deadline
+                ? sprintf('Toko "%s" ditangguhkan hingga %s. Hubungi dukungan Raliva untuk informasi lebih lanjut.', $toko->nama_toko, $toko->ditangguhkan_sampai->translatedFormat('d F Y'))
+                : sprintf('Toko "%s" ditangguhkan oleh platform tanpa batas waktu. Hubungi dukungan Raliva untuk informasi lebih lanjut.', $toko->nama_toko),
             'url' => route('owner.data-toko'),
         ]);
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Toko Ditangguhkan', sprintf('Toko "%s" ditangguhkan.', $toko->nama_toko), route('superadmin.manajemen-toko'));
 
         return back()->with('toast', [
-            'message' => sprintf('Toko %s ditangguhkan.', $toko->nama_toko),
+            'message' => sprintf('Toko %s ditangguhkan%s', $toko->nama_toko, $labelDeadline),
             'icon' => 'block',
         ]);
     }
@@ -254,7 +273,10 @@ class ManajemenTokoController extends Controller
 
         $lama = $toko->only(['status']);
 
-        $toko->update(['status' => Store::STATUS_AKTIF]);
+        $toko->update([
+            'status' => Store::STATUS_AKTIF,
+            'ditangguhkan_sampai' => null,
+        ]);
 
         ActivityLogger::log(
             'store.reactivate',
