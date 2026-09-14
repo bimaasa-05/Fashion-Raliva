@@ -70,9 +70,10 @@
                         "xl": "0.75rem",
                         "full": "9999px"
                     },
-                    "spacing": {
-                        "gutter": "12px",
-                        "base": "4px",
+"spacing": {
+                            "gutter": "12px",
+                            "25": "6.25rem",
+                            "base": "4px",
                         "xl": "48px",
                         "lg": "32px",
                         "container-margin": "20px",
@@ -118,6 +119,7 @@
     body {
       min-height: max(884px, 100dvh);
     }
+    .overflow-x-clip { overflow-x: clip; }
   </style>
 <style>
         :root {
@@ -368,7 +370,7 @@
     .co-step-line.done { background:#8B1E3F; }
 </style>
 </head>
-<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[168px] md:pb-[104px] lg:pl-72">
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-10 lg:pl-72">
 
 @php
     $isGuest = ! auth()->check();
@@ -403,7 +405,7 @@
 <input type="hidden" name="shipping" id="co-shipping-input" value="{{ $shipping }}"/>
 
 <!-- Main Content -->
-<main class="pt-6 pb-[72px] w-full overflow-x-hidden">
+<main class="pt-6 pb-[72px] w-full overflow-x-clip">
     <div class="mx-auto max-w-[1400px] px-container-margin">
 
         {{-- Stepper --}}
@@ -441,7 +443,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-[1.65fr_.95fr] gap-lg items-start">
 
-            {{-- LEFT: Data Pemesan + Catatan + Items + Shipping --}}
+            {{-- LEFT: Data Pemesan + Catatan + Rincian Pesanan --}}
             <div class="space-y-lg">
 
                 {{-- ========== DATA PEMESAN ========== --}}
@@ -533,6 +535,34 @@
                     </div>
                 </div>
 
+                </div>
+
+            {{-- RIGHT: Sticky kolom rangkuman (harga, pengiriman, bayar) --}}
+            <div class="space-y-md lg:sticky lg:top-25">
+
+                {{-- ========== RINCIAN HARGA ========== --}}
+                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+                    <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN HARGA') }}</p>
+                    <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Rincian Harga') }}</h3>
+                    <div class="co-summary-row">
+                        <span>Subtotal</span>
+                        <span id="co-subtotal" data-subtotal="{{ $subtotal }}">Rp {{ number_format((float)$subtotal, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="co-summary-row">
+                        <span>Shipping</span>
+                        <span id="co-shipping">Rp {{ number_format((float)$shipping, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="co-summary-row">
+                        <span>Tax</span>
+                        <span>Rp {{ number_format((float)$tax, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="co-summary-row total">
+                        <span>Total Payment</span>
+                        <span id="co-total">Rp {{ number_format((float)$total, 0, ',', '.') }}</span>
+                    </div>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Akun akan dibuat otomatis (password: Raliva123) saat lanjut ke pembayaran.') }}</p>
+                </div>
+
                 {{-- ========== SHIPPING METHOD ========== --}}
                 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
                     <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('SHIPPING METHOD') }}</p>
@@ -554,54 +584,25 @@
                     @endforeach
                 </div>
 
-            </div>
+                {{-- ========== TOTAL PAYMENT + LANJUT KE PEMBAYARAN ========== --}}
+                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+                    <div class="flex items-center justify-between gap-sm flex-wrap">
+                        <div class="min-w-0">
+                            <p class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)]">{{ __('Total Payment') }}</p>
+                            <p id="co-total-bottom" class="font-body-lg text-body-lg md:text-title-md font-semibold text-on-surface">Rp {{ number_format((float)$total, 0, ',', '.') }}</p>
+                        </div>
+                        <button type="submit" class="btn-gold w-full md:w-auto inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                            {{ __('Lanjut Ke Pembayaran') }}
+                        </button>
+                    </div>
+                </div>
 
-            {{-- RIGHT: Rincian Harga --}}
-            <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up lg:sticky lg:top-20">
-                <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN HARGA') }}</p>
-                <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Rincian Harga') }}</h3>
-                <div class="co-summary-row">
-                    <span>Subtotal</span>
-                    <span id="co-subtotal" data-subtotal="{{ $subtotal }}">Rp {{ number_format((float)$subtotal, 0, ',', '.') }}</span>
-                </div>
-                <div class="co-summary-row">
-                    <span>Shipping</span>
-                    <span id="co-shipping">Rp {{ number_format((float)$shipping, 0, ',', '.') }}</span>
-                </div>
-                <div class="co-summary-row">
-                    <span>Tax</span>
-                    <span>Rp {{ number_format((float)$tax, 0, ',', '.') }}</span>
-                </div>
-                <div class="co-summary-row total">
-                    <span>Total Payment</span>
-                    <span id="co-total">Rp {{ number_format((float)$total, 0, ',', '.') }}</span>
-                </div>
-                <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Akun akan dibuat otomatis (password: Raliva123) saat lanjut ke pembayaran.') }}</p>
-                <div class="mt-md lg:hidden">
-                    <button type="submit" class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
-                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                        {{ __('Lanjut Ke Pembayaran') }}
-                    </button>
-                </div>
             </div>
 
         </div>
     </div>
 </main>
-
-{{-- Bottom Action Bar (desktop) --}}
-<div class="co-bottom-bar fixed bottom-0 left-0 right-0 lg:left-72 z-50 px-container-margin py-sm pb-safe hidden lg:block">
-    <div class="co-bottom-bar-card card-premium flex items-center gap-sm md:gap-md bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.18)]">
-        <div class="summary flex-1 min-w-0">
-            <p>{{ __('Total Payment') }}</p>
-            <p id="co-total-bottom">Rp {{ number_format((float)$total, 0, ',', '.') }}</p>
-        </div>
-        <button type="submit" class="btn-place shrink-0">
-            <span class="material-symbols-outlined">arrow_forward</span>
-            <span class="truncate">{{ __('Lanjut Ke Pembayaran') }}</span>
-        </button>
-    </div>
-</div>
 
 </form>
 
