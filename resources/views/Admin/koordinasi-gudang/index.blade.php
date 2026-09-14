@@ -15,11 +15,11 @@
         <div class="bg-error/10 border border-error/30 text-error rounded-lg px-4 py-3 text-sm font-body-md">{{ session('error') }}</div>
     @endif
 
-    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6">
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Pesanan Perlu Diambil di Gudang</h2>
         <div class="space-y-gutter">
             @forelse ($pesananDiambil as $o)
-            <div class="border border-muted-border rounded-lg p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="border border-muted-border rounded-lg p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 card-premium">
                 <div>
                     <p class="font-mono text-sm text-on-surface-variant">{{ $o->nomor_order ?? ('#'.$o->order_id) }} • {{ $o->checkout?->user?->nama_lengkap ?? '-' }}</p>
                     <p class="font-title-md text-title-md text-on-surface mt-1">
@@ -52,11 +52,11 @@
         </div>
     </section>
 
-    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6">
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Persetujuan Pemindahan Stok</h2>
         <div class="space-y-gutter">
             @forelse ($menungguPersetujuan as $t)
-            <div class="border border-muted-border rounded-lg p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="border border-muted-border rounded-lg p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 card-premium">
                 <div class="min-w-0">
                     <p class="font-mono text-sm text-on-surface-variant">#TRF-{{ $t->stock_transfer_id }} • {{ $t->fromWarehouse?->nama_gudang ?? '-' }} → {{ $t->toWarehouse?->nama_gudang ?? '-' }}</p>
                     <p class="font-title-md text-title-md text-on-surface mt-1">
