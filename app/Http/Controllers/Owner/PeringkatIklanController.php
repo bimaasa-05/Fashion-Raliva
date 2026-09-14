@@ -36,7 +36,7 @@ class PeringkatIklanController extends Controller
                 ->paginate(10)->withQueryString();
         }
 
-        $rekenings = PlatformBankAccount::with('bank')->where('status', PlatformBankAccount::STATUS_AKTIF)->orderBy('nomor_rekening')->get();
+        $rekenings = PlatformBankAccount::with('bank')->whereNotNull('bank_id')->where('status', PlatformBankAccount::STATUS_AKTIF)->orderBy('nomor_rekening')->get();
         $metode = PaymentMethod::where('status', PaymentMethod::STATUS_AKTIF)->orderBy('nama_metode')->get();
         $tiers = PeringkatService::defaultTiers();
         $raw = Setting::get(Setting::PERINGKAT_TIER, null);
