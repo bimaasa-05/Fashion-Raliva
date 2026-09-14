@@ -886,7 +886,7 @@
                                                             class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
                                                             {{ __('Pilih salah satu') }}
                                                             {{ $pm->nama_metode }}:</p>
-                                                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-sm"
+                                                        <div class="grid grid-cols-2 gap-md"
                                                             id="grid-{{ $kode }}">
                                                             @foreach ($accts as $a)
                                                                 @php $sel = (string) ($payment->payment_method_account_id ?? '') === (string) $a->payment_method_account_id; @endphp
