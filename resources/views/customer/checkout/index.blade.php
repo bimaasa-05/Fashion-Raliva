@@ -259,11 +259,12 @@
     }
     .co-scroll {
         overflow-x: auto;
-        scrollbar-width: thin;
-        scrollbar-color: var(--chrome-accent) transparent;
+        -ms-overflow-style: auto !important;
+        scrollbar-width: thin !important;
+        scrollbar-color: var(--chrome-accent) transparent !important;
         padding-bottom: 0.875rem;
     }
-    .co-scroll::-webkit-scrollbar { height: 5px; }
+    .co-scroll::-webkit-scrollbar { display: block !important; width: 5px !important; height: 5px !important; }
     .co-scroll::-webkit-scrollbar-track { background: transparent; }
     .co-scroll::-webkit-scrollbar-thumb { background: var(--chrome-accent); border-radius: 999px; }
     .co-input {
@@ -472,10 +473,10 @@
             <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Periksa data pemesan, catatan, dan rincian pesanan sebelum melanjutkan ke pembayaran. Akun akan dibuat otomatis saat lanjut.') }}</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-[1.65fr_.95fr] gap-lg items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,.95fr)] gap-lg items-start">
 
             {{-- LEFT: Data Pemesan + Catatan + Rincian Pesanan --}}
-            <div class="space-y-lg">
+            <div class="space-y-lg min-w-0">
 
                 {{-- ========== DATA PEMESAN ========== --}}
                 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
@@ -526,10 +527,10 @@
                 </div>
 
                 {{-- ========== RINCIAN PESANAN ========== --}}
-                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up min-w-0">
                     <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN PESANAN') }}</p>
                     <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Rincian Pesanan') }}</h3>
-                    <div class="flex gap-sm overflow-x-auto co-scroll">
+                    <div class="grid grid-cols-2 lg:grid-cols-3 gap-md">
                     @forelse ($items as $i)
                     @php
                         $pv = $i->productVariant;
@@ -537,18 +538,19 @@
                         $img = $pr?->images->first()?->file_gambar ?? '';
                         $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/checkout/600/800';
                     @endphp
-                        <div class="flex-shrink-0 w-64 flex items-center gap-sm bg-surface-container border border-[var(--border-soft)] rounded-xl p-sm">
-                            <div class="flex-shrink-0 w-16 h-20 bg-surface-container-high rounded-lg overflow-hidden">
+                        <div class="flex flex-col bg-surface-container border border-[var(--border-soft)] rounded-lg overflow-hidden">
+                            <div class="relative w-full aspect-[3/4] bg-surface-container-high overflow-hidden">
                                 <img class="w-full h-full object-cover" loading="lazy" alt="{{ $pr?->nama_produk ?? __('Produk') }}" src="{{ $imgUrl }}"/>
                             </div>
-                            <div class="min-w-0 flex-1">
+                            <div class="flex flex-col flex-1 min-w-0 gap-1 p-sm">
                                 <p class="font-body-sm text-body-sm text-on-surface font-semibold truncate">{{ $pr?->nama_produk ?? __('Produk') }}</p>
                                 <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ trim(($pv?->warna ?? '') . ' · ' . ($pv?->ukuran ?? ''), ' ·') }}</p>
-                                <p class="font-body-sm text-body-sm text-on-surface mt-xs">Rp {{ number_format((float)$i->harga_snapshot, 0, ',', '.') }} <span class="text-on-surface-variant">×{{ $i->quantity }}</span></p>
+                                <p class="font-body-sm text-body-sm text-on-surface font-semibold mt-auto">Rp {{ number_format((float)$i->harga_snapshot, 0, ',', '.') }}</p>
+                                <p class="font-label-sm text-label-sm text-on-surface-variant">×{{ $i->quantity }}</p>
                             </div>
                         </div>
                     @empty
-                        <div class="flex-shrink-0 w-full flex items-center justify-center py-lg text-center">
+                        <div class="col-span-full flex items-center justify-center py-lg text-center">
                             <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $isGuest ? __('Pilih produk terlebih dahulu.') : __('Keranjang masih kosong.') }}</p>
                         </div>
                     @endforelse
@@ -569,7 +571,7 @@
                 </div>
 
             {{-- RIGHT: Sticky kolom rangkuman (harga, pengiriman, bayar) --}}
-            <div class="space-y-md lg:sticky lg:top-25">
+            <div class="space-y-md min-w-0 lg:sticky lg:top-25">
 
                 {{-- ========== RINCIAN HARGA ========== --}}
                 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
