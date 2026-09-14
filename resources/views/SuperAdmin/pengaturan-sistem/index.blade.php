@@ -369,32 +369,68 @@
         var sections = Array.from(document.querySelectorAll('[data-scroll-section]'));
         if (!links.length || !sections.length) return;
 
-        function activate(key) {
+        /* Garis deteksi sedikit di bawah quick-nav sticky (scroll-margin 144px). */
+        var spyLine = 160;
+        var activeKey = null;
+
+        function setActive(key) {
+            activeKey = key;
             links.forEach(function (link) {
                 link.classList.toggle('is-active', link.getAttribute('data-scroll-link') === key);
             });
         }
+
+        function currentSection() {
+            var bestKey = null;
+            var bestTop = -Infinity;
+            sections.forEach(function (s) {
+                var top = s.getBoundingClientRect().top;
+                if (top <= spyLine && top > bestTop) {
+                    bestTop = top;
+                    bestKey = s.getAttribute('data-scroll-section');
+                }
+            });
+
+            if (!bestKey) {
+                return sections[0].getAttribute('data-scroll-section');
+            }
+
+            /* Tie-break: kartu dalam satu baris (grid 2 kolom) punya posisi sama.
+               Bila yang sedang aktif ikut di posisi puncak, pertahankan dia agar
+               pill yang diklik pengguna tidak kebalik ke kartu sebelahnya. */
+            var contending = sections.some(function (s) {
+                return s.getAttribute('data-scroll-section') === activeKey &&
+                    Math.abs(s.getBoundingClientRect().top - bestTop) < 0.5;
+            });
+
+            return contending ? activeKey : bestKey;
+        }
+
+        var ticking = false;
+        function onScroll() {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(function () {
+                ticking = false;
+                setActive(currentSection());
+            });
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
 
         links.forEach(function (link) {
             link.addEventListener('click', function (e) {
                 var target = document.getElementById(link.getAttribute('href').slice(1));
                 if (!target) return;
                 e.preventDefault();
+                setActive(link.getAttribute('data-scroll-link'));
                 target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                activate(link.getAttribute('data-scroll-link'));
+                onScroll();
             });
         });
 
-        if ('IntersectionObserver' in window) {
-            var io = new IntersectionObserver(function (entries) {
-                entries.forEach(function (entry) {
-                    if (entry.isIntersecting) activate(entry.target.getAttribute('data-scroll-section'));
-                });
-            }, { rootMargin: '-25% 0px -65% 0px', threshold: 0 });
-            sections.forEach(function (s) { io.observe(s); });
-        } else {
-            activate(sections[0].getAttribute('data-scroll-section'));
-        }
+        onScroll();
     })();
 
     document.querySelectorAll('form[data-save-form]').forEach(function (form) {
