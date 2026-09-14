@@ -33,9 +33,9 @@ class PaymentMethod extends Model
 
     public function accounts(): HasMany
     {
-        return $this->hasMany(PaymentMethodAccount::class, 'payment_method_id', 'payment_method_id')
-            ->where('status', PaymentMethodAccount::STATUS_AKTIF)
+        return $this->hasMany(PlatformBankAccount::class, 'jenis', 'kode_metode')
+            ->where('status', PlatformBankAccount::STATUS_AKTIF)
             ->orderBy('urutan')
-            ->orderBy('payment_method_account_id');
+            ->orderBy('platform_bank_account_id');
     }
 }
