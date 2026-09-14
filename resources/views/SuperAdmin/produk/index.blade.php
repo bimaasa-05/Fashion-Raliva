@@ -83,9 +83,15 @@
                             'arsip' => ['Arsip', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
                             default => [ucfirst($produk->status), 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
                         };
+                        $normFoto = function ($raw) {
+                            if (filter_var($raw, FILTER_VALIDATE_URL)) return $raw;
+                            $raw = ltrim($raw, '/');
+                            return str_starts_with($raw, 'assets/') ? asset($raw) : asset('storage/' . $raw);
+                        };
                         $firstImg = $produk->images->first();
-                        $imgSrc = $firstImg ? (filter_var($firstImg->file_gambar, FILTER_VALIDATE_URL) ? $firstImg->file_gambar : asset('storage/' . ltrim($firstImg->file_gambar, '/'))) : null;
+                        $imgSrc = $firstImg ? $normFoto($firstImg->file_gambar) : null;
                         $imgCount = $produk->images->count();
+                        $galImgs = $produk->images->map(fn ($gi) => $normFoto($gi->file_gambar))->values()->all();
                     @endphp
                     <tr data-table-row data-status="{{ $produk->status }}" data-search="{{ strtolower($produk->nama_produk.' '.($produk->store->nama_toko ?? '').' '.($produk->category->nama_kategori ?? '')) }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-4 text-center text-on-surface-variant font-mono row-num"></td>
@@ -99,7 +105,7 @@
                                  data-variants="{{ $produk->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}"
                                  data-desc="{{ $produk->deskripsi }}"
                                  data-status-label="{{ $statusLabel[0] }}"
-                                 data-images='{{ json_encode($produk->images->pluck('file_gambar')->values(), JSON_UNESCAPED_SLASHES) }}'
+                                 data-images='{{ json_encode($galImgs, JSON_UNESCAPED_SLASHES) }}'
                                  onclick="openProdukGallery(this)"
                                  title="Lihat semua foto">
                                 @if($imgSrc)
@@ -151,7 +157,7 @@
                 };
             @endphp
             <article data-table-row data-status="{{ $produk->status }}" data-search="{{ strtolower($produk->nama_produk.' '.($produk->store->nama_toko ?? '').' '.($produk->category->nama_kategori ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
-                @php $firstImgM = $produk->images->first(); $imgSrcM = $firstImgM ? (filter_var($firstImgM->file_gambar, FILTER_VALIDATE_URL) ? $firstImgM->file_gambar : asset('storage/' . ltrim($firstImgM->file_gambar, '/'))) : null; $imgCountM = $produk->images->count(); @endphp
+                @php $normFotoM = function ($raw) { if (filter_var($raw, FILTER_VALIDATE_URL)) return $raw; $raw = ltrim($raw, '/'); return str_starts_with($raw, 'assets/') ? asset($raw) : asset('storage/' . $raw); }; $firstImgM = $produk->images->first(); $imgSrcM = $firstImgM ? $normFotoM($firstImgM->file_gambar) : null; $imgCountM = $produk->images->count(); $galImgsM = $produk->images->map(fn ($gi) => $normFotoM($gi->file_gambar))->values()->all(); @endphp
                 <div class="flex items-start gap-4 mb-3">
                     <div class="relative w-16 h-16 rounded-lg overflow-hidden bg-surface-container-low border border-muted-border shrink-0 cursor-pointer hover:ring-2 hover:ring-gold-accent/50 transition-all"
                          data-name="{{ $produk->nama_produk }}"
@@ -162,7 +168,7 @@
                          data-variants="{{ $produk->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}"
                          data-desc="{{ $produk->deskripsi }}"
                          data-status-label="{{ $statusLabel[0] }}"
-                         data-images='{{ json_encode($produk->images->pluck('file_gambar')->values(), JSON_UNESCAPED_SLASHES) }}'
+                         data-images='{{ json_encode($galImgsM, JSON_UNESCAPED_SLASHES) }}'
                          onclick="openProdukGallery(this)"
                          title="Lihat semua foto">
                         @if($imgSrcM)

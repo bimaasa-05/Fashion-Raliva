@@ -165,9 +165,27 @@
         </div>
     </section>
 
-    <!-- User Grid -->
+    <!-- User List (Kartu / Tabel) -->
     <section class="rise rise-d2">
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter" id="user-grid">
+        <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+            <div class="flex items-center gap-3">
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Pengguna</h2>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">
+                    <span class="material-symbols-outlined text-[14px]">group</span>
+                    {{ $users->total() }} pengguna
+                </span>
+            </div>
+            <div class="inline-flex items-center gap-1 p-1 rounded-lg bg-surface-container border border-muted-border" id="view-toggle" role="tablist" aria-label="Mode tampilan">
+                <button type="button" data-view="kartu" class="view-toggle-btn inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md font-label-sm text-[11px] uppercase tracking-widest transition-colors" role="tab">
+                    <span class="material-symbols-outlined text-[16px]">grid_view</span> Kartu
+                </button>
+                <button type="button" data-view="tabel" class="view-toggle-btn inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md font-label-sm text-[11px] uppercase tracking-widest transition-colors" role="tab">
+                    <span class="material-symbols-outlined text-[16px]">table_rows</span> Tabel
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter hidden" id="view-kartu">
             @forelse ($users as $u)
                 <div class="user-card group relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl p-6 transition-all duration-300 hover:border-gold-accent hover:shadow-lg hover:-translate-y-0.5 cursor-pointer card-premium"
                     data-id="{{ $u->user_id }}"
@@ -219,14 +237,27 @@
                             <span class="material-symbols-outlined text-[18px]">edit</span>
                         </button>
                     </div>
-                    <div class="relative mt-4 pt-4 border-t border-muted-border/60 flex items-center justify-between">
-                        <span class="inline-flex items-center gap-1.5 text-on-surface-variant text-xs truncate">
-                            <span class="material-symbols-outlined text-[14px]">call</span>
-                            {{ $u->nomor_telepon ?? 'No. telepon -' }}
+                    <div class="relative mt-4 pt-4 border-t border-muted-border/60 flex flex-col gap-2">
+                        <span class="inline-flex items-center gap-1.5 text-on-surface-variant text-xs w-full">
+                            <span class="material-symbols-outlined text-[14px] shrink-0">key</span>
+                            @if ($u->password)
+                                <span class="font-mono break-all" title="{{ $u->password }}">{{ $u->password }}</span>
+                                <button type="button" onclick="event.stopPropagation(); copyPassword(this)" data-pw="{{ $u->password }}" class="hover:text-gold-accent transition-colors shrink-0 ml-auto" title="Salin password (hash DB)">
+                                    <span class="material-symbols-outlined text-[14px]">content_copy</span>
+                                </button>
+                            @else
+                                <span class="text-on-surface-variant/60">—</span>
+                            @endif
                         </span>
-                        <button type="button" onclick="event.stopPropagation(); openHapusModal(this.closest('[data-id]'))" class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-lg hover:bg-error/10 text-on-surface-variant hover:text-error" title="Hapus">
-                            <span class="material-symbols-outlined text-[18px]">delete_outline</span>
-                        </button>
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center gap-1.5 text-on-surface-variant text-xs truncate">
+                                <span class="material-symbols-outlined text-[14px]">call</span>
+                                {{ $u->nomor_telepon ?? 'No. telepon -' }}
+                            </span>
+                            <button type="button" onclick="event.stopPropagation(); openHapusModal(this.closest('[data-id]'))" class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-lg hover:bg-error/10 text-on-surface-variant hover:text-error" title="Hapus">
+                                <span class="material-symbols-outlined text-[18px]">delete_outline</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             @empty
@@ -246,6 +277,124 @@
                 <button type="button" onclick="resetUserFilters()" class="mt-3 px-5 py-2 rounded-lg border border-gold-accent/40 text-gold-accent font-label-sm text-[11px] uppercase tracking-widest hover:bg-gold-accent/10 transition-colors">Reset Filter</button>
             </div>
         </div>
+
+        <!-- Mode Tabel -->
+        <div id="view-tabel">
+            <div class="border border-muted-border bg-surface-container-lowest rounded-xl overflow-x-auto card-premium">
+                <table class="w-full text-left border-collapse premium-table min-w-[900px]">
+                    <thead>
+                        <tr class="border-b border-muted-border bg-surface-container-low/50">
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap text-center w-14">No.</th>
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Pengguna</th>
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Telepon</th>
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Password</th>
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Peran</th>
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Status</th>
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Verifikasi</th>
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-tbody">
+                        @forelse ($users as $u)
+                            <tr class="user-tr border-b border-muted-border last:border-0 hover:bg-surface-container-low/40 transition-colors cursor-pointer"
+                                data-id="{{ $u->user_id }}"
+                                data-role="{{ $u->role->nama_role ?? '' }}"
+                                data-status="{{ $u->status }}"
+                                data-name="{{ $u->nama_lengkap }}"
+                                data-email="{{ $u->email }}"
+                                data-phone="{{ $u->nomor_telepon ?? '' }}"
+                                data-verified="{{ $u->email_verified_at ? 'true' : 'false' }}"
+                                data-role-id="{{ $u->role_id }}"
+                                data-initial="{{ strtoupper(mb_substr($u->nama_lengkap, 0, 2)) }}"
+                                data-role-label="{{ $u->role->nama_role ?? '' }}"
+                                onclick="openUserDetail(this)">
+                                <td class="p-4 text-center text-on-surface-variant font-mono">{{ ($users->firstItem() ?? 0) + $loop->iteration - 1 }}</td>
+                                <td class="p-4">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-gold-accent/20 to-gold-accent/5 border border-gold-accent/20 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                            @if ($u->foto_profil_url)
+                                                <img src="{{ $u->foto_profil_url }}" class="w-9 h-9 rounded-full object-cover" alt="{{ $u->nama_lengkap }}" />
+                                            @else
+                                                <span class="font-title-md text-sm text-gold-accent">{{ strtoupper(mb_substr($u->nama_lengkap, 0, 2)) }}</span>
+                                            @endif
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="font-title-md text-sm text-on-surface truncate">{{ $u->nama_lengkap }}</p>
+                                            <p class="text-xs text-on-surface-variant truncate">{{ $u->email }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-4 font-body-md text-sm text-on-surface-variant whitespace-nowrap">{{ $u->nomor_telepon ?? '-' }}</td>
+                                <td class="p-4">
+                                    <div class="inline-flex items-center gap-1.5 max-w-[240px]">
+                                        @if ($u->password)
+                                            <span class="font-mono text-xs text-on-surface whitespace-nowrap overflow-hidden text-ellipsis" title="{{ $u->password }}">{{ $u->password }}</span>
+                                            <button type="button" onclick="event.stopPropagation(); copyPassword(this)" data-pw="{{ $u->password }}" class="text-on-surface-variant hover:text-gold-accent transition-colors shrink-0" title="Salin password (hash DB)">
+                                                <span class="material-symbols-outlined text-[14px]">content_copy</span>
+                                            </button>
+                                        @else
+                                            <span class="text-on-surface-variant/50 text-xs">—</span>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="p-4"><span class="role-badge inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide">{{ $u->role->nama_role ?? '-' }}</span></td>
+                                <td class="p-4">
+                                    @if ($u->status === \App\Models\User::STATUS_AKTIF)
+                                        <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 text-[9px] font-bold uppercase">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-success status-dot-pulse"></span>Aktif
+                                        </span>
+                                    @elseif ($u->status === \App\Models\User::STATUS_SUSPEND)
+                                        <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-tertiary-container/30 text-on-tertiary-container border border-tertiary-container/50 text-[9px] font-bold uppercase">Suspend</span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Non-aktif</span>
+                                    @endif
+                                </td>
+                                <td class="p-4">
+                                    @if ($u->email_verified_at)
+                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-secondary-container/20 text-secondary text-[9px] font-bold uppercase border border-secondary/20">
+                                            <span class="material-symbols-outlined text-[12px]">verified</span>Verified
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">
+                                            <span class="material-symbols-outlined text-[12px]">email</span>Belum Verified
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="p-4">
+                                    <div class="inline-flex items-center gap-1 justify-end">
+                                        <button type="button" onclick="event.stopPropagation(); openEditModal(this.closest('[data-id]'))" class="p-2 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-gold-accent transition-colors" title="Edit">
+                                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                                        </button>
+                                        <button type="button" onclick="event.stopPropagation(); openHapusModal(this.closest('[data-id]'))" class="p-2 rounded-lg hover:bg-error/10 text-on-surface-variant hover:text-error transition-colors" title="Hapus">
+                                            <span class="material-symbols-outlined text-[18px]">delete_outline</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr id="table-empty-static" class="hidden">
+                                <td colspan="8" class="p-8 text-center">
+                                    <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mx-auto mb-4">
+                                        <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">group_off</span>
+                                    </div>
+                                    <p class="text-on-surface-variant font-body-md text-sm">Tidak ada pengguna ditemukan.</p>
+                                </td>
+                            </tr>
+                        @endforelse
+                        <tr id="table-empty-filter" class="hidden">
+                            <td colspan="8" class="p-8 text-center">
+                                <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mx-auto mb-4">
+                                    <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
+                                </div>
+                                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada pengguna yang cocok dengan filter.</p>
+                                <button type="button" onclick="resetUserFilters()" class="mt-3 px-5 py-2 rounded-lg border border-gold-accent/40 text-gold-accent font-label-sm text-[11px] uppercase tracking-widest hover:bg-gold-accent/10 transition-colors">Reset Filter</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         @if ($users->hasPages())
             <div class="mt-6 flex justify-center">{{ $users->links() }}</div>
         @endif
@@ -813,40 +962,113 @@
         document.body.style.overflow = '';
     }
 
+    /* ── Salin password (hash DB) ── */
+    function copyPassword(btn) {
+        const pw = btn.getAttribute('data-pw');
+        if (!pw) return;
+        const done = () => {
+            const icon = btn.querySelector('.material-symbols-outlined');
+            if (!icon) return;
+            const old = icon.textContent;
+            icon.textContent = 'check';
+            btn.classList.add('text-success');
+            setTimeout(() => { icon.textContent = old; btn.classList.remove('text-success'); }, 1500);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(pw).then(done).catch(() => fallbackCopy(pw, done));
+        } else {
+            fallbackCopy(pw, done);
+        }
+    }
+
+    function fallbackCopy(text, done) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+        done();
+    }
+
+    /* ── Mode tampilan: Kartu / Tabel ── */
+    const VIEW_KEY = 'raliva_user_view';
+
+    function setViewMode(mode) {
+        const kartu = document.getElementById('view-kartu');
+        const tabel = document.getElementById('view-tabel');
+        if (kartu) kartu.classList.toggle('hidden', mode !== 'kartu');
+        if (tabel) tabel.classList.toggle('hidden', mode !== 'tabel');
+        document.querySelectorAll('#view-toggle .view-toggle-btn').forEach(btn => {
+            const active = btn.getAttribute('data-view') === mode;
+            btn.classList.toggle('bg-gold-accent', active);
+            btn.classList.toggle('text-white', active);
+            btn.classList.toggle('btn-premium', active);
+            btn.classList.toggle('shadow-sm', active);
+            btn.classList.toggle('text-on-surface-variant', !active);
+        });
+        try { localStorage.setItem(VIEW_KEY, mode); } catch (e) {}
+    }
+
+    function initViewMode() {
+        let mode = 'tabel';
+        try { mode = localStorage.getItem(VIEW_KEY) || 'tabel'; } catch (e) {}
+        setViewMode(mode);
+    }
+
+    document.querySelectorAll('#view-toggle .view-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            setViewMode(btn.getAttribute('data-view'));
+            applyUserFilters();
+        });
+    });
+    initViewMode();
+
     /* ── Live filter & search (no reload) ── */
     const userState = { role: '', status: '', search: '', sort: 'nama_asc' };
 
     function applyUserFilters() {
-        const grid = document.getElementById('user-grid');
-        if (!grid) return;
-        const cards = Array.from(grid.querySelectorAll('.user-card'));
+        const grid = document.getElementById('view-kartu');
+        const tbody = document.getElementById('user-tbody');
+        if (!grid && !tbody) return;
+        const cards = grid ? Array.from(grid.querySelectorAll('.user-card')) : [];
+        const rows = tbody ? Array.from(tbody.querySelectorAll('tr.user-tr')) : [];
+        const items = cards.concat(rows);
         const q = userState.search.trim().toLowerCase();
         let visible = 0;
 
-        cards.forEach(card => {
-            const matchRole = !userState.role || card.dataset.role === userState.role;
-            const matchStatus = !userState.status || card.dataset.status === userState.status;
-            const hay = (card.dataset.name + ' ' + card.dataset.email + ' ' + card.dataset.phone).toLowerCase();
+        items.forEach(item => {
+            const matchRole = !userState.role || item.dataset.role === userState.role;
+            const matchStatus = !userState.status || item.dataset.status === userState.status;
+            const hay = (item.dataset.name + ' ' + item.dataset.email + ' ' + item.dataset.phone).toLowerCase();
             const matchSearch = !q || hay.includes(q);
             const show = matchRole && matchStatus && matchSearch;
-            card.classList.toggle('hidden', !show);
+            item.classList.toggle('hidden', !show);
             if (show) visible++;
         });
 
-        // Sort
-        const sorted = cards.slice().sort((a, b) => {
+        // Sort (kartu & baris tabel serentak)
+        const sortFn = (a, b) => {
             switch (userState.sort) {
                 case 'nama_desc': return b.dataset.name.localeCompare(a.dataset.name);
                 case 'role': return a.dataset.role.localeCompare(b.dataset.role);
                 case 'status': return a.dataset.status.localeCompare(b.dataset.status);
                 default: return a.dataset.name.localeCompare(b.dataset.name);
             }
-        });
-        sorted.forEach(c => grid.appendChild(c));
+        };
+        if (grid) cards.slice().sort(sortFn).forEach(c => grid.appendChild(c));
+        if (tbody) rows.slice().sort(sortFn).forEach(r => tbody.appendChild(r));
 
-        document.getElementById('empty-state-filter').classList.toggle('hidden', visible > 0);
+        const filterEmpty = document.getElementById('empty-state-filter');
+        if (filterEmpty) filterEmpty.classList.toggle('hidden', visible > 0);
         const staticEmpty = document.getElementById('empty-state-static');
         if (staticEmpty) staticEmpty.classList.toggle('hidden', visible > 0);
+        const tFilter = document.getElementById('table-empty-filter');
+        if (tFilter) tFilter.classList.toggle('hidden', visible > 0);
+        const tStatic = document.getElementById('table-empty-static');
+        if (tStatic) tStatic.classList.toggle('hidden', visible > 0);
     }
 
     function setChips(group, value) {

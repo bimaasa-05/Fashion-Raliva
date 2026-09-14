@@ -7,6 +7,11 @@
 
 @section('header-subtitle', 'Laporan transaksi, komisi, toko, pengguna, refund, dan pencairan.')
 
+@php
+    $rangeLabels = ['7' => '7 Hari Terakhir', '30' => '1 Bulan Terakhir', '365' => '1 Tahun Terakhir'];
+    $trendLabel = $rangeLabels[$activeRange] ?? '1 Bulan Terakhir';
+@endphp
+
 @push('styles')
 <style>
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
@@ -16,78 +21,117 @@
 @endpush
 
 @section('content')
-<!-- Summary Cards Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-section-gap">
-    <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 flex flex-col gap-2 relative overflow-hidden card-premium">
-        <div class="flex justify-between items-start">
-            <span class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-gold-accent text-[20px]">account_balance_wallet</span>
-            </span>
+<section>
+    <h2 data-reveal class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Laporan</h2>
+    <div data-reveal-group class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+        <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hero-glow">
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Pendapatan</span>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">Rp <span data-count="{{ $totalPendapatan }}" data-count-decimals="0">{{ number_format($totalPendapatan, 0, ',', '.') }}</span></span>
+            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>Semua transaksi berhasil</span>
+            <div class="flex items-end gap-[3px] h-6 mt-auto">
+                <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:66%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:58%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:74%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:68%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:88%"></i>
+            </div>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
         </div>
-        <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Total Pendapatan</span>
-        <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</span>
-        <span class="text-on-surface-variant text-xs">Semua transaksi berhasil</span>
-    </div>
 
-    <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 flex flex-col gap-2 relative overflow-hidden card-premium">
-        <div class="flex justify-between items-start">
-            <span class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-gold-accent text-[20px]">shopping_bag</span>
-            </span>
+        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Pesanan</span>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight"><span data-count="{{ $totalPesanan }}">{{ number_format($totalPesanan, 0, ',', '.') }}</span></span>
+            <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-gold-accent">shopping_bag</span>Pesanan berhasil</span>
+            <div class="flex items-end gap-[3px] h-6 mt-auto">
+                <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:50%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:70%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:64%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:80%"></i>
+            </div>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
         </div>
-        <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Total Pesanan</span>
-        <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">{{ number_format($totalPesanan) }}</span>
-        <span class="text-on-surface-variant text-xs">Pesanan berhasil</span>
-    </div>
 
-    <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 flex flex-col gap-2 relative overflow-hidden card-premium">
-        <div class="flex justify-between items-start">
-            <span class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-gold-accent text-[20px]">payments</span>
-            </span>
+        <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hero-glow">
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Komisi Raliva</span>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold leading-tight">Rp <span data-count="{{ $komisiRaliva }}" data-count-decimals="0">{{ number_format($komisiRaliva, 0, ',', '.') }}</span></span>
+            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>Total komisi terkumpul</span>
+            <div class="flex items-end gap-[3px] h-6 mt-auto">
+                <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:72%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:84%"></i>
+            </div>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">percent</span>
         </div>
-        <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Komisi Raliva</span>
-        <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold leading-tight">Rp {{ number_format($komisiRaliva, 0, ',', '.') }}</span>
-        <span class="text-on-surface-variant text-xs">Total komisi terkumpul</span>
-    </div>
 
-    <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 flex flex-col gap-2 relative overflow-hidden card-premium">
-        <div class="flex justify-between items-start">
-            <span class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-gold-accent text-[20px]">storefront</span>
-            </span>
+        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Toko Aktif</span>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight"><span data-count="{{ $tokoAktif }}">{{ $tokoAktif }}</span></span>
+            <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-gold-accent">storefront</span>Toko terverifikasi</span>
+            <div class="flex items-end gap-[3px] h-6 mt-auto">
+                <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:30%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:35%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:32%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:42%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:52%"></i>
+            </div>
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">storefront</span>
         </div>
-        <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-2">Toko Aktif</span>
-        <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">{{ $tokoAktif }}</span>
-        <span class="text-on-surface-variant text-xs">Toko terverifikasi</span>
     </div>
-</div>
+</section>
 
-<!-- Charts Section -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-section-gap">
-    <div class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="font-title-md text-on-surface uppercase tracking-wider premium-heading">Tren Pendapatan</h3>
+    <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
+        <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <div class="flex items-center gap-3">
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Tren Pendapatan</h2>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">
+                    <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                    <span id="trend-badge-text">{{ $trendLabel }}</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span id="trend-total" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gold-accent/10 border border-gold-accent/25 font-title-md text-sm text-gold-accent whitespace-nowrap">Rp 0</span>
+                <div class="w-40">
+                    <select id="trend-range" class="raliva-select !py-2 !text-xs">
+                        @foreach ($rangeLabels as $rKey => $rLabel)
+                            <option value="{{ $rKey }}" {{ $activeRange === $rKey ? 'selected' : '' }}>{{ $rLabel }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
         </div>
-        <div class="h-[300px] w-full relative">
+        <div id="trend-chart-wrap" class="h-[280px] w-full relative">
             <canvas id="revenueChart"></canvas>
         </div>
-    </div>
-    <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="font-title-md text-on-surface uppercase tracking-wider premium-heading">Toko Teratas</h3>
+        <div id="trend-empty" class="hidden flex flex-col items-center justify-center py-16 text-center gap-2 text-on-surface-variant">
+            <span class="material-symbols-outlined text-[32px] opacity-50">monitoring</span>
+            <p class="font-body-md text-sm">Belum ada transaksi pada periode ini.</p>
         </div>
-        <div data-leaderboard='@json($topToko)'></div>
-    </div>
+        <div id="trend-error" class="hidden flex-col items-center justify-center py-16 text-center gap-2 text-on-surface-variant">
+            <span class="material-symbols-outlined text-[32px] opacity-50">cloud_off</span>
+            <p class="font-body-md text-sm">Gagal memuat grafik. Pastikan CDN Chart.js dapat diakses.</p>
+            <button id="trend-retry" class="mt-2 px-4 py-2 rounded-lg border border-gold-accent/30 text-gold-accent text-xs font-bold uppercase tracking-wider hover:bg-gold-accent/10 transition-colors">Muat Ulang</button>
+        </div>
+        <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[14px] text-gold-accent">insights</span>
+            <span id="trend-insight-text">Pilih rentang waktu untuk melihat ringkasan.</span>
+        </p>
+    </section>
+
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Toko Teratas</h2>
+            <span class="material-symbols-outlined text-gold-accent text-[20px]">emoji_events</span>
+        </div>
+        <div data-leaderboard='@json($topToko)' class="flex-1"></div>
+        <div class="flex items-center justify-center gap-6 mt-4 pt-4 border-t border-muted-border">
+            <a href="{{ route('superadmin.peringkat') }}#toko" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
+            <span class="w-px h-4 bg-muted-border"></span>
+            <a href="{{ route('superadmin.manajemen-toko') }}" class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest hover:underline">Kelola Semua Toko</a>
+        </div>
+    </section>
 </div>
 
 <!-- Recent Transactions Table -->
-<div class="mb-section-gap">
-    <div class="flex justify-between items-center mb-6">
-        <h3 class="font-title-md text-on-surface uppercase tracking-wider premium-heading">Transaksi Terbaru</h3>
-        <a href="{{ route('superadmin.laporan.export', ['period' => request('period', 30)]) }}" class="inline-flex items-center gap-2 px-3 py-2 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
-            <span class="material-symbols-outlined text-[18px]">download</span> Export CSV
-        </a>
+<section class="mb-section-gap">
+    <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
+        <h3 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Transaksi Terbaru</h3>
+        <div class="flex items-center gap-3">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">
+                <span class="material-symbols-outlined text-[14px]">receipt_long</span>
+                {{ $recentTransactions->count() }} transaksi
+            </span>
+            <a href="{{ route('superadmin.laporan.export', ['period' => request('period', 30)]) }}" class="inline-flex items-center gap-2 px-3 py-2 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
+                <span class="material-symbols-outlined text-[18px]">download</span> Export CSV
+            </a>
+        </div>
     </div>
     <div class="border border-muted-border bg-surface-container-lowest rounded-lg overflow-x-auto hidden md:block card-premium">
         <table class="w-full text-left border-collapse premium-table">
@@ -166,50 +210,145 @@
             <p class="text-center text-on-surface-variant py-10">Belum ada transaksi tercatat.</p>
         @endforelse
     </div>
-</div>
+</section>
 @endsection
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('revenueChart');
-        if (!ctx) return;
+    let revenueChart = null;
+    let currentTrendRange = @json($activeRange);
+    const rangeData = @json($rangeData);
+
+    const chartWrap = document.getElementById('trend-chart-wrap');
+    const chartEmpty = document.getElementById('trend-empty');
+    const chartError = document.getElementById('trend-error');
+    const insightText = document.getElementById('trend-insight-text');
+    const totalEl = document.getElementById('trend-total');
+    const badgeText = document.getElementById('trend-badge-text');
+
+    const formatRupiahShort = (value) => {
+        if (value >= 1000000000) return (value / 1000000000).toFixed(1).replace('.', ',') + ' M';
+        if (value >= 1000000) return (value / 1000000).toFixed(1).replace('.', ',') + ' jt';
+        if (value >= 1000) return Math.round(value / 1000) + ' rb';
+        return value;
+    };
+
+    const formatRupiah = (value) => new Intl.NumberFormat('id-ID').format(Math.round(value));
+
+    const chartTheme = () => {
         const isDark = document.documentElement.classList.contains('dark');
-        const gridColor = isDark ? '#333333' : '#E9E8E7';
-        const tickColor = isDark ? '#BAB8B8' : '#747878';
-        const tooltipBg = isDark ? '#F0EEEE' : '#1b1c1c';
-        const tooltipText = isDark ? '#111111' : '#ffffff';
-        Chart.defaults.font.family = 'Manrope, sans-serif';
-        Chart.defaults.color = tickColor;
-        Chart.defaults.scale.grid.color = gridColor;
-        new Chart(ctx.getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: @json($chartLabels),
-                datasets: [{
-                    label: 'Pendapatan',
-                    data: @json($chartData),
-                    borderColor: '#8B1E3F',
-                    backgroundColor: 'rgba(139, 30, 63, 0.1)',
-                    borderWidth: 2,
-                    pointBackgroundColor: '#8B1E3F',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    fill: true,
-                    tension: 0.3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { backgroundColor: tooltipBg, titleColor: tooltipText, bodyColor: tooltipText, titleFont: { family: 'Manrope', size: 12, weight: '700' }, bodyFont: { family: 'Manrope', size: 14 }, padding: 12, cornerRadius: 0, displayColors: false, callbacks: { label: function (context) { return 'Rp ' + context.parsed.y + 'M'; } } } },
-                scales: { x: { grid: { display: false, drawBorder: false }, ticks: { font: { size: 11 } } }, y: { grid: { drawBorder: false, borderDash: [4, 4] }, ticks: { callback: function (value) { return value + 'M'; }, font: { size: 11 }, maxTicksLimit: 6 }, beginAtZero: true } },
-                interaction: { intersect: false, mode: 'index' }
-            }
-        });
+        return {
+            grid: isDark ? '#333333' : '#E9E8E7',
+            tick: isDark ? '#BAB8B8' : '#747878',
+            tooltipBg: isDark ? '#F0EEEE' : '#1b1c1c',
+            tooltipText: isDark ? '#111111' : '#ffffff'
+        };
+    };
+
+    const smoothDraw = (total = 950) => ({
+        x: { type: 'number', duration: total, easing: 'easeOutQuart', from: (ctx) => (ctx.chart && ctx.chart.chartArea ? ctx.chart.chartArea.left : 0) },
+        y: { type: 'number', duration: total, easing: 'easeOutQuart' }
+    });
+
+    const renderTrendChart = () => {
+        if (typeof Chart === 'undefined') {
+            chartWrap?.classList.add('hidden');
+            chartEmpty?.classList.add('hidden');
+            chartError?.classList.remove('hidden');
+            return;
+        }
+        chartError?.classList.add('hidden');
+
+        const c = chartTheme();
+        const data = rangeData[currentTrendRange] || rangeData['30'];
+
+        if (totalEl) totalEl.textContent = 'Rp ' + formatRupiah(data.total || 0);
+
+        const hasData = (data.data || []).some((v) => v > 0);
+        chartEmpty?.classList.toggle('hidden', hasData);
+        chartWrap?.classList.toggle('hidden', !hasData);
+
+        if (!hasData) {
+            if (revenueChart) { revenueChart.destroy(); revenueChart = null; }
+            if (insightText) insightText.textContent = 'Belum ada transaksi pada rentang waktu ini.';
+            return;
+        }
+
+        if (data.best && data.best.value > 0) {
+            insightText.textContent = 'Pendapatan tertinggi pada ' + data.best.label + ' sebesar Rp ' + formatRupiah(data.best.value) + '.';
+        } else {
+            insightText.textContent = 'Pendapatan periode ini: Rp ' + formatRupiah(data.total || 0) + '.';
+        }
+
+        if (!revenueChart) {
+            revenueChart = new Chart(document.getElementById('revenueChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Pendapatan',
+                        data: data.data,
+                        borderColor: '#8B1E3F',
+                        backgroundColor: 'rgba(139, 30, 63, 0.12)',
+                        fill: true,
+                        tension: 0.38,
+                        borderWidth: 2,
+                        pointBackgroundColor: '#8B1E3F',
+                        pointRadius: 3,
+                        pointHoverRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: smoothDraw(),
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: c.tooltipBg, titleColor: c.tooltipText, bodyColor: c.tooltipText,
+                            titleFont: { family: 'Manrope', size: 12, weight: '700' }, bodyFont: { family: 'Manrope', size: 14 },
+                            padding: 12, cornerRadius: 0, displayColors: false,
+                            callbacks: { label: (ctx) => ' Pendapatan: Rp ' + formatRupiah(ctx.raw) }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: c.grid }, ticks: { color: c.tick, font: { family: 'Manrope', size: 11 }, callback: (v) => formatRupiahShort(v) } },
+                        x: { grid: { display: false }, ticks: { color: c.tick, font: { family: 'Manrope', size: 11 }, maxTicksLimit: currentTrendRange === '365' ? 12 : 8, maxRotation: 0, autoSkip: true } }
+                    }
+                }
+            });
+            revenueChart.options.animation = { duration: 700, easing: 'easeOutCubic' };
+            return;
+        }
+
+        revenueChart.data.labels = data.labels;
+        revenueChart.data.datasets[0].data = data.data;
+        revenueChart.options.scales.y.grid.color = c.grid;
+        revenueChart.options.scales.y.ticks.color = c.tick;
+        revenueChart.options.scales.x.ticks.color = c.tick;
+        revenueChart.update();
+    };
+
+    document.getElementById('trend-range')?.addEventListener('change', (e) => {
+        currentTrendRange = e.target.value;
+        if (badgeText) badgeText.textContent = e.target.options[e.target.selectedIndex].text;
+        renderTrendChart();
+    });
+
+    document.getElementById('trend-retry')?.addEventListener('click', () => {
+        renderTrendChart();
+    });
+
+    window.ralivaOnReady(() => {
+        try {
+            renderTrendChart();
+        } catch (e) {
+            chartWrap?.classList.add('hidden');
+            chartEmpty?.classList.add('hidden');
+            chartError?.classList.remove('hidden');
+        }
     });
 </script>
 @endpush
