@@ -69,5 +69,32 @@
         </div>
         <p class="text-xs text-on-surface-variant mt-2">Data hanya untuk toko yang ditugaskan kepada Anda (AdminContext).</p>
     </section>
+
+    <section class="space-y-gutter">
+        <h2 class="font-title-md text-title-md text-on-surface premium-heading">Pendapatan per Metode Pembayaran</h2>
+        <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
+            <table class="w-full min-w-[480px] premium-table">
+                <thead>
+                    <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-4 text-left">Metode</th>
+                        <th class="p-4 text-center">Transaksi</th>
+                        <th class="p-4 text-center">Total</th>
+                    </tr>
+                </thead>
+                <tbody class="font-body-md text-sm">
+                    @forelse($perMetode ?? collect() as $m)
+                        <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                            <td class="p-4 text-on-surface">{{ $m->nama_metode }}</td>
+                            <td class="p-4 text-center text-on-surface">{{ $m->jumlah_transaksi }}</td>
+                            <td class="p-4 text-center text-secondary">Rp {{ number_format($m->total,0,',','.') }}</td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="3" class="p-8 text-center text-on-surface-variant">Belum ada pembayaran terverifikasi.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <p class="text-xs text-on-surface-variant mt-2">Berdasarkan pembayaran berstatus terverifikasi pada toko yang ditugaskan kepada Anda.</p>
+    </section>
 </div>
 @endsection
