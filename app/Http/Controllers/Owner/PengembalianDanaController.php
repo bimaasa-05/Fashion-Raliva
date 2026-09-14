@@ -15,35 +15,21 @@ class PengembalianDanaController extends Controller
     {
         $storeId = \App\Support\OwnerContext::firstStoreId();
 
-        $tab = $request->query('tab', 'pengajuan');
-
-        $base = Refund::query()
-            ->with(['order', 'requester', 'reviewer', 'items']);
+        $refunds = Refund::query()
+            ->with(['order', 'requester', 'reviewer', 'items'])
+            ->where('status', Refund::STATUS_ESKALASI)
+            ->orderByDesc('diajukan_pada')
+            ->get();
 
         if ($storeId) {
-            $base->whereHas('order', fn ($q) => $q->where('store_id', $storeId));
+            $refunds = $refunds->filter(fn ($r) => (int) $r->order?->store_id === (int) $storeId)->values();
+        } else {
+            $refunds = collect();
         }
 
-        $stats = [
-            'pengajuan' => (clone $base)->whereIn('status', [Refund::STATUS_REQUESTED, Refund::STATUS_ESKALASI])->count(),
-            'eskalasi' => (clone $base)->where('status', Refund::STATUS_ESKALASI)->count(),
-            'disetujui' => (clone $base)->where('status', Refund::STATUS_DISETUJUI)->count(),
-            'ditolak' => (clone $base)->where('status', Refund::STATUS_DITOLAK)->count(),
-            'selesai' => (clone $base)->where('status', Refund::STATUS_SELESAI)->count(),
-        ];
-
-        $refunds = match ($tab) {
-            'eskalasi' => (clone $base)->where('status', Refund::STATUS_ESKALASI)->orderByDesc('diajukan_pada')->get(),
-            'disetujui' => (clone $base)->where('status', Refund::STATUS_DISETUJUI)->orderByDesc('diajukan_pada')->get(),
-            'ditolak' => (clone $base)->where('status', Refund::STATUS_DITOLAK)->orderByDesc('diajukan_pada')->get(),
-            'selesai' => (clone $base)->where('status', Refund::STATUS_SELESAI)->orderByDesc('diajukan_pada')->get(),
-            default => (clone $base)->whereIn('status', [Refund::STATUS_REQUESTED, Refund::STATUS_ESKALASI])->orderByDesc('diajukan_pada')->get(),
-        };
-
         return view('Owner.pengembalian-dana.index', [
-            'stats' => $stats,
             'refunds' => $refunds,
-            'activeTab' => in_array($tab, ['pengajuan', 'eskalasi', 'disetujui', 'ditolak', 'selesai'], true) ? $tab : 'pengajuan',
+            'eskalasiCount' => $refunds->count(),
         ]);
     }
 
@@ -51,7 +37,7 @@ class PengembalianDanaController extends Controller
     {
         $this->assertStoreOwnerScope($refund);
 
-        if (! in_array($refund->status, [Refund::STATUS_REQUESTED, Refund::STATUS_ESKALASI], true)) {
+        if ($refund->status !== Refund::STATUS_ESKALASI) {
             return back()->with('error', 'Refund sudah diproses.');
         }
 
@@ -80,7 +66,7 @@ class PengembalianDanaController extends Controller
     {
         $this->assertStoreOwnerScope($refund);
 
-        if (! in_array($refund->status, [Refund::STATUS_REQUESTED, Refund::STATUS_ESKALASI], true)) {
+        if ($refund->status !== Refund::STATUS_ESKALASI) {
             return back()->with('error', 'Refund sudah diproses.');
         }
 
