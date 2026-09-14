@@ -23,7 +23,7 @@ class Payment extends Model
     protected $fillable = [
         'checkout_id',
         'payment_method_id',
-        'payment_method_account_id',
+        'payment_account_id',
         'jumlah',
         'status',
         'batas_waktu',
@@ -50,7 +50,7 @@ class Payment extends Model
 
     public function account(): BelongsTo
     {
-        return $this->belongsTo(PaymentMethodAccount::class, 'payment_method_account_id', 'payment_method_account_id');
+        return $this->belongsTo(PlatformBankAccount::class, 'payment_account_id', 'platform_bank_account_id');
     }
 
     public function proofs(): HasMany
