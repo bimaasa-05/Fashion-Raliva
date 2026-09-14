@@ -70,9 +70,10 @@
                         "xl": "0.75rem",
                         "full": "9999px"
                     },
-                    "spacing": {
-                        "gutter": "12px",
-                        "base": "4px",
+"spacing": {
+                            "gutter": "12px",
+                            "25": "6.25rem",
+                            "base": "4px",
                         "xl": "48px",
                         "lg": "32px",
                         "container-margin": "20px",
@@ -118,6 +119,7 @@
     body {
       min-height: max(884px, 100dvh);
     }
+    .overflow-x-clip { overflow-x: clip; }
   </style>
 <style>
         :root {
@@ -257,11 +259,12 @@
     }
     .co-scroll {
         overflow-x: auto;
-        scrollbar-width: thin;
-        scrollbar-color: var(--chrome-accent) transparent;
+        -ms-overflow-style: auto !important;
+        scrollbar-width: thin !important;
+        scrollbar-color: var(--chrome-accent) transparent !important;
         padding-bottom: 0.875rem;
     }
-    .co-scroll::-webkit-scrollbar { height: 5px; }
+    .co-scroll::-webkit-scrollbar { display: block !important; width: 5px !important; height: 5px !important; }
     .co-scroll::-webkit-scrollbar-track { background: transparent; }
     .co-scroll::-webkit-scrollbar-thumb { background: var(--chrome-accent); border-radius: 999px; }
     .co-input {
@@ -276,9 +279,40 @@
         outline: none;
         transition: border-color .18s ease, background .18s ease;
     }
-    .co-input:focus { border-color: #8B1E3F; background: #fff; }
+    .co-input:focus { border-color: #8B1E3F; background: #fff; box-shadow: none; outline: none; }
     html.theme-dark .co-input:focus { background:#262524; }
     .co-input.is-error { border-color: #ba1a1a; }
+    input.co-input[type='email'] {
+        background: var(--surface-warm);
+        border: 1px solid var(--border-soft);
+        border-radius: 0.5rem;
+        padding: 0.65rem 0.9rem;
+        font-family: 'Manrope', sans-serif;
+        font-size: 14px;
+        color: var(--on-surface);
+        height: auto;
+        line-height: inherit;
+        box-shadow: none;
+        outline: none;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    input.co-input[type='email']:focus { background: #fff; border-color: #8B1E3F; }
+    html.theme-dark input.co-input[type='email']:focus { background: #262524; }
+    .co-input:-webkit-autofill,
+    .co-input:-webkit-autofill:hover,
+    .co-input:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0 1000px var(--surface-warm) inset !important;
+        -webkit-text-fill-color: var(--on-surface) !important;
+        caret-color: var(--on-surface);
+        transition: background-color 999999s, -webkit-box-shadow 0s;
+    }
+    html.theme-dark .co-input:-webkit-autofill,
+    html.theme-dark .co-input:-webkit-autofill:hover,
+    html.theme-dark .co-input:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0 1000px #201f1e inset !important;
+        -webkit-text-fill-color: var(--on-surface) !important;
+    }
     .co-textarea {
         width: 100%;
         background: var(--surface-warm);
@@ -292,7 +326,7 @@
         resize: vertical;
         transition: border-color .18s ease, background .18s ease;
     }
-    .co-textarea:focus { border-color: #8B1E3F; background: #fff; }
+    .co-textarea:focus { border-color: #8B1E3F; background: #fff; box-shadow: none; outline: none; }
     html.theme-dark .co-textarea:focus { background:#262524; }
     .co-ship-option {
         display: flex;
@@ -366,9 +400,24 @@
     .co-step:not(.active):not(.done) { color: var(--text-muted); }
     .co-step-line { width:32px; height:1px; background:var(--border-soft); }
     .co-step-line.done { background:#8B1E3F; }
+    /* rincian pesanan dropdown */
+    .co-rincian-toggle {
+        display:inline-flex; align-items:center; justify-content:center; gap:.4rem;
+        height:34px; padding:0 .9rem; border-radius:9999px;
+        border:1px solid var(--border-soft); background:var(--surface-warm);
+        color:var(--chrome-text-dim); cursor:pointer;
+        transition: background .18s ease, border-color .18s ease, color .18s ease;
+    }
+    .co-rincian-toggle:hover, .co-rincian-toggle.open { border-color:#8B1E3F; color:#8B1E3F; }
+    .co-rincian-label { font-family:'Manrope',sans-serif; font-size:12px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; white-space:nowrap; }
+    .co-rincian-toggle .material-symbols-outlined { font-size:20px; transition: transform .35s ease; }
+    .co-rincian-toggle.open .material-symbols-outlined { transform: rotate(180deg); }
+    .co-more-wrap { display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s ease; }
+    .co-more-wrap > div { overflow:hidden; min-height:0; }
+    .co-more-wrap.open { grid-template-rows:1fr; }
 </style>
 </head>
-<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[168px] md:pb-[104px] lg:pl-72">
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-10 lg:pl-72">
 
 @php
     $isGuest = ! auth()->check();
@@ -403,7 +452,7 @@
 <input type="hidden" name="shipping" id="co-shipping-input" value="{{ $shipping }}"/>
 
 <!-- Main Content -->
-<main class="pt-6 pb-[72px] w-full overflow-x-hidden">
+<main class="pt-6 pb-[72px] w-full overflow-x-clip">
     <div class="mx-auto max-w-[1400px] px-container-margin">
 
         {{-- Stepper --}}
@@ -439,56 +488,129 @@
             <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Periksa data pemesan, catatan, dan rincian pesanan sebelum melanjutkan ke pembayaran. Akun akan dibuat otomatis saat lanjut.') }}</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-[1.65fr_.95fr] gap-lg items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,.95fr)] gap-lg items-start">
 
-            {{-- LEFT: Data Pemesan + Catatan + Items + Shipping --}}
-            <div class="space-y-lg">
+            {{-- LEFT: Data Pemesan + Catatan + Rincian Pesanan --}}
+            <div class="space-y-lg min-w-0">
 
                 {{-- ========== DATA PEMESAN ========== --}}
                 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
                     <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('DATA PEMESAN') }}</p>
                     <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Data Pemesan') }}</h3>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
-                        <label class="flex flex-col gap-1.5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-md">
+                        <label class="flex flex-col gap-1.5 lg:col-span-3">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Nama Lengkap') }} <span class="text-error">*</span></span>
                             <input name="nama_penerima" value="{{ $prefill['nama_penerima'] }}" required maxlength="150" class="co-input @error('nama_penerima') is-error @enderror" placeholder="{{ __('Nama penerima') }}"/>
                             @error('nama_penerima')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
                         </label>
-                        <label class="flex flex-col gap-1.5">
+                        <label class="flex flex-col gap-1.5 lg:col-span-3">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('No. Telepon / WhatsApp') }} <span class="text-error">*</span></span>
                             <input name="nomor_telepon" value="{{ $prefill['nomor_telepon'] }}" required maxlength="30" class="co-input @error('nomor_telepon') is-error @enderror" placeholder="08xxxxxxxxxx"/>
                             @error('nomor_telepon')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
                         </label>
-                        <label class="flex flex-col gap-1.5 md:col-span-2">
+                        <label class="flex flex-col gap-1.5 md:col-span-2 lg:col-span-6">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Email') }} <span class="text-error">*</span></span>
                             <input name="email_pelanggan" type="email" value="{{ $prefill['email_pelanggan'] }}" required maxlength="150" class="co-input @error('email_pelanggan') is-error @enderror" placeholder="nama@email.com"/>
                             @error('email_pelanggan')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
                             <span class="font-label-sm text-label-sm text-on-surface-variant/70">{{ __('Dipakai sebagai username akun. Password default: Raliva123') }}</span>
                         </label>
-                        <label class="flex flex-col gap-1.5 md:col-span-2">
-                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Alamat') }} <span class="text-error">*</span></span>
-                            <textarea name="alamat" required rows="2" class="co-textarea @error('alamat') is-error @enderror" placeholder="{{ __('Jl. ...') }}">{{ $prefill['alamat'] }}</textarea>
-                            @error('alamat')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
-                        </label>
-                        <label class="flex flex-col gap-1.5">
-                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Kota') }} <span class="text-error">*</span></span>
-                            <input name="kota" value="{{ $prefill['kota'] }}" required maxlength="100" class="co-input @error('kota') is-error @enderror" placeholder="{{ __('Kota') }}"/>
-                            @error('kota')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
-                        </label>
-                        <label class="flex flex-col gap-1.5">
+                        <label class="flex flex-col gap-1.5 lg:col-span-2">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Provinsi') }} <span class="text-error">*</span></span>
                             <input name="provinsi" value="{{ $prefill['provinsi'] }}" required maxlength="100" class="co-input @error('provinsi') is-error @enderror" placeholder="{{ __('Provinsi') }}"/>
                             @error('provinsi')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
                         </label>
-                        <label class="flex flex-col gap-1.5">
+                        <label class="flex flex-col gap-1.5 lg:col-span-2">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Kota') }} <span class="text-error">*</span></span>
+                            <input name="kota" value="{{ $prefill['kota'] }}" required maxlength="100" class="co-input @error('kota') is-error @enderror" placeholder="{{ __('Kota') }}"/>
+                            @error('kota')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
+                        </label>
+                        <label class="flex flex-col gap-1.5 md:col-span-2 lg:col-span-2">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Kode Pos') }} <span class="text-error">*</span></span>
                             <input name="kode_pos" value="{{ $prefill['kode_pos'] }}" required maxlength="20" class="co-input @error('kode_pos') is-error @enderror" placeholder="12345"/>
                             @error('kode_pos')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
                         </label>
+                        <label class="flex flex-col gap-1.5 md:col-span-2 lg:col-span-6">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Alamat') }} <span class="text-error">*</span></span>
+                            <textarea name="alamat" required rows="2" class="co-textarea @error('alamat') is-error @enderror" placeholder="{{ __('Jl. ...') }}">{{ $prefill['alamat'] }}</textarea>
+                            @error('alamat')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
+                        </label>
                     </div>
                     @if(!$isGuest && $address)
                     <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-md flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">location_on</span> {{ __('Diisi otomatis dari alamat default. Ubah bila perlu.') }} <a href="{{ route('customer.address.index') }}" class="text-secondary underline underline-offset-2">{{ __('Kelola alamat') }}</a></p>
+                    @endif
+                </div>
+
+                {{-- ========== RINCIAN PESANAN ========== --}}
+                @php
+                    $coShowCount = $items->count();
+                    $coTop = $items->slice(0, 3);
+                    $coMore = $coShowCount > 3 ? $items->slice(3) : collect();
+                @endphp
+                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up min-w-0">
+                    <div class="flex items-start justify-between gap-sm mb-md">
+                        <div class="min-w-0">
+                            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN PESANAN') }}</p>
+                            <h3 class="premium-heading font-title-md text-title-md text-on-surface">{{ __('Rincian Pesanan') }}</h3>
+                        </div>
+                        @if($coShowCount > 3)
+                        <button id="co-rincian-toggle" type="button" aria-expanded="false" aria-controls="co-rincian-more" aria-label="{{ __('Tampilkan semua produk') }}" data-label-open="{{ __('Show less') }}" data-label-close="{{ __('Show more') }}" class="co-rincian-toggle shrink-0" onclick="coToggleRincian(this)">
+                            <span class="co-rincian-label">{{ __('Show more') }}</span>
+                            <span class="material-symbols-outlined">expand_more</span>
+                        </button>
+                        @endif
+                    </div>
+                    <div class="grid grid-cols-2 lg:grid-cols-3 gap-md">
+                    @forelse ($coTop as $i)
+                    @php
+                        $pv = $i->productVariant;
+                        $pr = $pv?->product;
+                        $img = $pr?->images->first()?->file_gambar ?? '';
+                        $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/checkout/600/800';
+                    @endphp
+                        <div class="flex flex-col bg-surface-container border border-[var(--border-soft)] rounded-lg overflow-hidden">
+                            <div class="relative w-full aspect-[3/4] bg-surface-container-high overflow-hidden">
+                                <img class="w-full h-full object-cover" loading="lazy" alt="{{ $pr?->nama_produk ?? __('Produk') }}" src="{{ $imgUrl }}"/>
+                            </div>
+                            <div class="flex flex-col flex-1 min-w-0 gap-1 p-sm">
+                                <p class="font-body-sm text-body-sm text-on-surface font-semibold truncate">{{ $pr?->nama_produk ?? __('Produk') }}</p>
+                                <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ trim(($pv?->warna ?? '') . ' · ' . ($pv?->ukuran ?? ''), ' ·') }}</p>
+                                <p class="font-body-sm text-body-sm text-on-surface font-semibold mt-auto">Rp {{ number_format((float)$i->harga_snapshot, 0, ',', '.') }}</p>
+                                <p class="font-label-sm text-label-sm text-on-surface-variant">×{{ $i->quantity }}</p>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-span-full flex items-center justify-center py-lg text-center">
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $isGuest ? __('Pilih produk terlebih dahulu.') : __('Keranjang masih kosong.') }}</p>
+                        </div>
+                    @endforelse
+                    </div>
+                    @if($coShowCount > 3)
+                    <div id="co-rincian-more" class="co-more-wrap" aria-hidden="true">
+                        <div>
+                            <div class="grid grid-cols-2 lg:grid-cols-3 gap-md mt-md">
+                            @foreach ($coMore as $i)
+                            @php
+                                $pv = $i->productVariant;
+                                $pr = $pv?->product;
+                                $img = $pr?->images->first()?->file_gambar ?? '';
+                                $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/checkout/600/800';
+                            @endphp
+                                <div class="flex flex-col bg-surface-container border border-[var(--border-soft)] rounded-lg overflow-hidden">
+                                    <div class="relative w-full aspect-[3/4] bg-surface-container-high overflow-hidden">
+                                        <img class="w-full h-full object-cover" loading="lazy" alt="{{ $pr?->nama_produk ?? __('Produk') }}" src="{{ $imgUrl }}"/>
+                                    </div>
+                                    <div class="flex flex-col flex-1 min-w-0 gap-1 p-sm">
+                                        <p class="font-body-sm text-body-sm text-on-surface font-semibold truncate">{{ $pr?->nama_produk ?? __('Produk') }}</p>
+                                        <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ trim(($pv?->warna ?? '') . ' · ' . ($pv?->ukuran ?? ''), ' ·') }}</p>
+                                        <p class="font-body-sm text-body-sm text-on-surface font-semibold mt-auto">Rp {{ number_format((float)$i->harga_snapshot, 0, ',', '.') }}</p>
+                                        <p class="font-label-sm text-label-sm text-on-surface-variant">×{{ $i->quantity }}</p>
+                                    </div>
+                                </div>
+                            @endforeach
+                            </div>
+                        </div>
+                    </div>
                     @endif
                 </div>
 
@@ -503,34 +625,32 @@
                     </label>
                 </div>
 
-                {{-- ========== RINCIAN PESANAN ========== --}}
+                </div>
+
+            {{-- RIGHT: Sticky kolom rangkuman (harga, pengiriman, bayar) --}}
+            <div class="space-y-md min-w-0 lg:sticky lg:top-25">
+
+                {{-- ========== RINCIAN HARGA ========== --}}
                 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
-                    <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN PESANAN') }}</p>
-                    <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Rincian Pesanan') }}</h3>
-                    <div class="flex gap-sm overflow-x-auto co-scroll">
-                    @forelse ($items as $i)
-                    @php
-                        $pv = $i->productVariant;
-                        $pr = $pv?->product;
-                        $img = $pr?->images->first()?->file_gambar ?? '';
-                        $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/checkout/600/800';
-                    @endphp
-                        <div class="flex-shrink-0 w-64 flex items-center gap-sm bg-surface-container border border-[var(--border-soft)] rounded-xl p-sm">
-                            <div class="flex-shrink-0 w-16 h-20 bg-surface-container-high rounded-lg overflow-hidden">
-                                <img class="w-full h-full object-cover" loading="lazy" alt="{{ $pr?->nama_produk ?? __('Produk') }}" src="{{ $imgUrl }}"/>
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <p class="font-body-sm text-body-sm text-on-surface font-semibold truncate">{{ $pr?->nama_produk ?? __('Produk') }}</p>
-                                <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ trim(($pv?->warna ?? '') . ' · ' . ($pv?->ukuran ?? ''), ' ·') }}</p>
-                                <p class="font-body-sm text-body-sm text-on-surface mt-xs">Rp {{ number_format((float)$i->harga_snapshot, 0, ',', '.') }} <span class="text-on-surface-variant">×{{ $i->quantity }}</span></p>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="flex-shrink-0 w-full flex items-center justify-center py-lg text-center">
-                            <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $isGuest ? __('Pilih produk terlebih dahulu.') : __('Keranjang masih kosong.') }}</p>
-                        </div>
-                    @endforelse
+                    <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN HARGA') }}</p>
+                    <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Rincian Harga') }}</h3>
+                    <div class="co-summary-row">
+                        <span>Subtotal</span>
+                        <span id="co-subtotal" data-subtotal="{{ $subtotal }}">Rp {{ number_format((float)$subtotal, 0, ',', '.') }}</span>
                     </div>
+                    <div class="co-summary-row">
+                        <span>Shipping</span>
+                        <span id="co-shipping">Rp {{ number_format((float)$shipping, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="co-summary-row">
+                        <span>Tax</span>
+                        <span>Rp {{ number_format((float)$tax, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="co-summary-row total">
+                        <span>Total Payment</span>
+                        <span id="co-total">Rp {{ number_format((float)$total, 0, ',', '.') }}</span>
+                    </div>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Akun akan dibuat otomatis (password: Raliva123) saat lanjut ke pembayaran.') }}</p>
                 </div>
 
                 {{-- ========== SHIPPING METHOD ========== --}}
@@ -554,59 +674,45 @@
                     @endforeach
                 </div>
 
-            </div>
+                {{-- ========== TOTAL PAYMENT + LANJUT KE PEMBAYARAN ========== --}}
+                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+                    <div class="flex items-center justify-between gap-sm flex-wrap">
+                        <div class="min-w-0">
+                            <p class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)]">{{ __('Total Payment') }}</p>
+                            <p id="co-total-bottom" class="font-body-lg text-body-lg md:text-title-md font-semibold text-on-surface">Rp {{ number_format((float)$total, 0, ',', '.') }}</p>
+                        </div>
+                        <button type="submit" class="btn-gold w-full md:w-auto inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                            {{ __('Lanjut Ke Pembayaran') }}
+                        </button>
+                    </div>
+                </div>
 
-            {{-- RIGHT: Rincian Harga --}}
-            <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up lg:sticky lg:top-20">
-                <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN HARGA') }}</p>
-                <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Rincian Harga') }}</h3>
-                <div class="co-summary-row">
-                    <span>Subtotal</span>
-                    <span id="co-subtotal" data-subtotal="{{ $subtotal }}">Rp {{ number_format((float)$subtotal, 0, ',', '.') }}</span>
-                </div>
-                <div class="co-summary-row">
-                    <span>Shipping</span>
-                    <span id="co-shipping">Rp {{ number_format((float)$shipping, 0, ',', '.') }}</span>
-                </div>
-                <div class="co-summary-row">
-                    <span>Tax</span>
-                    <span>Rp {{ number_format((float)$tax, 0, ',', '.') }}</span>
-                </div>
-                <div class="co-summary-row total">
-                    <span>Total Payment</span>
-                    <span id="co-total">Rp {{ number_format((float)$total, 0, ',', '.') }}</span>
-                </div>
-                <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Akun akan dibuat otomatis (password: Raliva123) saat lanjut ke pembayaran.') }}</p>
-                <div class="mt-md lg:hidden">
-                    <button type="submit" class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
-                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                        {{ __('Lanjut Ke Pembayaran') }}
-                    </button>
-                </div>
             </div>
 
         </div>
     </div>
 </main>
 
-{{-- Bottom Action Bar (desktop) --}}
-<div class="co-bottom-bar fixed bottom-0 left-0 right-0 lg:left-72 z-50 px-container-margin py-sm pb-safe hidden lg:block">
-    <div class="co-bottom-bar-card card-premium flex items-center gap-sm md:gap-md bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.18)]">
-        <div class="summary flex-1 min-w-0">
-            <p>{{ __('Total Payment') }}</p>
-            <p id="co-total-bottom">Rp {{ number_format((float)$total, 0, ',', '.') }}</p>
-        </div>
-        <button type="submit" class="btn-place shrink-0">
-            <span class="material-symbols-outlined">arrow_forward</span>
-            <span class="truncate">{{ __('Lanjut Ke Pembayaran') }}</span>
-        </button>
-    </div>
-</div>
-
 </form>
 
 {{-- Drawer --}}
 @include('customer._partials.drawer')
+
+<script>
+    if (typeof coToggleRincian !== 'function') {
+        function coToggleRincian(btn) {
+            var wrap = document.getElementById('co-rincian-more');
+            if (!wrap) return;
+            var open = wrap.classList.toggle('open');
+            btn.classList.toggle('open', open);
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            wrap.setAttribute('aria-hidden', open ? 'false' : 'true');
+            var label = btn.querySelector('.co-rincian-label');
+            if (label) label.textContent = open ? btn.getAttribute('data-label-open') : btn.getAttribute('data-label-close');
+        }
+    }
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -655,6 +761,7 @@
         document.querySelectorAll('.btn-gold,.btn-place').forEach(function(b){
             b.addEventListener('click', function(){ b.classList.remove('flashing'); void b.offsetWidth; b.classList.add('flashing'); setTimeout(function(){ b.classList.remove('flashing'); },600); });
         });
+        // rincian pesanan dropdown (tampil >3 produk) - lihat coToggleRincian() di script bawah
     });
 </script>
 

@@ -866,12 +866,27 @@
                                                         </div>
                                                     @endif
                                                 @else
+                                                    @php
+                                                        $brandIcons = [
+                                                            'dana' => 'images/E-Wallet/dana.png',
+                                                            'gopay' => 'images/E-Wallet/gopay.jpg',
+                                                            'ovo' => 'images/E-Wallet/ovo.png',
+                                                            'shopeepay' => 'images/E-Wallet/shoopepay.jfif',
+                                                            'bca' => 'images/Bank/bca.png',
+                                                            'bri' => 'images/Bank/bri.png',
+                                                            'bni' => 'images/Bank/bni.png',
+                                                            'mandiri' => 'images/Bank/mandiri.png',
+                                                        ];
+                                                        $accts = $accts
+                                                            ->filter(fn ($a) => array_key_exists($a->kode, $brandIcons))
+                                                            ->values();
+                                                    @endphp
                                                     <div class="space-y-sm">
                                                         <p
                                                             class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
                                                             {{ __('Pilih salah satu') }}
                                                             {{ $pm->nama_metode }}:</p>
-                                                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-sm"
+                                                        <div class="grid grid-cols-2 gap-md"
                                                             id="grid-{{ $kode }}">
                                                             @foreach ($accts as $a)
                                                                 @php $sel = (string) ($payment->payment_method_account_id ?? '') === (string) $a->payment_method_account_id; @endphp
@@ -881,14 +896,8 @@
                                                                     data-nama="{{ $a->nama }}"
                                                                     data-rekening="{{ $a->nomor_rekening ?? '-' }}"
                                                                     data-pemilik="{{ $a->nama_pemilik ?? '-' }}">
-                                                                    @if ($a->file_gambar)
-                                                                        <img src="{{ asset('storage/' . ltrim($a->file_gambar, '/')) }}"
-                                                                            alt="{{ $a->nama }}"
-                                                                            class="h-9 object-contain" />
-                                                                    @else
-                                                                        <span
-                                                                            class="material-symbols-outlined text-[26px] text-on-surface-variant">account_balance_wallet</span>
-                                                                    @endif
+                                                                    <img src="{{ asset($brandIcons[$a->kode]) }}"
+                                                                        alt="{{ $a->nama }}" class="h-9 object-contain" />
                                                                     <span
                                                                         class="text-sm leading-tight">{{ $a->nama }}</span>
                                                                 </div>
