@@ -189,7 +189,170 @@
         }
     </style>
     <style>
-        /* ============ FULL DARK MODE TOKEN REMAP ============ */
+        .acc-ew-brand.dana { --brand: #008EDA; --brand-rgb: 0, 142, 218; }
+.acc-ew-brand.gopay { --brand: #00B7C4; --brand-rgb: 0, 183, 196; }
+.acc-ew-brand.ovo { --brand: #4C2E8D; --brand-rgb: 76, 46, 141; }
+.acc-ew-brand.shopeepay { --brand: #EE4D2D; --brand-rgb: 238, 77, 45; }
+
+.ew-accounts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .75rem;
+    position: relative;
+    width: 100%;
+}
+
+.ew-card-wrap {
+    width: 100%;
+    transition: transform .3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity .25s ease;
+}
+
+/* Sembunyikan kartu non-aktif */
+.ew-accounts-grid.ew-expanded .ew-card-wrap:not(.ew-active) {
+    display: none !important;
+}
+
+/* Posisi penuh saat aktif */
+.ew-card-wrap.ew-active {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
+/* Container utama E-Wallet */
+.account-opt-ew {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.2rem;
+    border: 1px solid var(--border-soft);
+    border-radius: .6rem;
+    background: var(--surface-warm);
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+    transition: transform .25s cubic-bezier(0.34, 1.56, 0.64, 1), border-color .2s ease, background .2s ease;
+}
+
+.account-opt-ew:hover { 
+    border-color: var(--brand);
+    transform: scale(1.02); /* Efek membal kecil saat di-hover */
+}
+
+/* State terpilih / Aktif */
+.account-opt-ew.selected {
+    border-color: var(--brand);
+    background: rgba(var(--brand-rgb), .10);
+    box-shadow: inset 0 0 0 1px rgba(var(--brand-rgb), .35);
+    align-items: center;
+    text-align: center;
+    /* Animasi bubble mekar */
+    animation: bubblePopOpen .4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.account-opt-ew.selected .ew-brand-name {
+    color: var(--brand);
+    font-weight: 600;
+}
+
+/* Container Detail (Konten Rekening) */
+.account-opt-ew .ew-card-detail {
+    display: none;
+    width: 100%;
+}
+
+.account-opt-ew.selected .ew-card-detail {
+    display: block;
+    /* Animasi kemunculan detail teks dari bawah */
+    animation: bubbleDetailFade .35s ease-out forwards;
+}
+
+.account-opt-ew .ew-card-detail-inner {
+    margin-top: .8rem;
+    padding-top: .8rem;
+    border-top: 1px solid rgba(var(--brand-rgb), .30);
+    text-align: left;
+    width: 100%;
+}
+
+.ew-detail-nama {
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--brand);
+    margin: 0 0 .4rem;
+}
+
+.ew-detail-line {
+    font-family: 'Manrope', sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.ew-detail-line strong {
+    color: var(--chrome-text);
+    font-weight: 600;
+}
+
+/* Dark Mode adjustment */
+html.theme-dark .account-opt-ew { background: #201f1e; border-color: rgba(255,255,255,.08); }
+html.theme-dark .account-opt-ew.selected { background: rgba(var(--brand-rgb), .14); }
+html.theme-dark .ew-detail-line { color: #b9b6b1; }
+html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
+
+/* ========================================================= */
+/* ANIMASI KEYFRAMES BUBBLE POP (MEKAR & MEMBAL)            */
+/* ========================================================= */
+@keyframes bubblePopOpen {
+    0% {
+        transform: scale(0.88);
+        opacity: 0.7;
+    }
+    60% {
+        transform: scale(1.03);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes bubblePopClose {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    40% {
+        transform: scale(1.04);
+    }
+    100% {
+        transform: scale(0.92);
+        opacity: 0.8;
+    }
+}
+
+@keyframes bubbleDetailFade {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.96);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Class pembantu untuk animasi tertutup via JS */
+.account-opt-ew.closing {
+    animation: bubblePopClose .25s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+    </style>
+    <style>
         html.theme-dark .bg-background,
         html.theme-dark .bg-surface,
         html.theme-dark .bg-surface-bright {
@@ -392,7 +555,6 @@
         }
     </style>
     <style>
-        /* ===== Premium cards + burgundy accents ===== */
         .card-premium {
             box-shadow: 0 1px 2px rgb(17 17 17 / .04), 0 12px 32px -16px rgb(17 17 17 / .16);
             transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
@@ -592,7 +754,7 @@
             align-items: center;
             justify-content: center;
             gap: .4rem;
-            padding: 1rem;
+            padding: .75rem;
             border: 1px solid var(--border-soft);
             border-radius: .75rem;
             background: var(--surface-warm);
@@ -679,7 +841,6 @@
         $akunBaruEmail = session('akun_baru');
     @endphp
 
-    <!-- TopAppBar -->
     <header
         class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
         <a href="{{ route('customer.checkout', request()->query('buy') ? ['buy' => request()->query('buy')] : []) }}"
@@ -695,7 +856,6 @@
     <main class="pt-6 pb-10 w-full overflow-x-hidden">
         <div class="mx-auto max-w-[1400px] px-container-margin">
 
-            {{-- Stepper --}}
             <div
                 class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center reveal-up">
                 <div class="co-stepper">
@@ -710,7 +870,6 @@
                 </div>
             </div>
 
-            {{-- Banner akun baru --}}
             @if ($akunBaruEmail)
                 <div class="banner-akun rounded-xl p-md mb-lg flex items-start gap-sm reveal-up">
                     <span class="material-symbols-outlined text-[22px] shrink-0 mt-0.5">celebration</span>
@@ -728,7 +887,6 @@
                 </div>
             @endif
 
-            {{-- Status hint --}}
             @if ($payment->status === \App\Models\Payment::STATUS_MENUNGGU_VERIFIKASI)
                 <div
                     class="bg-surface-container-low border border-outline-variant rounded-xl p-md mb-lg flex items-center gap-sm reveal-up">
@@ -775,13 +933,9 @@
             @endif
 
             @if (in_array($payment->status, [\App\Models\Payment::STATUS_PENDING, \App\Models\Payment::STATUS_DITOLAK], true))
-                {{-- GRID 2 kolom: kiri form, kanan rincian --}}
                 <div class="grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-lg items-start">
 
-                    {{-- KIRI --}}
                     <div class="space-y-lg">
-
-                        {{-- Pilih Metode Pembayaran --}}
                         <div
                             class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
                             <p
@@ -865,13 +1019,58 @@
                                                             </div>
                                                         </div>
                                                     @endif
-                                                @else
+                                                @elseif ($kode === 'ewallet')
                                                     @php
-                                                        $brandIcons = [
+                                                        $ewIcons = [
                                                             'dana' => 'images/E-Wallet/dana.png',
                                                             'gopay' => 'images/E-Wallet/gopay.jpg',
                                                             'ovo' => 'images/E-Wallet/ovo.png',
                                                             'shopeepay' => 'images/E-Wallet/shoopepay.jfif',
+                                                        ];
+                                                        $accts = $accts
+                                                            ->filter(fn ($a) => array_key_exists($a->kode, $ewIcons))
+                                                            ->values();
+                                                    @endphp
+                                                    <div class="space-y-sm">
+                                                        <p
+                                                            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
+                                                            {{ __('Pilih salah satu') }}
+                                                            {{ $pm->nama_metode }}:</p>
+                                                        <div class="ew-accounts-grid" id="grid-ewallet">
+                                                            @foreach ($accts as $a)
+                                                                @php $sel = (string) ($payment->payment_method_account_id ?? '') === (string) $a->payment_method_account_id; @endphp
+                                                                <div class="ew-card-wrap{{ $sel ? ' ew-active' : '' }}" data-kode="{{ $a->kode }}">
+                                                                    <div class="account-opt account-opt-ew acc-ew-brand {{ $a->kode }}{{ $sel ? ' selected' : '' }}"
+                                                                        data-panel="{{ $kode }}"
+                                                                        data-account-id="{{ $a->payment_method_account_id }}"
+                                                                        data-nama="{{ $a->nama }}"
+                                                                        data-rekening="{{ $a->nomor_rekening ?? '-' }}"
+                                                                        data-pemilik="{{ $a->nama_pemilik ?? '-' }}">
+                                                                        <img src="{{ asset($ewIcons[$a->kode]) }}"
+                                                                            alt="{{ $a->nama }}" class="h-7 object-contain" />
+                                                                        <span
+                                                                            class="ew-brand-name text-xs leading-tight mt-1">{{ $a->nama }}</span>
+                                                                        <div class="ew-card-detail">
+                                                                            <div class="ew-card-detail-inner">
+                                                                                <p class="ew-detail-nama">{{ $a->nama }}</p>
+                                                                                <p class="ew-detail-line">
+                                                                                    <span>{{ __('Rekening/Nomor') }}:</span>
+                                                                                    <strong>{{ $a->nomor_rekening ?? '-' }}</strong>
+                                                                                </p>
+                                                                                <p class="ew-detail-line">
+                                                                                    <span>{{ __('Atas nama') }}:</span>
+                                                                                    <strong>{{ $a->nama_pemilik ?? '-' }}</strong>
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    @php
+                                                        $brandIcons = [
                                                             'bca' => 'images/Bank/bca.png',
                                                             'bri' => 'images/Bank/bri.png',
                                                             'bni' => 'images/Bank/bni.png',
@@ -930,7 +1129,6 @@
                                     @endif
                                 </p>
 
-                                {{-- Upload Bukti --}}
                                 <div class="mt-lg">
                                     <p
                                         class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-sm flex items-center gap-2">
@@ -939,9 +1137,6 @@
                                     @php $buktiTerakhir = $payment->proofs->last(); @endphp
                                     @if ($buktiTerakhir)
                                         <div class="flex items-center gap-md border border-outline-variant rounded-xl p-md mb-sm bg-surface-container-low/50">
-                                            @php
-                                                $buktiLastUrl = \Illuminate\Support\Facades\Storage::url($buktiTerakhir->file_bukti);
-                                            @endphp
                                             <span class="material-symbols-outlined text-on-surface-variant shrink-0">receipt_long</span>
                                             <span class="font-body-sm text-body-sm text-on-surface-variant min-w-0 flex-1 truncate">{{ \Illuminate\Support\Str::afterLast($buktiTerakhir->file_bukti, '/') }}</span>
                                             <a href="{{ asset('storage/' . ltrim($buktiTerakhir->file_bukti, '/')) }}" target="_blank" rel="noopener"
@@ -973,7 +1168,6 @@
                         </div>
                     </div>
 
-                    {{-- KANAN: Rincian Pembayaran --}}
                     <div
                         class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up lg:sticky lg:top-20">
                         <p
@@ -1028,7 +1222,6 @@
                     </div>
                 </div>
             @else
-                {{-- Sudah upload — tampil detail saja + grid rincian --}}
                 <div class="grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-lg">
                     <div
                         class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
@@ -1095,21 +1288,16 @@
                 </div>
             @endif
 
-
-
         </div>
     </main>
 
-    {{-- Drawer --}}
     @include('customer._partials.drawer')
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var els = document.querySelectorAll('.reveal-up');
             if (!('IntersectionObserver' in window)) {
-                els.forEach(function(e) {
-                    e.classList.add('is-visible');
-                });
+                els.forEach(function(e) { e.classList.add('is-visible'); });
                 return;
             }
             var io = new IntersectionObserver(function(entries) {
@@ -1119,12 +1307,8 @@
                         io.unobserve(en.target);
                     }
                 });
-            }, {
-                threshold: 0.08
-            });
-            els.forEach(function(e) {
-                io.observe(e);
-            });
+            }, { threshold: 0.08 });
+            els.forEach(function(e) { io.observe(e); });
         });
     </script>
     <script>
@@ -1159,10 +1343,47 @@
             };
 
             var selectAccount = function(opt) {
-                document.querySelectorAll('.account-opt').forEach(function(o) {
-                    o.classList.remove('border-secondary', 'bg-secondary/5', 'ring-1', 'ring-secondary/20');
-                });
-                opt.classList.add('border-secondary', 'bg-secondary/5', 'ring-1', 'ring-secondary/20');
+    if (opt.classList.contains('account-opt-ew')) {
+        var wrap = opt.closest('.ew-card-wrap');
+        var ewGrid = document.getElementById('grid-ewallet');
+        var isAlreadySelected = opt.classList.contains('selected');
+
+        // Jika diklik kembali -> Jalankan animasi bubble tertutup
+        if (isAlreadySelected) {
+            opt.classList.add('closing');
+            
+            setTimeout(function() {
+                opt.classList.remove('selected', 'closing');
+                wrap.classList.remove('ew-active');
+                ewGrid.classList.remove('ew-expanded');
+                if (accountInput) accountInput.value = '';
+                if (rincianAkun) rincianAkun.textContent = '';
+            }, 200); // Penundaan sejenak mengikuti durasi animasi closing
+            return;
+        }
+
+        // Reset semua kartu lain
+        document.querySelectorAll('#grid-ewallet .ew-card-wrap').forEach(function(w) {
+            w.classList.remove('ew-active');
+        });
+        document.querySelectorAll('#grid-ewallet .account-opt-ew').forEach(function(o) {
+            o.classList.remove('selected', 'closing');
+        });
+
+        // Tampilkan kartu yang diklik dengan animasi mekar
+        wrap.classList.add('ew-active');
+        opt.classList.add('selected');
+        ewGrid.classList.add('ew-expanded');
+
+        if (accountInput) accountInput.value = opt.getAttribute('data-account-id');
+        if (rincianAkun) rincianAkun.textContent = opt.getAttribute('data-nama') || '';
+        return;
+                } else {
+                    document.querySelectorAll('.account-opt').forEach(function(o) {
+                        o.classList.remove('border-secondary', 'bg-secondary/5', 'ring-1', 'ring-secondary/20');
+                    });
+                    opt.classList.add('border-secondary', 'bg-secondary/5', 'ring-1', 'ring-secondary/20');
+                }
                 if (accountInput) accountInput.value = opt.getAttribute('data-account-id');
                 if (rincianAkun) rincianAkun.textContent = opt.getAttribute('data-nama') || '';
                 updateAccountDetail(opt);
@@ -1196,7 +1417,6 @@
                 opt.addEventListener('click', function() { selectAccount(opt); });
             });
 
-            // Restore state pada load (method & akun yang sudah terpilih)
             (function() {
                 var sel = grid ? grid.querySelector('.pay-method.selected') : null;
                 if (!sel) return;
@@ -1206,6 +1426,15 @@
                     if (kode === 'qris') {
                         var autoAcc = sel.getAttribute('data-account-id');
                         if (autoAcc && accountInput && !accountInput.value) accountInput.value = autoAcc;
+                    } else if (kode === 'ewallet') {
+                        var selEw = document.querySelector('#grid-ewallet .account-opt-ew.selected');
+                        if (selEw) {
+                            var parentWrap = selEw.closest('.ew-card-wrap');
+                            var parentGrid = document.getElementById('grid-ewallet');
+                            if (parentWrap) parentWrap.classList.add('ew-active');
+                            if (parentGrid) parentGrid.classList.add('ew-expanded');
+                            if (accountInput && !accountInput.value) accountInput.value = selEw.getAttribute('data-account-id');
+                        }
                     } else {
                         var selOpt = document.querySelector('#grid-' + kode + ' .account-opt.ring-1');
                         if (selOpt) updateAccountDetail(selOpt);
@@ -1241,9 +1470,7 @@
                         dropzone.classList.remove('bg-surface-container');
                         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
                             fileInput.files = e.dataTransfer.files;
-                            fileInput.dispatchEvent(new Event('change', {
-                                bubbles: true
-                            }));
+                            fileInput.dispatchEvent(new Event('change', { bubbles: true }));
                         }
                     });
                 }
@@ -1253,12 +1480,10 @@
                     b.classList.remove('flashing');
                     void b.offsetWidth;
                     b.classList.add('flashing');
-                    setTimeout(function() {
-                        b.classList.remove('flashing');
-                    }, 600);
+                    setTimeout(function() { b.classList.remove('flashing'); }, 600);
                 });
             });
-            // validasi sebelum submit: pastikan metode terpilih
+
             var form = document.getElementById('form-bayar');
             if (form) {
                 form.addEventListener('submit', function(e) {
@@ -1266,10 +1491,7 @@
                     if (!v) {
                         e.preventDefault();
                         alert('Pilih metode pembayaran terlebih dahulu.');
-                        if (grid) grid.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center'
-                        });
+                        if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                 });
             }
