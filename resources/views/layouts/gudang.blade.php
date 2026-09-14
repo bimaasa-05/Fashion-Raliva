@@ -134,9 +134,6 @@
         </button>
         <span class="font-display-lg text-headline-md tracking-widest text-on-surface">RALIVA</span>
         <div class="flex items-center gap-2">
-            <button type="button" class="theme-toggle text-on-surface hover:opacity-80 transition-opacity" aria-label="Ganti tema">
-                <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
-            </button>
             @php
                 $user = Auth::user();
                 $notifications = $user ? \App\Models\Notification::where('user_id', $user->user_id)
@@ -206,6 +203,18 @@
         <nav class="sidebar-scroll flex-1 min-h-0 overflow-y-auto">
             @include('partials.sidebar-menu-gudang')
         </nav>
+        <div class="shrink-0 border-t border-sidebar-border/70 mt-2 pt-2">
+            <button type="button" class="theme-toggle w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-on-sidebar hover:bg-gold-accent/10 transition-colors" aria-label="Ganti tema">
+                <span class="material-symbols-outlined text-[20px] text-gold-accent/80 shrink-0" data-theme-icon>light_mode</span>
+                <span data-sidebar-text class="min-w-0 flex-1 text-left">
+                    <span class="block text-[13px] font-semibold leading-tight">Tampilan</span>
+                    <span class="block text-[11px] opacity-60">Terang / Gelap</span>
+                </span>
+                <span data-sidebar-text class="relative shrink-0 w-10 h-6 rounded-full bg-sidebar-border/60 dark:bg-gold-accent/50 transition-colors" aria-hidden="true">
+                    <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-surface shadow transition-transform dark:translate-x-4"></span>
+                </span>
+            </button>
+        </div>
     </aside>
 
     <!-- Mobile Sidebar Overlay -->
@@ -225,9 +234,6 @@
                 <p class="text-on-surface-variant font-body-md text-sm mt-0.5">@yield('header-subtitle', 'Pantau persediaan dan aktivitas gudang Anda.')</p>
             </div>
             <div class="flex items-center gap-6">
-                <button type="button" class="theme-toggle text-on-surface hover:text-secondary transition-colors" aria-label="Ganti tema">
-                    <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
-                </button>
                 @include('partials.notification-panel', ['items' => $notifications, 'lihatSemuaRoute' => 'gudang.notifikasi'])
                 @include('partials.profile-menu', ['name' => $user?->nama_lengkap ?? 'User', 'role' => $user?->role?->nama_role ?? 'Gudang', 'profilRoute' => 'gudang.profil', 'showPengaturan' => false])
             </div>

@@ -110,7 +110,8 @@
                     <tbody id="table-body">
                         @forelse($shipments as $s)
                             @php
-                                $pelanggan = $s->order?->checkout?->user;
+$pelanggan = $s->order?->checkout?->user;
+                                $pelNama = $pelanggan?->nama_lengkap ?? $s->order?->checkout?->nama_penerima ?? '-';
                             @endphp
                             <tr data-table-row
                                         data-status="{{ $s->status }}"
@@ -146,7 +147,7 @@
                                         data-dikirim="{{ $s->dikirim_pada ? \Carbon\Carbon::parse($s->dikirim_pada)->locale('id')->translatedFormat('d M Y H:i') : '-' }}"
                                         data-diterima="{{ $s->diterima_pada ? \Carbon\Carbon::parse($s->diterima_pada)->locale('id')->translatedFormat('d M Y H:i') : '-' }}"
                                         data-status="{{ ucfirst($s->status) }}"
-                                        data-pelanggan="{{ $pelanggan->nama_lengkap ?? '-' }}">
+                                        data-pelanggan="{{ $pelNama }}">
                                         <span class="material-symbols-outlined text-[16px]">visibility</span>Detail
                                     </button>
                                 </td>
@@ -177,7 +178,8 @@
             <div id="card-grid" class="md:hidden grid grid-cols-1 gap-gutter">
                 @forelse($shipments as $s)
                     @php
-                        $pelanggan = $s->order?->checkout?->user;
+$pelanggan = $s->order?->checkout?->user;
+                        $pelNama = $pelanggan?->nama_lengkap ?? $s->order?->checkout?->nama_penerima ?? '-';
                     @endphp
                     <article data-table-row data-status="{{ $s->status }}" data-search="{{ strtolower(($s->order->nomor_order ?? '').' '.($s->order->store->nama_toko ?? '').' '.($s->courier->nama_kurir ?? '').' '.($s->nomor_resi ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
                         <div class="flex items-start justify-between gap-3 mb-3">
@@ -213,7 +215,7 @@
                             </div>
                             <div class="flex justify-between gap-3">
                                 <dt class="text-on-surface-variant">Pelanggan</dt>
-                                <dd class="text-on-surface text-right">{{ $pelanggan->nama_lengkap ?? '-' }}</dd>
+                                <dd class="text-on-surface text-right">{{ $pelNama }}</dd>
                             </div>
                         </dl>
 
@@ -227,7 +229,7 @@
                             data-dikirim="{{ $s->dikirim_pada ? \Carbon\Carbon::parse($s->dikirim_pada)->locale('id')->translatedFormat('d M Y H:i') : '-' }}"
                             data-diterima="{{ $s->diterima_pada ? \Carbon\Carbon::parse($s->diterima_pada)->locale('id')->translatedFormat('d M Y H:i') : '-' }}"
                             data-status="{{ ucfirst($s->status) }}"
-                            data-pelanggan="{{ $pelanggan->nama_lengkap ?? '-' }}">
+                            data-pelanggan="{{ $pelNama }}">
                             <span class="material-symbols-outlined text-[16px]">visibility</span>Detail
                         </button>
                     </article>
