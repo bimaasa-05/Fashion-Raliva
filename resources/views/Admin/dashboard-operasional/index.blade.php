@@ -26,6 +26,16 @@
     </span>
 </div>
 
+@if(($storeSuspended ?? false) && ! empty($suspendedStores))
+    <div class="mb-4 rounded-lg border border-error/30 bg-error/10 px-4 py-4 flex items-start gap-3">
+        <span class="material-symbols-outlined text-error mt-0.5">lock</span>
+        <div>
+            <p class="font-bold text-sm text-on-surface">Toko sedang ditangguhkan</p>
+            <p class="text-sm text-on-surface-variant mt-1">Toko <strong class="text-on-surface">{{ implode(', ', $suspendedStores) }}</strong> sedang ditangguhkan oleh platform. Fitur dibatasi dan hanya dashboard serta profil yang dapat diakses. Hubungi dukungan Raliva untuk informasi lebih lanjut.</p>
+        </div>
+    </div>
+@endif
+
 <section>
     <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Hari Ini</h2>
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">

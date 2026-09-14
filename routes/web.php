@@ -333,7 +333,7 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
 });
 
 //Route Role Admin Lengkap
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store-active'])->group(function () {
     Route::get('/dashboard', [DashboardOperasionalController::class, 'index'])->name('dashboard');
     Route::get('/pesanan', [AdminDataPesananController::class, 'index'])->name('pesanan');
     Route::post('/pesanan', [AdminDataPesananController::class, 'store'])->name('pesanan.store');
@@ -383,7 +383,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->grou
     Route::get('/riwayat-aktivitas', [AdminRiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
 });
 
-Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang'])->group(function () {
+Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang', 'store-active'])->group(function () {
     Route::get('/dashboard', [GudangDashboardController::class, 'index'])->name('dashboard');
     Route::get('/stok', [GudangStokController::class, 'index'])->name('stok');
     Route::get('/barang-masuk', [GudangBarangMasukController::class, 'index'])->name('barang-masuk');
@@ -411,7 +411,7 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang'])->g
 });
 
 //Role Route Owner Lengkap
-Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->group(function () {
+Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store-active'])->group(function () {
     Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/data-toko', [DataTokoController::class, 'index'])->name('data-toko');
     Route::put('/data-toko', [DataTokoController::class, 'update'])->name('data-toko.update');
@@ -486,7 +486,7 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::post('/pengembalian-dana/{refund}/selesaikan', [OwnerPengembalianDanaController::class, 'selesaikan'])->name('pengembalian-dana.selesaikan');
 });
 
-Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi'])->group(function () {
+Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi', 'store-active'])->group(function () {
     Route::get('/dashboard', [ProduksiDashboardController::class, 'index'])->name('dashboard');
     Route::get('/permintaan-produksi', [ProduksiPermintaanController::class, 'index'])->name('permintaan-produksi');
     Route::post('/permintaan-produksi/{productionOrder}/status', [ProduksiPermintaanController::class, 'updateStatus'])->name('permintaan-produksi.status');
