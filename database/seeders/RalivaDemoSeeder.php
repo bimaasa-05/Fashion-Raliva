@@ -498,7 +498,7 @@ class RalivaDemoSeeder extends Seeder
             }
         }
 
-        // Pesanan untuk Pelanggan Request (dashboard Gudang)
+        // Pesanan menunggu pemenuhan gudang (widget SLA)
         $requestStatuses = [Order::STATUS_DIBAYAR, Order::STATUS_DIPROSES];
         for ($r = 0; $r < 4; $r++) {
             $variant = $allVariants->skip($r % $allVariants->count())->first();

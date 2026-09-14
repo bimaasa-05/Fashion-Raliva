@@ -308,8 +308,8 @@ class GudangDemoSeeder extends Seeder
         StockMovement::insert($movements);
 
         // Beberapa pesanan pelanggan yang menunggu pemenuhan gudang
-        // (status dibayar/diproses) — mengisi card "Pelanggan Request" di dashboard
-        // dan halaman Pelanggan Request, konsisten dengan store gudang ini.
+        // Pesanan menunggu pemenuhan gudang
+        // (status dibayar/diproses) — mengisi widget SLA di dashboard.
         $customer = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Customer'))->first()
             ?? \App\Models\User::firstOrCreate(
                 ['email' => 'pelanggan.demo@raliva.test'],

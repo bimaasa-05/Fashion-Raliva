@@ -260,7 +260,6 @@
     @include('partials.bottom-nav', ['items' => [
         ['route' => 'gudang.dashboard', 'icon' => 'space_dashboard', 'label' => 'Beranda'],
         ['route' => 'gudang.stok', 'icon' => 'inventory_2', 'label' => 'Stok'],
-        ['route' => 'gudang.pelanggan-request', 'icon' => 'assignment_ind', 'label' => 'Request'],
         ['route' => 'gudang.riwayat-stok', 'icon' => 'history', 'label' => 'Riwayat'],
         ['route' => 'gudang.profil', 'icon' => 'person', 'label' => 'Profil'],
     ]])

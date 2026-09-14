@@ -15,7 +15,7 @@
         <div class="rounded-lg border border-error/30 bg-error/10 text-error px-4 py-3 text-sm">{{ session('error') }}</div>
     @endif
     @if (! $store)
-        <div class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
+        <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
             <div>
                 <p class="font-bold text-sm">Belum punya toko</p>
@@ -136,6 +136,16 @@
 
 @push('scripts')
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Check if no store banner exists (means no store)
+        const noStore = document.querySelector('[data-no-store-banner]');
+        if (noStore) {
+            document.querySelectorAll('[data-modal-open], button[type="submit"]').forEach(el=>{
+                el.setAttribute('disabled','');
+                el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
+            });
+        }
+    });
     const peringkatTiers = @json($tiers ?? []);
     function peringkatHari(nominal) {
         nominal = parseInt(nominal) || 0;

@@ -312,6 +312,26 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+document.addEventListener('DOMContentLoaded', function(){
+  if (!document.querySelector('[data-real]')) return;
+  // Check if no store banner exists (means no store)
+  const noStore = document.querySelector('[data-no-store-banner]');
+  if (!noStore) return;
+  // Disable all primary action buttons except Ajukan Toko
+  document.querySelectorAll('[data-modal-open], button[type="submit"], a[href*="pengajuan-toko"]:not([href*="ajukan"])').forEach(el=>{
+    el.setAttribute('disabled','');
+    el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
+  });
+  // More generic: disable all buttons in data-real except those inside pengajuan
+  document.querySelectorAll('[data-real] button, [data-real] a.btn-premium').forEach(el=>{
+    if (el.closest('[data-modal]')) return;
+    if (el.textContent.trim().includes('Ajukan')) return;
+    el.setAttribute('disabled','');
+    el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
+  });
+});
+</script>
+<script>
     /* ===== Tab Saldo: Ringkasan | Pencairan | Pengembalian ===== */
     const setSaldoTab = (name) => {
         document.querySelectorAll('[data-saldo-tab]').forEach((b) => {

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Order;
 use App\Models\User;
 use App\Models\Warehouse;
 use Tests\TestCase;
@@ -35,7 +34,6 @@ class GudangDropdownSmokeTest extends TestCase
             'gudang.pemeriksaan',
             'gudang.stok-rusak',
             'gudang.riwayat-stok',
-            'gudang.pelanggan-request',
             'gudang.notifikasi',
             'gudang.profil',
         ];
@@ -55,21 +53,6 @@ class GudangDropdownSmokeTest extends TestCase
                 $this->assertStringContainsString('/gudang/ganti', $html, 'dashboard should contain ganti form action');
             }
         }
-    }
-
-    public function test_dashboard_pelanggan_request_card_shows_count(): void
-    {
-        $user = $this->gudangUser();
-
-        $res = $this->actingAs($user)->get(route('gudang.dashboard'));
-        $res->assertStatus(200);
-
-        $html = $res->getContent();
-        $this->assertStringContainsString('Pelanggan Request', $html);
-        $this->assertStringContainsString('pesanan menunggu cek stok', $html);
-        // Angka harus sesuai jumlah Order dibayar/diproses milik toko gudang ini.
-        $expected = Order::whereIn('status', ['dibayar', 'diproses'])->count();
-        $this->assertStringContainsString('>'.$expected.'<', $html, 'card should show request count');
     }
 
     public function test_switching_warehouse_changes_active_session(): void
