@@ -83,8 +83,10 @@
                         ];
                         $st = $statusMap[$order->status] ?? [ucfirst($order->status), 'bg-surface-container-high text-on-surface'];
                         $pelanggan = $order->checkout?->user;
+                        $pelNama = $pelanggan?->nama_lengkap ?? $order->checkout?->nama_penerima ?? '-';
+                        $pelEmail = $pelanggan?->email ?? $order->checkout?->email_pelanggan ?? '';
                     @endphp
-                    <tr data-table-row data-status="{{ $order->status }}" data-search="{{ strtolower($order->nomor_order.' '.($pelanggan->nama_lengkap ?? '').' '.($pelanggan->email ?? '')) }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                    <tr data-table-row data-status="{{ $order->status }}" data-search="{{ strtolower($order->nomor_order.' '.$pelNama.' '.$pelEmail) }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-6 text-center text-on-surface-variant font-mono row-num"></td>
                         <td class="p-6 font-mono">{{ $order->nomor_order }}</td>
                         <td class="p-6">
@@ -99,8 +101,8 @@
                             </div>
                         </td>
                         <td class="p-6">
-                            <p class="font-body-md text-on-surface">{{ $pelanggan->nama_lengkap ?? '-' }}</p>
-                            <p class="text-on-surface-variant text-xs">{{ $pelanggan->email ?? '' }}</p>
+                            <p class="font-body-md text-on-surface">{{ $pelNama }}</p>
+                            <p class="text-on-surface-variant text-xs">{{ $pelEmail }}</p>
                         </td>
                         <td class="p-6"><span class="font-bold text-gold-accent">Rp {{ number_format((float) $order->grand_total, 0, ',', '.') }}</span></td>
                         <td class="p-6">
@@ -150,8 +152,10 @@
                 ];
                 $st = $statusMap[$order->status] ?? [ucfirst($order->status), 'bg-surface-container-high text-on-surface'];
                 $pelanggan = $order->checkout?->user;
+                $pelNama = $pelanggan?->nama_lengkap ?? $order->checkout?->nama_penerima ?? '-';
+                $pelEmail = $pelanggan?->email ?? $order->checkout?->email_pelanggan ?? '';
             @endphp
-            <article data-table-row data-status="{{ $order->status }}" data-search="{{ strtolower($order->nomor_order.' '.($pelanggan->nama_lengkap ?? '').' '.($pelanggan->email ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+            <article data-table-row data-status="{{ $order->status }}" data-search="{{ strtolower($order->nomor_order.' '.$pelNama.' '.$pelEmail) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
                 <div class="flex items-start justify-between gap-3 mb-3">
                     <div class="min-w-0">
                         <p class="font-mono font-bold text-on-surface leading-tight">{{ $order->nomor_order }}</p>
@@ -167,7 +171,7 @@
                     </div>
                     <div class="flex justify-between gap-3">
                         <dt class="text-on-surface-variant">Pelanggan</dt>
-                        <dd class="text-on-surface text-right">{{ $pelanggan->nama_lengkap ?? '-' }}</dd>
+                        <dd class="text-on-surface text-right">{{ $pelNama }}</dd>
                     </div>
                     <div class="flex justify-between gap-3">
                         <dt class="text-on-surface-variant">Produk</dt>
@@ -206,6 +210,8 @@
         ];
         $oSt = $oStatusMap[$order->status] ?? [ucfirst($order->status), 'bg-surface-container-high text-on-surface'];
         $oPelanggan = $order->checkout?->user;
+        $oPelNama = $oPelanggan?->nama_lengkap ?? $order->checkout?->nama_penerima ?? '-';
+        $oPelEmail = $oPelanggan?->email ?? $order->checkout?->email_pelanggan ?? '';
     @endphp
     <div id="modal-order-{{ $order->order_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/50" data-modal-close></div>
@@ -265,7 +271,7 @@
                         </div>
                         <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
                             <dt class="text-on-surface-variant shrink-0">Pelanggan</dt>
-                            <dd class="text-on-surface text-right">{{ $oPelanggan->nama_lengkap ?? '-' }} @if($oPelanggan?->email)<span class="text-on-surface-variant text-xs">({{ $oPelanggan->email }})</span>@endif</dd>
+                            <dd class="text-on-surface text-right">{{ $oPelNama }} @if($oPelEmail)<span class="text-on-surface-variant text-xs">({{ $oPelEmail }})</span>@endif</dd>
                         </div>
                         <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
                             <dt class="text-on-surface-variant shrink-0">Subtotal</dt>
