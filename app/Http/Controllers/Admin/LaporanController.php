@@ -49,6 +49,28 @@ class LaporanController extends Controller
             }
         }
 
-        return view('Admin.laporan.index', compact('pendapatan','pesananDiproses','totalPengeluaran','totalBersih','perToko','pesananBaru','menungguVerifikasi'));
+        // per metode pembayaran breakdown (hanya payment terverifikasi di store scope)
+        $perMetode = collect();
+        if ($storeIds) {
+            $perMetode = \App\Models\Payment::query()
+                ->where('status', \App\Models\Payment::STATUS_TERVERIFIKASI)
+                ->whereHas('checkout.orders', fn ($q) => $q->whereIn('store_id', $storeIds))
+                ->with('paymentMethod')
+                ->get()
+                ->groupBy('payment_method_id')
+                ->map(function ($group) {
+                    $metode = $group->first()->paymentMethod;
+
+                    return (object) [
+                        'nama_metode' => $metode?->nama_metode ?? '-',
+                        'jumlah_transaksi' => $group->count(),
+                        'total' => (float) $group->sum('jumlah'),
+                    ];
+                })
+                ->sortByDesc('total')
+                ->values();
+        }
+
+        return view('Admin.laporan.index', compact('pendapatan', 'pesananDiproses', 'totalPengeluaran', 'totalBersih', 'perToko', 'perMetode', 'pesananBaru', 'menungguVerifikasi'));
     }
 }
