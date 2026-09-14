@@ -278,9 +278,40 @@
         outline: none;
         transition: border-color .18s ease, background .18s ease;
     }
-    .co-input:focus { border-color: #8B1E3F; background: #fff; }
+    .co-input:focus { border-color: #8B1E3F; background: #fff; box-shadow: none; outline: none; }
     html.theme-dark .co-input:focus { background:#262524; }
     .co-input.is-error { border-color: #ba1a1a; }
+    input.co-input[type='email'] {
+        background: var(--surface-warm);
+        border: 1px solid var(--border-soft);
+        border-radius: 0.5rem;
+        padding: 0.65rem 0.9rem;
+        font-family: 'Manrope', sans-serif;
+        font-size: 14px;
+        color: var(--on-surface);
+        height: auto;
+        line-height: inherit;
+        box-shadow: none;
+        outline: none;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    input.co-input[type='email']:focus { background: #fff; border-color: #8B1E3F; }
+    html.theme-dark input.co-input[type='email']:focus { background: #262524; }
+    .co-input:-webkit-autofill,
+    .co-input:-webkit-autofill:hover,
+    .co-input:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0 1000px var(--surface-warm) inset !important;
+        -webkit-text-fill-color: var(--on-surface) !important;
+        caret-color: var(--on-surface);
+        transition: background-color 999999s, -webkit-box-shadow 0s;
+    }
+    html.theme-dark .co-input:-webkit-autofill,
+    html.theme-dark .co-input:-webkit-autofill:hover,
+    html.theme-dark .co-input:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0 1000px #201f1e inset !important;
+        -webkit-text-fill-color: var(--on-surface) !important;
+    }
     .co-textarea {
         width: 100%;
         background: var(--surface-warm);
@@ -294,7 +325,7 @@
         resize: vertical;
         transition: border-color .18s ease, background .18s ease;
     }
-    .co-textarea:focus { border-color: #8B1E3F; background: #fff; }
+    .co-textarea:focus { border-color: #8B1E3F; background: #fff; box-shadow: none; outline: none; }
     html.theme-dark .co-textarea:focus { background:#262524; }
     .co-ship-option {
         display: flex;
