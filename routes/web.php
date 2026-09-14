@@ -361,7 +361,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin'])->grou
     Route::post('/pengembalian-dana/{refund}/tolak', [AdminPengembalianDanaController::class, 'tolak'])->name('pengembalian-dana.tolak');
     Route::post('/pengembalian-dana/{refund}/eskalasi', [AdminPengembalianDanaController::class, 'eskalasi'])->name('pengembalian-dana.eskalasi');
     Route::get('/komplain', [KomplainController::class, 'index'])->name('komplain');
-    Route::post('/komplain/{komplain}/balas', [KomplainController::class, 'balas'])->name('komplain.balas');
+    Route::get('/komplain/{komplain}/messages', [KomplainController::class, 'messages'])->name('komplain.messages');
+    Route::post('/komplain/{komplain}/messages', [KomplainController::class, 'storeMessage'])->name('komplain.messages.store');
+    Route::patch('/komplain/{komplain}/messages/{message}', [KomplainController::class, 'updateMessage'])->name('komplain.messages.update')->withTrashed();
+    Route::delete('/komplain/{komplain}/messages/{message}', [KomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy')->withTrashed();
     Route::post('/komplain/{komplain}/eskalasi', [KomplainController::class, 'eskalasi'])->name('komplain.eskalasi');
     Route::get('/promo', [PromoController::class, 'index'])->name('promo');
     Route::post('/promo/{promotion}/toggle', [PromoController::class, 'toggle'])->name('promo.toggle');
@@ -453,7 +456,9 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner'])->grou
     Route::post('/gudang/{stockTransfer}/tolak', [KoordinasiGudangController::class, 'tolak'])->name('gudang.tolak');
     Route::get('/komplain', [OwnerKomplainController::class, 'index'])->name('komplain');
     Route::get('/komplain/{komplain}/messages', [OwnerKomplainController::class, 'messages'])->name('komplain.messages');
-    Route::post('/komplain/{komplain}/balas', [OwnerKomplainController::class, 'balas'])->name('komplain.balas');
+    Route::post('/komplain/{komplain}/messages', [OwnerKomplainController::class, 'storeMessage'])->name('komplain.messages.store');
+    Route::patch('/komplain/{komplain}/messages/{message}', [OwnerKomplainController::class, 'updateMessage'])->name('komplain.messages.update')->withTrashed();
+    Route::delete('/komplain/{komplain}/messages/{message}', [OwnerKomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy')->withTrashed();
     Route::get('/moderasi-produk', [OwnerModerasiProdukController::class, 'index'])->name('moderasi-produk');
     Route::post('/moderasi-produk/{product}/setujui', [OwnerModerasiProdukController::class, 'setujui'])->name('moderasi-produk.setujui');
     Route::post('/moderasi-produk/{product}/tolak', [OwnerModerasiProdukController::class, 'tolak'])->name('moderasi-produk.tolak');

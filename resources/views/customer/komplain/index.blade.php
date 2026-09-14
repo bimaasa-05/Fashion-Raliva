@@ -506,7 +506,7 @@
                         <span class="material-symbols-outlined text-[20px]">send</span>
                     </button>
                 </div>
-                <div id="chat-select-bar" class="items-center gap-2 lg:gap-3 py-1 overflow-x-auto" aria-label="{{ __('Select messages') }}">
+                <div id="chat-select-bar" class="flex items-center gap-1 lg:gap-1.5 bg-surface-container-lowest dark:bg-[#1c1c1c] border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-[26px] lg:rounded-[28px] px-2 lg:px-2.5 py-2 lg:py-2.5 shadow-sm overflow-x-auto" aria-label="{{ __('Select messages') }}">
                     <button type="button" onclick="exitSelectMessages()" id="chat-sel-close" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Keluar seleksi') }}" aria-label="{{ __('Keluar seleksi') }}">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
@@ -868,16 +868,26 @@
         closeChatMenu();
         if (opening) {
             closeChatMoreMenu();
+            const scroller = document.getElementById('chat-messages');
+            if (scroller) {
+                const scrollerRect = scroller.getBoundingClientRect();
+                const rowBtnRect = btn.getBoundingClientRect();
+                if (rowBtnRect.bottom > scrollerRect.bottom) {
+                    scroller.scrollTop += (rowBtnRect.bottom - scrollerRect.bottom) + 12;
+                }
+            }
             const btnRect = btn.getBoundingClientRect();
             const panelRect = panel.getBoundingClientRect();
+            const composerEl = document.getElementById('chat-input-area');
+            const composerTop = composerEl ? composerEl.getBoundingClientRect().top : panelRect.bottom;
             menu.style.position = 'fixed';
             let top = btnRect.bottom + 6;
             let left = btnRect.right - 150;
             // Keep inside panel horizontally
             if (left < panelRect.left + 8) left = panelRect.left + 8;
             if (left + 150 > panelRect.right - 8) left = panelRect.right - 158;
-            // Flip above if near bottom of panel
-            if (top + 80 > panelRect.bottom - 8) {
+            // Flip above if the dropdown would cover the composer or go below the panel
+            if (top + 80 > composerTop - 6 || top + 80 > panelRect.bottom - 8) {
                 top = btnRect.top - 52;
                 if (top < panelRect.top + 8) top = panelRect.top + 8;
             }
