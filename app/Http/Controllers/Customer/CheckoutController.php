@@ -11,7 +11,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
-use App\Models\PaymentMethodAccount;
+use App\Models\PlatformBankAccount;
 use App\Models\PaymentProof;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -424,7 +424,7 @@ class CheckoutController extends Controller
 
         $validated = $request->validate([
             'payment_method_id' => 'required|integer|exists:payment_methods,payment_method_id',
-            'payment_method_account_id' => 'nullable|integer|exists:payment_method_accounts,payment_method_account_id',
+            'payment_account_id' => 'nullable|integer|exists:platform_bank_accounts,platform_bank_account_id',
             'bukti' => 'required|image|mimes:jpeg,png,jpg|max:4096',
         ], [
             'payment_method_id.required' => 'Pilih metode pembayaran terlebih dahulu.',
@@ -440,10 +440,10 @@ class CheckoutController extends Controller
         }
 
         $account = null;
-        if (! empty($validated['payment_method_account_id'])) {
-            $account = PaymentMethodAccount::where('payment_method_account_id', $validated['payment_method_account_id'])
-                ->where('payment_method_id', $paymentMethod->payment_method_id)
-                ->where('status', PaymentMethodAccount::STATUS_AKTIF)
+        if (! empty($validated['payment_account_id'])) {
+            $account = PlatformBankAccount::where('platform_bank_account_id', $validated['payment_account_id'])
+                ->where('jenis', $paymentMethod->kode_metode)
+                ->where('status', PlatformBankAccount::STATUS_AKTIF)
                 ->first();
             if (! $account) {
                 return back()->with('toast', ['message' => 'Tujuan pembayaran tidak cocok dengan metode dipilih.', 'icon' => 'gpp_maybe']);
@@ -461,7 +461,7 @@ class CheckoutController extends Controller
                 $updatePayload['batas_waktu'] = now()->addMinutes($batas);
             }
             if ($account) {
-                $updatePayload['payment_method_account_id'] = $account->payment_method_account_id;
+                $updatePayload['payment_account_id'] = $account->platform_bank_account_id;
             }
             if ($updatePayload) {
                 $payment->update($updatePayload);
