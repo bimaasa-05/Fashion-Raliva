@@ -482,42 +482,42 @@
                     <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('DATA PEMESAN') }}</p>
                     <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Data Pemesan') }}</h3>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
-                        <label class="flex flex-col gap-1.5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-md">
+                        <label class="flex flex-col gap-1.5 lg:col-span-3">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Nama Lengkap') }} <span class="text-error">*</span></span>
                             <input name="nama_penerima" value="{{ $prefill['nama_penerima'] }}" required maxlength="150" class="co-input @error('nama_penerima') is-error @enderror" placeholder="{{ __('Nama penerima') }}"/>
                             @error('nama_penerima')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
                         </label>
-                        <label class="flex flex-col gap-1.5">
+                        <label class="flex flex-col gap-1.5 lg:col-span-3">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('No. Telepon / WhatsApp') }} <span class="text-error">*</span></span>
                             <input name="nomor_telepon" value="{{ $prefill['nomor_telepon'] }}" required maxlength="30" class="co-input @error('nomor_telepon') is-error @enderror" placeholder="08xxxxxxxxxx"/>
                             @error('nomor_telepon')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
                         </label>
-                        <label class="flex flex-col gap-1.5 md:col-span-2">
+                        <label class="flex flex-col gap-1.5 md:col-span-2 lg:col-span-6">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Email') }} <span class="text-error">*</span></span>
                             <input name="email_pelanggan" type="email" value="{{ $prefill['email_pelanggan'] }}" required maxlength="150" class="co-input @error('email_pelanggan') is-error @enderror" placeholder="nama@email.com"/>
                             @error('email_pelanggan')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
                             <span class="font-label-sm text-label-sm text-on-surface-variant/70">{{ __('Dipakai sebagai username akun. Password default: Raliva123') }}</span>
                         </label>
-                        <label class="flex flex-col gap-1.5 md:col-span-2">
-                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Alamat') }} <span class="text-error">*</span></span>
-                            <textarea name="alamat" required rows="2" class="co-textarea @error('alamat') is-error @enderror" placeholder="{{ __('Jl. ...') }}">{{ $prefill['alamat'] }}</textarea>
-                            @error('alamat')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
-                        </label>
-                        <label class="flex flex-col gap-1.5">
-                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Kota') }} <span class="text-error">*</span></span>
-                            <input name="kota" value="{{ $prefill['kota'] }}" required maxlength="100" class="co-input @error('kota') is-error @enderror" placeholder="{{ __('Kota') }}"/>
-                            @error('kota')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
-                        </label>
-                        <label class="flex flex-col gap-1.5">
+                        <label class="flex flex-col gap-1.5 lg:col-span-2">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Provinsi') }} <span class="text-error">*</span></span>
                             <input name="provinsi" value="{{ $prefill['provinsi'] }}" required maxlength="100" class="co-input @error('provinsi') is-error @enderror" placeholder="{{ __('Provinsi') }}"/>
                             @error('provinsi')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
                         </label>
-                        <label class="flex flex-col gap-1.5">
+                        <label class="flex flex-col gap-1.5 lg:col-span-2">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Kota') }} <span class="text-error">*</span></span>
+                            <input name="kota" value="{{ $prefill['kota'] }}" required maxlength="100" class="co-input @error('kota') is-error @enderror" placeholder="{{ __('Kota') }}"/>
+                            @error('kota')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
+                        </label>
+                        <label class="flex flex-col gap-1.5 md:col-span-2 lg:col-span-2">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Kode Pos') }} <span class="text-error">*</span></span>
                             <input name="kode_pos" value="{{ $prefill['kode_pos'] }}" required maxlength="20" class="co-input @error('kode_pos') is-error @enderror" placeholder="12345"/>
                             @error('kode_pos')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
+                        </label>
+                        <label class="flex flex-col gap-1.5 md:col-span-2 lg:col-span-6">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Alamat') }} <span class="text-error">*</span></span>
+                            <textarea name="alamat" required rows="2" class="co-textarea @error('alamat') is-error @enderror" placeholder="{{ __('Jl. ...') }}">{{ $prefill['alamat'] }}</textarea>
+                            @error('alamat')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
                         </label>
                     </div>
                     @if(!$isGuest && $address)
