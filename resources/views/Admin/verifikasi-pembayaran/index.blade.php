@@ -70,7 +70,7 @@
                             <p class="text-xs text-on-surface-variant mt-0.5">{{ $orderUtama?->store?->nama_toko ?? '-' }}</p>
                             <p class="font-title-md text-title-md text-gold-accent mt-1">Rp {{ number_format((float) $pembayaran->jumlah, 0, ',', '.') }}</p>
                         </div>
-                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ $pembayaran->paymentMethod?->nama_metode ?? '-' }}</span>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ $pembayaran->paymentMethod?->nama_metode ?? '-' }}{{ $pembayaran->account?->nama ? ' &#8226; ' . $pembayaran->account->nama : '' }}</span>
                     </div>
 
                     @if ($bukti)
@@ -163,7 +163,7 @@
                             <div class="min-w-0">
                                 <p class="raliva-label text-gold-accent">Detail Pembayaran</p>
                                 <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">#CKT-{{ str_pad((string) $pembayaran->checkout_id, 4, '0', STR_PAD_LEFT) }}</h3>
-                                <p class="text-on-surface-variant font-body-md text-xs mt-1">{{ $pembayaran->checkout?->nama_penerima ?? $pembayaran->checkout?->user?->nama_lengkap ?? '-' }}@if($pembayaran->checkout?->nomor_telepon) • {{ $pembayaran->checkout->nomor_telepon }}@endif &#8226; {{ $orderUtama?->store?->nama_toko ?? '-' }} &#8226; {{ $pembayaran->paymentMethod?->nama_metode ?? '-' }}</p>
+                                <p class="text-on-surface-variant font-body-md text-xs mt-1">{{ $pembayaran->checkout?->nama_penerima ?? $pembayaran->checkout?->user?->nama_lengkap ?? '-' }}@if($pembayaran->checkout?->nomor_telepon) • {{ $pembayaran->checkout->nomor_telepon }}@endif &#8226; {{ $orderUtama?->store?->nama_toko ?? '-' }} &#8226; {{ $pembayaran->paymentMethod?->nama_metode ?? '-' }}{{ $pembayaran->account?->nama ? ' • ' . $pembayaran->account->nama : '' }}</p>
                             </div>
                             <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors shrink-0" aria-label="Tutup">
                                 <span class="material-symbols-outlined">close</span>
