@@ -494,17 +494,6 @@
                     @endif
                 </div>
 
-                {{-- ========== CATATAN OPSIONAL — terpisah ========== --}}
-                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
-                    <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('CATATAN') }}</p>
-                    <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Catatan Opsional') }}</h3>
-                    <label class="flex flex-col gap-1.5">
-                        <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Catatan untuk produk (mis. instruksi pengiriman)') }}</span>
-                        <textarea name="catatan" rows="3" maxlength="1000" class="co-textarea @error('catatan') is-error @enderror" placeholder="{{ __('cth. 1–2 produk dikirim duluan ke alamat ini') }}">{{ $prefill['catatan'] }}</textarea>
-                        @error('catatan')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
-                    </label>
-                </div>
-
                 {{-- ========== RINCIAN PESANAN ========== --}}
                 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
                     <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN PESANAN') }}</p>
@@ -533,6 +522,17 @@
                         </div>
                     @endforelse
                     </div>
+                </div>
+
+                {{-- ========== CATATAN OPSIONAL — terpisah ========== --}}
+                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+                    <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('CATATAN') }}</p>
+                    <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Catatan Opsional') }}</h3>
+                    <label class="flex flex-col gap-1.5">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Catatan untuk produk (mis. instruksi pengiriman)') }}</span>
+                        <textarea name="catatan" rows="3" maxlength="1000" class="co-textarea @error('catatan') is-error @enderror" placeholder="{{ __('cth. 1–2 produk dikirim duluan ke alamat ini') }}">{{ $prefill['catatan'] }}</textarea>
+                        @error('catatan')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
+                    </label>
                 </div>
 
                 </div>
