@@ -348,6 +348,8 @@ class CheckoutController extends Controller
      */
     public function payment(int $checkout)
     {
+        \App\Support\PaymentExpiry::expireOverdue();
+
         if (! Auth::check()) {
             return redirect()->route('login', ['redirect' => route('customer.checkout.payment', $checkout)]);
         }
@@ -388,7 +390,7 @@ class CheckoutController extends Controller
 
         $checkoutModel = Checkout::where('checkout_id', $checkout)
             ->where('user_id', Auth::id())
-            ->with(['orders.store:store_id,nama_toko', 'orders.items', 'payment.paymentMethod'])
+            ->with(['orders.store:store_id,nama_toko', 'orders.items', 'payment.paymentMethod', 'payment.account'])
             ->firstOrFail();
 
         return view('customer.checkout.selesai', [
