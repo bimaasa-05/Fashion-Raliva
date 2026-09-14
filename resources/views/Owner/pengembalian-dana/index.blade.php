@@ -105,3 +105,18 @@
     </section>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // Check if no store banner exists (means no store)
+  const noStore = document.querySelector('[data-no-store-banner]');
+  if (!noStore) return;
+  // Disable all primary action buttons except Ajukan Toko
+  document.querySelectorAll('[data-modal-open], button[type="submit"], a[href*="pengajuan-toko"]:not([href*="ajukan"])').forEach(el=>{
+    el.setAttribute('disabled','');
+    el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
+  });
+});
+</script>
+@endpush

@@ -39,14 +39,11 @@ class Product extends Model
         'tipe_produk',
         'status',
         'alasan_penolakan',
-        'owner_verified_at',
     ];
 
     protected function casts(): array
     {
-        return [
-            'owner_verified_at' => 'datetime',
-        ];
+        return [];
     }
 
     public function store(): BelongsTo
