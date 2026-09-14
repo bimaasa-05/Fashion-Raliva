@@ -68,7 +68,7 @@ class PeringkatIklanController extends Controller
             ->orderBy('nama_produk')
             ->get();
 
-        $rekenings = PlatformBankAccount::with('bank')->where('status', PlatformBankAccount::STATUS_AKTIF)->orderBy('nomor_rekening')->get();
+        $rekenings = PlatformBankAccount::with('bank')->whereNotNull('bank_id')->where('status', PlatformBankAccount::STATUS_AKTIF)->orderBy('nomor_rekening')->get();
 
         $tiers = PeringkatService::defaultTiers();
         $raw = Setting::get(Setting::PERINGKAT_TIER, null);
