@@ -101,11 +101,22 @@
                     <strong class="text-on-surface">{{ $o->nomor_order }}</strong>
                 </div>
                 @endforeach
+                <div class="flex justify-between py-1.5 font-body-sm text-body-sm">
+                    <span class="text-on-surface-variant">{{ __('Metode Pembayaran') }}</span>
+                    <strong class="text-on-surface">{{ $payment->paymentMethod?->nama_metode ?? __('Belum dipilih') }}@if($payment->account) &#8226; {{ $payment->account->nama }}@endif</strong>
+                </div>
+                @if($payment->account && ($payment->account->nomor_rekening || $payment->account->nama_pemilik))
+                <div class="flex justify-between py-1.5 font-body-sm text-body-sm">
+                    <span class="text-on-surface-variant">{{ __('Kepada') }}</span>
+                    <span class="text-on-surface text-right">{{ trim(($payment->account->nama_pemilik ?? '') . ' ' . ($payment->account->nomor_rekening ?? '')) }}</span>
+                </div>
+                @endif
                 <div class="h-px bg-[var(--border-soft)] my-sm"></div>
                 <div class="flex justify-between font-body-sm text-body-sm">
                     <span class="text-on-surface-variant">{{ __('Total Dibayar') }}</span>
                     <strong class="text-[var(--chrome-accent)] text-title-md">Rp {{ number_format((float)$payment->jumlah,0,',','.') }}</strong>
                 </div>
+                <p class="font-body-sm text-body-sm text-emerald-700/80 mt-sm flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">task_alt</span> {{ __('Bukti pembayaran telah diunggah dan sedang diverifikasi admin.') }}</p>
                 <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-xs">{{ __('Nomor order disimpan. Gunakan untuk lacak resi.') }}</p>
             </div>
 
