@@ -22,6 +22,7 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
+    @include('partials.banner-suspended')
     @if(! $store)
         <div class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-4 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>

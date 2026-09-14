@@ -26,6 +26,7 @@ class PengaturanSistemController extends Controller
             'settings' => [
                 'nama_platform' => Setting::get(Setting::NAMA_PLATFORM, 'Raliva'),
                 'email_support' => Setting::get(Setting::EMAIL_SUPPORT, 'support@raliva.com'),
+                'whatsapp_support' => Setting::get(Setting::WHATSAPP_SUPPORT, ''),
                 'komisi_persen_default' => Setting::get(Setting::KOMISI_PERSEN_DEFAULT, '5'),
                 'biaya_layanan' => Setting::get(Setting::BIAYA_LAYANAN, '1000'),
                 'min_pencairan' => Setting::get(Setting::MIN_PENCAIRAN, '50000'),
@@ -43,6 +44,7 @@ class PengaturanSistemController extends Controller
         $data = $request->validate([
             'nama_platform' => 'sometimes|required|string|max:100',
             'email_support' => 'sometimes|required|email|max:100',
+            'whatsapp_support' => 'sometimes|nullable|string|max:20',
             'komisi_persen_default' => 'sometimes|required|numeric|min:0|max:15',
             'biaya_layanan' => 'sometimes|required|numeric|min:0',
             'min_pencairan' => 'sometimes|required|numeric|min:0',
@@ -55,6 +57,7 @@ class PengaturanSistemController extends Controller
         $map = [
             'nama_platform' => Setting::NAMA_PLATFORM,
             'email_support' => Setting::EMAIL_SUPPORT,
+            'whatsapp_support' => Setting::WHATSAPP_SUPPORT,
             'komisi_persen_default' => Setting::KOMISI_PERSEN_DEFAULT,
             'biaya_layanan' => Setting::BIAYA_LAYANAN,
             'min_pencairan' => Setting::MIN_PENCAIRAN,

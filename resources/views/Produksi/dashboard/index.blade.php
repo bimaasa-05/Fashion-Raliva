@@ -22,6 +22,7 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
+    @include('partials.banner-suspended')
     {{-- Identitas Workshop --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-5 card-premium">
         <div class="flex items-center gap-4">

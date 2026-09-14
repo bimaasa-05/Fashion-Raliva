@@ -52,6 +52,8 @@ class DashboardController extends Controller
                 'kategoriTerbesar' => collect(),
                 'leaderboardData' => [],
                 'barsData' => [],
+                'storeSuspended' => \App\Support\StoreGate::isLocked(),
+                'suspendedStores' => \App\Support\StoreGate::suspendedStoreNames(),
             ]);
         }
 
@@ -220,6 +222,8 @@ class DashboardController extends Controller
             'kategoriTerbesar' => $kategoriTerbesar,
             'leaderboardData' => $leaderboardData,
             'barsData' => $barsData,
+            'storeSuspended' => \App\Support\StoreGate::isLocked(),
+            'suspendedStores' => \App\Support\StoreGate::suspendedStoreNames(),
         ]);
     }
 

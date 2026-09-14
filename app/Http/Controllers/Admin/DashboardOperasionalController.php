@@ -55,6 +55,8 @@ class DashboardOperasionalController extends Controller
             'omzetMingguan' => $this->omzetMingguan($storeIds),
             'distribusiStatus' => $this->distribusiStatus($storeIds),
             'produkTerlaris' => $this->produkTerlaris($storeIds),
+            'storeSuspended' => \App\Support\StoreGate::isLocked(),
+            'suspendedStores' => \App\Support\StoreGate::suspendedStoreNames(),
         ]);
     }
 

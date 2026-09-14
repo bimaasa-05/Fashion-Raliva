@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
             'role' => \App\Http\Middleware\EnsureRole::class,
             'permission' => \App\Http\Middleware\EnsurePermission::class,
+            'store-active' => \App\Http\Middleware\EnsureStoreActive::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

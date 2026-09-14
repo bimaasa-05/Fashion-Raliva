@@ -30,6 +30,7 @@
 </div>
 
 <div data-real class="hidden space-y-6">
+    @include('partials.banner-suspended')
     <section class="rise card-static bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 card-premium">
         <div class="flex items-center gap-3">
             <div class="w-11 h-11 rounded-xl bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
