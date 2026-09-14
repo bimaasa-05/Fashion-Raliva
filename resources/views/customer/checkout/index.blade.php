@@ -400,6 +400,21 @@
     .co-step:not(.active):not(.done) { color: var(--text-muted); }
     .co-step-line { width:32px; height:1px; background:var(--border-soft); }
     .co-step-line.done { background:#8B1E3F; }
+    /* rincian pesanan dropdown */
+    .co-rincian-toggle {
+        display:inline-flex; align-items:center; justify-content:center; gap:.4rem;
+        height:34px; padding:0 .9rem; border-radius:9999px;
+        border:1px solid var(--border-soft); background:var(--surface-warm);
+        color:var(--chrome-text-dim); cursor:pointer;
+        transition: background .18s ease, border-color .18s ease, color .18s ease;
+    }
+    .co-rincian-toggle:hover, .co-rincian-toggle.open { border-color:#8B1E3F; color:#8B1E3F; }
+    .co-rincian-label { font-family:'Manrope',sans-serif; font-size:12px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; white-space:nowrap; }
+    .co-rincian-toggle .material-symbols-outlined { font-size:20px; transition: transform .35s ease; }
+    .co-rincian-toggle.open .material-symbols-outlined { transform: rotate(180deg); }
+    .co-more-wrap { display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s ease; }
+    .co-more-wrap > div { overflow:hidden; min-height:0; }
+    .co-more-wrap.open { grid-template-rows:1fr; }
 </style>
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-10 lg:pl-72">
@@ -527,11 +542,26 @@
                 </div>
 
                 {{-- ========== RINCIAN PESANAN ========== --}}
+                @php
+                    $coShowCount = $items->count();
+                    $coTop = $items->slice(0, 3);
+                    $coMore = $coShowCount > 3 ? $items->slice(3) : collect();
+                @endphp
                 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up min-w-0">
-                    <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN PESANAN') }}</p>
-                    <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Rincian Pesanan') }}</h3>
+                    <div class="flex items-start justify-between gap-sm mb-md">
+                        <div class="min-w-0">
+                            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN PESANAN') }}</p>
+                            <h3 class="premium-heading font-title-md text-title-md text-on-surface">{{ __('Rincian Pesanan') }}</h3>
+                        </div>
+                        @if($coShowCount > 3)
+                        <button id="co-rincian-toggle" type="button" aria-expanded="false" aria-controls="co-rincian-more" aria-label="{{ __('Tampilkan semua produk') }}" data-label-open="{{ __('Show less') }}" data-label-close="{{ __('Show more') }}" class="co-rincian-toggle shrink-0" onclick="coToggleRincian(this)">
+                            <span class="co-rincian-label">{{ __('Show more') }}</span>
+                            <span class="material-symbols-outlined">expand_more</span>
+                        </button>
+                        @endif
+                    </div>
                     <div class="grid grid-cols-2 lg:grid-cols-3 gap-md">
-                    @forelse ($items as $i)
+                    @forelse ($coTop as $i)
                     @php
                         $pv = $i->productVariant;
                         $pr = $pv?->product;
@@ -555,6 +585,33 @@
                         </div>
                     @endforelse
                     </div>
+                    @if($coShowCount > 3)
+                    <div id="co-rincian-more" class="co-more-wrap" aria-hidden="true">
+                        <div>
+                            <div class="grid grid-cols-2 lg:grid-cols-3 gap-md mt-md">
+                            @foreach ($coMore as $i)
+                            @php
+                                $pv = $i->productVariant;
+                                $pr = $pv?->product;
+                                $img = $pr?->images->first()?->file_gambar ?? '';
+                                $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/checkout/600/800';
+                            @endphp
+                                <div class="flex flex-col bg-surface-container border border-[var(--border-soft)] rounded-lg overflow-hidden">
+                                    <div class="relative w-full aspect-[3/4] bg-surface-container-high overflow-hidden">
+                                        <img class="w-full h-full object-cover" loading="lazy" alt="{{ $pr?->nama_produk ?? __('Produk') }}" src="{{ $imgUrl }}"/>
+                                    </div>
+                                    <div class="flex flex-col flex-1 min-w-0 gap-1 p-sm">
+                                        <p class="font-body-sm text-body-sm text-on-surface font-semibold truncate">{{ $pr?->nama_produk ?? __('Produk') }}</p>
+                                        <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ trim(($pv?->warna ?? '') . ' · ' . ($pv?->ukuran ?? ''), ' ·') }}</p>
+                                        <p class="font-body-sm text-body-sm text-on-surface font-semibold mt-auto">Rp {{ number_format((float)$i->harga_snapshot, 0, ',', '.') }}</p>
+                                        <p class="font-label-sm text-label-sm text-on-surface-variant">×{{ $i->quantity }}</p>
+                                    </div>
+                                </div>
+                            @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                 </div>
 
                 {{-- ========== CATATAN OPSIONAL — terpisah ========== --}}
@@ -643,6 +700,21 @@
 @include('customer._partials.drawer')
 
 <script>
+    if (typeof coToggleRincian !== 'function') {
+        function coToggleRincian(btn) {
+            var wrap = document.getElementById('co-rincian-more');
+            if (!wrap) return;
+            var open = wrap.classList.toggle('open');
+            btn.classList.toggle('open', open);
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            wrap.setAttribute('aria-hidden', open ? 'false' : 'true');
+            var label = btn.querySelector('.co-rincian-label');
+            if (label) label.textContent = open ? btn.getAttribute('data-label-open') : btn.getAttribute('data-label-close');
+        }
+    }
+</script>
+
+<script>
     document.addEventListener('DOMContentLoaded', function () {
         var els = document.querySelectorAll('.reveal-up');
         if (!('IntersectionObserver' in window)) {
@@ -689,6 +761,7 @@
         document.querySelectorAll('.btn-gold,.btn-place').forEach(function(b){
             b.addEventListener('click', function(){ b.classList.remove('flashing'); void b.offsetWidth; b.classList.add('flashing'); setTimeout(function(){ b.classList.remove('flashing'); },600); });
         });
+        // rincian pesanan dropdown (tampil >3 produk) - lihat coToggleRincian() di script bawah
     });
 </script>
 
