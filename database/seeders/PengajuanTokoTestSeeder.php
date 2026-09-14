@@ -106,14 +106,16 @@ class PengajuanTokoTestSeeder extends Seeder
 
     private function doc(int $storeId, string $jenis, string $status, ?string $catatan = null): void
     {
+        $path = 'store-documents/' . $storeId . '/' . $jenis . '.pdf';
         StoreDocument::updateOrCreate(
             ['store_id' => $storeId, 'jenis' => $jenis],
             [
-                'path' => 'store-documents/' . $storeId . '/' . $jenis . '.pdf',
+                'path' => $path,
                 'status' => $status,
                 'catatan' => $catatan,
             ]
         );
+        \App\Support\DemoStoreDoc::ensure($path);
     }
 
     private function notif(int $userId, string $tipe, string $judul, string $pesan, ?string $url): void

@@ -172,41 +172,47 @@
     <section data-reveal class="lg:col-span-1 bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Perlu Perhatian</h2>
         <ul class="flex flex-col gap-4">
-            <li class="flex items-center justify-between group cursor-pointer pb-4 border-b border-muted-border last:border-0 last:pb-0">
-                <div class="flex items-center gap-4">
-                    <div class="w-11 h-11 rounded-full bg-secondary-container flex items-center justify-center text-white shrink-0 shadow-sm">
-                        <span class="material-symbols-outlined">store_mall_directory</span>
+            <li class="border-b border-muted-border last:border-0 last:pb-0">
+                <a href="{{ route('superadmin.manajemen-toko', ['status' => 'pending']) }}" class="flex items-center justify-between group cursor-pointer pb-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-full bg-secondary-container flex items-center justify-center text-white shrink-0 shadow-sm">
+                            <span class="material-symbols-outlined">store_mall_directory</span>
+                        </div>
+                        <div>
+                            <span class="font-title-md text-title-md text-on-surface block">Verifikasi Toko</span>
+                            <span class="text-on-surface-variant font-body-md text-sm"><span data-count="{{ $perhatian['toko'] }}">{{ number_format($perhatian['toko']) }}</span> permintaan menunggu</span>
+                        </div>
                     </div>
-                    <div>
-                        <span class="font-title-md text-title-md text-on-surface block">Verifikasi Toko</span>
-                        <span class="text-on-surface-variant font-body-md text-sm"><span data-count="{{ $perhatian['toko'] }}">{{ number_format($perhatian['toko']) }}</span> permintaan menunggu</span>
-                    </div>
-                </div>
-                <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
+                    <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
+                </a>
             </li>
-            <li class="flex items-center justify-between group cursor-pointer pb-4 border-b border-muted-border last:border-0 last:pb-0">
-                <div class="flex items-center gap-4">
-                    <div class="w-11 h-11 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface shrink-0 shadow-sm">
-                        <span class="material-symbols-outlined">inventory_2</span>
+            <li class="border-b border-muted-border last:border-0 last:pb-0">
+                <a href="{{ route('superadmin.moderasi-produk') }}" class="flex items-center justify-between group cursor-pointer pb-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface shrink-0 shadow-sm">
+                            <span class="material-symbols-outlined">inventory_2</span>
+                        </div>
+                        <div>
+                            <span class="font-title-md text-title-md text-on-surface block">Moderasi Produk</span>
+                            <span class="text-on-surface-variant font-body-md text-sm"><span data-count="{{ $perhatian['produk'] }}">{{ number_format($perhatian['produk']) }}</span> item ditandai</span>
+                        </div>
                     </div>
-                    <div>
-                        <span class="font-title-md text-title-md text-on-surface block">Moderasi Produk</span>
-                        <span class="text-on-surface-variant font-body-md text-sm"><span data-count="{{ $perhatian['produk'] }}">{{ number_format($perhatian['produk']) }}</span> item ditandai</span>
-                    </div>
-                </div>
-                <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
+                    <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
+                </a>
             </li>
-            <li class="flex items-center justify-between group cursor-pointer pb-4 border-b border-muted-border last:border-0 last:pb-0">
-                <div class="flex items-center gap-4">
-                    <div class="w-11 h-11 rounded-full bg-error-container flex items-center justify-center text-on-error-container shrink-0 shadow-sm">
-                        <span class="material-symbols-outlined">currency_exchange</span>
+            <li class="border-b border-muted-border last:border-0 last:pb-0">
+                <a href="{{ route('superadmin.pengembalian-dana') }}" class="flex items-center justify-between group cursor-pointer pb-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-full bg-error-container flex items-center justify-center text-on-error-container shrink-0 shadow-sm">
+                            <span class="material-symbols-outlined">currency_exchange</span>
+                        </div>
+                        <div>
+                            <span class="font-title-md text-title-md text-on-surface block">Permintaan Refund</span>
+                            <span class="text-on-surface-variant font-body-md text-sm"><span data-count="{{ $perhatian['refund'] }}">{{ number_format($perhatian['refund']) }}</span> menunggu tinjauan</span>
+                        </div>
                     </div>
-                    <div>
-                        <span class="font-title-md text-title-md text-on-surface block">Permintaan Refund</span>
-                        <span class="text-on-surface-variant font-body-md text-sm"><span data-count="{{ $perhatian['refund'] }}">{{ number_format($perhatian['refund']) }}</span> menunggu tinjauan</span>
-                    </div>
-                </div>
-                <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
+                    <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
+                </a>
             </li>
         </ul>
     </section>
