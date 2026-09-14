@@ -796,9 +796,9 @@
                                 @csrf
                                 <input type="hidden" name="payment_method_id" id="input-payment-method"
                                     value="{{ old('payment_method_id', $payment->payment_method_id) }}" />
-                                <input type="hidden" name="payment_method_account_id" id="input-account-id"
-                                    value="{{ old('payment_method_account_id', $payment->payment_method_account_id) }}" />
+                                <input type="hidden" name="payment_account_id" id="input-account-id"
 
+                                    value="{{ old('payment_account_id', $payment->payment_account_id) }}" />
                                 @if ($paymentMethods->isEmpty())
                                     <p class="font-body-sm text-body-sm text-on-surface-variant">
                                         {{ __('Belum ada metode pembayaran aktif. Hubungi admin.') }}</p>
@@ -821,7 +821,7 @@
                                                 data-id="{{ $pm->payment_method_id }}"
                                                 data-nama="{{ $pm->nama_metode }}"
                                                 data-kode="{{ $pm->kode_metode }}"
-                                                data-account-id="{{ $qrAccount?->payment_method_account_id ?? '' }}">
+                                                data-account-id="{{ $qrAccount?->platform_bank_account_id ?? '' }}">
                                                 <span
                                                     class="material-symbols-outlined text-[28px]">{{ $icon }}</span>
                                                 <span
@@ -889,10 +889,10 @@
                                                         <div class="grid grid-cols-2 gap-md"
                                                             id="grid-{{ $kode }}">
                                                             @foreach ($accts as $a)
-                                                                @php $sel = (string) ($payment->payment_method_account_id ?? '') === (string) $a->payment_method_account_id; @endphp
+                                                                @php $sel = (string) ($payment->payment_account_id ?? '') === (string) $a->platform_bank_account_id; @endphp
                                                                 <div class="account-opt border border-outline-variant rounded-lg p-sm flex flex-col items-center gap-sm text-center cursor-pointer hover:border-secondary transition-colors{{ $sel ? ' border-secondary bg-secondary/5 ring-1 ring-secondary/20' : '' }}"
                                                                     data-panel="{{ $kode }}"
-                                                                    data-account-id="{{ $a->payment_method_account_id }}"
+                                                                    data-account-id="{{ $a->platform_bank_account_id }}"
                                                                     data-nama="{{ $a->nama }}"
                                                                     data-rekening="{{ $a->nomor_rekening ?? '-' }}"
                                                                     data-pemilik="{{ $a->nama_pemilik ?? '-' }}">
