@@ -133,6 +133,26 @@
                 <label class="raliva-label" for="catatan">Catatan untuk Produksi</label>
                 <textarea class="raliva-textarea" id="catatan" name="catatan" rows="3" placeholder="Contoh: prioritas warna hitam, ukuran 28-34..."></textarea>
             </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                <div>
+                    <label class="raliva-label" for="order-id">Pesan dari Order (opsional)</label>
+                    <select class="raliva-select" id="order-id" name="order_id">
+                        <option value="">— Tanpa Order —</option>
+                        @foreach(($pendingOrders ?? collect()) as $o)
+                            <option value="{{ $o->order_id }}">{{ $o->nomor_order ?? '#'.$o->order_id }} — {{ $o->items->map(fn($it) => $it->productVariant?->product?->nama_produk ?? '-')->implode(', ') }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="raliva-label" for="prioritas">Prioritas</label>
+                    <select class="raliva-select" id="prioritas" name="prioritas">
+                        <option value="normal" selected>Normal</option>
+                        <option value="rendah">Rendah</option>
+                        <option value="tinggi">Tinggi</option>
+                        <option value="urgent">Urgent</option>
+                    </select>
+                </div>
+            </div>
             <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
                 <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
                 <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Kirim Pengajuan</button>

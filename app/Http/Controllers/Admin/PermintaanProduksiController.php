@@ -72,7 +72,7 @@ class PermintaanProduksiController extends Controller
             'nomor_produksi' => 'PRD-'.date('ymd').'-'.strtoupper(substr(md5(uniqid()),0,4)),
             'prioritas' => $data['prioritas'] ?? ProductionOrder::PRIORITAS_NORMAL,
             'status' => ProductionOrder::STATUS_REQUESTED,
-            'catatan' => trim(($data['catatan'] ?? '').($data['order_id'] ? ' (dari Order #'.$data['order_id'].')' : '').($data['tanggal_mulai'] ? " Target {$data['tanggal_mulai']} s/d {$data['tanggal_selesai']}" : '')),
+            'catatan' => trim(($data['catatan'] ?? '').(($data['order_id'] ?? null) ? ' (dari Order #'.$data['order_id'].')' : '').($data['tanggal_mulai'] ? " Target {$data['tanggal_mulai']} s/d {$data['tanggal_selesai']}" : '')),
             'dimulai_pada' => $data['tanggal_mulai'] ?? now(),
             'selesai_pada' => $data['tanggal_selesai'] ?? null,
         ]);

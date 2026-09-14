@@ -362,6 +362,10 @@
 </p>
 @endif
 
+@if ($order->status === \App\Models\Order::STATUS_PENDING_PAYMENT && $order->checkout?->payment?->batas_waktu)
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-md">{{ __('Batas pembayaran') }}: <strong class="text-on-surface">{{ $order->checkout->payment->batas_waktu->format('d M Y, H:i') }}</strong></p>
+@endif
+
 <div class="flex flex-wrap justify-between items-end gap-sm mt-md pt-md border-t border-outline-variant/40">
 <div>
 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Total') }}</p>
@@ -373,9 +377,15 @@
 <span class="material-symbols-outlined text-[16px]">report</span>{{ __('Komplain') }}
 </a>
 @endif
+@if ($order->status === \App\Models\Order::STATUS_PENDING_PAYMENT)
+<a href="{{ route('customer.checkout.payment', $order->checkout_id) }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest">
+<span class="material-symbols-outlined text-[16px]">payments</span>{{ __('Lanjutkan Pembayaran') }}
+</a>
+@elseif (! in_array($order->status, [\App\Models\Order::STATUS_DIBATALKAN, \App\Models\Order::STATUS_REFUND], true))
 <a href="{{ route('customer.order-tracking', ['order' => $order->order_id]) }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest">
 <span class="material-symbols-outlined text-[16px]">local_shipping</span>{{ __('Lacak Pengiriman') }}
 </a>
+@endif
 </div>
 </div>
 </div>

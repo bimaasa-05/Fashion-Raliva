@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
+use App\Models\PaymentMethodAccount;
 use App\Models\PaymentProof;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -356,12 +357,13 @@ class CheckoutController extends Controller
 
         $checkoutModel = Checkout::where('checkout_id', $checkout)
             ->where('user_id', Auth::id())
-            ->with(['orders.store:store_id,nama_toko', 'payment.paymentMethod'])
+            ->with(['orders.store:store_id,nama_toko', 'payment.paymentMethod', 'payment.account', 'payment.proofs'])
             ->firstOrFail();
 
         $payment = $checkoutModel->payment;
 
-        $paymentMethods = PaymentMethod::where('status', PaymentMethod::STATUS_AKTIF)
+        $paymentMethods = PaymentMethod::with('accounts')
+            ->where('status', PaymentMethod::STATUS_AKTIF)
             ->orderBy('payment_method_id')
             ->get();
 
@@ -420,6 +422,7 @@ class CheckoutController extends Controller
 
         $validated = $request->validate([
             'payment_method_id' => 'required|integer|exists:payment_methods,payment_method_id',
+            'payment_method_account_id' => 'nullable|integer|exists:payment_method_accounts,payment_method_account_id',
             'bukti' => 'required|image|mimes:jpeg,png,jpg|max:4096',
         ], [
             'payment_method_id.required' => 'Pilih metode pembayaran terlebih dahulu.',
@@ -434,16 +437,32 @@ class CheckoutController extends Controller
             return back()->with('toast', ['message' => 'Metode pembayaran tidak tersedia.', 'icon' => 'gpp_maybe']);
         }
 
+        $account = null;
+        if (! empty($validated['payment_method_account_id'])) {
+            $account = PaymentMethodAccount::where('payment_method_account_id', $validated['payment_method_account_id'])
+                ->where('payment_method_id', $paymentMethod->payment_method_id)
+                ->where('status', PaymentMethodAccount::STATUS_AKTIF)
+                ->first();
+            if (! $account) {
+                return back()->with('toast', ['message' => 'Tujuan pembayaran tidak cocok dengan metode dipilih.', 'icon' => 'gpp_maybe']);
+            }
+        }
+
         $fileName = 'bukti-'.$checkoutModel->checkout_id.'-'.time().'.'.$validated['bukti']->extension();
         $path = $validated['bukti']->storeAs('payment_proofs', $fileName, 'public');
 
-        DB::transaction(function () use ($payment, $paymentMethod, $path, $validated) {
+        DB::transaction(function () use ($payment, $paymentMethod, $account, $path, $validated) {
+            $updatePayload = [];
             if (is_null($payment->payment_method_id)) {
                 $batas = $paymentMethod->batas_waktu_menit > 0 ? $paymentMethod->batas_waktu_menit : 1440;
-                $payment->update([
-                    'payment_method_id' => $paymentMethod->payment_method_id,
-                    'batas_waktu' => now()->addMinutes($batas),
-                ]);
+                $updatePayload['payment_method_id'] = $paymentMethod->payment_method_id;
+                $updatePayload['batas_waktu'] = now()->addMinutes($batas);
+            }
+            if ($account) {
+                $updatePayload['payment_method_account_id'] = $account->payment_method_account_id;
+            }
+            if ($updatePayload) {
+                $payment->update($updatePayload);
             }
             PaymentProof::create([
                 'payment_id' => $payment->payment_id,
