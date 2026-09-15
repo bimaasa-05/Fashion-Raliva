@@ -194,6 +194,11 @@
 .acc-ew-brand.ovo { --brand: #4C2E8D; --brand-rgb: 76, 46, 141; }
 .acc-ew-brand.shopeepay { --brand: #EE4D2D; --brand-rgb: 238, 77, 45; }
 
+.acc-bank-brand.bca { --brand: #0060AE; --brand-rgb: 0, 96, 174; }
+.acc-bank-brand.bri { --brand: #00529C; --brand-rgb: 0, 82, 156; }
+.acc-bank-brand.bni { --brand: #F7941E; --brand-rgb: 247, 148, 30; }
+.acc-bank-brand.mandiri { --brand: #FFC400; --brand-rgb: 255, 196, 0; }
+
 .ew-accounts-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1085,31 +1090,36 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                             class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
                                                             {{ __('Pilih salah satu') }}
                                                             {{ $pm->nama_metode }}:</p>
-                                                        <div class="grid grid-cols-2 gap-md"
-                                                            id="grid-{{ $kode }}">
+                                                        <div class="ew-accounts-grid" id="grid-{{ $kode }}">
                                                             @foreach ($accts as $a)
                                                                 @php $sel = (string) ($payment->payment_method_account_id ?? '') === (string) $a->payment_method_account_id; @endphp
-                                                                <div class="account-opt border border-outline-variant rounded-lg p-sm flex flex-col items-center gap-sm text-center cursor-pointer hover:border-secondary transition-colors{{ $sel ? ' border-secondary bg-secondary/5 ring-1 ring-secondary/20' : '' }}"
-                                                                    data-panel="{{ $kode }}"
-                                                                    data-account-id="{{ $a->payment_method_account_id }}"
-                                                                    data-nama="{{ $a->nama }}"
-                                                                    data-rekening="{{ $a->nomor_rekening ?? '-' }}"
-                                                                    data-pemilik="{{ $a->nama_pemilik ?? '-' }}">
-                                                                    <img src="{{ asset($brandIcons[$a->kode]) }}"
-                                                                        alt="{{ $a->nama }}" class="h-9 object-contain" />
-                                                                    <span
-                                                                        class="text-sm leading-tight">{{ $a->nama }}</span>
+                                                                <div class="ew-card-wrap{{ $sel ? ' ew-active' : '' }}" data-kode="{{ $a->kode }}">
+                                                                    <div class="account-opt account-opt-ew acc-bank-brand {{ $a->kode }}{{ $sel ? ' selected' : '' }}"
+                                                                        data-panel="{{ $kode }}"
+                                                                        data-account-id="{{ $a->payment_method_account_id }}"
+                                                                        data-nama="{{ $a->nama }}"
+                                                                        data-rekening="{{ $a->nomor_rekening ?? '-' }}"
+                                                                        data-pemilik="{{ $a->nama_pemilik ?? '-' }}">
+                                                                        <img src="{{ asset($brandIcons[$a->kode]) }}"
+                                                                            alt="{{ $a->nama }}" class="h-7 object-contain" />
+                                                                        <span
+                                                                            class="ew-brand-name text-xs leading-tight mt-1">{{ $a->nama }}</span>
+                                                                        <div class="ew-card-detail">
+                                                                            <div class="ew-card-detail-inner">
+                                                                                <p class="ew-detail-nama">{{ $a->nama }}</p>
+                                                                                <p class="ew-detail-line">
+                                                                                    <span>{{ __('Nomor Rekening') }}:</span>
+                                                                                    <strong>{{ $a->nomor_rekening ?? '-' }}</strong>
+                                                                                </p>
+                                                                                <p class="ew-detail-line">
+                                                                                    <span>{{ __('Atas nama') }}:</span>
+                                                                                    <strong>{{ $a->nama_pemilik ?? '-' }}</strong>
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             @endforeach
-                                                        </div>
-                                                        <div id="account-detail-{{ $kode }}"
-                                                            class="hidden border border-outline-variant rounded-lg p-md bg-surface-container-low/50">
-                                                            <p id="account-detail-nama-{{ $kode }}"
-                                                                class="font-body-sm text-body-sm text-on-surface font-semibold"></p>
-                                                            <p id="account-detail-rekening-{{ $kode }}"
-                                                                class="font-body-sm text-body-sm text-on-surface mt-xs"></p>
-                                                            <p id="account-detail-pemilik-{{ $kode }}"
-                                                                class="font-body-sm text-body-sm text-on-surface-variant mt-xs"></p>
                                                         </div>
                                                     </div>
                                                 @endif
@@ -1345,7 +1355,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             var selectAccount = function(opt) {
     if (opt.classList.contains('account-opt-ew')) {
         var wrap = opt.closest('.ew-card-wrap');
-        var ewGrid = document.getElementById('grid-ewallet');
+        var ewGrid = opt.closest('.ew-accounts-grid');
         var isAlreadySelected = opt.classList.contains('selected');
 
         // Jika diklik kembali -> Jalankan animasi bubble tertutup
@@ -1354,26 +1364,28 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             
             setTimeout(function() {
                 opt.classList.remove('selected', 'closing');
-                wrap.classList.remove('ew-active');
-                ewGrid.classList.remove('ew-expanded');
+                if (wrap) wrap.classList.remove('ew-active');
+                if (ewGrid) ewGrid.classList.remove('ew-expanded');
                 if (accountInput) accountInput.value = '';
                 if (rincianAkun) rincianAkun.textContent = '';
             }, 200); // Penundaan sejenak mengikuti durasi animasi closing
             return;
         }
 
-        // Reset semua kartu lain
-        document.querySelectorAll('#grid-ewallet .ew-card-wrap').forEach(function(w) {
-            w.classList.remove('ew-active');
-        });
-        document.querySelectorAll('#grid-ewallet .account-opt-ew').forEach(function(o) {
-            o.classList.remove('selected', 'closing');
-        });
+        // Reset semua kartu lain dalam grid yang sama
+        if (ewGrid) {
+            ewGrid.querySelectorAll('.ew-card-wrap').forEach(function(w) {
+                w.classList.remove('ew-active');
+            });
+            ewGrid.querySelectorAll('.account-opt-ew').forEach(function(o) {
+                o.classList.remove('selected', 'closing');
+            });
+        }
 
         // Tampilkan kartu yang diklik dengan animasi mekar
-        wrap.classList.add('ew-active');
+        if (wrap) wrap.classList.add('ew-active');
         opt.classList.add('selected');
-        ewGrid.classList.add('ew-expanded');
+        if (ewGrid) ewGrid.classList.add('ew-expanded');
 
         if (accountInput) accountInput.value = opt.getAttribute('data-account-id');
         if (rincianAkun) rincianAkun.textContent = opt.getAttribute('data-nama') || '';
@@ -1426,13 +1438,13 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                     if (kode === 'qris') {
                         var autoAcc = sel.getAttribute('data-account-id');
                         if (autoAcc && accountInput && !accountInput.value) accountInput.value = autoAcc;
-                    } else if (kode === 'ewallet') {
-                        var selEw = document.querySelector('#grid-ewallet .account-opt-ew.selected');
+                    } else if (kode === 'ewallet' || kode === 'bank_transfer') {
+                        var gridEl = document.getElementById('grid-' + kode);
+                        var selEw = gridEl ? gridEl.querySelector('.account-opt-ew.selected') : null;
                         if (selEw) {
                             var parentWrap = selEw.closest('.ew-card-wrap');
-                            var parentGrid = document.getElementById('grid-ewallet');
                             if (parentWrap) parentWrap.classList.add('ew-active');
-                            if (parentGrid) parentGrid.classList.add('ew-expanded');
+                            if (gridEl) gridEl.classList.add('ew-expanded');
                             if (accountInput && !accountInput.value) accountInput.value = selEw.getAttribute('data-account-id');
                         }
                     } else {
