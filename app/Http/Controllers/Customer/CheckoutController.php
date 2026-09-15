@@ -18,6 +18,7 @@ use App\Models\ProductVariant;
 use App\Models\Role;
 use App\Models\Store;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -488,6 +489,15 @@ return view('customer.checkout.selesai', [
             'judul' => 'Bukti Pembayaran Diunggah',
             'pesan' => 'Bukti pembayaran Anda sedang diverifikasi oleh admin.',
         ]);
+
+        NotificationService::sendToRole(
+            Role::ADMIN,
+            Notification::TIPE_PEMBAYARAN,
+            'Bukti Pembayaran Baru',
+            sprintf('Customer mengunggah bukti pembayaran Rp %s untuk checkout #%d. Segera verifikasi.', number_format((float) $payment->jumlah, 0, ',', '.'), $checkoutModel->checkout_id),
+            Auth::id(),
+            route('admin.verifikasi-pembayaran')
+        );
 
         // Selalu redirect ke halaman Selesai setelah upload bukti
         $hasAkunBaru = $request->session()->has('akun_baru') || session()->has('akun_baru');
