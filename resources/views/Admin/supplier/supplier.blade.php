@@ -22,9 +22,9 @@
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">check_circle</span>
         </div>
         <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">Menunggu Verifikasi</span>
-            <span class="raliva-figure text-[26px] text-gold-accent relative">{{ $stats['menunggu'] ?? 0 }}</span>
-            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">Nonaktif</span>
+            <span class="raliva-figure text-[26px] text-error relative">{{ $stats['nonaktif'] ?? 0 }}</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">block</span>
         </div>
         <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">Jangkauan Kota</span>
@@ -63,7 +63,6 @@
                     <select data-table-filter="status" aria-label="Filter status" class="bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
                         <option value="semua">Semua Status</option>
                         <option value="aktif">Aktif</option>
-                        <option value="verifikasi">Verifikasi</option>
                         <option value="nonaktif">Non-aktif</option>
                     </select>
                     <button type="button" data-filter-reset class="px-3 py-2.5 border border-muted-border rounded-lg font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hover:text-on-surface hover:border-gold-accent transition-colors">Reset</button>
@@ -80,6 +79,7 @@
                         <th class="p-4 text-left">Kontak</th>
                         <th class="p-4 text-left">Kota</th>
                         <th class="p-4 text-center">Jenis Barang</th>
+                        <th class="p-4 text-center">Stok</th>
                         <th class="p-4 text-center">Status</th>
                         <th class="p-4 text-right">Aksi</th>
                     </tr>
@@ -92,11 +92,10 @@
                         <td class="p-4 text-on-surface-variant">{{ $s->kontak ?? '-' }}<br /><span class="text-xs">{{ $s->email ?? '' }}</span></td>
                         <td class="p-4 text-on-surface">{{ $s->kota ?? '-' }}</td>
                         <td class="p-4 text-center"><span class="px-2 py-1 rounded bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase tracking-wide">{{ $s->jenis ?? '-' }}</span></td>
+                        <td class="p-4 text-center text-on-surface font-mono">{{ $s->stok ?? 0 }}</td>
                         <td class="p-4 text-center">
                             @if($s->status === 'aktif')
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aktif</span>
-                            @elseif($s->status === 'verifikasi')
-                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-warning/15 text-warning text-[10px] font-bold uppercase border border-warning/30"><span class="material-symbols-outlined text-[12px]">hourglass_top</span>Verifikasi</span>
                             @else
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/25">Non-aktif</span>
                             @endif
@@ -107,7 +106,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="7" class="p-8 text-center text-on-surface-variant text-sm">Belum ada supplier.</td></tr>
+                    <tr><td colspan="8" class="p-8 text-center text-on-surface-variant text-sm">Belum ada supplier.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -159,13 +158,14 @@
                 </div>
             </div>
             <div>
+                <label class="raliva-label" for="supplierStok">Stok</label>
+                <input type="number" id="supplierStok" name="stok" min="0" value="0" placeholder="0" class="raliva-input" />
+            </div>
+            <div>
                 <label class="raliva-label">Status Kerja Sama</label>
-                <div class="grid grid-cols-3 gap-3">
+                <div class="grid grid-cols-2 gap-3">
                     <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                         <input type="radio" class="sr-only" name="status" value="aktif" checked /> Aktif
-                    </label>
-                    <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
-                        <input type="radio" class="sr-only" name="status" value="verifikasi" /> Verifikasi
                     </label>
                     <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                         <input type="radio" class="sr-only" name="status" value="nonaktif" /> Non-aktif
@@ -247,9 +247,13 @@
                 </div>
             </div>
             <div>
+                <label class="raliva-label" for="edit-stok-{{ $s->supplier_id }}">Stok</label>
+                <input type="number" id="edit-stok-{{ $s->supplier_id }}" name="stok" min="0" value="{{ $s->stok ?? 0 }}" placeholder="0" class="raliva-input" />
+            </div>
+            <div>
                 <label class="raliva-label">Status Kerja Sama</label>
-                <div class="grid grid-cols-3 gap-3">
-                    @foreach(['aktif' => 'Aktif', 'verifikasi' => 'Verifikasi', 'nonaktif' => 'Non-aktif'] as $val => $label)
+                <div class="grid grid-cols-2 gap-3">
+                    @foreach(['aktif' => 'Aktif', 'nonaktif' => 'Non-aktif'] as $val => $label)
                         <label class="flex items-center justify-center px-4 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                             <input type="radio" class="sr-only" name="status" value="{{ $val }}" {{ $s->status === $val ? 'checked' : '' }} /> {{ $label }}
                         </label>
