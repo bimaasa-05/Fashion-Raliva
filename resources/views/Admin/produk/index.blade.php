@@ -59,7 +59,7 @@
         @if ($products->isEmpty())
             <p class="text-on-surface-variant text-sm py-10 text-center">Tidak ada produk ditemukan.</p>
         @else
-        <div data-reveal-group class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter">
+        <div data-reveal-group class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-gutter">
             @forelse ($products as $p)
                 @php
                     $skuA = $p->variants->first()?->sku ?? '-';
@@ -73,7 +73,7 @@
                     $fotosA = $p->images->map(fn ($img) => $normFotoA($img->file_gambar))->values()->all();
                 @endphp
                 <article data-reveal data-adm-row data-status="{{ $statusA === 'aktif' ? 'disetujui' : $statusA }}" data-produk-id="{{ $p->product_id }}" data-produk-nama="{{ $p->nama_produk }}" data-produk-sku="{{ $skuA }}" data-produk-created="{{ $p->created_at?->translatedFormat('d M Y') }}" data-produk-harga="Rp {{ number_format((float) $p->harga_dasar, 0, ',', '.') }}" data-produk-kategori="{{ $p->category?->nama_kategori ?? '-' }}" data-produk-tipe="{{ ucfirst($p->tipe_produk ?? 'regular') }}" data-produk-varian="{{ $p->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}" data-produk-deskripsi="{{ $p->deskripsi }}" data-produk-status="{{ $statusA }}" data-produk-alasan="{{ $statusA === 'ditolak' ? ($p->alasan_penolakan ?? '') : '' }}" data-produk-images='@json($fotosA)' class="group bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium flex flex-col">
-                    <div class="relative aspect-[3/4] bg-surface-container-low overflow-hidden" data-produk-gallery>
+                    <div class="relative aspect-[3/4] bg-surface-container-low overflow-hidden max-h-48" data-produk-gallery>
                         @if (count($fotosA))
                             <div class="block w-full h-full" data-produk-main>
                                 <img src="{{ $fotosA[0] }}" alt="{{ $p->nama_produk }}" data-produk-main-img class="w-full h-full object-cover transition-opacity duration-300" loading="lazy" />
@@ -368,12 +368,20 @@
             <div class="grid grid-cols-2 gap-gutter">
                 <div>
                     <label for="fp-kategori" class="block raliva-label mb-2">Kategori</label>
-                    <select id="fp-kategori" name="category_id" class="raliva-select">
-                        <option value="">— Pilih —</option>
-                        @foreach ($categories as $c)
-                            <option value="{{ $c->category_id }}">{{ $c->nama_kategori }}</option>
-                        @endforeach
-                    </select>
+                    <div class="flex gap-2">
+                        <select id="fp-kategori" name="category_id" class="raliva-select flex-1">
+                            <option value="">— Pilih —</option>
+                            @foreach ($categories as $c)
+                                <option value="{{ $c->category_id }}">{{ $c->nama_kategori }}</option>
+                            @endforeach
+                        </select>
+                        <button type="button" onclick="document.getElementById('form-tambah-kategori').classList.toggle('hidden')" class="px-3 py-2 border border-gold-accent/40 text-gold-accent rounded-lg text-xs whitespace-nowrap">+ Kategori</button>
+                    </div>
+                    <form id="form-tambah-kategori" method="POST" action="{{ route('admin.kategori.store') }}" class="hidden mt-2 flex gap-2">
+                        @csrf
+                        <input type="text" name="nama_kategori" placeholder="Nama kategori baru" required class="raliva-input flex-1 text-sm" />
+                        <button type="submit" class="px-3 py-2 bg-deep-onyx text-on-primary text-xs rounded">Simpan</button>
+                    </form>
                 </div>
                 <div>
                     <label for="fp-harga" class="block raliva-label mb-2">Harga (Rp)</label>
@@ -387,10 +395,22 @@
             <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">Variasi &amp; Stok</p>
             <div>
                 <p class="raliva-label mb-2">Ukuran</p>
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-2" id="ukuran-chips">
                     @foreach (['XS', 'S', 'M', 'L', 'XL', 'XXL', 'All Size'] as $size)
                         <button type="button" class="ukuran-chip px-4 py-2 rounded-lg border border-muted-border text-xs font-medium text-on-surface hover:border-gold-accent transition-colors" data-size="{{ $size }}">{{ $size }}</button>
                     @endforeach
+                    <button type="button" onclick="document.getElementById('custom-size-fields').classList.toggle('hidden')" class="px-4 py-2 rounded-lg border border-dashed border-gold-accent/40 text-gold-accent text-xs font-medium hover:bg-gold-accent/5 transition-colors">+ Custom</button>
+                </div>
+                <div id="custom-size-fields" class="hidden mt-3 p-3 border border-muted-border rounded-lg bg-surface-container-low space-y-2">
+                    <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Ukuran Custom (isi yang relevan)</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        <input type="number" name="custom_ld" placeholder="Lingkar Dada (cm)" class="raliva-input text-sm" />
+                        <input type="number" name="custom_pb" placeholder="Panjang Baju (cm)" class="raliva-input text-sm" />
+                        <input type="number" name="custom_lb" placeholder="Lebar Bahu (cm)" class="raliva-input text-sm" />
+                        <input type="number" name="custom_lt" placeholder="Lingkar Tangan (cm)" class="raliva-input text-sm" />
+                        <input type="number" name="custom_pl" placeholder="Panjang Lengan (cm)" class="raliva-input text-sm" />
+                    </div>
+                    <button type="button" onclick="addCustomSize()" class="px-3 py-1.5 bg-deep-onyx text-on-primary text-xs rounded">Tambah Ukuran Custom</button>
                 </div>
                 <input type="hidden" name="ukuran_terpilih" id="ukuran-terpilih" />
             </div>
@@ -434,10 +454,44 @@ document.querySelectorAll('.ukuran-chip').forEach(btn=>{
         btn.classList.toggle('bg-gold-accent');
         btn.classList.toggle('text-white');
         btn.classList.toggle('border-gold-accent');
-        const selected = Array.from(document.querySelectorAll('.ukuran-chip.bg-gold-accent')).map(b=>b.dataset.size || b.textContent.trim());
-        document.getElementById('ukuran-terpilih').value = selected.join(',');
+        updateUkuranTerpilih();
     });
 });
+
+function updateUkuranTerpilih() {
+    const selected = Array.from(document.querySelectorAll('.ukuran-chip.bg-gold-accent')).map(b=>b.dataset.size || b.textContent.trim());
+    document.getElementById('ukuran-terpilih').value = selected.join(',');
+}
+
+function addCustomSize() {
+    const ld = document.querySelector('[name="custom_ld"]').value;
+    const pb = document.querySelector('[name="custom_pb"]').value;
+    const lb = document.querySelector('[name="custom_lb"]').value;
+    const lt = document.querySelector('[name="custom_lt"]').value;
+    const pl = document.querySelector('[name="custom_pl"]').value;
+    const parts = [];
+    if (ld) parts.push('LD=' + ld);
+    if (pb) parts.push('PB=' + pb);
+    if (lb) parts.push('LB=' + lb);
+    if (lt) parts.push('LT=' + lt);
+    if (pl) parts.push('PL=' + pl);
+    if (parts.length === 0) { alert('Isi minimal 1 ukuran custom.'); return; }
+    const label = parts.join(' / ');
+    const container = document.getElementById('ukuran-chips');
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'ukuran-chip px-4 py-2 rounded-lg border border-gold-accent bg-gold-accent text-white text-xs font-medium';
+    chip.dataset.size = label;
+    chip.textContent = label;
+    chip.addEventListener('click', function() {
+        this.remove();
+        updateUkuranTerpilih();
+    });
+    container.insertBefore(chip, container.lastElementChild);
+    updateUkuranTerpilih();
+    // Reset inputs
+    document.querySelectorAll('[name^="custom_"]').forEach(i => i.value = '');
+}
 </script>
 @endpush
 @endsection
