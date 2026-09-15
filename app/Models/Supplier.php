@@ -17,6 +17,7 @@ class Supplier extends Model
         'kota',
         'jenis',
         'catatan',
+        'stok',
         'status',
     ];
 
