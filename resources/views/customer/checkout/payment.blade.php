@@ -774,6 +774,32 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             background: #8B1E3F;
         }
 
+        /* Spinner loading untuk step belum dicapai */
+        .co-step .num.loading {
+            border: 2px solid var(--border-soft);
+            border-top-color: #8B1E3F;
+            background: transparent !important;
+            color: transparent !important;
+            animation: co-spin 0.75s linear infinite;
+        }
+        .co-step .num.loading::after {
+            content: '';
+            display: none;
+        }
+        @keyframes co-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Step yang sudah selesai (done) bisa diklik untuk kembali */
+        .co-step.done {
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity .2s ease;
+        }
+        .co-step.done:hover {
+            opacity: .75;
+        }
+
         .pay-method {
             display: flex;
             flex-direction: column;
@@ -892,8 +918,12 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                         {{ __('Review') }}</a>
                     <span class="co-step-line done"></span>
                     <span class="co-step active"><span class="num">2</span> {{ __('Bayar') }}</span>
-                    <span class="co-step-line"></span>
-                    <span class="co-step"><span class="num">3</span> {{ __('Selesai') }}</span>
+                    <span class="co-step-line {{ $maxStep >= 3 ? 'done' : '' }}"></span>
+                    @if($maxStep >= 3)
+                        <a href="{{ route('customer.checkout.selesai', $checkout->checkout_id) }}" class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Selesai') }}</a>
+                    @else
+                        <span class="co-step"><span class="num loading"></span> {{ __('Selesai') }}</span>
+                    @endif
                 </div>
             </div>
 
