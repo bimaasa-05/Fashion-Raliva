@@ -74,18 +74,14 @@ class DataProdukController extends Controller
                 'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => \App\Models\Notification::TIPE_PROMO,
                 'judul' => 'Produk Baru Diajukan',
-<<<<<<< HEAD
-                'pesan' => sprintf('Produk "%s" diajukan dan menunggu verifikasi SuperAdmin.', $product->nama_produk),
-=======
                 'pesan' => sprintf('Produk "%s" diajukan dan menunggu moderasi Super Admin.', $product->nama_produk),
->>>>>>> 805af2ec7afd202e60685487b80cc6e85225bde2
                 'url' => route('superadmin.moderasi-produk'),
             ]);
         }
         \App\Models\Notification::fireSelf(
             \App\Models\Notification::TIPE_PROMO,
-=======
->>>>>>> 805af2ec7afd202e60685487b80cc6e85225bde2
+            'Produk Diajukan',
+            sprintf('Produk "%s" diajukan ke Super Admin untuk verifikasi.', $product->nama_produk),
             route('admin.produk')
         );
 
