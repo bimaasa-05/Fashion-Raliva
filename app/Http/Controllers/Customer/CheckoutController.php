@@ -443,7 +443,7 @@ return view('customer.checkout.selesai', [
             return back()->with('toast', ['message' => 'Metode pembayaran tidak tersedia.', 'icon' => 'gpp_maybe']);
         }
 
-        if (in_array($paymentMethod->kode_metode, ['ewallet', 'bank_transfer'], true) && empty($validated['payment_method_account_id'])) {
+        if (in_array($paymentMethod->kode_metode, ['ewallet', 'bank_transfer'], true) && empty($validated['payment_account_id'])) {
             return back()->with('toast', ['message' => 'Pilih akun/tujuan pembayaran terlebih dahulu.', 'icon' => 'gpp_maybe']);
         }
 
