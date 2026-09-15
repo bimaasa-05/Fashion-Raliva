@@ -3,200 +3,401 @@
 @section('title', 'Data Produksi')
 
 @section('header-title', 'Data Produksi')
-@section('header-badge', '6 Berjalan')
-@section('header-subtitle', 'Mencatat detail produk, jumlah target, bahan dan status produksi.')
+@section('header-badge', $stats['diproses'] . ' Berjalan')
+@section('header-subtitle', 'Pesanan yang sedang menunggu produksi atau sedang diproses. Lihat bahan, tambah bahan, dan kelola status produksi.')
+
+@push('styles')
+<style>
+    .progress-track { background: var(--surface-container-high); border-radius: 999px; height: 8px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; border-radius: 999px; transition: width 0.6s ease-out; }
+    .countdown-badge { font-variant-numeric: tabular-nums; }
+</style>
+@endpush
 
 @section('content')
-<div data-skeleton class="space-y-section-gap">
-    <div class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
-        @for ($i = 0; $i < 4; $i++)
-            <div class="h-28 bg-surface-container-high rounded-lg animate-pulse"></div>
-        @endfor
+@include('partials.flash-toast')
+
+<div class="space-y-section-gap">
+    {{-- Skeleton --}}
+    <div data-skeleton class="space-y-section-gap">
+        <div class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+            @for ($i = 0; $i < 4; $i++)
+                <div class="h-28 bg-surface-container-high rounded-lg animate-pulse"></div>
+            @endfor
+        </div>
+        <div class="h-96 bg-surface-container-high rounded-lg animate-pulse"></div>
     </div>
-    <div class="h-96 bg-surface-container-high rounded-lg animate-pulse"></div>
-</div>
 
-<div data-real class="hidden space-y-section-gap">
-    {{-- Ringkasan --}}
-    <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
-        <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Catatan</span>
-            <span class="raliva-figure text-[26px] text-on-surface">48</span>
-            <span class="font-label-sm text-[11px] text-on-surface-variant">sejak Jan 2026</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">description</span>
-        </div>
-        <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Berjalan</span>
-            <span class="raliva-figure text-[26px] text-on-surface">6</span>
-            <span class="font-label-sm text-[11px] text-on-surface-variant">aktif di workshop</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">precision_manufacturing</span>
-        </div>
-        <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Selesai</span>
-            <span class="raliva-figure text-[26px] text-secondary">32</span>
-            <span class="font-label-sm text-[11px] text-on-surface-variant">telah diserahkan ke gudang</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">task_alt</span>
-        </div>
-        <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Tertunda</span>
-            <span class="raliva-figure text-[26px] text-error">2</span>
-            <span class="font-label-sm text-[11px] text-on-surface-variant">butuh tindak lanjut</span>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">pending</span>
-        </div>
-    </section>
-
-    {{-- Tabel Data Produksi --}}
-    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-3 flex-wrap w-full lg:w-auto">
-                <div class="relative flex-1 min-w-[220px]">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                    <input type="text" placeholder="Cari produk atau kode..." data-table-search class="raliva-search" />
-                </div>
-                <select data-table-filter="status-produksi" class="raliva-select">
-                    <option value="">Semua Status</option>
-                    <option value="berjalan">Berjalan</option>
-                    <option value="selesai">Selesai</option>
-                    <option value="tertunda">Tertunda</option>
-                </select>
+    <div data-real class="hidden space-y-section-gap">
+        {{-- Stats --}}
+        <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+            <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Produksi</span>
+                <span class="raliva-figure text-[26px] text-gold-accent">{{ $stats['menunggu'] }}</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">menunggu input bahan Admin</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">pending_actions</span>
             </div>
-            <button type="button" data-modal-open="modal-tambah-produksi" class="shrink-0 flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium w-full lg:w-auto">
-                <span class="material-symbols-outlined text-[18px]">add</span>Catat Produksi
-            </button>
-        </div>
+            <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Sedang Diproses</span>
+                <span class="raliva-figure text-[26px] text-on-surface">{{ $stats['diproses'] }}</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">tahap jahit &amp; finishing</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">precision_manufacturing</span>
+            </div>
+            <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Terlambat</span>
+                <span class="raliva-figure text-[26px] text-error">{{ $stats['terlambat'] }}</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">melebihi deadline</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-error/15 fill pointer-events-none select-none" aria-hidden="true">warning</span>
+            </div>
+            <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Bahan Tersedia</span>
+                <span class="raliva-figure text-[26px] text-secondary">{{ $bahanList->count() }}</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">bahan aktif di toko</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">science</span>
+            </div>
+        </section>
 
-        <div data-table-wrap class="overflow-x-auto">
-            <table class="premium-table w-full min-w-[960px] font-body-md text-sm">
-                <thead>
-                    <tr class="border-b border-muted-border text-left">
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Kode</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Produk</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Target</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Bahan Utama</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Jadwal</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ([
-                        ['kode' => 'PRD-0018', 'produk' => 'Trench Coat Signature', 'qty' => 25, 'bahan' => 'Wool Premium', 'jadwal' => '22 Agu — 30 Agu', 'status' => 'Berjalan', 'key' => 'berjalan'],
-                        ['kode' => 'PRD-0017', 'produk' => 'Blazer Wool Premium', 'qty' => 40, 'bahan' => 'Wool Charcoal', 'jadwal' => '18 Agu — 28 Agu', 'status' => 'Berjalan', 'key' => 'berjalan'],
-                        ['kode' => 'PRD-0016', 'produk' => 'Silk Scarf Monogram', 'qty' => 80, 'bahan' => 'Sutra Grade A', 'jadwal' => '15 Agu — 05 Sep', 'status' => 'Berjalan', 'key' => 'berjalan'],
-                        ['kode' => 'PRD-0015', 'produk' => 'Wide Leg Trousers', 'qty' => 60, 'bahan' => 'Katun Drill', 'jadwal' => '10 Agu — 20 Agu', 'status' => 'Selesai', 'key' => 'selesai'],
-                        ['kode' => 'PRD-0014', 'produk' => 'Knit Cardigan Rajut', 'qty' => 45, 'bahan' => 'Benang Wol Beige', 'jadwal' => '05 Agu — 15 Agu', 'status' => 'Selesai', 'key' => 'selesai'],
-                        ['kode' => 'PRD-0013', 'produk' => 'Kemeja Linen Oversized', 'qty' => 120, 'bahan' => 'Linen Natural', 'jadwal' => '02 Agu — 12 Agu', 'status' => 'Tertunda', 'key' => 'tertunda'],
-                    ] as $row)
-                        <tr data-table-row data-status-produksi="{{ $row['key'] }}" class="border-b border-muted-border last:border-0">
-                            <td class="py-3.5 px-4 font-bold text-on-surface">{{ $row['kode'] }}</td>
-                            <td class="py-3.5 px-4 text-on-surface font-bold">{{ $row['produk'] }}</td>
-                            <td class="py-3.5 px-4 text-on-surface">{{ number_format($row['qty'], 0, ',', '.') }} unit</td>
-                            <td class="py-3.5 px-4 text-on-surface-variant">{{ $row['bahan'] }}</td>
-                            <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $row['jadwal'] }}</td>
-                            <td class="py-3.5 px-4 text-center">
-                                @if ($row['key'] === 'selesai')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-deep-onyx text-on-primary text-[10px] font-bold uppercase">Selesai</span>
-                                @elseif ($row['key'] === 'tertunda')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Tertunda</span>
-                                @else
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Berjalan</span>
-                                @endif
-                            </td>
-                            <td class="py-3.5 px-4 text-right">
-                                <button type="button" data-modal-open="modal-ubah-produksi" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Kelola</button>
-                            </td>
+        {{-- Tabel --}}
+        <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+                <div class="flex items-center gap-3 flex-wrap w-full lg:w-auto">
+                    <div class="relative flex-1 min-w-[220px]">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
+                        <input type="text" placeholder="Cari nomor pesanan..." data-table-search class="raliva-search" />
+                    </div>
+                    <select data-table-filter="status-produksi" class="raliva-select">
+                        <option value="">Semua Status</option>
+                        <option value="menunggu_produksi">Menunggu Produksi</option>
+                        <option value="diproses">Diproses</option>
+                        <option value="menunggu_qc">Menunggu QC</option>
+                    </select>
+                </div>
+            </div>
+
+            <div data-table-wrap class="overflow-x-auto">
+                <table class="premium-table w-full min-w-[1000px] font-body-md text-sm">
+                    <thead>
+                        <tr class="border-b border-muted-border text-left">
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Pesanan</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Produk &amp; Jumlah</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Bahan dari Admin</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Jadwal &amp; Progress</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Aksi</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        @forelse ($orders as $o)
+                            @php
+                                $isDiproses = $o->status === \App\Models\Order::STATUS_DIPROSES;
+                                $isMenunggu = $o->status === \App\Models\Order::STATUS_MENUNGGU_PRODUKSI;
+                                $hasDates = $o->tgl_mulai_produksi && $o->tgl_berakhir_produksi;
+                                $totalSeconds = 0;
+                                $elapsedSeconds = 0;
+                                $progressPct = 0;
+                                $isTerlambat = false;
+                                $daysLeft = null;
+                                if ($hasDates) {
+                                    $start = $o->tgl_mulai_produksi->timestamp;
+                                    $end = $o->tgl_berakhir_produksi->timestamp;
+                                    $now = now()->timestamp;
+                                    $totalSeconds = max(1, $end - $start);
+                                    $elapsedSeconds = max(0, min($totalSeconds, $now - $start));
+                                    $progressPct = min(100, round(($elapsedSeconds / $totalSeconds) * 100));
+                                    $isTerlambat = $now > $end;
+                                    $daysLeft = (int) round(($end - $now) / 86400);
+                                }
+                                $accepted = (bool) $o->produksi_dimulai_pada;
+                                $rejectedNote = $o->produksi_catatan_tolak;
+                            @endphp
+                            <tr data-table-row data-status-produksi="{{ $o->status }}" class="border-b border-muted-border last:border-0 align-top">
+                                <td class="py-3.5 px-4">
+                                    <p class="font-bold text-on-surface">{{ $o->nomor_order }}</p>
+                                    <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->created_at?->translatedFormat('d M Y') ?? '-' }}</p>
+                                    @if ($rejectedNote)
+                                        <p class="text-xs text-error mt-1" title="{{ $rejectedNote }}">⚠ Ditolak: {{ \Illuminate\Support\Str::limit($rejectedNote, 30) }}</p>
+                                    @endif
+                                </td>
+                                <td class="py-3.5 px-4">
+                                    @foreach ($o->items as $item)
+                                        <p class="text-on-surface">{{ $item->nama_produk_snapshot }} <span class="text-on-surface-variant">× {{ $item->quantity }}</span></p>
+                                    @endforeach
+                                </td>
+                                <td class="py-3.5 px-4 max-w-[220px]">
+                                    @if ($o->bahanList->isNotEmpty())
+                                        @foreach ($o->bahanList as $bahan)
+                                            <p class="text-xs {{ $bahan->creator?->role?->nama_role === 'Produksi' ? 'text-secondary' : 'text-on-surface-variant' }}">
+                                                {{ $bahan->nama_bahan }}: {{ $bahan->jumlah }} {{ $bahan->satuan }}
+                                                @if ($bahan->creator?->role?->nama_role === 'Produksi')
+                                                    <span class="text-secondary">(Produksi)</span>
+                                                @endif
+                                            </p>
+                                        @endforeach
+                                    @else
+                                        <span class="text-on-surface-variant text-xs">Belum ada bahan</span>
+                                    @endif
+                                </td>
+                                <td class="py-3.5 px-4">
+                                    @if ($hasDates)
+                                        <p class="text-xs text-on-surface-variant">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
+                                        <div class="progress-track mt-1.5">
+                                            <div class="progress-bar-fill {{ $isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent') }}" style="width: {{ $progressPct }}%"></div>
+                                        </div>
+                                        <p class="text-xs mt-1 countdown-badge {{ $isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant' }}">
+                                            @if ($isTerlambat)
+                                                Terlambat {{ abs($daysLeft) }} hari
+                                            @elseif ($progressPct >= 100)
+                                                Selesai tepat waktu
+                                            @else
+                                                Sisa {{ $daysLeft }} hari ({{ $progressPct }}%)
+                                            @endif
+                                        </p>
+                                    @else
+                                        <span class="text-on-surface-variant text-xs">Belum dijadwalkan</span>
+                                    @endif
+                                </td>
+                                <td class="py-3.5 px-4 text-center">
+                                    @if ($isMenunggu)
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Menunggu</span>
+                                    @elseif ($isDiproses)
+                                        @if ($accepted)
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Diproses</span>
+                                        @else
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Menunggu Accept</span>
+                                        @endif
+                                    @elseif ($o->status === \App\Models\Order::STATUS_MENUNGGU_QC)
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-orange-500/10 text-orange-600 text-[10px] font-bold uppercase border border-orange-500/30">Menunggu QC</span>
+                                    @endif
+                                </td>
+                                <td class="py-3.5 px-4 text-right">
+                                    @if ($isDiproses)
+                                        @if (! $accepted)
+                                            <div class="flex gap-1 justify-end">
+                                                <form method="POST" action="{{ route('produksi.data-produksi.accept', $o) }}" class="inline">
+                                                    @csrf
+                                                    <button type="submit" class="px-2.5 py-1.5 bg-secondary text-on-secondary text-[10px] font-bold uppercase rounded hover:opacity-90 transition-opacity">Accept</button>
+                                                </form>
+                                                <button type="button" onclick="document.getElementById('modal-tolak-{{ $o->order_id }}').classList.remove('hidden')" class="px-2.5 py-1.5 bg-error/10 border border-error/20 text-error text-[10px] font-bold uppercase rounded hover:bg-error/20 transition-colors">Tolak</button>
+                                            </div>
+                                        @else
+                                            <div class="flex gap-1 justify-end">
+                                                <button type="button" onclick="openModalBahan('{{ $o->order_id }}')" class="px-2.5 py-1.5 border border-gold-accent/40 text-gold-accent text-[10px] font-bold uppercase rounded hover:bg-gold-accent/10 transition-colors">+ Bahan</button>
+                                                <button type="button" onclick="openModalSelesai('{{ $o->order_id }}')" class="px-2.5 py-1.5 bg-deep-onyx text-on-primary text-[10px] font-bold uppercase rounded hover:opacity-90 transition-opacity">Selesai</button>
+                                            </div>
+                                        @endif
+                                    @else
+                                        <span class="text-on-surface-variant text-xs">Menunggu Admin proses</span>
+                                    @endif
+                                </td>
+                            </tr>
 
-        <div data-empty-state class="hidden flex-col items-center py-12 text-center gap-3">
-            <div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center">
-                <span class="material-symbols-outlined text-[28px] text-on-surface-variant">search_off</span>
+                        @empty
+                            <tr><td colspan="6" class="py-12 text-center text-on-surface-variant">Tidak ada pesanan dalam produksi.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
-            <p class="text-on-surface-variant font-body-md text-sm">Tidak ada data produksi yang cocok.</p>
-            <button type="button" data-filter-reset class="mt-1 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Reset Filter</button>
-        </div>
-    </section>
+            {{ $orders->withQueryString()->links() }}
+        </section>
+
+        {{-- Modal Tolak & Modal Bahan & Modal Selesai — dirender di luar table --}}
+        @foreach ($orders as $o)
+                            @php
+                                $isDiproses = $o->status === \App\Models\Order::STATUS_DIPROSES;
+                                $accepted = (bool) $o->produksi_dimulai_pada;
+                            @endphp
+
+                            {{-- Modal Tolak --}}
+                            @if ($isDiproses && ! $accepted)
+                            <div id="modal-tolak-{{ $o->order_id }}" class="hidden fixed inset-0 z-[70] flex items-center justify-center p-4">
+                                <div class="absolute inset-0 bg-black/50" onclick="closeModalTolak('{{ $o->order_id }}')"></div>
+                                <form method="POST" action="{{ route('produksi.data-produksi.reject', $o) }}" class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl p-6">
+                                    @csrf
+                                    <h3 class="font-title-md text-title-md text-on-surface mb-2">Tolak Produksi</h3>
+                                    <p class="text-on-surface-variant text-sm mb-3">Pesanan <span class="font-mono font-bold text-on-surface">{{ $o->nomor_order }}</span></p>
+                                    <textarea name="catatan" required minlength="10" maxlength="500" rows="3" class="raliva-textarea" placeholder="Alasan penolakan... (minimal 10 karakter)"></textarea>
+                                    <div class="flex gap-3 mt-4">
+                                        <button type="button" onclick="closeModalTolak('{{ $o->order_id }}')" class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface">Batal</button>
+                                        <button type="submit" class="flex-1 py-2.5 bg-error text-on-error text-xs font-semibold rounded-lg">Tolak</button>
+                                    </div>
+                                </form>
+                            </div>
+                            @endif
+
+                            {{-- Modal Tambah Bahan --}}
+                            @if ($isDiproses && $accepted)
+                            <div id="modal-bahan-{{ $o->order_id }}" class="hidden fixed inset-0 z-[70] flex items-center justify-center p-4">
+                                <div class="absolute inset-0 bg-black/50" onclick="closeModalBahan('{{ $o->order_id }}')"></div>
+                                <form method="POST" action="{{ route('produksi.data-produksi.bahan', $o) }}" class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl max-h-[85vh] overflow-y-auto">
+                                    @csrf
+                                    <div class="sticky top-0 bg-surface-container-lowest border-b border-muted-border px-6 py-4 flex justify-between items-center">
+                                        <div>
+                                            <h3 class="font-title-md text-title-md text-on-surface">Tambah Bahan Produksi</h3>
+                                            <p class="text-xs text-on-surface-variant">{{ $o->nomor_order }}</p>
+                                        </div>
+                                        <button type="button" onclick="closeModalBahan('{{ $o->order_id }}')" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+                                    </div>
+                                    <div class="p-6 space-y-3">
+                                        <p class="text-xs text-on-surface-variant">Tambah bahan yang belum diinput Admin. Pilih dari katalog atau ketik manual.</p>
+                                        <div id="bahan-container-produksi-{{ $o->order_id }}" class="space-y-3"></div>
+                                        <button type="button" onclick="addBahanProduksiRow('{{ $o->order_id }}')" class="w-full py-2.5 border border-dashed border-outline-variant rounded-lg text-xs font-semibold text-on-surface-variant hover:border-gold-accent hover:text-gold-accent transition-colors flex items-center justify-center gap-1.5">
+                                            <span class="material-symbols-outlined text-[16px]">add</span> Tambah Bahan
+                                        </button>
+                                    </div>
+                                    <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex gap-3">
+                                        <button type="button" onclick="closeModalBahan('{{ $o->order_id }}')" class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface">Batal</button>
+                                        <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded-lg btn-premium">Simpan Bahan</button>
+                                    </div>
+                                </form>
+                            </div>
+                            @endif
+
+                            {{-- Modal Selesai Produksi (input berhasil/gagal) --}}
+                            @if ($isDiproses && $accepted)
+                            <div id="modal-selesai-{{ $o->order_id }}" class="hidden fixed inset-0 z-[70] flex items-center justify-center p-4">
+                                <div class="absolute inset-0 bg-black/50" onclick="closeModalSelesai('{{ $o->order_id }}')"></div>
+                                <form method="POST" action="{{ route('produksi.data-produksi.status', $o) }}" class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl max-h-[85vh] overflow-y-auto">
+                                    @csrf
+                                    <div class="sticky top-0 bg-surface-container-lowest border-b border-muted-border px-6 py-4 flex justify-between items-center">
+                                        <div>
+                                            <h3 class="font-title-md text-title-md text-on-surface">Selesai Produksi</h3>
+                                            <p class="text-xs text-on-surface-variant">{{ $o->nomor_order }}</p>
+                                        </div>
+                                        <button type="button" onclick="closeModalSelesai('{{ $o->order_id }}')" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+                                    </div>
+                                    <div class="p-6 space-y-4">
+                                        <p class="text-xs text-on-surface-variant">Input hasil produksi. Pesanan akan masuk ke tahap QC.</p>
+                                        <div>
+                                            <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Jumlah Berhasil *</label>
+                                            <input type="number" name="jumlah_berhasil" required min="0" class="raliva-input w-full" placeholder="0" />
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Jumlah Gagal</label>
+                                            <input type="number" name="jumlah_gagal" min="0" value="0" class="raliva-input w-full" />
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Catatan (opsional)</label>
+                                            <textarea name="catatan" rows="2" class="raliva-textarea" placeholder="Catatan produksi..."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex gap-3">
+                                        <button type="button" onclick="closeModalSelesai('{{ $o->order_id }}')" class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface">Batal</button>
+                                        <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded-lg btn-premium">Selesai Produksi</button>
+                                    </div>
+                                </form>
+                            </div>
+                            @endif
+                        @endforeach
+    </div>
 </div>
 
-{{-- Modal Tambah Produksi --}}
-<div id="modal-tambah-produksi" data-modal class="fixed inset-0 z-[70] hidden">
-    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-    <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
-        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-            <div>
-                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Catat Data Produksi</h3>
-                <p class="text-on-surface-variant font-body-md text-xs mt-1">Jejak proses produksi yang terstruktur dan mudah ditelusuri.</p>
-            </div>
-            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-        <form data-toast-message="Data produksi berhasil dicatat." class="p-6 space-y-5">
-            <div>
-                <label class="block raliva-label mb-2">Produk</label>
-                <select class="raliva-select">
-                    <option>Trench Coat Signature</option>
-                    <option>Blazer Wool Premium</option>
-                    <option selected>Kemeja Linen Oversized</option>
-                    <option>Silk Scarf Monogram</option>
+@php
+    $bahanJson = $bahanList->map(function ($b) {
+        return ['bahan_id' => $b->bahan_id, 'nama_bahan' => $b->nama_bahan, 'satuan' => $b->satuan, 'stok' => $b->stok];
+    })->toJson();
+@endphp
+
+@push('scripts')
+<script>
+    const bahanProduksiData = {!! $bahanJson !!};
+    let bahanProduksiIdx = {};
+
+    function openModalBahan(orderId) {
+        const modal = document.getElementById('modal-bahan-' + orderId);
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        // Auto-add 1 row kalau container kosong
+        const container = document.getElementById('bahan-container-produksi-' + orderId);
+        if (container && container.children.length === 0) {
+            addBahanProduksiRow(orderId);
+        }
+    }
+
+    function closeModalBahan(orderId) {
+        const modal = document.getElementById('modal-bahan-' + orderId);
+        if (modal) modal.classList.add('hidden');
+    }
+
+    function closeModalTolak(orderId) {
+        const modal = document.getElementById('modal-tolak-' + orderId);
+        if (modal) modal.classList.add('hidden');
+    }
+
+    function openModalSelesai(orderId) {
+        const modal = document.getElementById('modal-selesai-' + orderId);
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeModalSelesai(orderId) {
+        const modal = document.getElementById('modal-selesai-' + orderId);
+        if (modal) modal.classList.add('hidden');
+    }
+
+    function addBahanProduksiRow(orderId) {
+        if (!bahanProduksiIdx[orderId]) bahanProduksiIdx[orderId] = 0;
+        const container = document.getElementById('bahan-container-produksi-' + orderId);
+        if (!container) return;
+        const idx = bahanProduksiIdx[orderId]++;
+        const row = document.createElement('div');
+        row.setAttribute('data-bahan-row', '');
+        row.className = 'bahan-row border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low space-y-2.5';
+        row.innerHTML = `
+            <div class="flex items-start justify-between gap-3">
+                <select name="bahan[${idx}][bahan_id]" class="raliva-select flex-1 min-w-0" onchange="onBahanSelectChange(this)">
+                    <option value="">— Pilih bahan / ketik manual —</option>
+                    ${bahanProduksiData.map(b => `<option value="${b.bahan_id}" data-nama="${b.nama_bahan}" data-satuan="${b.satuan}">${b.nama_bahan} (Stok: ${b.stok} ${b.satuan})</option>`).join('')}
                 </select>
-            </div>
-            <div class="grid grid-cols-2 gap-gutter">
-                <div>
-                    <label for="dp-qty" class="block raliva-label mb-2">Jumlah Target</label>
-                    <input id="dp-qty" type="number" value="80" min="1" required class="raliva-input" />
-                </div>
-                <div>
-                    <label for="dp-bahan" class="block raliva-label mb-2">Bahan Utama</label>
-                    <input id="dp-bahan" type="text" placeholder="cth. Sutra Grade A" class="raliva-input" />
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-gutter">
-                <div>
-                    <label for="dp-mulai" class="block raliva-label mb-2">Tanggal Mulai</label>
-                    <input id="dp-mulai" type="date" value="2026-08-22" required class="raliva-input" />
-                </div>
-                <div>
-                    <label for="dp-selesai" class="block raliva-label mb-2">Target Selesai</label>
-                    <input id="dp-selesai" type="date" value="2026-08-30" required class="raliva-input" />
-                </div>
-            </div>
-            <div>
-                <label for="dp-status" class="block raliva-label mb-2">Status Awal</label>
-                <select id="dp-status" class="raliva-select">
-                    <option selected>Berjalan</option>
-                    <option>Selesai</option>
-                    <option>Tertunda</option>
-                </select>
-            </div>
-            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-[16px]">save</span>Simpan Data
+                <button type="button" onclick="removeBahanRow(this)" class="shrink-0 px-2.5 py-2.5 rounded-lg border border-error/20 text-error hover:bg-error/10">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
                 </button>
             </div>
-        </form>
-    </div>
-</div>
+            <div class="grid grid-cols-[1fr_110px] gap-3">
+                <input type="text" name="bahan[${idx}][nama_bahan]" required class="raliva-input w-full" placeholder="Nama bahan" />
+                <input type="number" name="bahan[${idx}][jumlah]" required min="0.01" step="0.01" class="raliva-input w-full py-2 text-center" placeholder="Jumlah" />
+            </div>
+            <div class="grid grid-cols-[110px_1fr] gap-3">
+                <input type="text" name="bahan[${idx}][satuan]" required class="raliva-input w-full" placeholder="Satuan" />
+                <input type="text" name="bahan[${idx}][catatan]" class="raliva-input w-full" placeholder="Catatan (opsional)" />
+            </div>
+        `;
+        container.appendChild(row);
+    }
 
-{{-- Modal Ubah (dummy kelola) --}}
-<div id="modal-ubah-produksi" data-modal class="fixed inset-0 z-[70] hidden">
-    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-    <div class="relative mx-auto mt-24 md:mt-40 w-[calc(100%-2rem)] max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl">
-        <div class="p-6 text-center space-y-4">
-            <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center mx-auto">
-                <span class="material-symbols-outlined text-[28px] text-gold-accent">edit</span>
-            </div>
-            <h3 class="font-title-md text-title-md text-on-surface">Kelola Produksi</h3>
-            <p class="text-on-surface-variant font-body-md text-sm leading-relaxed">Perbarui jumlah, bahan atau status produksi untuk jejak yang akurat.</p>
-            <div class="flex flex-col-reverse gap-gutter pt-2">
-                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
-                <button type="button" data-modal-open="modal-tambah-produksi" onclick="showRalivaToast('Form edit dibuka (demo).', 'edit')" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Buka Form Edit</button>
-            </div>
-        </div>
-    </div>
-</div>
+    function removeBahanRow(btn) {
+        const row = btn.closest('[data-bahan-row]');
+        if (row) row.remove();
+    }
+
+    function onBahanSelectChange(select) {
+        const opt = select.options[select.selectedIndex];
+        const row = select.closest('[data-bahan-row]');
+        if (!row) return;
+        if (opt.value) {
+            row.querySelector('input[name*="[nama_bahan]"]').value = opt.dataset.nama;
+            row.querySelector('input[name*="[satuan]"]').value = opt.dataset.satuan;
+        }
+    }
+
+    // Table search + filter
+    document.querySelectorAll('[data-table-search]').forEach(input => {
+        input.addEventListener('input', function() {
+            const term = this.value.toLowerCase();
+            document.querySelectorAll('[data-table-row]').forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const status = row.dataset.statusProduksi || '';
+                const filterVal = document.querySelector('[data-table-filter]')?.value || '';
+                const matchSearch = text.includes(term);
+                const matchFilter = !filterVal || status === filterVal;
+                row.style.display = (matchSearch && matchFilter) ? '' : 'none';
+            });
+        });
+    });
+    document.querySelectorAll('[data-table-filter]').forEach(select => {
+        select.addEventListener('change', function() {
+            const searchInput = document.querySelector('[data-table-search]');
+            if (searchInput) searchInput.dispatchEvent(new Event('input'));
+        });
+    });
+</script>
+@endpush
 @endsection
