@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BahanProduksiController as AdminBahanProduksiController;
 use App\Http\Controllers\Admin\DashboardOperasionalController;
 use App\Http\Controllers\Admin\DataCustomerController;
 use App\Http\Controllers\Admin\DataPesananController as AdminDataPesananController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\Admin\PromoController;
 use App\Http\Controllers\Admin\RiwayatAktivitasController as AdminRiwayatAktivitasController;
 use App\Http\Controllers\Admin\StokController;
 use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\VerifikasiPembayaranController;
 use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
 use App\Http\Controllers\Auth\LoginController;
@@ -350,12 +352,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::post('/customer', [DataCustomerController::class, 'store'])->name('customer.store');
     Route::get('/produk', [DataProdukController::class, 'index'])->name('produk');
     Route::post('/produk', [DataProdukController::class, 'store'])->name('produk.store');
+    Route::post('/kategori', [\App\Http\Controllers\Admin\KategoriController::class, 'store'])->name('kategori.store');
     Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier');
     Route::post('/supplier', [SupplierController::class, 'store'])->name('supplier.store');
     Route::put('/supplier/{supplier}', [SupplierController::class, 'update'])->name('supplier.update');
     Route::delete('/supplier/{supplier}', [SupplierController::class, 'destroy'])->name('supplier.destroy');
+    Route::get('/bahan-produksi', [AdminBahanProduksiController::class, 'index'])->name('bahan-produksi');
+    Route::post('/bahan-produksi', [AdminBahanProduksiController::class, 'store'])->name('bahan-produksi.store');
+    Route::get('/bahan-produksi/{bahan}/update', [AdminBahanProduksiController::class, 'update'])->name('bahan-produksi.update');
+    Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi');
+    Route::post('/transaksi/pemasukan', [TransaksiController::class, 'storePemasukan'])->name('transaksi.pemasukan');
+    Route::post('/transaksi/pengeluaran', [TransaksiController::class, 'storePengeluaran'])->name('transaksi.pengeluaran');
     Route::get('/stok', [StokController::class, 'index'])->name('stok');
-    Route::put('/stok/{warehouseStock}', [StokController::class, 'update'])->name('stok.update');
     Route::get('/pengiriman', [PengirimanController::class, 'index'])->name('pengiriman');
     Route::post('/pengiriman/{pesanan}/resi', [PengirimanController::class, 'simpanResi'])->name('pengiriman.resi');
     Route::post('/pengiriman/{pengiriman}/kirim', [PengirimanController::class, 'kirim'])->name('pengiriman.kirim');
@@ -494,10 +502,16 @@ Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi
     Route::get('/permintaan-produksi', [ProduksiPermintaanController::class, 'index'])->name('permintaan-produksi');
     Route::post('/permintaan-produksi/{productionOrder}/status', [ProduksiPermintaanController::class, 'updateStatus'])->name('permintaan-produksi.status');
     Route::get('/data-produksi', [ProduksiDataController::class, 'index'])->name('data-produksi');
+    Route::post('/data-produksi/{order}/accept', [ProduksiDataController::class, 'accept'])->name('data-produksi.accept');
+    Route::post('/data-produksi/{order}/reject', [ProduksiDataController::class, 'reject'])->name('data-produksi.reject');
+    Route::post('/data-produksi/{order}/bahan', [ProduksiDataController::class, 'storeBahan'])->name('data-produksi.bahan');
+    Route::post('/data-produksi/{order}/status', [ProduksiDataController::class, 'updateStatus'])->name('data-produksi.status');
     Route::get('/pemeriksaan-kualitas', [ProduksiPemeriksaanController::class, 'index'])->name('pemeriksaan-kualitas');
+    Route::post('/pemeriksaan-kualitas/{order}/qc', [ProduksiPemeriksaanController::class, 'store'])->name('pemeriksaan-kualitas.store');
     Route::get('/produk-selesai', [ProduksiProdukSelesaiController::class, 'index'])->name('produk-selesai');
     Route::get('/barang-rusak', [ProduksiBarangRusakController::class, 'index'])->name('barang-rusak');
     Route::get('/bahan-produksi', [ProduksiBahanController::class, 'index'])->name('bahan-produksi');
+    Route::post('/bahan-produksi', [ProduksiBahanController::class, 'store'])->name('bahan-produksi.store');
     Route::get('/riwayat-produksi', [ProduksiRiwayatController::class, 'index'])->name('riwayat-produksi');
     Route::get('/notifikasi', [ProduksiNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [ProduksiProfilController::class, 'index'])->name('profil');
