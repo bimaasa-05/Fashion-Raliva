@@ -10,8 +10,9 @@
         [
             'label' => 'Transaksi',
             'items' => [
-                ['route' => 'admin.pesanan', 'icon' => 'shopping_cart', 'text' => 'Data Pesanan'],
                 ['route' => 'admin.verifikasi-pembayaran', 'icon' => 'fact_check', 'text' => 'Verifikasi Pembayaran'],
+                ['route' => 'admin.pesanan', 'icon' => 'shopping_cart', 'text' => 'Data Pesanan'],
+                ['route' => 'admin.transaksi', 'icon' => 'receipt_long', 'text' => 'Data Transaksi'],
                 ['route' => 'admin.pengembalian-dana', 'icon' => 'assignment_return', 'text' => 'Pengembalian Dana'],
             ],
         ],
@@ -36,6 +37,7 @@
                 ['route' => 'admin.pengiriman', 'icon' => 'local_shipping', 'text' => 'Pengiriman'],
                 ['route' => 'admin.koordinasi-gudang', 'icon' => 'warehouse', 'text' => 'Koordinasi Gudang'],
                 ['route' => 'admin.permintaan-produksi', 'icon' => 'precision_manufacturing', 'text' => 'Permintaan Produksi'],
+                ['route' => 'admin.bahan-produksi', 'icon' => 'science', 'text' => 'Bahan Produksi'],
                 ['route' => 'admin.supplier', 'icon' => 'fact_check', 'text' => 'Data Supplier'],
             ],
         ],
