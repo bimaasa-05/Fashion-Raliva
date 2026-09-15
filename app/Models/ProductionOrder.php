@@ -92,4 +92,9 @@ class ProductionOrder extends Model
     {
         return $this->hasMany(QualityCheck::class, 'production_order_id', 'production_order_id');
     }
+
+    public function materials(): HasMany
+    {
+        return $this->hasMany(ProductionOrderMaterial::class, 'production_order_id', 'production_order_id');
+    }
 }

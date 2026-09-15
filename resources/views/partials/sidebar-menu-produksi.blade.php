@@ -8,25 +8,17 @@
             ],
         ],
         [
-            'label' => 'Permintaan',
-            'items' => [
-                ['route' => 'produksi.permintaan-produksi', 'icon' => 'assignment', 'text' => 'Permintaan Produksi'],
-            ],
-        ],
-        [
             'label' => 'Proses Produksi',
             'items' => [
                 ['route' => 'produksi.data-produksi', 'icon' => 'precision_manufacturing', 'text' => 'Data Produksi'],
                 ['route' => 'produksi.pemeriksaan-kualitas', 'icon' => 'fact_check', 'text' => 'Pemeriksaan Kualitas'],
-                ['route' => 'produksi.produk-selesai', 'icon' => 'task_alt', 'text' => 'Produk Selesai'],
-                ['route' => 'produksi.barang-rusak', 'icon' => 'report', 'text' => 'Barang Rusak'],
+                ['route' => 'produksi.pelaporan-produksi', 'icon' => 'summarize', 'text' => 'Pelaporan Produksi'],
             ],
         ],
         [
-            'label' => 'Bahan & Histori',
+            'label' => 'Bahan & Transaksi',
             'items' => [
                 ['route' => 'produksi.bahan-produksi', 'icon' => 'inventory', 'text' => 'Bahan Produksi'],
-                ['route' => 'produksi.riwayat-produksi', 'icon' => 'history', 'text' => 'Riwayat Produksi'],
                 ['route' => 'produksi.notifikasi', 'icon' => 'notifications', 'text' => 'Notifikasi'],
             ],
         ],
