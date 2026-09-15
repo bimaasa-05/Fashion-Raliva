@@ -60,6 +60,7 @@ use App\Http\Controllers\Produksi\DashboardController as ProduksiDashboardContro
 use App\Http\Controllers\Produksi\DataProduksiController as ProduksiDataController;
 use App\Http\Controllers\Produksi\NotifikasiController as ProduksiNotifikasiController;
 use App\Http\Controllers\Produksi\PemeriksaanKualitasController as ProduksiPemeriksaanController;
+use App\Http\Controllers\Produksi\ProdukSelesaiController as ProduksiProdukSelesaiController;
 use App\Http\Controllers\Produksi\PelaporanProduksiController as ProduksiPelaporanController;
 use App\Http\Controllers\Produksi\ProfilController as ProduksiProfilController;
 use App\Http\Controllers\SuperAdmin\DashboardController;
@@ -496,11 +497,14 @@ Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi
     Route::post('/data-produksi/{order}/status', [ProduksiDataController::class, 'updateStatus'])->name('data-produksi.status');
     Route::get('/pemeriksaan-kualitas', [ProduksiPemeriksaanController::class, 'index'])->name('pemeriksaan-kualitas');
     Route::post('/pemeriksaan-kualitas/{order}/qc', [ProduksiPemeriksaanController::class, 'store'])->name('pemeriksaan-kualitas.store');
+    Route::get('/pelaporan-produksi', [ProduksiPelaporanController::class, 'index'])->name('pelaporan-produksi');
     Route::get('/produk-selesai', [ProduksiProdukSelesaiController::class, 'index'])->name('produk-selesai');
-    Route::get('/barang-rusak', [ProduksiBarangRusakController::class, 'index'])->name('barang-rusak');
+    // Nonaktif sementara: controller + view belum ada
+    // Route::get('/barang-rusak', [ProduksiBarangRusakController::class, 'index'])->name('barang-rusak');
     Route::get('/bahan-produksi', [ProduksiBahanController::class, 'index'])->name('bahan-produksi');
     Route::post('/bahan-produksi', [ProduksiBahanController::class, 'store'])->name('bahan-produksi.store');
-    Route::get('/riwayat-produksi', [ProduksiRiwayatController::class, 'index'])->name('riwayat-produksi');
+    // Nonaktif sementara: controller + view belum ada
+    // Route::get('/riwayat-produksi', [ProduksiRiwayatController::class, 'index'])->name('riwayat-produksi');
     Route::get('/notifikasi', [ProduksiNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [ProduksiProfilController::class, 'index'])->name('profil');
 });
