@@ -367,11 +367,7 @@
 <span class="material-symbols-outlined text-[16px]">report</span>{{ __('Komplain') }}
 </a>
 @endif
-@if ($order->status === \App\Models\Order::STATUS_PENDING_PAYMENT)
-<a href="{{ route('customer.checkout.payment', $order->checkout_id) }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest">
-<span class="material-symbols-outlined text-[16px]">payments</span>{{ __('Lanjutkan Pembayaran') }}
-</a>
-@elseif (! in_array($order->status, [\App\Models\Order::STATUS_DIBATALKAN, \App\Models\Order::STATUS_REFUND], true))
+@if (! in_array($order->status, [\App\Models\Order::STATUS_PENDING_PAYMENT, \App\Models\Order::STATUS_DIBATALKAN, \App\Models\Order::STATUS_REFUND], true))
 <a href="{{ route('customer.order-tracking', ['order' => $order->order_id]) }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest">
 <span class="material-symbols-outlined text-[16px]">local_shipping</span>{{ __('Lacak Pengiriman') }}
 </a>
