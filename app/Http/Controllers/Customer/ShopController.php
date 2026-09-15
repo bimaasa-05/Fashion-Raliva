@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdSlot;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\Store;
@@ -29,10 +30,12 @@ class ShopController extends Controller
 
         $totalProducts = $products->count();
 
+        $ads = AdSlot::activeProducts(10);
+
         $wishlistedIds = $this->wishlistedIds();
         $cartCount = \App\Http\Controllers\Customer\CartController::countForUser(Auth::id());
 
-        return view('customer.shop.index', compact('products', 'totalProducts', 'wishlistedIds', 'cartCount'));
+        return view('customer.shop.index', compact('products', 'totalProducts', 'ads', 'wishlistedIds', 'cartCount'));
     }
 
     /**
