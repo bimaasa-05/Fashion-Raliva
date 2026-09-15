@@ -17,6 +17,7 @@ class QualityCheck extends Model
 
     protected $fillable = [
         'production_order_id',
+        'order_id',
         'checked_by',
         'jumlah_lulus',
         'jumlah_gagal',
@@ -35,6 +36,11 @@ class QualityCheck extends Model
     public function productionOrder(): BelongsTo
     {
         return $this->belongsTo(ProductionOrder::class, 'production_order_id', 'production_order_id');
+    }
+
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class, 'order_id', 'order_id');
     }
 
     public function checker(): BelongsTo
