@@ -633,6 +633,27 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             }
         }
 
+        .carpet-down {
+            animation: carpetDown .45s cubic-bezier(.4, 0, .2, 1) both;
+        }
+
+        @keyframes carpetDown {
+            from {
+                clip-path: inset(0 0 100% 0);
+                opacity: 0;
+            }
+            to {
+                clip-path: inset(0 0 0 0);
+                opacity: 1;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .carpet-down {
+                animation: none;
+            }
+        }
+
         .btn-gold {
             position: relative;
             overflow: hidden;
@@ -1139,11 +1160,12 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                     @endif
                                 </p>
 
-                                <div class="mt-lg">
-                                    <p
-                                        class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-sm flex items-center gap-2">
-                                        <span class="w-7 h-px bg-[var(--chrome-accent)] opacity-60"></span>
-                                        {{ __('UPLOAD BUKTI') }}</p>
+<div id="panel-bukti" class="hidden">
+                                    <div class="mt-lg">
+                                        <p
+                                            class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-sm flex items-center gap-2">
+                                            <span class="w-7 h-px bg-[var(--chrome-accent)] opacity-60"></span>
+                                            {{ __('UPLOAD BUKTI') }}</p>
                                     @php $buktiTerakhir = $payment->proofs->last(); @endphp
                                     @if ($buktiTerakhir)
                                         <div class="flex items-center gap-md border border-outline-variant rounded-xl p-md mb-sm bg-surface-container-low/50">
@@ -1189,6 +1211,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
         </button>
     </div>
 </div>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -1344,6 +1367,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             var rincian = document.getElementById('rincian-metode');
             var rincianAkun = document.getElementById('rincian-akun');
             var hint = document.getElementById('pay-selected-hint');
+            var panelBukti = document.getElementById('panel-bukti');
 
             var showPanel = function(kode) {
                 document.querySelectorAll('.method-detail').forEach(function(p) {
@@ -1353,6 +1377,35 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                 if (panel) panel.classList.remove('hidden');
                 var wrap = document.getElementById('pay-detail');
                 if (wrap) wrap.classList.remove('hidden');
+            };
+
+            var showBukti = function() {
+                if (!panelBukti) return;
+                panelBukti.classList.remove('hidden');
+                panelBukti.classList.remove('carpet-down');
+                void panelBukti.offsetWidth;
+                panelBukti.classList.add('carpet-down');
+            };
+
+            var hideBukti = function() {
+                if (!panelBukti) return;
+                panelBukti.classList.add('hidden');
+                panelBukti.classList.remove('carpet-down');
+            };
+
+            var syncBukti = function() {
+                var sel = grid ? grid.querySelector('.pay-method.selected') : null;
+                if (!sel) { hideBukti(); return; }
+                var kode = sel.getAttribute('data-kode');
+                if (kode === 'qris') { showBukti(); return; }
+                if (kode === 'ewallet' || kode === 'bank_transfer') {
+                    var gridEl = document.getElementById('grid-' + kode);
+                    var selAcc = gridEl ? gridEl.querySelector('.account-opt-ew.selected') : null;
+                    if (selAcc) { showBukti(); return; }
+                    hideBukti();
+                    return;
+                }
+                showBukti();
             };
 
             var updateAccountDetail = function(opt) {
@@ -1383,6 +1436,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                 if (ewGrid) ewGrid.classList.remove('ew-expanded');
                 if (accountInput) accountInput.value = '';
                 if (rincianAkun) rincianAkun.textContent = '';
+                syncBukti();
             }, 200); // Penundaan sejenak mengikuti durasi animasi closing
             return;
         }
@@ -1404,6 +1458,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
 
         if (accountInput) accountInput.value = opt.getAttribute('data-account-id');
         if (rincianAkun) rincianAkun.textContent = opt.getAttribute('data-nama') || '';
+        syncBukti();
         return;
                 } else {
                     document.querySelectorAll('.account-opt').forEach(function(o) {
@@ -1414,6 +1469,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                 if (accountInput) accountInput.value = opt.getAttribute('data-account-id');
                 if (rincianAkun) rincianAkun.textContent = opt.getAttribute('data-nama') || '';
                 updateAccountDetail(opt);
+                syncBukti();
             };
 
             var selectMethod = function(el) {
@@ -1431,6 +1487,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                     showPanel(kode);
                     var autoAcc = el.getAttribute('data-account-id');
                     if (autoAcc && accountInput) accountInput.value = autoAcc;
+                    syncBukti();
                 }
             };
 
@@ -1466,6 +1523,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                         var selOpt = document.querySelector('#grid-' + kode + ' .account-opt.ring-1');
                         if (selOpt) updateAccountDetail(selOpt);
                     }
+                    syncBukti();
                 }
             })();
 
