@@ -13,12 +13,14 @@
                 ['route' => 'produksi.data-produksi', 'icon' => 'precision_manufacturing', 'text' => 'Data Produksi'],
                 ['route' => 'produksi.pemeriksaan-kualitas', 'icon' => 'fact_check', 'text' => 'Pemeriksaan Kualitas'],
                 ['route' => 'produksi.pelaporan-produksi', 'icon' => 'summarize', 'text' => 'Pelaporan Produksi'],
+                ['route' => 'produksi.riwayat-produksi', 'icon' => 'history', 'text' => 'Riwayat Produksi'],
             ],
         ],
         [
             'label' => 'Bahan & Transaksi',
             'items' => [
                 ['route' => 'produksi.bahan-produksi', 'icon' => 'inventory', 'text' => 'Bahan Produksi'],
+                ['route' => 'produksi.permintaan', 'icon' => 'send', 'text' => 'Permintaan'],
                 ['route' => 'produksi.notifikasi', 'icon' => 'notifications', 'text' => 'Notifikasi'],
             ],
         ],

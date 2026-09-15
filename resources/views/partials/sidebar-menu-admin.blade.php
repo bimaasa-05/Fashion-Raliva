@@ -39,6 +39,7 @@
                 ['route' => 'admin.permintaan-produksi', 'icon' => 'precision_manufacturing', 'text' => 'Permintaan Produksi'],
                 ['route' => 'admin.bahan-produksi', 'icon' => 'science', 'text' => 'Bahan Produksi'],
                 ['route' => 'admin.supplier', 'icon' => 'fact_check', 'text' => 'Data Supplier'],
+                ['route' => 'admin.permintaan-operasional', 'icon' => 'pending_actions', 'text' => 'Permintaan Operasional'],
             ],
         ],
         [

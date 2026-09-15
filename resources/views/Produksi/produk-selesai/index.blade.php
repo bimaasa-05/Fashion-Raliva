@@ -46,6 +46,7 @@
                         <tr class="border-b border-muted-border last:border-0 align-top">
                             <td class="py-3.5 px-4">
                                 <p class="font-bold text-on-surface">{{ $o->nomor_order }}</p>
+                                <p class="text-xs text-on-surface mt-0.5">{{ $o->checkout?->nama_penerima ?? $o->checkout?->user?->nama_lengkap ?? '-' }}</p>
                                 <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->created_at?->translatedFormat('d M Y') ?? '-' }}</p>
                             </td>
                             <td class="py-3.5 px-4">

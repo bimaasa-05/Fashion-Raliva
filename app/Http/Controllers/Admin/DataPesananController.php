@@ -190,6 +190,10 @@ class DataPesananController extends Controller
             'items.min' => 'Pilih minimal 1 produk.',
             'items.*.product_variant_id.required' => 'Pilih produk untuk setiap baris.',
             'items.*.quantity.min' => 'Qty minimal 1.',
+            'nomor_telepon.required_if' => 'Nomor telepon wajib diisi untuk pesanan offline.',
+            'nama_penerima.required_if' => 'Nama penerima wajib diisi untuk pesanan offline.',
+            'alamat.required_if' => 'Alamat wajib diisi untuk pesanan offline.',
+            'metode_bayar.required_if' => 'Pilih metode pembayaran untuk pesanan offline.',
         ]);
 
         $items = collect($data['items'])->filter(fn ($r) => ! empty($r['product_variant_id']))->values();
@@ -228,22 +232,40 @@ class DataPesananController extends Controller
         $userId = null;
 
         if ($isOffline) {
+            // 1. Cari existing customer by email (jika ada)
             if (! empty($data['email_pelanggan'])) {
                 $existing = \App\Models\User::where('email', $data['email_pelanggan'])->first();
                 if ($existing && $existing->role?->nama_role === Role::CUSTOMER) {
                     $userId = $existing->user_id;
-                } else {
-                    $user = \App\Models\User::create([
-                        'nama_lengkap' => $data['nama_penerima'],
-                        'email' => $data['email_pelanggan'],
-                        'password' => Hash::make('Raliva123'),
-                        'role_id' => Role::where('nama_role', Role::CUSTOMER)->value('role_id'),
-                        'nomor_telepon' => $data['nomor_telepon'],
-                        'status' => 'aktif',
-                        'email_verified_at' => now(),
-                    ]);
-                    $userId = $user->user_id;
                 }
+            }
+
+            // 2. Cari existing customer by nomor telepon (jika belum ketemu)
+            if (! $userId && ! empty($data['nomor_telepon'])) {
+                $existing = \App\Models\User::where('nomor_telepon', $data['nomor_telepon'])
+                    ->whereHas('role', fn ($q) => $q->where('nama_role', Role::CUSTOMER))
+                    ->first();
+                if ($existing) {
+                    $userId = $existing->user_id;
+                }
+            }
+
+            // 3. Auto-create customer jika belum ketemu
+            if (! $userId) {
+                $autoEmail = ! empty($data['email_pelanggan'])
+                    ? $data['email_pelanggan']
+                    : preg_replace('/[^0-9]/', '', $data['nomor_telepon'] ?? '') . '@offline.raliva.test';
+
+                $user = \App\Models\User::create([
+                    'nama_lengkap' => $data['nama_penerima'],
+                    'email' => $autoEmail,
+                    'password' => Hash::make('Raliva123'),
+                    'role_id' => Role::where('nama_role', Role::CUSTOMER)->value('role_id'),
+                    'nomor_telepon' => $data['nomor_telepon'],
+                    'status' => 'aktif',
+                    'email_verified_at' => now(),
+                ]);
+                $userId = $user->user_id;
             }
         } else {
             $userId = (int) $data['user_id'];
