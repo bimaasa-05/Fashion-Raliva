@@ -918,12 +918,8 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                         {{ __('Review') }}</a>
                     <span class="co-step-line done"></span>
                     <span class="co-step active"><span class="num">2</span> {{ __('Bayar') }}</span>
-                    <span class="co-step-line {{ $maxStep >= 3 ? 'done' : '' }}"></span>
-                    @if($maxStep >= 3)
-                        <a href="{{ route('customer.checkout.selesai', $checkout->checkout_id) }}" class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Selesai') }}</a>
-                    @else
-                        <span class="co-step"><span class="num loading"></span> {{ __('Selesai') }}</span>
-                    @endif
+                    <span class="co-step-line"></span>
+                    <span class="co-step"><span class="num loading"></span> {{ __('Selesai') }}</span>
                 </div>
             </div>
 
