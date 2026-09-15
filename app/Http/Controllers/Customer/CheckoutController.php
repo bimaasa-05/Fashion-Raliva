@@ -120,6 +120,22 @@ class CheckoutController extends Controller
             ->orderBy('payment_method_id')
             ->get();
 
+        // Jejak progress stepper
+        $maxStep = max(session('checkout_max_step', 1), 1);
+        session(['checkout_max_step' => $maxStep]);
+        $checkoutActiveId = session('checkout_active_id');
+
+        // Fallback: jika session kosong tapi maxStep menunjukkan sudah pernah ke Payment,
+        // ambil checkout terakhir user dari database
+        if (!$checkoutActiveId && $maxStep >= 2 && Auth::check()) {
+            $checkoutActiveId = Checkout::where('user_id', Auth::id())
+                ->latest('checkout_id')
+                ->value('checkout_id');
+            if ($checkoutActiveId) {
+                session(['checkout_active_id' => $checkoutActiveId]);
+            }
+        }
+
         return view('customer.checkout.index', compact(
             'address',
             'items',
@@ -130,7 +146,9 @@ class CheckoutController extends Controller
             'tax',
             'total',
             'paymentMethods',
-            'buyId'
+            'buyId',
+            'maxStep',
+            'checkoutActiveId'
         ));
     }
 
@@ -367,10 +385,16 @@ class CheckoutController extends Controller
             ->orderBy('payment_method_id')
             ->get();
 
+        // Jejak progress stepper
+        $maxStep = max(session('checkout_max_step', 1), 2);
+        session(['checkout_max_step' => $maxStep]);
+        session(['checkout_active_id' => $checkoutModel->checkout_id]);
+
         return view('customer.checkout.payment', [
             'checkout' => $checkoutModel,
             'payment' => $payment,
             'paymentMethods' => $paymentMethods,
+            'maxStep' => $maxStep,
         ]);
     }
 
@@ -391,9 +415,14 @@ class CheckoutController extends Controller
             ->with(['orders.store:store_id,nama_toko', 'orders.items', 'payment.paymentMethod'])
             ->firstOrFail();
 
+        // Jejak progress stepper
+        session(['checkout_max_step' => 3]);
+        session(['checkout_active_id' => $checkoutModel->checkout_id]);
+
         return view('customer.checkout.selesai', [
             'checkout' => $checkoutModel,
             'payment' => $checkoutModel->payment,
+            'maxStep' => 3,
         ]);
     }
 
