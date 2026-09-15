@@ -101,51 +101,174 @@
 
         @php $akunBaru = session('akun_baru'); @endphp
 
+        {{-- === SUKSES HEADER === --}}
         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-2xl p-md md:p-xl card-premium text-center reveal-up">
             <div class="mx-auto w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mb-md">
                 <span class="material-symbols-outlined text-[40px] text-emerald-600">task_alt</span>
             </div>
             <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('Pesanan Berhasil!') }}</h2>
             <p class="font-body-sm text-body-sm text-on-surface-variant mt-sm max-w-xl mx-auto">{{ __('Terima kasih. Pesananmu telah kami terima dan bukti pembayaran sedang diverifikasi admin.') }}</p>
+        </div>
 
-            <div class="mt-lg text-left max-w-xl mx-auto bg-surface-container-low border border-outline-variant rounded-xl p-md">
-                <p class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-sm">{{ __('DETAIL PESANAN') }}</p>
-                @foreach($checkout->orders as $o)
-                <div class="flex justify-between py-1.5 font-body-sm text-body-sm">
-                    <span class="text-on-surface-variant">{{ $o->store?->nama_toko ?? __('Toko') }}</span>
-                    <strong class="text-on-surface">{{ $o->nomor_order }}</strong>
+        {{-- === DETAIL PESANAN LENGKAP === --}}
+        <div class="mt-lg max-w-3xl mx-auto space-y-md">
+
+            {{-- Header: Nomor Order & Tanggal --}}
+            <div class="bg-surface-container-low border border-outline-variant rounded-xl p-md reveal-up">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-xs">
+                    <div>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Nomor Pesanan') }}</p>
+                        @foreach($checkout->orders as $o)
+                            <p class="font-body-lg text-body-lg font-semibold text-on-surface">{{ $o->nomor_order }}</p>
+                        @endforeach
+                    </div>
+                    <div class="text-right">
+                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Tanggal') }}</p>
+                        <p class="font-body-lg text-body-lg font-semibold text-on-surface">{{ $checkout->created_at ? $checkout->created_at->format('d M Y, H:i') : '—' }}</p>
+                    </div>
                 </div>
-                @endforeach
-                <div class="h-px bg-[var(--border-soft)] my-sm"></div>
-                <div class="flex justify-between font-body-sm text-body-sm">
-                    <span class="text-on-surface-variant">{{ __('Total Dibayar') }}</span>
-                    <strong class="text-[var(--chrome-accent)] text-title-md">Rp {{ number_format((float)$payment->jumlah,0,',','.') }}</strong>
+                @if($checkout->email_pelanggan)
+                <div class="mt-sm pt-sm border-t border-[var(--border-soft)]">
+                    <p class="font-label-sm text-label-sm text-on-surface-variant/70">{{ __('Email pemesan') }}: {{ $checkout->email_pelanggan }}</p>
                 </div>
-                <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-xs">{{ __('Nomor order disimpan. Gunakan untuk lacak resi.') }}</p>
+                @endif
             </div>
 
-            @if($akunBaru)
-            <div class="mt-md max-w-xl mx-auto bg-emerald-50 border border-emerald-200 rounded-xl p-md text-left flex gap-sm">
-                <span class="material-symbols-outlined text-emerald-600">key</span>
-                <div>
-                    <p class="font-body-sm text-body-sm font-semibold text-emerald-800">{{ __('Akun berhasil dibuat') }}</p>
-                    <p class="font-body-sm text-body-sm text-emerald-700 mt-xs">{{ __('Email') }}: <strong>{{ $akunBaru }}</strong> • {{ __('Password') }}: <strong>Raliva123</strong></p>
-                    <p class="font-label-sm text-label-sm text-emerald-700/80 mt-xs">{{ __('Segera ganti password untuk keamanan.') }} <a href="{{ route('customer.account.password') }}" class="underline font-semibold">{{ __('Ganti Password') }}</a></p>
+            {{-- Grid: Metode Pembayaran + Alamat Pengiriman --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                {{-- Metode Pembayaran --}}
+                <div class="border border-outline-variant rounded-lg p-md reveal-up">
+                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider flex items-center gap-1.5 mb-sm">
+                        <span class="material-symbols-outlined text-[16px]">payments</span> {{ __('Metode Pembayaran') }}
+                    </p>
+                    <p class="font-body-lg text-body-lg font-semibold text-on-surface">{{ $payment->paymentMethod?->nama_metode ?? '—' }}</p>
+                    @if($payment->account)
+                    <div class="mt-sm space-y-1">
+                        <p class="text-sm text-on-surface-variant"><span class="font-medium text-on-surface">{{ $payment->account->nama_pemilik ?? $payment->account->nama }}</span></p>
+                        @if($payment->account->nomor_rekening)
+                        <p class="text-sm text-on-surface-variant font-mono">{{ $payment->account->nomor_rekening }}</p>
+                        @endif
+                    </div>
+                    @endif
+                    <div class="mt-sm pt-sm border-t border-[var(--border-soft)]">
+                        <p class="text-xs text-on-surface-variant/70 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">schedule</span>
+                            {{ __('Status') }}:
+                            <span
+                                class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ml-1
+                                @if($payment->status === 'pending') bg-amber-100 text-amber-800
+                                @elseif($payment->status === 'menunggu_verifikasi') bg-blue-100 text-blue-800
+                                @elseif($payment->status === 'terverifikasi') bg-emerald-100 text-emerald-800
+                                @elseif($payment->status === 'ditolak') bg-red-100 text-red-800
+                                @else bg-surface-container text-on-surface-variant @endif
+                            ">{{ $payment->status }}</span>
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Alamat Pengiriman --}}
+                <div class="border border-outline-variant rounded-lg p-md reveal-up">
+                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider flex items-center gap-1.5 mb-sm">
+                        <span class="material-symbols-outlined text-[16px]">local_shipping</span> {{ __('Alamat Pengiriman') }}
+                    </p>
+                    <p class="font-body-lg text-body-lg font-semibold text-on-surface">{{ $checkout->nama_penerima }}</p>
+                    <div class="mt-sm space-y-0.5 text-sm text-on-surface-variant">
+                        <p>{{ $checkout->nomor_telepon }}</p>
+                        <p>{{ $checkout->alamat }}</p>
+                        <p>{{ $checkout->kota }}, {{ $checkout->provinsi }}{{ $checkout->kode_pos ? ', ' . $checkout->kode_pos : '' }}</p>
+                    </div>
                 </div>
             </div>
-            @endif
 
-            <div class="mt-lg flex flex-col sm:flex-row gap-sm justify-center">
-                <a href="{{ route('customer.shop') }}" class="btn-gold inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
-                    <span class="material-symbols-outlined text-[18px]">storefront</span> {{ __('Lanjut Belanja') }}
-                </a>
-                <a href="{{ route('customer.cek-resi') }}" class="inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full border border-outline-variant font-label-caps text-label-caps uppercase tracking-widest hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">local_shipping</span> {{ __('Lacak via Resi') }}
-                </a>
-                <a href="{{ route('customer.order-tracking') }}" class="inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full border border-outline-variant font-label-caps text-label-caps uppercase tracking-widest hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">receipt_long</span> {{ __('Lacak Pesanan') }}
-                </a>
+            {{-- Daftar Produk per Toko --}}
+            @foreach($checkout->orders as $order)
+            <div class="border border-outline-variant rounded-lg p-md reveal-up">
+                <p class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-sm flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px]">storefront</span>
+                    {{ $order->store?->nama_toko ?? __('Toko') }}
+                </p>
+                @if($order->items && $order->items->count() > 0)
+                <div class="divide-y divide-outline-variant/50">
+                    @foreach($order->items as $item)
+                    <div class="flex justify-between items-start py-3 gap-sm">
+                        <div class="min-w-0">
+                            <p class="font-medium text-on-surface text-sm leading-snug">{{ $item->nama_produk_snapshot }}</p>
+                            @if($item->catatan_custom)
+                            <p class="text-xs text-on-surface-variant mt-0.5 italic">{{ $item->catatan_custom }}</p>
+                            @endif
+                            <p class="text-sm text-on-surface-variant mt-1">{{ $item->quantity }} × Rp {{ number_format((float)$item->harga_snapshot, 0,',','.') }}</p>
+                        </div>
+                        <p class="font-semibold text-on-surface text-sm whitespace-nowrap">Rp {{ number_format((float)$item->total, 0,',','.') }}</p>
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                <p class="text-sm text-on-surface-variant italic py-3">{{ __('Tidak ada item.') }}</p>
+                @endif
             </div>
+            @endforeach
+
+            {{-- Rincian Biaya --}}
+            <div class="bg-surface-container-low border border-outline-variant rounded-xl p-md reveal-up">
+                <p class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-sm">{{ __('Rincian Biaya') }}</p>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-on-surface-variant">{{ __('Subtotal Produk') }}</span>
+                        <span class="text-on-surface">Rp {{ number_format((float)$checkout->subtotal, 0,',','.') }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-on-surface-variant">{{ __('Ongkos Kirim') }}</span>
+                        <span class="text-on-surface">Rp {{ number_format((float)$checkout->total_ongkir, 0,',','.') }}</span>
+                    </div>
+                    @if($checkout->total_diskon > 0)
+                    <div class="flex justify-between text-sm">
+                        <span class="text-on-surface-variant">{{ __('Diskon') }}</span>
+                        <span class="text-emerald-600 font-medium">− Rp {{ number_format((float)$checkout->total_diskon, 0,',','.') }}</span>
+                    </div>
+                    @endif
+                    @if($checkout->total_pajak > 0)
+                    <div class="flex justify-between text-sm">
+                        <span class="text-on-surface-variant">{{ __('Pajak') }}</span>
+                        <span class="text-on-surface">Rp {{ number_format((float)$checkout->total_pajak, 0,',','.') }}</span>
+                    </div>
+                    @endif
+                    @if($checkout->biaya_layanan > 0)
+                    <div class="flex justify-between text-sm">
+                        <span class="text-on-surface-variant">{{ __('Biaya Layanan') }}</span>
+                        <span class="text-on-surface">Rp {{ number_format((float)$checkout->biaya_layanan, 0,',','.') }}</span>
+                    </div>
+                    @endif
+                    <div class="h-px bg-[var(--border-soft)] my-2"></div>
+                    <div class="flex justify-between">
+                        <span class="font-semibold text-on-surface">{{ __('Total Dibayar') }}</span>
+                        <span class="font-title-md text-title-md font-bold text-[var(--chrome-accent)]">Rp {{ number_format((float)$payment->jumlah, 0,',','.') }}</span>
+                    </div>
+                </div>
+                <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Nomor order disimpan. Gunakan untuk lacak resi.') }}</p>
+            </div>
+
+        </div> {{-- end max-w-3xl space-y-md --}}
+
+        {{-- === BANNER AKUN BARU === --}}
+        @if($akunBaru)
+        <div class="mt-lg max-w-3xl mx-auto bg-emerald-50 border border-emerald-200 rounded-xl p-md text-left flex gap-sm reveal-up">
+            <span class="material-symbols-outlined text-emerald-600 shrink-0">key</span>
+            <div>
+                <p class="font-body-sm text-body-sm font-semibold text-emerald-800">{{ __('Akun berhasil dibuat') }}</p>
+                <p class="font-body-sm text-body-sm text-emerald-700 mt-xs">{{ __('Email') }}: <strong>{{ $akunBaru }}</strong> • {{ __('Password') }}: <strong>Raliva123</strong></p>
+                <p class="font-label-sm text-label-sm text-emerald-700/80 mt-xs">{{ __('Segera ganti password untuk keamanan.') }} <a href="{{ route('customer.account.password') }}" class="underline font-semibold">{{ __('Ganti Password') }}</a></p>
+            </div>
+        </div>
+        @endif
+
+        {{-- === TOMBOL AKSI === --}}
+        <div class="mt-lg max-w-3xl mx-auto flex flex-col sm:flex-row gap-sm justify-center reveal-up">
+            <a href="{{ route('customer.shop') }}" class="btn-gold inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                <span class="material-symbols-outlined text-[18px]">storefront</span> {{ __('Lanjut Belanja') }}
+            </a>
+            <a href="{{ route('customer.order-tracking') }}" class="inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full border border-outline-variant font-label-caps text-label-caps uppercase tracking-widest hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">
+                <span class="material-symbols-outlined text-[18px]">receipt_long</span> {{ __('Lacak Pesanan') }}
+            </a>
         </div>
     </div>
 </main>
