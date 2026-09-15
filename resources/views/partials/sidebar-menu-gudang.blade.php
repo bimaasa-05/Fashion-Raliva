@@ -20,12 +20,6 @@
             ],
         ],
         [
-            'label' => 'Pelanggan',
-            'items' => [
-                ['route' => 'gudang.pelanggan-request', 'icon' => 'assignment_ind', 'text' => 'Pelanggan Request'],
-            ],
-        ],
-        [
             'label' => 'Operasional',
             'items' => [
                 ['route' => 'gudang.notifikasi', 'icon' => 'notifications', 'text' => 'Notifikasi'],

@@ -38,6 +38,7 @@
                     </tr>
                 </thead>
                 <tbody>
+<<<<<<< HEAD
                     @forelse ($orders as $o)
                         <tr class="border-b border-muted-border last:border-0 align-top">
                             <td class="py-3.5 px-4">
@@ -62,10 +63,38 @@
                         </tr>
                     @empty
                         <tr><td colspan="5" class="py-12 text-center text-on-surface-variant">Tidak ada pesanan menunggu QC.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+=======
+                    @forelse ($checks as $check)
+                        <tr class="border-b border-muted-border last:border-0">
+                            <td class="py-3.5 px-4">
+                                <p class="font-bold text-on-surface">{{ $check->productionOrder?->nomor_produksi ?? '-' }}</p>
+                                <p class="text-xs text-on-surface-variant mt-0.5">
+                                    {{ $check->productionOrder?->items->pluck('productVariant.product.nama_produk')->unique()->implode(', ') }}
+                                </p>
+                            </td>
+                            <td class="py-3.5 px-4 text-center text-on-surface">{{ number_format($check->jumlah_lulus + $check->jumlah_gagal, 0, ',', '.') }}</td>
+                            <td class="py-3.5 px-4 text-center font-bold text-secondary">{{ number_format($check->jumlah_lulus, 0, ',', '.') }}</td>
+                            <td class="py-3.5 px-4 text-center font-bold {{ $check->jumlah_gagal > 0 ? 'text-error' : 'text-on-surface-variant' }}">{{ number_format($check->jumlah_gagal, 0, ',', '.') }}</td>
+                            <td class="py-3.5 px-4 text-on-surface-variant max-w-[240px]">{{ $check->catatan ?: '—' }}</td>
+                            <td class="py-3.5 px-4 text-on-surface-variant">{{ $check->checker?->nama_lengkap ?? '-' }}</td>
+                            <td class="py-3.5 px-4 text-center">
+                                @if ($check->status === 'lulus')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Lulus</span>
+                                @elseif ($check->status === 'gagal')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Gagal</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Sebagian</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="py-12 text-center">
+                                <div class="flex flex-col items-center gap-3">
+                                        <span class="material-symbols-outlined text-[28px] text-on-surface-variant">search_off</span>
+                                    </div>
+                                    <p class="text-on-surface-variant font-body-md text-sm">Tidak ada pemeriksaan yang cocok.</p>
+<<<<<<< HEAD
         {{ $orders->withQueryString()->links() }}
     </section>
 </div>
@@ -80,9 +109,27 @@
             <div>
                 <h3 class="font-title-md text-title-md text-on-surface">QC + Packing</h3>
                 <p class="text-xs text-on-surface-variant">{{ $o->nomor_order }}</p>
+=======
+
+        @if ($checks->hasPages())
+            <div class="mt-6 flex justify-center">{{ $checks->links() }}</div>
+        @endif
+    </section>
+</div>
+
+{{-- Modal Catat QC --}}
+<div id="modal-catat-qc" data-modal class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto mt-10 md:mt-12 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
+        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border z-10">
+            <div>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Catat Hasil QC</h3>
+                <p class="text-on-surface-variant font-body-md text-xs mt-1">Layak masuk gudang, gagal tercatat sebagai barang rusak & diproduksi ulang.</p>
+>>>>>>> 805af2ec7afd202e60685487b80cc6e85225bde2
             </div>
             <button type="button" onclick="closeModalQC('{{ $o->order_id }}')" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
         </div>
+<<<<<<< HEAD
         <div class="p-6 space-y-4">
             <div class="bg-surface-container-low rounded-lg p-3 space-y-1">
                 <p class="text-xs text-on-surface-variant uppercase tracking-wider">Hasil Produksi</p>
@@ -95,6 +142,41 @@
             <div>
                 <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Jumlah Gagal QC</label>
                 <input type="number" name="jumlah_gagal" min="0" value="{{ $o->jumlah_gagal ?? 0 }}" class="raliva-input w-full" />
+=======
+        <form method="POST" action="{{ route('produksi.pemeriksaan-kualitas.store') }}" class="p-6 space-y-5">
+            @csrf
+            <div>
+                <label class="block raliva-label mb-2">Produksi (Menunggu QC)</label>
+                <select name="production_order_id" class="raliva-select" required>
+                    @forelse ($antrian as $order)
+                        <option value="{{ $order->production_order_id }}">
+                            {{ $order->nomor_produksi }} • {{ $order->items->pluck('productVariant.product.nama_produk')->unique()->implode(', ') }} • {{ $order->items->sum('jumlah_diminta') }} unit • sisa {{ $order->sisa_target }}
+                        </option>
+                    @empty
+                        <option value="" disabled>Tidak ada produksi dalam antrian QC</option>
+                    @endforelse
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-gutter">
+                <div>
+                    <label for="qc-layak" class="block raliva-label mb-2">Unit Layak</label>
+                    <input id="qc-layak" name="jumlah_lulus" type="number" min="0" value="" placeholder="0" required class="raliva-input" />
+                </div>
+                <div>
+                    <label for="qc-gagal" class="block raliva-label mb-2">Unit Gagal</label>
+                    <input id="qc-gagal" name="jumlah_gagal" type="number" min="0" value="" placeholder="0" required class="raliva-input" />
+                </div>
+            </div>
+            <div>
+                <label for="qc-catatan" class="block raliva-label mb-2">Catatan Defect <span class="text-on-surface-variant/60">(opsional)</span></label>
+                <textarea id="qc-catatan" name="catatan" rows="3" placeholder="cth. Jahitan kancing kurang kuat pada 2 unit..." class="raliva-textarea"></textarea>
+            </div>
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="submit" {{ $antrian->isEmpty() ? 'disabled' : '' }} class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-[16px]">fact_check</span>Simpan Hasil QC
+                </button>
+>>>>>>> 805af2ec7afd202e60685487b80cc6e85225bde2
             </div>
             <div>
                 <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Catatan (opsional)</label>
@@ -107,6 +189,7 @@
         </div>
     </form>
 </div>
+<<<<<<< HEAD
 @endforeach
 
 @push('scripts')
@@ -122,3 +205,14 @@
 </script>
 @endpush
 @endsection
+=======
+
+@if ($antrian->isNotEmpty())
+    <div class="fixed bottom-24 md:bottom-8 right-4 md:right-8 z-[60]">
+        <button type="button" data-modal-open="modal-catat-qc" class="flex items-center gap-2 px-5 py-3 bg-deep-onyx text-on-primary text-sm font-semibold rounded-full shadow-xl btn-premium">
+            <span class="material-symbols-outlined text-[18px]">add_task</span>Catat QC
+        </button>
+    </div>
+@endif
+@endsection
+>>>>>>> 805af2ec7afd202e60685487b80cc6e85225bde2

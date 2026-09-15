@@ -26,7 +26,6 @@ use App\Http\Controllers\Gudang\BarangMasukController as GudangBarangMasukContro
 use App\Http\Controllers\Gudang\DashboardController as GudangDashboardController;
 use App\Http\Controllers\Gudang\GantiGudangController;
 use App\Http\Controllers\Gudang\NotifikasiController as GudangNotifikasiController;
-use App\Http\Controllers\Gudang\PelangganRequestController as GudangPelangganRequestController;
 use App\Http\Controllers\Gudang\PemeriksaanStokController as GudangPemeriksaanStokController;
 use App\Http\Controllers\Gudang\PemindahanStokController as GudangPemindahanStokController;
 use App\Http\Controllers\Gudang\ProfilController as GudangProfilController;
@@ -42,7 +41,6 @@ use App\Http\Controllers\Owner\KaryawanController;
 use App\Http\Controllers\Owner\KelolaSlotController;
 use App\Http\Controllers\Owner\KomplainController as OwnerKomplainController;
 use App\Http\Controllers\Owner\LaporanController as OwnerLaporanController;
-use App\Http\Controllers\Owner\ModerasiProdukController as OwnerModerasiProdukController;
 use App\Http\Controllers\Owner\NotifikasiController as OwnerNotifikasiController;
 use App\Http\Controllers\Owner\PaketSlotController as OwnerPaketSlotController;
 use App\Http\Controllers\Owner\PencairanDanaController as OwnerPencairanDanaController;
@@ -58,15 +56,12 @@ use App\Http\Controllers\Owner\PromoController as OwnerPromoController;
 use App\Http\Controllers\Owner\SaldoController;
 use App\Http\Controllers\Owner\UlasanController;
 use App\Http\Controllers\Produksi\BahanProduksiController as ProduksiBahanController;
-use App\Http\Controllers\Produksi\BarangRusakController as ProduksiBarangRusakController;
 use App\Http\Controllers\Produksi\DashboardController as ProduksiDashboardController;
 use App\Http\Controllers\Produksi\DataProduksiController as ProduksiDataController;
 use App\Http\Controllers\Produksi\NotifikasiController as ProduksiNotifikasiController;
 use App\Http\Controllers\Produksi\PemeriksaanKualitasController as ProduksiPemeriksaanController;
-use App\Http\Controllers\Produksi\PermintaanProduksiController as ProduksiPermintaanController;
-use App\Http\Controllers\Produksi\ProdukSelesaiController as ProduksiProdukSelesaiController;
+use App\Http\Controllers\Produksi\PelaporanProduksiController as ProduksiPelaporanController;
 use App\Http\Controllers\Produksi\ProfilController as ProduksiProfilController;
-use App\Http\Controllers\Produksi\RiwayatProduksiController as ProduksiRiwayatController;
 use App\Http\Controllers\SuperAdmin\DashboardController;
 use App\Http\Controllers\SuperAdmin\DataBankController;
 use App\Http\Controllers\SuperAdmin\DataPembayaranController;
@@ -403,8 +398,6 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang', 'st
     Route::get('/pemeriksaan', [GudangPemeriksaanStokController::class, 'index'])->name('pemeriksaan');
     Route::get('/stok-rusak', [GudangStokRusakController::class, 'index'])->name('stok-rusak');
     Route::get('/riwayat-stok', [GudangRiwayatStokController::class, 'index'])->name('riwayat-stok');
-    Route::get('/pelanggan-request', [GudangPelangganRequestController::class, 'index'])->name('pelanggan-request');
-    Route::post('/pelanggan-request/konfirmasi', [GudangPelangganRequestController::class, 'konfirmasi'])->name('pelanggan-request.konfirmasi')->middleware('permission:warehouse.stock_check');
     Route::get('/notifikasi', [GudangNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [GudangProfilController::class, 'index'])->name('profil');
     Route::post('/profil', [GudangProfilController::class, 'updateProfile'])->name('profil.update');
@@ -470,9 +463,6 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::post('/komplain/{komplain}/messages', [OwnerKomplainController::class, 'storeMessage'])->name('komplain.messages.store');
     Route::patch('/komplain/{komplain}/messages/{message}', [OwnerKomplainController::class, 'updateMessage'])->name('komplain.messages.update')->withTrashed();
     Route::delete('/komplain/{komplain}/messages/{message}', [OwnerKomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy')->withTrashed();
-    Route::get('/moderasi-produk', [OwnerModerasiProdukController::class, 'index'])->name('moderasi-produk');
-    Route::post('/moderasi-produk/{product}/setujui', [OwnerModerasiProdukController::class, 'setujui'])->name('moderasi-produk.setujui');
-    Route::post('/moderasi-produk/{product}/tolak', [OwnerModerasiProdukController::class, 'tolak'])->name('moderasi-produk.tolak');
     Route::get('/paket-slot', [OwnerPaketSlotController::class, 'index'])->name('paket-slot');
     Route::get('/pencairan-dana', [OwnerPencairanDanaController::class, 'index'])->name('pencairan-dana');
     Route::post('/pencairan-dana', [OwnerPencairanDanaController::class, 'store'])->name('pencairan-dana.store');
@@ -499,8 +489,6 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
 
 Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi', 'store-active'])->group(function () {
     Route::get('/dashboard', [ProduksiDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/permintaan-produksi', [ProduksiPermintaanController::class, 'index'])->name('permintaan-produksi');
-    Route::post('/permintaan-produksi/{productionOrder}/status', [ProduksiPermintaanController::class, 'updateStatus'])->name('permintaan-produksi.status');
     Route::get('/data-produksi', [ProduksiDataController::class, 'index'])->name('data-produksi');
     Route::post('/data-produksi/{order}/accept', [ProduksiDataController::class, 'accept'])->name('data-produksi.accept');
     Route::post('/data-produksi/{order}/reject', [ProduksiDataController::class, 'reject'])->name('data-produksi.reject');

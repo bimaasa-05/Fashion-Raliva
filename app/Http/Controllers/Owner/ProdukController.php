@@ -125,7 +125,7 @@ class ProdukController extends Controller
         }
 
         if ($wasRejected) {
-            $product->update(['status' => Product::STATUS_PENDING, 'alasan_penolakan' => null, 'owner_verified_at' => null]);
+            $product->update(['status' => Product::STATUS_PENDING, 'alasan_penolakan' => null]);
             $sa = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))->first();
             if ($sa) {
                 Notification::create([

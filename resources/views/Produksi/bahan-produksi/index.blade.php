@@ -173,3 +173,55 @@
 </script>
 @endpush
 @endsection
+
+@push('scripts')
+<script>
+    window.ralivaMaterials = [
+        @foreach ($materials as $material)
+            { id: {{ $material->production_material_id }}, nama: @json($material->nama_bahan), satuan: @json($material->satuan) },
+        @endforeach
+    ];
+
+    const fillMaterialOptions = (select) => {
+        select.innerHTML = '';
+        window.ralivaMaterials.forEach((m) => {
+            const opt = document.createElement('option');
+            opt.value = m.id;
+            opt.textContent = m.nama + ' (' + m.satuan + ')';
+            select.appendChild(opt);
+        });
+    };
+
+    const setStokModal = (jenis, materialId) => {
+        const select = document.getElementById(jenis + '-select');
+        fillMaterialOptions(select);
+        const nama = document.getElementById(jenis + '-nama');
+        if (materialId) {
+            select.value = materialId;
+            const mat = window.ralivaMaterials.find(m => m.id === materialId);
+            nama.textContent = mat ? '— ' + mat.nama : '';
+        } else {
+            nama.textContent = '';
+        }
+    };
+
+    document.querySelectorAll('[data-open-stok]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            document.getElementById('modal-stok-' + btn.getAttribute('data-open-stok')).classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            setStokModal(btn.getAttribute('data-open-stok'), btn.getAttribute('data-material'));
+        });
+    });
+
+    document.querySelectorAll('[data-modal-open="modal-stok-masuk"]').forEach((btn) => btn.addEventListener('click', () => setStokModal('masuk')));
+    document.querySelectorAll('[data-modal-open="modal-stok-keluar"]').forEach((btn) => btn.addEventListener('click', () => setStokModal('keluar')));
+
+    document.querySelectorAll('#masuk-select, #keluar-select').forEach((select) => {
+        select.addEventListener('change', () => {
+            const jenis = select.id.replace('-select', '');
+            const mat = window.ralivaMaterials.find(m => m.id === Number(select.value));
+            document.getElementById(jenis + '-nama').textContent = mat ? '— ' + mat.nama : '';
+        });
+    });
+</script>
+@endpush

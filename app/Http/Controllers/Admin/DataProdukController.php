@@ -64,26 +64,28 @@ class DataProdukController extends Controller
             'harga_dasar' => $data['harga_dasar'],
             'tipe_produk' => $data['tipe_produk'] ?? Product::TIPE_REGULAR,
             'status' => Product::STATUS_PENDING,
-            'alasan_penolakan' => 'Menunggu persetujuan SuperAdmin.',
+            'alasan_penolakan' => 'Menunggu moderasi Super Admin.',
         ]);
 
-        // Notifikasi ke SuperAdmin (bukan Owner)
-        $superAdmins = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', \App\Models\Role::SUPER_ADMIN))
-            ->where('status', 'aktif')->get(['user_id']);
-        foreach ($superAdmins as $sa) {
+        $sa = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))->first();
+        if ($sa) {
             \App\Models\Notification::create([
                 'user_id' => $sa->user_id,
                 'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => \App\Models\Notification::TIPE_PROMO,
                 'judul' => 'Produk Baru Diajukan',
+<<<<<<< HEAD
                 'pesan' => sprintf('Produk "%s" diajukan dan menunggu verifikasi SuperAdmin.', $product->nama_produk),
+=======
+                'pesan' => sprintf('Produk "%s" diajukan dan menunggu moderasi Super Admin.', $product->nama_produk),
+>>>>>>> 805af2ec7afd202e60685487b80cc6e85225bde2
                 'url' => route('superadmin.moderasi-produk'),
             ]);
         }
         \App\Models\Notification::fireSelf(
             \App\Models\Notification::TIPE_PROMO,
-            'Produk Diajukan',
-            sprintf('Produk "%s" diajukan ke SuperAdmin untuk verifikasi.', $product->nama_produk),
+=======
+>>>>>>> 805af2ec7afd202e60685487b80cc6e85225bde2
             route('admin.produk')
         );
 
@@ -121,6 +123,6 @@ class DataProdukController extends Controller
             }
         }
 
-        return back()->with('success', 'Produk diajukan. Menunggu persetujuan SuperAdmin.');
+        return back()->with('success', 'Produk diajukan. Menunggu moderasi Super Admin.');
     }
 }

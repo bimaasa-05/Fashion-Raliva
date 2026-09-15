@@ -27,12 +27,6 @@
                 </div>
             </div>
         @endif
-    @if (($counts['pending'] ?? 0) > 0)
-        <a href="{{ route('owner.moderasi-produk') }}" class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-center gap-3 hover:border-gold-accent/60 transition-colors">
-            <span class="material-symbols-outlined text-gold-accent mt-0.5">hourglass_top</span>
-            <p class="text-sm text-on-surface"><span class="font-bold">{{ $counts['pending'] }} produk</span> menunggu verifikasi Owner. <span class="underline text-gold-accent font-semibold">Ke Moderasi Produk</span></p>
-        </a>
-    @endif
     {{-- Ringkasan --}}
     <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
