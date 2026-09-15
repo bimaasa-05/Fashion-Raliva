@@ -372,6 +372,46 @@
 </div>
 </div>
 </section>
+@if (count($adProducts))
+<!-- Sponsored Ads -->
+<section class="py-xl reveal-up">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
+<div class="flex items-center justify-between mb-xs">
+<div class="atl-eyebrow">
+<span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Sponsored') }}</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant inline-flex items-center gap-xs"><span class="material-symbols-outlined text-[16px]" data-icon="campaign">campaign</span>{{ __('Iklan') }}</span>
+</div>
+<h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Featured by Our Ateliers') }}</h3>
+<div class="flex overflow-x-auto no-scrollbar lg:grid lg:grid-cols-5 lg:overflow-visible gap-md pb-xs mt-md snap-x snap-mandatory">
+@foreach ($adProducts as $a)
+@php
+    $aPrice = $a->variants->min('harga') ?? $a->harga_dasar;
+    $aImg = $a->images->first()->file_gambar ?? '';
+    $aImgUrl = $aImg ? (filter_var($aImg, FILTER_VALIDATE_URL) ? $aImg : asset($aImg)) : 'https://picsum.photos/seed/ad/900/1200';
+    $aWl = in_array($a->product_id, $wishlistedIds, true);
+@endphp
+<div class="relative flex flex-col group cursor-pointer shrink-0 w-40 lg:w-auto snap-center">
+<a href="{{ route('customer.shop.produk-detail', $a->product_id) }}" class="flex flex-col group cursor-pointer">
+<div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
+<img loading="lazy" decoding="async" class="object-cover w-full h-full " alt="{{ $a->nama_produk }}" src="{{ $aImgUrl }}"/>
+<span class="absolute top-2 left-2 bg-secondary text-on-secondary text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">{{ __('Iklan') }}</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider truncate">{{ $a->store?->nama_toko ?? __('RALIVA') }}</span>
+<h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $a->nama_produk }}</h4>
+<span class="font-body-sm text-body-sm text-on-surface">Rp {{ number_format($aPrice, 0, ',', '.') }}</span>
+</a>
+<button type="button" aria-label="{{ __('Add to wishlist') }}" data-wishlist-toggle data-product-id="{{ $a->product_id }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center{{ $aWl ? ' wishlisted-active' : '' }}">
+<span class="material-symbols-outlined" data-icon="favorite{{ $aWl ? '' : '_border' }}"@if($aWl) data-weight="fill"@endif>favorite{{ $aWl ? '' : '_border' }}</span>
+</button>
+</div>
+@endforeach
+</div>
+</div>
+</div>
+</section>
+@endif
 <!-- New Arrivals -->
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
