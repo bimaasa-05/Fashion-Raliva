@@ -179,7 +179,9 @@ class CheckoutController extends Controller
                 // Coba auto-login dengan password default
                 $credentials = ['email' => $validated['email_pelanggan'], 'password' => 'Raliva123'];
                 if (Auth::attempt($credentials)) {
+                    $request->session()->put('password_hash_web', Auth::user()->getAuthPassword());
                     $request->session()->regenerate();
+                    $request->session()->put('password_hash_web', Auth::user()->getAuthPassword());
                 } else {
                     // Email sudah ada tapi bukan Raliva123 -> minta login manual
                     $loginUrl = route('login');
@@ -206,7 +208,9 @@ class CheckoutController extends Controller
                     'email_verified_at' => now(),
                 ]);
                 Auth::login($user);
+                $request->session()->put('password_hash_web', $request->user()->getAuthPassword());
                 $request->session()->regenerate();
+                $request->session()->put('password_hash_web', $request->user()->getAuthPassword());
                 $isNewAccount = true;
                 $flashEmail = $validated['email_pelanggan'];
             }
