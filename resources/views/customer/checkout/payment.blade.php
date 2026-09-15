@@ -1155,12 +1155,12 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                     @endif
                                     <label id="dropzone"
                                         class="flex flex-col items-center justify-center gap-sm border-2 border-dashed border-outline rounded-xl py-xl bg-surface-container-low cursor-pointer hover:border-secondary transition-colors text-center px-md">
-                                        <span
+                                        <span id="dropzone-icon"
                                             class="material-symbols-outlined text-[40px] text-on-surface-variant">upload_file</span>
-                                        <span
+                                        <span id="upload-hint"
                                             class="font-body-sm text-body-sm text-on-surface-variant text-center">{{ __('Klik untuk memilih gambar bukti transfer (JPG/PNG, maks 4MB)') }}</span>
-                                        <span id="file-name"
-                                            class="font-label-sm text-label-sm text-secondary hidden"></span>
+                                        <img id="preview-bukti" alt="{{ __('Pratinjau bukti') }}"
+                                            class="hidden max-h-60 w-auto max-w-full object-contain rounded-lg border border-outline-variant bg-surface-container-lowest" />
                                         <input type="file" name="bukti" id="input-bukti"
                                             accept="image/jpeg,image/png,image/jpg" class="sr-only" required />
                                     </label>
@@ -1169,11 +1169,26 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                     @enderror
                                 </div>
 
-                                <button type="submit" id="btn-submit-bukti"
-                                    class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest mt-lg">
-                                    <span class="material-symbols-outlined text-[20px]" id="btn-submit-icon">task_alt</span>
-                                    <span id="btn-submit-text">{{ $buktiTerakhir ? __('Ganti Bukti Foto') : __('Unggah Bukti Pembayaran') }}</span>
-                                </button>
+                                <div id="btn-actions" class="mt-lg" data-prev-proof="@json((bool) $buktiTerakhir)">
+    <button type="submit" id="btn-unggah"{{ $buktiTerakhir ? ' class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest hidden"' : ' class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest"' }}>
+        <span class="material-symbols-outlined text-[20px]" id="btn-unggah-icon">task_alt</span>
+        <span id="btn-unggah-text">{{ __('Unggah Bukti Pembayaran') }}</span>
+    </button>
+
+    <div id="btn-pair" class="{{ $buktiTerakhir ? 'grid grid-cols-2 gap-sm' : 'grid grid-cols-2 gap-sm hidden' }}">
+        <button type="button" id="btn-ganti"
+            class="w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest border border-outline text-on-surface hover:bg-surface-container-high transition-colors">
+            <span class="material-symbols-outlined text-[20px]">photo_camera_back</span>
+            <span>{{ __('Ganti') }}</span>
+        </button>
+
+        <button type="submit" id="btn-selesai"
+            class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+            <span class="material-symbols-outlined text-[20px]">check_circle</span>
+            <span>{{ __('Selesai') }}</span>
+        </button>
+    </div>
+</div>
                             </form>
                         </div>
                     </div>
@@ -1455,18 +1470,55 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             })();
 
             var fileInput = document.getElementById('input-bukti');
-            var fileName = document.getElementById('file-name');
             var dropzone = document.getElementById('dropzone');
-            if (fileInput && fileName) {
+            var previewImg = document.getElementById('preview-bukti');
+            var dropzoneIcon = document.getElementById('dropzone-icon');
+            var uploadHint = document.getElementById('upload-hint');
+            var btnUnggah = document.getElementById('btn-unggah');
+            var btnPair = document.getElementById('btn-pair');
+            var btnGanti = document.getElementById('btn-ganti');
+            var btnActions = document.getElementById('btn-actions');
+            var hasPrevProof = btnActions ? btnActions.getAttribute('data-prev-proof') === 'true' : false;
+            var previewUrl = null;
+
+            var showSingle = function() {
+                if (btnUnggah) btnUnggah.classList.remove('hidden');
+                if (btnPair) btnPair.classList.add('hidden');
+            };
+
+            var showPair = function() {
+                if (btnUnggah) btnUnggah.classList.add('hidden');
+                if (btnPair) btnPair.classList.remove('hidden');
+            };
+
+            if (btnGanti) {
+                btnGanti.addEventListener('click', function() {
+                    if (fileInput) fileInput.click();
+                });
+            }
+
+            if (hasPrevProof) showPair(); else showSingle();
+
+            if (fileInput) {
                 fileInput.addEventListener('change', function() {
                     if (fileInput.files && fileInput.files[0]) {
-                        fileName.textContent = fileInput.files[0].name;
-                        fileName.classList.remove('hidden');
                         if (dropzone) dropzone.classList.add('border-secondary');
-                        var btnText = document.getElementById('btn-submit-text');
-                        var btnIcon = document.getElementById('btn-submit-icon');
-                        if (btnText) btnText.textContent = 'Ganti Bukti Foto';
-                        if (btnIcon) btnIcon.textContent = 'photo_camera_back';
+                        if (previewUrl) URL.revokeObjectURL(previewUrl);
+                        previewUrl = URL.createObjectURL(fileInput.files[0]);
+                        if (previewImg) {
+                            previewImg.src = previewUrl;
+                            previewImg.classList.remove('hidden');
+                        }
+                        if (dropzoneIcon) dropzoneIcon.classList.add('hidden');
+                        if (uploadHint) uploadHint.classList.add('hidden');
+                        showPair();
+                    } else {
+                        if (previewUrl) { URL.revokeObjectURL(previewUrl); previewUrl = null; }
+                        if (previewImg) { previewImg.src = ''; previewImg.classList.add('hidden'); }
+                        if (dropzoneIcon) dropzoneIcon.classList.remove('hidden');
+                        if (uploadHint) uploadHint.classList.remove('hidden');
+                        if (dropzone) dropzone.classList.remove('border-secondary');
+                        if (hasPrevProof) showPair(); else showSingle();
                     }
                 });
                 if (dropzone) {
