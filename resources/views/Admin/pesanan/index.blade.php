@@ -113,6 +113,7 @@
                                 <button type="button" data-modal-open="modal-batalkan-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Batalkan</button>
                             @endif
                             <button type="button" data-modal-open="modal-detail-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
+                            <button type="button" onclick="openDetailProduksi('{{ $pesanan->order_id }}')" class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">Produksi</button>
                         </td>
                     </tr>
                 @empty
@@ -344,6 +345,11 @@
         </div>
     </form>
 </div>
+
+{{-- Modal Detail Produksi (timeline) per pesanan --}}
+@foreach ($orders as $pesanan)
+    @include('partials.modal-produksi-detail', ['o' => $pesanan])
+@endforeach
 @endsection
 
 @push('scripts')
@@ -403,12 +409,14 @@
         const row = document.createElement('div');
         row.setAttribute('data-bahan-row', '');
         row.className = 'border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low space-y-2.5';
+        const dlId = 'bahan-datalist-' + orderId + '-' + idx;
         row.innerHTML = `
             <div class="flex items-start justify-between gap-3">
-                <select name="bahan[${idx}][bahan_id]" onchange="onBahanChange(this)" class="raliva-select flex-1 min-w-0">
-                    <option value="">— Pilih bahan / ketik manual —</option>
-                    ${bahanMaster.map(b => `<option value="${b.bahan_id}" data-nama="${b.nama_bahan}" data-satuan="${b.satuan}">${b.nama_bahan}</option>`).join('')}
-                </select>
+                <input type="text" list="${dlId}" autocomplete="off" placeholder="Ketik / pilih bahan..." oninput="onBahanInput(this)" class="raliva-input flex-1 min-w-0" />
+                <input type="hidden" name="bahan[${idx}][bahan_id]" value="" />
+                <datalist id="${dlId}">
+                    ${bahanMaster.map(b => `<option value="${b.bahan_id}" label="${b.nama_bahan} (stok ${b.stok} ${b.satuan})">${b.nama_bahan}</option>`).join('')}
+                </datalist>
                 <button type="button" onclick="removeBahanRow(this)" class="shrink-0 px-2.5 py-2.5 rounded-lg border border-error/20 text-error hover:bg-error/10 transition-colors" title="Hapus baris">
                     <span class="material-symbols-outlined text-[18px]">delete</span>
                 </button>
@@ -442,19 +450,21 @@
         if (row) row.remove();
     }
 
-    function onBahanChange(select) {
-        const row = select.closest('[data-bahan-row]');
+    function onBahanInput(textInput) {
+        const row = textInput.closest('[data-bahan-row]');
         if (!row) return;
-        const opt = select.options[select.selectedIndex];
-        const nama = opt?.dataset?.nama ?? '';
-        const satuan = opt?.dataset?.satuan ?? '';
-        if (nama) {
+        const hiddenInput = row.querySelector('input[name$="[bahan_id]"]');
+        if (!hiddenInput) return;
+        const b = bahanMaster.find(x => x.bahan_id == textInput.value || x.nama_bahan == textInput.value);
+        if (b) {
+            hiddenInput.value = b.bahan_id;
+            textInput.value = b.bahan_id;
             const namaInput = row.querySelector('input[name$="[nama_bahan]"]');
-            if (namaInput && !namaInput.value) namaInput.value = nama;
-        }
-        if (satuan) {
+            if (namaInput && !namaInput.value) namaInput.value = b.nama_bahan;
             const satuanInput = row.querySelector('input[name$="[satuan]"]');
-            if (satuanInput && !satuanInput.value) satuanInput.value = satuan;
+            if (satuanInput && !satuanInput.value) satuanInput.value = b.satuan;
+        } else {
+            hiddenInput.value = '';
         }
     }
 
@@ -519,13 +529,15 @@
         const row = document.createElement('div');
         row.setAttribute('data-item-row', '');
         row.className = 'grid grid-cols-[1fr_110px_140px] gap-3 items-end';
+        const dlId = 'variant-datalist-' + i;
         row.innerHTML = `
             <div>
                 <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Produk</label>
-                <select name="items[${i}][product_variant_id]" onchange="onItemChange(this)" class="raliva-select">
-                    <option value="">— Pilih Varian —</option>
-                    ${itemVariants.map(v => `<option value="${v.product_variant_id}" data-nama="${v.nama_produk}" data-harga="${v.harga}" data-stok="${v.stok}">${v.nama_produk} — ${[v.ukuran, v.warna].filter(Boolean).join(' ')} (stok ${v.stok}) — Rp ${v.harga.toLocaleString('id-ID')}</option>`).join('')}
-                </select>
+                <input type="text" list="${dlId}" autocomplete="off" placeholder="Ketik nama produk / pilih varian..." oninput="onVariantInput(this)" class="raliva-input w-full" />
+                <input type="hidden" name="items[${i}][product_variant_id]" value="" />
+                <datalist id="${dlId}">
+                    ${itemVariants.map(v => `<option value="${v.product_variant_id}" label="${v.nama_produk} — ${[v.ukuran, v.warna].filter(Boolean).join(' ')} (stok ${v.stok}) — Rp ${v.harga.toLocaleString('id-ID')}">${v.nama_produk} — ${[v.ukuran, v.warna].filter(Boolean).join(' ')}</option>`).join('')}
+                </datalist>
             </div>
             <div>
                 <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Qty</label>
@@ -551,11 +563,22 @@
         recalculateTotal();
     }
 
-    function onItemChange(select) {
-        const row = select.closest('[data-item-row]');
+    function onVariantInput(textInput) {
+        const row = textInput.closest('[data-item-row]');
         if (!row) return;
-        recalculateRow(row);
-        recalculateTotal();
+        const hiddenInput = row.querySelector('input[name$="[product_variant_id]"]');
+        if (!hiddenInput) return;
+        const v = itemVariants.find(x => x.product_variant_id == textInput.value || x.nama_produk == textInput.value);
+        if (v) {
+            hiddenInput.value = v.product_variant_id;
+            textInput.value = v.product_variant_id;
+            recalculateRow(row);
+            recalculateTotal();
+        } else {
+            hiddenInput.value = '';
+            recalculateRow(row);
+            recalculateTotal();
+        }
     }
 
     function onQtyChange(input) {
@@ -566,12 +589,12 @@
     }
 
     function recalculateRow(row) {
-        const select = row.querySelector('select[name$="[product_variant_id]"]');
+        const hiddenInput = row.querySelector('input[name$="[product_variant_id]"]');
         const qtyInput = row.querySelector('input[name$="[quantity]"]');
         const subtotalEl = row.querySelector('.item-subtotal');
-        if (!select || !qtyInput || !subtotalEl) return;
-        const opt = select.options[select.selectedIndex];
-        const harga = parseFloat(opt?.dataset?.harga ?? 0);
+        if (!hiddenInput || !qtyInput || !subtotalEl) return;
+        const v = itemVariants.find(x => x.product_variant_id == hiddenInput.value);
+        const harga = v ? parseFloat(v.harga) : 0;
         const qty = Math.max(1, parseInt(qtyInput.value || 1, 10));
         const sub = harga * qty;
         subtotalEl.textContent = 'Rp ' + sub.toLocaleString('id-ID');
@@ -580,10 +603,10 @@
     function recalculateTotal() {
         let total = 0;
         document.querySelectorAll('#item-container [data-item-row]').forEach(row => {
-            const select = row.querySelector('select[name$="[product_variant_id]"]');
+            const hiddenInput = row.querySelector('input[name$="[product_variant_id]"]');
             const qtyInput = row.querySelector('input[name$="[quantity]"]');
-            const opt = select?.options[select?.selectedIndex ?? -1];
-            const harga = parseFloat(opt?.dataset?.harga ?? 0);
+            const v = itemVariants.find(x => x.product_variant_id == hiddenInput?.value);
+            const harga = v ? parseFloat(v.harga) : 0;
             const qty = Math.max(0, parseInt(qtyInput?.value || 0, 10));
             total += harga * qty;
             const subtotalEl = row.querySelector('.item-subtotal');

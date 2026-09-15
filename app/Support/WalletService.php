@@ -14,8 +14,8 @@ class WalletService
      * Kredit dana penjualan ke saldo tersedia owner ketika order selesai.
      *
      * Idempotent: jika komisi untuk order ini sudah ada (aktif), tidak diproses lagi.
-     * Komisi platform dipotong dari grand_total dan dicatat pada record Commission,
-     * wallet bertambah sebesar neto (grand_total - komisi).
+     * Komisi platform dihitung dari dasar (grand_total - pajak - biaya layanan) lalu
+     * dicatat pada record Commission, wallet bertambah sebesar neto (dasar - komisi).
      */
     public static function creditOrder(Order $order): void
     {
@@ -33,10 +33,12 @@ class WalletService
         $persen = min(100, max(0, $persen));
 
         $grand = (float) $order->grand_total;
-        $komisi = round($grand * $persen / 100);
-        $neto = $grand - $komisi;
+        $dasar = $grand - (float) $order->total_pajak - (float) $order->biaya_layanan;
+        $dasar = max(0, $dasar);
+        $komisi = round($dasar * $persen / 100);
+        $neto = $dasar - $komisi;
 
-        DB::transaction(function () use ($order, $persen, $grand, $komisi, $neto) {
+        DB::transaction(function () use ($order, $persen, $dasar, $komisi, $neto) {
             if (Commission::where('order_id', $order->order_id)
                 ->where('status', Commission::STATUS_AKTIF)
                 ->exists()) {
@@ -62,7 +64,7 @@ class WalletService
                 'order_id' => $order->order_id,
                 'store_id' => $order->store_id,
                 'persentase' => $persen,
-                'dasar_perhitungan' => $grand,
+                'dasar_perhitungan' => $dasar,
                 'jumlah_komisi' => $komisi,
                 'status' => Commission::STATUS_AKTIF,
             ]);

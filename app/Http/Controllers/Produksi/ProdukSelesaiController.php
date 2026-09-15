@@ -20,7 +20,7 @@ class ProdukSelesaiController extends Controller
             ->where('status', Order::STATUS_SIAP_KIRIM)
             ->with(['items.productVariant.product', 'qualityChecks' => function ($q) {
                 $q->whereNotNull('order_id')->latest();
-            }, 'checkout', 'store'])
+            }, 'checkout', 'store', 'bahanList', 'shipments'])
             ->orderByDesc('created_at')
             ->paginate(15);
 

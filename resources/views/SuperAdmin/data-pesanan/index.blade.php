@@ -309,14 +309,14 @@
                                 <dt class="text-on-surface-variant shrink-0">Pajak</dt>
                                 <dd class="text-on-surface text-right">Rp {{ number_format((float) $order->total_pajak, 0, ',', '.') }}</dd>
                             </div>
-                            <p class="text-xs text-on-surface-variant mt-1">Nilai tersimpan. Setting pajak {{ $pajakPersen }}% tersedia namun belum dihitung saat checkout.</p>
+                            <p class="text-xs text-on-surface-variant mt-1">PPN {{ $pajakPersen }}% diterapkan otomatis dari subtotal pada checkout &amp; pesanan baru.</p>
                         </div>
                         <div class="pb-3 border-b border-muted-border">
                             <div class="flex justify-between gap-4">
                                 <dt class="text-on-surface-variant shrink-0">Biaya Layanan</dt>
                                 <dd class="text-on-surface text-right">Rp {{ number_format((float) $order->biaya_layanan, 0, ',', '.') }}</dd>
                             </div>
-                            <p class="text-xs text-on-surface-variant mt-1">Nilai tersimpan. Biaya layanan belum diterapkan saat checkout.</p>
+                            <p class="text-xs text-on-surface-variant mt-1">Biaya layanan diterapkan otomatis sesuai setting (Rp 0 jika belum diatur).</p>
                         </div>
                         <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
                             <dt class="text-on-surface-variant shrink-0">Ongkir</dt>

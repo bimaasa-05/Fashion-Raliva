@@ -23,7 +23,7 @@ class PemeriksaanKualitasController extends Controller
 
         $orders = Order::whereIn('store_id', $storeIds)
             ->where('status', Order::STATUS_MENUNGGU_QC)
-            ->with(['items.productVariant.product', 'bahanList', 'checkout', 'store'])
+            ->with(['items.productVariant.product', 'bahanList', 'checkout', 'store', 'qualityChecks', 'shipments'])
             ->orderByDesc('created_at')
             ->paginate(15);
 

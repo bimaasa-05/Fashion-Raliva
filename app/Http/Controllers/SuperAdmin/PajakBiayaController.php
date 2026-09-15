@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use App\Models\Order;
 use App\Models\Setting;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
@@ -14,10 +15,28 @@ class PajakBiayaController extends Controller
     {
         $komisi = (float) Setting::get(Setting::KOMISI_PERSEN_DEFAULT, '5');
         $pajak = (float) Setting::get(Setting::PAJAK_PERSEN, '11');
+        $biayaLayanan = (float) Setting::get(Setting::BIAYA_LAYANAN, '0');
+
+        $pajakTerkumpul = (float) Order::whereIn('status', [
+            Order::STATUS_DIBAYAR,
+            Order::STATUS_DIPROSES,
+            Order::STATUS_DIKIRIM,
+            Order::STATUS_SELESAI,
+        ])->sum('total_pajak');
+
+        $biayaLayananTerkumpul = (float) Order::whereIn('status', [
+            Order::STATUS_DIBAYAR,
+            Order::STATUS_DIPROSES,
+            Order::STATUS_DIKIRIM,
+            Order::STATUS_SELESAI,
+        ])->sum('biaya_layanan');
 
         return view('SuperAdmin.pajak-biaya.index', [
             'komisi' => $komisi,
             'pajak' => $pajak,
+            'biayaLayanan' => $biayaLayanan,
+            'pajakTerkumpul' => $pajakTerkumpul,
+            'biayaLayananTerkumpul' => $biayaLayananTerkumpul,
         ]);
     }
 

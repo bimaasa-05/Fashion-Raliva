@@ -63,6 +63,7 @@ use App\Http\Controllers\Produksi\PemeriksaanKualitasController as ProduksiPemer
 use App\Http\Controllers\Produksi\ProdukSelesaiController as ProduksiProdukSelesaiController;
 use App\Http\Controllers\Produksi\PelaporanProduksiController as ProduksiPelaporanController;
 use App\Http\Controllers\Produksi\ProfilController as ProduksiProfilController;
+use App\Http\Controllers\Produksi\RiwayatProduksiController as ProduksiRiwayatController;
 use App\Http\Controllers\SuperAdmin\DashboardController;
 use App\Http\Controllers\SuperAdmin\DataBankController;
 use App\Http\Controllers\SuperAdmin\DataPembayaranController;
@@ -95,6 +96,8 @@ use App\Http\Controllers\SuperAdmin\SlotProdukController;
 use App\Http\Controllers\SuperAdmin\StokController as SaStokController;
 use App\Http\Controllers\SuperAdmin\StoreStaffController;
 use App\Http\Controllers\SuperAdmin\UlasanProdukTokoController;
+use App\Http\Controllers\Admin\PermintaanOperasionalController as AdminPermintaanOperasionalController;
+use App\Http\Controllers\PermintaanOperasionalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -388,6 +391,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::get('/notifikasi', [\App\Http\Controllers\Admin\NotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/laporan', [AdminLaporanController::class, 'index'])->name('laporan');
     Route::get('/riwayat-aktivitas', [AdminRiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
+    // Permintaan Operasional
+    Route::get('/permintaan-operasional', [AdminPermintaanOperasionalController::class, 'index'])->name('permintaan-operasional');
+    Route::get('/permintaan-operasional/{permintaan}', [AdminPermintaanOperasionalController::class, 'show'])->name('permintaan-operasional.show');
+    Route::post('/permintaan-operasional/{permintaan}/setujui', [AdminPermintaanOperasionalController::class, 'setujui'])->name('permintaan-operasional.setujui');
+    Route::post('/permintaan-operasional/{permintaan}/tolak', [AdminPermintaanOperasionalController::class, 'tolak'])->name('permintaan-operasional.tolak');
 });
 
 Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang', 'store-active'])->group(function () {
@@ -413,6 +421,9 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang', 'st
     Route::post('/pemeriksaan', [GudangPemeriksaanStokController::class, 'store'])->name('pemeriksaan.store')->middleware('permission:warehouse.stock_adjust');
     Route::post('/stok-rusak', [GudangStokRusakController::class, 'store'])->name('stok-rusak.store')->middleware('permission:warehouse.damage');
     Route::post('/notifikasi/tandai-dibaca', [GudangNotifikasiController::class, 'markRead'])->name('notifikasi.tandai-dibaca');
+    // Permintaan Operasional (ajukan ke Admin)
+    Route::get('/permintaan', [PermintaanOperasionalController::class, 'index'])->name('permintaan')->middleware('permission:warehouse.permintaan');
+    Route::post('/permintaan', [PermintaanOperasionalController::class, 'store'])->name('permintaan.store')->middleware('permission:warehouse.permintaan');
 });
 
 //Role Route Owner Lengkap
@@ -501,12 +512,14 @@ Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi
     Route::get('/produk-selesai', [ProduksiProdukSelesaiController::class, 'index'])->name('produk-selesai');
     // Nonaktif sementara: controller + view belum ada
     // Route::get('/barang-rusak', [ProduksiBarangRusakController::class, 'index'])->name('barang-rusak');
+    Route::get('/riwayat-produksi', [ProduksiRiwayatController::class, 'index'])->name('riwayat-produksi');
     Route::get('/bahan-produksi', [ProduksiBahanController::class, 'index'])->name('bahan-produksi');
     Route::post('/bahan-produksi', [ProduksiBahanController::class, 'store'])->name('bahan-produksi.store');
-    // Nonaktif sementara: controller + view belum ada
-    // Route::get('/riwayat-produksi', [ProduksiRiwayatController::class, 'index'])->name('riwayat-produksi');
     Route::get('/notifikasi', [ProduksiNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [ProduksiProfilController::class, 'index'])->name('profil');
+    // Permintaan Operasional (ajukan ke Admin)
+    Route::get('/permintaan', [PermintaanOperasionalController::class, 'index'])->name('permintaan');
+    Route::post('/permintaan', [PermintaanOperasionalController::class, 'store'])->name('permintaan.store');
 });
 
 /* ===== Notifikasi Global (semua role) ===== */
