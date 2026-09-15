@@ -813,13 +813,14 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
 
         .pay-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: .75rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: .5rem;
         }
 
         @media(min-width:768px) {
             .pay-grid {
                 grid-template-columns: repeat(3, 1fr);
+                gap: .75rem;
             }
         }
 
@@ -1381,6 +1382,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
 
             var proofs = {};
             var currentKode = null;
+            var toastShown = {};
 
             var showBukti = function() {
                 if (!panelBukti) return;
@@ -1447,6 +1449,18 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                 showBukti();
             };
 
+            var showToast = function(msg, dur) {
+                var existing = document.getElementById('pay-toast');
+                if (existing) existing.remove();
+                var toast = document.createElement('div');
+                toast.id = 'pay-toast';
+                toast.textContent = msg;
+                toast.style.cssText = 'position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#1c1b1b;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-family:Manrope,sans-serif;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;transition:opacity .3s ease;';
+                document.body.appendChild(toast);
+                requestAnimationFrame(function() { toast.style.opacity = '1'; });
+                setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 350); }, dur || 1800);
+            };
+
             var updateAccountDetail = function(opt) {
                 var panelKode = opt.getAttribute('data-panel');
                 var namaEl = document.getElementById('account-detail-nama-' + panelKode);
@@ -1490,6 +1504,8 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             });
         }
 
+        var kodeMet = opt.getAttribute('data-panel');
+
         // Tampilkan kartu yang diklik dengan animasi mekar
         if (wrap) wrap.classList.add('ew-active');
         opt.classList.add('selected');
@@ -1498,6 +1514,10 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
         if (accountInput) accountInput.value = opt.getAttribute('data-account-id');
         if (rincianAkun) rincianAkun.textContent = opt.getAttribute('data-nama') || '';
         syncBukti();
+        if (kodeMet && !toastShown[kodeMet]) {
+            toastShown[kodeMet] = true;
+            showToast('Klik lagi untuk mengganti metode pembayaran.', 5000);
+        }
         return;
                 } else {
                     document.querySelectorAll('.account-opt').forEach(function(o) {
