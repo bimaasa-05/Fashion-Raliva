@@ -483,23 +483,16 @@ return view('customer.checkout.selesai', [
             'pesan' => 'Bukti pembayaran Anda sedang diverifikasi oleh admin.',
         ]);
 
-        // Jika akun baru (flash masih ada) -> ke Selesai, else order-tracking
+        // Selalu redirect ke halaman Selesai setelah upload bukti
         $hasAkunBaru = $request->session()->has('akun_baru') || session()->has('akun_baru');
-        // Fallback: user dibuat <15 menit & masih pending? tetap anggap baru
-        if (! $hasAkunBaru) {
-            $userCreatedRecently = Auth::user()->created_at && Auth::user()->created_at->gt(now()->subMinutes(15));
-            // Jika batas_waktu baru di-set dan payment tadinya null -> kemungkinan akun baru
-            // Simpler: tidak auto-detect, biarkan ke order-tracking
-        }
+        $redirect = redirect()->route('customer.checkout.selesai', $checkoutModel->checkout_id)
+            ->with('toast', ['message' => 'Bukti pembayaran diunggah. Menunggu verifikasi admin.', 'icon' => 'task_alt']);
 
         if ($hasAkunBaru) {
-            return redirect()->route('customer.checkout.selesai', $checkoutModel->checkout_id)
-                ->with('akun_baru', session('akun_baru'))
-                ->with('toast', ['message' => 'Bukti pembayaran diunggah. Menunggu verifikasi admin.', 'icon' => 'task_alt']);
+            $redirect = $redirect->with('akun_baru', session('akun_baru'));
         }
 
-        return redirect()->route('customer.order-tracking')
-            ->with('toast', ['message' => 'Bukti pembayaran diunggah. Menunggu verifikasi admin.', 'icon' => 'task_alt']);
+        return $redirect;
     }
 
     /**
