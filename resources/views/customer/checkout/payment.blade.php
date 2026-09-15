@@ -1091,11 +1091,11 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                             {{ $pm->nama_metode }}:</p>
                                                         <div class="ew-accounts-grid" id="grid-ewallet">
                                                             @foreach ($accts as $a)
-                                                                @php $sel = (string) ($payment->payment_method_account_id ?? '') === (string) $a->payment_method_account_id; @endphp
+                                                                @php $sel = (string) ($payment->payment_account_id ?? '') === (string) $a->platform_bank_account_id; @endphp
                                                                 <div class="ew-card-wrap{{ $sel ? ' ew-active' : '' }}" data-kode="{{ $a->kode }}">
                                                                     <div class="account-opt account-opt-ew acc-ew-brand {{ $a->kode }}{{ $sel ? ' selected' : '' }}"
                                                                         data-panel="{{ $kode }}"
-                                                                        data-account-id="{{ $a->payment_method_account_id }}"
+                                                                        data-account-id="{{ $a->platform_bank_account_id }}"
                                                                         data-nama="{{ $a->nama }}"
                                                                         data-rekening="{{ $a->nomor_rekening ?? '-' }}"
                                                                         data-pemilik="{{ $a->nama_pemilik ?? '-' }}">
@@ -1140,11 +1140,11 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                             {{ $pm->nama_metode }}:</p>
                                                         <div class="ew-accounts-grid" id="grid-{{ $kode }}">
                                                             @foreach ($accts as $a)
-                                                                @php $sel = (string) ($payment->payment_method_account_id ?? '') === (string) $a->payment_method_account_id; @endphp
+                                                                @php $sel = (string) ($payment->payment_account_id ?? '') === (string) $a->platform_bank_account_id; @endphp
                                                                 <div class="ew-card-wrap{{ $sel ? ' ew-active' : '' }}" data-kode="{{ $a->kode }}">
                                                                     <div class="account-opt account-opt-ew acc-bank-brand {{ $a->kode }}{{ $sel ? ' selected' : '' }}"
                                                                         data-panel="{{ $kode }}"
-                                                                        data-account-id="{{ $a->payment_method_account_id }}"
+                                                                        data-account-id="{{ $a->platform_bank_account_id }}"
                                                                         data-nama="{{ $a->nama }}"
                                                                         data-rekening="{{ $a->nomor_rekening ?? '-' }}"
                                                                         data-pemilik="{{ $a->nama_pemilik ?? '-' }}">
