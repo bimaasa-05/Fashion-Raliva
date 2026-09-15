@@ -113,8 +113,9 @@ class CheckoutController extends Controller
 
         $shippingOptions = self::SHIPPING_OPTIONS;
         $shipping = 35000;
-        $tax = 0;
-        $total = $subtotal + $shipping;
+        $tax = \App\Support\PricingService::taxFor($subtotal);
+        $biayaLayanan = (int) round(\App\Support\PricingService::serviceFee());
+        $total = $subtotal + $shipping + $tax + $biayaLayanan;
 
         $paymentMethods = PaymentMethod::where('status', PaymentMethod::STATUS_AKTIF)
             ->orderBy('payment_method_id')
@@ -128,6 +129,7 @@ class CheckoutController extends Controller
             'shippingOptions',
             'shipping',
             'tax',
+            'biayaLayanan',
             'total',
             'paymentMethods',
             'buyId'
@@ -234,7 +236,9 @@ class CheckoutController extends Controller
         $subtotal = $items->sum(fn ($i) => $i['quantity'] * $i['harga']);
         $catatan = $validated['catatan'] ?? null;
 
-        [$checkout, $orders] = DB::transaction(function () use ($items, $subtotal, $shipping, $fromCart, $actor, $validated, $catatan) {
+        [$pajak, $biaya, $grand] = \App\Support\PricingService::computeTotals($subtotal, $shipping);
+
+        [$checkout, $orders] = DB::transaction(function () use ($items, $subtotal, $shipping, $pajak, $biaya, $grand, $fromCart, $actor, $validated, $catatan) {
             $checkout = Checkout::create([
                 'user_id' => $actor->user_id,
                 'email_pelanggan' => $validated['email_pelanggan'],
@@ -246,20 +250,26 @@ class CheckoutController extends Controller
                 'kode_pos' => $validated['kode_pos'],
                 'subtotal' => $subtotal,
                 'total_diskon' => 0,
-                'total_pajak' => 0,
-                'biaya_layanan' => 0,
+                'total_pajak' => $pajak,
+                'biaya_layanan' => $biaya,
                 'total_ongkir' => $shipping,
-                'grand_total' => $subtotal + $shipping,
+                'grand_total' => $grand,
                 'status' => Checkout::STATUS_PENDING,
             ]);
 
             $orders = [];
             $byStore = $items->groupBy(fn ($i) => $i['store_id']);
 
-            $byStore->each(function ($group, $storeId) use ($checkout, $shipping, $subtotal, &$orders, $catatan) {
+            $byStore->each(function ($group, $storeId) use ($checkout, $shipping, $subtotal, $pajak, $biaya, &$orders, $catatan) {
                 $storeSubtotal = $group->sum(fn ($i) => $i['quantity'] * $i['harga']);
                 $storeShipping = $subtotal > 0
                     ? (int) round($shipping * ($storeSubtotal / $subtotal))
+                    : 0;
+                $storePajak = $subtotal > 0
+                    ? (int) round($pajak * ($storeSubtotal / $subtotal))
+                    : 0;
+                $storeBiaya = $subtotal > 0 && $biaya > 0
+                    ? (int) round($biaya * ($storeSubtotal / $subtotal))
                     : 0;
 
                 $order = Order::create([
@@ -268,10 +278,10 @@ class CheckoutController extends Controller
                     'nomor_order' => 'RLV-'.$storeId.'-'.strtoupper(substr(md5(uniqid((string) $storeId, true)), 0, 6)),
                     'subtotal' => $storeSubtotal,
                     'total_diskon' => 0,
-                    'total_pajak' => 0,
-                    'biaya_layanan' => 0,
+                    'total_pajak' => $storePajak,
+                    'biaya_layanan' => $storeBiaya,
                     'total_ongkir' => $storeShipping,
-                    'grand_total' => $storeSubtotal + $storeShipping,
+                    'grand_total' => $storeSubtotal + $storeShipping + $storePajak + $storeBiaya,
                     'status' => Order::STATUS_PENDING_PAYMENT,
                     'tipe_order' => Order::TIPE_PRODUK_TETAP,
                     'catatan' => $catatan,
@@ -297,7 +307,7 @@ class CheckoutController extends Controller
             Payment::create([
                 'checkout_id' => $checkout->checkout_id,
                 'payment_method_id' => null,
-                'jumlah' => $subtotal + $shipping,
+                'jumlah' => $grand,
                 'status' => Payment::STATUS_PENDING,
                 'batas_waktu' => now()->addMinutes(1440),
             ]);

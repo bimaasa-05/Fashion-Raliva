@@ -4,7 +4,7 @@
 
 @section('header-title', 'Pajak & Biaya Layanan')
 @section('header-badge', 'Kelola')
-@section('header-subtitle', 'Kelola biaya global dan pajak yang ditampilkan saat checkout')
+@section('header-subtitle', 'Kelola biaya global dan pajak yang diterapkan otomatis saat checkout')
 
 @push('styles')
 <style>
@@ -68,6 +68,22 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Agregat Terkumpul -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-gutter" data-reveal>
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium relative overflow-hidden">
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-secondary/10 fill pointer-events-none select-none" aria-hidden="true">account_balance</span>
+            <p class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Pajak Terkumpul</p>
+            <p class="font-headline-lg text-headline-lg md:text-display-lg text-secondary mt-2">Rp {{ number_format($pajakTerkumpul, 0, ',', '.') }}</p>
+            <p class="font-body-md text-sm text-on-surface-variant mt-1">Total PPN tersimpan dari seluruh transaksi (dibayar/disetor ke negara).</p>
+        </div>
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium relative overflow-hidden">
+            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 fill pointer-events-none select-none" aria-hidden="true">receipt_long</span>
+            <p class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">Biaya Layanan Terkumpul</p>
+            <p class="font-headline-lg text-headline-lg md:text-display-lg text-on-surface mt-2">Rp {{ number_format($biayaLayananTerkumpul, 0, ',', '.') }}</p>
+            <p class="font-body-md text-sm text-on-surface-variant mt-1">Total biaya layanan dari seluruh transaksi (default {{ $biayaLayanan > 0 ? 'Rp '.number_format($biayaLayanan, 0, ',', '.') : 'tidak berlaku' }} per transaksi).</p>
         </div>
     </section>
 
