@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdSlot;
 use App\Models\Product;
 use App\Models\Store;
 use Illuminate\Http\Request;
@@ -40,6 +41,8 @@ class SearchController extends Controller
         $products = $query->latest()->take(12)->get();
         $totalProducts = $products->count();
 
+        $ads = AdSlot::activeProducts(6, $q);
+
         $popularTags = Product::query()
             ->where('status', Product::STATUS_AKTIF)
             ->whereHas('store', fn ($s) => $s->where('status', Store::STATUS_AKTIF))
@@ -55,7 +58,7 @@ class SearchController extends Controller
 
         $wishlistedIds = $this->wishlistedIds();
 
-        return view('customer.search.index', compact('products', 'totalProducts', 'q', 'popularTags', 'wishlistedIds'));
+        return view('customer.search.index', compact('products', 'totalProducts', 'q', 'popularTags', 'ads', 'wishlistedIds'));
     }
 
     /**
