@@ -36,6 +36,7 @@
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Gagal QC</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tanggal QC</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60,9 +61,14 @@
                             <td class="py-3.5 px-4 text-center">
                                 <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Siap Kirim</span>
                             </td>
+                            <td class="py-3.5 px-4 text-right">
+                                <button type="button" onclick="openDetailProduksi('{{ $o->order_id }}')" title="Detail produksi" class="inline-flex items-center justify-center px-2.5 py-2 border border-muted-border text-on-surface-variant rounded hover:border-gold-accent hover:text-gold-accent transition-colors">
+                                    <span class="material-symbols-outlined text-[16px]">timeline</span>
+                                </button>
+                            </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="py-12 text-center text-on-surface-variant">Belum ada produk siap dikirim.</td></tr>
+                        <tr><td colspan="7" class="py-12 text-center text-on-surface-variant">Belum ada produk siap dikirim.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -70,4 +76,9 @@
         {{ $orders->withQueryString()->links() }}
     </section>
 </div>
+
+{{-- Modal Detail Produksi (timeline) per order --}}
+@foreach ($orders as $o)
+    @include('partials.modal-produksi-detail', ['o' => $o])
+@endforeach
 @endsection

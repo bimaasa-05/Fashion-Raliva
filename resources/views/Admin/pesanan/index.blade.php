@@ -113,6 +113,7 @@
                                 <button type="button" data-modal-open="modal-batalkan-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Batalkan</button>
                             @endif
                             <button type="button" data-modal-open="modal-detail-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
+                            <button type="button" onclick="openDetailProduksi('{{ $pesanan->order_id }}')" class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">Produksi</button>
                         </td>
                     </tr>
                 @empty
@@ -344,6 +345,11 @@
         </div>
     </form>
 </div>
+
+{{-- Modal Detail Produksi (timeline) per pesanan --}}
+@foreach ($orders as $pesanan)
+    @include('partials.modal-produksi-detail', ['o' => $pesanan])
+@endforeach
 @endsection
 
 @push('scripts')

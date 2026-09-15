@@ -81,6 +81,7 @@
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Hasil Produksi</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tanggal QC</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -126,10 +127,15 @@
                             <td class="py-3.5 px-4 text-center">
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border whitespace-nowrap {{ $statusBadge }}">{{ $statusLabel }}</span>
                             </td>
+                            <td class="py-3.5 px-4 text-right">
+                                <button type="button" onclick="openDetailProduksi('{{ $o->order_id }}')" title="Detail produksi" class="inline-flex items-center justify-center px-2.5 py-2 border border-muted-border text-on-surface-variant rounded hover:border-gold-accent hover:text-gold-accent transition-colors">
+                                    <span class="material-symbols-outlined text-[16px]">timeline</span>
+                                </button>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="py-12 text-center">
+                            <td colspan="7" class="py-12 text-center">
                                 <div class="flex flex-col items-center gap-3">
                                     <div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center">
                                         <span class="material-symbols-outlined text-[28px] text-on-surface-variant">history</span>
@@ -156,4 +162,9 @@
         @endif
     </section>
 </div>
+
+{{-- Modal Detail Produksi (timeline) per order --}}
+@foreach ($orders as $o)
+    @include('partials.modal-produksi-detail', ['o' => $o])
+@endforeach
 @endsection

@@ -61,6 +61,7 @@ class PermissionSeeder extends Seeder
             ['kode_permission' => 'warehouse.transfer', 'nama_permission' => 'Mutasi stok antar gudang', 'deskripsi' => 'Mengelola stock transfer antar gudang.'],
             ['kode_permission' => 'warehouse.damage', 'nama_permission' => 'Laporan stok rusak', 'deskripsi' => 'Melaporkan dan mencatat stok rusak/kerusakan.'],
             ['kode_permission' => 'warehouse.stock_check', 'nama_permission' => 'Cek ketersediaan bahan', 'deskripsi' => 'Memeriksa dan mengonfirmasi ketersediaan bahan untuk permintaan pelanggan.'],
+            ['kode_permission' => 'warehouse.permintaan', 'nama_permission' => 'Mengelola permintaan operasional', 'deskripsi' => 'Melihat dan merespons permintaan operasional dari gudang.'],
 
             // Modul Supplier
             ['kode_permission' => 'supplier.view', 'nama_permission' => 'Melihat supplier', 'deskripsi' => 'Melihat daftar dan data supplier untuk kebutuhan stok.'],

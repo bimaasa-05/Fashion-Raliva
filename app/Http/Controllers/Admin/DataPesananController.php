@@ -40,7 +40,7 @@ class DataPesananController extends Controller
         $storeIds = AdminContext::assignedStoreIds();
         $orders = Order::query()
             ->whereIn('store_id', $storeIds)
-            ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap,email', 'checkout.payment:payment_id,checkout_id,status', 'checkout.payment.proofs', 'checkout.payment.paymentMethod', 'items.productVariant.product', 'shipments'])
+            ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap,email', 'checkout.payment:payment_id,checkout_id,status', 'checkout.payment.proofs', 'checkout.payment.paymentMethod', 'items.productVariant.product', 'shipments', 'bahanList', 'qualityChecks'])
             ->when(
                 array_key_exists($status, $statuses),
                 fn ($query) => $query->where('status', $status)
@@ -273,7 +273,9 @@ class DataPesananController extends Controller
 
         $metodeBayar = $isOffline ? ($data['metode_bayar'] ?? 'tunai') : null;
 
-        $newOrder = DB::transaction(function () use ($prepared, $subtotal, $userId, $storeId, $isOffline, $data, $request, $metodeBayar) {
+        [$pajak, $biaya, $grand] = \App\Support\PricingService::computeTotals($subtotal, 0);
+
+        $newOrder = DB::transaction(function () use ($prepared, $subtotal, $pajak, $biaya, $grand, $userId, $storeId, $isOffline, $data, $request, $metodeBayar) {
             $checkout = \App\Models\Checkout::create([
                 'user_id' => $userId,
                 'email_pelanggan' => $data['email_pelanggan'] ?? null,
@@ -282,10 +284,10 @@ class DataPesananController extends Controller
                 'alamat' => $data['alamat'] ?? null,
                 'subtotal' => $subtotal,
                 'total_diskon' => 0,
-                'total_pajak' => 0,
-                'biaya_layanan' => 0,
+                'total_pajak' => $pajak,
+                'biaya_layanan' => $biaya,
                 'total_ongkir' => 0,
-                'grand_total' => $subtotal,
+                'grand_total' => $grand,
                 'status' => \App\Models\Checkout::STATUS_PENDING,
             ]);
 
@@ -294,7 +296,9 @@ class DataPesananController extends Controller
                 'checkout_id' => $checkout->checkout_id,
                 'nomor_order' => 'RLV-' . $storeId . '-' . strtoupper(substr(md5(uniqid()), 0, 6)),
                 'subtotal' => $subtotal,
-                'grand_total' => $subtotal,
+                'total_pajak' => $pajak,
+                'biaya_layanan' => $biaya,
+                'grand_total' => $grand,
                 'status' => Order::STATUS_PENDING_PAYMENT,
             ]);
 
@@ -321,7 +325,7 @@ class DataPesananController extends Controller
                         'checkout_id' => $checkout->checkout_id,
                         'payment_method_id' => $paymentMethodId,
                         'payment_account_id' => null,
-                        'jumlah' => $subtotal,
+                        'jumlah' => $grand,
                         'status' => Payment::STATUS_TERVERIFIKASI,
                         'batas_waktu' => now(),
                         'dibayar_pada' => now(),
@@ -344,7 +348,7 @@ class DataPesananController extends Controller
                         'checkout_id' => $checkout->checkout_id,
                         'payment_method_id' => $paymentMethodId,
                         'payment_account_id' => $data['payment_account_id'],
-                        'jumlah' => $subtotal,
+                        'jumlah' => $grand,
                         'status' => Payment::STATUS_MENUNGGU_VERIFIKASI,
                         'batas_waktu' => now()->addMinutes(1440),
                     ]);
@@ -456,7 +460,7 @@ class DataPesananController extends Controller
         ]);
 
         $lamaItems = $pesanan->items()->get()->map(fn ($it) => $it->only(['order_item_id', 'product_variant_id', 'quantity', 'subtotal']))->all();
-        $lamaTotal = $pesanan->only(['subtotal', 'grand_total']);
+        $lamaTotal = $pesanan->only(['subtotal', 'total_pajak', 'biaya_layanan', 'grand_total']);
 
         DB::transaction(function () use ($pesanan, $data, &$baruItems, &$baruTotal) {
             $order = Order::with(['checkout.payment', 'shipments', 'items'])
@@ -570,16 +574,31 @@ class DataPesananController extends Controller
                 OrderItem::whereIn('order_item_id', $dropIds)->delete();
             }
 
-            $order->update(['subtotal' => $subtotal, 'grand_total' => $subtotal]);
+            [$pajak, $biaya, $grand] = \App\Support\PricingService::computeTotals($subtotal, 0);
+
+            $order->update([
+                'subtotal' => $subtotal,
+                'total_pajak' => $pajak,
+                'biaya_layanan' => $biaya,
+                'grand_total' => $grand,
+            ]);
 
             $checkout = $order->checkout;
             if ($checkout) {
-                $siblingTotal = Order::where('checkout_id', $checkout->checkout_id)->sum('grand_total');
-                $checkout->update(['subtotal' => $siblingTotal, 'grand_total' => $siblingTotal]);
+                $siblings = Order::where('checkout_id', $checkout->checkout_id)->get([
+                    'subtotal', 'total_ongkir', 'total_pajak', 'biaya_layanan', 'grand_total',
+                ]);
+                $checkout->update([
+                    'subtotal' => $siblings->sum('subtotal'),
+                    'total_ongkir' => $siblings->sum('total_ongkir'),
+                    'total_pajak' => $siblings->sum('total_pajak'),
+                    'biaya_layanan' => $siblings->sum('biaya_layanan'),
+                    'grand_total' => $siblings->sum('grand_total'),
+                ]);
             }
 
             $baruItems = OrderItem::where('order_id', $order->order_id)->get()->map(fn ($it) => $it->only(['order_item_id', 'product_variant_id', 'quantity', 'subtotal']))->all();
-            $baruTotal = ['subtotal' => $subtotal, 'grand_total' => $subtotal];
+            $baruTotal = ['subtotal' => $subtotal, 'total_pajak' => $pajak, 'biaya_layanan' => $biaya, 'grand_total' => $grand];
         });
 
         ActivityLogger::log('admin.order.items.update', Order::class, $pesanan->order_id, ['items' => $lamaItems, 'total' => $lamaTotal], ['items' => $baruItems ?? [], 'total' => $baruTotal ?? []], sprintf('Mengubah item pesanan %s.', $pesanan->nomor_order));

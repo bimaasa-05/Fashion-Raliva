@@ -30,7 +30,7 @@ class RiwayatProduksiController extends Controller
 
         $query = Order::whereIn('store_id', $storeIds)
             ->whereIn('status', [Order::STATUS_SIAP_KIRIM, Order::STATUS_DIKIRIM, Order::STATUS_SELESAI])
-            ->with(['items.productVariant.product', 'qualityChecks', 'checkout', 'store']);
+            ->with(['items.productVariant.product', 'qualityChecks', 'checkout', 'store', 'bahanList', 'shipments']);
 
         if ($status !== 'semua') {
             $query->where('status', $status);

@@ -673,6 +673,12 @@ $ukuran = $v?->ukuran;
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Tax') }}</p>
 <p class="font-body-sm text-body-sm text-on-surface font-medium">Rp {{ number_format($selected->total_pajak, 0, ',', '.') }}</p>
 </div>
+@if ((float) $selected->biaya_layanan > 0)
+<div class="flex justify-between py-1">
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Biaya Layanan') }}</p>
+<p class="font-body-sm text-body-sm text-on-surface font-medium">Rp {{ number_format($selected->biaya_layanan, 0, ',', '.') }}</p>
+</div>
+@endif
 <div class="w-full h-px bg-outline-variant my-md"></div>
 <div class="flex justify-between items-center py-1">
 <p class="font-title-md text-title-md text-on-surface font-semibold">{{ __('Total') }}</p>

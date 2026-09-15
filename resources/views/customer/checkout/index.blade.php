@@ -643,9 +643,17 @@
                         <span id="co-shipping">Rp {{ number_format((float)$shipping, 0, ',', '.') }}</span>
                     </div>
                     <div class="co-summary-row">
-                        <span>Tax</span>
-                        <span>Rp {{ number_format((float)$tax, 0, ',', '.') }}</span>
+                        <span>Tax (PPN)</span>
+                        <span id="co-tax" data-tax="{{ $tax }}">Rp {{ number_format((float)$tax, 0, ',', '.') }}</span>
                     </div>
+                    @if ($biayaLayanan > 0)
+                    <div class="co-summary-row">
+                        <span>Biaya Layanan</span>
+                        <span id="co-biaya" data-biaya="{{ $biayaLayanan }}">Rp {{ number_format((float)$biayaLayanan, 0, ',', '.') }}</span>
+                    </div>
+                    @else
+                    <div id="co-biaya" data-biaya="{{ $biayaLayanan }}" class="hidden"></div>
+                    @endif
                     <div class="co-summary-row total">
                         <span>Total Payment</span>
                         <span id="co-total">Rp {{ number_format((float)$total, 0, ',', '.') }}</span>
@@ -740,9 +748,13 @@
             return 'Rp ' + n.toLocaleString('id-ID');
         }
         var subtotalEl = document.getElementById('co-subtotal');
+        var taxEl = document.getElementById('co-tax');
+        var biayaEl = document.getElementById('co-biaya');
         var subtotal = subtotalEl ? (parseFloat(subtotalEl.getAttribute('data-subtotal')) || 0) : 0;
+        var tax = taxEl ? (parseFloat(taxEl.getAttribute('data-tax')) || 0) : 0;
+        var biaya = biayaEl ? (parseFloat(biayaEl.getAttribute('data-biaya')) || 0) : 0;
         function refreshTotal(ongkir) {
-            var total = subtotal + (parseFloat(ongkir) || 0);
+            var total = subtotal + (parseFloat(ongkir) || 0) + tax + biaya;
             var shipEl = document.getElementById('co-shipping');
             var totalEls = document.querySelectorAll('#co-total, #co-total-bottom');
             if (shipEl) shipEl.textContent = rupiah(ongkir);

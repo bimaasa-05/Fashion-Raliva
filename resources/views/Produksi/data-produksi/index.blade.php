@@ -160,6 +160,9 @@
                                 @endif
                             </td>
                             <td class="py-3.5 px-4 text-right">
+                                <button type="button" onclick="openDetailProduksi('{{ $o->order_id }}')" title="Detail produksi" class="inline-flex items-center justify-center px-2.5 py-2 border border-muted-border text-on-surface-variant rounded hover:border-gold-accent hover:text-gold-accent transition-colors mr-1 align-top">
+                                    <span class="material-symbols-outlined text-[16px]">timeline</span>
+                                </button>
                                 @if ($isDiproses)
                                     @if (! $accepted)
                                         <div class="flex gap-1 justify-end">
@@ -279,6 +282,11 @@
         </form>
     </div>
     @endif
+@endforeach
+
+{{-- Modal Detail Produksi (timeline) per order --}}
+@foreach ($orders as $o)
+    @include('partials.modal-produksi-detail', ['o' => $o])
 @endforeach
 
 @php

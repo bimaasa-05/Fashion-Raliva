@@ -25,7 +25,7 @@ class DataProduksiController extends Controller
 
         $orders = Order::whereIn('store_id', $storeIds)
             ->whereIn('status', [Order::STATUS_MENUNGGU_PRODUKSI, Order::STATUS_DIPROSES, Order::STATUS_MENUNGGU_QC])
-            ->with(['items.productVariant.product', 'bahanList.bahan', 'bahanList.creator', 'checkout', 'store'])
+            ->with(['items.productVariant.product', 'bahanList.bahan', 'bahanList.creator', 'checkout', 'store', 'qualityChecks', 'shipments'])
             ->orderByRaw("CASE WHEN status = 'menunggu_produksi' THEN 0 WHEN status = 'diproses' THEN 1 WHEN status = 'menunggu_qc' THEN 2 ELSE 3 END")
             ->orderByDesc('created_at')
             ->paginate(15);
