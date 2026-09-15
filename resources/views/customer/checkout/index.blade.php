@@ -400,6 +400,21 @@
     .co-step:not(.active):not(.done) { color: var(--text-muted); }
     .co-step-line { width:32px; height:1px; background:var(--border-soft); }
     .co-step-line.done { background:#8B1E3F; }
+
+    /* Spinner loading untuk step belum dicapai */
+    .co-step .num.loading {
+        border: 2px solid var(--border-soft);
+        border-top-color: #8B1E3F;
+        background: transparent !important;
+        color: transparent !important;
+        animation: co-spin 0.75s linear infinite;
+    }
+    .co-step .num.loading::after { content:''; display:none; }
+    @keyframes co-spin { to { transform: rotate(360deg); } }
+
+    /* Step yang sudah selesai (done) bisa diklik untuk kembali */
+    .co-step.done { cursor:pointer; text-decoration:none; transition: opacity .2s ease; }
+    .co-step.done:hover { opacity: .75; }
     /* rincian pesanan dropdown */
     .co-rincian-toggle {
         display:inline-flex; align-items:center; justify-content:center; gap:.4rem;
@@ -459,10 +474,22 @@
         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center reveal-up">
             <div class="co-stepper">
                 <span class="co-step active"><span class="num">1</span> {{ __('Review') }}</span>
-                <span class="co-step-line"></span>
-                <span class="co-step"><span class="num">2</span> {{ __('Bayar') }}</span>
-                <span class="co-step-line"></span>
-                <span class="co-step"><span class="num">3</span> {{ __('Selesai') }}</span>
+                <span class="co-step-line {{ $maxStep >= 2 ? 'done' : '' }}"></span>
+                @if($maxStep >= 2 && $checkoutActiveId)
+                    <a href="{{ route('customer.checkout.payment', $checkoutActiveId) }}" class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Bayar') }}</a>
+                @elseif($maxStep >= 2)
+                    <span class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Bayar') }}</span>
+                @else
+                    <span class="co-step"><span class="num loading"></span> {{ __('Bayar') }}</span>
+                @endif
+                <span class="co-step-line {{ $maxStep >= 3 ? 'done' : '' }}"></span>
+                @if($maxStep >= 3 && $checkoutActiveId)
+                    <a href="{{ route('customer.checkout.selesai', $checkoutActiveId) }}" class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Selesai') }}</a>
+                @elseif($maxStep >= 3)
+                    <span class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Selesai') }}</span>
+                @else
+                    <span class="co-step"><span class="num loading"></span> {{ __('Selesai') }}</span>
+                @endif
             </div>
         </div>
 
