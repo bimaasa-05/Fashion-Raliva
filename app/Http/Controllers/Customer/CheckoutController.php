@@ -181,7 +181,9 @@ class CheckoutController extends Controller
                 // Coba auto-login dengan password default
                 $credentials = ['email' => $validated['email_pelanggan'], 'password' => 'Raliva123'];
                 if (Auth::attempt($credentials)) {
+                    $request->session()->put('password_hash_web', Auth::user()->getAuthPassword());
                     $request->session()->regenerate();
+                    $request->session()->put('password_hash_web', Auth::user()->getAuthPassword());
                 } else {
                     // Email sudah ada tapi bukan Raliva123 -> minta login manual
                     $loginUrl = route('login');
@@ -208,7 +210,9 @@ class CheckoutController extends Controller
                     'email_verified_at' => now(),
                 ]);
                 Auth::login($user);
+                $request->session()->put('password_hash_web', $request->user()->getAuthPassword());
                 $request->session()->regenerate();
+                $request->session()->put('password_hash_web', $request->user()->getAuthPassword());
                 $isNewAccount = true;
                 $flashEmail = $validated['email_pelanggan'];
             }
@@ -403,7 +407,7 @@ class CheckoutController extends Controller
             ->with(['orders.store:store_id,nama_toko', 'orders.items', 'payment.paymentMethod', 'payment.account'])
             ->firstOrFail();
 
-        return view('customer.checkout.selesai', [
+return view('customer.checkout.selesai', [
             'checkout' => $checkoutModel,
             'payment' => $checkoutModel->payment,
         ]);
@@ -449,6 +453,10 @@ class CheckoutController extends Controller
             return back()->with('toast', ['message' => 'Metode pembayaran tidak tersedia.', 'icon' => 'gpp_maybe']);
         }
 
+        if (in_array($paymentMethod->kode_metode, ['ewallet', 'bank_transfer'], true) && empty($validated['payment_method_account_id'])) {
+            return back()->with('toast', ['message' => 'Pilih akun/tujuan pembayaran terlebih dahulu.', 'icon' => 'gpp_maybe']);
+        }
+
         $account = null;
         if (! empty($validated['payment_account_id'])) {
             $account = PlatformBankAccount::where('platform_bank_account_id', $validated['payment_account_id'])
@@ -491,23 +499,16 @@ class CheckoutController extends Controller
             'pesan' => 'Bukti pembayaran Anda sedang diverifikasi oleh admin.',
         ]);
 
-        // Jika akun baru (flash masih ada) -> ke Selesai, else order-tracking
+        // Selalu redirect ke halaman Selesai setelah upload bukti
         $hasAkunBaru = $request->session()->has('akun_baru') || session()->has('akun_baru');
-        // Fallback: user dibuat <15 menit & masih pending? tetap anggap baru
-        if (! $hasAkunBaru) {
-            $userCreatedRecently = Auth::user()->created_at && Auth::user()->created_at->gt(now()->subMinutes(15));
-            // Jika batas_waktu baru di-set dan payment tadinya null -> kemungkinan akun baru
-            // Simpler: tidak auto-detect, biarkan ke order-tracking
-        }
+        $redirect = redirect()->route('customer.checkout.selesai', $checkoutModel->checkout_id)
+            ->with('toast', ['message' => 'Bukti pembayaran diunggah. Menunggu verifikasi admin.', 'icon' => 'task_alt']);
 
         if ($hasAkunBaru) {
-            return redirect()->route('customer.checkout.selesai', $checkoutModel->checkout_id)
-                ->with('akun_baru', session('akun_baru'))
-                ->with('toast', ['message' => 'Bukti pembayaran diunggah. Menunggu verifikasi admin.', 'icon' => 'task_alt']);
+            $redirect = $redirect->with('akun_baru', session('akun_baru'));
         }
 
-        return redirect()->route('customer.order-tracking')
-            ->with('toast', ['message' => 'Bukti pembayaran diunggah. Menunggu verifikasi admin.', 'icon' => 'task_alt']);
+        return $redirect;
     }
 
     /**
