@@ -1003,9 +1003,9 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                 @csrf
                                 <input type="hidden" name="payment_method_id" id="input-payment-method"
                                     value="{{ old('payment_method_id', $payment->payment_method_id) }}" />
-                                <input type="hidden" name="payment_method_account_id" id="input-account-id"
-                                    value="{{ old('payment_method_account_id', $payment->payment_method_account_id) }}" />
+                                <input type="hidden" name="payment_account_id" id="input-account-id"
 
+                                    value="{{ old('payment_account_id', $payment->payment_account_id) }}" />
                                 @if ($paymentMethods->isEmpty())
                                     <p class="font-body-sm text-body-sm text-on-surface-variant">
                                         {{ __('Belum ada metode pembayaran aktif. Hubungi admin.') }}</p>
@@ -1028,7 +1028,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                 data-id="{{ $pm->payment_method_id }}"
                                                 data-nama="{{ $pm->nama_metode }}"
                                                 data-kode="{{ $pm->kode_metode }}"
-                                                data-account-id="{{ $qrAccount?->payment_method_account_id ?? '' }}">
+                                                data-account-id="{{ $qrAccount?->platform_bank_account_id ?? '' }}">
                                                 <span
                                                     class="material-symbols-outlined text-[28px]">{{ $icon }}</span>
                                                 <span

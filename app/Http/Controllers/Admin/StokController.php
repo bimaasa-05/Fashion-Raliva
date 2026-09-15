@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Notification;
 use App\Models\WarehouseStock;
 use App\Support\AdminContext;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class StokController extends Controller
@@ -16,27 +14,10 @@ class StokController extends Controller
         $storeIds = AdminContext::assignedStoreIds();
         $stocks = WarehouseStock::with(['productVariant.product', 'warehouse'])
             ->whereHas('warehouse', fn($q) => $q->whereIn('store_id', $storeIds))
-            ->orderBy('warehouse_stock_id')
+            ->orderByRaw("CASE WHEN jumlah_stok <= stok_minimum THEN 0 ELSE 1 END")
+            ->orderByRaw('jumlah_stok ASC')
             ->paginate(15);
 
         return view('Admin.stok.index', compact('stocks'));
-    }
-
-    public function update(Request $request, WarehouseStock $warehouseStock): RedirectResponse
-    {
-        $storeIds = AdminContext::assignedStoreIds();
-        if (! in_array($warehouseStock->warehouse->store_id, $storeIds)) {
-            abort(403);
-        }
-
-        $data = $request->validate([
-            'jumlah_stok' => 'required|integer|min:0',
-        ]);
-
-        $warehouseStock->update($data);
-
-        Notification::fireSelf(Notification::TIPE_SISTEM, 'Stok Diperbarui', sprintf('Stok "%s" kini %d.', $warehouseStock->productVariant?->product?->nama_produk ?? 'Produk', $data['jumlah_stok']), route('admin.stok'));
-
-        return back()->with('success', 'Stok diperbarui.');
     }
 }

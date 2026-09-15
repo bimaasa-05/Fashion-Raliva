@@ -32,6 +32,7 @@
             <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
             <div id="chip-group" class="flex flex-wrap gap-2">
                 <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
+                <button type="button" data-chip="iklan" class="chip-btn px-4 py-2 rounded-lg border border-gold-accent/40 text-gold-accent font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Iklan ({{ $stats['iklan'] ?? 0 }})</button>
                 <button type="button" data-chip="pending" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu ({{ $stats['pending'] }})</button>
                 <button type="button" data-chip="aktif" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Aktif ({{ $stats['aktif'] }})</button>
                 <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditolak ({{ $stats['ditolak'] }})</button>
@@ -83,11 +84,17 @@
                             'arsip' => ['Arsip', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
                             default => [ucfirst($produk->status), 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
                         };
+                        $normFoto = function ($raw) {
+                            if (filter_var($raw, FILTER_VALIDATE_URL)) return $raw;
+                            $raw = ltrim($raw, '/');
+                            return str_starts_with($raw, 'assets/') ? asset($raw) : asset('storage/' . $raw);
+                        };
                         $firstImg = $produk->images->first();
-                        $imgSrc = $firstImg ? (filter_var($firstImg->file_gambar, FILTER_VALIDATE_URL) ? $firstImg->file_gambar : asset('storage/' . ltrim($firstImg->file_gambar, '/'))) : null;
+                        $imgSrc = $firstImg ? $normFoto($firstImg->file_gambar) : null;
                         $imgCount = $produk->images->count();
+                        $galImgs = $produk->images->map(fn ($gi) => $normFoto($gi->file_gambar))->values()->all();
                     @endphp
-                    <tr data-table-row data-status="{{ $produk->status }}" data-search="{{ strtolower($produk->nama_produk.' '.($produk->store->nama_toko ?? '').' '.($produk->category->nama_kategori ?? '')) }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
+                    <tr data-table-row data-status="{{ $produk->status }}" data-iklan="{{ $produk->adSlot ? 1 : 0 }}" data-search="{{ strtolower($produk->nama_produk.' '.($produk->store->nama_toko ?? '').' '.($produk->category->nama_kategori ?? '')) }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-4 text-center text-on-surface-variant font-mono row-num"></td>
                         <td class="p-4">
                             <div class="relative w-12 h-12 rounded-lg overflow-hidden bg-surface-container-low border border-muted-border shrink-0 cursor-pointer hover:ring-2 hover:ring-gold-accent/50 transition-all"
@@ -99,7 +106,7 @@
                                  data-variants="{{ $produk->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}"
                                  data-desc="{{ $produk->deskripsi }}"
                                  data-status-label="{{ $statusLabel[0] }}"
-                                 data-images='{{ json_encode($produk->images->pluck('file_gambar')->values(), JSON_UNESCAPED_SLASHES) }}'
+                                 data-images='{{ json_encode($galImgs, JSON_UNESCAPED_SLASHES) }}'
                                  onclick="openProdukGallery(this)"
                                  title="Lihat semua foto">
                                 @if($imgSrc)
@@ -112,7 +119,16 @@
                                 @endif
                             </div>
                         </td>
-                        <td class="p-4 text-on-surface">{{ $produk->nama_produk }}</td>
+                        <td class="p-4 text-on-surface">
+                            <span class="inline-flex items-center gap-1.5">
+                                {{ $produk->nama_produk }}
+                                @if ($produk->relationLoaded('adSlot') && $produk->adSlot)
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[9px] font-bold uppercase tracking-wider" title="Produk sedang tampil di slot iklan peringkat">
+                                        <span class="material-symbols-outlined text-[11px]">workspace_premium</span> Iklan
+                                    </span>
+                                @endif
+                            </span>
+                        </td>
                         <td class="p-4 text-on-surface">{{ $produk->store->nama_toko ?? '-' }}</td>
                         <td class="p-4 text-on-surface-variant">{{ $produk->category->nama_kategori ?? '-' }}</td>
                         <td class="p-4"><span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ ucfirst($produk->tipe_produk) }}</span></td>
@@ -150,8 +166,8 @@
                     default => [ucfirst($produk->status), 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
                 };
             @endphp
-            <article data-table-row data-status="{{ $produk->status }}" data-search="{{ strtolower($produk->nama_produk.' '.($produk->store->nama_toko ?? '').' '.($produk->category->nama_kategori ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
-                @php $firstImgM = $produk->images->first(); $imgSrcM = $firstImgM ? (filter_var($firstImgM->file_gambar, FILTER_VALIDATE_URL) ? $firstImgM->file_gambar : asset('storage/' . ltrim($firstImgM->file_gambar, '/'))) : null; $imgCountM = $produk->images->count(); @endphp
+            <article data-table-row data-status="{{ $produk->status }}" data-iklan="{{ $produk->adSlot ? 1 : 0 }}" data-search="{{ strtolower($produk->nama_produk.' '.($produk->store->nama_toko ?? '').' '.($produk->category->nama_kategori ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                @php $normFotoM = function ($raw) { if (filter_var($raw, FILTER_VALIDATE_URL)) return $raw; $raw = ltrim($raw, '/'); return str_starts_with($raw, 'assets/') ? asset($raw) : asset('storage/' . $raw); }; $firstImgM = $produk->images->first(); $imgSrcM = $firstImgM ? $normFotoM($firstImgM->file_gambar) : null; $imgCountM = $produk->images->count(); $galImgsM = $produk->images->map(fn ($gi) => $normFotoM($gi->file_gambar))->values()->all(); @endphp
                 <div class="flex items-start gap-4 mb-3">
                     <div class="relative w-16 h-16 rounded-lg overflow-hidden bg-surface-container-low border border-muted-border shrink-0 cursor-pointer hover:ring-2 hover:ring-gold-accent/50 transition-all"
                          data-name="{{ $produk->nama_produk }}"
@@ -162,7 +178,7 @@
                          data-variants="{{ $produk->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}"
                          data-desc="{{ $produk->deskripsi }}"
                          data-status-label="{{ $statusLabel[0] }}"
-                         data-images='{{ json_encode($produk->images->pluck('file_gambar')->values(), JSON_UNESCAPED_SLASHES) }}'
+                         data-images='{{ json_encode($galImgsM, JSON_UNESCAPED_SLASHES) }}'
                          onclick="openProdukGallery(this)"
                          title="Lihat semua foto">
                         @if($imgSrcM)
@@ -177,7 +193,14 @@
                     <div class="min-w-0 flex-1">
                         <p class="font-title-md text-title-md text-on-surface leading-tight">{{ $produk->nama_produk }}</p>
                         <p class="text-on-surface-variant text-xs mt-0.5">{{ $produk->store->nama_toko ?? '-' }}</p>
-                        <span class="mt-1 inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ ucfirst($produk->tipe_produk) }}</span>
+                        <span class="mt-1 inline-flex flex-wrap items-center gap-1.5">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ ucfirst($produk->tipe_produk) }}</span>
+                            @if ($produk->relationLoaded('adSlot') && $produk->adSlot)
+                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[9px] font-bold uppercase tracking-wider" title="Produk sedang tampil di slot iklan peringkat">
+                                    <span class="material-symbols-outlined text-[11px]">workspace_premium</span> Iklan
+                                </span>
+                            @endif
+                        </span>
                     </div>
                     <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $statusLabel[1] }} text-[10px] font-bold uppercase border shrink-0">{{ $statusLabel[0] }}</span>
                 </div>
@@ -226,7 +249,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let visible = 0;
 
         rows.forEach((row) => {
-            const matchStatus = activeStatus === 'semua' || row.getAttribute('data-status') === activeStatus;
+            const matchStatus = activeStatus === 'semua' || activeStatus === 'iklan'
+                ? (activeStatus === 'iklan' ? row.getAttribute('data-iklan') === '1' : true)
+                : row.getAttribute('data-status') === activeStatus;
             const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
             const show = matchStatus && matchSearch;
             row.classList.toggle('hidden', !show);

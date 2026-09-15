@@ -20,7 +20,7 @@ class PengirimanController extends Controller
 
         $siapDikirim = Order::query()
             ->whereIn('store_id', $storeIds)
-            ->where('status', Order::STATUS_DIPROSES)
+            ->where('status', Order::STATUS_SIAP_KIRIM)
             ->whereDoesntHave('shipments')
             ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap', 'items'])
             ->orderByDesc('created_at')
@@ -49,9 +49,9 @@ class PengirimanController extends Controller
             ]);
         }
 
-        if ($pesanan->status !== Order::STATUS_DIPROSES) {
+        if ($pesanan->status !== Order::STATUS_SIAP_KIRIM) {
             return back()->with('toast', [
-                'message' => 'Hanya pesanan berstatus diproses yang dapat disiapkan pengirimannya.',
+                'message' => 'Hanya pesanan berstatus siap kirim yang dapat disiapkan pengirimannya.',
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -150,7 +150,7 @@ class PengirimanController extends Controller
             'dikirim_pada' => now(),
         ]);
 
-        if ($pesanan->status === Order::STATUS_DIPROSES) {
+        if ($pesanan->status === Order::STATUS_SIAP_KIRIM) {
             $pesanan->update(['status' => Order::STATUS_DIKIRIM]);
         }
 

@@ -25,6 +25,12 @@ class Order extends Model
 
     public const STATUS_REFUND = 'refund';
 
+    public const STATUS_MENUNGGU_PRODUKSI = 'menunggu_produksi';
+
+    public const STATUS_MENUNGGU_QC = 'menunggu_qc';
+
+    public const STATUS_SIAP_KIRIM = 'siap_kirim';
+
     public const TIPE_PRODUK_TETAP = 'produk_tetap';
 
     public const TIPE_CUSTOM = 'custom';
@@ -40,6 +46,14 @@ class Order extends Model
         'total_ongkir',
         'grand_total',
         'status',
+        'tgl_mulai_produksi',
+        'tgl_berakhir_produksi',
+        'produksi_dimulai_pada',
+        'produksi_catatan_tolak',
+        'jumlah_berhasil',
+        'jumlah_gagal',
+        'tanggal_qc',
+        'tanggal_packing',
         'tipe_order',
         'status_ketersediaan',
         'catatan_gudang',
@@ -51,6 +65,11 @@ class Order extends Model
     {
         return [
             'dicek_gudang_pada' => 'datetime',
+            'tgl_mulai_produksi' => 'datetime',
+            'tgl_berakhir_produksi' => 'datetime',
+            'produksi_dimulai_pada' => 'datetime',
+            'tanggal_qc' => 'datetime',
+            'tanggal_packing' => 'datetime',
         ];
     }
 
@@ -102,5 +121,15 @@ class Order extends Model
     public function walletTransactions(): HasMany
     {
         return $this->hasMany(WalletTransaction::class, 'order_id', 'order_id');
+    }
+
+    public function bahanList(): HasMany
+    {
+        return $this->hasMany(ProductionOrderBahan::class, 'order_id', 'order_id');
+    }
+
+    public function qualityChecks(): HasMany
+    {
+        return $this->hasMany(QualityCheck::class, 'order_id', 'order_id');
     }
 }

@@ -30,6 +30,7 @@ class Store extends Model
         'nomor_telepon',
         'status',
         'alasan_penolakan',
+        'ditangguhkan_sampai',
     ];
 
     public function owner(): BelongsTo
@@ -116,6 +117,8 @@ class Store extends Model
 
     protected function casts(): array
     {
-        return [];
+        return [
+            'ditangguhkan_sampai' => 'datetime',
+        ];
     }
 }

@@ -5,11 +5,13 @@
 @section('header-title', 'Data Bank')
 @section('header-badge', 'Kelola')
 
-@section('header-subtitle', 'Kelola data rekening bank platform untuk pencairan dana')
+@section('header-subtitle', 'Kelola rekening bank, e-wallet, dan QRIS platform')
 
 @push('styles')
 <style>
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .tab-btn.active { background: var(--chrome-accent); color: #fff; }
+    .tab-btn { transition: all .2s; }
 </style>
 @endpush
 
@@ -20,312 +22,412 @@
     <!-- Toolbar -->
     <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">account_balance</span></div>
+            <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-gold-accent text-[20px]">account_balance</span>
+            </div>
             <div>
                 <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Data Bank</h2>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Kelola rekening bank platform.</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Kelola rekening bank, e-wallet, dan QRIS platform.</p>
             </div>
         </div>
-        <button type="button" onclick="openBankForm()" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
-            <span class="material-symbols-outlined text-[18px]">add</span> Tambah Bank
+    </section>
+
+    <!-- Tabs -->
+    <div class="flex gap-2 border-b border-[var(--border-soft)]">
+        <button class="tab-btn active px-4 py-2 rounded-t-lg font-label-sm text-sm" data-tab="bank" onclick="switchTab('bank')">
+            <span class="material-symbols-outlined text-[18px] align-middle">account_balance</span> Bank Transfer
         </button>
-    </section>
+        <button class="tab-btn px-4 py-2 rounded-t-lg font-label-sm text-sm" data-tab="ewallet" onclick="switchTab('ewallet')">
+            <span class="material-symbols-outlined text-[18px] align-middle">account_balance_wallet</span> E-Wallet
+        </button>
+        <button class="tab-btn px-4 py-2 rounded-t-lg font-label-sm text-sm" data-tab="qris" onclick="switchTab('qris')">
+            <span class="material-symbols-outlined text-[18px] align-middle">qr_code_2</span> QRIS
+        </button>
+    </div>
 
-    <!-- Bank Grid -->
-    <section data-table-scope class="space-y-gutter">
-        <div class="flex justify-between items-center flex-wrap gap-2">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Daftar Bank</h2>
-            <span class="text-on-surface-variant font-body-md text-sm">{{ $stats['aktif'] }} aktif • total {{ $stats['total'] }} bank</span>
+    <!-- Panel: Bank Transfer -->
+    <div id="panel-bank" class="tab-panel">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-title-md text-title-md text-on-surface">Bank Transfer</h3>
+            <button type="button" onclick="openBankForm()" class="flex items-center gap-2 px-4 py-2 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">
+                <span class="material-symbols-outlined text-[18px]">add</span> Tambah Bank
+            </button>
         </div>
-
-        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 space-y-4">
-            <div class="flex items-center gap-2 shrink-0">
-                <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Bank</span>
-            </div>
-            <div id="bank-chip-group" class="flex flex-wrap gap-2">
-                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['total'] }})</button>
-                <button type="button" data-chip="aktif" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Aktif ({{ $stats['aktif'] }})</button>
-                <button type="button" data-chip="nonaktif" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Nonaktif ({{ $stats['total'] - $stats['aktif'] }})</button>
-            </div>
-            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                <div class="relative flex-1">
-                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                    <input id="bank-search" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama bank, kode, nomor rekening, atau pemilik..." />
-                    <button type="button" id="bank-clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
-                        <span class="material-symbols-outlined text-[20px]">close</span>
-                    </button>
-                </div>
-                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-                    <span id="bank-result-count">{{ $banks->count() }}</span> bank
-                </p>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
-            @forelse ($banks as $bank)
-                @php $rekening = $bank->platformBankAccounts->first(); @endphp
-                <div class="group relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl p-6 transition-all duration-300 hover:border-gold-accent hover:shadow-lg hover:-translate-y-0.5"
-                    data-table-row
-                    data-search="{{ strtolower($bank->nama_bank.' '.$bank->kode_bank.' '.($rekening?->nomor_rekening ?? '').' '.($rekening?->nama_pemilik ?? '')) }}"
-                    data-id="{{ $bank->bank_id }}"
-                    data-nama="{{ $bank->nama_bank }}"
-                    data-kode="{{ $bank->kode_bank }}"
-                    data-rekening="{{ $rekening?->nomor_rekening ?? '' }}"
-                    data-pemilik="{{ $rekening?->nama_pemilik ?? '' }}"
-                    data-status="{{ $bank->status }}">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-secondary-container/20 to-transparent rounded-full -translate-y-8 translate-x-8" style="filter: blur(20px); opacity: 0.5;"></div>
-                    <div class="relative">
-                        <div class="flex items-start justify-between mb-4">
-                            <div class="w-14 h-14 rounded-full bg-secondary-container flex items-center justify-center group-hover:scale-105 transition-transform">
-                                <span class="material-symbols-outlined text-white text-[28px]">account_balance</span>
-                            </div>
-                            @if ($bank->status !== \App\Models\Bank::STATUS_AKTIF)
-                                <span class="inline-flex px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Non-aktif</span>
-                            @else
-                                <span class="inline-flex px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 text-[9px] font-bold uppercase">Aktif</span>
-                            @endif
-                        </div>
-                        <h3 class="font-title-md text-title-md text-on-surface group-hover:text-gold-accent transition-colors mb-1">{{ $bank->nama_bank }}</h3>
-                        @if ($rekening)
-                            <div class="space-y-1.5 mt-3">
-                                <div class="flex items-center gap-2 text-sm text-on-surface-variant">
-                                    <span class="material-symbols-outlined text-[16px]">credit_card</span>
-                                    <span class="font-mono">{{ $rekening->nomor_rekening }}</span>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-left text-on-surface-variant border-b border-[var(--border-soft)]">
+                        <th class="py-3 px-2">Bank</th>
+                        <th class="py-3 px-2">Kode</th>
+                        <th class="py-3 px-2">No. Rekening</th>
+                        <th class="py-3 px-2">Pemilik</th>
+                        <th class="py-3 px-2">Status</th>
+                        <th class="py-3 px-2">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($banks as $bank)
+                        @php $rek = $bank->platformBankAccounts->first(); @endphp
+                        <tr class="border-b border-[var(--border-soft)] hover:bg-surface-container-low/50">
+                            <td class="py-3 px-2 font-medium">{{ $bank->nama_bank }}</td>
+                            <td class="py-3 px-2">{{ $bank->kode_bank }}</td>
+                            <td class="py-3 px-2">{{ $rek?->nomor_rekening ?? '-' }}</td>
+                            <td class="py-3 px-2">{{ $rek?->nama_pemilik ?? '-' }}</td>
+                            <td class="py-3 px-2">
+                                <span class="px-2 py-0.5 rounded text-xs {{ $bank->status === 'aktif' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">{{ $bank->status }}</span>
+                            </td>
+                            <td class="py-3 px-2">
+                                <div class="flex gap-1">
+                                    <button onclick="editBank({{ $bank->bank_id }})" class="text-blue-600 hover:text-blue-800" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                                    <form action="{{ route('superadmin.data-bank.hapus', $bank) }}" method="POST" onsubmit="return confirm('Hapus bank {{ $bank->nama_bank }}?')">
+                                        @csrf
+                                        <button type="submit" class="text-red-600 hover:text-red-800" title="Hapus"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+                                    </form>
                                 </div>
-                                <div class="flex items-center gap-2 text-sm text-on-surface-variant">
-                                    <span class="material-symbols-outlined text-[16px]">person</span>
-                                    <span>{{ $rekening->nama_pemilik }}</span>
-                                </div>
-                            </div>
-                        @else
-                            <p class="text-on-surface-variant/60 text-sm mt-2 italic">Belum ada rekening platform</p>
-                        @endif
-                    </div>
-                    <div class="flex items-center justify-between pt-4 border-t border-muted-border mt-4">
-                        <button type="button" onclick="openBankForm(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
-                            <span class="material-symbols-outlined text-[20px]">edit</span>
-                        </button>
-                        <button type="button" onclick="openHapusBank(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
-                            <span class="material-symbols-outlined text-[20px]">delete</span>
-                        </button>
-                    </div>
-                </div>
-            @empty
-                <p class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-12">Belum ada data bank. Tambahkan bank pertama Anda.</p>
-            @endforelse
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
-        <p id="bank-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada bank yang cocok.</p>
-    </section>
+    </div>
+
+    <!-- Panel: E-Wallet -->
+    <div id="panel-ewallet" class="tab-panel hidden">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-title-md text-title-md text-on-surface">E-Wallet</h3>
+            <button type="button" onclick="openEwalletForm()" class="flex items-center gap-2 px-4 py-2 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">
+                <span class="material-symbols-outlined text-[18px]">add</span> Tambah E-Wallet
+            </button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-left text-on-surface-variant border-b border-[var(--border-soft)]">
+                        <th class="py-3 px-2">Nama</th>
+                        <th class="py-3 px-2">Kode</th>
+                        <th class="py-3 px-2">No. Telepon</th>
+                        <th class="py-3 px-2">Pemilik</th>
+                        <th class="py-3 px-2">Status</th>
+                        <th class="py-3 px-2">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($ewallets as $ew)
+                        <tr class="border-b border-[var(--border-soft)] hover:bg-surface-container-low/50">
+                            <td class="py-3 px-2 font-medium">{{ $ew->nama }}</td>
+                            <td class="py-3 px-2">{{ $ew->kode }}</td>
+                            <td class="py-3 px-2">{{ $ew->nomor_rekening ?? '-' }}</td>
+                            <td class="py-3 px-2">{{ $ew->nama_pemilik ?? '-' }}</td>
+                            <td class="py-3 px-2">
+                                <span class="px-2 py-0.5 rounded text-xs {{ $ew->status === 'aktif' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">{{ $ew->status }}</span>
+                            </td>
+                            <td class="py-3 px-2">
+                                <div class="flex gap-1">
+                                    <button onclick="editEwallet({{ $ew->platform_bank_account_id }})" class="text-blue-600 hover:text-blue-800" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                                    <form action="{{ route('superadmin.data-bank.account.hapus', $ew) }}" method="POST" onsubmit="return confirm('Hapus e-wallet {{ $ew->nama }}?')">
+                                        @csrf
+                                        <button type="submit" class="text-red-600 hover:text-red-800" title="Hapus"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Panel: QRIS -->
+    <div id="panel-qris" class="tab-panel hidden">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-title-md text-title-md text-on-surface">QRIS</h3>
+            @if ($qris)
+                <button type="button" onclick="editQris({{ $qris->platform_bank_account_id }})" class="flex items-center gap-2 px-4 py-2 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">
+                    <span class="material-symbols-outlined text-[18px]">edit</span> Edit QRIS
+                </button>
+            @else
+                <button type="button" onclick="openQrisForm()" class="flex items-center gap-2 px-4 py-2 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">
+                    <span class="material-symbols-outlined text-[18px]">add</span> Tambah QRIS
+                </button>
+            @endif
+        </div>
+        @if ($qris)
+            <div class="flex flex-col sm:flex-row gap-6 p-4 border border-[var(--border-soft)] rounded-xl">
+                @if ($qris->file_gambar)
+                    <img src="{{ asset('storage/' . ltrim($qris->file_gambar, '/')) }}" alt="{{ $qris->nama }}" class="w-48 h-48 object-contain rounded-lg border border-[var(--border-soft)] bg-white" />
+                @endif
+                <div class="flex-1 space-y-2">
+                    <p class="font-title-md text-title-md text-on-surface">{{ $qris->nama }}</p>
+                    <p class="text-on-surface-variant text-sm">{{ $qris->deskripsi }}</p>
+                    <p class="text-sm">Nama: <strong>{{ $qris->nama_pemilik }}</strong></p>
+                    <p class="text-sm">Status: <span class="px-2 py-0.5 rounded text-xs {{ $qris->status === 'aktif' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">{{ $qris->status }}</span></p>
+                </div>
+            </div>
+        @else
+            <p class="text-on-surface-variant text-sm">Belum ada akun QRIS. Klik "Tambah QRIS" untuk membuat.</p>
+        @endif
+    </div>
 </div>
 
-<!-- Modal Form Bank (Tambah/Edit) -->
-<form method="POST" action="" id="bank-form" onsubmit="closeBankModal()">
-    @csrf
-    <div id="modal-form-bank" data-modal class="fixed inset-0 z-[70] hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close onclick="closeBankModal()"></div>
-        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
-            <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-                <div>
-                    <h3 id="bank-modal-title" class="font-title-md text-title-md text-on-surface premium-heading">Tambah Bank Baru</h3>
-                    <p id="bank-modal-sub" class="text-on-surface-variant font-body-md text-sm mt-1">Data rekening bank platform.</p>
-                </div>
-                <button type="button" onclick="closeBankModal()" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
-            </div>
-            <div class="p-6 space-y-5">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaBank">Nama Bank</label>
-                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaBank" name="nama_bank" type="text" maxlength="100" placeholder="BCA, Mandiri, BRI..." required />
-                    </div>
-                    <div>
-                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="kodeBank">Kode Bank</label>
-                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 uppercase" id="kodeBank" name="kode_bank" type="text" maxlength="20" placeholder="BCA" required />
-                    </div>
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="nomorRekening">Nomor Rekening</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 font-mono" id="nomorRekening" name="nomor_rekening" type="text" maxlength="50" placeholder="1234567890" required />
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaPemilik">Nama Pemilik Rekening</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaPemilik" name="nama_pemilik" type="text" maxlength="150" placeholder="PT Raliva Fashion" required />
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-3">Status</label>
-                    <div class="flex gap-4">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="status" value="aktif" class="w-4 h-4 accent-gold-accent" checked />
-                            <span class="text-sm text-on-surface">Aktif</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="status" value="nonaktif" class="w-4 h-4 accent-gold-accent" />
-                            <span class="text-sm text-on-surface">Non-aktif</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                    <button type="button" onclick="closeBankModal()" class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                    <button type="submit" id="bank-submit-btn" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tambah Bank</button>
-                </div>
-            </div>
+<!-- Modal: Bank Form -->
+<div id="modal-bank" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <div class="bg-surface-container-high rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 id="bank-modal-title" class="font-title-md text-title-md text-on-surface">Tambah Bank</h3>
+            <button onclick="closeBankForm()" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
         </div>
+        <form id="form-bank" method="POST" action="{{ route('superadmin.data-bank.store') }}" enctype="multipart/form-data">
+            @csrf
+            <input type="hidden" name="_method" value="POST" id="bank-method" />
+            <input type="hidden" name="bank_id" id="bank-id" />
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Nama Bank</label>
+                    <input type="text" name="nama_bank" id="bank-nama" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" />
+                </div>
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Kode Bank</label>
+                    <input type="text" name="kode_bank" id="bank-kode" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" />
+                </div>
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Nomor Rekening</label>
+                    <input type="text" name="nomor_rekening" id="bank-rekening" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" />
+                </div>
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Nama Pemilik</label>
+                    <input type="text" name="nama_pemilik" id="bank-pemilik" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" />
+                </div>
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Status</label>
+                    <select name="status" id="bank-status" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm">
+                        <option value="aktif">Aktif</option>
+                        <option value="nonaktif">Nonaktif</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+                <button type="button" onclick="closeBankForm()" class="px-4 py-2 text-sm rounded-lg border border-[var(--border-soft)] text-on-surface-variant">Batal</button>
+                <button type="submit" class="px-4 py-2 text-sm rounded-lg bg-deep-onyx text-on-primary">Simpan</button>
+            </div>
+        </form>
     </div>
-</form>
+</div>
 
-<!-- Modal Hapus Bank -->
-<form method="POST" action="" id="hapus-bank-form" onsubmit="closeHapusModal()">
-    @csrf
-    <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="hapusBankModal" onclick="if (event.target === this) closeHapusModal()">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                    <span class="material-symbols-outlined text-error text-[28px]">delete_forever</span>
+<!-- Modal: E-Wallet Form -->
+<div id="modal-ewallet" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <div class="bg-surface-container-high rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 id="ewallet-modal-title" class="font-title-md text-title-md text-on-surface">Tambah E-Wallet</h3>
+            <button onclick="closeEwalletForm()" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <form id="form-ewallet" method="POST" action="{{ route('superadmin.data-bank.account.store') }}" enctype="multipart/form-data">
+            @csrf
+            <input type="hidden" name="jenis" value="ewallet" />
+            <input type="hidden" name="account_id" id="ewallet-id" />
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Nama</label>
+                    <input type="text" name="nama" id="ewallet-nama" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" />
                 </div>
-                <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Hapus Bank</h3>
-                <p class="text-on-surface-variant text-sm text-center mb-4">Bank <span id="hapus-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen beserta rekening platform-nya.</p>
-                <div id="hapus-warning" class="hidden mb-4"></div>
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeHapusModal()">Batal</button>
-                    <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Hapus</button>
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Kode</label>
+                    <input type="text" name="kode" id="ewallet-kode" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" />
+                </div>
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">No. Telepon</label>
+                    <input type="text" name="nomor_rekening" id="ewallet-rekening" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" />
+                </div>
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Nama Pemilik</label>
+                    <input type="text" name="nama_pemilik" id="ewallet-pemilik" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" value="RALIVA Fashion" />
+                </div>
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Deskripsi</label>
+                    <textarea name="deskripsi" id="ewallet-deskripsi" rows="2" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Logo</label>
+                    <input type="file" name="file_gambar" accept="image/*" class="w-full text-sm" />
+                </div>
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Status</label>
+                    <select name="status" id="ewallet-status" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm">
+                        <option value="aktif">Aktif</option>
+                        <option value="nonaktif">Nonaktif</option>
+                    </select>
                 </div>
             </div>
-        </div>
+            <div class="flex justify-end gap-2 mt-6">
+                <button type="button" onclick="closeEwalletForm()" class="px-4 py-2 text-sm rounded-lg border border-[var(--border-soft)] text-on-surface-variant">Batal</button>
+                <button type="submit" class="px-4 py-2 text-sm rounded-lg bg-deep-onyx text-on-primary">Simpan</button>
+            </div>
+        </form>
     </div>
-</form>
-@endsection
+</div>
+
+<!-- Modal: QRIS Form -->
+<div id="modal-qris" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <div class="bg-surface-container-high rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 id="qris-modal-title" class="font-title-md text-title-md text-on-surface">Tambah QRIS</h3>
+            <button onclick="closeQrisForm()" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <form id="form-qris" method="POST" action="{{ route('superadmin.data-bank.account.store') }}" enctype="multipart/form-data">
+            @csrf
+            <input type="hidden" name="jenis" value="qris" />
+            <input type="hidden" name="account_id" id="qris-id" />
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Nama</label>
+                    <input type="text" name="nama" id="qris-nama" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" value="QRIS RALIVA" />
+                </div>
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Kode</label>
+                    <input type="text" name="kode" id="qris-kode" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" value="qris" />
+                </div>
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Nama Pemilik</label>
+                    <input type="text" name="nama_pemilik" id="qris-pemilik" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" value="RALIVA Fashion" />
+                </div>
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Deskripsi</label>
+                    <textarea name="deskripsi" id="qris-deskripsi" rows="2" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm">Scan kode QR dengan aplikasi apa pun (GoPay, OVO, Dana, ShopeePay, m-Banking).</textarea>
+                </div>
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Gambar QR</label>
+                    <input type="file" name="file_gambar" accept="image/*" class="w-full text-sm" />
+                </div>
+                <div>
+                    <label class="block text-sm text-on-surface-variant mb-1">Status</label>
+                    <select name="status" id="qris-status" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm">
+                        <option value="aktif">Aktif</option>
+                        <option value="nonaktif">Nonaktif</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+                <button type="button" onclick="closeQrisForm()" class="px-4 py-2 text-sm rounded-lg border border-[var(--border-soft)] text-on-surface-variant">Batal</button>
+                <button type="submit" class="px-4 py-2 text-sm rounded-lg bg-deep-onyx text-on-primary">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 @push('scripts')
 <script>
-    const bankUrls = {
-        store: '{{ route('superadmin.data-bank.store') }}',
-        update: (id) => '{{ route('superadmin.data-bank.update', ':id:') }}'.replace(':id:', id),
-        hapus: (id) => '{{ route('superadmin.data-bank.hapus', ':id:') }}'.replace(':id:', id)
-    };
-
-    function openBankForm(card = null) {
-        const isEdit = !!card;
-        const form = document.getElementById('bank-form');
-
-        if (isEdit) {
-            const d = card.dataset;
-            document.getElementById('bank-modal-title').textContent = 'Ubah Bank';
-            document.getElementById('bank-modal-sub').textContent = 'Perubahan berlaku pada seluruh transaksi.';
-            document.getElementById('namaBank').value = d.nama;
-            document.getElementById('kodeBank').value = d.kode;
-            document.getElementById('nomorRekening').value = d.rekening;
-            document.getElementById('namaPemilik').value = d.pemilik;
-            document.querySelector('input[name="status"][value="' + d.status + '"]').checked = true;
-            form.action = bankUrls.update(d.id);
-            document.getElementById('bank-submit-btn').textContent = 'Simpan Perubahan';
-        } else {
-            document.getElementById('bank-modal-title').textContent = 'Tambah Bank Baru';
-            document.getElementById('bank-modal-sub').textContent = 'Data rekening bank platform.';
-            document.getElementById('namaBank').value = '';
-            document.getElementById('kodeBank').value = '';
-            document.getElementById('nomorRekening').value = '';
-            document.getElementById('namaPemilik').value = '';
-            document.querySelector('input[name="status"][value="aktif"]').checked = true;
-            form.action = bankUrls.store;
-            document.getElementById('bank-submit-btn').textContent = 'Tambah Bank';
-        }
-
-        document.getElementById('modal-form-bank').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        setTimeout(() => document.getElementById('namaBank').focus(), 100);
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+        document.getElementById('panel-' + tab).classList.remove('hidden');
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
     }
 
-    function closeBankModal() {
-        document.getElementById('modal-form-bank').classList.add('hidden');
-        document.body.style.overflow = '';
+    // Bank modal
+    function openBankForm() {
+        document.getElementById('bank-modal-title').textContent = 'Tambah Bank';
+        document.getElementById('form-bank').action = '{{ route('superadmin.data-bank.store') }}';
+        document.getElementById('bank-id').value = '';
+        document.getElementById('bank-nama').value = '';
+        document.getElementById('bank-kode').value = '';
+        document.getElementById('bank-rekening').value = '';
+        document.getElementById('bank-pemilik').value = '';
+        document.getElementById('bank-status').value = 'aktif';
+        document.getElementById('modal-bank').classList.remove('hidden');
+        document.getElementById('modal-bank').classList.add('flex');
     }
 
-    function openHapusBank(card) {
-        const d = card.dataset;
-        document.getElementById('hapus-nama').textContent = d.nama;
-        document.getElementById('hapus-warning').className = 'hidden';
-
-        document.getElementById('hapus-bank-form').action = bankUrls.hapus(d.id);
-        const modal = document.getElementById('hapusBankModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
+    function closeBankForm() {
+        document.getElementById('modal-bank').classList.add('hidden');
+        document.getElementById('modal-bank').classList.remove('flex');
     }
 
-    function closeHapusModal() {
-        const modal = document.getElementById('hapusBankModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
-    }
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') { closeBankModal(); closeHapusModal(); }
-    });
-</script>
-@endpush
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const scope = document.querySelector('[data-table-scope]');
-    if (!scope) return;
-
-    const rows = Array.from(scope.querySelectorAll('[data-table-row]'));
-    const chipBtns = document.querySelectorAll('#bank-chip-group .chip-btn');
-    const searchInput = document.getElementById('bank-search');
-    const clearBtn = document.getElementById('bank-clear-search');
-    const countEl = document.getElementById('bank-result-count');
-    const emptySearch = document.getElementById('bank-empty-search');
-
-    const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
-    const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
-
-    let activeChip = 'semua';
-
-    function applyFilter() {
-        const term = searchInput.value.trim().toLowerCase();
-        let visible = 0;
-
-        rows.forEach((row) => {
-            const matchChip = activeChip === 'semua' || row.getAttribute('data-status') === activeChip;
-            const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
-            const show = matchChip && matchSearch;
-            row.classList.toggle('hidden', !show);
-            if (show) visible++;
-        });
-
-        countEl.textContent = visible;
-        emptySearch.classList.toggle('hidden', visible > 0 || rows.length === 0);
-    }
-
-    chipBtns.forEach((btn) => {
-        btn.addEventListener('click', () => {
-            chipBtns.forEach((b) => {
-                b.classList.remove(...activeClasses);
-                b.classList.add(...idleClasses, 'hover:bg-surface-container-high');
+    function editBank(id) {
+        // fetch bank data via AJAX
+        fetch(`/superadmin/data-bank/${id}/edit`)
+            .then(r => r.json())
+            .then(d => {
+                document.getElementById('bank-modal-title').textContent = 'Edit Bank';
+                document.getElementById('form-bank').action = '{{ route('superadmin.data-bank.update', ['bank' => ':ID']) }}'.replace(':ID', id);
+                document.getElementById('bank-id').value = id;
+                document.getElementById('bank-nama').value = d.nama_bank;
+                document.getElementById('bank-kode').value = d.kode_bank;
+                document.getElementById('bank-rekening').value = d.rekening || '';
+                document.getElementById('bank-pemilik').value = d.pemilik || '';
+                document.getElementById('bank-status').value = d.status;
+                document.getElementById('modal-bank').classList.remove('hidden');
+                document.getElementById('modal-bank').classList.add('flex');
             });
-            btn.classList.remove(...idleClasses, 'hover:bg-surface-container-high');
-            btn.classList.add(...activeClasses);
-            activeChip = btn.getAttribute('data-chip');
-            applyFilter();
-        });
-    });
+    }
 
-    let debounce;
-    searchInput.addEventListener('input', () => {
-        clearBtn.classList.toggle('opacity-0', !searchInput.value);
-        clearTimeout(debounce);
-        debounce = setTimeout(applyFilter, 200);
-    });
+    // E-Wallet modal
+    function openEwalletForm() {
+        document.getElementById('ewallet-modal-title').textContent = 'Tambah E-Wallet';
+        document.getElementById('form-ewallet').action = '{{ route('superadmin.data-bank.account.store') }}';
+        document.getElementById('ewallet-id').value = '';
+        document.getElementById('ewallet-nama').value = '';
+        document.getElementById('ewallet-kode').value = '';
+        document.getElementById('ewallet-rekening').value = '';
+        document.getElementById('ewallet-pemilik').value = 'RALIVA Fashion';
+        document.getElementById('ewallet-deskripsi').value = '';
+        document.getElementById('ewallet-status').value = 'aktif';
+        document.getElementById('modal-ewallet').classList.remove('hidden');
+        document.getElementById('modal-ewallet').classList.add('flex');
+    }
 
-    clearBtn.addEventListener('click', () => {
-        searchInput.value = '';
-        clearBtn.classList.add('opacity-0');
-        applyFilter();
-    });
+    function closeEwalletForm() {
+        document.getElementById('modal-ewallet').classList.add('hidden');
+        document.getElementById('modal-ewallet').classList.remove('flex');
+    }
 
-    applyFilter();
-});
+    function editEwallet(id) {
+        fetch(`/superadmin/data-bank/account/${id}/edit`)
+            .then(r => r.json())
+            .then(d => {
+                document.getElementById('ewallet-modal-title').textContent = 'Edit E-Wallet';
+                document.getElementById('form-ewallet').action = '{{ route('superadmin.data-bank.account.update', ['account' => ':ID']) }}'.replace(':ID', id);
+                document.getElementById('ewallet-id').value = id;
+                document.getElementById('ewallet-nama').value = d.nama;
+                document.getElementById('ewallet-kode').value = d.kode;
+                document.getElementById('ewallet-rekening').value = d.nomor_rekening || '';
+                document.getElementById('ewallet-pemilik').value = d.nama_pemilik || 'RALIVA Fashion';
+                document.getElementById('ewallet-deskripsi').value = d.deskripsi || '';
+                document.getElementById('ewallet-status').value = d.status;
+                document.getElementById('modal-ewallet').classList.remove('hidden');
+                document.getElementById('modal-ewallet').classList.add('flex');
+            });
+    }
+
+    // QRIS modal
+    function openQrisForm() {
+        document.getElementById('qris-modal-title').textContent = 'Tambah QRIS';
+        document.getElementById('form-qris').action = '{{ route('superadmin.data-bank.account.store') }}';
+        document.getElementById('qris-id').value = '';
+        document.getElementById('modal-qris').classList.remove('hidden');
+        document.getElementById('modal-qris').classList.add('flex');
+    }
+
+    function closeQrisForm() {
+        document.getElementById('modal-qris').classList.add('hidden');
+        document.getElementById('modal-qris').classList.remove('flex');
+    }
+
+    function editQris(id) {
+        fetch(`/superadmin/data-bank/account/${id}/edit`)
+            .then(r => r.json())
+            .then(d => {
+                document.getElementById('qris-modal-title').textContent = 'Edit QRIS';
+                document.getElementById('form-qris').action = '{{ route('superadmin.data-bank.account.update', ['account' => ':ID']) }}'.replace(':ID', id);
+                document.getElementById('qris-id').value = id;
+                document.getElementById('qris-nama').value = d.nama;
+                document.getElementById('qris-kode').value = d.kode;
+                document.getElementById('qris-pemilik').value = d.nama_pemilik || 'RALIVA Fashion';
+                document.getElementById('qris-deskripsi').value = d.deskripsi || '';
+                document.getElementById('qris-status').value = d.status;
+                document.getElementById('modal-qris').classList.remove('hidden');
+                document.getElementById('modal-qris').classList.add('flex');
+            });
+    }
 </script>
 @endpush
+@endsection

@@ -64,24 +64,24 @@ class DataProdukController extends Controller
             'harga_dasar' => $data['harga_dasar'],
             'tipe_produk' => $data['tipe_produk'] ?? Product::TIPE_REGULAR,
             'status' => Product::STATUS_PENDING,
-            'alasan_penolakan' => 'Menunggu persetujuan Owner.',
+            'alasan_penolakan' => 'Menunggu moderasi Super Admin.',
         ]);
 
-        $store = \App\Models\Store::find($storeId);
-        if ($store && $store->owner_id) {
+        $sa = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))->first();
+        if ($sa) {
             \App\Models\Notification::create([
-                'user_id' => $store->owner_id,
+                'user_id' => $sa->user_id,
                 'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => \App\Models\Notification::TIPE_PROMO,
                 'judul' => 'Produk Baru Diajukan',
-                'pesan' => sprintf('Produk "%s" diajukan dan menunggu verifikasi Owner.', $product->nama_produk),
-                'url' => route('owner.moderasi-produk'),
+                'pesan' => sprintf('Produk "%s" diajukan dan menunggu moderasi Super Admin.', $product->nama_produk),
+                'url' => route('superadmin.moderasi-produk'),
             ]);
         }
         \App\Models\Notification::fireSelf(
             \App\Models\Notification::TIPE_PROMO,
             'Produk Diajukan',
-            sprintf('Produk "%s" diajukan ke Owner untuk verifikasi.', $product->nama_produk),
+            sprintf('Produk "%s" diajukan ke Super Admin untuk verifikasi.', $product->nama_produk),
             route('admin.produk')
         );
 
@@ -119,6 +119,6 @@ class DataProdukController extends Controller
             }
         }
 
-        return back()->with('success', 'Produk diajukan. Menunggu persetujuan Owner.');
+        return back()->with('success', 'Produk diajukan. Menunggu moderasi Super Admin.');
     }
 }

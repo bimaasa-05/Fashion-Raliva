@@ -16,7 +16,7 @@ class PengirimanController extends Controller
     public function index()
     {
         $query = Shipment::with([
-            'order:order_id,nomor_order,store_id',
+            'order:order_id,nomor_order,store_id,checkout_id',
             'order.store:store_id,nama_toko',
             'order.checkout.user:user_id,nama_lengkap',
             'courier:courier_id,nama_kurir',
@@ -78,7 +78,7 @@ class PengirimanController extends Controller
                 $locked->update($updateData);
 
                 if ($newStatus === Shipment::STATUS_DITERIMA) {
-                    $order = $locked->order()->lockForUpdate()->first();
+                    $order = Order::whereKey($locked->order_id)->lockForUpdate()->first();
 
                     if ($order && $order->status !== Order::STATUS_SELESAI) {
                         $order->update(['status' => Order::STATUS_SELESAI]);

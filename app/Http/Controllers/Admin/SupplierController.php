@@ -20,7 +20,7 @@ class SupplierController extends Controller
         $stats = [
             'total' => $suppliers->total(),
             'aktif' => Supplier::where('status', 'aktif')->count(),
-            'menunggu' => Supplier::where('status', 'verifikasi')->count(),
+            'nonaktif' => Supplier::where('status', 'nonaktif')->count(),
             'kota' => Supplier::distinct('kota')->count('kota'),
         ];
 
@@ -37,8 +37,11 @@ class SupplierController extends Controller
             'kota' => 'nullable|string|max:80',
             'jenis' => 'nullable|string|max:30',
             'catatan' => 'nullable|string|max:1000',
-            'status' => 'required|in:aktif,nonaktif,verifikasi',
+            'stok' => 'nullable|integer|min:0',
+            'status' => 'required|in:aktif,nonaktif',
         ]);
+
+        $data['stok'] = $data['stok'] ?? 0;
 
         Supplier::create($data);
 
@@ -57,8 +60,11 @@ class SupplierController extends Controller
             'kota' => 'nullable|string|max:80',
             'jenis' => 'nullable|string|max:30',
             'catatan' => 'nullable|string|max:1000',
-            'status' => 'required|in:aktif,nonaktif,verifikasi',
+            'stok' => 'nullable|integer|min:0',
+            'status' => 'required|in:aktif,nonaktif',
         ]);
+
+        $data['stok'] = $data['stok'] ?? 0;
 
         $supplier->update($data);
 

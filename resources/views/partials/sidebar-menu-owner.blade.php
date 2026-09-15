@@ -1,4 +1,5 @@
 @php
+    $storeLocked = \App\Support\StoreGate::isLocked();
     $menuGroups = [
         [
             'label' => 'Utama',
@@ -17,7 +18,6 @@
             'label' => 'Operasional',
             'items' => [
                 ['route' => 'owner.produk', 'icon' => 'checkroom', 'text' => 'Data Produk'],
-                ['route' => 'owner.moderasi-produk', 'icon' => 'inventory_2', 'text' => 'Moderasi Produk'],
                 ['route' => 'owner.promo', 'icon' => 'local_offer', 'text' => 'Promo Toko'],
                 ['route' => 'owner.data-pelanggan', 'icon' => 'groups', 'text' => 'Data Pelanggan'],
                 ['route' => 'owner.kelola-slot', 'aliases' => ['owner.paket-slot'], 'icon' => 'storage', 'text' => 'Management Slot'],
@@ -68,19 +68,31 @@
                 <div class="{{ $collapsible ? 'min-h-0 overflow-hidden' : '' }}">
                     <div class="{{ $collapsible ? 'space-y-1' : '' }}">
                 @foreach ($group['items'] as $item)
+                    @php
+                        $locked = $storeLocked && $item['route'] !== 'owner.dashboard';
+                        $isActive = request()->routeIs($item['route'], ...($item['aliases'] ?? []));
+                    @endphp
+                    @if ($locked)
+                        <div class="group flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-on-sidebar/35 border-l-[3px] border-transparent cursor-not-allowed" title="Menu terkunci — toko sedang ditangguhkan">
+                            <span class="material-symbols-outlined text-[20px] text-on-sidebar/30">{{ $item['icon'] }}</span>
+                            <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate">{{ $item['text'] }}</span>
+                            <span class="material-symbols-outlined text-[16px] text-gold-accent/60">lock</span>
+                        </div>
+                    @else
                     <a class="group flex items-center gap-2.5 py-2.5 transition-all duration-200
-                        @if(request()->routeIs($item['route'], ...($item['aliases'] ?? [])))
+                        @if($isActive)
                             pl-3 pr-[28px] mr-[-16px] rounded-l-lg bg-gold-accent/10 text-gold-accent border-l-[3px] border-gold-accent
                         @else
                             px-3 rounded-lg text-on-sidebar/80 hover:bg-sidebar-hover hover:text-on-sidebar border-l-[3px] border-transparent
                         @endif"
                         href="{{ route($item['route']) }}">
-                        <span class="material-symbols-outlined text-[20px] @if(request()->routeIs($item['route'], ...($item['aliases'] ?? []))) fill text-gold-accent @else text-on-sidebar/60 @endif transition-colors">
+                        <span class="material-symbols-outlined text-[20px] @if($isActive) fill text-gold-accent @else text-on-sidebar/60 @endif transition-colors">
                             {{ $item['icon'] }}
                         </span>
                         <span class="sidebar-tip">{{ $item['text'] }}</span>
                         <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate" title="{{ $item['text'] }}">{{ $item['text'] }}</span>
                     </a>
+                    @endif
                 @endforeach
                     </div>
                 </div>

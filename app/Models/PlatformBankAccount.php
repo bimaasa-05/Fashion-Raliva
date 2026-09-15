@@ -13,10 +13,22 @@ class PlatformBankAccount extends Model
 
     public const STATUS_NONAKTIF = 'nonaktif';
 
+    public const JENIS_QRIS = 'qris';
+
+    public const JENIS_EWALLET = 'ewallet';
+
+    public const JENIS_BANK_TRANSFER = 'bank_transfer';
+
     protected $fillable = [
         'bank_id',
+        'jenis',
+        'nama',
+        'kode',
+        'deskripsi',
         'nomor_rekening',
         'nama_pemilik',
+        'file_gambar',
+        'urutan',
         'status',
     ];
 

@@ -18,22 +18,16 @@ class KomplainController extends Controller
 
         $complaints = Complaint::with('user')
             ->where('store_id', $storeId)
+            ->where('status', Complaint::STATUS_ESKALASI)
             ->orderByDesc('dibuat_pada')
             ->paginate(10)
             ->withQueryString();
 
-        $all = Complaint::where('store_id', $storeId)->get();
-        $terbuka = $all->whereIn('status', [Complaint::STATUS_OPEN, Complaint::STATUS_DIPROSES])->count();
-        $menunggu = $all->where('status', Complaint::STATUS_OPEN)->count();
-        $selesai = $all->where('status', Complaint::STATUS_SELESAI)->count();
-        $selesaiBulanIni = $all->where('status', Complaint::STATUS_SELESAI)
-            ->filter(fn($c) => $c->dibuat_pada && $c->dibuat_pada->month === now()->month)
+        $eskalasiCount = Complaint::where('store_id', $storeId)
+            ->where('status', Complaint::STATUS_ESKALASI)
             ->count();
-        $resolution = $all->count() > 0 ? round($selesai / $all->count() * 100) : 0;
 
-        return view('Owner.komplain.index', compact(
-            'complaints', 'terbuka', 'menunggu', 'selesaiBulanIni', 'resolution'
-        ));
+        return view('Owner.komplain.index', compact('complaints', 'eskalasiCount'));
     }
 
     /**
@@ -41,7 +35,7 @@ class KomplainController extends Controller
      */
     public function messages(Complaint $komplain)
     {
-        abort_unless($this->belongsToStore($komplain), 404);
+        abort_unless($this->belongsToStoreEscalated($komplain), 404);
 
         $messages = $komplain->messages()
             ->withTrashed()
@@ -60,7 +54,7 @@ class KomplainController extends Controller
      */
     public function storeMessage(Request $request, Complaint $komplain)
     {
-        abort_unless($this->belongsToStore($komplain), 404);
+        abort_unless($this->belongsToStoreEscalated($komplain), 404);
 
         if (in_array($komplain->status, [Complaint::STATUS_SELESAI, Complaint::STATUS_DITUTUP], true)) {
             return response()->json(['message' => 'Komplain ini sudah selesai.'], 422);
@@ -102,7 +96,7 @@ class KomplainController extends Controller
      */
     public function updateMessage(Request $request, Complaint $komplain, ComplaintMessage $message)
     {
-        abort_unless($this->belongsToStore($komplain), 404);
+        abort_unless($this->belongsToStoreEscalated($komplain), 404);
 
         if ($message->complaint_id !== $komplain->complaint_id) {
             abort(404);
@@ -146,7 +140,7 @@ class KomplainController extends Controller
      */
     public function destroyMessage(Request $request, Complaint $komplain, ComplaintMessage $message)
     {
-        abort_unless($this->belongsToStore($komplain), 404);
+        abort_unless($this->belongsToStoreEscalated($komplain), 404);
 
         if ($message->complaint_id !== $komplain->complaint_id) {
             abort(404);
@@ -194,5 +188,15 @@ class KomplainController extends Controller
     protected function belongsToStore(Complaint $complaint): bool
     {
         return (int) $complaint->store_id === (int) OwnerContext::firstStoreId();
+    }
+
+    /**
+     * Owner hanya boleh melihat/membalas komplain yang sudah dieskalasi
+     * kepadanya oleh Admin. Komplain non-eskalasi tidak boleh tampil.
+     */
+    protected function belongsToStoreEscalated(Complaint $complaint): bool
+    {
+        return $this->belongsToStore($complaint)
+            && $complaint->status === Complaint::STATUS_ESKALASI;
     }
 }

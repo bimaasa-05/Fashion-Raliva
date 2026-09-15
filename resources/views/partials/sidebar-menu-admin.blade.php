@@ -1,4 +1,5 @@
 @php
+    $storeLocked = \App\Support\StoreGate::isLocked();
     $menuGroups = [
         [
             'label' => 'Utama',
@@ -9,8 +10,9 @@
         [
             'label' => 'Transaksi',
             'items' => [
-                ['route' => 'admin.pesanan', 'icon' => 'shopping_cart', 'text' => 'Data Pesanan'],
                 ['route' => 'admin.verifikasi-pembayaran', 'icon' => 'fact_check', 'text' => 'Verifikasi Pembayaran'],
+                ['route' => 'admin.pesanan', 'icon' => 'shopping_cart', 'text' => 'Data Pesanan'],
+                ['route' => 'admin.transaksi', 'icon' => 'receipt_long', 'text' => 'Data Transaksi'],
                 ['route' => 'admin.pengembalian-dana', 'icon' => 'assignment_return', 'text' => 'Pengembalian Dana'],
             ],
         ],
@@ -35,6 +37,7 @@
                 ['route' => 'admin.pengiriman', 'icon' => 'local_shipping', 'text' => 'Pengiriman'],
                 ['route' => 'admin.koordinasi-gudang', 'icon' => 'warehouse', 'text' => 'Koordinasi Gudang'],
                 ['route' => 'admin.permintaan-produksi', 'icon' => 'precision_manufacturing', 'text' => 'Permintaan Produksi'],
+                ['route' => 'admin.bahan-produksi', 'icon' => 'science', 'text' => 'Bahan Produksi'],
                 ['route' => 'admin.supplier', 'icon' => 'fact_check', 'text' => 'Data Supplier'],
             ],
         ],
@@ -66,19 +69,31 @@
                 <div class="{{ $collapsible ? 'min-h-0 overflow-hidden' : '' }}">
                     <div class="{{ $collapsible ? 'space-y-1' : '' }}">
                 @foreach ($group['items'] as $item)
+                    @php
+                        $locked = $storeLocked && $item['route'] !== 'admin.dashboard';
+                        $isActive = request()->routeIs($item['route']);
+                    @endphp
+                    @if ($locked)
+                        <div class="group flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-on-sidebar/35 border-l-[3px] border-transparent cursor-not-allowed" title="Menu terkunci — toko sedang ditangguhkan">
+                            <span class="material-symbols-outlined text-[20px] text-on-sidebar/30">{{ $item['icon'] }}</span>
+                            <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate">{{ $item['text'] }}</span>
+                            <span class="material-symbols-outlined text-[16px] text-gold-accent/60">lock</span>
+                        </div>
+                    @else
                     <a class="group flex items-center gap-2.5 py-2.5 transition-all duration-200
-                        @if(request()->routeIs($item['route']))
+                        @if($isActive)
                             pl-3 pr-[28px] mr-[-16px] rounded-l-lg bg-gold-accent/10 text-gold-accent border-l-[3px] border-gold-accent
                         @else
                             px-3 rounded-lg text-on-sidebar/80 hover:bg-sidebar-hover hover:text-on-sidebar border-l-[3px] border-transparent
                         @endif"
                         href="{{ route($item['route']) }}">
-                        <span class="material-symbols-outlined text-[20px] @if(request()->routeIs($item['route'])) fill text-gold-accent @else text-on-sidebar/60 @endif transition-colors">
+                        <span class="material-symbols-outlined text-[20px] @if($isActive) fill text-gold-accent @else text-on-sidebar/60 @endif transition-colors">
                             {{ $item['icon'] }}
                         </span>
                         <span class="sidebar-tip">{{ $item['text'] }}</span>
                         <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate">{{ $item['text'] }}</span>
                     </a>
+                    @endif
                 @endforeach
                     </div>
                 </div>

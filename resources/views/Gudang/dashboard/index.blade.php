@@ -7,7 +7,7 @@
 
 @section('content')
 @php
-    /** @var object{total_produk:int, total_stok:int, masuk_hari_ini:int, keluar_hari_ini:int, menipis:int, kritis:int, habis:int, rusak:int} $stats */
+    /** @var object{total_produk:int, total_stok:int, masuk_hari_ini:int, keluar_hari_ini:int, menipis:int, kritis:int, habis:int} $stats */
     /** @var \App\Models\Warehouse|null $warehouse */
 @endphp
 <div data-skeleton class="space-y-6">
@@ -30,6 +30,7 @@
 </div>
 
 <div data-real class="hidden space-y-6">
+    @include('partials.banner-suspended')
     <section class="rise card-static bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 card-premium">
         <div class="flex items-center gap-3">
             <div class="w-11 h-11 rounded-xl bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
@@ -101,12 +102,6 @@
                     <i class="w-1.5 rounded-sm bg-error/30" style="height:30%"></i><i class="w-1.5 rounded-sm bg-error/30" style="height:26%"></i><i class="w-1.5 rounded-sm bg-error/50" style="height:34%"></i><i class="w-1.5 rounded-sm bg-error/50" style="height:28%"></i><i class="w-1.5 rounded-sm bg-error/70" style="height:38%"></i><i class="w-1.5 rounded-sm bg-error" style="height:30%"></i><i class="w-1.5 rounded-sm bg-error" style="height:42%"></i>
                 </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">report</span>
-            </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pelanggan Request</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $stats->rusak ?? 0 }}">{{ $stats->rusak ?? 0 }}</span></span>
-                <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">schedule</span>pesanan menunggu cek stok</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">assignment_ind</span>
             </div>
         </div>
     </section>

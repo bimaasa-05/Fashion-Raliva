@@ -90,7 +90,10 @@ class DashboardController extends Controller
             'ulasanTerbaru',
             'chart',
             'aktivitas',
-        ));
+        ))->with([
+            'storeSuspended' => \App\Support\StoreGate::isLocked(),
+            'suspendedStores' => \App\Support\StoreGate::suspendedStoreNames(),
+        ]);
     }
 
     /**

@@ -8,6 +8,8 @@ use App\Models\Notification;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\PaymentVerification;
+use App\Models\Role;
+use App\Services\NotificationService;
 use App\Support\ActivityLogger;
 use App\Support\AdminContext;
 use Illuminate\Http\Request;
@@ -78,7 +80,7 @@ class VerifikasiPembayaranController extends Controller
 
             Order::where('checkout_id', $pembayaran->checkout_id)
                 ->where('status', Order::STATUS_PENDING_PAYMENT)
-                ->update(['status' => Order::STATUS_DIBAYAR]);
+                ->update(['status' => Order::STATUS_MENUNGGU_PRODUKSI]);
         });
 
         ActivityLogger::log(
@@ -92,8 +94,18 @@ class VerifikasiPembayaranController extends Controller
 
         $this->notifyCustomer($pembayaran, 'Pembayaran Diverifikasi', sprintf('Pembayaran sebesar Rp %s telah diverifikasi dan pesanan sedang diproses.', number_format((float) $pembayaran->jumlah, 0, ',', '.')));
 
+        // Notifikasi ke Produksi
+        NotificationService::sendToRole(
+            Role::PRODUKSI,
+            Notification::TIPE_SISTEM,
+            'Pesanan Siap Diproduksi',
+            sprintf('Pembayaran pesanan #%d telah diverifikasi. Menunggu input bahan dari Admin.', $pembayaran->checkout_id),
+            ActivityLogger::resolveActorId(),
+            route('produksi.data-produksi')
+        );
+
         return back()->with('toast', [
-            'message' => 'Pembayaran diverifikasi. Pesanan kini berstatus dibayar.',
+            'message' => 'Pembayaran diverifikasi. Pesanan kini berstatus menunggu produksi.',
             'icon' => 'task_alt',
         ]);
     }

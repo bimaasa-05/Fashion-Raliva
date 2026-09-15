@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Product extends Model
 {
@@ -38,14 +39,11 @@ class Product extends Model
         'tipe_produk',
         'status',
         'alasan_penolakan',
-        'owner_verified_at',
     ];
 
     protected function casts(): array
     {
-        return [
-            'owner_verified_at' => 'datetime',
-        ];
+        return [];
     }
 
     public function store(): BelongsTo
@@ -78,5 +76,14 @@ class Product extends Model
         return $this->belongsToMany(Promotion::class, 'promotion_products', 'product_id', 'promotion_id')
             ->withPivot('promotion_product_id')
             ->withTimestamps();
+    }
+
+    public function adSlot(): HasOne
+    {
+        return $this->hasOne(AdSlot::class, 'product_id', 'product_id')
+            ->where('status', AdSlot::STATUS_AKTIF)
+            ->whereDate('tanggal_mulai', '<=', now()->toDateString())
+            ->whereDate('tanggal_selesai', '>=', now()->toDateString())
+            ->latest('ad_slot_id');
     }
 }

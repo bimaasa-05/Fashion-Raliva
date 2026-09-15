@@ -498,7 +498,7 @@ class RalivaDemoSeeder extends Seeder
             }
         }
 
-        // Pesanan untuk Pelanggan Request (dashboard Gudang)
+        // Pesanan menunggu pemenuhan gudang (widget SLA)
         $requestStatuses = [Order::STATUS_DIBAYAR, Order::STATUS_DIPROSES];
         for ($r = 0; $r < 4; $r++) {
             $variant = $allVariants->skip($r % $allVariants->count())->first();
@@ -721,10 +721,12 @@ class RalivaDemoSeeder extends Seeder
         //  14. DOKUMEN TOKO
         // ════════════════════════════════════════════════════════════════
         foreach (['ktp', 'npwp', 'foto_depan', 'siu'] as $jenis) {
+            $docPath = 'store-documents/'.$store->store_id.'/'.$jenis.'.pdf';
             StoreDocument::updateOrCreate(
                 ['store_id' => $store->store_id, 'jenis' => $jenis],
-                ['path' => 'store-documents/'.$store->store_id.'/'.$jenis.'.pdf', 'status' => 'terverifikasi', 'catatan' => null]
+                ['path' => $docPath, 'status' => 'terverifikasi', 'catatan' => null]
             );
+            \App\Support\DemoStoreDoc::ensure($docPath);
         }
 
         // ════════════════════════════════════════════════════════════════

@@ -28,6 +28,8 @@ class Setting extends Model
 
     public const EMAIL_SUPPORT = 'email_support';
 
+    public const WHATSAPP_SUPPORT = 'whatsapp_support';
+
     public const MODERASI_OTOMATIS = 'moderasi_otomatis';
 
     public const MODE_MAINTENANCE = 'mode_maintenance';

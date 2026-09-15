@@ -70,7 +70,7 @@
                             <p class="text-xs text-on-surface-variant mt-0.5">{{ $orderUtama?->store?->nama_toko ?? '-' }}</p>
                             <p class="font-title-md text-title-md text-gold-accent mt-1">Rp {{ number_format((float) $pembayaran->jumlah, 0, ',', '.') }}</p>
                         </div>
-                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ $pembayaran->paymentMethod?->nama_metode ?? '-' }}{{ $pembayaran->account?->nama ? ' &#8226; ' . $pembayaran->account->nama : '' }}</span>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">@if($pembayaran->account?->file_gambar)<img src="{{ asset('storage/' . ltrim($pembayaran->account->file_gambar, '/')) }}" alt="{{ $pembayaran->account->nama }}" class="h-3.5 w-3.5 object-contain mr-1" />@endif{{ $pembayaran->paymentMethod?->nama_metode ?? '-' }}{{ $pembayaran->account?->nama ? ' &#8226; ' . $pembayaran->account->nama : '' }}</span>
                     </div>
 
                     @if ($bukti)
@@ -201,6 +201,25 @@
                             </div>
                             @if ((float) $pembayaran->jumlah !== (float) $detailTotal)
                                 <p class="text-xs text-error border border-error/20 bg-error/5 rounded-lg px-4 py-3">Nominal tidak sama dengan total tagihan (selisih Rp {{ number_format(abs((float) $pembayaran->jumlah - (float) $detailTotal), 0, ',', '.') }}).</p>
+                            @endif
+                            @if ($pembayaran->account && ($pembayaran->account->nomor_rekening || $pembayaran->account->nama_pemilik))
+                                <div class="border border-muted-border rounded-lg p-4 bg-surface-container-low/50">
+                                    <p class="raliva-label mb-2">Tujuan Pembayaran</p>
+                                    <div class="flex items-center gap-3">
+                                        @if ($pembayaran->account->file_gambar)
+                                            <img src="{{ asset('storage/' . ltrim($pembayaran->account->file_gambar, '/')) }}" alt="{{ $pembayaran->account->nama }}" class="w-12 h-12 object-contain rounded border border-outline-variant bg-white" />
+                                        @endif
+                                        <div class="min-w-0 text-sm">
+                                            <p class="font-bold text-on-surface">{{ $pembayaran->account->nama }}</p>
+                                            @if ($pembayaran->account->nomor_rekening)
+                                                <p class="text-on-surface-variant">Nomor/Rekening: <strong class="text-on-surface">{{ $pembayaran->account->nomor_rekening }}</strong></p>
+                                            @endif
+                                            @if ($pembayaran->account->nama_pemilik)
+                                                <p class="text-on-surface-variant">Atas nama: {{ $pembayaran->account->nama_pemilik }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
                             @endif
                             <div>
                                 <p class="raliva-label mb-2">Bukti ({{ $pembayaran->proofs->count() }})</p>

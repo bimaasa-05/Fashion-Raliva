@@ -52,6 +52,8 @@ class DashboardController extends Controller
                 'kategoriTerbesar' => collect(),
                 'leaderboardData' => [],
                 'barsData' => [],
+                'storeSuspended' => \App\Support\StoreGate::isLocked(),
+                'suspendedStores' => \App\Support\StoreGate::suspendedStoreNames(),
             ]);
         }
 
@@ -116,12 +118,6 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Pelanggan request = pesanan toko ini yang menunggu pemenuhan gudang
-        // (status dibayar/diproses), konsisten dengan halaman Pelanggan Request.
-        $pelangganRequest = Order::where('store_id', $warehouse->store_id)
-            ->whereIn('status', [Order::STATUS_DIBAYAR, Order::STATUS_DIPROSES])
-            ->count();
-
         // --- Widget ringkasan real (pengganti kartu statis hardcode) ---
         // Target penerimaan harian (konstanta bisnis, bisa diatur).
         $targetHarian = 150;
@@ -171,7 +167,6 @@ class DashboardController extends Controller
             'menipis' => $statusCounts['menipis'] ?? 0,
             'kritis' => $statusCounts['kritis'] ?? 0,
             'habis' => $statusCounts['habis'] ?? 0,
-            'rusak' => $pelangganRequest,
         ];
 
         $maxKategori = $kategoriTerbesar->max('jumlah') ?: 1;
@@ -220,6 +215,8 @@ class DashboardController extends Controller
             'kategoriTerbesar' => $kategoriTerbesar,
             'leaderboardData' => $leaderboardData,
             'barsData' => $barsData,
+            'storeSuspended' => \App\Support\StoreGate::isLocked(),
+            'suspendedStores' => \App\Support\StoreGate::suspendedStoreNames(),
         ]);
     }
 

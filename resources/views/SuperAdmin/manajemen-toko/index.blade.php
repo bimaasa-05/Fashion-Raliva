@@ -93,6 +93,7 @@
                 data-desc="{{ $store->deskripsi }}"
                 data-reason="{{ $store->alasan_penolakan }}"
                 data-phone="{{ $store->nomor_telepon ?? '-' }}"
+                data-sampai="{{ $item->ditangguhkan_sampai ?? '' }}"
                 data-dokumen='{{ $item->dokumen->map(fn ($d) => ["id" => $d->store_document_id, "jenis" => $d->jenis, "status" => $d->status, "path" => $d->path, "catatan" => $d->catatan])->toJson() }}'
                 onclick="openStoreModal(this)"
                 class="toko-card group bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden cursor-pointer card-premium">
@@ -176,7 +177,7 @@
     };
 
     let activeCard = null;
-    let activeDocPaths = [];
+    let activeDocs = [];
 
     const actionUrls = {
         setujui: (id) => '{{ route('superadmin.manajemen-toko.setujui', ':id:') }}'.replace(':id:', id),
@@ -230,12 +231,13 @@
             rejectBtn.classList.remove('hidden');
             document.getElementById('store-action-info')?.classList.remove('hidden');
         } else if (d.status === 'aktif') {
-            mainBtn.textContent = 'Tangguhkan Toko';
-            mainBtn.dataset.confirm = 'false';
-            mainBtn.classList.remove('hidden');
+            mainBtn.classList.add('hidden');
             mainForm.action = actionUrls.tangguhkan(d.id);
             rejectBtn.classList.add('hidden');
             document.getElementById('store-action-info')?.classList.add('hidden');
+            closeStoreModal();
+            openSuspendModal(d.id, d.name);
+            return;
         } else if (d.status === 'nonaktif') {
             mainBtn.textContent = 'Aktifkan Kembali';
             mainBtn.dataset.confirm = 'false';
@@ -243,6 +245,9 @@
             mainForm.action = actionUrls.aktifkan(d.id);
             rejectBtn.classList.add('hidden');
             document.getElementById('store-action-info')?.classList.add('hidden');
+            meta.verification = d.sampai
+                ? 'Ditangguhkan sementara — aktif kembali ' + d.sampai
+                : 'Ditangguhkan oleh Admin tanpa batas waktu';
         } else if (d.status === 'ditolak') {
             mainBtn.textContent = 'Pulihkan & Setujui';
             mainBtn.dataset.confirm = 'true';
@@ -311,20 +316,21 @@
     function renderStoreDocs(storeId, docs = []) {
         const container = document.getElementById('store-docs-list');
         const allBtn = document.getElementById('btn-open-all-docs');
-        const ordered = ['ktp', 'npwp', 'foto_depan', 'siu'];
-        activeDocPaths = [];
-        if (!docs || docs.length === 0) {
+        const order = { ktp: 0, npwp: 1, foto_depan: 2, siu: 3 };
+        activeDocs = (docs || []).slice().sort(function (a, b) {
+            const ka = order[a.jenis] !== undefined ? order[a.jenis] : 99;
+            const kb = order[b.jenis] !== undefined ? order[b.jenis] : 99;
+            return ka - kb;
+        });
+        if (activeDocs.length === 0) {
             container.innerHTML = '<div class="bg-surface-container-low border border-muted-border rounded-lg p-4 text-sm text-on-surface-variant">Belum ada dokumen diunggah.</div>';
             allBtn.classList.add('hidden');
+            allBtn.classList.remove('inline-flex');
             return;
         }
-        const present = docs.reduce((acc, d) => { acc[d.jenis] = d; return acc; }, {});
         let html = '';
-        ordered.forEach(function (jenis) {
-            const d = present[jenis];
-            if (!d) return;
-            activeDocPaths.push(d.path);
-            const meta = docMeta[jenis] || { label: jenis, icon: 'description' };
+        activeDocs.forEach(function (d) {
+            const meta = docMeta[d.jenis] || { label: d.jenis, icon: 'description' };
             const verified = d.status === 'terverifikasi';
             const rejected = d.status === 'ditolak';
             const badgeClass = verified ? 'bg-secondary-container/20 text-secondary border-secondary/20'
@@ -355,21 +361,63 @@
                 + '</div>'
                 + '</div>';
         });
-        container.innerHTML = html || '<div class="bg-surface-container-low border border-muted-border rounded-lg p-4 text-sm text-on-surface-variant">Belum ada dokumen diunggah.</div>';
-        if (activeDocPaths.length > 0) {
-            allBtn.classList.remove('hidden');
-            allBtn.classList.add('inline-flex');
-        } else {
-            allBtn.classList.add('hidden');
-            allBtn.classList.remove('inline-flex');
-        }
+        container.innerHTML = html;
+        allBtn.classList.remove('hidden');
+        allBtn.classList.add('inline-flex');
     }
 
     function openAllDocs() {
-        if (activeDocPaths.length === 0) return;
-        activeDocPaths.forEach(function (path) {
-            window.open(previewUrl(path), '_blank', 'noopener');
+        if (activeDocs.length === 0) return;
+        document.getElementById('all-docs-store-name').textContent = activeCard ? activeCard.dataset.name : '-';
+        document.getElementById('all-docs-count').textContent = activeDocs.length;
+        const grid = document.getElementById('all-docs-grid');
+        grid.innerHTML = '';
+        activeDocs.forEach(function (d) {
+            const meta = docMeta[d.jenis] || { label: d.jenis, icon: 'description' };
+            const verified = d.status === 'terverifikasi';
+            const rejected = d.status === 'ditolak';
+            const badgeClass = verified ? 'bg-secondary-container/20 text-secondary border-secondary/20'
+                : (rejected ? 'bg-error/10 text-error border-error/20'
+                   : 'bg-surface-container-high text-on-surface-variant border-outline-variant');
+            const badgeIcon = verified ? 'check_circle' : (rejected ? 'cancel' : 'schedule');
+            const badgeLabel = verified ? 'Terverifikasi' : (rejected ? 'Ditolak' : 'Menunggu');
+            const missId = 'all-doc-missing-' + d.id;
+            const onerr = 'this.style.display=\'none\';document.getElementById(\'' + missId + '\').style.display=\'flex\';';
+            const isPdf = /\.pdf$/i.test(d.path);
+            const preview = isPdf
+                ? '<div class="w-full h-40 bg-surface-container-low border border-muted-border rounded-lg flex flex-col items-center justify-center gap-2">'
+                    + '<span class="material-symbols-outlined text-[40px] text-gold-accent">picture_as_pdf</span>'
+                    + '<span class="text-[10px] font-label-sm uppercase tracking-widest text-on-surface-variant">Dokumen PDF</span>'
+                    + '</div>'
+                : '<img class="w-full h-40 object-cover" alt="' + meta.label + '" src="' + previewUrl(d.path) + '" loading="lazy" onerror="' + onerr + '">';
+            const fallback = '<div id="' + missId + '" style="display:none" class="w-full h-40 bg-surface-container-low border border-muted-border rounded-lg flex-col items-center justify-center gap-2">'
+                + '<span class="material-symbols-outlined text-[40px] text-on-surface-variant">broken_image</span>'
+                + '<span class="text-[10px] font-label-sm uppercase tracking-widest text-on-surface-variant">File tidak ditemukan</span>'
+                + '</div>';
+            grid.innerHTML += '<div class="bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden flex flex-col">'
+                + '<div class="relative">' + preview + fallback + '</div>'
+                + '<div class="p-4 flex flex-col gap-2 flex-1">'
+                + '<div class="flex items-center justify-between gap-2 flex-wrap">'
+                + '<span class="text-[10px] font-label-sm uppercase tracking-widest text-on-surface-variant">' + meta.label + '</span>'
+                + '<span class="inline-flex shrink-0 items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border ' + badgeClass + '"><span class="material-symbols-outlined fill text-[11px]">' + badgeIcon + '</span>' + badgeLabel + '</span>'
+                + '</div>'
+                + '<a href="' + previewUrl(d.path) + '" target="_blank" rel="noopener" class="mt-auto inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-gold-accent/40 text-gold-accent hover:bg-gold-accent/10 transition-colors"><span class="material-symbols-outlined text-[14px]">open_in_new</span>Buka di Tab Baru</a>'
+                + '</div>'
+                + '</div>';
         });
+        const modal = document.getElementById('all-docs-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeAllDocs() {
+        const modal = document.getElementById('all-docs-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        if (document.getElementById('store-modal').classList.contains('hidden')) {
+            document.body.style.overflow = '';
+        }
     }
 
     function openDocRejectModal(storeId, docId, label) {
@@ -387,8 +435,50 @@
         modal.classList.remove('flex');
     }
 
+    function openSuspendModal(storeId, storeName) {
+        document.getElementById('suspend-store-name').textContent = storeName;
+        document.getElementById('suspend-form').action = actionUrls.tangguhkan(storeId);
+        const permanen = document.querySelector('input[name="tipe_suspend"][value="permanen"]');
+        permanen.checked = true;
+        document.getElementById('sampai-input').value = '';
+        document.getElementById('sampai-input').disabled = true;
+        const modal = document.getElementById('suspend-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeSuspendModal() {
+        const modal = document.getElementById('suspend-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function confirmSuspend() {
+        const isSementara = document.querySelector('input[name="tipe_suspend"][value="sementara"]').checked;
+        if (isSementara) {
+            const sampai = document.getElementById('sampai-input').value;
+            if (! sampai) {
+                alert('Mohon pilih tanggal berakhirnya penangguhan.');
+                return false;
+            }
+            if (new Date(sampai) <= new Date()) {
+                alert('Batas waktu harus di masa depan.');
+                return false;
+            }
+            if (! confirm('Toko akan ditangguhkan sementara hingga ' + new Date(sampai).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}) + '. Lanjutkan?')) {
+                return false;
+            }
+        } else {
+            if (! confirm('Toko akan ditangguhkan secara permanen. Lanjutkan?')) {
+                return false;
+            }
+        }
+        closeSuspendModal();
+        return true;
+    }
+
     document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') { closeStoreModal(); closeRejectModal(); closeDocRejectModal(); }
+        if (event.key === 'Escape') { closeAllDocs(); closeStoreModal(); closeRejectModal(); closeDocRejectModal(); closeSuspendModal(); }
     });
 </script>
 @endpush
@@ -587,6 +677,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="flex justify-end gap-3">
                     <button type="button" class="px-4 py-2.5 text-on-surface-variant font-label-sm text-[11px] uppercase tracking-wider hover:text-on-surface transition-colors" onclick="closeDocRejectModal()">Batal</button>
                     <button type="submit" class="px-6 py-2.5 bg-error text-on-error font-label-sm text-[11px] uppercase tracking-wider rounded-lg hover:opacity-90 transition-opacity btn-premium">Konfirmasi Penolakan</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div aria-labelledby="all-docs-title" aria-modal="true" role="dialog" class="fixed inset-0 z-[115] hidden items-center justify-center p-4 md:p-6 bg-black/50 backdrop-blur-sm" id="all-docs-modal" onclick="if (event.target === this) closeAllDocs()">
+    <div class="relative z-10 w-full max-w-4xl h-[min(760px,92vh)] bg-surface-container-lowest rounded-xl border border-muted-border shadow-2xl flex flex-col overflow-hidden">
+        <div class="shrink-0 border-b border-muted-border px-6 md:px-8 py-5">
+            <div class="flex items-start justify-between gap-4">
+                <div class="min-w-0">
+                    <p class="font-label-sm text-[10px] uppercase tracking-widest text-gold-accent inline-flex items-center gap-1.5 mb-1"><span class="material-symbols-outlined text-[14px]">folder_open</span>Dokumen Toko</p>
+                    <h3 class="font-display-lg text-headline-lg-mobile truncate" id="all-docs-title">Semua Sertifikat</h3>
+                    <p class="text-xs text-on-surface-variant mt-0.5"><span id="all-docs-store-name" class="font-bold text-on-surface">-</span> &bull; <span id="all-docs-count">0</span> dokumen</p>
+                </div>
+                <button type="button" onclick="closeAllDocs()" class="text-on-surface-variant hover:text-on-surface transition-colors p-2 -mr-2 shrink-0"><span class="material-symbols-outlined">close</span></button>
+            </div>
+        </div>
+        <div class="flex-1 overflow-y-auto p-6 md:p-8">
+            <div id="all-docs-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-gutter"></div>
+        </div>
+    </div>
+</div>
+
+<div aria-labelledby="suspend-title" aria-modal="true" role="dialog" class="fixed inset-0 z-[105] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="suspend-modal" onclick="if (event.target === this) closeSuspendModal()">
+    <form id="suspend-form" method="POST" action="" onsubmit="return confirmSuspend()">
+        @csrf
+        <div class="relative z-10 bg-surface-container-lowest w-full max-w-md border border-muted-border rounded-xl shadow-2xl overflow-hidden">
+            <div class="p-8">
+                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
+                    <span class="material-symbols-outlined text-error text-[28px]">block</span>
+                </div>
+                <h3 class="font-display-lg text-headline-lg-mobile text-center mb-2" id="suspend-title">Tangguhkan Toko</h3>
+                <p class="text-on-surface-variant text-sm text-center mb-6">Toko <span id="suspend-store-name" class="font-bold text-on-surface">-</span> akan ditangguhkan. Pilih jenis penangguhan:</p>
+
+                <div class="space-y-3 mb-6">
+                    <label class="flex items-start gap-3 p-3 border border-muted-border rounded-lg cursor-pointer hover:border-gold-accent/50 transition-colors has-[:checked]:border-error has-[:checked]:bg-error/5">
+                        <input type="radio" name="tipe_suspend" value="permanen" checked class="mt-0.5 accent-error" />
+                        <div>
+                            <p class="font-label-sm text-label-sm text-on-surface font-bold">Permanen</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">Toko akan ditangguhkan tanpa batas waktu. Hanya bisa diaktifkan kembali oleh Super Admin.</p>
+                        </div>
+                    </label>
+                    <label class="flex items-start gap-3 p-3 border border-muted-border rounded-lg cursor-pointer hover:border-gold-accent/50 transition-colors has-[:checked]:border-error has-[:checked]:bg-error/5">
+                        <input type="radio" name="tipe_suspend" value="sementara" class="mt-0.5 accent-error" onchange="document.getElementById('sampai-input').disabled = this.value !== 'sementara'; if(this.value !== 'sementara') document.getElementById('sampai-input').value = '';" />
+                        <div class="flex-1">
+                            <p class="font-label-sm text-label-sm text-on-surface font-bold">Sementara (Berbatas Waktu)</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5 mb-3">Toko akan otomatis aktif kembali melewati batas waktu yang ditentukan.</p>
+                            <input type="datetime-local" id="sampai-input" name="sampai" disabled class="w-full bg-surface-container-low border border-muted-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error disabled:opacity-40" />
+                        </div>
+                    </label>
+                </div>
+
+                <div class="flex justify-end gap-3">
+                    <button type="button" class="px-4 py-2.5 text-on-surface-variant font-label-sm text-[11px] uppercase tracking-wider hover:text-on-surface transition-colors" onclick="closeSuspendModal()">Batal</button>
+                    <button type="submit" class="px-6 py-2.5 bg-error text-on-error font-label-sm text-[11px] uppercase tracking-wider rounded-lg hover:opacity-90 transition-opacity btn-premium">Konfirmasi Tangguhkan</button>
                 </div>
             </div>
         </div>

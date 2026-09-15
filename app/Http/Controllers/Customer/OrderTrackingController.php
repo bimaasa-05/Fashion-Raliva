@@ -41,12 +41,15 @@ class OrderTrackingController extends Controller
      */
     public function index(Request $request)
     {
+        \App\Support\PaymentExpiry::expireOverdue();
+
         $orders = Auth::user()->orders()
             ->with([
                 'store',
                 'items.productVariant.product.images',
                 'shipments.courier',
-                'checkout.payment',
+                'checkout.payment.paymentMethod',
+                'checkout.payment.account',
             ])
             ->orderByDesc('orders.created_at')
             ->get();

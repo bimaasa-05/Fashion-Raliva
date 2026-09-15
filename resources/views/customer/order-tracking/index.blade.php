@@ -420,6 +420,60 @@
 </div>
 </div>
 </section>
+@php
+    $payInfo = $selected->checkout?->payment;
+    $payStatusLabel = $payInfo ? match ($payInfo->status) {
+        \App\Models\Payment::STATUS_PENDING => __('Menunggu Pembayaran'),
+        \App\Models\Payment::STATUS_MENUNGGU_VERIFIKASI => __('Menunggu Verifikasi'),
+        \App\Models\Payment::STATUS_TERVERIFIKASI => __('Pembayaran Diterima'),
+        \App\Models\Payment::STATUS_DITOLAK => __('Bukti Ditolak'),
+        \App\Models\Payment::STATUS_KADALUARSA => __('Kedaluwarsa'),
+        default => ucfirst(str_replace('_', ' ', $payInfo->status)),
+    } : null;
+@endphp
+@if ($payInfo)
+<section class="pb-xl reveal-up">
+<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
+    <div class="flex items-center justify-between gap-3 mb-md">
+        <p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">payments</span>
+            {{ __('Rincian Pembayaran') }}
+        </p>
+        <span class="inline-flex items-center gap-xs px-sm py-1 rounded-full border {{ $payInfo->status === App\Models\Payment::STATUS_TERVERIFIKASI ? 'bg-secondary/10 border-secondary/15 text-secondary' : ($payInfo->status === App\Models\Payment::STATUS_KADALUARSA || $payInfo->status === App\Models\Payment::STATUS_DITOLAK ? 'bg-error/10 border-error/15 text-error' : 'bg-surface-container-high border-outline-variant text-on-surface-variant') }}">
+            <span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold">{{ $payStatusLabel }}</span>
+        </span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+        <div class="border border-outline-variant rounded-xl p-md">
+            <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2">{{ __('Metode') }}</p>
+            <p class="font-body-md text-body-md text-on-surface font-semibold">{{ $payInfo->paymentMethod?->nama_metode ?? __('Belum dipilih') }}</p>
+            @if ($payInfo->account)
+                <div class="flex items-center gap-sm mt-sm">
+                    @if ($payInfo->account->file_gambar)
+                        <img src="{{ asset('storage/' . ltrim($payInfo->account->file_gambar, '/')) }}" alt="{{ $payInfo->account->nama }}" class="h-8 object-contain rounded border border-outline-variant bg-white" />
+                    @endif
+                    <div class="min-w-0">
+                        <p class="font-body-sm text-body-sm text-on-surface">{{ $payInfo->account->nama }}</p>
+                        @if ($payInfo->account->nomor_rekening)
+                            <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $payInfo->account->nomor_rekening }} @if($payInfo->account->nama_pemilik) &#8226; {{ $payInfo->account->nama_pemilik }}@endif</p>
+                        @endif
+                    </div>
+                </div>
+            @endif
+        </div>
+        <div class="border border-outline-variant rounded-xl p-md">
+            <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2">{{ __('Total') }}</p>
+            <p class="font-title-md text-title-md text-on-surface font-semibold">Rp {{ number_format((float) $payInfo->jumlah, 0, ',', '.') }}</p>
+            @if ($payInfo->status === \App\Models\Payment::STATUS_PENDING && $payInfo->batas_waktu)
+                <p class="font-label-sm text-label-sm text-on-surface-variant mt-sm">Batas pembayaran: {{ $payInfo->batas_waktu->translatedFormat('d M Y, H:i') }}</p>
+            @endif
+        </div>
+    </div>
+</div>
+</div>
+</section>
+@endif
 <!-- Visual Tracking Timeline -->
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
