@@ -1379,6 +1379,9 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                 if (wrap) wrap.classList.remove('hidden');
             };
 
+            var proofs = {};
+            var currentKode = null;
+
             var showBukti = function() {
                 if (!panelBukti) return;
                 panelBukti.classList.remove('hidden');
@@ -1393,18 +1396,54 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                 panelBukti.classList.remove('carpet-down');
             };
 
+            var assignFile = function(file) {
+                if (!fileInput) return;
+                if (!file) {
+                    fileInput.value = '';
+                    return;
+                }
+                var dt = new DataTransfer();
+                dt.items.add(file);
+                fileInput.files = dt.files;
+            };
+
+            var applyProofUi = function(kode) {
+                if (!fileInput || !previewImg || !dropzone || !dropzoneIcon || !uploadHint) return;
+                currentKode = kode;
+                var store = proofs[kode] || null;
+                if (store && store.file) {
+                    assignFile(store.file);
+                    previewImg.src = store.url;
+                    previewImg.classList.remove('hidden');
+                    dropzone.classList.add('border-secondary');
+                    dropzoneIcon.classList.add('hidden');
+                    uploadHint.classList.add('hidden');
+                    showPair();
+                } else {
+                    assignFile(null);
+                    previewImg.removeAttribute('src');
+                    previewImg.classList.add('hidden');
+                    dropzone.classList.remove('border-secondary');
+                    dropzoneIcon.classList.remove('hidden');
+                    uploadHint.classList.remove('hidden');
+                    if (hasPrevProof) showPair(); else showSingle();
+                }
+            };
+
             var syncBukti = function() {
                 var sel = grid ? grid.querySelector('.pay-method.selected') : null;
                 if (!sel) { hideBukti(); return; }
                 var kode = sel.getAttribute('data-kode');
-                if (kode === 'qris') { showBukti(); return; }
+                currentKode = kode;
+                if (kode === 'qris') { applyProofUi(kode); showBukti(); return; }
                 if (kode === 'ewallet' || kode === 'bank_transfer') {
                     var gridEl = document.getElementById('grid-' + kode);
                     var selAcc = gridEl ? gridEl.querySelector('.account-opt-ew.selected') : null;
-                    if (selAcc) { showBukti(); return; }
+                    if (selAcc) { applyProofUi(kode); showBukti(); return; }
                     hideBukti();
                     return;
                 }
+                applyProofUi(kode);
                 showBukti();
             };
 
@@ -1535,9 +1574,8 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             var btnUnggah = document.getElementById('btn-unggah');
             var btnPair = document.getElementById('btn-pair');
             var btnGanti = document.getElementById('btn-ganti');
-            var btnActions = document.getElementById('btn-actions');
+var btnActions = document.getElementById('btn-actions');
             var hasPrevProof = btnActions ? btnActions.getAttribute('data-prev-proof') === 'true' : false;
-            var previewUrl = null;
 
             var showSingle = function() {
                 if (btnUnggah) btnUnggah.classList.remove('hidden');
@@ -1559,24 +1597,21 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
 
             if (fileInput) {
                 fileInput.addEventListener('change', function() {
+                    var kode = currentKode;
                     if (fileInput.files && fileInput.files[0]) {
+                        var f = fileInput.files[0];
+                        if (proofs[kode] && proofs[kode].url) URL.revokeObjectURL(proofs[kode].url);
+                        proofs[kode] = { file: f, url: URL.createObjectURL(f) };
                         if (dropzone) dropzone.classList.add('border-secondary');
-                        if (previewUrl) URL.revokeObjectURL(previewUrl);
-                        previewUrl = URL.createObjectURL(fileInput.files[0]);
                         if (previewImg) {
-                            previewImg.src = previewUrl;
+                            previewImg.src = proofs[kode].url;
                             previewImg.classList.remove('hidden');
                         }
                         if (dropzoneIcon) dropzoneIcon.classList.add('hidden');
                         if (uploadHint) uploadHint.classList.add('hidden');
                         showPair();
                     } else {
-                        if (previewUrl) { URL.revokeObjectURL(previewUrl); previewUrl = null; }
-                        if (previewImg) { previewImg.src = ''; previewImg.classList.add('hidden'); }
-                        if (dropzoneIcon) dropzoneIcon.classList.remove('hidden');
-                        if (uploadHint) uploadHint.classList.remove('hidden');
-                        if (dropzone) dropzone.classList.remove('border-secondary');
-                        if (hasPrevProof) showPair(); else showSingle();
+                        applyProofUi(kode);
                     }
                 });
                 if (dropzone) {
@@ -1614,6 +1649,15 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                         e.preventDefault();
                         alert('Pilih metode pembayaran terlebih dahulu.');
                         if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
+                    var selM = grid ? grid.querySelector('.pay-method.selected') : null;
+                    if (selM) {
+                        var kodeM = selM.getAttribute('data-kode');
+                        if ((kodeM === 'ewallet' || kodeM === 'bank_transfer') && accountInput && !accountInput.value) {
+                            e.preventDefault();
+                            alert('Pilih akun/tujuan pembayaran terlebih dahulu.');
+                        }
                     }
                 });
             }
