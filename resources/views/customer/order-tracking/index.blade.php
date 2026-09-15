@@ -368,7 +368,7 @@
     $itemsCount = $selected->items->count();
     $progressWidth = $isCancelled ? 0 : (($step - 1) / 3 * 100);
     $details = [
-        'pending_payment' => [__('Menunggu pembayaran'), __('Silakan selesaikan pembayaran Anda agar pesanan segera diproses.')],
+        'pending_payment' => [__('Menunggu verifikasi'), __('Bukti pembayaran Anda sedang diverifikasi admin. Pesanan akan diproses setelah terverifikasi.')],
         'dibayar' => [__('Pembayaran diterima'), __('Pembayaran Anda telah kami terima. Pesanan sedang menunggu diproses.')],
         'diproses' => [__('Sedang disiapkan'), __('Pesanan sedang diproses di gudang dan akan segera dikirim.')],
         'dikirim' => [__('Sedang dalam perjalanan'), __('Pesanan sudah dikirim dan sedang dalam perjalanan menuju alamat Anda.')],
@@ -518,13 +518,6 @@ $active = ! $isCancelled && $step && $stepIndex === $step;
 <h3 class="font-title-md text-title-md text-on-surface mb-xs">{{ $detail[0] }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $detail[1] }}</p>
 </div>
-@if ($selected->status === \App\Models\Order::STATUS_PENDING_PAYMENT)
-<div class="mt-lg flex justify-center">
-<a href="{{ route('customer.checkout.payment', $selected->checkout_id) }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest">
-<span class="material-symbols-outlined text-[18px]">payments</span>{{ __('Lanjutkan Pembayaran') }}
-</a>
-</div>
-@endif
 @if (in_array($selected->status, [\App\Models\Order::STATUS_DIKIRIM, \App\Models\Order::STATUS_SELESAI]))
 <div class="mt-lg flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-sm">
 @if ($selected->status === \App\Models\Order::STATUS_DIKIRIM)
