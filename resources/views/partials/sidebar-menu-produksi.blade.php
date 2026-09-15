@@ -12,6 +12,7 @@
             'items' => [
                 ['route' => 'produksi.data-produksi', 'icon' => 'precision_manufacturing', 'text' => 'Data Produksi'],
                 ['route' => 'produksi.pemeriksaan-kualitas', 'icon' => 'fact_check', 'text' => 'Pemeriksaan Kualitas'],
+                ['route' => 'produksi.produk-selesai', 'icon' => 'task_alt', 'text' => 'Produk Selesai'],
                 ['route' => 'produksi.pelaporan-produksi', 'icon' => 'summarize', 'text' => 'Pelaporan Produksi'],
                 ['route' => 'produksi.riwayat-produksi', 'icon' => 'history', 'text' => 'Riwayat Produksi'],
             ],

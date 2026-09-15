@@ -13,6 +13,13 @@
     $stepKirim      = $o->shipments->first()?->created_at;
     $isSelesai      = $o->status === \App\Models\Order::STATUS_SELESAI;
 
+    $produksiSelesai = ($stepQc !== null) || in_array($o->status, [
+        \App\Models\Order::STATUS_MENUNGGU_QC,
+        \App\Models\Order::STATUS_SIAP_KIRIM,
+        \App\Models\Order::STATUS_DIKIRIM,
+        \App\Models\Order::STATUS_SELESAI,
+    ], true);
+
     $durTarget = null;
     $durActual = null;
     $durDiff   = null;
@@ -105,22 +112,55 @@
                     <div class="bg-surface-container-low rounded-lg p-3">
                         <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Target (Admin)</p>
                         <p class="text-on-surface font-bold mt-1">{{ $durTarget !== null ? $fmtDur($durTarget) : '-' }}</p>
+                        @if ($stepJadwalAkhir)
+                            @if ($produksiSelesai)
+                                @if ($stepQc)
+                                    @php
+                                        $selisih = (int) round(($stepQc->timestamp - $stepJadwalAkhir->timestamp) / 60);
+                                    @endphp
+                                    <p class="text-xs mt-1 {{ $selisih <= 0 ? 'text-secondary' : 'text-error' }}">
+                                        @if ($selisih === 0)
+                                            Selesai tepat waktu.
+                                        @elseif ($selisih < 0)
+                                            Selesai lebih cepat {{ $fmtDur(abs($selisih)) }} dari target.
+                                        @else
+                                            Terlambat {{ $fmtDur($selisih) }} dari target.
+                                        @endif
+                                    </p>
+                                @else
+                                    <p class="text-xs text-on-surface-variant mt-1">Produksi selesai · Menunggu QC</p>
+                                @endif
+                            @else
+                                <p class="text-xs text-on-surface-variant mt-1 countdown-badge" data-live-countdown-end="{{ $stepJadwalAkhir->timestamp }}">Sisa...</p>
+                            @endif
+                        @endif
                     </div>
                     <div class="bg-surface-container-low rounded-lg p-3">
                         <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Aktual (Produksi)</p>
-                        <p class="text-on-surface font-bold mt-1">{{ $durActual !== null ? $fmtDur($durActual) : '-' }}</p>
+                        <p class="text-on-surface font-bold mt-1"
+                           @if ($stepDiterima)
+                           data-live-elapsed-start="{{ $stepDiterima->timestamp }}"
+                           @if ($stepQc) data-live-elapsed-end="{{ $stepQc->timestamp }}" @endif
+                           @endif
+                        >{{ $durActual !== null ? $fmtDur($durActual) : '-' }}</p>
                     </div>
                 </div>
-                @if ($durDiff !== null)
-                    <div class="mt-3 flex items-center gap-2 rounded-lg border px-3 py-2.5 {{ $durDiff <= 0 ? 'border-secondary/25 bg-secondary-container/10' : 'border-error/25 bg-error/10' }}">
-                        <span class="material-symbols-outlined text-[18px] {{ $durDiff <= 0 ? 'text-secondary' : 'text-error' }}">{{ $durDiff <= 0 ? 'check_circle' : 'error' }}</span>
-                        <span class="text-xs {{ $durDiff <= 0 ? 'text-secondary' : 'text-error' }}">
-                            @if ($durDiff === 0)
+                @if ($stepDiterima && $durTarget !== null && ($stepQc || $o->status === \App\Models\Order::STATUS_DIPROSES))
+                    <div class="mt-3 flex items-center gap-2 rounded-lg border px-3 py-2.5 {{ $durDiff !== null && $durDiff <= 0 ? 'border-secondary/25 bg-secondary-container/10' : 'border-error/25 bg-error/10' }}"
+                         data-live-diff
+                         data-diff-start="{{ $stepDiterima->timestamp }}"
+                         data-diff-end="{{ $stepQc?->timestamp ?? '' }}"
+                         data-diff-target-sec="{{ $durTarget !== null ? $durTarget * 60 : 0 }}">
+                        <span class="material-symbols-outlined text-[18px] {{ $durDiff !== null && $durDiff <= 0 ? 'text-secondary' : 'text-error' }}">{{ $durDiff !== null && $durDiff <= 0 ? 'check_circle' : 'error' }}</span>
+                        <span class="text-xs {{ $durDiff !== null && $durDiff <= 0 ? 'text-secondary' : 'text-error' }}">
+                            @if ($durDiff !== null && $durDiff === 0)
                                 Selesai tepat waktu.
-                            @elseif ($durDiff < 0)
+                            @elseif ($durDiff !== null && $durDiff < 0)
                                 Selesai lebih cepat {{ $fmtDur(abs($durDiff)) }} dari target.
-                            @else
+                            @elseif ($durDiff !== null)
                                 Terlambat {{ $fmtDur($durDiff) }} dari target.
+                            @else
+                                Memuat...
                             @endif
                         </span>
                     </div>
@@ -218,5 +258,77 @@
                 document.body.style.overflow = '';
             });
         });
+    </script>
+    <script>
+        function liveDurFmt(totalSec) {
+            if (totalSec === null || isNaN(totalSec) || totalSec < 0) totalSec = 0;
+            const h = Math.floor(totalSec / 86400);
+            const j = Math.floor((totalSec % 86400) / 3600);
+            const m = Math.floor((totalSec % 3600) / 60);
+            const s = Math.floor(totalSec % 60);
+            const parts = [];
+            if (h > 0) parts.push(h + 'h');
+            if (j > 0) parts.push(j + 'j');
+            if (m > 0) parts.push(m + 'm');
+            if (s > 0) parts.push(s + 'd');
+            return parts.length ? parts.join(' ') : '< 1 menit';
+        }
+
+        function tickLiveDurations() {
+            const now = Date.now();
+
+            // Countdown target (admin)
+            document.querySelectorAll('[data-live-countdown-end]').forEach(function (el) {
+                const end = parseInt(el.dataset.liveCountdownEnd, 10) * 1000;
+                const diff = Math.floor((end - now) / 1000);
+                if (diff < 0) {
+                    el.textContent = 'Terlambat ' + liveDurFmt(Math.abs(diff));
+                    el.classList.add('text-error', 'font-bold');
+                    el.classList.remove('text-on-surface-variant');
+                } else {
+                    el.textContent = 'Sisa ' + liveDurFmt(diff);
+                    el.classList.add('text-on-surface-variant');
+                    el.classList.remove('text-error', 'font-bold');
+                }
+            });
+
+            // Elapsed aktual (produksi)
+            document.querySelectorAll('[data-live-elapsed-start]').forEach(function (el) {
+                const start = parseInt(el.dataset.liveElapsedStart, 10) * 1000;
+                const endRaw = el.dataset.liveElapsedEnd;
+                const end = endRaw ? parseInt(endRaw, 10) * 1000 : null;
+                const base = end ? end : now;
+                el.textContent = liveDurFmt(Math.floor((base - start) / 1000));
+            });
+
+            // Banner diff live
+            document.querySelectorAll('[data-live-diff]').forEach(function (el) {
+                const start = parseInt(el.dataset.diffStart, 10) * 1000;
+                const endRaw = el.dataset.diffEnd;
+                const end = endRaw ? parseInt(endRaw, 10) * 1000 : null;
+                const targetSec = parseInt(el.dataset.diffTargetSec, 10) || 0;
+                const base = end ? end : now;
+                const actualSec = Math.floor((base - start) / 1000);
+                const diff = actualSec - targetSec;
+
+                const icon = el.querySelector('.material-symbols-outlined');
+                const label = el.querySelector('span.text-xs');
+                if (diff === 0) {
+                    el.className = el.className.replace(/border-(error|secondary)\/[0-9]+/g, 'border-secondary/25').replace(/bg-(error|secondary-container)\/[0-9]+/g, 'bg-secondary-container/10');
+                    if (icon) { icon.textContent = 'check_circle'; icon.className = icon.className.replace(/text-(error|secondary)/g, 'text-secondary'); }
+                    if (label) { label.textContent = 'Selesai tepat waktu.'; label.className = label.className.replace(/text-(error|secondary)/g, 'text-secondary'); }
+                } else if (diff < 0) {
+                    el.className = el.className.replace(/border-(error|secondary)\/[0-9]+/g, 'border-secondary/25').replace(/bg-(error|secondary-container)\/[0-9]+/g, 'bg-secondary-container/10');
+                    if (icon) { icon.textContent = 'check_circle'; icon.className = icon.className.replace(/text-(error|secondary)/g, 'text-secondary'); }
+                    if (label) { label.textContent = 'Selesai lebih cepat ' + liveDurFmt(Math.abs(diff)) + ' dari target.'; label.className = label.className.replace(/text-(error|secondary)/g, 'text-secondary'); }
+                } else {
+                    el.className = el.className.replace(/border-(error|secondary)\/[0-9]+/g, 'border-error/25').replace(/bg-(error|secondary-container)\/[0-9]+/g, 'bg-error/10');
+                    if (icon) { icon.textContent = 'error'; icon.className = icon.className.replace(/text-(error|secondary)/g, 'text-error'); }
+                    if (label) { label.textContent = 'Terlambat ' + liveDurFmt(diff) + ' dari target.'; label.className = label.className.replace(/text-(error|secondary)/g, 'text-error'); }
+                }
+            });
+        }
+        setInterval(tickLiveDurations, 1000);
+        document.addEventListener('DOMContentLoaded', tickLiveDurations);
     </script>
 @endif
