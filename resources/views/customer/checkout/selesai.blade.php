@@ -64,6 +64,21 @@
     .co-step.done .num, .co-step.active .num { background:#8B1E3F; border-color:#8B1E3F; color:#fff; }
     .co-step.active { color:#8B1E3F; } .co-step:not(.active):not(.done) { color: var(--text-muted); }
     .co-step-line { width:32px; height:1px; background:var(--border-soft); } .co-step-line.done { background:#8B1E3F; }
+
+    /* Spinner loading untuk step belum dicapai */
+    .co-step .num.loading {
+        border: 2px solid var(--border-soft);
+        border-top-color: #8B1E3F;
+        background: transparent !important;
+        color: transparent !important;
+        animation: co-spin 0.75s linear infinite;
+    }
+    .co-step .num.loading::after { content:''; display:none; }
+    @keyframes co-spin { to { transform: rotate(360deg); } }
+
+    /* Step yang sudah selesai (done) bisa diklik untuk kembali */
+    .co-step.done { cursor:pointer; text-decoration:none; transition: opacity .2s ease; }
+    .co-step.done:hover { opacity: .75; }
 </style>
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col lg:pl-72">
@@ -75,13 +90,13 @@
 <main class="pt-6 pb-10 w-full overflow-x-hidden">
     <div class="mx-auto max-w-[1400px] px-container-margin">
         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center reveal-up">
-            <div class="co-stepper">
-                <span class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Review') }}</span>
-                <span class="co-step-line done"></span>
-                <span class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Bayar') }}</span>
-                <span class="co-step-line done"></span>
-                <span class="co-step active"><span class="num">3</span> {{ __('Selesai') }}</span>
-            </div>
+<div class="co-stepper">
+            <a href="{{ route('customer.checkout') }}" class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Review') }}</a>
+            <span class="co-step-line done"></span>
+            <a href="{{ route('customer.checkout.payment', $checkout->checkout_id) }}" class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Bayar') }}</a>
+            <span class="co-step-line done"></span>
+            <span class="co-step active"><span class="num">3</span> {{ __('Selesai') }}</span>
+        </div>
         </div>
 
         @php $akunBaru = session('akun_baru'); @endphp
