@@ -118,9 +118,9 @@
     <!-- Bottom Nav Bar (Mobile) -->
     @include('partials.bottom-nav', ['items' => [
         ['route' => 'produksi.dashboard', 'icon' => 'space_dashboard', 'label' => 'Beranda'],
-        ['route' => 'produksi.permintaan-produksi', 'icon' => 'assignment', 'label' => 'Permintaan'],
         ['route' => 'produksi.data-produksi', 'icon' => 'precision_manufacturing', 'label' => 'Produksi'],
-        ['route' => 'produksi.riwayat-produksi', 'icon' => 'history', 'label' => 'Riwayat'],
+        ['route' => 'produksi.pemeriksaan-kualitas', 'icon' => 'fact_check', 'label' => 'QC'],
+        ['route' => 'produksi.bahan-produksi', 'icon' => 'inventory', 'label' => 'Bahan'],
         ['route' => 'produksi.profil', 'icon' => 'person', 'label' => 'Profil'],
     ]])
 

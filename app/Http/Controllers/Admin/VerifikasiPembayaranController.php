@@ -8,6 +8,7 @@ use App\Models\Notification;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\PaymentVerification;
+use App\Services\NotificationService;
 use App\Support\ActivityLogger;
 use App\Support\AdminContext;
 use Illuminate\Http\Request;
@@ -91,6 +92,15 @@ class VerifikasiPembayaranController extends Controller
         );
 
         $this->notifyCustomer($pembayaran, 'Pembayaran Diverifikasi', sprintf('Pembayaran sebesar Rp %s telah diverifikasi dan pesanan sedang diproses.', number_format((float) $pembayaran->jumlah, 0, ',', '.')));
+
+        NotificationService::sendToRole(
+            \App\Models\Role::PRODUKSI,
+            Notification::TIPE_SISTEM,
+            'Pesanan Siap Diproduksi',
+            sprintf('Pesanan checkout #%d (Rp %s) terverifikasi — siap diproses.', $pembayaran->checkout_id, number_format((float) $pembayaran->jumlah, 0, ',', '.')),
+            ActivityLogger::resolveActorId(),
+            route('produksi.data-produksi')
+        );
 
         return back()->with('toast', [
             'message' => 'Pembayaran diverifikasi. Pesanan kini berstatus dibayar.',

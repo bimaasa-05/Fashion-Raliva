@@ -4,7 +4,7 @@
 
 @section('header-title', 'Dashboard Produksi')
 @section('header-badge', 'Atelier Aktif')
-@section('header-subtitle', 'Ringkasan permintaan, proses produksi dan hasil kerja harian Anda.')
+@section('header-subtitle', 'Ringkasan proses produksi, kualitas dan hasil kerja harian Anda.')
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
@@ -40,11 +40,11 @@
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-gutter self-start md:self-auto">
-            <a href="{{ route('produksi.permintaan-produksi') }}" class="flex items-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">
-                <span class="material-symbols-outlined text-[16px]">assignment</span>Permintaan Baru
+            <a href="{{ route('produksi.pemeriksaan-kualitas') }}" class="flex items-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">
+                <span class="material-symbols-outlined text-[16px]">fact_check</span>Pemeriksaan Kualitas
             </a>
             <a href="{{ route('produksi.data-produksi') }}" class="flex items-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">
-                <span class="material-symbols-outlined text-[16px]">add</span>Catat Produksi
+                <span class="material-symbols-outlined text-[16px]">precision_manufacturing</span>Data Produksi
             </a>
         </div>
     </section>
@@ -53,42 +53,42 @@
     <section>
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Produksi</h2>
         <div data-reveal-group class="grid grid-cols-2 xl:grid-cols-3 gap-gutter">
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Permintaan Baru</span>
-                <span class="raliva-figure text-[26px] text-gold-accent">4</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">menunggu konfirmasi</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">assignment</span>
-            </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Produksi Berjalan</span>
-                <span class="raliva-figure text-[26px] text-on-surface">6</span>
+            <a href="{{ route('produksi.data-produksi') }}" class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hover:border-gold-accent transition-colors" data-reveal>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Diproses</span>
+                <span class="raliva-figure text-[26px] text-gold-accent">{{ $stats['diproses'] }}</span>
                 <span class="font-label-sm text-[11px] text-on-surface-variant">sedang dikerjakan</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">precision_manufacturing</span>
-            </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
+            </a>
+            <a href="{{ route('produksi.pemeriksaan-kualitas') }}" class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hover:border-gold-accent transition-colors" data-reveal>
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu QC</span>
-                <span class="raliva-figure text-[26px] text-gold-accent">3</span>
+                <span class="raliva-figure text-[26px] text-gold-accent">{{ $stats['menunggu_qc'] }}</span>
                 <span class="font-label-sm text-[11px] text-on-surface-variant">perlu pemeriksaan</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">fact_check</span>
-            </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Selesai Hari Ini</span>
-                <span class="raliva-figure text-[26px] text-secondary">42</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">unit layak jual</span>
+            </a>
+            <a href="{{ route('produksi.pelaporan-produksi') }}" class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hover:border-gold-accent transition-colors" data-reveal>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Selesai Bulan Ini</span>
+                <span class="raliva-figure text-[26px] text-secondary">{{ $stats['selesai_bulan'] }}</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">order terpenuhi</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">task_alt</span>
+            </a>
+            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Unit Layak Bulan Ini</span>
+                <span class="raliva-figure text-[26px] text-secondary">{{ number_format($stats['layak_bulan'], 0, ',', '.') }}</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">lolos QC masuk gudang</span>
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">verified</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Barang Rusak</span>
-                <span class="raliva-figure text-[26px] text-error">5</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">defect perlu penanganan</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Barang Rusak Bulan Ini</span>
+                <span class="raliva-figure text-[26px] text-error">{{ number_format($stats['rusak_bulan'], 0, ',', '.') }}</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">defect tercatat QC</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">report</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
+            <a href="{{ route('produksi.bahan-produksi') }}" class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hover:border-gold-accent transition-colors" data-reveal>
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Bahan Menipis</span>
-                <span class="raliva-figure text-[26px] text-error">2</span>
+                <span class="raliva-figure text-[26px] {{ $stats['bahan_menipis'] > 0 ? 'text-error' : 'text-secondary' }}">{{ $stats['bahan_menipis'] }}</span>
                 <span class="font-label-sm text-[11px] text-on-surface-variant">perlu isi ulang</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">inventory</span>
-            </div>
+            </a>
         </div>
     </section>
 
@@ -121,77 +121,53 @@
         <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Produksi Prioritas</h2>
             <ul class="space-y-5">
-                <li>
-                    <div class="flex items-start justify-between gap-3 mb-2">
-                        <div class="flex items-start gap-3">
-                            <div class="w-9 h-9 rounded-lg bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
-                                <span class="material-symbols-outlined text-[18px] text-gold-accent">checkroom</span>
+                @foreach ($prioritas as $p)
+                    <li>
+                        <div class="flex items-start justify-between gap-3 mb-2">
+                            <div class="flex items-start gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-[18px] text-gold-accent">checkroom</span>
+                                </div>
+                                <div>
+                                    <p class="font-title-md text-sm text-on-surface leading-snug">{{ $p['produk'] }} — {{ $p['jumlah_diminta'] }} unit</p>
+                                    <p class="text-on-surface-variant text-xs mt-0.5">{{ $p['nomor_produksi'] }} • {{ $p['status'] === \App\Models\ProductionOrder::STATUS_MENUNGGU_QC ? 'Menunggu QC' : 'Diproses' }}</p>
+                                </div>
                             </div>
-                            <div>
-                                <p class="font-title-md text-sm text-on-surface leading-snug">Blazer Wool Premium — 40 unit</p>
-                                <p class="text-on-surface-variant text-xs mt-0.5">PRQ-0041 • Target 30 Agu</p>
-                            </div>
+                            <span class="font-label-sm text-[11px] font-bold {{ $p['pct'] >= 100 ? 'text-secondary' : 'text-gold-accent' }} shrink-0">{{ $p['pct'] }}%</span>
                         </div>
-                        <span class="font-label-sm text-[11px] font-bold text-secondary shrink-0">65%</span>
-                    </div>
-                    <div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                        <div class="progress-fill h-full rounded-full" data-progress="65"></div>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-start justify-between gap-3 mb-2">
-                        <div class="flex items-start gap-3">
-                            <div class="w-9 h-9 rounded-lg bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
-                                <span class="material-symbols-outlined text-[18px] text-gold-accent">apparel</span>
-                            </div>
-                            <div>
-                                <p class="font-title-md text-sm text-on-surface leading-snug">Kemeja Linen Oversized — 120 unit</p>
-                                <p class="text-on-surface-variant text-xs mt-0.5">PRQ-0040 • Menunggu QC</p>
-                            </div>
+                        <div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+                            <div class="progress-fill h-full rounded-full" data-progress="{{ $p['pct'] }}"></div>
                         </div>
-                        <span class="font-label-sm text-[11px] font-bold text-gold-accent shrink-0">90%</span>
-                    </div>
-                    <div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                        <div class="progress-fill h-full rounded-full" data-progress="90"></div>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-start justify-between gap-3 mb-2">
-                        <div class="flex items-start gap-3">
-                            <div class="w-9 h-9 rounded-lg bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
-                                <span class="material-symbols-outlined text-[18px] text-gold-accent">style</span>
+                    </li>
+                @endforeach
+                @if ($bahanMenipis)
+                    <li>
+                        <div class="flex items-start justify-between gap-3 mb-2">
+                            <div class="flex items-start gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-[18px] text-gold-accent">inventory_2</span>
+                                </div>
+                                <div>
+                                    <p class="font-title-md text-sm text-on-surface leading-snug">Bahan Baku — {{ $bahanMenipis->nama_bahan }}</p>
+                                    <p class="text-on-surface-variant text-xs mt-0.5">Sisa {{ number_format($bahanMenipis->stok_sekarang, 0, ',', '.') }} {{ $bahanMenipis->satuan }} • Menipis</p>
+                                </div>
                             </div>
-                            <div>
-                                <p class="font-title-md text-sm text-on-surface leading-snug">Silk Scarf Monogram — 80 unit</p>
-                                <p class="text-on-surface-variant text-xs mt-0.5">PRQ-0042 • Menunggu konfirmasi</p>
-                            </div>
+                            <span class="font-label-sm text-[11px] font-bold text-error shrink-0">Min.</span>
                         </div>
-                        <span class="font-label-sm text-[11px] font-bold text-on-surface-variant shrink-0">0%</span>
-                    </div>
-                    <div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                        <div class="progress-fill h-full rounded-full" data-progress="0"></div>
-                    </div>
-                </li>
-                <li>
-                    <div class="flex items-start justify-between gap-3 mb-2">
-                        <div class="flex items-start gap-3">
-                            <div class="w-9 h-9 rounded-lg bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
-                                <span class="material-symbols-outlined text-[18px] text-gold-accent">inventory_2</span>
-                            </div>
-                            <div>
-                                <p class="font-title-md text-sm text-on-surface leading-snug">Bahan Baku — Kain Katun Premium</p>
-                                <p class="text-on-surface-variant text-xs mt-0.5">Sisa 18 meter • Menipis</p>
-                            </div>
+                        <div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+                            @php
+                                $low = $bahanMenipis->minimal_stok > 0 ? $bahanMenipis->stok_sekarang / $bahanMenipis->minimal_stok * 20 : 15;
+                            @endphp
+                            <div class="progress-fill h-full rounded-full" data-progress-mode="quota" data-progress="{{ max(1, min(100, (int) round($low))) }}"></div>
                         </div>
-                        <span class="font-label-sm text-[11px] font-bold text-error shrink-0">15%</span>
-                    </div>
-                    <div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                        <div class="progress-fill h-full rounded-full" data-progress-mode="quota" data-progress="15"></div>
-                    </div>
-                </li>
+                    </li>
+                @endif
             </ul>
-            <a href="{{ route('produksi.permintaan-produksi') }}" class="mt-6 w-full flex items-center justify-center gap-2 py-3 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
-                Lihat Permintaan<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+            @if ($prioritas->isEmpty() && ! $bahanMenipis)
+                <p class="text-on-surface-variant font-body-md text-sm py-6 text-center">Tidak ada produksi berjalan.</p>
+            @endif
+            <a href="{{ route('produksi.data-produksi') }}" class="mt-6 w-full flex items-center justify-center gap-2 py-3 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
+                Lihat Data Produksi<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
             </a>
         </section>
     </div>
@@ -200,45 +176,27 @@
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between gap-4 mb-6">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Aktivitas Terbaru</h2>
-            <a href="{{ route('produksi.riwayat-produksi') }}" class="text-sm font-semibold text-gold-accent hover:underline shrink-0">Lihat Riwayat</a>
+            <a href="{{ route('produksi.data-produksi', ['tab' => 'proses']) }}" class="text-sm font-semibold text-gold-accent hover:underline shrink-0">Lihat Semua</a>
         </div>
         <ul class="space-y-4">
-            <li class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shrink-0">
-                        <span class="material-symbols-outlined">task_alt</span>
+            @forelse ($events as $ev)
+                <li class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
+                    <div class="flex items-center gap-4 min-w-0">
+                        <div class="w-10 h-10 rounded-full shrink-0 flex items-center justify-center {{ $ev['tipe'] === 'qc' ? 'bg-gold-accent/10 border border-gold-accent/30 text-gold-accent' : ($ev['tipe'] === 'selesai' ? 'bg-secondary-container text-on-secondary-container' : 'bg-surface-container-high text-on-surface-variant') }}">
+                            <span class="material-symbols-outlined">{{ $ev['tipe'] === 'qc' ? 'fact_check' : ($ev['tipe'] === 'selesai' ? 'task_alt' : 'precision_manufacturing') }}</span>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="font-title-md text-base text-on-surface block">{{ $ev['judul'] }}</span>
+                            <span class="text-on-surface-variant font-body-md text-sm block truncate">{{ $ev['pesan'] }}</span>
+                        </div>
                     </div>
-                    <div>
-                        <span class="font-title-md text-base text-on-surface block">Produk Selesai</span>
-                        <span class="text-on-surface-variant font-body-md text-sm">Wide Leg Trousers <span class="text-secondary font-bold">60 unit</span> siap serah ke Gudang</span>
-                    </div>
-                </div>
-                <span class="font-label-sm text-xs text-on-surface-variant shrink-0">09:12</span>
-            </li>
-            <li class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center text-gold-accent shrink-0">
-                        <span class="material-symbols-outlined">fact_check</span>
-                    </div>
-                    <div>
-                        <span class="font-title-md text-base text-on-surface block">Pemeriksaan QC</span>
-                        <span class="text-on-surface-variant font-body-md text-sm">Blazer Wool Premium — <span class="text-secondary font-bold">38 layak</span> / 2 defect</span>
-                    </div>
-                </div>
-                <span class="font-label-sm text-xs text-on-surface-variant shrink-0">08:30</span>
-            </li>
-            <li class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-error/10 border border-error/20 flex items-center justify-center text-error shrink-0">
-                        <span class="material-symbols-outlined">report</span>
-                    </div>
-                    <div>
-                        <span class="font-title-md text-base text-on-surface block">Barang Rusak</span>
-                        <span class="text-on-surface-variant font-body-md text-sm">Silk Scarf Monogram — <span class="text-error font-bold">3 unit</span> cacat printing</span>
-                    </div>
-                </div>
-                <span class="font-label-sm text-xs text-on-surface-variant shrink-0">Kemarin</span>
-            </li>
+                    <span class="font-label-sm text-xs text-on-surface-variant shrink-0">{{ $ev['waktu'] ? $ev['waktu']->diffForHumans() : '' }}</span>
+                </li>
+            @empty
+                <li class="text-center py-6">
+                    <p class="text-on-surface-variant font-body-md text-sm">Belum ada aktivitas produksi.</p>
+                </li>
+            @endforelse
         </ul>
     </section>
 </div>
@@ -252,11 +210,7 @@
     const chartWrap = document.getElementById('chart-wrap');
     const chartError = document.getElementById('chart-error');
 
-    const rangeData = {
-        '7': { labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'], output: [32, 48, 28, 52, 42, 60, 38], target: [40, 40, 40, 40, 40, 40, 40] },
-        '30': { labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'], output: [182, 210, 248, 220], target: [240, 240, 240, 240] },
-        '90': { labels: ['Juni', 'Juli', 'Agustus'], output: [620, 740, 860], target: [720, 720, 720] }
-    };
+    const rangeData = @json($chart);
 
     const salesTheme = () => {
         const isDark = document.documentElement.classList.contains('dark');
