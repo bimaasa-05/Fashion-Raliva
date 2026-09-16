@@ -395,8 +395,16 @@
     .co-bottom-bar { flex-direction: column; align-items: stretch; gap: 0; padding: 0; }
     .co-bb-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .625rem 1.25rem; cursor: pointer; background: transparent; border: 0; width: 100%; text-align: left; font-family: 'Manrope', sans-serif; }
     .co-bb-head span:first-child { color: var(--text-muted); }
-    .co-bb-chev { color: var(--text-muted); transition: transform .28s cubic-bezier(.4,0,.2,1); transform: rotate(180deg); }
-    .co-bottom-bar.open .co-bb-chev { transform: rotate(0deg); }
+    .co-bb-chev { display:inline-flex; align-items:center; justify-content:center;
+        width:28px; height:28px; border-radius:9999px;
+        background:var(--chrome-bg-soft); border:1px solid var(--border-soft);
+        color:var(--text-muted); font-variation-settings:'FILL' 0,'wght' 500;
+        transition:transform .3s cubic-bezier(.4,0,.2,1),background .25s,border-color .25s,color .25s;
+        transform:rotate(180deg); }
+    .co-bb-toggle:hover .co-bb-chev { border-color:var(--chrome-accent); color:var(--chrome-accent); }
+    .co-bottom-bar.open .co-bb-chev { transform:rotate(0deg);
+        background:var(--chrome-accent); border-color:var(--chrome-accent); color:#fff;
+        font-variation-settings:'FILL' 1,'wght' 600; }
     .co-bb-panel { max-height: 0; overflow: hidden; transition: max-height .32s cubic-bezier(.4,0,.2,1); padding-left: 1.25rem; padding-right: 1.25rem; }
     .co-bottom-bar.open .co-bb-panel { max-height: 100vh; overflow-y: auto; padding-bottom: .5rem; }
     .co-bb-block { padding: .625rem 0; border-top: 1px solid var(--border-soft); }
@@ -404,6 +412,17 @@
     .co-bb-rows { display: flex; flex-direction: column; gap: .4rem; }
     .co-bb-row { display: flex; align-items: center; justify-content: space-between; font-family: 'Manrope', sans-serif; font-size: 13px; color: var(--on-surface); }
     .co-bb-row.total { padding-top: .6rem; margin-top: .2rem; border-top: 1px dashed var(--border-soft); font-weight: 700; }
+
+    /* ---- daftar produk dalam panel ---- */
+    .co-bb-store { padding: .75rem 0 1rem; }
+    .co-bb-store + .co-bb-store { padding-top: 0; border-top: 1px dashed var(--border-soft); }
+    .co-bb-store-name { font-family: 'Manrope', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--chrome-accent); margin-bottom: .5rem; }
+    .co-bb-item { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; padding: .4rem 0; }
+    .co-bb-item + .co-bb-item { border-top: 1px dashed var(--border-soft); }
+    .co-bb-item-name { font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 600; color: var(--on-surface); line-height: 1.3; }
+    .co-bb-item-note { font-size: 11px; color: var(--text-muted); }
+    .co-bb-item-qty { font-size: 12px; color: var(--text-muted); margin-top: .15rem; }
+    .co-bb-item-total { font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 600; color: var(--on-surface); white-space: nowrap; }
     .co-bottom-bar .co-bb-foot { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .75rem 1.25rem calc(.75rem + env(safe-area-inset-bottom)); }
     .co-bottom-bar .co-bb-foot .summary { flex: 1 1 0%; min-width: 0; }
     .co-bottom-bar .co-bb-foot .summary p:last-child { font-size: 15px; }
@@ -735,6 +754,31 @@
                         <span class="material-symbols-outlined co-bb-chev text-[18px]">expand_more</span>
                     </button>
                     <div class="co-bb-panel" id="co-bb-panel" aria-hidden="true">
+                        {{-- ===== DAFTAR PRODUK ===== --}}
+                        @php $coGroups = $items->groupBy(fn ($i) => $i->productVariant?->product?->store_id ?? 0); @endphp
+                        @foreach($coGroups as $coGroup)
+                        <div class="co-bb-store">
+                            <p class="co-bb-store-name flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[14px]">storefront</span>
+                                {{ $coGroup->first()->productVariant?->product?->store?->nama_toko ?? __('Toko') }}
+                            </p>
+                            <div>
+                                @foreach($coGroup as $coItem)
+                                <div class="co-bb-item">
+                                    <div>
+                                        <p class="co-bb-item-name">{{ $coItem->productVariant?->product?->nama_produk ?? __('Produk') }}</p>
+                                        @if(trim(($coItem->productVariant?->warna ?? '') . ' · ' . ($coItem->productVariant?->ukuran ?? ''), ' ·') !== '')
+                                        <p class="co-bb-item-note">{{ trim(($coItem->productVariant?->warna ?? '') . ' · ' . ($coItem->productVariant?->ukuran ?? ''), ' ·') }}</p>
+                                        @endif
+                                        <p class="co-bb-item-qty">{{ $coItem->quantity }} × Rp {{ number_format((float)$coItem->harga_snapshot, 0, ',', '.') }}</p>
+                                    </div>
+                                    <p class="co-bb-item-total">Rp {{ number_format((float)($coItem->quantity * $coItem->harga_snapshot), 0, ',', '.') }}</p>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endforeach
+
                         {{-- ===== METODE PENGIRIMAN ===== --}}
                         <div class="co-bb-block">
                             <p class="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant mb-xs">{{ __('Metode Pengiriman') }}</p>
