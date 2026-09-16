@@ -76,6 +76,20 @@
     .co-step .num.loading::after { content:''; display:none; }
     @keyframes co-spin { to { transform: rotate(360deg); } }
 
+    /* ---- success check icon: filled circle pop + stroke draw ---- */
+    .co-success-wrap { animation: co-wrap-pop .5s cubic-bezier(.34,1.3,.5,1) both; }
+    .co-success-svg { display:block; width:72px; height:72px; }
+    .co-success-ring-circle { transform: rotate(-90deg); transform-origin: center; }
+    .co-success-ring-circle .co-ring-path { stroke-dasharray: 226; stroke-dashoffset: 226; animation: co-draw-ring .5s ease-in-out .2s forwards; }
+    .co-success-check { stroke-dasharray: 48; stroke-dashoffset: 48; animation: co-draw-check .45s cubic-bezier(.45,.05,.4,.95) .68s forwards; }
+    @keyframes co-wrap-pop {
+        0%   { transform: scale(.4); opacity: 0; }
+        60%  { transform: scale(1.06); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes co-draw-ring { to { stroke-dashoffset: 0; } }
+    @keyframes co-draw-check { to { stroke-dashoffset: 0; } }
+
     /* Step yang sudah selesai (done) bisa diklik untuk kembali */
     .co-step.done { cursor:pointer; text-decoration:none; transition: opacity .2s ease; }
     .co-step.done:hover { opacity: .75; }
@@ -149,9 +163,14 @@
         @php $akunBaru = session('akun_baru'); @endphp
 
         {{-- === SUKSES HEADER === --}}
-        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-2xl p-md md:p-xl card-premium text-center reveal-up">
-            <div class="mx-auto w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mb-md">
-                <span class="material-symbols-outlined text-[40px] text-emerald-600">task_alt</span>
+        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-2xl p-md md:p-xl card-premium text-center reveal-up overflow-hidden">
+            <div class="co-success-wrap relative mx-auto mb-md w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center">
+                <svg class="co-success-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+                    <g class="co-success-ring-circle">
+                        <circle class="co-ring-path" cx="40" cy="40" r="36" stroke="#10B981" stroke-width="3.5" stroke-linecap="round"/>
+                    </g>
+                    <path class="co-success-check" d="M28 41 L36.5 49.5 L53 32" stroke="#10B981" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
             </div>
             <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('Pesanan Berhasil!') }}</h2>
             <p class="font-body-sm text-body-sm text-on-surface-variant mt-sm max-w-xl mx-auto">{{ __('Terima kasih. Pesananmu telah kami terima dan bukti pembayaran sedang diverifikasi admin.') }}</p>
