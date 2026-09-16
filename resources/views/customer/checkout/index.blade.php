@@ -395,8 +395,8 @@
     .co-bottom-bar { flex-direction: column; align-items: stretch; gap: 0; padding: 0; }
     .co-bb-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .625rem 1.25rem; cursor: pointer; background: transparent; border: 0; width: 100%; text-align: left; font-family: 'Manrope', sans-serif; }
     .co-bb-head span:first-child { color: var(--text-muted); }
-    .co-bb-chev { color: var(--text-muted); transition: transform .28s cubic-bezier(.4,0,.2,1); }
-    .co-bottom-bar.open .co-bb-chev { transform: rotate(180deg); }
+    .co-bb-chev { color: var(--text-muted); transition: transform .28s cubic-bezier(.4,0,.2,1); transform: rotate(180deg); }
+    .co-bottom-bar.open .co-bb-chev { transform: rotate(0deg); }
     .co-bb-panel { max-height: 0; overflow: hidden; transition: max-height .32s cubic-bezier(.4,0,.2,1); padding-left: 1.25rem; padding-right: 1.25rem; }
     .co-bottom-bar.open .co-bb-panel { max-height: 100vh; overflow-y: auto; padding-bottom: .5rem; }
     .co-bb-block { padding: .625rem 0; border-top: 1px solid var(--border-soft); }
