@@ -33,7 +33,6 @@ use App\Http\Controllers\Gudang\RiwayatStokController as GudangRiwayatStokContro
 use App\Http\Controllers\Gudang\StokController as GudangStokController;
 use App\Http\Controllers\Gudang\StokRusakController as GudangStokRusakController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboardController;
-use App\Http\Controllers\Owner\DataBankController as OwnerDataBankController;
 use App\Http\Controllers\Owner\DataPelangganController;
 use App\Http\Controllers\Owner\DataTokoController;
 use App\Http\Controllers\Owner\GudangController as OwnerGudangController;
@@ -436,10 +435,6 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/data-toko', [DataTokoController::class, 'index'])->name('data-toko');
     Route::put('/data-toko', [DataTokoController::class, 'update'])->name('data-toko.update');
-    Route::get('/data-bank', [OwnerDataBankController::class, 'index'])->name('data-bank');
-    Route::post('/data-bank', [OwnerDataBankController::class, 'store'])->name('data-bank.store');
-    Route::put('/data-bank/{bankAccount}', [OwnerDataBankController::class, 'update'])->name('data-bank.update');
-    Route::delete('/data-bank/{bankAccount}', [OwnerDataBankController::class, 'destroy'])->name('data-bank.destroy');
     Route::get('/pengajuan-toko', [PengajuanTokoController::class, 'index'])->name('pengajuan-toko');
     Route::post('/pengajuan-toko', [PengajuanTokoController::class, 'store'])->name('pengajuan-toko.store');
     Route::get('/pengaturan-toko', [PengaturanTokoController::class, 'index'])->name('pengaturan-toko');

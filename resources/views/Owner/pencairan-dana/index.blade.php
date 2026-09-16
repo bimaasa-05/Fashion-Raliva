@@ -20,7 +20,7 @@
             <div>
                 <p class="raliva-label text-gold-accent">Saldo Tersedia</p>
                 <p class="raliva-figure text-[28px] mt-1">Rp {{ number_format($wallet?->saldo_tersedia ?? 0,0,',','.') }}</p>
-                <p class="text-xs text-on-surface-variant mt-1">{{ $store?->nama_toko ?? '-' }} • {{ $bankAccounts->count() }} rekening</p>
+                <p class="text-xs text-on-surface-variant mt-1">{{ $store?->nama_toko ?? '-' }}</p>
             </div>
             <button type="button" data-modal-open="modal-cair" class="px-6 py-3 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Ajukan Pencairan</button>
         </div>
@@ -34,7 +34,7 @@
                     <tr class="border-b border-muted-border text-left">
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tanggal</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Jumlah</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Rekening</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tujuan</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Status</th>
                     </tr>
                 </thead>
@@ -43,7 +43,9 @@
                         <tr class="border-b border-muted-border last:border-0">
                             <td class="py-3.5 px-4">{{ $w->diajukan_pada?->translatedFormat('d M Y') ?? '-' }}</td>
                             <td class="py-3.5 px-4 font-bold text-on-surface">Rp {{ number_format($w->jumlah,0,',','.') }}</td>
-                            <td class="py-3.5 px-4">{{ $w->bankAccount->bank->nama_bank ?? '-' }} • {{ $w->bankAccount->nomor_rekening ?? '' }}</td>
+                            <td class="py-3.5 px-4">
+                                <p>{{ $w->tujuan_jenis_label }} • {{ $w->tujuan_penyedia }} • {{ $w->tujuan_nomor }}</p>
+                            </td>
                             <td class="py-3.5 px-4"><span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $w->status==='dibayar' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : ($w->status==='pending' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-error/10 text-error border-error/20') }}">{{ $w->status }}</span></td>
                         </tr>
                     @empty
@@ -75,13 +77,44 @@
                 </div>
             </div>
             <div>
-                <label class="block raliva-label mb-2">Rekening Tujuan</label>
-                <select name="bank_account_id" required class="raliva-select">
-                    <option value="">Pilih rekening</option>
-                    @foreach($bankAccounts as $ba)
-                        <option value="{{ $ba->bank_account_id }}">{{ $ba->bank->nama_bank }} • {{ $ba->nomor_rekening }} ({{ $ba->nama_pemilik }})</option>
-                    @endforeach
-                </select>
+                <label class="block raliva-label mb-2">Tipe Tujuan</label>
+                <input type="hidden" name="tipe_tujuan" id="tujuan-tipe" value="{{ old('tipe_tujuan') === 'e-wallet' ? 'e-wallet' : 'bank' }}" />
+                <div class="grid grid-cols-2 gap-2 p-1 bg-surface-container-low border border-muted-border rounded-xl">
+                    <button type="button" data-tujuan-tipe="bank" class="tujuan-tipe-btn py-2.5 rounded-lg text-sm font-semibold transition-colors">Bank</button>
+                    <button type="button" data-tujuan-tipe="e-wallet" class="tujuan-tipe-btn py-2.5 rounded-lg text-sm font-semibold transition-colors">E-wallet</button>
+                </div>
+            </div>
+            <div id="tujuan-block-bank" class="space-y-4">
+                <div>
+                    <label class="block raliva-label mb-2">Bank Tujuan</label>
+                    <select name="bank_id" class="raliva-select">
+                        <option value="">Pilih bank</option>
+                        @foreach($banks as $b)
+                            <option value="{{ $b->bank_id }}">{{ $b->nama_bank }} ({{ $b->kode_bank }})</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">No. Rekening</label>
+                    <input name="nomor_tujuan" type="text" inputmode="numeric" value="{{ old('nomor_tujuan') }}" required maxlength="50" class="raliva-input" placeholder="1234567890" />
+                </div>
+            </div>
+            <div id="tujuan-block-ewallet" class="space-y-4">
+                <div>
+                    <label class="block raliva-label mb-2">Penyedia E-wallet</label>
+                    <select name="penyedia" class="raliva-select" disabled>
+                        <option value="">Pilih penyedia</option>
+                        <option value="OVO">OVO</option>
+                        <option value="GoPay">GoPay</option>
+                        <option value="DANA">DANA</option>
+                        <option value="ShopeePay">ShopeePay</option>
+                        <option value="LinkAja">LinkAja</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">Nomor E-wallet</label>
+                    <input name="nomor_tujuan" type="text" inputmode="tel" value="{{ old('nomor_tujuan') }}" maxlength="50" class="raliva-input" placeholder="0812xxxxxxxx" disabled />
+                </div>
             </div>
             <div>
                 <label class="block raliva-label mb-2">Catatan</label>
@@ -131,6 +164,37 @@ document.addEventListener('input', (e) => {
 document.addEventListener('submit', (e) => {
     if (!(e.target instanceof HTMLFormElement)) return;
     e.target.querySelectorAll('[data-rupiah]').forEach((el) => { el.value = el.value.replace(/\./g, ''); });
+});
+
+/* Toggle tipe tujuan: Bank / E-wallet (satu nama field nomor_tujuan per blok aktif). */
+function syncTujuanTipe(tipe) {
+    const hidden = document.getElementById('tujuan-tipe');
+    if (!hidden) return;
+    hidden.value = tipe;
+    document.querySelectorAll('[data-tujuan-tipe]').forEach((btn) => {
+        const on = btn.dataset.tujuanTipe === tipe;
+        btn.classList.toggle('bg-deep-onyx', on);
+        btn.classList.toggle('text-on-primary', on);
+        btn.classList.toggle('btn-premium', on);
+        btn.classList.toggle('text-on-surface-variant', !on);
+    });
+    const bank = document.getElementById('tujuan-block-bank');
+    const ew = document.getElementById('tujuan-block-ewallet');
+    if (bank) bank.classList.toggle('hidden', tipe !== 'bank');
+    if (ew) ew.classList.toggle('hidden', tipe !== 'e-wallet');
+    if (bank) bank.querySelectorAll('select, input').forEach((el) => { el.disabled = tipe !== 'bank'; });
+    if (ew) ew.querySelectorAll('select, input').forEach((el) => { el.disabled = tipe !== 'e-wallet'; });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-tujuan-tipe]').forEach((btn) => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            syncTujuanTipe(this.getAttribute('data-tujuan-tipe'));
+        });
+    });
+    const initial = document.getElementById('tujuan-tipe')?.value || 'bank';
+    syncTujuanTipe(initial);
 });
 </script>
 @endpush

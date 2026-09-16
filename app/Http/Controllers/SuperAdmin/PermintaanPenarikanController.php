@@ -15,7 +15,7 @@ class PermintaanPenarikanController extends Controller
     public function index(Request $request)
     {
         $withdrawals = Withdrawal::query()
-            ->with(['store.owner:user_id,nama_lengkap', 'wallet', 'bankAccount.bank'])
+            ->with(['store.owner:user_id,nama_lengkap', 'wallet', 'bankAccount.bank', 'bank'])
             ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'disetujui' THEN 1 WHEN 'dibayar' THEN 2 ELSE 3 END")
             ->orderByDesc('diajukan_pada')
             ->get();
@@ -180,7 +180,7 @@ class PermintaanPenarikanController extends Controller
                 'jumlah' => $penarikan->jumlah,
                 'saldo_sebelum' => $saldoSebelum,
                 'saldo_sesudah' => $saldoSebelum - (float) $penarikan->jumlah,
-                'keterangan' => sprintf('Pencairan dana ke rekening %s (%s).', $penarikan->bankAccount->nomor_rekening ?? '-', $penarikan->bankAccount->bank->nama_bank ?? '-'),
+                'keterangan' => sprintf('Pencairan dana ke %s (%s).', $penarikan->tujuan_nomor ?: '-', $penarikan->tujuan_penyedia ?: '-'),
             ]);
 
             $penarikan->update([
