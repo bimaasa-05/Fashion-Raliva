@@ -205,9 +205,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::delete('/wishlist/{productId}', [\App\Http\Controllers\Customer\WishlistController::class, 'destroy'])->name('wishlist.destroy');
     });
 
-    Route::get('/help', function () {
-        return view('customer.help.index');
-    })->name('help');
+    Route::get('/help', [\App\Http\Controllers\Customer\HelpController::class, 'index'])->name('help');
 
     Route::post('/locale', function (Request $request) {
         $validated = $request->validate([
@@ -294,6 +292,13 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/pengaturan-sistem', [PengaturanSistemController::class, 'index'])->name('pengaturan-sistem');
     Route::put('/pengaturan-sistem', [PengaturanSistemController::class, 'updateSettings'])->name('pengaturan-sistem.update');
     Route::post('/pengaturan-sistem/legal', [PengaturanSistemController::class, 'updateLegal'])->name('pengaturan-sistem.legal');
+    Route::put('/pengaturan-sistem/help', [PengaturanSistemController::class, 'updateHelp'])->name('pengaturan-sistem.help');
+    Route::post('/pengaturan-sistem/help/kategori', [PengaturanSistemController::class, 'storeHelpCategory'])->name('pengaturan-sistem.help.kategori.store');
+    Route::put('/pengaturan-sistem/help/kategori/{helpCategory}', [PengaturanSistemController::class, 'updateHelpCategory'])->name('pengaturan-sistem.help.kategori.update');
+    Route::delete('/pengaturan-sistem/help/kategori/{helpCategory}', [PengaturanSistemController::class, 'destroyHelpCategory'])->name('pengaturan-sistem.help.kategori.destroy');
+    Route::post('/pengaturan-sistem/help/faq', [PengaturanSistemController::class, 'storeHelpFaq'])->name('pengaturan-sistem.help.faq.store');
+    Route::put('/pengaturan-sistem/help/faq/{helpFaq}', [PengaturanSistemController::class, 'updateHelpFaq'])->name('pengaturan-sistem.help.faq.update');
+    Route::delete('/pengaturan-sistem/help/faq/{helpFaq}', [PengaturanSistemController::class, 'destroyHelpFaq'])->name('pengaturan-sistem.help.faq.destroy');
     Route::put('/pengaturan-sistem/tier', [PengaturanSistemController::class, 'updateTier'])->name('pengaturan-sistem.tier.update');
     Route::post('/pengaturan-sistem/tier', [PengaturanSistemController::class, 'storeTier'])->name('pengaturan-sistem.tier.store');
     Route::put('/pengaturan-sistem/tier/{index}', [PengaturanSistemController::class, 'updateSingleTier'])->whereNumber('index')->name('pengaturan-sistem.tier.singleUpdate');

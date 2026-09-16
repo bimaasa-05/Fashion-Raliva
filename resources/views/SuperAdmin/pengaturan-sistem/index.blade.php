@@ -88,6 +88,7 @@
             <a href="#kartu-batas" data-scroll-link="batas" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">speed</span> Batas</a>
             <a href="#kartu-tier" data-scroll-link="tier" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">military_tech</span> Tier Peringkat</a>
             <a href="#kartu-legal" data-scroll-link="legal" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">verified_user</span> Dokumen Legal</a>
+            <a href="#kartu-help" data-scroll-link="help" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">help_center</span> Pusat Bantuan</a>
         </div>
     </nav>
 
@@ -291,6 +292,487 @@
             <button type="submit" data-save-button class="bg-deep-onyx text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Simpan Konten Legal</button>
         </div>
     </form>
+
+    {{--=== Pusat Bantuan ===--}}
+    <section id="kartu-help" data-scroll-section="help" class="snap-anchor bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 space-y-gutter card-premium">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+                <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">help_center</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Pusat Bantuan</h2></div>
+                <p class="font-body-md text-sm text-on-surface-variant mt-2">Konten halaman Pusat Bantuan Customer: hero, kategori, dan FAQ. Info kontak memakai Email &amp; WhatsApp dari kartu Umum.</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 rounded-full bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-[10px] uppercase tracking-wider">Tampil di halaman Help Center</span>
+        </div>
+
+        {{-- Hero + jam WhatsApp --}}
+        <form method="POST" action="{{ route('superadmin.pengaturan-sistem.help') }}" class="space-y-gutter border border-muted-border rounded-lg p-4" data-save-form>
+            @csrf @method('PUT')
+            <p class="font-title-md text-sm text-on-surface">Teks Hero &amp; Jam Layanan</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="help_hero_title">Judul Hero</label>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="help_hero_title" name="help_hero_title" type="text" maxlength="150" value="{{ $helpHero['title'] }}" required />
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="help_hero_subtitle">Subjudul Hero</label>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="help_hero_subtitle" name="help_hero_subtitle" type="text" maxlength="255" value="{{ $helpHero['subtitle'] }}" required />
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="help_hero_search">Placeholder Pencarian</label>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="help_hero_search" name="help_hero_search" type="text" maxlength="100" value="{{ $helpHero['search'] }}" />
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="help_whatsapp_hours">Jam Operasional WhatsApp</label>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="help_whatsapp_hours" name="help_whatsapp_hours" type="text" maxlength="100" value="{{ $helpWhatsappHours }}" placeholder="Mon–Fri, 09.00–17.00 WIB" />
+                </div>
+            </div>
+            <div class="flex justify-end border-t border-muted-border pt-gutter">
+                <button type="submit" data-save-button class="px-8 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Simpan Hero &amp; Kontak</button>
+            </div>
+        </form>
+
+        {{-- Kategori --}}
+        <div class="space-y-gutter border border-muted-border rounded-lg p-4">
+            <div class="flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                    <p class="font-title-md text-sm text-on-surface">Kategori Bantuan</p>
+                    <p class="font-body-md text-xs text-on-surface-variant mt-1">Kartu kategori yang tampil di bawah hero.</p>
+                </div>
+                <button type="button" onclick="openHelpModal('modal-help-cat-tambah')" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">+ Tambah Kategori</button>
+            </div>
+            <div class="overflow-x-auto hidden md:block">
+                <table class="w-full min-w-[640px] premium-table">
+                    <thead>
+                        <tr class="border-b bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                            <th class="p-3 text-center w-12">No</th>
+                            <th class="p-3 text-center w-16">Ikon</th>
+                            <th class="p-3 text-left">Judul</th>
+                            <th class="p-3 text-left">Subjudul</th>
+                            <th class="p-3 text-center w-16">Urutan</th>
+                            <th class="p-3 text-center">Status</th>
+                            <th class="p-3 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($helpCategories as $i => $c)
+                            <tr class="border-b border-muted-border hover:bg-surface-container-low">
+                                <td class="p-3 text-center font-mono text-sm">{{ $i + 1 }}</td>
+                                <td class="p-3 text-center"><span class="material-symbols-outlined text-[20px] text-gold-accent">{{ $c->icon }}</span></td>
+                                <td class="p-3 text-sm font-semibold">{{ $c->judul }}</td>
+                                <td class="p-3 text-sm text-on-surface-variant">{{ $c->subjudul ?: '—' }}</td>
+                                <td class="p-3 text-center font-mono text-sm">{{ $c->urutan }}</td>
+                                <td class="p-3 text-center"><span class="inline-flex px-2 py-1 rounded-full text-[11px] font-bold border {{ $c->is_active ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container text-on-surface-variant border-muted-border' }}">{{ $c->is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
+                                <td class="p-3 text-right">
+                                    <div class="flex items-center justify-end gap-1">
+                                        <button type="button" onclick="openHelpCategoryEdit({{ $c->help_category_id }}, @js($c->icon), @js($c->judul), @js($c->subjudul), {{ $c->is_active ? 'true' : 'false' }})" class="px-2.5 py-1.5 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">Edit</button>
+<button type="button" onclick="openHelpCategoryDelete({{ $c->help_category_id }}, @js($c->judul))" class="px-2.5 py-1.5 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">Hapus</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr class="hidden md:table-row"><td colspan="7" class="p-8 text-center text-on-surface-variant">Belum ada kategori bantuan.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            <div class="md:hidden space-y-gutter">
+                @forelse($helpCategories as $c)
+                    <div class="bg-surface-container-low border border-muted-border rounded-lg p-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-start gap-3 min-w-0">
+                                <div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-[20px] text-gold-accent">{{ $c->icon }}</span>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="font-title-md text-sm text-on-surface">{{ $c->judul }}</p>
+                                    @if ($c->subjudul)
+                                        <p class="font-body-md text-xs text-on-surface-variant mt-0.5 line-clamp-1">{{ $c->subjudul }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                            <span class="inline-flex px-2 py-1 rounded-full text-[10px] font-bold border shrink-0 {{ $c->is_active ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container text-on-surface-variant border-muted-border' }}">{{ $c->is_active ? 'Aktif' : 'Nonaktif' }}</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-3 mt-3">
+                            <span class="font-label-sm text-xs text-on-surface-variant">Urutan <span class="font-mono text-on-surface font-bold">{{ $c->urutan }}</span></span>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="openHelpCategoryEdit({{ $c->help_category_id }}, @js($c->icon), @js($c->judul), @js($c->subjudul), {{ $c->is_active ? 'true' : 'false' }})" class="px-3 py-1.5 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">Edit</button>
+                                <button type="button" onclick="openHelpCategoryDelete({{ $c->help_category_id }}, @js($c->judul))" class="px-3 py-1.5 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">Hapus</button>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <p class="text-center font-body-md text-sm text-on-surface-variant py-6 border border-dashed border-muted-border rounded-lg">Belum ada kategori bantuan.</p>
+                @endforelse
+            </div>
+        </div>
+
+        {{-- FAQ --}}
+        <div class="space-y-gutter border border-muted-border rounded-lg p-4">
+            <div class="flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                    <p class="font-title-md text-sm text-on-surface">Daftar FAQ</p>
+                    <p class="font-body-md text-xs text-on-surface-variant mt-1">Pertanyaan dan jawaban yang tampil di bagian Frequently Asked Questions.</p>
+                </div>
+                <button type="button" onclick="openHelpModal('modal-help-faq-tambah')" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">+ Tambah FAQ</button>
+            </div>
+            <div class="overflow-x-auto hidden md:block">
+                <table class="w-full min-w-[820px] premium-table">
+                    <thead>
+                        <tr class="border-b bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
+                            <th class="p-3 text-center w-12">No</th>
+                            <th class="p-3 text-left">Kategori</th>
+                            <th class="p-3 text-left">Pertanyaan</th>
+                            <th class="p-3 text-left">Jawaban</th>
+                            <th class="p-3 text-center w-16">Urutan</th>
+                            <th class="p-3 text-center">Status</th>
+                            <th class="p-3 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($helpFaqs as $i => $f)
+                            <tr class="border-b border-muted-border hover:bg-surface-container-low">
+                                <td class="p-3 text-center font-mono text-sm">{{ $i + 1 }}</td>
+                                <td class="p-3 text-sm"><span class="inline-flex items-center gap-1.5 text-on-surface-variant"><span class="material-symbols-outlined text-[15px]">{{ $f->category?->icon ?: 'help' }}</span>{{ $f->category?->judul ?: 'Tanpa Kategori' }}</span></td>
+                                <td class="p-3 text-sm font-semibold max-w-[280px]">{{ $f->pertanyaan }}</td>
+                                <td class="p-3 text-sm text-on-surface-variant max-w-[360px]">{{ \Illuminate\Support\Str::limit($f->jawaban, 90) }}</td>
+                                <td class="p-3 text-center font-mono text-sm">{{ $f->urutan }}</td>
+                                <td class="p-3 text-center"><span class="inline-flex px-2 py-1 rounded-full text-[11px] font-bold border {{ $f->is_active ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container text-on-surface-variant border-muted-border' }}">{{ $f->is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
+                                <td class="p-3 text-right">
+                                    <div class="flex items-center justify-end gap-1">
+                                        <button type="button" onclick="openHelpFaqEdit({{ $f->help_faq_id }}, {{ (int) $f->help_category_id }}, @js($f->pertanyaan), @js($f->jawaban), {{ $f->is_active ? 'true' : 'false' }})" class="px-2.5 py-1.5 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">Edit</button>
+                                        <button type="button" onclick="openHelpFaqDelete({{ $f->help_faq_id }}, @js($f->pertanyaan))" class="px-2.5 py-1.5 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">Hapus</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr class="hidden md:table-row"><td colspan="7" class="p-8 text-center text-on-surface-variant">Belum ada FAQ.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            <div class="md:hidden space-y-gutter">
+                @forelse($helpFaqs as $f)
+                    <div class="bg-surface-container-low border border-muted-border rounded-lg p-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <p class="font-title-md text-sm text-on-surface min-w-0">{{ $f->pertanyaan }}</p>
+                            <span class="inline-flex px-2 py-1 rounded-full text-[10px] font-bold border shrink-0 {{ $f->is_active ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container text-on-surface-variant border-muted-border' }}">{{ $f->is_active ? 'Aktif' : 'Nonaktif' }}</span>
+                        </div>
+                        <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-on-surface-variant mt-1.5"><span class="material-symbols-outlined text-[14px]">{{ $f->category?->icon ?: 'help' }}</span>{{ $f->category?->judul ?: 'Tanpa Kategori' }}</span>
+                        <p class="font-body-md text-xs text-on-surface-variant leading-relaxed mt-1.5 line-clamp-2">{{ $f->jawaban }}</p>
+                        <div class="flex items-center justify-between gap-3 mt-3">
+                            <span class="font-label-sm text-xs text-on-surface-variant">Urutan <span class="font-mono text-on-surface font-bold">{{ $f->urutan }}</span></span>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="openHelpFaqEdit({{ $f->help_faq_id }}, {{ (int) $f->help_category_id }}, @js($f->pertanyaan), @js($f->jawaban), {{ $f->is_active ? 'true' : 'false' }})" class="px-3 py-1.5 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">Edit</button>
+                                <button type="button" onclick="openHelpFaqDelete({{ $f->help_faq_id }}, @js($f->pertanyaan))" class="px-3 py-1.5 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">Hapus</button>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <p class="text-center font-body-md text-sm text-on-surface-variant py-6 border border-dashed border-muted-border rounded-lg">Belum ada FAQ.</p>
+                @endforelse
+            </div>
+        </div>
+    </section>
+</div>
+
+<datalist id="help-icon-list">
+    <option value="local_shipping"></option>
+    <option value="assignment_return"></option>
+    <option value="payments"></option>
+    <option value="support_agent"></option>
+    <option value="chat"></option>
+    <option value="mail"></option>
+    <option value="help"></option>
+    <option value="help_center"></option>
+    <option value="shopping_bag"></option>
+    <option value="inventory_2"></option>
+    <option value="verified_user"></option>
+    <option value="credit_card"></option>
+    <option value="storefront"></option>
+    <option value="person"></option>
+    <option value="lock"></option>
+    <option value="local_offer"></option>
+    <option value="replay"></option>
+    <option value="receipt_long"></option>
+</datalist>
+
+<!-- Modal Tambah Kategori -->
+<div id="modal-help-cat-tambah" class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeHelpModal('modal-help-cat-tambah')"></div>
+    <div class="relative w-full max-w-md m-auto max-h-[84dvh] overflow-y-auto no-scrollbar">
+        <div class="overflow-hidden rounded-2xl border border-muted-border shadow-2xl card-premium bg-surface-container-lowest">
+            <div class="relative overflow-hidden banner-gradient px-6 py-5">
+                <span class="banner-glow banner-glow-1"></span>
+                <span class="banner-glow banner-glow-2"></span>
+                <div class="relative flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[22px] text-white">category</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h3 class="font-title-md text-title-md text-white">Tambah Kategori Bantuan</h3>
+                        <p class="font-body-md text-xs text-white/70 mt-0.5">Kartu kategori yang tampil di halaman Pusat Bantuan Customer.</p>
+                    </div>
+                    <button type="button" onclick="closeHelpModal('modal-help-cat-tambah')" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white shrink-0 transition-colors"><span class="material-symbols-outlined text-[18px]">close</span></button>
+                </div>
+            </div>
+            <form method="POST" action="{{ route('superadmin.pengaturan-sistem.help.kategori.store') }}" class="p-6 space-y-4">
+                @csrf
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Ikon (Material Symbols)</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gold-accent text-[18px] pointer-events-none">list</span>
+                        <input type="text" name="icon" list="help-icon-list" required maxlength="50" class="w-full bg-surface-container-low border border-muted-border rounded-xl pl-11 pr-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="local_shipping" />
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Judul</label>
+                    <input type="text" name="judul" required maxlength="100" class="w-full bg-surface-container-low border border-muted-border rounded-xl px-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="Shipping" />
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Subjudul</label>
+                    <input type="text" name="subjudul" maxlength="150" class="w-full bg-surface-container-low border border-muted-border rounded-xl px-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="Track & delivery" />
+                </div>
+                <div class="flex items-center justified gap-4 p-4 border border-gold-accent/25 rounded-xl bg-gold-accent/5">
+                    <p class="font-label-sm text-xs text-on-surface-variant inline-flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">auto_awesome</span>Urutan diatur otomatis sesuai urutan pembuatan.</p>
+                </div>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
+                    <button type="button" onclick="closeHelpModal('modal-help-cat-tambah')" class="px-6 py-3 border border-muted-border rounded-xl text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
+                    <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-gold-accent to-secondary text-on-primary text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">add</span>Tambah</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Kategori -->
+<div id="modal-help-cat-edit" class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeHelpModal('modal-help-cat-edit')"></div>
+    <div class="relative w-full max-w-md m-auto max-h-[84dvh] overflow-y-auto no-scrollbar">
+        <div class="overflow-hidden rounded-2xl border border-muted-border shadow-2xl card-premium bg-surface-container-lowest">
+            <div class="relative overflow-hidden banner-gradient px-6 py-5">
+                <span class="banner-glow banner-glow-1"></span>
+                <span class="banner-glow banner-glow-2"></span>
+                <div class="relative flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[22px] text-white">edit</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h3 class="font-title-md text-title-md text-white">Edit Kategori Bantuan</h3>
+                        <p class="font-body-md text-xs text-white/70 mt-0.5">Ubah detail kategori bantuan Customer.</p>
+                    </div>
+                    <button type="button" onclick="closeHelpModal('modal-help-cat-edit')" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white shrink-0 transition-colors"><span class="material-symbols-outlined text-[18px]">close</span></button>
+                </div>
+            </div>
+            <form id="form-help-cat-edit" method="POST" action="" class="p-6 space-y-4">
+                @csrf @method('PUT')
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Ikon (Material Symbols)</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gold-accent text-[18px] pointer-events-none">list</span>
+                        <input type="text" name="icon" id="edit-help-cat-icon" list="help-icon-list" required maxlength="50" class="w-full bg-surface-container-low border border-muted-border rounded-xl pl-11 pr-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Judul</label>
+                    <input type="text" name="judul" id="edit-help-cat-judul" required maxlength="100" class="w-full bg-surface-container-low border border-muted-border rounded-xl px-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Subjudul</label>
+                    <input type="text" name="subjudul" id="edit-help-cat-subjudul" maxlength="150" class="w-full bg-surface-container-low border border-muted-border rounded-xl px-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
+                </div>
+                <div class="flex items-center justify-between gap-4 p-4 border border-muted-border rounded-xl bg-surface-container-low">
+                    <p class="font-title-md text-sm text-on-surface">Tampilkan kategori</p>
+                    <label class="raliva-toggle">
+                        <input type="hidden" name="is_active" value="0" />
+                        <input type="checkbox" name="is_active" id="edit-help-cat-active" value="1" class="sr-only peer" />
+                        <span class="raliva-toggle-track"></span>
+                        <span class="raliva-toggle-knob"></span>
+                    </label>
+                </div>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
+                    <button type="button" onclick="closeHelpModal('modal-help-cat-edit')" class="px-6 py-3 border border-muted-border rounded-xl text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
+                    <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-gold-accent to-secondary text-on-primary text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Tambah FAQ -->
+<div id="modal-help-faq-tambah" class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeHelpModal('modal-help-faq-tambah')"></div>
+    <div class="relative w-full max-w-lg m-auto max-h-[84dvh] overflow-y-auto no-scrollbar">
+        <div class="overflow-hidden rounded-2xl border border-muted-border shadow-2xl card-premium bg-surface-container-lowest">
+            <div class="relative overflow-hidden banner-gradient px-6 py-5">
+                <span class="banner-glow banner-glow-1"></span>
+                <span class="banner-glow banner-glow-2"></span>
+                <div class="relative flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[22px] text-white">quiz</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h3 class="font-title-md text-title-md text-white">Tambah FAQ</h3>
+                        <p class="font-body-md text-xs text-white/70 mt-0.5">Atur pertanyaan bantuan Customer dalam satu kategori.</p>
+                    </div>
+                    <button type="button" onclick="closeHelpModal('modal-help-faq-tambah')" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white shrink-0 transition-colors"><span class="material-symbols-outlined text-[18px]">close</span></button>
+                </div>
+            </div>
+            <form method="POST" action="{{ route('superadmin.pengaturan-sistem.help.faq.store') }}" class="p-6 space-y-4">
+                @csrf
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Kategori</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gold-accent text-[18px] pointer-events-none">category</span>
+                        <select name="help_category_id" required class="w-full appearance-none bg-surface-container-low border border-muted-border rounded-xl pl-11 pr-10 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors">
+                            <option value="" selected disabled>Pilih kategori...</option>
+                            @foreach ($helpCategories as $cat)
+                                <option value="{{ $cat->help_category_id }}">{{ $cat->judul }}</option>
+                            @endforeach
+                        </select>
+                        <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">expand_more</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Pertanyaan</label>
+                    <input type="text" name="pertanyaan" required maxlength="255" class="w-full bg-surface-container-low border border-muted-border rounded-xl px-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="How do I track my order?" />
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Jawaban</label>
+                    <textarea name="jawaban" rows="4" required minlength="3" class="w-full bg-surface-container-low border border-muted-border rounded-xl p-4 font-body-md text-sm leading-relaxed focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="Tuliskan jawaban..."></textarea>
+                </div>
+                <div class="flex items-center justify-between gap-4 p-4 border border-gold-accent/25 rounded-xl bg-gold-accent/5">
+                    <p class="font-label-sm text-xs text-on-surface-variant inline-flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">auto_awesome</span>Urutan diatur otomatis sesuai urutan pembuatan.</p>
+                </div>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
+                    <button type="button" onclick="closeHelpModal('modal-help-faq-tambah')" class="px-6 py-3 border border-muted-border rounded-xl text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
+                    <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-gold-accent to-secondary text-on-primary text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">add</span>Tambah</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit FAQ -->
+<div id="modal-help-faq-edit" class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeHelpModal('modal-help-faq-edit')"></div>
+    <div class="relative w-full max-w-lg m-auto max-h-[84dvh] overflow-y-auto no-scrollbar">
+        <div class="overflow-hidden rounded-2xl border border-muted-border shadow-2xl card-premium bg-surface-container-lowest">
+            <div class="relative overflow-hidden banner-gradient px-6 py-5">
+                <span class="banner-glow banner-glow-1"></span>
+                <span class="banner-glow banner-glow-2"></span>
+                <div class="relative flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[22px] text-white">edit_note</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h3 class="font-title-md text-title-md text-white">Edit FAQ</h3>
+                        <p class="font-body-md text-xs text-white/70 mt-0.5">Perbarui pertanyaan, jawaban, dan kategori bantuan.</p>
+                    </div>
+                    <button type="button" onclick="closeHelpModal('modal-help-faq-edit')" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white shrink-0 transition-colors"><span class="material-symbols-outlined text-[18px]">close</span></button>
+                </div>
+            </div>
+            <form id="form-help-faq-edit" method="POST" action="" class="p-6 space-y-4">
+                @csrf @method('PUT')
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Kategori</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gold-accent text-[18px] pointer-events-none">category</span>
+                        <select name="help_category_id" id="edit-help-faq-category" required class="w-full appearance-none bg-surface-container-low border border-muted-border rounded-xl pl-11 pr-10 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors">
+                            <option value="" disabled>Pilih kategori...</option>
+                            @foreach ($helpCategories as $cat)
+                                <option value="{{ $cat->help_category_id }}">{{ $cat->judul }}</option>
+                            @endforeach
+                        </select>
+                        <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">expand_more</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Pertanyaan</label>
+                    <input type="text" name="pertanyaan" id="edit-help-faq-pertanyaan" required maxlength="255" class="w-full bg-surface-container-low border border-muted-border rounded-xl px-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Jawaban</label>
+                    <textarea name="jawaban" id="edit-help-faq-jawaban" rows="4" required minlength="3" class="w-full bg-surface-container-low border border-muted-border rounded-xl p-4 font-body-md text-sm leading-relaxed focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors"></textarea>
+                </div>
+                <div class="flex items-center justify-between gap-4 p-4 border border-muted-border rounded-xl bg-surface-container-low">
+                    <p class="font-title-md text-sm text-on-surface">Tampilkan FAQ</p>
+                    <label class="raliva-toggle">
+                        <input type="hidden" name="is_active" value="0" />
+                        <input type="checkbox" name="is_active" id="edit-help-faq-active" value="1" class="sr-only peer" />
+                        <span class="raliva-toggle-track"></span>
+                        <span class="raliva-toggle-knob"></span>
+                    </label>
+                </div>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
+                    <button type="button" onclick="closeHelpModal('modal-help-faq-edit')" class="px-6 py-3 border border-muted-border rounded-xl text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
+                    <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-gold-accent to-secondary text-on-primary text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Hapus Kategori -->
+<div id="modal-help-kat-hapus" class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeHelpModal('modal-help-kat-hapus')"></div>
+    <div class="relative w-full max-w-md m-auto max-h-[84dvh] overflow-y-auto no-scrollbar">
+        <div class="overflow-hidden rounded-2xl border border-error/40 shadow-2xl card-premium bg-surface-container-lowest">
+            <div class="relative overflow-hidden bg-error px-6 py-5">
+                <div class="relative flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[22px] text-white">delete_forever</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h3 class="font-title-md text-title-md text-white">Hapus Kategori Bantuan</h3>
+                        <p class="font-body-md text-xs text-white/70 mt-0.5">Tindakan ini tidak bisa dibatalkan.</p>
+                    </div>
+                    <button type="button" onclick="closeHelpModal('modal-help-kat-hapus')" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white shrink-0 transition-colors"><span class="material-symbols-outlined text-[18px]">close</span></button>
+                </div>
+            </div>
+            <form id="form-help-kat-hapus" method="POST" action="" class="p-6 space-y-4">
+                @csrf @method('DELETE')
+                <div class="p-4 border border-error/25 rounded-xl bg-error/5">
+                    <p class="font-body-md text-sm text-on-surface">Hapus kategori <span id="help-kat-hapus-nama" class="font-bold text-error">…</span>?</p>
+                </div>
+                <p class="font-body-md text-xs text-on-surface-variant inline-flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent mt-[1px]">info</span>Kategori yang masih dipakai oleh FAQ tidak bisa dihapus.</p>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
+                    <button type="button" onclick="closeHelpModal('modal-help-kat-hapus')" class="px-6 py-3 border border-muted-border rounded-xl text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
+                    <button type="submit" class="px-6 py-3 rounded-xl bg-error text-white text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Hapus FAQ -->
+<div id="modal-help-faq-hapus" class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeHelpModal('modal-help-faq-hapus')"></div>
+    <div class="relative w-full max-w-md m-auto max-h-[84dvh] overflow-y-auto no-scrollbar">
+        <div class="overflow-hidden rounded-2xl border border-error/40 shadow-2xl card-premium bg-surface-container-lowest">
+            <div class="relative overflow-hidden bg-error px-6 py-5">
+                <div class="relative flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[22px] text-white">delete_forever</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h3 class="font-title-md text-title-md text-white">Hapus FAQ</h3>
+                        <p class="font-body-md text-xs text-white/70 mt-0.5">Tindakan ini tidak bisa dibatalkan.</p>
+                    </div>
+                    <button type="button" onclick="closeHelpModal('modal-help-faq-hapus')" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white shrink-0 transition-colors"><span class="material-symbols-outlined text-[18px]">close</span></button>
+                </div>
+            </div>
+            <form id="form-help-faq-hapus" method="POST" action="" class="p-6 space-y-4">
+                @csrf @method('DELETE')
+                <div class="p-4 border border-error/25 rounded-xl bg-error/5">
+                    <p class="font-body-md text-sm text-on-surface">Hapus FAQ <span id="help-faq-hapus-teks" class="font-bold text-error">…</span>?</p>
+                </div>
+                <p class="font-body-md text-xs text-on-surface-variant inline-flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent mt-[1px]">info</span>FAQ yang sudah dihapus tidak bisa dikembalikan.</p>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
+                    <button type="button" onclick="closeHelpModal('modal-help-faq-hapus')" class="px-6 py-3 border border-muted-border rounded-xl text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
+                    <button type="submit" class="px-6 py-3 rounded-xl bg-error text-white text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <!-- Modal Tambah Tier -->
@@ -362,6 +844,50 @@
         document.getElementById('form-tier-edit').action = '{{ url('superadmin/pengaturan-sistem/tier') }}/' + index;
         document.getElementById('modal-tier-edit').classList.remove('hidden');
         document.getElementById('modal-tier-edit').classList.add('flex');
+    }
+
+    function openHelpModal(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove('hidden');
+        el.classList.add('flex');
+    }
+
+    function closeHelpModal(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.classList.add('hidden');
+        el.classList.remove('flex');
+    }
+
+    function openHelpCategoryEdit(id, icon, judul, subjudul, isActive) {
+        document.getElementById('edit-help-cat-icon').value = icon || '';
+        document.getElementById('edit-help-cat-judul').value = judul || '';
+        document.getElementById('edit-help-cat-subjudul').value = subjudul || '';
+        document.getElementById('edit-help-cat-active').checked = !!isActive;
+        document.getElementById('form-help-cat-edit').action = '{{ url('superadmin/pengaturan-sistem/help/kategori') }}/' + id;
+        openHelpModal('modal-help-cat-edit');
+    }
+
+    function openHelpFaqEdit(id, categoryId, pertanyaan, jawaban, isActive) {
+        document.getElementById('edit-help-faq-category').value = categoryId || '';
+        document.getElementById('edit-help-faq-pertanyaan').value = pertanyaan || '';
+        document.getElementById('edit-help-faq-jawaban').value = jawaban || '';
+        document.getElementById('edit-help-faq-active').checked = !!isActive;
+        document.getElementById('form-help-faq-edit').action = '{{ url('superadmin/pengaturan-sistem/help/faq') }}/' + id;
+        openHelpModal('modal-help-faq-edit');
+    }
+
+    function openHelpCategoryDelete(id, judul) {
+        document.getElementById('form-help-kat-hapus').action = '{{ url('superadmin/pengaturan-sistem/help/kategori') }}/' + id;
+        document.getElementById('help-kat-hapus-nama').textContent = judul || '';
+        openHelpModal('modal-help-kat-hapus');
+    }
+
+    function openHelpFaqDelete(id, pertanyaan) {
+        document.getElementById('form-help-faq-hapus').action = '{{ url('superadmin/pengaturan-sistem/help/faq') }}/' + id;
+        document.getElementById('help-faq-hapus-teks').textContent = pertanyaan || '';
+        openHelpModal('modal-help-faq-hapus');
     }
 
     (function () {
