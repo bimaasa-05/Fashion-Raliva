@@ -20,6 +20,8 @@ class PencairanDanaController extends Controller
                 'withdrawals' => collect(),
                 'banks' => \App\Models\Bank::where('status', 'aktif')->orderBy('nama_bank')->get(),
                 'store' => null,
+                'available' => 0,
+                'locked' => 0,
             ]);
         }
         $wallet = $store->wallet;
@@ -29,8 +31,12 @@ class PencairanDanaController extends Controller
         }
         $banks = \App\Models\Bank::where('status', 'aktif')->orderBy('nama_bank')->get();
         $withdrawals = $wallet->withdrawals()->with(['bankAccount.bank', 'bank'])->orderByDesc('diajukan_pada')->paginate(10);
+        $locked = (float) $wallet->withdrawals()
+            ->where('status', Withdrawal::STATUS_PENDING)
+            ->sum('jumlah');
+        $available = max(0, (float) $wallet->saldo_tersedia - $locked);
 
-        return view('Owner.pencairan-dana.index', compact('wallet', 'withdrawals', 'banks', 'store'));
+        return view('Owner.pencairan-dana.index', compact('wallet', 'withdrawals', 'banks', 'store', 'available', 'locked'));
     }
 
     public function store(Request $request)
