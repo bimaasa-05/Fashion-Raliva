@@ -76,9 +76,70 @@
     .co-step .num.loading::after { content:''; display:none; }
     @keyframes co-spin { to { transform: rotate(360deg); } }
 
+    /* ---- success check icon: filled circle pop + stroke draw ---- */
+    .co-success-wrap { animation: co-wrap-pop .5s cubic-bezier(.34,1.3,.5,1) both; }
+    .co-success-svg { display:block; width:72px; height:72px; }
+    .co-success-ring-circle { transform: rotate(-90deg); transform-origin: center; }
+    .co-success-ring-circle .co-ring-path { stroke-dasharray: 226; stroke-dashoffset: 226; animation: co-draw-ring .5s ease-in-out .2s forwards; }
+    .co-success-check { stroke-dasharray: 48; stroke-dashoffset: 48; animation: co-draw-check .45s cubic-bezier(.45,.05,.4,.95) .68s forwards; }
+    @keyframes co-wrap-pop {
+        0%   { transform: scale(.4); opacity: 0; }
+        60%  { transform: scale(1.06); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes co-draw-ring { to { stroke-dashoffset: 0; } }
+    @keyframes co-draw-check { to { stroke-dashoffset: 0; } }
+
     /* Step yang sudah selesai (done) bisa diklik untuk kembali */
     .co-step.done { cursor:pointer; text-decoration:none; transition: opacity .2s ease; }
     .co-step.done:hover { opacity: .75; }
+
+    /* ===== mobile bottom-sheet collapsible ===== */
+    .co-bottom-bar { position:fixed; bottom:0; left:0; right:0; z-index:50;
+        display:flex; flex-direction:column; align-items:stretch; gap:0; padding:0;
+        background:var(--chrome-bg-soft); border-top:1px solid var(--chrome-border);
+        backdrop-filter:blur(12px) saturate(1.4); -webkit-backdrop-filter:blur(12px) saturate(1.4); }
+    @media(min-width:1024px){ .co-bottom-bar{ display:none!important; } }
+    .co-bb-toggle { display:flex; align-items:center; justify-content:space-between;
+        gap:.75rem; padding:.625rem 1.25rem; cursor:pointer; background:transparent;
+        border:0; width:100%; text-align:left; font-family:'Manrope',sans-serif; }
+    .co-bb-toggle span:first-child { color:var(--text-muted); }
+    .co-bb-chev { display:inline-flex; align-items:center; justify-content:center;
+        width:28px; height:28px; border-radius:9999px;
+        background:var(--chrome-bg-soft); border:1px solid var(--border-soft);
+        color:var(--text-muted); font-variation-settings:'FILL' 0,'wght' 500;
+        transition:transform .3s cubic-bezier(.4,0,.2,1),background .25s,border-color .25s,color .25s;
+        transform:rotate(180deg); }
+    .co-bb-toggle:hover .co-bb-chev { border-color:var(--chrome-accent); color:var(--chrome-accent); }
+    .co-bottom-bar.open .co-bb-chev { transform:rotate(0deg);
+        background:var(--chrome-accent); border-color:var(--chrome-accent); color:#fff;
+        font-variation-settings:'FILL' 1,'wght' 600; }
+    .co-bb-panel { max-height:0; overflow:hidden;
+        transition:max-height .32s cubic-bezier(.4,0,.2,1);
+        padding-left:1.25rem; padding-right:1.25rem; }
+    .co-bottom-bar.open .co-bb-panel { max-height:100vh; overflow-y:auto; padding-bottom:.5rem; }
+    .co-bb-rows { display:flex; flex-direction:column; gap:.4rem; padding:.625rem 0; }
+    .co-bb-store + .co-bb-rows { border-top:1px dashed var(--border-soft); }
+
+    /* ---- daftar produk dalam panel ---- */
+    .co-bb-store { padding:.75rem 0 1rem; }
+    .co-bb-store + .co-bb-store { padding-top:0; border-top:1px dashed var(--border-soft); }
+    .co-bb-store-name { font-family:'Manrope',sans-serif; font-size:12px; font-weight:700;
+        letter-spacing:.06em; text-transform:uppercase; color:var(--chrome-accent); margin-bottom:.5rem; }
+    .co-bb-item { display:flex; align-items:flex-start; justify-content:space-between;
+        gap:.75rem; padding:.4rem 0; }
+    .co-bb-item + .co-bb-item { border-top:1px dashed var(--border-soft); }
+    .co-bb-item-name { font-family:'Manrope',sans-serif; font-size:13px; font-weight:600; color:var(--on-surface); line-height:1.3; }
+    .co-bb-item-note { font-size:11px; color:var(--text-muted); }
+    .co-bb-item-qty { font-size:12px; color:var(--text-muted); margin-top:.15rem; }
+    .co-bb-item-total { font-family:'Manrope',sans-serif; font-size:13px; font-weight:600; color:var(--on-surface); white-space:nowrap; }
+    .co-bb-row { display:flex; align-items:center; justify-content:space-between;
+        font-family:'Manrope',sans-serif; font-size:13px; color:var(--on-surface); }
+    .co-bb-row.total { padding-top:.6rem; margin-top:.2rem; border-top:1px dashed var(--border-soft); font-weight:700; }
+    .co-bottom-bar .co-bb-foot { display:flex; align-items:center; justify-content:space-between;
+        gap:.75rem; padding:.75rem 1.25rem calc(.75rem + env(safe-area-inset-bottom)); }
+    .co-bottom-bar .co-bb-foot .summary { flex:1 1 0%; min-width:0; }
+    .co-bottom-bar .co-bb-foot .summary p:last-child { font-size:15px; }
 </style>
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col lg:pl-72">
@@ -87,7 +148,7 @@
     <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[220px] text-center">{{ __('Selesai') }}</h1>
     <div class="w-10"></div>
 </header>
-<main class="pt-6 pb-10 w-full overflow-x-hidden">
+<main class="pt-6 pb-[128px] w-full overflow-x-hidden">
     <div class="mx-auto max-w-[1400px] px-container-margin">
         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center reveal-up">
 <div class="co-stepper">
@@ -102,9 +163,14 @@
         @php $akunBaru = session('akun_baru'); @endphp
 
         {{-- === SUKSES HEADER === --}}
-        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-2xl p-md md:p-xl card-premium text-center reveal-up">
-            <div class="mx-auto w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mb-md">
-                <span class="material-symbols-outlined text-[40px] text-emerald-600">task_alt</span>
+        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-2xl p-md md:p-xl card-premium text-center reveal-up overflow-hidden">
+            <div class="co-success-wrap relative mx-auto mb-md w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center">
+                <svg class="co-success-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+                    <g class="co-success-ring-circle">
+                        <circle class="co-ring-path" cx="40" cy="40" r="36" stroke="#10B981" stroke-width="3.5" stroke-linecap="round"/>
+                    </g>
+                    <path class="co-success-check" d="M28 41 L36.5 49.5 L53 32" stroke="#10B981" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
             </div>
             <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('Pesanan Berhasil!') }}</h2>
             <p class="font-body-sm text-body-sm text-on-surface-variant mt-sm max-w-xl mx-auto">{{ __('Terima kasih. Pesananmu telah kami terima dan bukti pembayaran sedang diverifikasi admin.') }}</p>
@@ -180,9 +246,9 @@
                 </div>
             </div>
 
-            {{-- Daftar Produk per Toko --}}
+            {{-- Daftar Produk per Toko (desktop; di mobile ada di sticky footer) --}}
             @foreach($checkout->orders as $order)
-            <div class="border border-outline-variant rounded-lg p-md reveal-up">
+            <div class="hidden lg:block border border-outline-variant rounded-lg p-md reveal-up">
                 <p class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-sm flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-[16px]">storefront</span>
                     {{ $order->store?->nama_toko ?? __('Toko') }}
@@ -208,8 +274,8 @@
             </div>
             @endforeach
 
-            {{-- Rincian Biaya --}}
-            <div class="bg-surface-container-low border border-outline-variant rounded-xl p-md reveal-up">
+            {{-- Rincian Biaya (desktop; di mobile ada di sticky footer) --}}
+            <div class="hidden lg:block bg-surface-container-low border border-outline-variant rounded-xl p-md reveal-up">
                 <p class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-sm">{{ __('Rincian Biaya') }}</p>
                 <div class="space-y-2">
                     <div class="flex justify-between text-sm">
@@ -261,8 +327,8 @@
         </div>
         @endif
 
-        {{-- === TOMBOL AKSI === --}}
-        <div class="mt-lg max-w-3xl mx-auto flex flex-col sm:flex-row gap-sm justify-center reveal-up">
+        {{-- === TOMBOL AKSI (desktop; di mobile ada di sticky footer) === --}}
+        <div class="hidden lg:flex mt-lg max-w-3xl mx-auto flex flex-col sm:flex-row gap-sm justify-center reveal-up">
             <a href="{{ route('customer.shop') }}" class="btn-gold inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
                 <span class="material-symbols-outlined text-[18px]">storefront</span> {{ __('Lanjut Belanja') }}
             </a>
@@ -271,6 +337,77 @@
             </a>
         </div>
     </div>
+
+    {{-- ===== STICKY FOOTER MOBILE: Rincian Pesanan ===== --}}
+    <div class="co-bottom-bar lg:hidden" id="co-bottom-bar">
+        <button type="button" class="co-bb-toggle" id="co-bb-toggle" aria-expanded="false" aria-controls="co-bb-panel">
+            <span class="inline-flex items-center gap-2 font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
+                <span class="material-symbols-outlined text-[16px]">tune</span>
+                {{ __('Rincian Pesanan') }}
+            </span>
+            <span class="material-symbols-outlined co-bb-chev text-[18px]">expand_more</span>
+        </button>
+
+        <div class="co-bb-panel" id="co-bb-panel" aria-hidden="true">
+            {{-- Daftar Produk --}}
+            @foreach($checkout->orders as $order)
+            <div class="co-bb-store">
+                <p class="co-bb-store-name flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[14px]">storefront</span>
+                    {{ $order->store?->nama_toko ?? __('Toko') }}
+                </p>
+                @if($order->items && $order->items->count() > 0)
+                <div>
+                    @foreach($order->items as $item)
+                    <div class="co-bb-item">
+                        <div>
+                            <p class="co-bb-item-name">{{ $item->nama_produk_snapshot }}</p>
+                            @if($item->catatan_custom)
+                            <p class="co-bb-item-note italic">{{ $item->catatan_custom }}</p>
+                            @endif
+                            <p class="co-bb-item-qty">{{ $item->quantity }} × Rp {{ number_format((float)$item->harga_snapshot, 0, ',', '.') }}</p>
+                        </div>
+                        <p class="co-bb-item-total">Rp {{ number_format((float)$item->total, 0, ',', '.') }}</p>
+                    </div>
+                    @endforeach
+                </div>
+                @endif
+            </div>
+            @endforeach
+
+            <div class="co-bb-rows">
+                <div class="co-bb-row"><span>{{ __('Subtotal') }}</span><span>Rp {{ number_format((float)$checkout->subtotal, 0, ',', '.') }}</span></div>
+                <div class="co-bb-row"><span>{{ __('Ongkos Kirim') }}</span><span>Rp {{ number_format((float)$checkout->total_ongkir, 0, ',', '.') }}</span></div>
+                @if($checkout->total_diskon > 0)
+                <div class="co-bb-row"><span>{{ __('Diskon') }}</span><span class="text-emerald-600">− Rp {{ number_format((float)$checkout->total_diskon, 0, ',', '.') }}</span></div>
+                @endif
+                @if($checkout->total_pajak > 0)
+                <div class="co-bb-row"><span>{{ __('Pajak') }}</span><span>Rp {{ number_format((float)$checkout->total_pajak, 0, ',', '.') }}</span></div>
+                @endif
+                @if($checkout->biaya_layanan > 0)
+                <div class="co-bb-row"><span>{{ __('Biaya Layanan') }}</span><span>Rp {{ number_format((float)$checkout->biaya_layanan, 0, ',', '.') }}</span></div>
+                @endif
+                <div class="co-bb-row total"><span>{{ __('Total Dibayar') }}</span><span>Rp {{ number_format((float)$payment->jumlah, 0, ',', '.') }}</span></div>
+            </div>
+        </div>
+
+        <div class="co-bb-foot">
+            <div class="summary">
+                <p class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Total Dibayar') }}</p>
+                <p class="font-body-lg text-body-lg font-semibold text-on-surface">Rp {{ number_format((float)$payment->jumlah, 0, ',', '.') }}</p>
+            </div>
+            <div class="shrink-0 flex items-center gap-sm">
+                <a href="{{ route('customer.order-tracking') }}" class="inline-flex items-center justify-center gap-1.5 px-sm py-3 rounded-full border border-outline-variant font-label-caps text-label-caps uppercase tracking-widest hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+                </a>
+                <a href="{{ route('customer.shop') }}" class="btn-gold shrink-0 inline-flex items-center justify-center gap-1 px-sm py-2.5 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                    <span class="material-symbols-outlined text-[16px]">storefront</span>
+                    {{ __('Lanjut Belanja') }}
+                </a>
+            </div>
+        </div>
+    </div>
+
 </main>
 @include('customer._partials.drawer')
 <script>
@@ -279,6 +416,22 @@
         if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('is-visible'); }); return; }
         var io = new IntersectionObserver(function (entries) { entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); } }); }, { threshold: 0.08 });
         els.forEach(function (e) { io.observe(e); });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var bbToggle = document.getElementById('co-bb-toggle');
+        var bbPanel  = document.getElementById('co-bb-panel');
+        if (bbToggle && bbPanel) {
+            bbToggle.addEventListener('click', function () {
+                var open = bbPanel.classList.toggle('open');
+                bbToggle.classList.toggle('open', open);
+                var bbBar = bbToggle.closest('.co-bottom-bar');
+                if (bbBar) bbBar.classList.toggle('open', open);
+                bbToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                bbPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+            });
+        }
     });
 </script>
 </body>

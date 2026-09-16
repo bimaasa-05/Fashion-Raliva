@@ -138,10 +138,6 @@ Route::prefix('customer')->name('customer.')->group(function () {
     Route::post('/checkout/{checkout}/payment', [\App\Http\Controllers\Customer\CheckoutController::class, 'uploadProof'])->name('checkout.payment.upload');
     Route::get('/checkout/{checkout}/selesai', [\App\Http\Controllers\Customer\CheckoutController::class, 'selesai'])->name('checkout.selesai');
 
-    // Cek Resi publik — tamu bisa lacak tanpa login
-    Route::get('/cek-resi', [\App\Http\Controllers\Customer\CekResiController::class, 'index'])->name('cek-resi');
-    Route::post('/cek-resi', [\App\Http\Controllers\Customer\CekResiController::class, 'search'])->name('cek-resi.search');
-
     // My Account — publik branching (guest => teaser, member => index)
     Route::get('/account', [\App\Http\Controllers\Customer\AccountController::class, 'index'])->name('account');
 
