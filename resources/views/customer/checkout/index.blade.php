@@ -391,6 +391,22 @@
     html.theme-dark .co-ship-option.selected { background: rgba(139, 30, 63, .18); border-color: #8B1E3F; color: #ffc2c9; box-shadow: inset 0 0 0 1px rgba(139, 30, 63, .4); }
     html.theme-dark .co-ship-option.selected p:first-of-type { color: #ffc2c9; }
     @media (min-width: 1024px) { .co-bottom-bar { display: none !important; } }
+    /* ===== co-bottom collapsible sheet (mobile) ===== */
+    .co-bottom-bar { flex-direction: column; align-items: stretch; gap: 0; padding: 0; }
+    .co-bb-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .625rem 1.25rem; cursor: pointer; background: transparent; border: 0; width: 100%; text-align: left; font-family: 'Manrope', sans-serif; }
+    .co-bb-head span:first-child { color: var(--text-muted); }
+    .co-bb-chev { color: var(--text-muted); transition: transform .28s cubic-bezier(.4,0,.2,1); }
+    .co-bottom-bar.open .co-bb-chev { transform: rotate(180deg); }
+    .co-bb-panel { max-height: 0; overflow: hidden; transition: max-height .32s cubic-bezier(.4,0,.2,1); padding-left: 1.25rem; padding-right: 1.25rem; }
+    .co-bottom-bar.open .co-bb-panel { max-height: 100vh; overflow-y: auto; padding-bottom: .5rem; }
+    .co-bb-block { padding: .625rem 0; border-top: 1px solid var(--border-soft); }
+    .co-bb-panel > :first-child { border-top: 1px solid var(--border-soft); }
+    .co-bb-rows { display: flex; flex-direction: column; gap: .4rem; }
+    .co-bb-row { display: flex; align-items: center; justify-content: space-between; font-family: 'Manrope', sans-serif; font-size: 13px; color: var(--on-surface); }
+    .co-bb-row.total { padding-top: .6rem; margin-top: .2rem; border-top: 1px dashed var(--border-soft); font-weight: 700; }
+    .co-bottom-bar .co-bb-foot { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .75rem 1.25rem calc(.75rem + env(safe-area-inset-bottom)); }
+    .co-bottom-bar .co-bb-foot .summary { flex: 1 1 0%; min-width: 0; }
+    .co-bottom-bar .co-bb-foot .summary p:last-child { font-size: 15px; }
     .co-bottom-bar .summary { flex: 1 1 0%; min-width: 0; }
     .co-bottom-bar .summary p:first-child { font-family: 'Manrope', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
     .co-bottom-bar .summary p:last-child { font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 600; color: var(--on-surface); }
@@ -653,7 +669,7 @@
             <div class="space-y-md min-w-0 lg:sticky lg:top-25">
 
                 {{-- ========== RINCIAN HARGA ========== --}}
-                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+                <div class="hidden lg:block bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
                     <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN HARGA') }}</p>
                     <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Rincian Harga') }}</h3>
                     <div class="co-summary-row">
@@ -675,8 +691,8 @@
                     <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Akun akan dibuat otomatis (password: Raliva123) saat lanjut ke pembayaran.') }}</p>
                 </div>
 
-                {{-- ========== SHIPPING METHOD ========== --}}
-                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+                {{-- ========== METODE PENGIRIMAN (desktop) ========== --}}
+                <div class="hidden lg:block bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
                     <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('SHIPPING METHOD') }}</p>
                     <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Metode Pengiriman') }}</h3>
                     @foreach ($shippingOptions as $opt)
@@ -711,14 +727,51 @@
                 </div>
 
                 <div class="co-bottom-bar lg:hidden">
-                    <div class="summary">
-                        <p class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Total Payment') }}</p>
-                        <p id="co-total-sticky" class="font-title-md text-title-md text-on-surface">Rp {{ number_format((float)$total, 0, ',', '.') }}</p>
-                    </div>
-                    <button type="submit" class="btn-gold shrink-0 inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
-                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                        {{ __('Lanjut') }}
+                    <button type="button" class="co-bb-toggle w-full inline-flex items-center justify-between gap-2 px-xs py-sm" id="co-bb-toggle" aria-expanded="false" aria-controls="co-bb-panel">
+                        <span class="inline-flex items-center gap-2 font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
+                            <span class="material-symbols-outlined text-[16px]">tune</span>
+                            {{ __('Rincian & Pengiriman') }}
+                        </span>
+                        <span class="material-symbols-outlined co-bb-chev text-[18px]">expand_more</span>
                     </button>
+                    <div class="co-bb-panel" id="co-bb-panel" aria-hidden="true">
+                        {{-- ===== METODE PENGIRIMAN ===== --}}
+                        <div class="co-bb-block">
+                            <p class="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant mb-xs">{{ __('Metode Pengiriman') }}</p>
+                            @foreach ($shippingOptions as $opt)
+                            @php $isSel = (int)$opt['ongkir'] === (int)$shipping; @endphp
+                            <div class="co-ship-option{{ $isSel ? ' selected' : '' }}" data-shipping-ongkir="{{ $opt['ongkir'] }}">
+                                <div class="flex items-center gap-sm">
+                                    <div class="w-4 h-4 rounded-full border-2 border-primary-dim flex items-center justify-center">
+                                        @if($isSel)<div class="w-2 h-2 rounded-full bg-primary"></div>@endif
+                                    </div>
+                                    <div>
+                                        <p class="font-body-sm text-body-sm font-semibold">{{ __($opt['nama']) }}</p>
+                                        <p class="font-label-sm text-label-sm text-on-surface-variant">{{ __($opt['estimasi']) }}</p>
+                                    </div>
+                                </div>
+                                <span class="font-body-sm text-body-sm">{{ $opt['ongkir'] > 0 ? 'Rp ' . number_format((float)$opt['ongkir'], 0, ',', '.') : __('Free') }}</span>
+                            </div>
+                            @endforeach
+                        </div>
+                        {{-- ===== RINCIAN HARGA ===== --}}
+                        <div class="co-bb-block co-bb-rows">
+                            <div class="co-bb-row"><span>{{ __('Subtotal') }}</span><span>Rp {{ number_format((float)$subtotal, 0, ',', '.') }}</span></div>
+                            <div class="co-bb-row"><span>{{ __('Shipping') }}</span><span id="co-shipping-sticky">Rp {{ number_format((float)$shipping, 0, ',', '.') }}</span></div>
+                            <div class="co-bb-row"><span>{{ __('Tax') }}</span><span>Rp {{ number_format((float)$tax, 0, ',', '.') }}</span></div>
+                            <div class="co-bb-row co-bb-total"><span>{{ __('Total Payment') }}</span><span id="co-total-sticky-panel">Rp {{ number_format((float)$total, 0, ',', '.') }}</span></div>
+                        </div>
+                    </div>
+                    <div class="co-bb-foot">
+                        <div class="summary">
+                            <p class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Total Payment') }}</p>
+                            <p id="co-total-sticky" class="font-body-lg text-body-lg font-semibold text-on-surface">Rp {{ number_format((float)$total, 0, ',', '.') }}</p>
+                        </div>
+                        <button type="submit" class="btn-gold shrink-0 inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                            {{ __('Lanjut') }}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -776,8 +829,10 @@
         function refreshTotal(ongkir) {
             var total = subtotal + (parseFloat(ongkir) || 0);
             var shipEl = document.getElementById('co-shipping');
-            var totalEls = document.querySelectorAll('#co-total, #co-total-bottom, #co-total-sticky');
+            var shipElSticky = document.getElementById('co-shipping-sticky');
+            var totalEls = document.querySelectorAll('#co-total, #co-total-bottom, #co-total-sticky, #co-total-sticky-panel');
             if (shipEl) shipEl.textContent = rupiah(ongkir);
+            if (shipElSticky) shipElSticky.textContent = rupiah(ongkir);
             totalEls.forEach(function (t) { t.textContent = rupiah(total); });
         }
         document.querySelectorAll('.co-ship-option').forEach(function (opt) {
@@ -793,6 +848,19 @@
         document.querySelectorAll('.btn-gold,.btn-place').forEach(function(b){
             b.addEventListener('click', function(){ b.classList.remove('flashing'); void b.offsetWidth; b.classList.add('flashing'); setTimeout(function(){ b.classList.remove('flashing'); },600); });
         });
+        // ===== toggle sticky detail sheet (mobile) =====
+        var bbToggle = document.getElementById('co-bb-toggle');
+        var bbPanel = document.getElementById('co-bb-panel');
+        if (bbToggle && bbPanel) {
+            bbToggle.addEventListener('click', function () {
+                var open = bbPanel.classList.toggle('open');
+                bbToggle.classList.toggle('open', open);
+                var bbBar = bbToggle.closest('.co-bottom-bar');
+                if (bbBar) bbBar.classList.toggle('open', open);
+                bbToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                bbPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+            });
+        }
         // rincian pesanan dropdown (tampil >3 produk) - lihat coToggleRincian() di script bawah
     });
 </script>
