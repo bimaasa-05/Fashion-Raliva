@@ -281,7 +281,7 @@
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary inline-flex items-center gap-xs"><span class="material-symbols-outlined text-[18px]" data-icon="campaign">campaign</span>{{ __('Sponsored') }}</span>
 <span class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Iklan') }}</span>
 </div>
-<div class="flex overflow-x-auto no-scrollbar gap-gutter pb-xs">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
 @foreach ($ads as $a)
 @php
     $sMin = $a->variants->min('harga') ?? $a->harga_dasar;
@@ -289,7 +289,7 @@
     $sImgUrl = $sImg ? (filter_var($sImg, FILTER_VALIDATE_URL) ? $sImg : asset($sImg)) : 'https://picsum.photos/seed/searchad/900/1200';
     $sWl = in_array($a->product_id, $wishlistedIds, true);
 @endphp
-<div class="relative flex flex-col group cursor-pointer shrink-0 w-36 md:w-44">
+<div class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', $a->product_id) }}" class="flex flex-col group cursor-pointer">
 <div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
 <img class="object-cover w-full h-full " loading="lazy" decoding="async" alt="{{ $a->nama_produk }}" src="{{ $sImgUrl }}"/>
