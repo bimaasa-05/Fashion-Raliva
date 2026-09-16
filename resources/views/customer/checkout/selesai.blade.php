@@ -134,7 +134,7 @@
     <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[220px] text-center">{{ __('Selesai') }}</h1>
     <div class="w-10"></div>
 </header>
-<main class="pt-6 pb-10 w-full overflow-x-hidden">
+<main class="pt-6 pb-[128px] w-full overflow-x-hidden">
     <div class="mx-auto max-w-[1400px] px-container-margin">
         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center reveal-up">
 <div class="co-stepper">
@@ -381,8 +381,8 @@
                 <a href="{{ route('customer.order-tracking') }}" class="inline-flex items-center justify-center gap-1.5 px-sm py-3 rounded-full border border-outline-variant font-label-caps text-label-caps uppercase tracking-widest hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">
                     <span class="material-symbols-outlined text-[18px]">receipt_long</span>
                 </a>
-                <a href="{{ route('customer.shop') }}" class="btn-gold inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
-                    <span class="material-symbols-outlined text-[18px]">storefront</span>
+                <a href="{{ route('customer.shop') }}" class="btn-gold shrink-0 inline-flex items-center justify-center gap-1 px-sm py-2.5 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                    <span class="material-symbols-outlined text-[16px]">storefront</span>
                     {{ __('Lanjut Belanja') }}
                 </a>
             </div>
