@@ -377,19 +377,24 @@
         left: 0;
         right: 0;
         z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem 1.25rem;
+        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+        background: var(--chrome-bg-soft);
+        border-top: 1px solid var(--chrome-border);
+        backdrop-filter: blur(12px) saturate(1.4);
+        -webkit-backdrop-filter: blur(12px) saturate(1.4);
     }
     html.theme-dark .co-ship-option:hover { background: #262524; border-color: #8B1E3F; color: #8B1E3F; }
     html.theme-dark .co-ship-option.selected { background: rgba(139, 30, 63, .18); border-color: #8B1E3F; color: #ffc2c9; box-shadow: inset 0 0 0 1px rgba(139, 30, 63, .4); }
     html.theme-dark .co-ship-option.selected p:first-of-type { color: #ffc2c9; }
-    @media (min-width: 1024px) { .co-bottom-bar { left: 288px; right: 0; } }
+    @media (min-width: 1024px) { .co-bottom-bar { display: none !important; } }
     .co-bottom-bar .summary { flex: 1 1 0%; min-width: 0; }
     .co-bottom-bar .summary p:first-child { font-family: 'Manrope', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
     .co-bottom-bar .summary p:last-child { font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 600; color: var(--on-surface); }
-    .co-bottom-bar .btn-place { padding: 0.75rem 1.5rem; font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #ffffff; background: #8B1E3F; border: none; border-radius: 0.5rem; cursor: pointer; transition: background .18s ease, transform .12s ease; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
-    .co-bottom-bar .btn-place:hover { background: #6D1428; }
-    .co-bottom-bar .btn-place:active { transform: scale(0.985); }
-    .co-bottom-bar .btn-place:disabled { opacity:.45; cursor:not-allowed; }
-    @media (max-width: 639px) { .co-bottom-bar { bottom: 72px; } .co-bottom-bar .summary p:last-child { font-size: 16px; } }
+    @media (max-width: 639px) { .co-bottom-bar .summary p:last-child { font-size: 16px; } }
     /* stepper */
     .co-stepper { display:flex; align-items:center; justify-content:center; gap:.5rem; }
     .co-step { display:flex; align-items:center; gap:.45rem; font-family:'Manrope',sans-serif; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
@@ -400,6 +405,8 @@
     .co-step:not(.active):not(.done) { color: var(--text-muted); }
     .co-step-line { width:32px; height:1px; background:var(--border-soft); }
     .co-step-line.done { background:#8B1E3F; }
+    /* Layar sangat sempit: tampilkan hanya nomor step, sembunyikan label + garis penguhubung */
+    @media (max-width: 374px) { .co-step { font-size: 0; gap: .3rem; } .co-step-line { display: none; } }
 
     /* Spinner loading untuk step belum dicapai */
     .co-step .num.loading {
@@ -690,7 +697,7 @@
                 </div>
 
                 {{-- ========== TOTAL PAYMENT + LANJUT KE PEMBAYARAN ========== --}}
-                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
+                <div class="hidden lg:block bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
                     <div class="flex items-center justify-between gap-sm flex-wrap">
                         <div class="min-w-0">
                             <p class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)]">{{ __('Total Payment') }}</p>
@@ -703,6 +710,16 @@
                     </div>
                 </div>
 
+                <div class="co-bottom-bar lg:hidden">
+                    <div class="summary">
+                        <p class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Total Payment') }}</p>
+                        <p id="co-total-sticky" class="font-title-md text-title-md text-on-surface">Rp {{ number_format((float)$total, 0, ',', '.') }}</p>
+                    </div>
+                    <button type="submit" class="btn-gold shrink-0 inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                        {{ __('Lanjut') }}
+                    </button>
+                </div>
             </div>
 
         </div>
@@ -759,7 +776,7 @@
         function refreshTotal(ongkir) {
             var total = subtotal + (parseFloat(ongkir) || 0);
             var shipEl = document.getElementById('co-shipping');
-            var totalEls = document.querySelectorAll('#co-total, #co-total-bottom');
+            var totalEls = document.querySelectorAll('#co-total, #co-total-bottom, #co-total-sticky');
             if (shipEl) shipEl.textContent = rupiah(ongkir);
             totalEls.forEach(function (t) { t.textContent = rupiah(total); });
         }
