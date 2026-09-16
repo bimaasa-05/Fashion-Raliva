@@ -384,7 +384,7 @@
 <span class="font-body-sm text-body-sm text-on-surface-variant inline-flex items-center gap-xs"><span class="material-symbols-outlined text-[16px]" data-icon="campaign">campaign</span>{{ __('Iklan') }}</span>
 </div>
 <h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Featured by Our Ateliers') }}</h3>
-<div class="flex overflow-x-auto no-scrollbar lg:grid lg:grid-cols-5 lg:overflow-visible gap-md pb-xs mt-md snap-x snap-mandatory">
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-gutter mt-md">
 @foreach ($adProducts as $a)
 @php
     $aPrice = $a->variants->min('harga') ?? $a->harga_dasar;
@@ -392,7 +392,7 @@
     $aImgUrl = $aImg ? (filter_var($aImg, FILTER_VALIDATE_URL) ? $aImg : asset($aImg)) : 'https://picsum.photos/seed/ad/900/1200';
     $aWl = in_array($a->product_id, $wishlistedIds, true);
 @endphp
-<div class="relative flex flex-col group cursor-pointer shrink-0 w-40 lg:w-auto snap-center">
+<div class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', $a->product_id) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
 <img loading="lazy" decoding="async" class="object-cover w-full h-full " alt="{{ $a->nama_produk }}" src="{{ $aImgUrl }}"/>
