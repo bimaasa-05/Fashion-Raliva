@@ -33,7 +33,6 @@ use App\Http\Controllers\Gudang\RiwayatStokController as GudangRiwayatStokContro
 use App\Http\Controllers\Gudang\StokController as GudangStokController;
 use App\Http\Controllers\Gudang\StokRusakController as GudangStokRusakController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboardController;
-use App\Http\Controllers\Owner\DataBankController as OwnerDataBankController;
 use App\Http\Controllers\Owner\DataPelangganController;
 use App\Http\Controllers\Owner\DataTokoController;
 use App\Http\Controllers\Owner\GudangController as OwnerGudangController;
@@ -63,6 +62,7 @@ use App\Http\Controllers\Produksi\PemeriksaanKualitasController as ProduksiPemer
 use App\Http\Controllers\Produksi\ProdukSelesaiController as ProduksiProdukSelesaiController;
 use App\Http\Controllers\Produksi\PelaporanProduksiController as ProduksiPelaporanController;
 use App\Http\Controllers\Produksi\ProfilController as ProduksiProfilController;
+use App\Http\Controllers\Produksi\RiwayatProduksiController as ProduksiRiwayatController;
 use App\Http\Controllers\SuperAdmin\DashboardController;
 use App\Http\Controllers\SuperAdmin\DataBankController;
 use App\Http\Controllers\SuperAdmin\DataPembayaranController;
@@ -95,6 +95,8 @@ use App\Http\Controllers\SuperAdmin\SlotProdukController;
 use App\Http\Controllers\SuperAdmin\StokController as SaStokController;
 use App\Http\Controllers\SuperAdmin\StoreStaffController;
 use App\Http\Controllers\SuperAdmin\UlasanProdukTokoController;
+use App\Http\Controllers\Admin\PermintaanOperasionalController as AdminPermintaanOperasionalController;
+use App\Http\Controllers\PermintaanOperasionalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -198,9 +200,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::delete('/wishlist/{productId}', [\App\Http\Controllers\Customer\WishlistController::class, 'destroy'])->name('wishlist.destroy');
     });
 
-    Route::get('/help', function () {
-        return view('customer.help.index');
-    })->name('help');
+    Route::get('/help', [\App\Http\Controllers\Customer\HelpController::class, 'index'])->name('help');
 
     Route::post('/locale', function (Request $request) {
         $validated = $request->validate([
@@ -287,6 +287,13 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/pengaturan-sistem', [PengaturanSistemController::class, 'index'])->name('pengaturan-sistem');
     Route::put('/pengaturan-sistem', [PengaturanSistemController::class, 'updateSettings'])->name('pengaturan-sistem.update');
     Route::post('/pengaturan-sistem/legal', [PengaturanSistemController::class, 'updateLegal'])->name('pengaturan-sistem.legal');
+    Route::put('/pengaturan-sistem/help', [PengaturanSistemController::class, 'updateHelp'])->name('pengaturan-sistem.help');
+    Route::post('/pengaturan-sistem/help/kategori', [PengaturanSistemController::class, 'storeHelpCategory'])->name('pengaturan-sistem.help.kategori.store');
+    Route::put('/pengaturan-sistem/help/kategori/{helpCategory}', [PengaturanSistemController::class, 'updateHelpCategory'])->name('pengaturan-sistem.help.kategori.update');
+    Route::delete('/pengaturan-sistem/help/kategori/{helpCategory}', [PengaturanSistemController::class, 'destroyHelpCategory'])->name('pengaturan-sistem.help.kategori.destroy');
+    Route::post('/pengaturan-sistem/help/faq', [PengaturanSistemController::class, 'storeHelpFaq'])->name('pengaturan-sistem.help.faq.store');
+    Route::put('/pengaturan-sistem/help/faq/{helpFaq}', [PengaturanSistemController::class, 'updateHelpFaq'])->name('pengaturan-sistem.help.faq.update');
+    Route::delete('/pengaturan-sistem/help/faq/{helpFaq}', [PengaturanSistemController::class, 'destroyHelpFaq'])->name('pengaturan-sistem.help.faq.destroy');
     Route::put('/pengaturan-sistem/tier', [PengaturanSistemController::class, 'updateTier'])->name('pengaturan-sistem.tier.update');
     Route::post('/pengaturan-sistem/tier', [PengaturanSistemController::class, 'storeTier'])->name('pengaturan-sistem.tier.store');
     Route::put('/pengaturan-sistem/tier/{index}', [PengaturanSistemController::class, 'updateSingleTier'])->whereNumber('index')->name('pengaturan-sistem.tier.singleUpdate');
@@ -384,6 +391,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::get('/notifikasi', [\App\Http\Controllers\Admin\NotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/laporan', [AdminLaporanController::class, 'index'])->name('laporan');
     Route::get('/riwayat-aktivitas', [AdminRiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
+    // Permintaan Operasional
+    Route::get('/permintaan-operasional', [AdminPermintaanOperasionalController::class, 'index'])->name('permintaan-operasional');
+    Route::get('/permintaan-operasional/{permintaan}', [AdminPermintaanOperasionalController::class, 'show'])->name('permintaan-operasional.show');
+    Route::post('/permintaan-operasional/{permintaan}/setujui', [AdminPermintaanOperasionalController::class, 'setujui'])->name('permintaan-operasional.setujui');
+    Route::post('/permintaan-operasional/{permintaan}/tolak', [AdminPermintaanOperasionalController::class, 'tolak'])->name('permintaan-operasional.tolak');
 });
 
 Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang', 'store-active'])->group(function () {
@@ -409,6 +421,9 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang', 'st
     Route::post('/pemeriksaan', [GudangPemeriksaanStokController::class, 'store'])->name('pemeriksaan.store')->middleware('permission:warehouse.stock_adjust');
     Route::post('/stok-rusak', [GudangStokRusakController::class, 'store'])->name('stok-rusak.store')->middleware('permission:warehouse.damage');
     Route::post('/notifikasi/tandai-dibaca', [GudangNotifikasiController::class, 'markRead'])->name('notifikasi.tandai-dibaca');
+    // Permintaan Operasional (ajukan ke Admin)
+    Route::get('/permintaan', [PermintaanOperasionalController::class, 'index'])->name('permintaan')->middleware('permission:warehouse.permintaan');
+    Route::post('/permintaan', [PermintaanOperasionalController::class, 'store'])->name('permintaan.store')->middleware('permission:warehouse.permintaan');
 });
 
 //Role Route Owner Lengkap
@@ -416,10 +431,6 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/data-toko', [DataTokoController::class, 'index'])->name('data-toko');
     Route::put('/data-toko', [DataTokoController::class, 'update'])->name('data-toko.update');
-    Route::get('/data-bank', [OwnerDataBankController::class, 'index'])->name('data-bank');
-    Route::post('/data-bank', [OwnerDataBankController::class, 'store'])->name('data-bank.store');
-    Route::put('/data-bank/{bankAccount}', [OwnerDataBankController::class, 'update'])->name('data-bank.update');
-    Route::delete('/data-bank/{bankAccount}', [OwnerDataBankController::class, 'destroy'])->name('data-bank.destroy');
     Route::get('/pengajuan-toko', [PengajuanTokoController::class, 'index'])->name('pengajuan-toko');
     Route::post('/pengajuan-toko', [PengajuanTokoController::class, 'store'])->name('pengajuan-toko.store');
     Route::get('/pengaturan-toko', [PengaturanTokoController::class, 'index'])->name('pengaturan-toko');
@@ -497,12 +508,14 @@ Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi
     Route::get('/produk-selesai', [ProduksiProdukSelesaiController::class, 'index'])->name('produk-selesai');
     // Nonaktif sementara: controller + view belum ada
     // Route::get('/barang-rusak', [ProduksiBarangRusakController::class, 'index'])->name('barang-rusak');
+    Route::get('/riwayat-produksi', [ProduksiRiwayatController::class, 'index'])->name('riwayat-produksi');
     Route::get('/bahan-produksi', [ProduksiBahanController::class, 'index'])->name('bahan-produksi');
     Route::post('/bahan-produksi', [ProduksiBahanController::class, 'store'])->name('bahan-produksi.store');
-    // Nonaktif sementara: controller + view belum ada
-    // Route::get('/riwayat-produksi', [ProduksiRiwayatController::class, 'index'])->name('riwayat-produksi');
     Route::get('/notifikasi', [ProduksiNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [ProduksiProfilController::class, 'index'])->name('profil');
+    // Permintaan Operasional (ajukan ke Admin)
+    Route::get('/permintaan', [PermintaanOperasionalController::class, 'index'])->name('permintaan');
+    Route::post('/permintaan', [PermintaanOperasionalController::class, 'store'])->name('permintaan.store');
 });
 
 /* ===== Notifikasi Global (semua role) ===== */

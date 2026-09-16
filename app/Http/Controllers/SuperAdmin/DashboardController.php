@@ -33,6 +33,13 @@ class DashboardController extends Controller
             Order::STATUS_SELESAI,
         ])->sum('grand_total');
 
+        $totalPajak = (float) Order::whereIn('status', [
+            Order::STATUS_DIBAYAR,
+            Order::STATUS_DIPROSES,
+            Order::STATUS_DIKIRIM,
+            Order::STATUS_SELESAI,
+        ])->sum('total_pajak');
+
         $komisiRaliva = (float) Commission::sum('jumlah_komisi');
 
         // Tugas yang perlu perhatian
@@ -154,6 +161,7 @@ class DashboardController extends Controller
                 'produk' => $totalProduk,
                 'nilai_transaksi' => $nilaiTransaksi,
                 'komisi' => $komisiRaliva,
+                'pajak' => $totalPajak,
             ],
             'perhatian' => [
                 'toko' => $tokoMenunggu,

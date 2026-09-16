@@ -102,6 +102,7 @@
                         <tr data-table-row data-status-produksi="{{ $o->status }}" class="border-b border-muted-border last:border-0 align-top">
                             <td class="py-3.5 px-4">
                                 <p class="font-bold text-on-surface">{{ $o->nomor_order }}</p>
+                                <p class="text-xs text-on-surface mt-0.5">{{ $o->checkout?->nama_penerima ?? $o->checkout?->user?->nama_lengkap ?? '-' }}</p>
                                 <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->created_at?->translatedFormat('d M Y') ?? '-' }}</p>
                                 @if ($rejectedNote)
                                     <p class="text-xs text-error mt-1" title="{{ $rejectedNote }}">⚠ Ditolak: {{ \Illuminate\Support\Str::limit($rejectedNote, 30) }}</p>
@@ -132,15 +133,15 @@
                                     <div class="progress-track mt-1.5">
                                         <div class="progress-bar-fill {{ $isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent') }}" style="width: {{ $progressPct }}%"></div>
                                     </div>
-                                    <p class="text-xs mt-1 countdown-badge {{ $isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant' }}">
-                                        @if ($isTerlambat)
-                                            Terlambat {{ abs($daysLeft) }} hari
-                                        @elseif ($progressPct >= 100)
-                                            Selesai tepat waktu
-                                        @else
-                                            Sisa {{ $daysLeft }} hari ({{ $progressPct }}%)
-                                        @endif
-                                    </p>
+                                    @if ($progressPct >= 100)
+                                        <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
+                                    @else
+                                        <p class="text-xs mt-1 countdown-badge {{ $isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant' }}"
+                                           data-countdown-deadline="{{ $o->tgl_berakhir_produksi->timestamp }}"
+                                           data-countdown-progress="{{ $progressPct }}">
+                                            Memuat...
+                                        </p>
+                                    @endif
                                 @else
                                     <span class="text-on-surface-variant text-xs">Belum dijadwalkan</span>
                                 @endif
@@ -159,6 +160,9 @@
                                 @endif
                             </td>
                             <td class="py-3.5 px-4 text-right">
+                                <button type="button" onclick="openDetailProduksi('{{ $o->order_id }}')" title="Detail produksi" class="inline-flex items-center justify-center px-2.5 py-2 border border-muted-border text-on-surface-variant rounded hover:border-gold-accent hover:text-gold-accent transition-colors mr-1 align-top">
+                                    <span class="material-symbols-outlined text-[16px]">timeline</span>
+                                </button>
                                 @if ($isDiproses)
                                     @if (! $accepted)
                                         <div class="flex gap-1 justify-end">
@@ -200,7 +204,7 @@
 
     {{-- Modal Tolak --}}
     @if ($isDiproses && ! $accepted)
-    <div id="modal-tolak-{{ $o->order_id }}" class="hidden fixed inset-0 z-[70] flex items-center justify-center p-4">
+    <div id="modal-tolak-{{ $o->order_id }}" class="hidden fixed inset-0 z-[80] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/50" onclick="closeModalTolak('{{ $o->order_id }}')"></div>
         <form method="POST" action="{{ route('produksi.data-produksi.reject', $o) }}" class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl p-6">
             @csrf
@@ -217,7 +221,7 @@
 
     {{-- Modal Tambah Bahan --}}
     @if ($isDiproses && $accepted)
-    <div id="modal-bahan-{{ $o->order_id }}" class="hidden fixed inset-0 z-[70] flex items-center justify-center p-4">
+    <div id="modal-bahan-{{ $o->order_id }}" class="hidden fixed inset-0 z-[80] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/50" onclick="closeModalBahan('{{ $o->order_id }}')"></div>
         <form method="POST" action="{{ route('produksi.data-produksi.bahan', $o) }}" class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl max-h-[85vh] overflow-y-auto">
             @csrf
@@ -245,9 +249,9 @@
 
     {{-- Modal Selesai Produksi --}}
     @if ($isDiproses && $accepted)
-    <div id="modal-selesai-{{ $o->order_id }}" class="hidden fixed inset-0 z-[70] flex items-center justify-center p-4">
+    <div id="modal-selesai-{{ $o->order_id }}" class="hidden fixed inset-0 z-[80] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/50" onclick="closeModalSelesai('{{ $o->order_id }}')"></div>
-        <form method="POST" action="{{ route('produksi.data-produksi.status', $o) }}" class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl max-h-[85vh] overflow-y-auto">
+        <form method="POST" action="{{ route('produksi.data-produksi.status', $o) }}" class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl max-h-[85vh] overflow-y-auto">
             @csrf
             <div class="sticky top-0 bg-surface-container-lowest border-b border-muted-border px-6 py-4 flex justify-between items-center">
                 <div>
@@ -280,6 +284,11 @@
     @endif
 @endforeach
 
+{{-- Modal Detail Produksi (timeline) per order --}}
+@foreach ($orders as $o)
+    @include('partials.modal-produksi-detail', ['o' => $o])
+@endforeach
+
 @php
     $bahanJson = ($bahanList ?? collect())->map(function ($b) {
         return ['bahan_id' => $b->bahan_id, 'nama_bahan' => $b->nama_bahan, 'satuan' => $b->satuan, 'stok' => $b->stok];
@@ -295,6 +304,7 @@
         const modal = document.getElementById('modal-bahan-' + orderId);
         if (!modal) return;
         modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
         const container = document.getElementById('bahan-container-produksi-' + orderId);
         if (container && container.children.length === 0) {
             addBahanProduksiRow(orderId);
@@ -304,21 +314,25 @@
     function closeModalBahan(orderId) {
         const modal = document.getElementById('modal-bahan-' + orderId);
         if (modal) modal.classList.add('hidden');
+        document.body.style.overflow = '';
     }
 
     function closeModalTolak(orderId) {
         const modal = document.getElementById('modal-tolak-' + orderId);
         if (modal) modal.classList.add('hidden');
+        document.body.style.overflow = '';
     }
 
     function openModalSelesai(orderId) {
         const modal = document.getElementById('modal-selesai-' + orderId);
         if (modal) modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
     }
 
     function closeModalSelesai(orderId) {
         const modal = document.getElementById('modal-selesai-' + orderId);
         if (modal) modal.classList.add('hidden');
+        document.body.style.overflow = '';
     }
 
     function addBahanProduksiRow(orderId) {
@@ -386,6 +400,38 @@
             if (searchInput) searchInput.dispatchEvent(new Event('input'));
         });
     });
+    // === COUNTDOWN TIMER REAL-TIME ===
+    function formatCountdown(seconds) {
+        const abs = Math.abs(seconds);
+        const d = Math.floor(abs / 86400);
+        const h = Math.floor((abs % 86400) / 3600);
+        const m = Math.floor((abs % 3600) / 60);
+        const s = abs % 60;
+        let parts = [];
+        if (d > 0) parts.push(d + 'j');
+        parts.push(h + 'j');
+        parts.push(m + 'm');
+        parts.push(s + 'd');
+        return parts.join(' ');
+    }
+
+    function updateCountdowns() {
+        document.querySelectorAll('[data-countdown-deadline]').forEach(el => {
+            const deadline = parseInt(el.dataset.countdownDeadline) * 1000;
+            const progress = el.dataset.countdownProgress || '0';
+            const now = Date.now();
+            const diff = Math.floor((deadline - now) / 1000);
+            if (diff < 0) {
+                el.textContent = 'Terlambat ' + formatCountdown(diff);
+                el.classList.add('text-error', 'font-bold');
+                el.classList.remove('text-on-surface-variant');
+            } else {
+                el.textContent = 'Sisa ' + formatCountdown(diff) + ' (' + progress + '%)';
+            }
+        });
+    }
+    setInterval(updateCountdowns, 1000);
+    updateCountdowns();
 </script>
 @endpush
 @endsection

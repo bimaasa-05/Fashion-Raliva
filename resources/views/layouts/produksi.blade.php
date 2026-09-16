@@ -120,6 +120,7 @@
         ['route' => 'produksi.dashboard', 'icon' => 'space_dashboard', 'label' => 'Beranda'],
         ['route' => 'produksi.data-produksi', 'icon' => 'precision_manufacturing', 'label' => 'Produksi'],
         ['route' => 'produksi.pemeriksaan-kualitas', 'icon' => 'fact_check', 'label' => 'QC'],
+        ['route' => 'produksi.produk-selesai', 'icon' => 'task_alt', 'label' => 'Selesai'],
         ['route' => 'produksi.bahan-produksi', 'icon' => 'inventory', 'label' => 'Bahan'],
         ['route' => 'produksi.profil', 'icon' => 'person', 'label' => 'Profil'],
     ]])

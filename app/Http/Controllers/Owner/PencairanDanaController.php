@@ -18,8 +18,10 @@ class PencairanDanaController extends Controller
             return view('Owner.pencairan-dana.index', [
                 'wallet' => $wallet,
                 'withdrawals' => collect(),
-                'bankAccounts' => collect(),
+                'banks' => \App\Models\Bank::where('status', 'aktif')->orderBy('nama_bank')->get(),
                 'store' => null,
+                'available' => 0,
+                'locked' => 0,
             ]);
         }
         $wallet = $store->wallet;
@@ -27,10 +29,14 @@ class PencairanDanaController extends Controller
             $wallet = \App\Models\Wallet::create(['store_id'=>$store->store_id,'saldo_tersedia'=>0,'saldo_tertahan'=>0]);
             $store->setRelation('wallet', $wallet);
         }
-        $bankAccounts = $store->bankAccounts()->with('bank')->get();
-        $withdrawals = $wallet->withdrawals()->with('bankAccount.bank')->orderByDesc('diajukan_pada')->paginate(10);
+        $banks = \App\Models\Bank::where('status', 'aktif')->orderBy('nama_bank')->get();
+        $withdrawals = $wallet->withdrawals()->with(['bankAccount.bank', 'bank'])->orderByDesc('diajukan_pada')->paginate(10);
+        $locked = (float) $wallet->withdrawals()
+            ->where('status', Withdrawal::STATUS_PENDING)
+            ->sum('jumlah');
+        $available = max(0, (float) $wallet->saldo_tersedia - $locked);
 
-        return view('Owner.pencairan-dana.index', compact('wallet', 'withdrawals', 'bankAccounts', 'store'));
+        return view('Owner.pencairan-dana.index', compact('wallet', 'withdrawals', 'banks', 'store', 'available', 'locked'));
     }
 
     public function store(Request $request)
@@ -41,8 +47,16 @@ class PencairanDanaController extends Controller
         }
         $data = $request->validate([
             'jumlah' => ['required', 'numeric', 'min:100000'],
-            'bank_account_id' => ['required', 'exists:store_bank_accounts,bank_account_id'],
+            'tipe_tujuan' => ['required', 'in:bank,e-wallet'],
+            'bank_id' => ['required_if:tipe_tujuan,bank', 'nullable', 'integer', 'exists:banks,bank_id'],
+            'penyedia' => ['required_if:tipe_tujuan,e-wallet', 'nullable', 'string', 'max:100'],
+            'nomor_tujuan' => ['required', 'string', 'max:50'],
             'catatan' => ['nullable', 'string', 'max:500'],
+        ], [
+            'tipe_tujuan.required' => 'Pilih tipe tujuan pencairan.',
+            'bank_id.required_if' => 'Pilih bank tujuan.',
+            'penyedia.required_if' => 'Pilih penyedia e-wallet.',
+            'nomor_tujuan.required' => 'Masukkan nomor tujuan.',
         ]);
         $wallet = $store->wallet;
         $locked = (float) $wallet->withdrawals()
@@ -52,12 +66,14 @@ class PencairanDanaController extends Controller
         if ($available < (float) $data['jumlah']) {
             return back()->with('error', 'Saldo tidak cukup (termasuk opsi pencairan yang sedang menunggu).');
         }
-        $bank = $store->bankAccounts()->findOrFail($data['bank_account_id']);
-        DB::transaction(function () use ($wallet, $bank, $data, $store) {
+        DB::transaction(function () use ($wallet, $data, $store) {
             Withdrawal::create([
                 'store_id' => $store->store_id,
                 'wallet_id' => $wallet->wallet_id,
-                'bank_account_id' => $bank->bank_account_id,
+                'tipe_tujuan' => $data['tipe_tujuan'],
+                'bank_id' => $data['tipe_tujuan'] === 'bank' ? ($data['bank_id'] ?? null) : null,
+                'penyedia' => $data['tipe_tujuan'] === 'e-wallet' ? ($data['penyedia'] ?? null) : null,
+                'nomor_tujuan' => $data['nomor_tujuan'],
                 'jumlah' => $data['jumlah'],
                 'status' => Withdrawal::STATUS_PENDING,
                 'diajukan_pada' => now(),

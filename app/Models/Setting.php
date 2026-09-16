@@ -38,6 +38,14 @@ class Setting extends Model
 
     public const KEBIJAKAN_PRIVASI = 'kebijakan_privasi';
 
+    public const HELP_HERO_TITLE = 'help_hero_title';
+
+    public const HELP_HERO_SUBTITLE = 'help_hero_subtitle';
+
+    public const HELP_HERO_SEARCH = 'help_hero_search';
+
+    public const HELP_WHATSAPP_HOURS = 'help_whatsapp_hours';
+
     protected $fillable = [
         'kunci',
         'nilai',

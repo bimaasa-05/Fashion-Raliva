@@ -42,6 +42,7 @@
                         <tr class="border-b border-muted-border last:border-0 align-top">
                             <td class="py-3.5 px-4">
                                 <p class="font-bold text-on-surface">{{ $o->nomor_order }}</p>
+                                <p class="text-xs text-on-surface mt-0.5">{{ $o->checkout?->nama_penerima ?? $o->checkout?->user?->nama_lengkap ?? '-' }}</p>
                                 <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->created_at?->translatedFormat('d M Y') ?? '-' }}</p>
                             </td>
                             <td class="py-3.5 px-4">
@@ -57,6 +58,9 @@
                                 <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Menunggu QC</span>
                             </td>
                             <td class="py-3.5 px-4 text-right">
+                                <button type="button" onclick="openDetailProduksi('{{ $o->order_id }}')" title="Detail produksi" class="inline-flex items-center justify-center px-2.5 py-2 border border-muted-border text-on-surface-variant rounded hover:border-gold-accent hover:text-gold-accent transition-colors mr-1 align-top">
+                                    <span class="material-symbols-outlined text-[16px]">timeline</span>
+                                </button>
                                 <button type="button" onclick="openModalQC('{{ $o->order_id }}')" class="px-3 py-1.5 bg-deep-onyx text-on-primary text-[10px] font-bold uppercase rounded hover:opacity-90 transition-opacity">QC + Packing</button>
                             </td>
                         </tr>
@@ -107,6 +111,11 @@
         </div>
     </form>
 </div>
+@endforeach
+
+{{-- Modal Detail Produksi (timeline) per order --}}
+@foreach ($orders as $o)
+    @include('partials.modal-produksi-detail', ['o' => $o])
 @endforeach
 
 @push('scripts')

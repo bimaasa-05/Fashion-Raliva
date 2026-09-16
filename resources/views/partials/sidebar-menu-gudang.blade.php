@@ -22,6 +22,7 @@
         [
             'label' => 'Operasional',
             'items' => [
+                ['route' => 'gudang.permintaan', 'icon' => 'send', 'text' => 'Permintaan'],
                 ['route' => 'gudang.notifikasi', 'icon' => 'notifications', 'text' => 'Notifikasi'],
             ],
         ],

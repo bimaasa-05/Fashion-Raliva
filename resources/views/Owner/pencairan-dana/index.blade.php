@@ -20,7 +20,7 @@
             <div>
                 <p class="raliva-label text-gold-accent">Saldo Tersedia</p>
                 <p class="raliva-figure text-[28px] mt-1">Rp {{ number_format($wallet?->saldo_tersedia ?? 0,0,',','.') }}</p>
-                <p class="text-xs text-on-surface-variant mt-1">{{ $store?->nama_toko ?? '-' }} • {{ $bankAccounts->count() }} rekening</p>
+                <p class="text-xs text-on-surface-variant mt-1">{{ $store?->nama_toko ?? '-' }}</p>
             </div>
             <button type="button" data-modal-open="modal-cair" class="px-6 py-3 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Ajukan Pencairan</button>
         </div>
@@ -34,7 +34,7 @@
                     <tr class="border-b border-muted-border text-left">
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tanggal</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Jumlah</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Rekening</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tujuan</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Status</th>
                     </tr>
                 </thead>
@@ -43,7 +43,9 @@
                         <tr class="border-b border-muted-border last:border-0">
                             <td class="py-3.5 px-4">{{ $w->diajukan_pada?->translatedFormat('d M Y') ?? '-' }}</td>
                             <td class="py-3.5 px-4 font-bold text-on-surface">Rp {{ number_format($w->jumlah,0,',','.') }}</td>
-                            <td class="py-3.5 px-4">{{ $w->bankAccount->bank->nama_bank ?? '-' }} • {{ $w->bankAccount->nomor_rekening ?? '' }}</td>
+                            <td class="py-3.5 px-4">
+                                <p>{{ $w->tujuan_jenis_label }} • {{ $w->tujuan_penyedia }} • {{ $w->tujuan_nomor }}</p>
+                            </td>
                             <td class="py-3.5 px-4"><span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $w->status==='dibayar' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : ($w->status==='pending' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-error/10 text-error border-error/20') }}">{{ $w->status }}</span></td>
                         </tr>
                     @empty
@@ -64,7 +66,7 @@
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
     <div class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
         <h3 class="font-title-md text-title-md premium-heading">Ajukan Pencairan</h3>
-        <p class="text-xs text-on-surface-variant mt-1">Minimal Rp 100.000 • Saldo tersedia Rp {{ number_format($wallet?->saldo_tersedia ?? 0,0,',','.') }}</p>
+        <p class="text-xs text-on-surface-variant mt-1">Minimal Rp 100.000 • Maksimal Rp {{ number_format((float) $available, 0, ',', '.') }}</p>
         <form method="POST" action="{{ route('owner.pencairan-dana.store') }}" class="mt-6 space-y-4">
             @csrf
             <div>
@@ -73,19 +75,62 @@
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-on-surface-variant pointer-events-none">Rp</span>
                     <input name="jumlah" type="text" inputmode="numeric" data-rupiah required class="raliva-input" style="padding-left:2.75rem" placeholder="100.000" />
                 </div>
-            </div>
-            <div>
-                <label class="block raliva-label mb-2">Rekening Tujuan</label>
-                <select name="bank_account_id" required class="raliva-select">
-                    <option value="">Pilih rekening</option>
-                    @foreach($bankAccounts as $ba)
-                        <option value="{{ $ba->bank_account_id }}">{{ $ba->bank->nama_bank }} • {{ $ba->nomor_rekening }} ({{ $ba->nama_pemilik }})</option>
+                <div class="flex flex-wrap gap-1.5 mt-2">
+                    @foreach([5 => '5%', 10 => '10%', 25 => '25%', 50 => '50%', 75 => '75%', 100 => 'Maksimal'] as $p => $label)
+                        <button type="button" data-persentase="{{ $p }}" class="quick-cair-btn text-xs px-2.5 py-1 rounded-md border border-muted-border text-on-surface-variant hover:border-gold-accent/40 hover:text-gold-accent transition-colors">{{ $label }}</button>
                     @endforeach
-                </select>
+                </div>
+                <div id="fail-cair-warning" class="hidden items-center gap-2 bg-error/10 border border-error/25 text-error rounded-lg px-3 py-2 text-xs font-body-md mt-2">
+                    <span class="material-symbols-outlined text-[16px] shrink-0">info</span>
+                    <span id="fail-cair-warning-text">Saldo Anda tidak segitu.</span>
+                </div>
             </div>
             <div>
-                <label class="block raliva-label mb-2">Catatan</label>
-                <textarea name="catatan" rows="2" class="raliva-textarea" placeholder="opsional"></textarea>
+                <label class="block raliva-label mb-2">Tipe Tujuan</label>
+                <input type="hidden" name="tipe_tujuan" id="tujuan-tipe" value="{{ old('tipe_tujuan') === 'e-wallet' ? 'e-wallet' : 'bank' }}" />
+                <div class="grid grid-cols-2 gap-2 p-1 bg-surface-container-low border border-muted-border rounded-xl">
+                    <button type="button" data-tujuan-tipe="bank" class="tujuan-tipe-btn py-2.5 rounded-lg text-sm font-semibold transition-colors">Bank</button>
+                    <button type="button" data-tujuan-tipe="e-wallet" class="tujuan-tipe-btn py-2.5 rounded-lg text-sm font-semibold transition-colors">E-wallet</button>
+                </div>
+            </div>
+            <div id="tujuan-block-bank" class="space-y-4">
+                <div>
+                    <label class="block raliva-label mb-2">Bank Tujuan</label>
+                    <select name="bank_id" class="raliva-select">
+                        <option value="">Pilih bank</option>
+                        @foreach($banks as $b)
+                            <option value="{{ $b->bank_id }}">{{ $b->nama_bank }} ({{ $b->kode_bank }})</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">No. Rekening</label>
+                    <input name="nomor_tujuan" type="text" inputmode="numeric" value="{{ old('nomor_tujuan') }}" required maxlength="50" class="raliva-input" placeholder="1234567890" />
+                </div>
+            </div>
+            <div id="tujuan-block-ewallet" class="space-y-4">
+                <div>
+                    <label class="block raliva-label mb-2">Penyedia E-wallet</label>
+                    <select name="penyedia" class="raliva-select" disabled>
+                        <option value="">Pilih penyedia</option>
+                        <option value="OVO">OVO</option>
+                        <option value="GoPay">GoPay</option>
+                        <option value="DANA">DANA</option>
+                        <option value="ShopeePay">ShopeePay</option>
+                        <option value="LinkAja">LinkAja</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">Nomor E-wallet</label>
+                    <input name="nomor_tujuan" type="text" inputmode="tel" value="{{ old('nomor_tujuan') }}" maxlength="50" class="raliva-input" placeholder="0812xxxxxxxx" disabled />
+                </div>
+            </div>
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="raliva-label">Catatan</label>
+                    <span data-char-count class="text-[11px] text-on-surface-variant/70">0 / 500</span>
+                </div>
+                <textarea name="catatan" id="catatan-cair" rows="2" maxlength="500" class="raliva-textarea" placeholder="opsional"></textarea>
             </div>
             <div class="flex justify-end gap-3 pt-2">
                 <button type="button" data-modal-close class="py-2.5 px-6 border border-muted-border rounded-lg text-sm font-semibold">Batal</button>
@@ -122,15 +167,135 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 /* Format ribuan live untuk input nominal (ketik 1000000 → 1.000.000 + hint Rp). */
+const MAX_CAIR = {{ (int) round($available) }};
+const LOCKED_CAIR = {{ (int) round($locked) }};
+const jumlahInput = document.querySelector('[data-modal][id="modal-cair"] input[name="jumlah"][data-rupiah]');
+const failWarning = document.getElementById('fail-cair-warning');
+const failWarningText = document.getElementById('fail-cair-warning-text');
+const catatanCair = document.getElementById('catatan-cair');
+const catatanCounter = document.querySelector('[data-char-count]');
+
+function numericCairValue(el) {
+    return parseInt(String(el?.value || '').replace(/\D/g, ''), 10) || 0;
+}
+
+function setJumlahOverState(on) {
+    const submitBtn = document.querySelector('#modal-cair button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.disabled = on;
+        submitBtn.classList.toggle('opacity-50', on);
+        submitBtn.classList.toggle('cursor-not-allowed', on);
+    }
+}
+
+function showPendingCairWarning() {
+    failWarning.classList.remove('hidden');
+    failWarning.classList.add('flex');
+    failWarningText.textContent = 'Saldo Anda masih dalam proses pencairan (pending) sebesar Rp ' + new Intl.NumberFormat('id-ID').format(LOCKED_CAIR) + '. Anda tidak dapat mengajukan lagi sampai pengajuan selesai.';
+    jumlahInput.style.borderColor = '#ef4444';
+    setJumlahOverState(true);
+}
+
+function syncCairState() {
+    if (!failWarning || !jumlahInput) return;
+    const val = numericCairValue(jumlahInput);
+    const over = val > MAX_CAIR;
+    const allPending = MAX_CAIR === 0 && LOCKED_CAIR > 0;
+    if (over && allPending) {
+        showPendingCairWarning();
+        return;
+    }
+    failWarning.classList.toggle('hidden', !over);
+    failWarning.classList.toggle('flex', over);
+    if (over) {
+        failWarningText.textContent = 'Saldo Anda tidak segitu — maksimal Rp ' + new Intl.NumberFormat('id-ID').format(MAX_CAIR) + '.';
+    }
+    jumlahInput.style.borderColor = over ? '#ef4444' : '';
+    const catatanOver = (catatanCair?.value.length ?? 0) > 500;
+    setJumlahOverState(over || catatanOver);
+}
+
+function syncCatatanCount() {
+    if (!catatanCair || !catatanCounter) return;
+    const len = catatanCair.value.length;
+    const over = len > 500;
+    catatanCounter.textContent = len + ' / 500';
+    catatanCounter.classList.toggle('text-error', over || len > 475);
+    catatanCounter.classList.toggle('text-on-surface-variant/70', !over && len <= 475);
+    catatanCair.style.borderColor = over ? '#ef4444' : '';
+}
+
 document.addEventListener('input', (e) => {
     const el = e.target?.closest?.('[data-rupiah]');
     if (!el) return;
     const digits = el.value.replace(/\D/g, '').slice(0, 15);
         el.value = digits ? new Intl.NumberFormat('id-ID').format(digits) : '';
-    });
+    if (el === jumlahInput) syncCairState();
+});
 document.addEventListener('submit', (e) => {
     if (!(e.target instanceof HTMLFormElement)) return;
     e.target.querySelectorAll('[data-rupiah]').forEach((el) => { el.value = el.value.replace(/\./g, ''); });
+});
+
+/* Toggle tipe tujuan: Bank / E-wallet (satu nama field nomor_tujuan per blok aktif). */
+function syncTujuanTipe(tipe) {
+    const hidden = document.getElementById('tujuan-tipe');
+    if (!hidden) return;
+    hidden.value = tipe;
+    document.querySelectorAll('[data-tujuan-tipe]').forEach((btn) => {
+        const on = btn.dataset.tujuanTipe === tipe;
+        btn.classList.toggle('bg-deep-onyx', on);
+        btn.classList.toggle('text-on-primary', on);
+        btn.classList.toggle('btn-premium', on);
+        btn.classList.toggle('text-on-surface-variant', !on);
+    });
+    const bank = document.getElementById('tujuan-block-bank');
+    const ew = document.getElementById('tujuan-block-ewallet');
+    if (bank) bank.classList.toggle('hidden', tipe !== 'bank');
+    if (ew) ew.classList.toggle('hidden', tipe !== 'e-wallet');
+    if (bank) bank.querySelectorAll('select, input').forEach((el) => { el.disabled = tipe !== 'bank'; });
+    if (ew) ew.querySelectorAll('select, input').forEach((el) => { el.disabled = tipe !== 'e-wallet'; });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-tujuan-tipe]').forEach((btn) => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            syncTujuanTipe(this.getAttribute('data-tujuan-tipe'));
+        });
+    });
+    const initial = document.getElementById('tujuan-tipe')?.value || 'bank';
+    syncTujuanTipe(initial);
+
+    document.querySelectorAll('[data-persentase]').forEach((btn) => {
+        btn.addEventListener('click', function () {
+            if (!jumlahInput) return;
+            if (MAX_CAIR === 0 && LOCKED_CAIR > 0) {
+                jumlahInput.value = '';
+                document.querySelectorAll('[data-persentase]').forEach((b) => {
+                    b.classList.remove('bg-gold-accent/10', 'text-gold-accent', 'border-gold-accent/40');
+                    b.classList.add('border-muted-border', 'text-on-surface-variant');
+                });
+                showPendingCairWarning();
+                return;
+            }
+            const pct = (parseFloat(this.dataset.persentase || '0') || 0) / 100;
+            const amount = Math.floor(pct * MAX_CAIR);
+            jumlahInput.value = amount ? new Intl.NumberFormat('id-ID').format(amount) : '';
+            document.querySelectorAll('[data-persentase]').forEach((b) => {
+                const on = b === this;
+                b.classList.toggle('bg-gold-accent/10', on && amount > 0);
+                b.classList.toggle('text-gold-accent', on && amount > 0);
+                b.classList.toggle('border-gold-accent/40', on && amount > 0);
+                b.classList.toggle('border-muted-border', !on || amount === 0);
+                b.classList.toggle('text-on-surface-variant', !on || amount === 0);
+            });
+            syncCairState();
+        });
+    });
+    syncCairState();
+    if (catatanCair) catatanCair.addEventListener('input', syncCatatanCount);
+    syncCatatanCount();
 });
 </script>
 @endpush
