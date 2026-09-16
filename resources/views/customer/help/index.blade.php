@@ -237,31 +237,30 @@
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="max-w-3xl mx-auto text-center">
-<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">SUPPORT</p>
-<h2 class="premium-heading font-headline-lg text-headline-lg text-on-surface mb-sm">{{ __('How can we help?') }}</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-lg">{{ __('Search our help center or browse popular topics below.') }}</p>
-<form class="relative max-w-xl mx-auto" onsubmit="return false;">
-<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-<input class="w-full bg-surface border border-outline-variant rounded-full pl-14 pr-md py-md font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors" placeholder="{{ __('Search help topics...') }}" type="search"/>
-</form>
+                <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">SUPPORT</p>
+                <h2 class="premium-heading font-headline-lg text-headline-lg text-on-surface mb-sm">{{ $hero['title'] }}</h2>
+                <p class="font-body-lg text-body-lg text-on-surface-variant mb-lg">{{ $hero['subtitle'] }}</p>
+                <form class="relative max-w-xl mx-auto" onsubmit="return false;">
+                <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                <input class="w-full bg-surface border border-outline-variant rounded-full pl-14 pr-md py-md font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors" placeholder="{{ $hero['search'] }}" type="search"/>
+                </form>
 </div>
 <div class="mt-xl pt-xl border-t border-[var(--border-soft)]">
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-md text-center">BROWSE BY CATEGORY</p>
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
-@foreach ([
-                ['icon' => 'local_shipping', 'title' => __('Shipping'), 'sub' => __('Track & delivery')],
-                ['icon' => 'assignment_return', 'title' => __('Returns'), 'sub' => __('Exchanges & refunds')],
-                ['icon' => 'payments', 'title' => __('Payments'), 'sub' => __('Methods & security')],
-                ['icon' => 'support_agent', 'title' => __('Contact'), 'sub' => __('Talk to our team')],
-            ] as $cat)
+@forelse ($categories as $cat)
 <a href="#faq" class="flex flex-col items-center text-center gap-xs p-md border border-outline-variant rounded-lg bg-surface hover:border-secondary hover:bg-surface-container-low transition-colors group">
 <span class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-xs">
-<span class="material-symbols-outlined text-[24px] text-secondary group-hover:scale-110 transition-transform">{{ $cat['icon'] }}</span>
+<span class="material-symbols-outlined text-[24px] text-secondary group-hover:scale-110 transition-transform">{{ $cat->icon }}</span>
 </span>
-<span class="font-title-md text-title-md text-on-surface">{{ $cat['title'] }}</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant">{{ $cat['sub'] }}</span>
+<span class="font-title-md text-title-md text-on-surface">{{ $cat->judul }}</span>
+@if ($cat->subjudul)
+<span class="font-label-sm text-label-sm text-on-surface-variant">{{ $cat->subjudul }}</span>
+@endif
 </a>
-@endforeach
+@empty
+<p class="col-span-2 lg:col-span-4 text-center font-body-sm text-body-sm text-on-surface-variant">{{ __('Belum ada kategori bantuan.') }}</p>
+@endforelse
 </div>
 </div>
 </div>
@@ -272,61 +271,31 @@
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('Frequently Asked Questions') }}</h2>
 <div class="flex flex-col gap-sm">
+@forelse ($faqGroups as $group)
+@if ($group['category'])
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mt-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-[16px]">{{ $group['category']->icon }}</span>
+{{ $group['category']->judul }}
+</p>
+@else
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mt-md">Umum</p>
+@endif
+@foreach ($group['faqs'] as $faq)
 <details class="group bg-surface-container-low rounded-lg border border-outline-variant px-md">
 <summary class="flex justify-between items-center py-sm cursor-pointer list-none">
-<span class="font-title-md text-title-md text-on-surface">{{ __('How do I track my order?') }}</span>
+<span class="font-title-md text-title-md text-on-surface">{{ $faq->pertanyaan }}</span>
 <span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
 </summary>
 <div class="pb-sm">
 <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-                    Go to Account → My Orders and select the order you want to follow. You will see the latest delivery status there, from preparing to delivered.
+                    {{ $faq->jawaban }}
                 </p>
 </div>
 </details>
-<details class="group bg-surface-container-low rounded-lg border border-outline-variant px-md">
-<summary class="flex justify-between items-center py-sm cursor-pointer list-none">
-<span class="font-title-md text-title-md text-on-surface">{{ __('What is your return policy?') }}</span>
-<span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
-</summary>
-<div class="pb-sm">
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-                    Returns are accepted within 14 days of delivery. Items must be unworn with original tags attached. Start a return by contacting our support team with your order number.
-                </p>
-</div>
-</details>
-<details class="group bg-surface-container-low rounded-lg border border-outline-variant px-md">
-<summary class="flex justify-between items-center py-sm cursor-pointer list-none">
-<span class="font-title-md text-title-md text-on-surface">{{ __('Which payment methods do you accept?') }}</span>
-<span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
-</summary>
-<div class="pb-sm">
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-                    We accept bank transfer, major credit cards, and popular e-wallets. All payments are processed securely at checkout.
-                </p>
-</div>
-</details>
-<details class="group bg-surface-container-low rounded-lg border border-outline-variant px-md">
-<summary class="flex justify-between items-center py-sm cursor-pointer list-none">
-<span class="font-title-md text-title-md text-on-surface">{{ __('Can I change my delivery address?') }}</span>
-<span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
-</summary>
-<div class="pb-sm">
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-                    Yes, as long as the order has not been shipped. Update your saved addresses in Account → Addresses, then contact support so we can apply it to your open order.
-                </p>
-</div>
-</details>
-<details class="group bg-surface-container-low rounded-lg border border-outline-variant px-md">
-<summary class="flex justify-between items-center py-sm cursor-pointer list-none">
-<span class="font-title-md text-title-md text-on-surface">{{ __('How do I contact a store?') }}</span>
-<span class="material-symbols-outlined text-on-surface group-open:rotate-180 transition-transform">expand_more</span>
-</summary>
-<div class="pb-sm">
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-                    Open the store page from any product or from Featured Stores on the home page. Store contact options are available on their profile.
-                </p>
-</div>
-</details>
+@endforeach
+@empty
+<p class="text-center font-body-sm text-body-sm text-on-surface-variant py-md">{{ __('Belum ada pertanyaan yang tersedia.') }}</p>
+@endforelse
 </div>
 </div>
 </div>
@@ -335,25 +304,30 @@
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('Still Need Help?') }}</h2>
+@php
+    $waDigits = preg_replace('/\D/', '', (string) $whatsappSupport);
+    $waLink = $waDigits ? 'https://wa.me/'.$waDigits : null;
+    $emailSupport = $emailSupport ?: 'support@raliva.com';
+@endphp
 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
-<button class="flex items-center gap-sm p-md border border-outline-variant rounded-lg bg-surface hover:border-secondary transition-colors text-left" type="button">
+<a @if ($waLink) href="{{ $waLink }}" target="_blank" rel="noopener" @else role="button" @endif class="flex items-center gap-sm p-md border border-outline-variant rounded-lg bg-surface hover:border-secondary transition-colors text-left">
 <span class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0">
 <span class="material-symbols-outlined text-[20px] text-on-surface-variant">chat</span>
 </span>
 <span>
 <span class="font-body-sm text-body-sm font-semibold block">{{ __('WhatsApp') }}</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant block">Mon–Fri, 09.00–17.00 WIB</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant block">{{ $whatsappHours }}</span>
 </span>
-</button>
-<button class="flex items-center gap-sm p-md border border-outline-variant rounded-lg bg-surface hover:border-secondary transition-colors text-left" type="button">
+</a>
+<a href="mailto:{{ $emailSupport }}" class="flex items-center gap-sm p-md border border-outline-variant rounded-lg bg-surface hover:border-secondary transition-colors text-left">
 <span class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0">
 <span class="material-symbols-outlined text-[20px] text-on-surface-variant">mail</span>
 </span>
 <span>
 <span class="font-body-sm text-body-sm font-semibold block">{{ __('Email Us') }}</span>
-<span class="font-label-sm text-label-sm text-on-surface-variant block">support@raliva.com</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant block">{{ $emailSupport }}</span>
 </span>
-</button>
+</a>
 </div>
 </div>
 </div>
