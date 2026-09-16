@@ -20,9 +20,7 @@ class BahanProduksiController extends Controller
             ->orderBy('nama_bahan')
             ->paginate(15);
 
-        $suppliers = Supplier::whereIn('store_id', $storeIds)
-            ->orWhereNull('store_id')
-            ->orderBy('nama_supplier')
+        $suppliers = Supplier::orderBy('nama_supplier')
             ->get(['supplier_id', 'nama_supplier']);
 
         $stats = [
