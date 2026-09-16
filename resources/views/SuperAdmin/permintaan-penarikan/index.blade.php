@@ -112,7 +112,7 @@
                         <th class="p-6 w-12 text-center">No.</th>
                         <th class="p-6">Toko / Pemilik</th>
                         <th class="p-6">Detail Pengajuan</th>
-                        <th class="p-6">Info Bank</th>
+                        <th class="p-6">Info Tujuan</th>
                         <th class="p-6 text-center">Status</th>
                         <th class="p-6 text-center">Dibayar</th>
                         <th class="p-6 text-center">Aksi</th>
@@ -126,7 +126,7 @@
                             $initial = strtoupper(substr(collect(preg_split('/\s+/', trim($initialStore ?? '')))->map(fn ($k) => mb_substr($k, 0, 1))->implode(''), 0, 2)) ?: '?';
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors group"
-                            data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store?->nama_toko ?? '').' '.($w->store?->owner?->nama_lengkap ?? '').' '.($w->bankAccount?->bank?->nama_bank ?? '')) }}"
+                            data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store?->nama_toko ?? '').' '.($w->store?->owner?->nama_lengkap ?? '').' '.($w->tujuan_penyedia)) }}"
                             data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store?->nama_toko ?? '-' }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}">
                             <td class="p-6 text-center text-on-surface-variant font-mono row-num"></td>
                             <td class="p-6">
@@ -143,8 +143,8 @@
                                 <p class="text-on-surface-variant">{{ $w->diajukan_pada?->translatedFormat('d M Y') }}</p>
                             </td>
                             <td class="p-6">
-                                <p class="text-primary">{{ $w->bankAccount?->bank?->nama_bank ?? '-' }}</p>
-                                <p class="text-on-surface-variant">**** **** {{ substr($w->bankAccount?->nomor_rekening ?? '', -4) }}</p>
+                                <p class="text-primary">{{ $w->tujuan_penyedia ?: '-' }}</p>
+                                <p class="text-on-surface-variant">**** **** {{ substr($w->tujuan_nomor, -4) }}</p>
                             </td>
                             <td class="p-6 text-center">
                                 <span class="inline-flex items-center px-2 py-1 rounded {{ $badge['class'] }} text-xs uppercase">{{ $badge['label'] }}</span>
@@ -210,7 +210,7 @@
                     $initialStore = $w->store?->nama_toko;
                     $initial = strtoupper(substr(collect(preg_split('/\s+/', trim($initialStore ?? '')))->map(fn ($k) => mb_substr($k, 0, 1))->implode(''), 0, 2)) ?: '?';
                 @endphp
-                <article data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store?->nama_toko ?? '').' '.($w->store?->owner?->nama_lengkap ?? '').' '.($w->bankAccount?->bank?->nama_bank ?? '')) }}" data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store?->nama_toko ?? '-' }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                <article data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store?->nama_toko ?? '').' '.($w->store?->owner?->nama_lengkap ?? '').' '.($w->tujuan_penyedia)) }}" data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store?->nama_toko ?? '-' }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-10 h-10 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center font-label-sm shrink-0">{{ $initial }}</div>
@@ -232,12 +232,12 @@
                             <dd class="text-on-surface text-right">{{ $w->diajukan_pada?->translatedFormat('d M Y') }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Bank</dt>
-                            <dd class="text-on-surface text-right">{{ $w->bankAccount?->bank?->nama_bank ?? '-' }}</dd>
+                            <dt class="text-on-surface-variant">Tujuan</dt>
+                            <dd class="text-on-surface text-right">{{ $w->tujuan_penyedia ?: '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Rekening</dt>
-                            <dd class="font-mono text-on-surface-variant text-right">**** **** {{ substr($w->bankAccount?->nomor_rekening ?? '', -4) }}</dd>
+                            <dt class="text-on-surface-variant">Nomor</dt>
+                            <dd class="font-mono text-on-surface-variant text-right">**** **** {{ substr($w->tujuan_nomor, -4) }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">Dibayar</dt>

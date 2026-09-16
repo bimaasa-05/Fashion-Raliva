@@ -32,6 +32,10 @@ class Withdrawal extends Model
         'file_bukti',
         'deskripsi_bukti',
         'bukti_diupload_pada',
+        'tipe_tujuan',
+        'bank_id',
+        'penyedia',
+        'nomor_tujuan',
     ];
 
     protected function casts(): array
@@ -57,6 +61,38 @@ class Withdrawal extends Model
     public function bankAccount(): BelongsTo
     {
         return $this->belongsTo(StoreBankAccount::class, 'bank_account_id', 'bank_account_id');
+    }
+
+    public function bank(): BelongsTo
+    {
+        return $this->belongsTo(Bank::class, 'bank_id', 'bank_id');
+    }
+
+    public function getTujuanJenisLabelAttribute(): string
+    {
+        if ($this->tipe_tujuan === 'e-wallet') {
+            return 'E-wallet';
+        }
+
+        return 'Bank';
+    }
+
+    public function getTujuanPenyediaAttribute(): string
+    {
+        if ($this->tipe_tujuan === 'e-wallet') {
+            return $this->penyedia ?: 'E-wallet';
+        }
+
+        if ($this->tipe_tujuan === 'bank' && $this->bank) {
+            return $this->bank->nama_bank;
+        }
+
+        return $this->bankAccount?->bank?->nama_bank ?: 'Bank';
+    }
+
+    public function getTujuanNomorAttribute(): string
+    {
+        return $this->nomor_tujuan ?: ($this->bankAccount?->nomor_rekening ?? '');
     }
 
     public function reviewer(): BelongsTo
