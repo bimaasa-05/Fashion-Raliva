@@ -9,7 +9,7 @@
 <div class="space-y-section-gap">
     <div class="flex items-start gap-3 p-4 border border-gold-accent/30 bg-gold-accent/10 rounded-lg">
         <span class="material-symbols-outlined text-gold-accent text-[20px] mt-0.5">lock</span>
-        <p class="font-body-md text-sm text-on-surface">Akses terbatas: kamu hanya dapat melihat detail produk. Menambah produk akan diajukan dan menunggu persetujuan Owner (status <b>pending</b>).</p>
+        <p class="font-body-md text-sm text-on-surface">Akses terbatas: produk yang kamu tambahkan akan diajukan dan menunggu persetujuan Super Admin (status <b>pending</b>).</p>
     </div>
 
     <section data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
@@ -336,7 +336,7 @@
         <div>
             <label class="block raliva-label mb-2">Foto Produk (maks. 8 foto)</label>
             <div class="grid grid-cols-4 gap-gutter">
-                @for ($i = 0; $i < 4; $i++)
+                @for ($i = 0; $i < 8; $i++)
                     <label class="aspect-[3/4] rounded-lg border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-gold-accent hover:bg-surface-container-low transition-colors group">
                         <input type="file" name="foto_produk[]" accept="image/*" class="hidden" onchange="if(this.files[0]){this.parentElement.querySelector('span').textContent='✓';}" />
                         <span class="material-symbols-outlined text-[22px] text-on-surface-variant group-hover:text-gold-accent transition-colors">add_photo_alternate</span>
@@ -369,19 +369,20 @@
                 <div>
                     <label for="fp-kategori" class="block raliva-label mb-2">Kategori</label>
                     <div class="flex gap-2">
-                        <select id="fp-kategori" name="category_id" class="raliva-select flex-1">
-                            <option value="">— Pilih —</option>
-                            @foreach ($categories as $c)
-                                <option value="{{ $c->category_id }}">{{ $c->nama_kategori }}</option>
-                            @endforeach
-                        </select>
-                        <button type="button" onclick="document.getElementById('form-tambah-kategori').classList.toggle('hidden')" class="px-3 py-2 border border-gold-accent/40 text-gold-accent rounded-lg text-xs whitespace-nowrap">+ Kategori</button>
+                        <div class="flex-1 space-y-2">
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant pointer-events-none">search</span>
+                                <input type="text" id="kategori-search" placeholder="Cari kategori..." autocomplete="off" class="raliva-input text-sm pl-9" />
+                            </div>
+                            <select id="fp-kategori" name="category_id" class="raliva-select w-full">
+                                <option value="">— Pilih —</option>
+                                @foreach ($categories as $c)
+                                    <option value="{{ $c->category_id }}">{{ $c->nama_kategori }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button type="button" data-modal-open="modal-tambah-kategori" class="px-3 py-2 border border-gold-accent/40 text-gold-accent rounded-lg text-xs whitespace-nowrap h-fit">+ Kategori</button>
                     </div>
-                    <form id="form-tambah-kategori" method="POST" action="{{ route('admin.kategori.store') }}" class="hidden mt-2 flex gap-2">
-                        @csrf
-                        <input type="text" name="nama_kategori" placeholder="Nama kategori baru" required class="raliva-input flex-1 text-sm" />
-                        <button type="submit" class="px-3 py-2 bg-deep-onyx text-on-primary text-xs rounded">Simpan</button>
-                    </form>
                 </div>
                 <div>
                     <label for="fp-harga" class="block raliva-label mb-2">Harga (Rp)</label>
@@ -426,15 +427,13 @@
                     @endforeach
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-gutter">
-                <div>
-                    <label for="fp-stok" class="block raliva-label mb-2">Total Stok Awal</label>
-                    <input id="fp-stok" name="stok_awal" type="number" value="50" min="0" class="raliva-input" />
-                </div>
-                <div>
-                    <label for="fp-min-restock" class="block raliva-label mb-2">Ambang Stok Menipis</label>
-                    <input id="fp-min-restock" name="stok_minimum" type="number" value="10" min="0" class="raliva-input" />
-                </div>
+            <div>
+                <p class="raliva-label mb-1">Stok per Varian</p>
+                <p class="text-xs text-on-surface-variant mb-3">Setelah pilih ukuran &amp; warna, isi stok untuk setiap kombinasi varian.</p>
+                <div id="varian-stok-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                <div id="varian-stok-empty" class="mt-2 p-4 border border-dashed border-outline-variant rounded-lg text-center text-xs text-on-surface-variant">Belum ada varian. Pilih ukuran &amp; warna di atas untuk mengatur stok per varian.</div>
+                <input type="hidden" name="stok_awal" id="fp-stok-synced" value="0" />
+                <input type="hidden" name="stok_minimum" id="fp-min-restock-synced" value="0" />
             </div>
         </div>
 
@@ -447,6 +446,36 @@
     </form>
     </div>
 </div>
+
+{{-- Modal Tambah Kategori (terpisah dari form produk) --}}
+<div id="modal-tambah-kategori" data-modal class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl flex flex-col max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-surface-container-lowest z-10 flex items-center justify-between px-6 py-5 border-b border-muted-border shrink-0">
+            <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Kategori Baru</h3>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="form-tambah-kategori" class="flex-1 overflow-y-auto p-6 space-y-4">
+            @csrf
+            <div>
+                <label for="ktg-nama" class="block raliva-label mb-2">Nama Kategori</label>
+                <input id="ktg-nama" name="nama_kategori" type="text" placeholder="cth. Outerwear" required maxlength="100" class="raliva-input" />
+            </div>
+            <div>
+                <label for="ktg-deskripsi" class="block raliva-label mb-2">Deskripsi</label>
+                <textarea id="ktg-deskripsi" name="deskripsi" rows="3" maxlength="500" placeholder="Opsional, penjelasan singkat kategori..." class="raliva-textarea"></textarea>
+            </div>
+        </form>
+        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border px-6 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
+            <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+            <button type="button" id="ktg-simpan" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[16px]">check_circle</span>Simpan Kategori
+            </button>
+        </div>
+    </div>
+</div>
 @push('scripts')
 <script>
 document.querySelectorAll('.ukuran-chip').forEach(btn=>{
@@ -455,11 +484,85 @@ document.querySelectorAll('.ukuran-chip').forEach(btn=>{
         btn.classList.toggle('text-white');
         btn.classList.toggle('border-gold-accent');
         updateUkuranTerpilih();
+        renderVarianStok();
     });
 });
 
+document.querySelectorAll('[name="warna[]"]').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+        renderVarianStok();
+    });
+});
+
+function getSelectedUkuran() {
+    return Array.from(document.querySelectorAll('.ukuran-chip.bg-gold-accent')).map(b=>b.dataset.size || b.textContent.trim());
+}
+
+function getSelectedWarna() {
+    return Array.from(document.querySelectorAll('[name="warna[]"]:checked')).map(cb=>cb.value);
+}
+
+function renderVarianStok() {
+    const ukuran = getSelectedUkuran();
+    const warna = getSelectedWarna();
+    const grid = document.getElementById('varian-stok-grid');
+    const empty = document.getElementById('varian-stok-empty');
+    if (!grid || !empty) return;
+
+    const count = ukuran.length * warna.length;
+    empty.style.display = count > 0 ? 'none' : 'block';
+    grid.innerHTML = '';
+
+    let i = 0;
+    for (const uk of ukuran) {
+        for (const wr of warna) {
+            const row = document.createElement('div');
+            row.className = 'p-3 border border-muted-border rounded-lg bg-surface-container-low space-y-2';
+            row.innerHTML = `
+                <input type="hidden" name="varian_stok[${i}][ukuran]" value="${escapeHtml(uk)}" />
+                <input type="hidden" name="varian_stok[${i}][warna]" value="${escapeHtml(wr)}" />
+                <div class="flex items-center gap-2">
+                    <span class="w-4 h-4 rounded-full border border-outline-variant shrink-0 inline-block" style="background-color: ${warnaSwatch(wr)}"></span>
+                    <span class="text-xs font-bold text-on-surface truncate">${escapeHtml(uk)} · ${escapeHtml(wr)}</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Stok</label>
+                        <input type="number" name="varian_stok[${i}][stok]" value="0" min="0" class="raliva-input text-sm" />
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Ambang Menipis</label>
+                        <input type="number" name="varian_stok[${i}][stok_minimum]" value="0" min="0" class="raliva-input text-sm" />
+                    </div>
+                </div>
+            `;
+            grid.appendChild(row);
+            i++;
+        }
+    }
+
+    // sync hidden total (backward compat)
+    const total = Array.from(grid.querySelectorAll('[name$="[stok]"]')).reduce((s, el)=> s + (parseInt(el.value,10) || 0), 0);
+    const syncTotal = document.getElementById('fp-stok-synced');
+    const syncMin = document.getElementById('fp-min-restock-synced');
+    if (syncTotal) syncTotal.value = total;
+    if (syncMin) {
+        const mins = Array.from(grid.querySelectorAll('[name$="[stok_minimum]"]')).map(el=>parseInt(el.value,10)||0);
+        syncMin.value = mins.length ? Math.min(...mins) : 0;
+    }
+}
+
+function escapeHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function warnaSwatch(name) {
+    const map = {'Hitam':'#1c1b1b','Krem':'#e8dcc8','Navy':'#22304a','Camel':'#c19a6b','Putih':'#f5f3f3'};
+    return map[name] || '#cccccc';
+}
+
 function updateUkuranTerpilih() {
-    const selected = Array.from(document.querySelectorAll('.ukuran-chip.bg-gold-accent')).map(b=>b.dataset.size || b.textContent.trim());
+    const selected = getSelectedUkuran();
     document.getElementById('ukuran-terpilih').value = selected.join(',');
 }
 
@@ -486,12 +589,73 @@ function addCustomSize() {
     chip.addEventListener('click', function() {
         this.remove();
         updateUkuranTerpilih();
+        renderVarianStok();
     });
     container.insertBefore(chip, container.lastElementChild);
     updateUkuranTerpilih();
+    renderVarianStok();
     // Reset inputs
     document.querySelectorAll('[name^="custom_"]').forEach(i => i.value = '');
 }
+
+// --- Searchable kategori ---
+(function() {
+    const search = document.getElementById('kategori-search');
+    const select = document.getElementById('fp-kategori');
+    if (!search || !select) return;
+    search.addEventListener('input', () => {
+        const q = search.value.trim().toLowerCase();
+        Array.from(select.options).forEach(opt => {
+            if (!opt.value) return;
+            opt.style.display = opt.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+    });
+})();
+
+// --- Tambah Kategori via AJAX ---
+(function() {
+    const btn = document.getElementById('ktg-simpan');
+    const modal = document.getElementById('modal-tambah-kategori');
+    const form = document.getElementById('form-tambah-kategori');
+    if (!btn || !modal || !form) return;
+    btn.addEventListener('click', () => {
+        const nama = document.getElementById('ktg-nama').value.trim();
+        const deskripsi = document.getElementById('ktg-deskripsi').value.trim();
+        if (!nama) { alert('Nama kategori wajib diisi.'); return; }
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>Menyimpan...';
+        const data = new FormData();
+        data.append('_token', document.querySelector('input[name="_token"]').value);
+        data.append('nama_kategori', nama);
+        data.append('deskripsi', deskripsi);
+        fetch('{{ route('admin.kategori.store') }}', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+            body: data
+        })
+        .then(r => r.json().then(j => ({ ok: r.ok, j })))
+        .then(({ ok, j }) => {
+            if (!ok || !j.success) throw new Error(j.message || 'Gagal menyimpan kategori.');
+            const opt = document.createElement('option');
+            opt.value = j.kategori.category_id;
+            opt.textContent = j.kategori.nama_kategori;
+            const select = document.getElementById('fp-kategori');
+            select.appendChild(opt);
+            select.value = opt.value;
+            document.getElementById('ktg-nama').value = '';
+            document.getElementById('ktg-deskripsi').value = '';
+            modal.classList.add('hidden');
+            const search = document.getElementById('kategori-search');
+            if (search) search.value = '';
+            alert('Kategori "' + opt.textContent + '" berhasil ditambahkan.');
+        })
+        .catch(err => { alert(err.message || 'Terjadi kesalahan.'); })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">check_circle</span>Simpan Kategori';
+        });
+    });
+})();
 </script>
 @endpush
 @endsection
