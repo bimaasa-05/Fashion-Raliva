@@ -18,14 +18,8 @@ class ProfilePhoto
      */
     public static function store(UploadedFile $file, int $userId, string $prefix): string
     {
-        $dir = public_path('profil');
-
-        if (! is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
-
         $filename = $prefix.'-'.$userId.'-'.Str::random(20).'.'.$file->getClientOriginalExtension();
-        $file->move($dir, $filename);
+        Storage::disk(self::DISK)->putFileAs('profil', $file, $filename);
 
         return 'profil/'.$filename;
     }
