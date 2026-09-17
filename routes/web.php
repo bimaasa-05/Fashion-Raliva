@@ -53,6 +53,7 @@ use App\Http\Controllers\Owner\ProduksiController as OwnerProduksiController;
 use App\Http\Controllers\Owner\ProfilController as OwnerProfilController;
 use App\Http\Controllers\Owner\PromoController as OwnerPromoController;
 use App\Http\Controllers\Owner\SaldoController;
+use App\Http\Controllers\Owner\RekapKaryawanController;
 use App\Http\Controllers\Owner\UlasanController;
 use App\Http\Controllers\Produksi\BahanProduksiController as ProduksiBahanController;
 use App\Http\Controllers\Produksi\DashboardController as ProduksiDashboardController;
@@ -465,6 +466,9 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::post('/karyawan', [KaryawanController::class, 'store'])->name('karyawan.store');
     Route::put('/karyawan/{storeStaff}', [KaryawanController::class, 'update'])->name('karyawan.update');
     Route::delete('/karyawan/{storeStaff}', [KaryawanController::class, 'destroy'])->name('karyawan.destroy');
+    Route::get('/rekap-karyawan', [RekapKaryawanController::class, 'index'])->name('rekap-karyawan');
+    Route::get('/rekap-karyawan/export-excel', [RekapKaryawanController::class, 'exportExcel'])->name('rekap-karyawan.export-excel');
+    Route::get('/rekap-karyawan/export-pdf', [RekapKaryawanController::class, 'exportPdf'])->name('rekap-karyawan.export-pdf');
     Route::get('/laporan', [OwnerLaporanController::class, 'index'])->name('laporan');
     Route::get('/laporan/export', [OwnerLaporanController::class, 'export'])->name('laporan.export');
     Route::get('/laporan/export-excel', [OwnerLaporanController::class, 'exportExcel'])->name('laporan.export-excel');
