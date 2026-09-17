@@ -22,6 +22,7 @@ class PencairanDanaController extends Controller
                 'store' => null,
                 'available' => 0,
                 'locked' => 0,
+                'totalDicairkan' => 0,
             ]);
         }
         $wallet = $store->wallet;
@@ -35,8 +36,11 @@ class PencairanDanaController extends Controller
             ->where('status', Withdrawal::STATUS_PENDING)
             ->sum('jumlah');
         $available = max(0, (float) $wallet->saldo_tersedia - $locked);
+        $totalDicairkan = (float) $wallet->withdrawals()
+            ->where('status', Withdrawal::STATUS_DIBAYAR)
+            ->sum('jumlah');
 
-        return view('Owner.pencairan-dana.index', compact('wallet', 'withdrawals', 'banks', 'store', 'available', 'locked'));
+        return view('Owner.pencairan-dana.index', compact('wallet', 'withdrawals', 'banks', 'store', 'available', 'locked', 'totalDicairkan'));
     }
 
     public function store(Request $request)
