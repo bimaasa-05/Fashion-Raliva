@@ -334,18 +334,34 @@
 <div class="flex-grow flex flex-col justify-center w-full max-w-md mx-auto py-xl relative z-10">
 <div class="border-2 border-secondary rounded-lg p-lg lg:p-xl frame-gold">
 <!-- Form Section -->
+@if (session('status'))
+<!-- Success State -->
+<div class="text-center" id="forgot-success">
+<span class="material-symbols-outlined text-secondary text-[64px]">mark_email_read</span>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-md mb-sm">{{ __('Check Your Email') }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">
+            {{ session('status') }}
+        </p>
+<a class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('login') }}">
+            {{ __('BACK TO LOGIN') }}
+        </a>
+</div>
+@else
 <div id="forgot-section">
 <div class="mb-md">
 <p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">{{ __('Raliva Account') }}</p>
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Forgot Password') }}</h2>
 <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __("Enter your email address and we'll help you reset your password.") }}</p>
 </div>
-<form id="forgot-form" novalidate>
+<form id="forgot-form" method="POST" action="{{ route('password.email') }}">
+@csrf
 <!-- Email -->
 <div class="mb-md">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">{{ __('Email') }}</label>
-<input autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="email" placeholder="you@example.com" type="email"/>
-<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-error">{{ __('Invalid email address.') }}</p>
+<input autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors @error('email') border-error @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" type="email" required autofocus/>
+@error('email')
+<p class="font-label-sm text-label-sm text-error mt-xs">{{ $message }}</p>
+@enderror
 </div>
 <!-- Submit -->
 <button class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="forgot-btn" type="submit">
@@ -361,44 +377,18 @@
         </a>
 </p>
 </div>
-<!-- Success State -->
-<div class="hidden text-center" id="forgot-success">
-<span class="material-symbols-outlined text-secondary text-[64px]">mark_email_read</span>
-<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-md mb-sm">{{ __('Check Your Email') }}</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">
-            {{ __("We've sent a password reset link to your email.") }}
-        </p>
-<a class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('login') }}">
-            {{ __('BACK TO LOGIN') }}
-        </a>
-</div>
+@endif
 </div>
 </div>
 </main>
 <script>
-        function setError(id, show) {
-            document.getElementById(id).classList.toggle('hidden', !show);
+        var forgotForm = document.getElementById('forgot-form');
+        if (forgotForm) {
+            forgotForm.addEventListener('submit', function () {
+                document.getElementById('forgot-btn').disabled = true;
+                document.getElementById('forgot-spinner').classList.remove('hidden');
+            });
         }
-
-        document.getElementById('forgot-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            var email = document.getElementById('email').value.trim();
-            setError('email-error', false);
-
-            if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-                setError('email-error', true);
-                return;
-            }
-
-            var btn = document.getElementById('forgot-btn');
-            btn.disabled = true;
-            document.getElementById('forgot-spinner').classList.remove('hidden');
-
-            setTimeout(function () {
-                document.getElementById('forgot-section').classList.add('hidden');
-                document.getElementById('forgot-success').classList.remove('hidden');
-            }, 800);
-        });
     </script>
 <script>
         document.querySelectorAll('.btn-gold').forEach(function (b) {
