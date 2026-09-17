@@ -28,9 +28,15 @@ class RegisterController extends Controller
         $data = $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:150', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:8', 'regex:/[A-Z]/', 'regex:/[0-9]/', 'confirmed'],
             'role' => ['required', 'in:customer,owner'],
             'terms' => ['accepted'],
+        ], [
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.regex' => 'Password harus mengandung minimal 1 huruf kapital dan 1 angka.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'terms.accepted' => 'Anda harus menyetujui syarat dan ketentuan.',
         ]);
 
         $roleName = $data['role'] === 'owner' ? Role::OWNER : Role::CUSTOMER;
