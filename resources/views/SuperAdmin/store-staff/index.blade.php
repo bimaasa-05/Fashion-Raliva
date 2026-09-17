@@ -254,97 +254,84 @@
 </div>
 
 <!-- Detail Modal -->
-<div id="modal-detail" class="fixed inset-0 z-[70] hidden">
-    <div class="absolute inset-0 bg-black/50" onclick="closeModal('modal-detail')"></div>
-    <div class="relative mx-auto w-full max-w-md mt-[10vh] bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[80vh] overflow-y-auto">
-        <div class="flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-            <div>
-                <p class="raliva-label text-gold-accent">Detail Staff</p>
-                <h3 id="detail-nama" class="font-title-md text-title-md text-on-surface premium-heading mt-1">-</h3>
-            </div>
-            <button type="button" onclick="closeModal('modal-detail')" class="text-on-surface-variant hover:text-on-surface transition-colors">
-                <span class="material-symbols-outlined">close</span>
-            </button>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'modal-detail',
+    'dataModal' => true,
+    'icon' => 'badge',
+    'title' => 'Detail Staff',
+    'subtitle' => '<span id="detail-nama">-</span>',
+    'subtitleRaw' => true,
+])
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Nama</label>
+            <p id="detail-nama-lengkap" class="text-sm font-semibold text-on-surface">-</p>
         </div>
-        <div class="p-6 space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Nama</label>
-                    <p id="detail-nama-lengkap" class="text-sm font-semibold text-on-surface">-</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Email</label>
-                    <p id="detail-email" class="text-sm font-semibold text-on-surface">-</p>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Role</label>
-                    <p id="detail-role" class="text-sm font-semibold text-on-surface">-</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Status</label>
-                    <p id="detail-status" class="text-sm font-semibold">-</p>
-                </div>
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-on-surface-variant mb-1">Toko</label>
-                <p id="detail-toko" class="text-sm font-semibold text-on-surface">-</p>
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-on-surface-variant mb-1">Tanggal Penugasan</label>
-                <p id="detail-tanggal" class="text-sm font-semibold text-on-surface">-</p>
-            </div>
-        </div>
-        <div class="px-6 pb-6">
-            <button type="button" onclick="closeModal('modal-detail')" class="w-full py-3 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Email</label>
+            <p id="detail-email" class="text-sm font-semibold text-on-surface">-</p>
         </div>
     </div>
-</div>
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Role</label>
+            <p id="detail-role" class="text-sm font-semibold text-on-surface">-</p>
+        </div>
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Status</label>
+            <p id="detail-status" class="text-sm font-semibold">-</p>
+        </div>
+    </div>
+    <div>
+        <label class="block text-xs font-medium text-on-surface-variant mb-1">Toko</label>
+        <p id="detail-toko" class="text-sm font-semibold text-on-surface">-</p>
+    </div>
+    <div>
+        <label class="block text-xs font-medium text-on-surface-variant mb-1">Tanggal Penugasan</label>
+        <p id="detail-tanggal" class="text-sm font-semibold text-on-surface">-</p>
+    </div>
+    @slot('footer')
+        <button type="button" data-modal-close class="btn-modal btn-modal-ghost w-full">Tutup</button>
+    @endslot
+@endcomponent
 
 <!-- Tambah Staff Modal -->
-<div id="modal-tambah-staff" class="fixed inset-0 z-[70] hidden">
-    <div class="absolute inset-0 bg-black/50" onclick="closeModal('modal-tambah-staff')"></div>
-    <div class="relative mx-auto w-full max-w-md mt-[10vh] bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[80vh] overflow-y-auto">
-        <div class="flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-            <div>
-                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Staff</h3>
-                <p class="text-on-surface-variant font-body-md text-xs mt-1">Tugaskan user yang sudah ada ke toko.</p>
-            </div>
-            <button type="button" onclick="closeModal('modal-tambah-staff')" class="text-on-surface-variant hover:text-on-surface transition-colors">
-                <span class="material-symbols-outlined">close</span>
-            </button>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'modal-tambah-staff',
+    'dataModal' => true,
+    'icon' => 'person_add',
+    'title' => 'Tambah Staff',
+    'subtitle' => 'Tugaskan user yang sudah ada ke toko.',
+])
+    <form method="POST" action="{{ route('superadmin.store-staff.store') }}" id="tambah-staff-form" class="space-y-5">
+        @csrf
+        <div>
+            <label class="block raliva-label mb-2">Pilih Toko</label>
+            <select name="store_id" class="raliva-select" required>
+                <option value="">-- Pilih Toko --</option>
+                @foreach ($stores as $store)
+                    <option value="{{ $store->store_id }}">{{ $store->nama_toko }}</option>
+                @endforeach
+            </select>
         </div>
-        <form method="POST" action="{{ route('superadmin.store-staff.store') }}" class="p-6 space-y-5">
-            @csrf
-            <div>
-                <label class="block raliva-label mb-2">Pilih Toko</label>
-                <select name="store_id" class="raliva-select" required>
-                    <option value="">-- Pilih Toko --</option>
-                    @foreach ($stores as $store)
-                        <option value="{{ $store->store_id }}">{{ $store->nama_toko }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block raliva-label mb-2">Pilih User</label>
-                <select name="user_id" class="raliva-select" required>
-                    <option value="">-- Pilih User --</option>
-                    @foreach ($users as $user)
-                        <option value="{{ $user->user_id }}">{{ $user->nama_lengkap }} ({{ $roleLabel[$user->role_id] ?? '-' }})</option>
-                    @endforeach
-                </select>
-                <p class="text-xs text-on-surface-variant mt-1">Hanya user dengan role Admin, Produksi, atau Gudang yang muncul.</p>
-            </div>
-            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                <button type="button" onclick="closeModal('modal-tambah-staff')" class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-[16px]">person_add</span>Tugaskan Staff
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+        <div>
+            <label class="block raliva-label mb-2">Pilih User</label>
+            <select name="user_id" class="raliva-select" required>
+                <option value="">-- Pilih User --</option>
+                @foreach ($users as $user)
+                    <option value="{{ $user->user_id }}">{{ $user->nama_lengkap }} ({{ $roleLabel[$user->role_id] ?? '-' }})</option>
+                @endforeach
+            </select>
+            <p class="text-xs text-on-surface-variant mt-1">Hanya user dengan role Admin, Produksi, atau Gudang yang muncul.</p>
+        </div>
+    </form>
+    @slot('footer')
+        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
+            <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+            <button type="submit" form="tambah-staff-form" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[16px]">person_add</span>Tugaskan Staff</button>
+        </div>
+    @endslot
+@endcomponent
 @endsection
 
 @push('scripts')

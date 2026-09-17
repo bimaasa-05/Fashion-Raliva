@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\EnsureRole;
 use App\Models\Role;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,7 +21,10 @@ class RegisterController extends Controller
             return redirect()->route(EnsureRole::homeRouteFor(Auth::user()->role?->nama_role));
         }
 
-        return view('customer.auth.register');
+        return view('customer.auth.register', [
+            'syaratKetentuan' => Setting::get(Setting::SYARAT_KETENTUAN, ''),
+            'kebijakanPrivasi' => Setting::get(Setting::KEBIJAKAN_PRIVASI, ''),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse

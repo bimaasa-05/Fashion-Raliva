@@ -213,136 +213,127 @@
         $oPelNama = $oPelanggan?->nama_lengkap ?? $order->checkout?->nama_penerima ?? '-';
         $oPelEmail = $oPelanggan?->email ?? $order->checkout?->email_pelanggan ?? '';
     @endphp
-    <div id="modal-order-{{ $order->order_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-        <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
-            <div class="flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border sticky top-0 bg-surface-container-lowest z-10">
-                <div>
-                    <p class="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider">Detail Pesanan</p>
-                    <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $order->nomor_order }}</h3>
-                </div>
-                <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
+    @component('SuperAdmin.partials.premium-modal', [
+        'id' => 'modal-order-' . $order->order_id,
+        'dataModal' => true,
+        'icon' => 'receipt_long',
+        'title' => 'Detail Pesanan',
+        'subtitle' => $order->nomor_order,
+        'size' => 'lg',
+    ])
+        <section>
+            <p class="font-label-sm text-[11px] uppercase tracking-widest text-gold-accent mb-4">Produk Dipesan ({{ $order->jumlah_produk }} item)</p>
+            <div class="flex items-center justify-between text-[10px] uppercase tracking-wider text-on-surface-variant px-1 mb-2">
+                <span>Produk</span>
+                <span>Subtotal</span>
             </div>
-
-            <div class="p-6 space-y-7">
-                <section>
-                    <p class="font-label-sm text-[11px] uppercase tracking-widest text-gold-accent mb-4">Produk Dipesan ({{ $order->jumlah_produk }} item)</p>
-                    <div class="flex items-center justify-between text-[10px] uppercase tracking-wider text-on-surface-variant px-1 mb-2">
-                        <span>Produk</span>
-                        <span>Subtotal</span>
-                    </div>
-                    <ul class="space-y-3">
-                        @forelse($order->items as $it)
-                            <li class="flex items-start justify-between gap-3 border border-muted-border rounded-lg p-3 bg-surface-container-low">
-                                <div class="min-w-0 flex-1">
-                                    <p class="font-body-md text-sm text-on-surface">{{ $it->nama_produk_snapshot ?: ($it->productVariant?->product?->nama_produk ?? '-') }}</p>
-                                    <p class="text-xs text-on-surface-variant mt-0.5">
-                                        @if($it->productVariant)
-                                            {{ $it->productVariant->warna ?: '-' }} &bull; {{ $it->productVariant->ukuran ?: '-' }}
-                                        @endif
-                                        <span class="text-on-surface">&times; {{ $it->quantity }}</span>
-                                    </p>
-                                    @if($it->catatan_custom)
-                                        <p class="text-xs text-on-surface-variant mt-0.5">Catatan: {{ Str::limit($it->catatan_custom, 60) }}</p>
-                                    @endif
-                                    @if((float) $it->diskon > 0)
-                                        <p class="text-xs text-secondary mt-1">Diskon produk: <b>&minus; Rp {{ number_format((float) $it->diskon, 0, ',', '.') }}</b></p>
-                                    @endif
-                                </div>
-                                <div class="text-right shrink-0">
-                                    <p class="text-on-surface-variant text-xs whitespace-nowrap">Rp {{ number_format((float) $it->harga_snapshot, 0, ',', '.') }} &times; {{ $it->quantity }}</p>
-                                    <p class="font-bold text-sm text-on-surface whitespace-nowrap">Rp {{ number_format((float) $it->subtotal, 0, ',', '.') }}</p>
-                                </div>
-                            </li>
-                        @empty
-                            <li class="text-sm text-on-surface-variant">Tidak ada item.</li>
-                        @endforelse
-                    </ul>
-                </section>
-
-                <section>
-                    <p class="font-label-sm text-[11px] uppercase tracking-widest text-gold-accent mb-3">Ringkasan Pembayaran</p>
-                    <dl class="space-y-2.5 font-body-md text-sm">
-                        <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
-                            <dt class="text-on-surface-variant shrink-0">Toko</dt>
-                            <dd class="text-on-surface text-right">{{ $order->store->nama_toko ?? '-' }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
-                            <dt class="text-on-surface-variant shrink-0">Pelanggan</dt>
-                            <dd class="text-on-surface text-right">{{ $oPelNama }} @if($oPelEmail)<span class="text-on-surface-variant text-xs">({{ $oPelEmail }})</span>@endif</dd>
-                        </div>
-                        <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
-                            <dt class="text-on-surface-variant shrink-0">Subtotal</dt>
-                            <dd class="text-on-surface text-right">Rp {{ number_format((float) $order->subtotal, 0, ',', '.') }}</dd>
-                        </div>
-                        <div class="pb-3 border-b border-muted-border space-y-1">
-                            <div class="flex justify-between gap-4">
-                                <dt class="text-on-surface-variant">Diskon</dt>
-                                <dd class="text-secondary text-right">
-                                    @if((float) $order->total_diskon > 0)
-                                        &minus; Rp {{ number_format((float) $order->total_diskon, 0, ',', '.') }}
-                                    @else
-                                        Rp 0
-                                    @endif
-                                </dd>
-                            </div>
-                            @php
-                                $diskons = $order->items->filter(fn ($i) => (float) $i->diskon > 0);
-                            @endphp
-                            @if($diskons->count())
-                                <ul class="text-xs text-on-surface-variant space-y-0.5">
-                                    @foreach($diskons as $d)
-                                        <li class="flex justify-between gap-4">
-                                            <span>{{ $d->nama_produk_snapshot }}</span>
-                                            <span class="shrink-0">&minus; Rp {{ number_format((float) $d->diskon, 0, ',', '.') }}</span>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            @else
-                                <p class="text-xs text-on-surface-variant">Tidak ada promo diterapkan pada pesanan ini.</p>
+            <ul class="space-y-3">
+                @forelse($order->items as $it)
+                    <li class="flex items-start justify-between gap-3 border border-muted-border rounded-lg p-3 bg-surface-container-low">
+                        <div class="min-w-0 flex-1">
+                            <p class="font-body-md text-sm text-on-surface">{{ $it->nama_produk_snapshot ?: ($it->productVariant?->product?->nama_produk ?? '-') }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">
+                                @if($it->productVariant)
+                                    {{ $it->productVariant->warna ?: '-' }} &bull; {{ $it->productVariant->ukuran ?: '-' }}
+                                @endif
+                                <span class="text-on-surface">&times; {{ $it->quantity }}</span>
+                            </p>
+                            @if($it->catatan_custom)
+                                <p class="text-xs text-on-surface-variant mt-0.5">Catatan: {{ Str::limit($it->catatan_custom, 60) }}</p>
+                            @endif
+                            @if((float) $it->diskon > 0)
+                                <p class="text-xs text-secondary mt-1">Diskon produk: <b>&minus; Rp {{ number_format((float) $it->diskon, 0, ',', '.') }}</b></p>
                             @endif
                         </div>
-                        <div class="pb-3 border-b border-muted-border">
-                            <div class="flex justify-between gap-4">
-                                <dt class="text-on-surface-variant shrink-0">Pajak</dt>
-                                <dd class="text-on-surface text-right">Rp {{ number_format((float) $order->total_pajak, 0, ',', '.') }}</dd>
-                            </div>
-                            <p class="text-xs text-on-surface-variant mt-1">PPN {{ $pajakPersen }}% diterapkan otomatis dari subtotal pada checkout &amp; pesanan baru.</p>
+                        <div class="text-right shrink-0">
+                            <p class="text-on-surface-variant text-xs whitespace-nowrap">Rp {{ number_format((float) $it->harga_snapshot, 0, ',', '.') }} &times; {{ $it->quantity }}</p>
+                            <p class="font-bold text-sm text-on-surface whitespace-nowrap">Rp {{ number_format((float) $it->subtotal, 0, ',', '.') }}</p>
                         </div>
-                        <div class="pb-3 border-b border-muted-border">
-                            <div class="flex justify-between gap-4">
-                                <dt class="text-on-surface-variant shrink-0">Biaya Layanan</dt>
-                                <dd class="text-on-surface text-right">Rp {{ number_format((float) $order->biaya_layanan, 0, ',', '.') }}</dd>
-                            </div>
-                            <p class="text-xs text-on-surface-variant mt-1">Biaya layanan diterapkan otomatis sesuai setting (Rp 0 jika belum diatur).</p>
-                        </div>
-                        <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
-                            <dt class="text-on-surface-variant shrink-0">Ongkir</dt>
-                            <dd class="text-on-surface text-right">Rp {{ number_format((float) $order->total_ongkir, 0, ',', '.') }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
-                            <dt class="text-on-surface-variant shrink-0">Status</dt>
-                            <dd class="text-right"><span class="inline-flex items-center px-2 py-1 rounded {{ $oSt[1] }} text-xs uppercase">{{ $oSt[0] }}</span></dd>
-                        </div>
-                        <div class="flex justify-between gap-4">
-                            <dt class="text-on-surface-variant shrink-0">Waktu</dt>
-                            <dd class="text-on-surface text-right">{{ $order->waktu_relatif }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-4 pt-2 border-t border-muted-border">
-                            <dt class="font-bold text-on-surface">Total Bayar</dt>
-                            <dd class="font-bold text-gold-accent text-right text-base">Rp {{ number_format((float) $order->grand_total, 0, ',', '.') }}</dd>
-                        </div>
-                    </dl>
-                </section>
-            </div>
+                    </li>
+                @empty
+                    <li class="text-sm text-on-surface-variant">Tidak ada item.</li>
+                @endforelse
+            </ul>
+        </section>
 
-            <div class="border-t border-muted-border p-4">
-                <button type="button" data-modal-close class="w-full py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tutup</button>
-            </div>
-        </div>
-    </div>
+        <section>
+            <p class="font-label-sm text-[11px] uppercase tracking-widest text-gold-accent mb-3">Ringkasan Pembayaran</p>
+            <dl class="space-y-2.5 font-body-md text-sm">
+                <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
+                    <dt class="text-on-surface-variant shrink-0">Toko</dt>
+                    <dd class="text-on-surface text-right">{{ $order->store->nama_toko ?? '-' }}</dd>
+                </div>
+                <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
+                    <dt class="text-on-surface-variant shrink-0">Pelanggan</dt>
+                    <dd class="text-on-surface text-right">{{ $oPelNama }} @if($oPelEmail)<span class="text-on-surface-variant text-xs">({{ $oPelEmail }})</span>@endif</dd>
+                </div>
+                <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
+                    <dt class="text-on-surface-variant shrink-0">Subtotal</dt>
+                    <dd class="text-on-surface text-right">Rp {{ number_format((float) $order->subtotal, 0, ',', '.') }}</dd>
+                </div>
+                <div class="pb-3 border-b border-muted-border space-y-1">
+                    <div class="flex justify-between gap-4">
+                        <dt class="text-on-surface-variant">Diskon</dt>
+                        <dd class="text-secondary text-right">
+                            @if((float) $order->total_diskon > 0)
+                                &minus; Rp {{ number_format((float) $order->total_diskon, 0, ',', '.') }}
+                            @else
+                                Rp 0
+                            @endif
+                        </dd>
+                    </div>
+                    @php
+                        $diskons = $order->items->filter(fn ($i) => (float) $i->diskon > 0);
+                    @endphp
+                    @if($diskons->count())
+                        <ul class="text-xs text-on-surface-variant space-y-0.5">
+                            @foreach($diskons as $d)
+                                <li class="flex justify-between gap-4">
+                                    <span>{{ $d->nama_produk_snapshot }}</span>
+                                    <span class="shrink-0">&minus; Rp {{ number_format((float) $d->diskon, 0, ',', '.') }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p class="text-xs text-on-surface-variant">Tidak ada promo diterapkan pada pesanan ini.</p>
+                    @endif
+                </div>
+                <div class="pb-3 border-b border-muted-border">
+                    <div class="flex justify-between gap-4">
+                        <dt class="text-on-surface-variant shrink-0">Pajak</dt>
+                        <dd class="text-on-surface text-right">Rp {{ number_format((float) $order->total_pajak, 0, ',', '.') }}</dd>
+                    </div>
+                    <p class="text-xs text-on-surface-variant mt-1">PPN {{ $pajakPersen }}% diterapkan otomatis dari subtotal pada checkout &amp; pesanan baru.</p>
+                </div>
+                <div class="pb-3 border-b border-muted-border">
+                    <div class="flex justify-between gap-4">
+                        <dt class="text-on-surface-variant shrink-0">Biaya Layanan</dt>
+                        <dd class="text-on-surface text-right">Rp {{ number_format((float) $order->biaya_layanan, 0, ',', '.') }}</dd>
+                    </div>
+                    <p class="text-xs text-on-surface-variant mt-1">Biaya layanan diterapkan otomatis sesuai setting (Rp 0 jika belum diatur).</p>
+                </div>
+                <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
+                    <dt class="text-on-surface-variant shrink-0">Ongkir</dt>
+                    <dd class="text-on-surface text-right">Rp {{ number_format((float) $order->total_ongkir, 0, ',', '.') }}</dd>
+                </div>
+                <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
+                    <dt class="text-on-surface-variant shrink-0">Status</dt>
+                    <dd class="text-right"><span class="inline-flex items-center px-2 py-1 rounded {{ $oSt[1] }} text-xs uppercase">{{ $oSt[0] }}</span></dd>
+                </div>
+                <div class="flex justify-between gap-4">
+                    <dt class="text-on-surface-variant shrink-0">Waktu</dt>
+                    <dd class="text-on-surface text-right">{{ $order->waktu_relatif }}</dd>
+                </div>
+                <div class="flex justify-between gap-4 pt-2 border-t border-muted-border">
+                    <dt class="font-bold text-on-surface">Total Bayar</dt>
+                    <dd class="font-bold text-gold-accent text-right text-base">Rp {{ number_format((float) $order->grand_total, 0, ',', '.') }}</dd>
+                </div>
+            </dl>
+        </section>
+    @slot('footer')
+        <button type="button" data-modal-close class="btn-modal btn-modal-primary w-full">Tutup</button>
+    @endslot
+    @endcomponent
 @endforeach
 @endsection
 

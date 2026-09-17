@@ -351,124 +351,126 @@
 </div>
 
 <!-- Modal Form Kategori (Tambah/Edit) -->
-<form method="POST" action="" id="kategori-form" onsubmit="closeKategoriModal()">
-    @csrf
-    <div id="modal-form-kategori" data-modal class="fixed inset-0 z-[70] hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close onclick="closeKategoriModal()"></div>
-        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
-            <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-                <div>
-                    <h3 id="kategori-modal-title" class="font-title-md text-title-md text-on-surface premium-heading">Tambah Kategori Baru</h3>
-                    <p id="kategori-modal-sub" class="text-on-surface-variant font-body-md text-sm mt-1">Kategori berlaku untuk seluruh toko di platform.</p>
-                </div>
-                <button type="button" onclick="closeKategoriModal()" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
-            </div>
-            <div class="p-6 space-y-5">
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKategori">Nama Kategori</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKategori" name="nama_kategori" type="text" maxlength="100" placeholder="Misal: Pakaian, Aksesoris" required />
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="parentId">Kategori Induk (opsional)</label>
-                    <select name="parent_id" id="parentId" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors">
-                        <option value="">— Tanpa induk (kategori utama) —</option>
-                        @foreach ($parents as $induk)
-                            <option value="{{ $induk->category_id }}">{{ $induk->nama_kategori }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsiKategori">Deskripsi</label>
-                    <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsiKategori" name="deskripsi" rows="3" maxlength="500" placeholder="Deskripsi kategori..."></textarea>
-                </div>
-                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                    <button type="button" onclick="closeKategoriModal()" class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                    <button type="submit" id="kategori-submit-btn" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tambah Kategori</button>
-                </div>
-            </div>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'modal-form-kategori',
+    'dataModal' => true,
+    'icon' => 'category',
+    'title' => 'Tambah Kategori Baru',
+    'titleId' => 'kategori-modal-title',
+    'subtitle' => 'Kategori berlaku untuk seluruh toko di platform.',
+    'subtitleId' => 'kategori-modal-sub',
+    'size' => 'lg',
+    'close' => 'closeKategoriModal',
+])
+    <form method="POST" action="" id="kategori-form" onsubmit="closeKategoriModal()">
+        @csrf
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKategori">Nama Kategori</label>
+            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKategori" name="nama_kategori" type="text" maxlength="100" placeholder="Misal: Pakaian, Aksesoris" required />
         </div>
-    </div>
-</form>
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="parentId">Kategori Induk (opsional)</label>
+            <select name="parent_id" id="parentId" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors">
+                <option value="">— Tanpa induk (kategori utama) —</option>
+                @foreach ($parents as $induk)
+                    <option value="{{ $induk->category_id }}">{{ $induk->nama_kategori }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsiKategori">Deskripsi</label>
+            <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsiKategori" name="deskripsi" rows="3" maxlength="500" placeholder="Deskripsi kategori..."></textarea>
+        </div>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4">
+                <button type="button" onclick="closeKategoriModal()" class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="kategori-form" id="kategori-submit-btn" class="btn-modal btn-modal-primary">Tambah Kategori</button>
+            </div>
+        @endslot
+    </form>
+@endcomponent
 
 <!-- Modal Hapus Kategori -->
-<form method="POST" action="" id="hapus-kategori-form" onsubmit="closeHapusModal()">
-    @csrf
-    <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="hapusKategoriModal" onclick="if (event.target === this) closeHapusModal()">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                    <span class="material-symbols-outlined text-error text-[28px]">delete_forever</span>
-                </div>
-                <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Hapus Kategori</h3>
-                <p class="text-on-surface-variant text-sm text-center mb-4">Kategori <span id="hapus-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.</p>
-                <div id="hapus-warning" class="hidden mb-4"></div>
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeHapusModal()">Batal</button>
-                    <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Hapus</button>
-                </div>
-            </div>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'hapusKategoriModal',
+    'zIndex' => 70,
+    'close' => 'closeHapusModal',
+])
+    <form method="POST" action="" id="hapus-kategori-form" onsubmit="closeHapusModal()" class="p-6 space-y-4">
+        @csrf
+        <div class="text-center">
+            <h3 class="font-title-md text-title-md text-on-surface">Hapus Kategori</h3>
+            <p class="text-on-surface-variant text-sm mt-2 mb-4">Kategori <span id="hapus-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.</p>
         </div>
-    </div>
-</form>
+        <div id="hapus-warning" class="hidden"></div>
+    </form>
+    @slot('footer')
+        <div class="flex space-x-3">
+            <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusModal()">Batal</button>
+            <button type="submit" form="hapus-kategori-form" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
+        </div>
+    @endslot
+@endcomponent
 
 <!-- Modal Form Kategori Toko (Tambah/Edit) -->
-<form method="POST" action="" id="kategori-toko-form" onsubmit="closeKategoriTokoModal()">
-    @csrf
-    <div id="modal-form-kategori-toko" data-modal class="fixed inset-0 z-[70] hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close onclick="closeKategoriTokoModal()"></div>
-        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
-            <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-                <div>
-                    <h3 id="kategori-toko-modal-title" class="font-title-md text-title-md text-on-surface premium-heading">Tambah Kategori Toko</h3>
-                    <p id="kategori-toko-modal-sub" class="text-on-surface-variant font-body-md text-sm mt-1">Kategori toko yang owner harus pilih saat mengisi data toko.</p>
-                </div>
-                <button type="button" onclick="closeKategoriTokoModal()" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
-            </div>
-            <div class="p-6 space-y-5">
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKategoriToko">Nama Kategori Toko</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKategoriToko" name="nama_kategori" type="text" maxlength="100" placeholder="Misal: Fashion & Lifestyle" required />
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsiKategoriToko">Deskripsi</label>
-                    <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsiKategoriToko" name="deskripsi" rows="3" maxlength="500" placeholder="Deskripsi kategori toko..."></textarea>
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="statusKategoriToko">Status</label>
-                    <select name="status" id="statusKategoriToko" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors">
-                        <option value="aktif">Aktif</option>
-                        <option value="nonaktif">Nonaktif</option>
-                    </select>
-                </div>
-                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                    <button type="button" onclick="closeKategoriTokoModal()" class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                    <button type="submit" id="kategori-toko-submit-btn" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tambah Kategori Toko</button>
-                </div>
-            </div>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'modal-form-kategori-toko',
+    'dataModal' => true,
+    'icon' => 'storefront',
+    'title' => 'Tambah Kategori Toko',
+    'titleId' => 'kategori-toko-modal-title',
+    'subtitle' => 'Kategori toko yang owner harus pilih saat mengisi data toko.',
+    'subtitleId' => 'kategori-toko-modal-sub',
+    'size' => 'lg',
+    'close' => 'closeKategoriTokoModal',
+])
+    <form method="POST" action="" id="kategori-toko-form" onsubmit="closeKategoriTokoModal()">
+        @csrf
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKategoriToko">Nama Kategori Toko</label>
+            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKategoriToko" name="nama_kategori" type="text" maxlength="100" placeholder="Misal: Fashion & Lifestyle" required />
         </div>
-    </div>
-</form>
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsiKategoriToko">Deskripsi</label>
+            <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsiKategoriToko" name="deskripsi" rows="3" maxlength="500" placeholder="Deskripsi kategori toko..."></textarea>
+        </div>
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="statusKategoriToko">Status</label>
+            <select name="status" id="statusKategoriToko" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors">
+                <option value="aktif">Aktif</option>
+                <option value="nonaktif">Nonaktif</option>
+            </select>
+        </div>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4">
+                <button type="button" onclick="closeKategoriTokoModal()" class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="kategori-toko-form" id="kategori-toko-submit-btn" class="btn-modal btn-modal-primary">Tambah Kategori Toko</button>
+            </div>
+        @endslot
+    </form>
+@endcomponent
 
 <!-- Modal Hapus Kategori Toko -->
-<form method="POST" action="" id="hapus-kategori-toko-form" onsubmit="closeHapusKategoriTokoModal()">
-    @csrf
-    <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="hapusKategoriTokoModal" onclick="if (event.target === this) closeHapusKategoriTokoModal()">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                    <span class="material-symbols-outlined text-error text-[28px]">delete_forever</span>
-                </div>
-                <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Hapus Kategori Toko</h3>
-                <p class="text-on-surface-variant text-sm text-center mb-4">Kategori toko <span id="hapus-toko-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.</p>
-                <div id="hapus-toko-warning" class="hidden mb-4"></div>
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeHapusKategoriTokoModal()">Batal</button>
-                    <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Hapus</button>
-                </div>
-            </div>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'hapusKategoriTokoModal',
+    'zIndex' => 70,
+    'close' => 'closeHapusKategoriTokoModal',
+])
+    <form method="POST" action="" id="hapus-kategori-toko-form" onsubmit="closeHapusKategoriTokoModal()" class="p-6 space-y-4">
+        @csrf
+        <div class="text-center">
+            <h3 class="font-title-md text-title-md text-on-surface">Hapus Kategori Toko</h3>
+            <p class="text-on-surface-variant text-sm mt-2 mb-4">Kategori toko <span id="hapus-toko-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.</p>
         </div>
-    </div>
-</form>
+        <div id="hapus-toko-warning" class="hidden"></div>
+    </form>
+    @slot('footer')
+        <div class="flex space-x-3">
+            <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusKategoriTokoModal()">Batal</button>
+            <button type="submit" form="hapus-kategori-toko-form" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
+        </div>
+    @endslot
+@endcomponent
 @endsection
 
 @push('scripts')

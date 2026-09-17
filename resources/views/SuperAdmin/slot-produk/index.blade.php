@@ -390,114 +390,115 @@
 </div>
 
 <!-- Tambah Manual Modal -->
-<div id="modal-tambah" class="fixed inset-0 z-[70] hidden">
-    <div class="absolute inset-0 bg-black/50" onclick="closeModal('modal-tambah')"></div>
-    <div class="relative mx-auto w-full max-w-md mt-[10vh] bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[80vh] overflow-y-auto">
-        <div class="flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-            <div>
-                <p class="raliva-label text-gold-accent">Tambah Slot Manual</p>
-                <h3 id="tambah-toko-nama" class="font-title-md text-title-md text-on-surface premium-heading mt-1">-</h3>
-            </div>
-            <button type="button" onclick="closeModal('modal-tambah')" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'modal-tambah',
+    'dataModal' => true,
+    'icon' => 'add_box',
+    'title' => 'Tambah Slot Manual',
+    'subtitle' => '<span id="tambah-toko-nama">-</span>',
+    'subtitleRaw' => true,
+])
+    <form id="tambah-form" method="POST" action="" class="space-y-5">
+        @csrf
+        <div>
+            <label class="block raliva-label mb-2">Jumlah Slot</label>
+            <input type="number" name="jumlah_slot" min="1" max="100000" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
         </div>
-        <form id="tambah-form" method="POST" action="" class="p-6 space-y-5">
-            @csrf
-            <div>
-                <label class="block raliva-label mb-2">Jumlah Slot</label>
-                <input type="number" name="jumlah_slot" min="1" max="100000" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
+        <div>
+            <label class="block raliva-label mb-2">Keterangan (opsional)</label>
+            <textarea name="keterangan" rows="2" maxlength="500" class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors"></textarea>
+        </div>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="tambah-form" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[16px]">add</span>Tambah Slot</button>
             </div>
-            <div>
-                <label class="block raliva-label mb-2">Keterangan (opsional)</label>
-                <textarea name="keterangan" rows="2" maxlength="500" class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors"></textarea>
-            </div>
-            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                <button type="button" onclick="closeModal('modal-tambah')" class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[16px]">add</span>Tambah Slot</button>
-            </div>
-        </form>
-    </div>
-</div>
+        @endslot
+    </form>
+@endcomponent
 
 <!-- Tambah Paket Modal -->
-<div id="modal-tambah-paket" class="fixed inset-0 z-[70] hidden">
-    <div class="absolute inset-0 bg-black/50" onclick="closeModal('modal-tambah-paket')"></div>
-    <div class="relative mx-auto w-full max-w-md mt-[10vh] bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[80vh] overflow-y-auto">
-        <div class="flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-            <div>
-                <p class="raliva-label text-gold-accent">Paket Slot</p>
-                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">Tambah Paket Baru</h3>
-            </div>
-            <button type="button" onclick="closeModal('modal-tambah-paket')" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'modal-tambah-paket',
+    'dataModal' => true,
+    'icon' => 'inventory_2',
+    'title' => 'Tambah Paket Baru',
+    'subtitle' => 'Paket Slot',
+])
+    <form method="POST" action="{{ route('superadmin.slot-produk.paket.store') }}" id="tambah-paket-form" class="space-y-5">
+        @csrf
+        <div>
+            <label class="block raliva-label mb-2">Nama Paket</label>
+            <input type="text" name="nama_paket" maxlength="100" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="contoh: Growth 10 Slot" />
         </div>
-        <form method="POST" action="{{ route('superadmin.slot-produk.paket.store') }}" class="p-6 space-y-5">
-            @csrf
+        <div class="grid grid-cols-2 gap-4">
             <div>
-                <label class="block raliva-label mb-2">Nama Paket</label>
-                <input type="text" name="nama_paket" maxlength="100" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="contoh: Growth 10 Slot" />
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block raliva-label mb-2">Harga (Rp)</label>
-                    <input type="number" name="harga" min="0" step="0.01" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
-                </div>
-                <div>
-                    <label class="block raliva-label mb-2">Jumlah Slot</label>
-                    <input type="number" name="jumlah_slot" min="1" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
-                </div>
+                <label class="block raliva-label mb-2">Harga (Rp)</label>
+                <input type="number" name="harga" min="0" step="0.01" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
             </div>
             <div>
-                <label class="block raliva-label mb-2">Durasi Berlaku (hari)</label>
-                <input type="number" name="durasi_hari" min="1" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
+                <label class="block raliva-label mb-2">Jumlah Slot</label>
+                <input type="number" name="jumlah_slot" min="1" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
             </div>
-            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                <button type="button" onclick="closeModal('modal-tambah-paket')" class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[16px]">add</span>Tambah Paket</button>
+        </div>
+        <div>
+            <label class="block raliva-label mb-2">Durasi Berlaku (hari)</label>
+            <input type="number" name="durasi_hari" min="1" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
+        </div>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="tambah-paket-form" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[16px]">add</span>Tambah Paket</button>
             </div>
-        </form>
-    </div>
-</div>
+        @endslot
+    </form>
+@endcomponent
 
 <!-- Tolak Permintaan Modal -->
-<div id="modal-tolak" class="fixed inset-0 z-[70] hidden">
-    <div class="absolute inset-0 bg-black/50" onclick="closeModal('modal-tolak')"></div>
-    <div class="relative mx-auto w-full max-w-md mt-[10vh] bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[80vh] overflow-y-auto">
-        <div class="flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-            <div>
-                <p class="raliva-label text-gold-accent">Tolak Permintaan</p>
-                <h3 id="tolak-toko-nama" class="font-title-md text-title-md text-on-surface premium-heading mt-1">-</h3>
-            </div>
-            <button type="button" onclick="closeModal('modal-tolak')" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'modal-tolak',
+    'dataModal' => true,
+    'icon' => 'block',
+    'title' => 'Tolak Permintaan',
+    'subtitle' => '<span id="tolak-toko-nama">-</span>',
+    'subtitleRaw' => true,
+])
+    <form id="tolak-form" method="POST" action="" class="space-y-5">
+        @csrf
+        <div>
+            <label class="block raliva-label mb-2">Alasan Penolakan</label>
+            <textarea name="alasan" rows="3" minlength="10" maxlength="1000" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error transition-colors" placeholder="Minimal 10 karakter"></textarea>
         </div>
-        <form id="tolak-form" method="POST" action="" class="p-6 space-y-5">
-            @csrf
-            <div>
-                <label class="block raliva-label mb-2">Alasan Penolakan</label>
-                <textarea name="alasan" rows="3" minlength="10" maxlength="1000" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error transition-colors" placeholder="Minimal 10 karakter"></textarea>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="tolak-form" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[16px]">block</span>Tolak</button>
             </div>
-            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                <button type="button" onclick="closeModal('modal-tolak')" class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                <button type="submit" class="py-3 px-6 bg-error text-on-error text-sm font-semibold rounded flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[16px]">block</span>Tolak</button>
-            </div>
-        </form>
-    </div>
-</div>
+        @endslot
+    </form>
+@endcomponent
 
 <!-- Modal Konfirmasi Slot (reusable) -->
-<div id="confirmSlotModal" class="fixed inset-0 z-[75] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeConfirmSlot()">
-    <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-        <div class="p-8">
-            <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-5">
-                <span class="material-symbols-outlined text-gold-accent text-[28px]">help</span>
-            </div>
-            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Konfirmasi</h3>
-            <p id="confirm-slot-desc" class="text-on-surface-variant text-sm text-center mb-4">Lanjutkan aksi ini?</p>
-            <div class="flex space-x-3">
-                <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeConfirmSlot()">Batal</button>
-                <button type="button" id="confirm-slot-submit" class="flex-1 bg-deep-onyx text-on-primary font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-black transition-colors rounded-lg btn-premium">Ya, Lanjutkan</button>
-            </div>
-        </div>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'confirmSlotModal',
+    'icon' => 'help',
+    'iconBox' => 'bg-gold-accent/20 border-gold-accent/30',
+    'iconColor' => 'text-gold-accent',
+    'zIndex' => 75,
+    'close' => 'closeConfirmSlot',
+    'dataModal' => true,
+])
+    <div class="p-6">
+        <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Konfirmasi</h3>
+        <p id="confirm-slot-desc" class="text-on-surface-variant text-sm text-center mb-6">Lanjutkan aksi ini?</p>
     </div>
-</div>
+    @slot('footer')
+        <div class="flex space-x-3">
+            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeConfirmSlot()">Batal</button>
+            <button type="button" id="confirm-slot-submit" class="flex-1 btn-modal btn-modal-primary">Ya, Lanjutkan</button>
+        </div>
+    @endslot
+@endcomponent
 @endsection
 
 @push('scripts')

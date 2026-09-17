@@ -74,6 +74,7 @@ use App\Http\Controllers\SuperAdmin\GudangController;
 use App\Http\Controllers\SuperAdmin\KategoriProdukController;
 use App\Http\Controllers\SuperAdmin\StoreCategoryController;
 use App\Http\Controllers\SuperAdmin\KomisiGlobalController;
+use App\Http\Controllers\SuperAdmin\SupplierController as SaSupplierController;
 use App\Http\Controllers\SuperAdmin\KomplainController as SaKomplainController;
 use App\Http\Controllers\SuperAdmin\KurirController;
 use App\Http\Controllers\SuperAdmin\LaporanController;
@@ -323,6 +324,7 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/produksi/{productionOrder}/detail', [ProduksiController::class, 'detailJson'])->name('produksi.detail');
     Route::get('/gudang', [GudangController::class, 'index'])->name('gudang');
     Route::get('/gudang/{warehouse}/detail', [GudangController::class, 'detailJson'])->name('gudang.detail');
+    Route::get('/supplier', [SaSupplierController::class, 'index'])->name('supplier');
     Route::get('/saldo-toko', [SaldoTokoController::class, 'index'])->name('saldo-toko');
     Route::get('/produk', [ProdukController::class, 'index'])->name('produk');
     Route::get('/ulasan-produk-toko', [UlasanProdukTokoController::class, 'index'])->name('ulasan-produk-toko');
@@ -503,9 +505,6 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::put('/profil/password', [OwnerProfilController::class, 'updatePassword'])->name('profil.password');
     Route::post('/profil/foto', [OwnerProfilController::class, 'updatePhoto'])->name('profil.foto');
     Route::put('/pengaturan-toko', [DataTokoController::class, 'update'])->name('pengaturan-toko.update');
-    Route::post('/pengembalian-dana/{refund}/setujui', [OwnerPengembalianDanaController::class, 'setujui'])->name('pengembalian-dana.setujui');
-    Route::post('/pengembalian-dana/{refund}/tolak', [OwnerPengembalianDanaController::class, 'tolak'])->name('pengembalian-dana.tolak');
-    Route::post('/pengembalian-dana/{refund}/selesaikan', [OwnerPengembalianDanaController::class, 'selesaikan'])->name('pengembalian-dana.selesaikan');
 });
 
 Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi', 'store-active'])->group(function () {

@@ -475,105 +475,113 @@
 </div>
 
 <!-- Modal Konfirmasi Nonaktifkan/Aktifkan (cascade info) -->
-<div id="confirmNonaktifkanModal" class="fixed inset-0 z-[75] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeConfirmNonaktifkan()">
-    <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-        <div class="p-8">
-            <div id="confirm-nonaktifkan-icon" class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                <span id="confirm-nonaktifkan-icon-sym" class="material-symbols-outlined text-error text-[28px]">block</span>
-            </div>
-            <h3 id="confirm-nonaktifkan-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">Nonaktifkan Pengguna?</h3>
-            <p id="confirm-nonaktifkan-desc" class="text-on-surface-variant text-sm text-center mb-4">Status akan diubah dan efek cascade akan dijelaskan di sini.</p>
-            <div class="flex space-x-3">
-                <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeConfirmNonaktifkan()">Batal</button>
-                <button type="button" id="confirm-nonaktifkan-submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Lanjutkan</button>
-            </div>
-        </div>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'confirmNonaktifkanModal',
+    'icon' => 'block',
+    'iconWrapId' => 'confirm-nonaktifkan-icon',
+    'iconSymId' => 'confirm-nonaktifkan-icon-sym',
+    'zIndex' => 75,
+    'close' => 'closeConfirmNonaktifkan',
+    'dataModal' => true,
+])
+    <div class="p-6">
+        <h3 id="confirm-nonaktifkan-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">Nonaktifkan Pengguna?</h3>
+        <p id="confirm-nonaktifkan-desc" class="text-on-surface-variant text-sm text-center mb-6">Status akan diubah dan efek cascade akan dijelaskan di sini.</p>
     </div>
-</div>
+    @slot('footer')
+        <div class="flex space-x-3">
+            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeConfirmNonaktifkan()">Batal</button>
+            <button type="button" id="confirm-nonaktifkan-submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Lanjutkan</button>
+        </div>
+    @endslot
+@endcomponent
 
 <!-- Modal Tambah/Edit Pengguna -->
 <form method="POST" action="" id="user-form" onsubmit="closeUserModal()">
     @csrf
-    <div id="modal-form-user" data-modal class="fixed inset-0 z-[70] hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close onclick="closeUserModal()"></div>
-        <div class="relative mx-auto mt-6 md:mt-10 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[90vh] overflow-y-auto">
-            <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-                <div>
-                    <h3 id="user-modal-title" class="font-title-md text-title-md text-on-surface premium-heading">Tambah Pengguna Baru</h3>
-                    <p id="user-modal-sub" class="text-on-surface-variant font-body-md text-sm mt-1">Lengkapi data untuk membuat akun baru.</p>
-                </div>
-                <button type="button" onclick="closeUserModal()" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+    @component('SuperAdmin.partials.premium-modal', [
+        'id' => 'modal-form-user',
+        'dataModal' => true,
+        'close' => 'closeUserModal',
+        'icon' => 'person_add',
+        'title' => 'Tambah Pengguna Baru',
+        'titleId' => 'user-modal-title',
+        'subtitle' => 'Lengkapi data untuk membuat akun baru.',
+        'subtitleId' => 'user-modal-sub',
+    ])
+        <div class="p-6 space-y-5">
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-nama">Nama Lengkap</label>
+                <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-nama" name="nama_lengkap" type="text" maxlength="150" placeholder="Masukkan nama lengkap" required />
             </div>
-            <div class="p-6 space-y-5">
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-email">Email</label>
+                <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-email" name="email" type="email" maxlength="150" placeholder="nama@email.com" required />
+            </div>
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-phone">Nomor Telepon</label>
+                <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-phone" name="nomor_telepon" type="tel" maxlength="30" placeholder="+62 812-3456-7890" />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-nama">Nama Lengkap</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-nama" name="nama_lengkap" type="text" maxlength="150" placeholder="Masukkan nama lengkap" required />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-role">Peran</label>
+                    <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors" id="form-role" name="role_id" required>
+                        @foreach ($roles as $role)
+                            <option value="{{ $role->role_id }}">{{ $role->nama_role }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-email">Email</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-email" name="email" type="email" maxlength="150" placeholder="nama@email.com" required />
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-phone">Nomor Telepon</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-phone" name="nomor_telepon" type="tel" maxlength="30" placeholder="+62 812-3456-7890" />
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-role">Peran</label>
-                        <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors" id="form-role" name="role_id" required>
-                            @foreach ($roles as $role)
-                                <option value="{{ $role->role_id }}">{{ $role->nama_role }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-status">Status</label>
-                        <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors" id="form-status" name="status" required>
-                            <option value="aktif">Aktif</option>
-                            <option value="nonaktif">Non-aktif</option>
-                            <option value="suspend">Suspend</option>
-                        </select>
-                    </div>
-                </div>
-                <div id="password-fields">
-                    <div>
-                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-password">Password</label>
-                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-password" name="password" type="password" minlength="8" placeholder="Minimal 8 karakter" />
-                        <p id="form-password-hint" class="text-on-surface-variant/60 text-xs mt-1 hidden">Kosongkan jika tidak ingin mengubah password.</p>
-                    </div>
-                    <div class="mt-4">
-                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-password-confirm">Konfirmasi Password</label>
-                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-password-confirm" name="password_confirmation" type="password" placeholder="Ulangi password" />
-                    </div>
-                </div>
-                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                    <button type="button" onclick="closeUserModal()" class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                    <button type="submit" id="user-submit-btn" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tambah Pengguna</button>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-status">Status</label>
+                    <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors" id="form-status" name="status" required>
+                        <option value="aktif">Aktif</option>
+                        <option value="nonaktif">Non-aktif</option>
+                        <option value="suspend">Suspend</option>
+                    </select>
                 </div>
             </div>
-        </div>
-    </div>
+            <div id="password-fields">
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-password">Password</label>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-password" name="password" type="password" minlength="8" placeholder="Minimal 8 karakter" />
+                    <p id="form-password-hint" class="text-on-surface-variant/60 text-xs mt-1 hidden">Kosongkan jika tidak ingin mengubah password.</p>
+                </div>
+                <div class="mt-4">
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-password-confirm">Konfirmasi Password</label>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-password-confirm" name="password_confirmation" type="password" placeholder="Ulangi password" />
+                </div>
+            </div>
+            </div>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
+                <button type="button" onclick="closeUserModal()" class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" id="user-submit-btn" class="btn-modal btn-modal-primary">Tambah Pengguna</button>
+            </div>
+        @endslot
+    @endcomponent
 </form>
 
 <!-- Modal Hapus Pengguna -->
 <form method="POST" action="" id="hapus-user-form" onsubmit="closeHapusModal()">
     @csrf
     @method('DELETE')
-    <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="hapusUserModal" onclick="if (event.target === this) closeHapusModal()">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                    <span class="material-symbols-outlined text-error text-[28px]">delete_forever</span>
-                </div>
-                <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Hapus Pengguna</h3>
-                <p class="text-on-surface-variant text-sm text-center mb-4">Pengguna <span id="hapus-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen dari sistem.</p>
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeHapusModal()">Batal</button>
-                    <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Hapus</button>
-                </div>
-            </div>
-        </div>
+    @component('SuperAdmin.partials.premium-confirm', [
+        'id' => 'hapusUserModal',
+        'icon' => 'delete_forever',
+        'close' => 'closeHapusModal',
+        'dataModal' => true,
+    ])
+        <div class="p-6">
+            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Hapus Pengguna</h3>
+            <p class="text-on-surface-variant text-sm text-center mb-6">Pengguna <span id="hapus-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen dari sistem.</p>
     </div>
+    @slot('footer')
+        <div class="flex space-x-3">
+            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeHapusModal()">Batal</button>
+            <button type="submit" class="flex-1 btn-modal btn-modal-danger">Ya, Hapus</button>
+        </div>
+    @endslot
+    @endcomponent
 </form>
 @endsection
 
@@ -1156,10 +1164,10 @@
             } else {
                 descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> akan menjadi <span class="font-bold text-error">nonaktif</span>.';
             }
-            iconWrap.className = 'w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5';
-            iconSym.className = 'material-symbols-outlined text-error text-[28px]';
+            iconWrap.className = 'w-12 h-12 rounded-full bg-error/25 border border-error/30 flex items-center justify-center';
+            iconSym.className = 'material-symbols-outlined text-[24px] text-error';
             iconSym.textContent = 'block';
-            submitBtn.className = 'flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium';
+            submitBtn.className = 'flex-1 btn-modal btn-modal-danger';
             submitBtn.textContent = 'Ya, Nonaktifkan';
         } else {
             titleEl.textContent = 'Aktifkan Pengguna?';
@@ -1169,10 +1177,10 @@
             } else {
                 descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> akan menjadi <span class="font-bold text-success">aktif</span>.';
             }
-            iconWrap.className = 'w-14 h-14 rounded-full bg-success/10 border border-success/25 flex items-center justify-center mx-auto mb-5';
-            iconSym.className = 'material-symbols-outlined text-success text-[28px]';
+            iconWrap.className = 'w-12 h-12 rounded-full bg-success/25 border border-success/30 flex items-center justify-center';
+            iconSym.className = 'material-symbols-outlined text-[24px] text-success';
             iconSym.textContent = 'check_circle';
-            submitBtn.className = 'flex-1 bg-success text-white font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium';
+            submitBtn.className = 'flex-1 btn-modal btn-modal-success';
             submitBtn.textContent = 'Ya, Aktifkan';
         }
 

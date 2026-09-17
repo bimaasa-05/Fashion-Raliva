@@ -164,86 +164,85 @@
 </div>
 
 <!-- Detail Modal -->
-<div id="detailModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeDetailModal()">
-    <div class="bg-surface-container-lowest w-full max-w-lg rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-        <!-- Header -->
-        <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-            <div>
-                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Detail Ulasan</h3>
-                <p class="text-on-surface-variant font-body-md text-sm mt-1">Informasi lengkap ulasan produk</p>
-            </div>
-            <button type="button" onclick="closeDetailModal()" class="text-on-surface-variant hover:text-on-surface transition-colors">
-                <span class="material-symbols-outlined">close</span>
-            </button>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'detailModal',
+    'dataModal' => true,
+    'close' => 'closeDetailModal',
+    'icon' => 'rate_review',
+    'title' => 'Detail Ulasan',
+    'subtitle' => 'Informasi lengkap ulasan produk',
+    'size' => 'lg',
+])
+    <!-- Reviewer info -->
+    <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-full bg-secondary-container/30 flex items-center justify-center shrink-0">
+            <span id="modal-initial" class="font-title-md text-title-md text-secondary">-</span>
         </div>
-        <!-- Body -->
-        <div class="p-6 space-y-5">
-            <!-- Reviewer info -->
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-full bg-secondary-container/30 flex items-center justify-center shrink-0">
-                    <span id="modal-initial" class="font-title-md text-title-md text-secondary">-</span>
-                </div>
-                <div class="min-w-0">
-                    <h4 id="modal-reviewer" class="font-title-md text-title-md text-on-surface truncate">-</h4>
-                    <p id="modal-email" class="text-on-surface-variant text-sm truncate">-</p>
-                </div>
-                <div class="ml-auto shrink-0">
-                    <span id="modal-status-badge" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase"></span>
-                </div>
-            </div>
-            <!-- Product & Store -->
-            <div class="grid grid-cols-2 gap-3">
-                <div class="p-3 border border-muted-border rounded-lg">
-                    <p class="text-on-surface-variant text-[10px] uppercase tracking-widest font-label-sm mb-1">Toko</p>
-                    <p id="modal-store" class="text-on-surface font-body-md text-sm truncate">-</p>
-                </div>
-                <div class="p-3 border border-muted-border rounded-lg">
-                    <p class="text-on-surface-variant text-[10px] uppercase tracking-widest font-label-sm mb-1">Produk</p>
-                    <p id="modal-product" class="text-on-surface font-body-md text-sm truncate">-</p>
-                </div>
-            </div>
-            <!-- Rating -->
-            <div class="text-center py-4 border-y border-muted-border">
-                <div id="modal-stars" class="flex items-center justify-center gap-1 mb-2"></div>
-                <p id="modal-rating-text" class="text-on-surface-variant text-sm"></p>
-            </div>
-            <!-- Ulasan -->
-            <div>
-                <p class="text-on-surface-variant text-[10px] uppercase tracking-widest font-label-sm mb-2">Ulasan</p>
-                <p id="modal-ulasan" class="text-on-surface font-body-md text-sm leading-relaxed">-</p>
-            </div>
-            <!-- Date -->
-            <div class="flex items-center gap-2 text-on-surface-variant text-xs">
-                <span class="material-symbols-outlined text-[14px]">schedule</span>
-                <span id="modal-date">-</span>
-            </div>
-            <!-- Action buttons -->
-            <div id="modal-actions" class="flex gap-3 pt-2">
-            </div>
+        <div class="min-w-0">
+            <h4 id="modal-reviewer" class="font-title-md text-title-md text-on-surface truncate">-</h4>
+            <p id="modal-email" class="text-on-surface-variant text-sm truncate">-</p>
+        </div>
+        <div class="ml-auto shrink-0">
+            <span id="modal-status-badge" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase"></span>
         </div>
     </div>
-</div>
+    <!-- Product & Store -->
+    <div class="grid grid-cols-2 gap-3">
+        <div class="p-3 border border-muted-border rounded-lg">
+            <p class="text-on-surface-variant text-[10px] uppercase tracking-widest font-label-sm mb-1">Toko</p>
+            <p id="modal-store" class="text-on-surface font-body-md text-sm truncate">-</p>
+        </div>
+        <div class="p-3 border border-muted-border rounded-lg">
+            <p class="text-on-surface-variant text-[10px] uppercase tracking-widest font-label-sm mb-1">Produk</p>
+            <p id="modal-product" class="text-on-surface font-body-md text-sm truncate">-</p>
+        </div>
+    </div>
+    <!-- Rating -->
+    <div class="text-center py-4 border-y border-muted-border">
+        <div id="modal-stars" class="flex items-center justify-center gap-1 mb-2"></div>
+        <p id="modal-rating-text" class="text-on-surface-variant text-sm"></p>
+    </div>
+    <!-- Ulasan -->
+    <div>
+        <p class="text-on-surface-variant text-[10px] uppercase tracking-widest font-label-sm mb-2">Ulasan</p>
+        <p id="modal-ulasan" class="text-on-surface font-body-md text-sm leading-relaxed">-</p>
+    </div>
+    <!-- Date -->
+    <div class="flex items-center gap-2 text-on-surface-variant text-xs">
+        <span class="material-symbols-outlined text-[14px]">schedule</span>
+        <span id="modal-date">-</span>
+    </div>
+    <!-- Action buttons -->
+    @slot('footer')
+        <div id="modal-actions" class="flex gap-3">
+        </div>
+    @endslot
+@endcomponent
 
 <!-- Toggle Status Modal -->
-<div id="toggleModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeToggleModal()">
-    <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-        <div class="p-8">
-            <div class="w-14 h-14 rounded-full bg-tertiary-container/30 border border-tertiary-container/50 flex items-center justify-center mx-auto mb-5">
-                <span class="material-symbols-outlined text-tertiary-container text-[28px]">warning</span>
-            </div>
-            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center" id="toggle-title">Ubah Status Ulasan</h3>
-            <p class="text-on-surface-variant text-sm text-center mb-4" id="toggle-message">-</p>
-            <form method="POST" action="" id="toggle-form">
-                @csrf
-                @method('PUT')
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeToggleModal()">Batal</button>
-                    <button type="submit" class="flex-1 bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Ubah</button>
-                </div>
-            </form>
-        </div>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'toggleModal',
+    'icon' => 'warning',
+    'iconBox' => 'bg-tertiary-container/30 border-tertiary-container/50',
+    'iconColor' => 'text-tertiary-container',
+    'close' => 'closeToggleModal',
+    'dataModal' => true,
+])
+    <div class="p-6">
+        <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center" id="toggle-title">Ubah Status Ulasan</h3>
+        <p class="text-on-surface-variant text-sm text-center mb-6" id="toggle-message">-</p>
     </div>
-</div>
+    @slot('footer')
+        <form method="POST" action="" id="toggle-form">
+            @csrf
+            @method('PUT')
+            <div class="flex space-x-3">
+                <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeToggleModal()">Batal</button>
+                <button type="submit" class="flex-1 btn-modal btn-modal-primary">Ya, Ubah</button>
+            </div>
+        </form>
+    @endslot
+@endcomponent
 @endsection
 
 @push('scripts')

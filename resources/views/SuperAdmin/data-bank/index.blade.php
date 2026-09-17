@@ -9,10 +9,6 @@
 
 @push('styles')
 <style>
-    .banner-gradient { background-image: linear-gradient(118deg, #141414 0%, #1f0c10 55%, #421329 100%); }
-    .banner-glow { position: absolute; border-radius: 9999px; pointer-events: none; }
-    .banner-glow-1 { top: -90px; right: -50px; width: 260px; height: 260px; background: rgba(139, 30, 63, 0.4); }
-    .banner-glow-2 { bottom: -120px; left: -60px; width: 220px; height: 220px; background: rgba(139, 30, 63, 0.24); }
     .banner-desc { font-size: 14px; color: rgba(255, 255, 255, 0.72); }
     .banner-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 9999px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.18); }
     .banner-badge .dot { width: 7px; height: 7px; border-radius: 9999px; animation: beat 1.6s ease-in-out infinite; }
@@ -27,9 +23,6 @@
     .tab-btn:hover { color: var(--color-on-surface); }
     .tab-btn.active { background: #141414; color: #fff; box-shadow: 0 8px 20px -10px rgb(17 17 17 / 0.45); }
     .tab-btn.active .material-symbols-outlined { color: var(--color-gold-accent); }
-
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 @endpush
 
@@ -105,7 +98,7 @@
                     <span class="material-symbols-outlined text-[18px]">add</span> Tambah Bank
                 </button>
             </div>
-            <div class="overflow-x-auto">
+            <div class="hidden md:block overflow-x-auto">
                 <table class="premium-table w-full text-sm">
                     <thead>
                         <tr class="text-left text-on-surface-variant border-b border-muted-border">
@@ -170,6 +163,60 @@
                     </tbody>
                 </table>
             </div>
+            <div class="md:hidden grid grid-cols-1 gap-gutter">
+                @forelse ($banks as $bank)
+                    @php $rek = $bank->platformBankAccounts->first(); @endphp
+                    <div class="rounded-xl border border-muted-border bg-surface-container-lowest card-premium p-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-10 h-10 rounded-xl bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-[20px] text-gold-accent">account_balance</span>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="font-semibold text-on-surface truncate">{{ $bank->nama_bank }}</p>
+                                    <p class="text-on-surface-variant text-xs mt-0.5 uppercase tracking-wider">{{ $bank->kode_bank }}</p>
+                                </div>
+                            </div>
+                            @if ($bank->status === 'aktif')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-secondary-container/20 text-secondary border-secondary/20 shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-error/10 text-error border-error/20 shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Nonaktif
+                                </span>
+                            @endif
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mt-4">
+                            <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
+                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">No. Rekening</p>
+                                <p class="text-sm font-semibold text-on-surface mt-0.5 tabular-nums break-all">{{ $rek?->nomor_rekening ?? '-' }}</p>
+                            </div>
+                            <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
+                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Pemilik</p>
+                                <p class="text-sm font-semibold text-on-surface mt-0.5 truncate">{{ $rek?->nama_pemilik ?? '-' }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end gap-1 mt-4 pt-3 border-t border-muted-border">
+                            <button onclick="editBank({{ $bank->bank_id }})" title="Edit bank" class="w-10 h-10 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-on-surface-variant hover:text-gold-accent flex items-center justify-center transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">edit</span>
+                            </button>
+                            <button type="button" onclick="confirmDeleteBank({{ $bank->bank_id }}, @js($bank->nama_bank))" title="Hapus bank" class="w-10 h-10 rounded-lg border border-transparent hover:border-error/30 hover:bg-error/10 text-on-surface-variant hover:text-error flex items-center justify-center transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                @empty
+                    <div class="rounded-xl border border-dashed border-muted-border bg-surface-container-lowest p-8 text-center">
+                        <div class="flex flex-col items-center gap-3">
+                            <div class="w-14 h-14 rounded-2xl bg-surface-container-low border border-muted-border flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[26px] text-on-surface-variant">account_balance</span>
+                            </div>
+                            <p class="font-body-md text-sm text-on-surface-variant">Belum ada bank terdaftar. Klik "Tambah Bank" untuk membuat metode transfer baru.</p>
+                        </div>
+                    </div>
+                @endforelse
+            </div>
         </div>
     </div>
 
@@ -190,7 +237,7 @@
                     <span class="material-symbols-outlined text-[18px]">add</span> Tambah E-Wallet
                 </button>
             </div>
-            <div class="overflow-x-auto">
+            <div class="hidden md:block overflow-x-auto">
                 <table class="premium-table w-full text-sm">
                     <thead>
                         <tr class="text-left text-on-surface-variant border-b border-muted-border">
@@ -253,6 +300,59 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+            <div class="md:hidden grid grid-cols-1 gap-gutter">
+                @forelse ($ewallets as $ew)
+                    <div class="rounded-xl border border-muted-border bg-surface-container-lowest card-premium p-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-10 h-10 rounded-xl bg-secondary-container/20 border border-secondary/20 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-[20px] text-secondary">account_balance_wallet</span>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="font-semibold text-on-surface truncate">{{ $ew->nama }}</p>
+                                    <p class="text-on-surface-variant text-xs mt-0.5 uppercase tracking-wider">{{ $ew->kode }}</p>
+                                </div>
+                            </div>
+                            @if ($ew->status === 'aktif')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-secondary-container/20 text-secondary border-secondary/20 shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-error/10 text-error border-error/20 shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Nonaktif
+                                </span>
+                            @endif
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mt-4">
+                            <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
+                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">No. Telepon</p>
+                                <p class="text-sm font-semibold text-on-surface mt-0.5 tabular-nums break-all">{{ $ew->nomor_rekening ?? '-' }}</p>
+                            </div>
+                            <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
+                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Pemilik</p>
+                                <p class="text-sm font-semibold text-on-surface mt-0.5 truncate">{{ $ew->nama_pemilik ?? '-' }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end gap-1 mt-4 pt-3 border-t border-muted-border">
+                            <button onclick="editEwallet({{ $ew->platform_bank_account_id }})" title="Edit e-wallet" class="w-10 h-10 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-on-surface-variant hover:text-gold-accent flex items-center justify-center transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">edit</span>
+                            </button>
+                            <button type="button" onclick="confirmDeleteEwallet({{ $ew->platform_bank_account_id }}, @js($ew->nama))" title="Hapus e-wallet" class="w-10 h-10 rounded-lg border border-transparent hover:border-error/30 hover:bg-error/10 text-on-surface-variant hover:text-error flex items-center justify-center transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                @empty
+                    <div class="rounded-xl border border-dashed border-muted-border bg-surface-container-lowest p-8 text-center">
+                        <div class="flex flex-col items-center gap-3">
+                            <div class="w-14 h-14 rounded-2xl bg-surface-container-low border border-muted-border flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[26px] text-on-surface-variant">account_balance_wallet</span>
+                            </div>
+                            <p class="font-body-md text-sm text-on-surface-variant">Belum ada e-wallet terdaftar. Klik "Tambah E-Wallet" untuk menambahkan.</p>
+                        </div>
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>
@@ -377,8 +477,8 @@
                     </select>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
-                    <button type="button" onclick="closeBankForm()" class="px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-gold-accent to-secondary text-on-primary text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                    <button type="button" onclick="closeBankForm()" class="btn-modal btn-modal-ghost">Batal</button>
+                    <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
                 </div>
             </form>
         </div>
@@ -442,8 +542,8 @@
                     </select>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
-                    <button type="button" onclick="closeEwalletForm()" class="px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-gold-accent to-secondary text-on-primary text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                    <button type="button" onclick="closeEwalletForm()" class="btn-modal btn-modal-ghost">Batal</button>
+                    <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
                 </div>
             </form>
         </div>
@@ -501,8 +601,8 @@
                     </select>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
-                    <button type="button" onclick="closeQrisForm()" class="px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-gold-accent to-secondary text-on-primary text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                    <button type="button" onclick="closeQrisForm()" class="btn-modal btn-modal-ghost">Batal</button>
+                    <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
                 </div>
             </form>
         </div>
@@ -530,8 +630,8 @@
                     <p id="hapus-bank-text" class="font-body-md text-sm text-on-surface-variant mt-2"></p>
                 </div>
                 <div class="flex items-center justify-center gap-3 pt-2">
-                    <button type="button" onclick="closeDeleteBank()" class="px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-error text-white text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
+                    <button type="button" onclick="closeDeleteBank()" class="btn-modal btn-modal-ghost">Batal</button>
+                    <button type="submit" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
                 </div>
             </form>
         </div>
@@ -559,8 +659,8 @@
                     <p id="hapus-ewallet-text" class="font-body-md text-sm text-on-surface-variant mt-2"></p>
                 </div>
                 <div class="flex items-center justify-center gap-3 pt-2">
-                    <button type="button" onclick="closeDeleteEwallet()" class="px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-error text-white text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
+                    <button type="button" onclick="closeDeleteEwallet()" class="btn-modal btn-modal-ghost">Batal</button>
+                    <button type="submit" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
                 </div>
             </form>
         </div>

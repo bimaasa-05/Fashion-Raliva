@@ -42,6 +42,7 @@ class OrderTrackingController extends Controller
     public function index(Request $request)
     {
         \App\Support\PaymentExpiry::expireOverdue();
+        \App\Support\OrderAutoComplete::selesaikanOtomatis();
 
         $orders = Auth::user()->orders()
             ->with([
@@ -141,12 +142,25 @@ class OrderTrackingController extends Controller
             'alasan' => ['required', 'string', 'min:20', 'max:2000'],
             'file_bukti_request' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:4096'],
             'deskripsi_bukti_request' => ['nullable', 'string', 'max:1000'],
+            'complaint_id' => ['nullable', 'integer', 'exists:complaints,complaint_id'],
         ]);
+
+        if (! empty($data['complaint_id'])) {
+            $complaint = \App\Models\Complaint::where('complaint_id', $data['complaint_id'])
+                ->where('user_id', Auth::id())
+                ->where('order_id', $order->order_id)
+                ->first();
+
+            if (! $complaint) {
+                return back()->with('toast', ['message' => 'Komplain tidak valid untuk pesanan ini.', 'icon' => 'info']);
+            }
+        }
 
         $path = $request->file('file_bukti_request')->store('bukti-refund-request/' . $order->order_id, 'public');
 
         $refund = \App\Models\Refund::create([
             'order_id' => $order->order_id,
+            'complaint_id' => $data['complaint_id'] ?? null,
             'payment_id' => $order->checkout?->payment?->payment_id,
             'requested_by' => Auth::id(),
             'tipe_refund' => $data['tipe_refund'],
