@@ -189,7 +189,6 @@
             <div class="flex-1 flex items-center justify-center gap-3 min-w-0">
                 <div data-sidebar-text>
                     <span class="font-display-lg text-title-md text-on-sidebar tracking-widest block leading-tight">RALIVA</span>
-                    <span class="text-gold-accent/80 font-label-sm text-[10px] uppercase tracking-wider">Super Admin</span>
                 </div>
             </div>
             <button type="button" id="sidebar-collapse" aria-expanded="true" aria-label="Perkecil menu sidebar" class="sidebar-collapse-btn hidden md:inline-flex w-8 h-8 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-gold-accent/70 hover:text-gold-accent items-center justify-center transition-colors shrink-0">

@@ -152,7 +152,6 @@
             <div class="flex-1 flex items-center justify-center gap-3 min-w-0">
                 <div data-sidebar-text>
                     <span class="font-display-lg text-title-md text-on-sidebar tracking-widest block leading-tight">RALIVA</span>
-                    <span class="text-gold-accent/80 font-label-sm text-[10px] uppercase tracking-wider">Owner</span>
                     @php $sbStore = \App\Support\SidebarContext::currentStore(); @endphp
                     @if ($sbStore?->kategori)
                         <span class="flex items-center gap-1.5 leading-tight max-w-[10rem] text-on-sidebar/60 font-body-md text-[11px] normal-case tracking-normal">
