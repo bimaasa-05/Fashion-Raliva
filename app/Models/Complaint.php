@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Complaint extends Model
 {
@@ -72,5 +73,10 @@ class Complaint extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(ComplaintMessage::class, 'complaint_id', 'complaint_id');
+    }
+
+    public function refund(): HasOne
+    {
+        return $this->hasOne(Refund::class, 'complaint_id', 'complaint_id');
     }
 }
