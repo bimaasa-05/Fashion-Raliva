@@ -36,8 +36,12 @@
     @endphp
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex flex-col sm:flex-row sm:items-center gap-6">
-            <div class="w-20 h-20 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-xl shrink-0 mx-auto sm:mx-0 border border-gold-accent/30">
-                {{ $oinit }}
+            <div class="w-20 h-20 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-xl shrink-0 mx-auto sm:mx-0 border border-gold-accent/30 overflow-hidden">
+                @if ($user->foto_profil_url)
+                    <img src="{{ $user->foto_profil_url }}" alt="{{ $onama }}" class="w-full h-full object-cover" />
+                @else
+                    {{ $oinit }}
+                @endif
             </div>
             <div class="flex-1 text-center sm:text-left">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3 justify-center sm:justify-start">
@@ -148,7 +152,7 @@
                 <div class="flex justify-center">
                     <div class="relative">
                         <div class="w-20 h-20 rounded-full overflow-hidden border border-outline-variant">
-                            <img id="ep-foto-preview" alt="Foto Profil" class="w-full h-full object-cover" src="{{ $user->foto_profil_url ?? ($user->foto_profil ? asset('storage/'.$user->foto_profil) : 'https://ui-avatars.com/api/?name='.urlencode($user->nama_lengkap ?? 'Owner').'&background=FF4F87&color=fff&size=80') }}" />
+                            <img id="ep-foto-preview" alt="Foto Profil" class="w-full h-full object-cover" src="{{ $user->foto_profil_url ?? 'https://ui-avatars.com/api/?name='.urlencode($user->nama_lengkap ?? 'Owner').'&background=FF4F87&color=fff&size=80' }}" />
                         </div>
                         <label for="ep-foto" class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center btn-premium shadow-md cursor-pointer" aria-label="Ubah Foto">
                             <span class="material-symbols-outlined text-[16px]">photo_camera</span>
@@ -222,7 +226,7 @@
                 @csrf
                 <div class="flex justify-center">
                     <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant">
-                        <img id="mf-preview" alt="Foto Profil" class="w-full h-full object-cover" src="{{ $user->foto_profil_url ?? ($user->foto_profil ? asset('storage/'.$user->foto_profil) : 'https://ui-avatars.com/api/?name='.urlencode($user->nama_lengkap ?? 'Owner').'&background=FF4F87&color=fff&size=96') }}" />
+                        <img id="mf-preview" alt="Foto Profil" class="w-full h-full object-cover" src="{{ $user->foto_profil_url ?? 'https://ui-avatars.com/api/?name='.urlencode($user->nama_lengkap ?? 'Owner').'&background=FF4F87&color=fff&size=96' }}" />
                     </div>
                 </div>
                 <div>
