@@ -105,7 +105,7 @@
                     <span class="material-symbols-outlined text-[18px]">add</span> Tambah Bank
                 </button>
             </div>
-            <div class="overflow-x-auto">
+            <div class="hidden md:block overflow-x-auto">
                 <table class="premium-table w-full text-sm">
                     <thead>
                         <tr class="text-left text-on-surface-variant border-b border-muted-border">
@@ -170,6 +170,60 @@
                     </tbody>
                 </table>
             </div>
+            <div class="md:hidden grid grid-cols-1 gap-gutter">
+                @forelse ($banks as $bank)
+                    @php $rek = $bank->platformBankAccounts->first(); @endphp
+                    <div class="rounded-xl border border-muted-border bg-surface-container-lowest card-premium p-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-10 h-10 rounded-xl bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-[20px] text-gold-accent">account_balance</span>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="font-semibold text-on-surface truncate">{{ $bank->nama_bank }}</p>
+                                    <p class="text-on-surface-variant text-xs mt-0.5 uppercase tracking-wider">{{ $bank->kode_bank }}</p>
+                                </div>
+                            </div>
+                            @if ($bank->status === 'aktif')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-secondary-container/20 text-secondary border-secondary/20 shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-error/10 text-error border-error/20 shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Nonaktif
+                                </span>
+                            @endif
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mt-4">
+                            <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
+                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">No. Rekening</p>
+                                <p class="text-sm font-semibold text-on-surface mt-0.5 tabular-nums break-all">{{ $rek?->nomor_rekening ?? '-' }}</p>
+                            </div>
+                            <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
+                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Pemilik</p>
+                                <p class="text-sm font-semibold text-on-surface mt-0.5 truncate">{{ $rek?->nama_pemilik ?? '-' }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end gap-1 mt-4 pt-3 border-t border-muted-border">
+                            <button onclick="editBank({{ $bank->bank_id }})" title="Edit bank" class="w-10 h-10 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-on-surface-variant hover:text-gold-accent flex items-center justify-center transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">edit</span>
+                            </button>
+                            <button type="button" onclick="confirmDeleteBank({{ $bank->bank_id }}, @js($bank->nama_bank))" title="Hapus bank" class="w-10 h-10 rounded-lg border border-transparent hover:border-error/30 hover:bg-error/10 text-on-surface-variant hover:text-error flex items-center justify-center transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                @empty
+                    <div class="rounded-xl border border-dashed border-muted-border bg-surface-container-lowest p-8 text-center">
+                        <div class="flex flex-col items-center gap-3">
+                            <div class="w-14 h-14 rounded-2xl bg-surface-container-low border border-muted-border flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[26px] text-on-surface-variant">account_balance</span>
+                            </div>
+                            <p class="font-body-md text-sm text-on-surface-variant">Belum ada bank terdaftar. Klik "Tambah Bank" untuk membuat metode transfer baru.</p>
+                        </div>
+                    </div>
+                @endforelse
+            </div>
         </div>
     </div>
 
@@ -190,7 +244,7 @@
                     <span class="material-symbols-outlined text-[18px]">add</span> Tambah E-Wallet
                 </button>
             </div>
-            <div class="overflow-x-auto">
+            <div class="hidden md:block overflow-x-auto">
                 <table class="premium-table w-full text-sm">
                     <thead>
                         <tr class="text-left text-on-surface-variant border-b border-muted-border">
@@ -253,6 +307,59 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+            <div class="md:hidden grid grid-cols-1 gap-gutter">
+                @forelse ($ewallets as $ew)
+                    <div class="rounded-xl border border-muted-border bg-surface-container-lowest card-premium p-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-10 h-10 rounded-xl bg-secondary-container/20 border border-secondary/20 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-[20px] text-secondary">account_balance_wallet</span>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="font-semibold text-on-surface truncate">{{ $ew->nama }}</p>
+                                    <p class="text-on-surface-variant text-xs mt-0.5 uppercase tracking-wider">{{ $ew->kode }}</p>
+                                </div>
+                            </div>
+                            @if ($ew->status === 'aktif')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-secondary-container/20 text-secondary border-secondary/20 shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-error/10 text-error border-error/20 shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Nonaktif
+                                </span>
+                            @endif
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mt-4">
+                            <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
+                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">No. Telepon</p>
+                                <p class="text-sm font-semibold text-on-surface mt-0.5 tabular-nums break-all">{{ $ew->nomor_rekening ?? '-' }}</p>
+                            </div>
+                            <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
+                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Pemilik</p>
+                                <p class="text-sm font-semibold text-on-surface mt-0.5 truncate">{{ $ew->nama_pemilik ?? '-' }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end gap-1 mt-4 pt-3 border-t border-muted-border">
+                            <button onclick="editEwallet({{ $ew->platform_bank_account_id }})" title="Edit e-wallet" class="w-10 h-10 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-on-surface-variant hover:text-gold-accent flex items-center justify-center transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">edit</span>
+                            </button>
+                            <button type="button" onclick="confirmDeleteEwallet({{ $ew->platform_bank_account_id }}, @js($ew->nama))" title="Hapus e-wallet" class="w-10 h-10 rounded-lg border border-transparent hover:border-error/30 hover:bg-error/10 text-on-surface-variant hover:text-error flex items-center justify-center transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                @empty
+                    <div class="rounded-xl border border-dashed border-muted-border bg-surface-container-lowest p-8 text-center">
+                        <div class="flex flex-col items-center gap-3">
+                            <div class="w-14 h-14 rounded-2xl bg-surface-container-low border border-muted-border flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[26px] text-on-surface-variant">account_balance_wallet</span>
+                            </div>
+                            <p class="font-body-md text-sm text-on-surface-variant">Belum ada e-wallet terdaftar. Klik "Tambah E-Wallet" untuk menambahkan.</p>
+                        </div>
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>
