@@ -42,9 +42,14 @@ class DataProdukController extends Controller
             'foto_produk.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'stok_awal' => 'nullable|integer|min:0',
             'stok_minimum' => 'nullable|integer|min:0',
-            'ukuran_terpilih' => 'nullable|string|max:50',
+            'ukuran_terpilih' => 'nullable|string|max:255',
             'warna' => 'nullable|array',
             'warna.*' => 'string|max:30',
+            'varian_stok' => 'nullable|array',
+            'varian_stok.*.ukuran' => 'required|string|max:255',
+            'varian_stok.*.warna' => 'required|string|max:100',
+            'varian_stok.*.stok' => 'nullable|integer|min:0',
+            'varian_stok.*.stok_minimum' => 'nullable|integer|min:0',
         ], [
             'nama_produk.required' => 'Nama produk wajib diisi.',
             'harga_dasar.required' => 'Harga dasar wajib diisi.',
@@ -102,20 +107,45 @@ class DataProdukController extends Controller
         // Handle variasi
         $ukuranList = $data['ukuran_terpilih'] ? explode(',', $data['ukuran_terpilih']) : ['All Size'];
         $warnaList = $data['warna'] ?? ['Hitam'];
-        $stokAwal = (int) ($data['stok_awal'] ?? 50);
-        $stokMin = (int) ($data['stok_minimum'] ?? 10);
+
+        $perVarian = collect($data['varian_stok'] ?? [])->keyBy(function ($v) {
+            return trim($v['ukuran']) . '|' . trim($v['warna']);
+        });
+
+        $warehouse = \App\Models\Warehouse::where('store_id', $storeId)->where('status', \App\Models\Warehouse::STATUS_AKTIF)->first();
+        if (!$warehouse) {
+            $warehouse = \App\Models\Warehouse::create([
+                'store_id' => $storeId,
+                'nama_gudang' => 'Gudang Utama',
+                'status' => \App\Models\Warehouse::STATUS_AKTIF,
+            ]);
+        }
+
         foreach ($ukuranList as $uk) {
             foreach ($warnaList as $wr) {
-                \App\Models\ProductVariant::create([
+                $key = trim($uk) . '|' . trim($wr);
+                $detail = $perVarian->get($key);
+
+                $variant = \App\Models\ProductVariant::create([
                     'product_id' => $product->product_id,
                     'sku' => strtoupper(substr($product->nama_produk, 0, 3)).'-'.str_pad($product->product_id, 4, '0').'-'.strtoupper(substr($uk,0,1)).substr($wr,0,1).rand(10,99),
                     'ukuran' => trim($uk),
                     'warna' => trim($wr),
                     'harga' => $data['harga_dasar'],
-                    'stok' => (int) ($stokAwal / max(1, count($ukuranList)*count($warnaList))),
-                    'stok_minimum' => $stokMin,
                     'status' => 'aktif',
                 ]);
+
+                if ($detail || $warehouse) {
+                    $stok = (int) ($detail['stok'] ?? 0);
+                    $stokMin = (int) ($detail['stok_minimum'] ?? 0);
+
+                    if ($warehouse) {
+                        \App\Models\WarehouseStock::updateOrCreate(
+                            ['warehouse_id' => $warehouse->warehouse_id, 'product_variant_id' => $variant->product_variant_id],
+                            ['jumlah_stok' => $stok, 'jumlah_direservasi' => 0, 'stok_minimum' => $stokMin]
+                        );
+                    }
+                }
             }
         }
 
