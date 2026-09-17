@@ -164,10 +164,29 @@
                         @error('nomor_telepon')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
                     <div>
+                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="gender">Jenis Kelamin</label>
+                        <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="gender" name="gender">
+                            <option value="" {{ old('gender', $user->gender) === null ? 'selected' : '' }}>—</option>
+                            <option value="male" {{ old('gender', $user->gender) === 'male' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="female" {{ old('gender', $user->gender) === 'female' ? 'selected' : '' }}>Perempuan</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="tanggal-lahir">Tanggal Lahir</label>
+                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="tanggal-lahir" name="tanggal_lahir" type="date" value="{{ old('tanggal_lahir', $user->tanggal_lahir?->format('Y-m-d') ?? '') }}" />
+                        @error('tanggal_lahir')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Peran</label>
                         <input class="w-full bg-surface-container border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface-variant cursor-not-allowed" type="text" value="{{ $user->role->nama_role ?? '-' }}" disabled />
                     </div>
                 </div>
+                @if($user->foto_profil_url)
+                    <label class="flex items-center gap-2 text-sm text-on-surface-variant cursor-pointer">
+                        <input type="checkbox" name="remove_photo" value="1" class="rounded border-muted-border text-gold-accent" />
+                        Hapus foto profil saat ini
+                    </label>
+                @endif
                 <div class="flex justify-end pt-4 border-t border-muted-border">
                     <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium inline-flex items-center gap-2">
                         <span class="material-symbols-outlined text-[16px]">save</span>
@@ -209,7 +228,7 @@
                     </div>
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="password-konfirmasi">Konfirmasi Password</label>
-                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="password-konfirmasi" name="password_confirmation" type="password" placeholder="Ulangi password baru" required />
+                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="password-konfirmasi" name="password_baru_confirmation" type="password" placeholder="Ulangi password baru" required />
                     </div>
                 </div>
                 <div class="flex justify-end pt-4 border-t border-muted-border">
