@@ -38,23 +38,30 @@
             </div>
             <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
             <div id="chip-group" class="flex flex-wrap gap-2">
-                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
-                <button type="button" data-chip="aktif" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Aktif ({{ $stats['aktif'] }})</button>
-                <button type="button" data-chip="nonaktif" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Nonaktif ({{ $stats['nonaktif'] }})</button>
+                @php
+                    $chipStatuses = ['semua', 'aktif', 'nonaktif'];
+                @endphp
+                @foreach ($chipStatuses as $chipStatus)
+                    @php $isActive = $activeStatus === $chipStatus; @endphp
+                    <a href="{{ route('superadmin.gudang', ['status' => $chipStatus, 'q' => $q]) }}" data-chip="{{ $chipStatus }}" class="chip-btn px-4 py-2 rounded-lg font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200 {{ $isActive ? 'bg-deep-onyx border border-deep-onyx text-on-primary' : 'border border-muted-border text-on-surface-variant hover:bg-surface-container-high' }}">
+                        {{ ucfirst($chipStatus) }} ({{ $stats[$chipStatus] }})
+                    </a>
+                @endforeach
             </div>
         </div>
 
         <!-- Search + Result Count -->
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-            <div class="relative flex-1">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                <input id="gudang-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama gudang, toko, atau alamat..." />
-                <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+            <form method="GET" action="{{ route('superadmin.gudang') }}" class="relative flex-1">
+                <input type="hidden" name="status" value="{{ $activeStatus }}">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] pointer-events-none">search</span>
+                <input name="q" value="{{ $q }}" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama gudang, toko, atau alamat..." />
+                <a href="{{ route('superadmin.gudang', ['status' => $activeStatus]) }}" aria-label="Hapus pencarian" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent transition-opacity {{ $q ? 'opacity-100' : 'opacity-0 pointer-events-none' }}">
                     <span class="material-symbols-outlined text-[20px]">close</span>
-                </button>
-            </div>
+                </a>
+            </form>
             <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-                <span id="result-count">{{ $warehouses->count() }}</span> gudang
+                <span id="result-count">{{ $warehouses->total() }}</span> gudang
             </p>
         </div>
     </div>
@@ -77,7 +84,7 @@
                 @forelse($warehouses as $wh)
                     @php $badge = $statusBadgeMap[$wh->status] ?? ['label' => $wh->status, 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant']; @endphp
                     <tr data-table-row data-status="{{ $wh->status }}" data-search="{{ strtolower($wh->nama_gudang.' '.($wh->store->nama_toko ?? '').' '.($wh->alamat ?? '')) }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                        <td class="p-4 text-center text-on-surface-variant font-mono row-num"></td>
+                        <td class="p-4 text-center text-on-surface-variant font-mono">{{ ($warehouses->firstItem() ?? 0) + $loop->index }}</td>
                         <td class="p-4 text-on-surface font-bold">{{ $wh->nama_gudang }}</td>
                         <td class="p-4 text-on-surface">{{ $wh->store->nama_toko ?? '-' }}</td>
                         <td class="p-4 text-on-surface-variant text-xs">{{ Str::limit($wh->alamat, 40) }}</td>
@@ -93,17 +100,18 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="p-8 text-center text-on-surface-variant">Belum ada data gudang.</td>
+                        <td colspan="7" class="p-8 text-center">
+                            @if ($activeStatus !== 'semua' || $q)
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
+                                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada data gudang yang cocok.</p>
+                            </div>
+                            @else
+                            <p class="text-on-surface-variant">Belum ada data gudang.</p>
+                            @endif
+                        </td>
                     </tr>
                 @endforelse
-                <tr id="empty-search" class="hidden">
-                    <td colspan="7" class="p-8 text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
-                            <p class="text-on-surface-variant font-body-md text-sm">Tidak ada data gudang yang cocok.</p>
-                        </div>
-                    </td>
-                </tr>
             </tbody>
         </table>
     </div>
@@ -135,10 +143,19 @@
                 </button>
             </article>
         @empty
-            <p class="text-center text-on-surface-variant py-10">Belum ada data gudang.</p>
+            <p class="text-center text-on-surface-variant py-10">
+                @if ($activeStatus !== 'semua' || $q)
+                Tidak ada data gudang yang cocok.
+                @else
+                Belum ada data gudang.
+                @endif
+            </p>
         @endforelse
-        <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada data gudang yang cocok.</p>
     </div>
+
+    @if ($warehouses->hasPages())
+        <div class="mt-6 flex justify-center">{{ $warehouses->links() }}</div>
+    @endif
 </section>
 
 <!-- Modal Detail Gudang -->
@@ -231,73 +248,7 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const scope = document.querySelector('[data-table-scope]');
-        if (!scope) return;
-
-        const rows = Array.from(scope.querySelectorAll('tr[data-table-row], article[data-table-row]'));
-        const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
-        const searchInput = document.getElementById('gudang-search');
-        const clearBtn = document.getElementById('clear-search');
-        const countEl = document.getElementById('result-count');
-        const emptySearch = document.getElementById('empty-search');
-        const emptySearchMobile = document.getElementById('empty-search-mobile');
-
-        const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
-        const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
-
-        let activeStatus = 'semua';
-
-        function applyFilter() {
-            const term = searchInput.value.trim().toLowerCase();
-            let visible = 0;
-
-            rows.forEach((row) => {
-                const matchStatus = activeStatus === 'semua' || row.getAttribute('data-status') === activeStatus;
-                const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
-                const show = matchStatus && matchSearch;
-                row.classList.toggle('hidden', !show);
-                if (show) {
-                    visible++;
-                    const num = row.querySelector('.row-num');
-                    if (num) num.textContent = visible;
-                }
-            });
-
-            countEl.textContent = visible;
-            emptySearch.classList.toggle('hidden', visible > 0);
-            if (emptySearchMobile) emptySearchMobile.classList.toggle('hidden', visible > 0);
-        }
-
-        chipBtns.forEach((btn) => {
-            btn.addEventListener('click', () => {
-                chipBtns.forEach((b) => {
-                    b.classList.remove(...activeClasses);
-                    b.classList.add(...idleClasses, 'hover:bg-surface-container-high');
-                });
-                btn.classList.remove(...idleClasses, 'hover:bg-surface-container-high');
-                btn.classList.add(...activeClasses);
-                activeStatus = btn.getAttribute('data-chip');
-                applyFilter();
-            });
-        });
-
-        let debounce;
-        searchInput.addEventListener('input', () => {
-            clearBtn.classList.toggle('opacity-0', !searchInput.value);
-            clearTimeout(debounce);
-            debounce = setTimeout(applyFilter, 200);
-        });
-
-        clearBtn.addEventListener('click', () => {
-            searchInput.value = '';
-            clearBtn.classList.add('opacity-0');
-            applyFilter();
-        });
-
-        applyFilter();
-    });
-
-    const saStatusBadge = (status) => ({
+        const saStatusBadge = (status) => ({
         'aktif': ['Aktif', 'bg-secondary-container/20 text-secondary border-secondary/20'],
         'nonaktif': ['Nonaktif', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
     }[status] ?? [status, 'bg-surface-container-high text-on-surface-variant border-outline-variant']);

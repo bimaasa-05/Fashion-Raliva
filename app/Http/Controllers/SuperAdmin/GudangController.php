@@ -4,25 +4,43 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Warehouse;
+use Illuminate\Http\Request;
 
 class GudangController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $warehouses = Warehouse::with(['store:store_id,nama_toko'])
-            ->withCount('stocks')
-            ->orderByDesc('updated_at')
-            ->get();
+        $status = $request->query('status', 'semua');
+        if (! in_array($status, ['semua', 'aktif', 'nonaktif'], true)) {
+            $status = 'semua';
+        }
+
+        $q = $request->query('q');
+        $q = is_string($q) ? trim($q) : '';
 
         $stats = [
-            'semua' => $warehouses->count(),
-            'aktif' => $warehouses->where('status', 'aktif')->count(),
-            'nonaktif' => $warehouses->where('status', 'nonaktif')->count(),
+            'semua' => Warehouse::count(),
+            'aktif' => Warehouse::where('status', 'aktif')->count(),
+            'nonaktif' => Warehouse::where('status', 'nonaktif')->count(),
         ];
+
+        $warehouses = Warehouse::with(['store:store_id,nama_toko'])
+            ->withCount('stocks')
+            ->when($status !== 'semua', fn ($query) => $query->where('status', $status))
+            ->when($q !== '', fn ($query) => $query->where(function ($w) use ($q) {
+                $w->where('nama_gudang', 'like', "%{$q}%")
+                    ->orWhere('alamat', 'like', "%{$q}%")
+                    ->orWhereHas('store', fn ($store) => $store->where('nama_toko', 'like', "%{$q}%"));
+            }))
+            ->orderByDesc('updated_at')
+            ->paginate(20)
+            ->withQueryString();
 
         return view('SuperAdmin.gudang.index', [
             'warehouses' => $warehouses,
             'stats' => $stats,
+            'activeStatus' => $status,
+            'q' => $q,
         ]);
     }
 
