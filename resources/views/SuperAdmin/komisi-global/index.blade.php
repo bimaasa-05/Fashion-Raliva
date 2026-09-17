@@ -209,46 +209,43 @@
     </section>
 
     <!-- Modal Perbarui Tarif Komisi -->
-    <form method="POST" action="{{ route('superadmin.komisi-global.update') }}" id="komisi-form" onsubmit="event.preventDefault(); document.getElementById('confirm-dialog').classList.remove('hidden');">
-        @csrf
-        @method('PUT')
-    <div id="modal-edit-komisi" data-modal class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close></div>
-        <div class="relative w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
-            <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-                <div>
-                    <h2 class="font-title-md text-title-md text-on-surface premium-heading">Perbarui Tarif Komisi</h2>
-                    <p class="text-on-surface-variant font-body-md text-sm mt-1">Berlaku untuk seluruh transaksi baru di semua toko.</p>
+    @component('SuperAdmin.partials.premium-modal', [
+        'id' => 'modal-edit-komisi',
+        'dataModal' => true,
+        'icon' => 'percent',
+        'title' => 'Perbarui Tarif Komisi',
+        'subtitle' => 'Berlaku untuk seluruh transaksi baru di semua toko.',
+        'size' => 'lg',
+        'zIndex' => 80,
+        'close' => 'closeEditForm',
+    ])
+        <form method="POST" action="{{ route('superadmin.komisi-global.update') }}" id="komisi-form" onsubmit="event.preventDefault(); document.getElementById('confirm-dialog').classList.remove('hidden');">
+            @csrf
+            @method('PUT')
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="commissionRate">Tarif Baru (%)</label>
+                <div class="relative max-w-xs">
+                    <input class="w-full bg-transparent border border-muted-border p-4 font-headline-lg-mobile text-headline-lg-mobile focus:outline-none focus:border-gold-accent transition-colors placeholder-on-surface-variant/50" id="commissionRate" name="komisi_persen" max="15" min="0" oninput="updatePreview(this.value)" placeholder="misal 5.5" step="0.1" type="number" value="{{ $komisi }}" required />
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none font-title-md">%</div>
                 </div>
-                <button type="button" data-modal-close onclick="closeEditForm();" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+                <p class="text-xs text-on-surface-variant mt-2">Batas aman internal: 0–15%.</p>
             </div>
-            <div class="p-6 space-y-container-margin">
-                <div class="space-y-container-margin">
-                    <div>
-                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="commissionRate">Tarif Baru (%)</label>
-                        <div class="relative max-w-xs">
-                            <input class="w-full bg-transparent border border-muted-border p-4 font-headline-lg-mobile text-headline-lg-mobile focus:outline-none focus:border-gold-accent transition-colors placeholder-on-surface-variant/50" id="commissionRate" name="komisi_persen" max="15" min="0" oninput="updatePreview(this.value)" placeholder="misal 5.5" step="0.1" type="number" value="{{ $komisi }}" required />
-                            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none font-title-md">%</div>
-                        </div>
-                        <p class="text-xs text-on-surface-variant mt-2">Batas aman internal: 0–15%.</p>
-                    </div>
-                    <div>
-                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="updateNotes">Catatan Perubahan (Internal)</label>
-                        <textarea class="w-full bg-transparent border border-muted-border p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="updateNotes" name="catatan" placeholder="Alasan perubahan ini..." rows="3"></textarea>
-                    </div>
-                    <div class="bg-surface-container border border-gold-accent/20 p-container-margin flex flex-col sm:flex-row justify-between items-start sm:items-center gap-gutter rounded-lg">
-                        <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Pratinjau</span><span class="font-body-md text-body-md">Dari penjualan Rp 1.000.000</span></div>
-                        <div class="text-right"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Pendapatan Platform</span><span class="font-title-md text-title-md text-gold-accent" id="preview-amount">Rp {{ number_format($komisi * 10000, 0, ',', '.') }}</span></div>
-                    </div>
-                    <div class="flex gap-gutter pt-container-margin">
-                        <button class="flex-1 border border-muted-border text-deep-onyx font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-surface-container-lowest transition-colors rounded-lg" onclick="closeEditForm();" type="button">Batal</button>
-                        <button class="flex-1 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-tertiary-container transition-colors rounded-lg btn-premium" type="submit">Tinjau Perubahan</button>
-                    </div>
-                </div>
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="updateNotes">Catatan Perubahan (Internal)</label>
+                <textarea class="w-full bg-transparent border border-muted-border p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="updateNotes" name="catatan" placeholder="Alasan perubahan ini..." rows="3"></textarea>
             </div>
-        </div>
-    </div>
-    </form>
+            <div class="bg-surface-container border border-gold-accent/20 p-container-margin flex flex-col sm:flex-row justify-between items-start sm:items-center gap-gutter rounded-lg">
+                <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Pratinjau</span><span class="font-body-md text-body-md">Dari penjualan Rp 1.000.000</span></div>
+                <div class="text-right"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Pendapatan Platform</span><span class="font-title-md text-title-md text-gold-accent" id="preview-amount">Rp {{ number_format($komisi * 10000, 0, ',', '.') }}</span></div>
+            </div>
+        @slot('footer')
+            <div class="flex gap-4">
+                <button class="btn-modal btn-modal-ghost flex-1" onclick="closeEditForm();" type="button">Batal</button>
+                <button class="btn-modal btn-modal-primary flex-1" type="submit" form="komisi-form">Tinjau Perubahan</button>
+            </div>
+        @endslot
+        </form>
+    @endcomponent
 </div>
 @endsection
 
@@ -309,18 +306,24 @@
 @endpush
 
 @push('modals')
-<div class="fixed inset-0 z-[95] hidden bg-surface-container/80 backdrop-blur-sm flex items-center justify-center p-gutter" id="confirm-dialog">
-    <div class="bg-surface border border-muted-border p-section-gap max-w-md w-full shadow-2xl relative rounded-xl">
-        <button type="button" class="absolute top-4 right-4 text-on-surface-variant hover:text-deep-onyx transition-colors" onclick="document.getElementById('confirm-dialog').classList.add('hidden')"><span class="material-symbols-outlined">close</span></button>
-        <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center mx-auto mb-gutter">
-            <span class="material-symbols-outlined text-gold-accent text-[28px]">published_with_changes</span>
-        </div>
-        <h3 class="font-display-lg text-headline-lg-mobile md:text-headline-lg mb-gutter text-center">Konfirmasi Perubahan</h3>
-        <p class="font-body-md text-body-md text-on-surface-variant mb-container-margin text-center">Anda akan mengubah tarif komisi global platform. Perubahan ini berlaku untuk semua transaksi selanjutnya dan akan tercatat dalam audit trail.</p>
-        <div class="flex flex-col gap-gutter">
-            <button type="button" class="w-full bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-tertiary-container transition-colors rounded-lg btn-premium" onclick="document.getElementById('confirm-dialog').classList.add('hidden'); document.getElementById('komisi-form').submit();">Konfirmasi & Terapkan</button>
-            <button type="button" class="w-full border border-muted-border text-deep-onyx font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-surface-container-lowest transition-colors rounded-lg" onclick="document.getElementById('confirm-dialog').classList.add('hidden')">Batal</button>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'confirm-dialog',
+    'icon' => 'published_with_changes',
+    'iconBox' => 'bg-gold-accent/10 border-gold-accent/30',
+    'iconColor' => 'text-gold-accent',
+    'zIndex' => 95,
+])
+    <div class="p-6 space-y-4">
+        <div class="text-center">
+            <h3 class="font-display-lg text-headline-lg-mobile md:text-headline-lg">Konfirmasi Perubahan</h3>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-2">Anda akan mengubah tarif komisi global platform. Perubahan ini berlaku untuk semua transaksi selanjutnya dan akan tercatat dalam audit trail.</p>
         </div>
     </div>
-</div>
+    @slot('footer')
+        <div class="flex flex-col gap-4">
+            <button type="button" class="btn-modal btn-modal-primary w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden'); document.getElementById('komisi-form').submit();">Konfirmasi &amp; Terapkan</button>
+            <button type="button" class="btn-modal btn-modal-ghost w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden')">Batal</button>
+        </div>
+    @endslot
+@endcomponent
 @endpush

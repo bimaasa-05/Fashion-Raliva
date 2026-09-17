@@ -251,86 +251,85 @@ $pelanggan = $s->order?->checkout?->user;
 </div>
 
 <!-- Detail Modal -->
-<div id="detail-modal" class="fixed inset-0 z-[70] hidden">
-    <div class="absolute inset-0 bg-black/50" onclick="closeModal()"></div>
-    <div class="relative mx-auto w-full max-w-md mt-[10vh] bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[80vh] overflow-y-auto">
-        <div class="flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-            <div>
-                <p class="raliva-label text-gold-accent">Detail Pengiriman</p>
-                <h3 id="d-order" class="font-title-md text-title-md text-on-surface premium-heading mt-1">-</h3>
-            </div>
-            <button type="button" onclick="closeModal()" class="text-on-surface-variant hover:text-on-surface transition-colors">
-                <span class="material-symbols-outlined">close</span>
-            </button>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'detail-modal',
+    'dataModal' => true,
+    'close' => 'closeModal',
+    'icon' => 'local_shipping',
+    'title' => 'Detail Pengiriman',
+    'subtitle' => '<span id="d-order">-</span>',
+    'subtitleRaw' => true,
+])
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Toko</label>
+            <p id="d-toko" class="text-sm font-semibold text-on-surface">-</p>
         </div>
-        <div class="p-6 space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Toko</label>
-                    <p id="d-toko" class="text-sm font-semibold text-on-surface">-</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Pelanggan</label>
-                    <p id="d-pelanggan" class="text-sm font-semibold text-on-surface">-</p>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Kurir</label>
-                    <p id="d-kurir" class="text-sm font-semibold text-on-surface">-</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">No. Resi</label>
-                    <p id="d-resi" class="text-sm font-semibold text-on-surface font-mono">-</p>
-                </div>
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-on-surface-variant mb-1">Ongkir</label>
-                <p id="d-ongkir" class="text-sm font-bold text-gold-accent">-</p>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Estimasi Tiba</label>
-                    <p id="d-estimasi" class="text-sm font-semibold text-on-surface">-</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Status</label>
-                    <p id="d-status" class="text-sm font-semibold">-</p>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Dikirim Pada</label>
-                    <p id="d-dikirim" class="text-sm font-semibold text-on-surface">-</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Diterima Pada</label>
-                    <p id="d-diterima" class="text-sm font-semibold text-on-surface">-</p>
-                </div>
-            </div>
-        </div>
-        <div class="px-6 pb-6">
-            <button type="button" onclick="closeModal()" class="w-full py-3 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Pelanggan</label>
+            <p id="d-pelanggan" class="text-sm font-semibold text-on-surface">-</p>
         </div>
     </div>
-</div>
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Kurir</label>
+            <p id="d-kurir" class="text-sm font-semibold text-on-surface">-</p>
+        </div>
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">No. Resi</label>
+            <p id="d-resi" class="text-sm font-semibold text-on-surface font-mono">-</p>
+        </div>
+    </div>
+    <div>
+        <label class="block text-xs font-medium text-on-surface-variant mb-1">Ongkir</label>
+        <p id="d-ongkir" class="text-sm font-bold text-gold-accent">-</p>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Estimasi Tiba</label>
+            <p id="d-estimasi" class="text-sm font-semibold text-on-surface">-</p>
+        </div>
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Status</label>
+            <p id="d-status" class="text-sm font-semibold">-</p>
+        </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Dikirim Pada</label>
+            <p id="d-dikirim" class="text-sm font-semibold text-on-surface">-</p>
+        </div>
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Diterima Pada</label>
+            <p id="d-diterima" class="text-sm font-semibold text-on-surface">-</p>
+        </div>
+    </div>
+    @slot('footer')
+        <button type="button" onclick="closeModal()" class="btn-modal btn-modal-ghost w-full">Tutup</button>
+    @endslot
+@endcomponent
 
 <!-- Modal Konfirmasi Ubah Status Pengiriman -->
-<div id="confirmPengirimanModal" class="fixed inset-0 z-[75] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeConfirmPengiriman()">
-    <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-        <div class="p-8">
-            <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-5">
-                <span class="material-symbols-outlined text-gold-accent text-[28px]">local_shipping</span>
-            </div>
-            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Ubah status pengiriman?</h3>
-            <p class="text-on-surface-variant text-sm text-center mb-4">Status akan diubah menjadi <span id="confirm-pengiriman-status" class="font-bold text-on-surface">-</span>.</p>
-            <div class="flex space-x-3">
-                <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeConfirmPengiriman()">Batal</button>
-                <button type="button" id="confirm-pengiriman-submit" class="flex-1 bg-deep-onyx text-on-primary font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-black transition-colors rounded-lg btn-premium">Ya, Ubah</button>
-            </div>
-        </div>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'confirmPengirimanModal',
+    'icon' => 'local_shipping',
+    'iconBox' => 'bg-gold-accent/20 border-gold-accent/30',
+    'iconColor' => 'text-gold-accent',
+    'zIndex' => 75,
+    'close' => 'closeConfirmPengiriman',
+    'dataModal' => true,
+])
+    <div class="p-6">
+        <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Ubah status pengiriman?</h3>
+        <p class="text-on-surface-variant text-sm text-center mb-6">Status akan diubah menjadi <span id="confirm-pengiriman-status" class="font-bold text-on-surface">-</span>.</p>
     </div>
-</div>
+    @slot('footer')
+        <div class="flex space-x-3">
+            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeConfirmPengiriman()">Batal</button>
+            <button type="button" id="confirm-pengiriman-submit" class="flex-1 btn-modal btn-modal-primary">Ya, Ubah</button>
+        </div>
+    @endslot
+@endcomponent
 @endsection
 
 @push('scripts')

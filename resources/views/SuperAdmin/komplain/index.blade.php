@@ -393,22 +393,28 @@
     </div>
 </div>
     <!-- Modal Konfirmasi Komplain (eskalasi/tutup) -->
-    <div id="confirmKomplainModal" class="hidden fixed inset-0 z-[75] items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeConfirmKomplain()">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <div id="confirm-komplain-icon" class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-5">
-                    <span id="confirm-komplain-icon-sym" class="material-symbols-outlined text-gold-accent text-[28px]">help</span>
-                </div>
-                <h3 id="confirm-komplain-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">Konfirmasi</h3>
-                <p id="confirm-komplain-desc" class="text-on-surface-variant text-sm text-center mb-4">Lanjutkan aksi ini?</p>
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeConfirmKomplain()">Batal</button>
-                    <button type="button" id="confirm-komplain-submit" class="flex-1 bg-deep-onyx text-on-primary font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-black transition-colors rounded-lg btn-premium">Ya, Lanjutkan</button>
-                </div>
-            </div>
-        </div>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'confirmKomplainModal',
+    'icon' => 'emergency',
+    'iconBox' => 'bg-gold-accent/20 border-gold-accent/30',
+    'iconColor' => 'text-gold-accent',
+    'iconWrapId' => 'confirm-komplain-icon',
+    'iconSymId' => 'confirm-komplain-icon-sym',
+    'zIndex' => 75,
+    'close' => 'closeConfirmKomplain',
+    'dataModal' => true,
+])
+    <div class="p-6">
+        <h3 id="confirm-komplain-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">Konfirmasi</h3>
+        <p id="confirm-komplain-desc" class="text-on-surface-variant text-sm text-center mb-6">Lanjutkan aksi ini?</p>
     </div>
-</div>
+    @slot('footer')
+        <div class="flex space-x-3">
+            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeConfirmKomplain()">Batal</button>
+            <button type="button" id="confirm-komplain-submit" class="flex-1 btn-modal btn-modal-primary">Ya, Lanjutkan</button>
+        </div>
+    @endslot
+@endcomponent
 @endsection
 
     @push('styles')
@@ -1547,16 +1553,16 @@
         const iconSym = document.getElementById('confirm-komplain-icon-sym');
         const submitBtn = document.getElementById('confirm-komplain-submit');
         if (isEskalasi) {
-            iconWrap.className = 'w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-5';
-            iconSym.className = 'material-symbols-outlined text-gold-accent text-[28px]';
+            iconWrap.className = 'w-12 h-12 rounded-full bg-gold-accent/25 border border-gold-accent/30 flex items-center justify-center';
+            iconSym.className = 'material-symbols-outlined text-[24px] text-gold-accent';
             iconSym.textContent = 'emergency';
-            submitBtn.className = 'flex-1 bg-gold-accent text-white font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium';
+            submitBtn.className = 'flex-1 btn-modal btn-modal-primary';
             submitBtn.textContent = 'Ya, Eskalasi';
         } else {
-            iconWrap.className = 'w-14 h-14 rounded-full bg-success/10 border border-success/25 flex items-center justify-center mx-auto mb-5';
-            iconSym.className = 'material-symbols-outlined text-success text-[28px]';
+            iconWrap.className = 'w-12 h-12 rounded-full bg-success/25 border border-success/30 flex items-center justify-center';
+            iconSym.className = 'material-symbols-outlined text-[24px] text-success';
             iconSym.textContent = 'check_circle';
-            submitBtn.className = 'flex-1 bg-success text-white font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium';
+            submitBtn.className = 'flex-1 btn-modal btn-modal-success';
             submitBtn.textContent = 'Ya, Tutup';
         }
         const m = document.getElementById('confirmKomplainModal');

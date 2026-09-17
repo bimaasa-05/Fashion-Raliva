@@ -9,10 +9,6 @@
 
 @push('styles')
 <style>
-    .banner-gradient { background-image: linear-gradient(118deg, #141414 0%, #1f0c10 55%, #421329 100%); }
-    .banner-glow { position: absolute; border-radius: 9999px; pointer-events: none; }
-    .banner-glow-1 { top: -90px; right: -50px; width: 260px; height: 260px; background: rgba(139, 30, 63, 0.4); }
-    .banner-glow-2 { bottom: -120px; left: -60px; width: 220px; height: 220px; background: rgba(139, 30, 63, 0.24); }
     .banner-desc { font-size: 14px; color: rgba(255, 255, 255, 0.72); }
     .banner-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 9999px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.18); }
     .banner-badge .dot { width: 7px; height: 7px; border-radius: 9999px; animation: beat 1.6s ease-in-out infinite; }
@@ -27,9 +23,6 @@
     .tab-btn:hover { color: var(--color-on-surface); }
     .tab-btn.active { background: #141414; color: #fff; box-shadow: 0 8px 20px -10px rgb(17 17 17 / 0.45); }
     .tab-btn.active .material-symbols-outlined { color: var(--color-gold-accent); }
-
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 @endpush
 
@@ -484,8 +477,8 @@
                     </select>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
-                    <button type="button" onclick="closeBankForm()" class="px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-gold-accent to-secondary text-on-primary text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                    <button type="button" onclick="closeBankForm()" class="btn-modal btn-modal-ghost">Batal</button>
+                    <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
                 </div>
             </form>
         </div>
@@ -549,8 +542,8 @@
                     </select>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
-                    <button type="button" onclick="closeEwalletForm()" class="px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-gold-accent to-secondary text-on-primary text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                    <button type="button" onclick="closeEwalletForm()" class="btn-modal btn-modal-ghost">Batal</button>
+                    <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
                 </div>
             </form>
         </div>
@@ -608,8 +601,8 @@
                     </select>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
-                    <button type="button" onclick="closeQrisForm()" class="px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-gold-accent to-secondary text-on-primary text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                    <button type="button" onclick="closeQrisForm()" class="btn-modal btn-modal-ghost">Batal</button>
+                    <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
                 </div>
             </form>
         </div>
@@ -637,8 +630,8 @@
                     <p id="hapus-bank-text" class="font-body-md text-sm text-on-surface-variant mt-2"></p>
                 </div>
                 <div class="flex items-center justify-center gap-3 pt-2">
-                    <button type="button" onclick="closeDeleteBank()" class="px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-error text-white text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
+                    <button type="button" onclick="closeDeleteBank()" class="btn-modal btn-modal-ghost">Batal</button>
+                    <button type="submit" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
                 </div>
             </form>
         </div>
@@ -666,8 +659,8 @@
                     <p id="hapus-ewallet-text" class="font-body-md text-sm text-on-surface-variant mt-2"></p>
                 </div>
                 <div class="flex items-center justify-center gap-3 pt-2">
-                    <button type="button" onclick="closeDeleteEwallet()" class="px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-error text-white text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
+                    <button type="button" onclick="closeDeleteEwallet()" class="btn-modal btn-modal-ghost">Batal</button>
+                    <button type="submit" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
                 </div>
             </form>
         </div>

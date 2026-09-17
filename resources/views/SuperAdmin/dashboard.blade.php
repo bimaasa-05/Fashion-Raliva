@@ -25,7 +25,7 @@
 
 <section>
     <h2 data-reveal class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Platform</h2>
-    <div data-reveal-group class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-gutter">
+    <div data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Pengguna</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $kpi['pengguna'] }}">{{ number_format($kpi['pengguna'], 0, ',', '.') }}</span></span>
@@ -62,7 +62,7 @@
             </div>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">checkroom</span>
         </div>
-        <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium col-span-2 md:col-span-1 hover:border-gold-accent transition-colors hero-glow">
+        <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hover:border-gold-accent transition-colors hero-glow">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Nilai Transaksi</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Rp <span data-count="{{ $kpi['nilai_transaksi'] }}" data-count-decimals="0">{{ number_format($kpi['nilai_transaksi'], 0, ',', '.') }}</span></span>
             <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>akumulasi</span>
@@ -71,7 +71,7 @@
             </div>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
         </div>
-        <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium col-span-2 md:col-span-1 hover:border-gold-accent transition-colors hero-glow">
+        <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hover:border-gold-accent transition-colors hero-glow">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Komisi Raliva</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold">Rp <span data-count="{{ $kpi['komisi'] }}" data-count-decimals="0">{{ number_format($kpi['komisi'], 0, ',', '.') }}</span></span>
             <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>akumulasi</span>
@@ -80,7 +80,7 @@
             </div>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">percent</span>
         </div>
-        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+        <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium col-span-2">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pajak Terkumpul</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Rp <span data-count="{{ $kpi['pajak'] }}" data-count-decimals="0">{{ number_format($kpi['pajak'], 0, ',', '.') }}</span></span>
             <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>akumulasi</span>
@@ -241,7 +241,7 @@
                             <span class="material-symbols-outlined text-sm text-gold-accent">{{ $icon }}</span>
                         </div>
                         <div>
-                            <p class="font-body-md text-on-surface">{{ $act['deskripsi'] ?? '-' }}</p>
+                            <p class="font-body-md text-on-surface">{!! $act['deskripsi'] ?? '-' !!}</p>
                             <p class="text-on-surface-variant text-sm mt-0.5">{{ $act['waktu'] }}</p>
                         </div>
                     </div>
@@ -269,6 +269,25 @@
         </div>
         <div data-leaderboard='@json($topPelanggan)'></div>
         <a href="{{ route('superadmin.peringkat') }}#pelanggan" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
+    </section>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Produk</h2>
+            <span class="material-symbols-outlined text-gold-accent text-[20px]">local_mall</span>
+        </div>
+        <div data-leaderboard='@json($topProduk)'></div>
+        <a href="{{ route('superadmin.produk') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Kelola Semua Produk</a>
+    </section>
+
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Produk Iklan</h2>
+            <span class="material-symbols-outlined text-gold-accent text-[20px]">campaign</span>
+        </div>
+        <div data-leaderboard='@json($topProdukIklan)'></div>
+        <a href="{{ route('superadmin.peringkat-iklan') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Iklan Lengkap</a>
     </section>
 </div>
 
