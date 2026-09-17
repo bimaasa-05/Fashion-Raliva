@@ -75,12 +75,12 @@
                     <option value="90" @selected($period === 90)>3 Bulan</option>
                     <option value="365" @selected($period === 365)>1 Tahun</option>
                 </select>
-                <a href="{{ route('owner.laporan.export', ['period' => $period]) }}" class="flex items-center justify-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors shrink-0">
-                    <span class="material-symbols-outlined text-[16px]">download</span>CSV
+                <a href="{{ route('owner.laporan.export-excel', ['period' => $period]) }}" class="flex items-center justify-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors shrink-0">
+                    <span class="material-symbols-outlined text-[16px]">download</span>Excell
                 </a>
-                <button type="button" onclick="window.print()" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium shrink-0">
+                <a href="{{ route('owner.laporan.cetak', ['period' => $period]) }}" target="_blank" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium shrink-0">
                     <span class="material-symbols-outlined text-[16px]">picture_as_pdf</span>PDF
-                </button>
+                </a>
             </div>
         </div>
         <div data-table-wrap class="overflow-x-auto">
@@ -123,34 +123,6 @@
         </div>
     </section>
 </div>
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  if (!document.querySelector('[data-real]')) return;
-  // Check if no store banner exists (means no store)
-  const noStore = document.querySelector('[data-no-store-banner]');
-  if (!noStore) return;
-  // Disable all primary action buttons except Ajukan Toko
-  document.querySelectorAll('[data-modal-open], button[type="submit"], a[href*="pengajuan-toko"]:not([href*="ajukan"])').forEach(el=>{
-    // Keep Ajukan Toko enabled
-    if (el.textContent.includes('Ajukan Toko') || el.getAttribute('data-modal-open')?.includes('modal-tambah')) {
-      // For tambah buttons, disable if no store
-      el.setAttribute('disabled','');
-      el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
-      el.title = 'Ajukan toko dulu';
-    }
-  });
-  // More generic: disable all buttons in data-real except those inside pengajuan
-  document.querySelectorAll('[data-real] button, [data-real] a.btn-premium').forEach(el=>{
-    if (el.closest('[data-modal]')) return;
-    if (el.textContent.trim().includes('Ajukan')) return;
-    el.setAttribute('disabled','');
-    el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
-  });
-});
-</script>
-@endpush
 
 @endsection
 
