@@ -776,21 +776,27 @@
         function applyGridFilter() {
             var cards = document.querySelectorAll('#product-grid > a');
             var shown = 0;
-            cards.forEach(function (card, idx) {
-                var cat = (card.getAttribute('data-category') || '').split(' ');
+            var matched = 0;
+            cards.forEach(function (card) {
+                var catRaw = (card.getAttribute('data-category') || '').trim();
                 var sizes = (card.getAttribute('data-size') || '').split(' ');
                 var colors = (card.getAttribute('data-color') || '').split(' ');
                 var price = parseInt(card.getAttribute('data-price'), 10) || 0;
                 var ok = true;
-                if (activeFilters.category.length && !activeFilters.category.some(function (c) { return cat.indexOf(c) >= 0; })) ok = false;
+                if (activeFilters.category.length && !activeFilters.category.some(function (c) { return catRaw === c; })) ok = false;
                 if (activeFilters.size.length && !activeFilters.size.some(function (s) { return sizes.indexOf(s) >= 0; })) ok = false;
                 if (activeFilters.color.length && !activeFilters.color.some(function (c) { return colors.indexOf(c) >= 0; })) ok = false;
                 if (activeFilters.price.min !== null && price < activeFilters.price.min) ok = false;
                 if (activeFilters.price.max !== null && price > activeFilters.price.max) ok = false;
-                var visible = ok && idx < revealedCount;
+                var visible = false;
+                if (ok) {
+                    visible = matched < revealedCount;
+                    matched++;
+                }
                 card.style.display = visible ? '' : 'none';
                 if (visible) shown++;
             });
+            window.__shopMatched = matched;
             var countEl = document.getElementById('result-count');
             if (countEl) countEl.textContent = shown;
             var boxEl = document.getElementById('shop-content-box');
@@ -807,10 +813,8 @@
             var btn = document.getElementById('load-more-btn');
             if (!wrap || !btn) return;
             var total = parseInt(wrap.getAttribute('data-total') || '0', 10);
-            var hiddenCount = 0;
-            document.querySelectorAll('#product-grid > a').forEach(function (c, idx) {
-                if (idx >= revealedCount) hiddenCount++;
-            });
+            var matched = (typeof window.__shopMatched === 'number') ? window.__shopMatched : 0;
+            var hiddenCount = matched - shownCount();
             var show = total > 6 && hiddenCount > 0 && !btn.hasAttribute('disabled');
             btn.style.display = show ? 'inline-flex' : 'none';
             wrap.classList.toggle('hidden', shownCount() === 0);
