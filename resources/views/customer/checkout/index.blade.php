@@ -494,7 +494,7 @@
 
 <!-- TopAppBar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-    <a href="{{ $buyId > 0 ? route('customer.shop.produk-detail', $buyId) : route('customer.chart') }}" aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+    <a href="{{ $backProductId > 0 ? route('customer.shop.produk-detail', $backProductId) : route('customer.chart') }}" aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
         <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
     </a>
     <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('Review') }}</h1>
