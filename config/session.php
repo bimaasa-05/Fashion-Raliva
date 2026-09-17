@@ -134,6 +134,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Multi-Role Session (Development Only)
+    |--------------------------------------------------------------------------
+    |
+    | Bila aktif, tiap area staff (/superadmin, /owner, /admin, /gudang,
+    | /produksi) memakai cookie sesi sendiri sehingga beberapa role dapat
+    | login bersamaan dari satu browser. Hapus SESSION_MULTI_ROLE di .env
+    | untuk menonaktifkan (perilaku normal, aman untuk produksi).
+    |
+    */
+
+    'multi_role' => env('SESSION_MULTI_ROLE', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Session Cookie Path
     |--------------------------------------------------------------------------
     |
