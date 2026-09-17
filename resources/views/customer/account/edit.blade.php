@@ -266,7 +266,7 @@
                 <div class="profile-photo-edit flex flex-col items-center text-center gap-sm">
                     <label for="foto_profil" class="profile-photo-edit-avatar inline-block cursor-pointer relative">
                         <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant bg-surface-container-high flex items-center justify-center">
-                            <img id="photo-preview-small" alt="Profile Picture" src="{{ Auth::user()->foto_profil_url ?? '' }}" class="w-full h-full object-cover {{ Auth::user()->foto_profil_url ? '' : 'hidden' }}"/>
+                            <img id="photo-preview-small" alt="Foto Profil" src="{{ Auth::user()->foto_profil_url ?? '' }}" class="w-full h-full object-cover {{ Auth::user()->foto_profil_url ? '' : 'hidden' }}"/>
                             <span id="photo-fallback" class="material-symbols-outlined text-[40px] text-on-surface-variant {{ Auth::user()->foto_profil_url ? 'hidden' : '' }}">person</span>
                         </div>
                         <span class="profile-photo-edit-badge absolute bottom-0 right-0 w-8 h-8 rounded-full bg-secondary text-on-secondary border-2 border-surface-container-lowest flex items-center justify-center">
