@@ -410,3 +410,23 @@ Perbaikan tuntas terkait keluhan asimetri foto profil:
 Verifikasi: suite 27 passed + 1 risky (OwnerKomplainTest pre-existing tanpa assertion);
 tambahan `ProfileSmokeTest::test_photo_upload_stored_on_public_disk_not_public_dir`;
 `view:cache` lulus; smoke HTTP `/storage/profil/...` 200 di server nyata.
+
+---
+
+## Konsistensi Password Akun Customer (SELESAI)
+
+Masalah: login customer yang akunnya dibuat via Admin gagal ("Email atau password salah")
+padahal kredensial disalin dari banner pembayaran.
+
+Akar: `Admin\DataCustomerController::store` membuat password acak `Str::random(16)` yang tak
+pernah ditampilkan, sementara banner pembayaran selalu menampilkan `Password: Raliva123`
+(selaras jalur guest-checkout & pesanan offline Admin). Kredensial yang disalin pun tidak cocok.
+
+Perbaikan:
+1. `Admin\DataCustomerController::store` → password default **`Raliva123`** (konsisten dgn
+   `CheckoutController` & `DataPesananController`); notifikasi akun diperbarui menyebut
+   password default.
+2. Test baru `CustomerLoginConsistencyTest` (2 test pass):
+   - akun mirip hasil checkout bisa login pada sesi baru ("tab baru") saat `multi_role=true`;
+     password salah (`password`) tetap ditolak;
+   - `POST admin.customer.store` → akun tersimpan dgn `Hash::check('Raliva123', ...)` = true.
