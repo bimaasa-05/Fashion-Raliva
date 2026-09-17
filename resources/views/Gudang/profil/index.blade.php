@@ -181,7 +181,8 @@
                 </div>
                 <div>
                     <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Foto Profil</label>
-                    <input type="file" name="foto_profil" accept="image/*" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent file:mr-3 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-gold-accent/10 file:text-gold-accent hover:file:bg-gold-accent/20" />
+                    <img id="gudang-foto-preview" alt="Pratinjau Foto Profil" src="{{ $user->foto_profil_url ?? '' }}" class="w-20 h-20 rounded-full object-cover border-2 border-gold-accent/40 mb-2 {{ $user->foto_profil_url ? '' : 'hidden' }}" />
+                    <input type="file" name="foto_profil" accept="image/*" data-photo-preview="gudang-foto-preview" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent file:mr-3 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-gold-accent/10 file:text-gold-accent hover:file:bg-gold-accent/20" />
                     <p class="text-xs text-on-surface-variant mt-1">Maks 2MB. Kosongkan jika tidak ingin mengubah.</p>
                 </div>
                 @if($user->foto_profil_url)
@@ -213,3 +214,5 @@
     </div>
 </div>
 @endsection
+
+@include('partials.profile-photo-preview')
