@@ -120,14 +120,17 @@
             <div>
                 <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Password Lama</label>
                 <input type="password" name="password_lama" required autocomplete="current-password" placeholder="••••••••" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent" />
+                @error('password_lama') <p class="text-xs text-error mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Password Baru</label>
                 <input type="password" name="password_baru" required minlength="8" autocomplete="new-password" placeholder="Minimal 8 karakter" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent" />
+                @error('password_baru') <p class="text-xs text-error mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Konfirmasi Password Baru</label>
                 <input type="password" name="password_baru_confirmation" required autocomplete="new-password" placeholder="Ulangi password baru" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent" />
+                @error('password_baru_confirmation') <p class="text-xs text-error mt-1">{{ $message }}</p> @enderror
             </div>
             <div class="md:col-span-3 flex flex-col sm:flex-row sm:justify-end items-start gap-3">
                 <p class="text-xs text-on-surface-variant flex items-center gap-1.5 mr-auto">
@@ -160,13 +163,33 @@
                 </div>
                 <div>
                     <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Nomor HP</label>
-                    <input type="text" name="nomor_telepon" value="{{ $user->nomor_telepon ?? '' }}" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
+                    <input type="text" name="nomor_telepon" maxlength="30" value="{{ $user->nomor_telepon ?? '' }}" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                    <div>
+                        <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Jenis Kelamin</label>
+                        <select name="gender" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
+                            <option value="" {{ old('gender', $user->gender) === null ? 'selected' : '' }}>—</option>
+                            <option value="male" {{ old('gender', $user->gender) === 'male' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="female" {{ old('gender', $user->gender) === 'female' ? 'selected' : '' }}>Perempuan</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Tanggal Lahir</label>
+                        <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $user->tanggal_lahir?->format('Y-m-d') ?? '') }}" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
+                    </div>
                 </div>
                 <div>
                     <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Foto Profil</label>
                     <input type="file" name="foto_profil" accept="image/*" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent file:mr-3 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-gold-accent/10 file:text-gold-accent hover:file:bg-gold-accent/20" />
                     <p class="text-xs text-on-surface-variant mt-1">Maks 2MB. Kosongkan jika tidak ingin mengubah.</p>
                 </div>
+                @if($user->foto_profil_url)
+                    <label class="flex items-center gap-2 text-sm text-on-surface-variant cursor-pointer">
+                        <input type="checkbox" name="remove_photo" value="1" class="rounded border-muted-border text-gold-accent" />
+                        Hapus foto profil saat ini
+                    </label>
+                @endif
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                     <div>
                         <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Role</label>
