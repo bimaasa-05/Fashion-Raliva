@@ -311,6 +311,10 @@
     }
     .shop-action-btn:hover { background-color: var(--chrome-hover); }
     .shop-sort-trigger { min-height: 40px; }
+    /* ============ SHOP: active filter chips smooth expand ============ */
+    #active-chips { display: grid; grid-template-rows: 0fr; min-height: 0; transition: grid-template-rows .32s cubic-bezier(.32,.72,0,1), opacity .25s ease; }
+    #active-chips.chip-open { grid-template-rows: 1fr; }
+    #active-chips > * { min-height: 0; overflow: hidden; }
     /* ============ SHOP CONTENT CONTAINER (single product-area container, mirrors Wishlist card feel) ============ */
     .shop-content-container {
         background-color: #ffffff;
@@ -401,7 +405,8 @@
 <!-- Shop Toolbar (parent container: category navigation left, actions right) -->
 <div class="shop-toolbar flex flex-row items-center gap-sm md:gap-md px-container-margin py-sm">
     <!-- Category Navigation Card (Super-Admin card-premium style) -->
-    <div class="shop-category-card flex-1 min-w-0 flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm">
+    <div class="shop-category-card flex-1 min-w-0 flex flex-col card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm">
+    <div class="shop-category-row flex items-center gap-sm md:gap-md min-w-0">
     <div class="shop-category-nav flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar">
         <button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-pill shrink-0 px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('All') }}</button>
 @php
@@ -446,12 +451,15 @@
             </div>
         </div>
     </div>
-</div>
-<!-- Active Filter Chips -->
-<div id="active-chips" class="px-container-margin py-sm flex flex-wrap gap-sm items-center min-h-[2.75rem] opacity-0 pointer-events-none transition-opacity duration-200">
-<div id="chips-list" class="flex flex-wrap gap-sm items-center grow"></div>
-<button id="clear-all" class="font-label-sm text-label-sm text-secondary underline hover:opacity-80 transition-opacity shrink-0" onclick="clearAll()" type="button">{{ __('Clear all') }}</button>
-</div>
+    <div id="active-chips" class="opacity-0 pointer-events-none">
+    <div>
+    <div class="py-xs flex flex-wrap gap-sm items-center">
+    <div id="chips-list" class="flex flex-wrap gap-sm items-center grow"></div>
+    <button id="clear-all" class="font-label-sm text-label-sm text-secondary underline hover:opacity-80 transition-opacity shrink-0" onclick="clearAll()" type="button">{{ __('Clear all') }}</button>
+    </div>
+    </div>
+    </div>
+    </div>
 </div>
 <!-- Shop Content Container -->
 <div class="mx-auto max-w-[1400px] px-container-margin shop-content-wrap">
@@ -728,6 +736,7 @@
             var hasChips = countActive() > 0;
             ac.classList.toggle('opacity-0', !hasChips);
             ac.classList.toggle('pointer-events-none', !hasChips);
+            ac.classList.toggle('chip-open', hasChips);
         }
         function removeFilter(type, val) {
             if (type === 'category') {
