@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdSlot;
 use App\Models\Product;
 use App\Models\Store;
 use Illuminate\Support\Facades\Auth;
@@ -35,10 +36,12 @@ class HomeController extends Controller
             ->take(4)
             ->get();
 
+        $adProducts = AdSlot::activeProducts(10);
+
         $wishlistedIds = $this->wishlistedIds();
         $cartCount = CartController::countForUser(Auth::id());
 
-        return view('customer.home.index', compact('products', 'stores', 'wishlistedIds', 'cartCount'));
+        return view('customer.home.index', compact('products', 'stores', 'adProducts', 'wishlistedIds', 'cartCount'));
     }
 
     /**

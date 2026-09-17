@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             PermintaanProduksiSeeder::class,
             AdminDemoSeeder::class,
             RalivaDemoSeeder::class,
+            PeringkatIklanSeeder::class,
             WarehouseStaffPermissionSeeder::class,
             HelpCenterSeeder::class,
         ]);

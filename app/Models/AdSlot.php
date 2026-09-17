@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Product;
+use App\Models\Store;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -65,5 +67,42 @@ class AdSlot extends Model
     public function handler(): BelongsTo
     {
         return $this->belongsTo(User::class, 'handled_by', 'user_id');
+    }
+
+    /**
+     * Produk dengan iklan aktif (periode berjalan), diurutkan bid tertinggi.
+     */
+    public static function activeProducts(int $limit = 10, ?string $term = null)
+    {
+        $today = now()->toDateString();
+
+        return static::query()
+            ->where('status', self::STATUS_AKTIF)
+            ->whereDate('tanggal_mulai', '<=', $today)
+            ->whereDate('tanggal_selesai', '>=', $today)
+            ->with(['product' => function ($q) use ($term) {
+                $q->where('status', Product::STATUS_AKTIF)
+                    ->whereHas('store', fn ($s) => $s->where('status', Store::STATUS_AKTIF))
+                    ->with([
+                        'store:store_id,nama_toko,logo',
+                        'images' => fn ($img) => $img->orderBy('urutan'),
+                        'variants' => fn ($v) => $v->where('status', 'aktif'),
+                    ]);
+
+                if ($term !== null && trim($term) !== '') {
+                    $like = '%'.trim($term).'%';
+                    $q->where(fn ($w) => $w
+                        ->where('nama_produk', 'like', $like)
+                        ->orWhereHas('store', fn ($s) => $s->where('nama_toko', 'like', $like))
+                        ->orWhereHas('category', fn ($c) => $c->where('nama_kategori', 'like', $like))
+                        ->orWhereHas('category.parent', fn ($c) => $c->where('nama_kategori', 'like', $like)));
+                }
+            }])
+            ->orderByDesc('nominal_bid')
+            ->limit(max(1, $limit))
+            ->get()
+            ->pluck('product')
+            ->filter()
+            ->values();
     }
 }

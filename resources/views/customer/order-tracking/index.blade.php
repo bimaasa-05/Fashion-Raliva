@@ -369,7 +369,7 @@
     $itemsCount = $selected->items->count();
     $progressWidth = $isCancelled ? 0 : (($step - 1) / 3 * 100);
     $details = [
-        'pending_payment' => [__('Menunggu pembayaran'), __('Silakan selesaikan pembayaran Anda agar pesanan segera diproses.')],
+        'pending_payment' => [__('Menunggu verifikasi'), __('Bukti pembayaran Anda sedang diverifikasi admin. Pesanan akan diproses setelah terverifikasi.')],
         'dibayar' => [__('Pembayaran diterima'), __('Pembayaran Anda telah kami terima. Pesanan sedang menunggu diproses.')],
         'diproses' => [__('Sedang disiapkan'), __('Pesanan sedang diproses di gudang dan akan segera dikirim.')],
         'dikirim' => [__('Sedang dalam perjalanan'), __('Pesanan sudah dikirim dan sedang dalam perjalanan menuju alamat Anda.')],
@@ -519,63 +519,6 @@ $active = ! $isCancelled && $step && $stepIndex === $step;
 <h3 class="font-title-md text-title-md text-on-surface mb-xs">{{ $detail[0] }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $detail[1] }}</p>
 </div>
-@if ($selected->tgl_mulai_produksi || $selected->produksi_dimulai_pada)
-<div class="mt-lg bg-surface-container-low p-md border border-outline-variant rounded-xl text-left">
-<div class="mb-sm flex items-center gap-2">
-<span class="material-symbols-outlined text-secondary text-[18px]">precision_manufacturing</span>
-<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Waktu Pengerjaan Produksi') }}</p>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
-<div>
-<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-xs">{{ __('Mulai Produksi') }}</p>
-<p class="font-body-sm text-body-sm text-on-surface font-medium">{{ $selected->produksi_dimulai_pada?->translatedFormat('d M Y, H:i') ?? $selected->tgl_mulai_produksi?->translatedFormat('d M Y, H:i') ?? '-' }}</p>
-@if ($selected->tanggal_qc)
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs uppercase tracking-wider">{{ __('QC Selesai') }}: <span class="text-on-surface font-medium normal-case tracking-normal">{{ $selected->tanggal_qc->translatedFormat('d M Y, H:i') }}</span></p>
-@endif
-</div>
-<div>
-<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-xs">{{ __('Target Selesai (Admin)') }}</p>
-<p class="font-body-sm text-body-sm text-on-surface font-medium">{{ $selected->tgl_berakhir_produksi?->translatedFormat('d M Y, H:i') ?? '-' }}</p>
-@if ($selected->tgl_berakhir_produksi)
-@if ($selected->tanggal_qc || $selected->status === \App\Models\Order::STATUS_MENUNGGU_QC || $selected->status === \App\Models\Order::STATUS_SIAP_KIRIM || $selected->status === \App\Models\Order::STATUS_DIKIRIM || $selected->status === \App\Models\Order::STATUS_SELESAI)
-@if ($selected->tanggal_qc)
-@php
-$selisih = (int) round(($selected->tanggal_qc->timestamp - $selected->tgl_berakhir_produksi->timestamp) / 60);
-$fmtMenit = fn(int $menit): string => $menit < 60
-? $menit . 'm'
-: (($menit >= 1440) ? intdiv($menit, 1440) . 'h ' . str_pad(intdiv($menit % 1440, 60), 2, '0', STR_PAD_LEFT) . 'j' : intdiv($menit, 60) . 'j ' . str_pad($menit % 60, 2, '0', STR_PAD_LEFT) . 'm');
-@endphp
-<p class="font-label-sm text-label-sm mt-xs {{ $selisih <= 0 ? 'text-secondary' : 'text-error' }}">
-@if ($selisih === 0)
-<span class="text-on-surface-variant">{{ __('Selesai tepat waktu.') }}</span>
-@elseif ($selisih < 0)
-<span class="text-on-surface-variant">{{ __('Selesai lebih cepat') }} {{ $fmtMenit(abs($selisih)) }} {{ __('dari target.') }}</span>
-@else
-<span class="text-error font-semibold">{{ __('Terlambat') }} {{ $fmtMenit($selisih) }} {{ __('dari target.') }}</span>
-@endif
-</p>
-@else
-<p class="font-label-sm text-label-sm mt-xs text-on-surface-variant">{{ __('Produksi selesai · Menunggu QC') }}</p>
-@endif
-@else
-<p class="font-label-sm text-label-sm mt-xs countdown-badge" data-customer-countdown-end="{{ $selected->tgl_berakhir_produksi->timestamp }}" data-status="{{ $selected->status }}"><span class="text-on-surface-variant">Sisa... (menghitung)</span></p>
-@endif
-@endif
-</div>
-</div>
-<div class="mt-sm pt-sm border-t border-outline-variant flex items-center justify-between gap-3">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Lama Pengerjaan') }}</span>
-@if ($selected->produksi_dimulai_pada)
-<p class="font-body-sm text-body-sm font-semibold text-secondary countdown-badge"
-   data-customer-elapsed-start="{{ $selected->produksi_dimulai_pada->timestamp }}"
-   @if ($selected->tanggal_qc) data-customer-elapsed-end="{{ $selected->tanggal_qc->timestamp }}" @endif
->Loading...</p>
-@else
-<p class="font-body-sm text-body-sm text-on-surface font-medium">{{ __('Belum dimulai') }}</p>
-@endif
-</div>
-</div>
-@endif
 @if ($selected->status === \App\Models\Order::STATUS_PENDING_PAYMENT)
 <div class="mt-lg flex justify-center">
 <a href="{{ route('customer.checkout.payment', $selected->checkout_id) }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest">

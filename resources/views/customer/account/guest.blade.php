@@ -62,7 +62,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-md card-premium flex gap-sm">
 <span class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0 border border-outline-variant/30"><span class="material-symbols-outlined text-secondary text-[20px]">local_mall</span></span>
-<div class="min-w-0"><h3 class="font-title-md text-title-md text-on-surface">{{ __('Pesanan & Lacak Resi') }}</h3><p class="font-body-sm text-body-sm text-on-surface-variant mt-1">{{ __('Lihat semua pesanan dan lacak pengiriman via resi atau nomor order.') }}</p></div>
+<div class="min-w-0"><h3 class="font-title-md text-title-md text-on-surface">{{ __('Pesanan & Lacak Pengiriman') }}</h3><p class="font-body-sm text-body-sm text-on-surface-variant mt-1">{{ __('Lihat semua pesanan dan status pengiriman setelah masuk.') }}</p></div>
 </div>
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-md card-premium flex gap-sm">
 <span class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0 border border-outline-variant/30"><span class="material-symbols-outlined text-secondary text-[20px]">location_on</span></span>
@@ -86,9 +86,6 @@
 </div>
 </div>
 <div class="flex flex-col sm:flex-row gap-sm justify-center mt-lg">
-<a href="{{ route('customer.cek-resi') }}" class="inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full border border-outline-variant font-label-caps text-label-caps uppercase tracking-widest hover:border-secondary hover:text-secondary transition-colors">
-<span class="material-symbols-outlined text-[18px]">local_shipping</span> {{ __('Cek Resi Tanpa Login') }}
-</a>
 <a href="{{ route('customer.shop') }}" class="inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full border border-outline-variant font-label-caps text-label-caps uppercase tracking-widest hover:border-secondary hover:text-secondary transition-colors">
 <span class="material-symbols-outlined text-[18px]">storefront</span> {{ __('Lanjut Belanja') }}
 </a>
