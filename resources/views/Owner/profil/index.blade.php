@@ -77,12 +77,12 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
                         <div>
                             <label for="pw-baru" class="block raliva-label mb-2">Kata Sandi Baru</label>
-                            <input id="pw-baru" name="password" type="password" required minlength="8" class="raliva-input" />
-                            @error('password') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                            <input id="pw-baru" name="password_baru" type="password" required minlength="8" class="raliva-input" placeholder="Minimal 8 karakter, 1 huruf kapital & 1 angka" />
+                            @error('password_baru') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label for="pw-konfirmasi" class="block raliva-label mb-2">Konfirmasi Kata Sandi</label>
-                            <input id="pw-konfirmasi" name="password_confirmation" type="password" required minlength="8" class="raliva-input" />
+                            <input id="pw-konfirmasi" name="password_baru_confirmation" type="password" required minlength="8" class="raliva-input" />
                         </div>
                     </div>
                     <div class="flex justify-end">
@@ -173,13 +173,34 @@
                 </div>
                 <div>
                     <label for="ep-hp" class="block raliva-label mb-2">Nomor HP <span class="text-on-surface-variant font-normal">(opsional)</span></label>
-                    <input id="ep-hp" name="nomor_telepon" type="text" value="{{ old('nomor_telepon', $user->nomor_telepon ?? '') }}" class="raliva-input" placeholder="08..." />
+                    <input id="ep-hp" name="nomor_telepon" type="text" maxlength="30" value="{{ old('nomor_telepon', $user->nomor_telepon ?? '') }}" class="raliva-input" placeholder="08..." />
                     @error('nomor_telepon') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
+                    <div>
+                        <label for="ep-gender" class="block raliva-label mb-2">Jenis Kelamin <span class="text-on-surface-variant font-normal">(opsional)</span></label>
+                        <select id="ep-gender" name="gender" class="raliva-input">
+                            <option value="" {{ old('gender', $user->gender) === null ? 'selected' : '' }}>—</option>
+                            <option value="male" {{ old('gender', $user->gender) === 'male' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="female" {{ old('gender', $user->gender) === 'female' ? 'selected' : '' }}>Perempuan</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="ep-tgl-lahir" class="block raliva-label mb-2">Tanggal Lahir <span class="text-on-surface-variant font-normal">(opsional)</span></label>
+                        <input id="ep-tgl-lahir" name="tanggal_lahir" type="date" value="{{ old('tanggal_lahir', $user->tanggal_lahir?->format('Y-m-d') ?? '') }}" class="raliva-input" />
+                        @error('tanggal_lahir') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
                 </div>
                 <div>
                     <label class="block raliva-label mb-2">Role</label>
                     <input type="text" value="{{ $roleName }} — {{ $ownedStores->isEmpty() ? 'Belum punya toko' : $ownedStores->pluck('nama_toko')->implode(' & ') }}" readonly disabled class="w-full bg-surface-container-low border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface-variant opacity-80 cursor-not-allowed" />
                 </div>
+                @if($user->foto_profil_url)
+                    <label class="flex items-center gap-2 text-sm text-on-surface-variant cursor-pointer">
+                        <input type="checkbox" name="remove_photo" value="1" class="rounded border-muted-border text-gold-accent" />
+                        Hapus foto profil saat ini
+                    </label>
+                @endif
                 <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
                     <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
                     <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Simpan Perubahan</button>
