@@ -141,25 +141,6 @@
                                         <span class="material-symbols-outlined text-sm">chat</span>
                                         Buka
                                     </button>
-
-                                    @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES, \App\Models\Complaint::STATUS_ESKALASI, 'baru'], true))
-                                        @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES], true) && ! $c->eskalasi_oleh_sa)
-                                            <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'eskalasi', '{{ $kode }}')" class="inline-block">
-                                                @csrf
-                                                <button type="submit" title="Eskalasi"
-                                                    class="w-8 h-8 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent/20 hover:border-gold-accent/50 transition-colors">
-                                                    <span class="material-symbols-outlined text-sm">emergency</span>
-                                                </button>
-                                            </form>
-                                        @endif
-                                        <form method="POST" action="{{ route('superadmin.komplain.tutup', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'tutup', '{{ $kode }}')" class="inline-block">
-                                            @csrf
-                                            <button type="submit" title="Tutup Komplain"
-                                                class="w-8 h-8 flex items-center justify-center border border-outline text-on-surface hover:bg-surface-container-high transition-colors">
-                                                <span class="material-symbols-outlined text-sm">check_circle</span>
-                                            </button>
-                                        </form>
-                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -218,23 +199,6 @@
                         <button type="button" onclick="openChatModal({{ $c->complaint_id }}, '{{ addslashes($c->subjek ?? $c->kategori) }}', '{{ $kode }}', '{{ addslashes($chatStatusLabelM) }}', {{ $chatDoneM ? 'true' : 'false' }})" class="flex-1 min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:opacity-80 transition-opacity btn-premium">
                             <span class="material-symbols-outlined text-[16px]">chat</span>Buka
                         </button>
-
-                        @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES, \App\Models\Complaint::STATUS_ESKALASI, 'baru'], true))
-                            @if (in_array($c->status, [\App\Models\Complaint::STATUS_OPEN, \App\Models\Complaint::STATUS_DIPROSES], true) && ! $c->eskalasi_oleh_sa)
-                                <form method="POST" action="{{ route('superadmin.komplain.eskalasi', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'eskalasi', '{{ $kode }}')" class="shrink-0">
-                                    @csrf
-                                    <button type="submit" title="Eskalasi" class="min-h-11 w-11 flex items-center justify-center bg-gold-accent/10 text-gold-accent border border-gold-accent/25 hover:bg-gold-accent/20 hover:border-gold-accent/50 transition-colors rounded-lg">
-                                        <span class="material-symbols-outlined text-[18px]">emergency</span>
-                                    </button>
-                                </form>
-                            @endif
-                            <form method="POST" action="{{ route('superadmin.komplain.tutup', $c->complaint_id) }}" onsubmit="return openConfirmKomplain(event, 'tutup', '{{ $kode }}')" class="shrink-0">
-                                @csrf
-                                <button type="submit" title="Tutup Komplain" class="min-h-11 w-11 flex items-center justify-center border border-outline text-on-surface hover:bg-surface-container-high transition-colors rounded-lg">
-                                    <span class="material-symbols-outlined text-[18px]">check_circle</span>
-                                </button>
-                            </form>
-                        @endif
                     </div>
                 </article>
             @empty
@@ -249,7 +213,7 @@
 </div>
 
 <!-- Chat Komplain Modal (synced identical to Customer) -->
-<div class="hidden fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
+<div class="hidden fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm chat-readonly" id="chat-container" onclick="if(event.target===this) closeChatModal()">
     <div class="min-h-full lg:h-full flex flex-col justify-end lg:flex-row lg:justify-end" onclick="if(event.target===this) closeChatModal()">
         <div id="chat-panel" class="flex flex-col bg-surface-container-low border-t md:border lg:border-t-0 lg:border-l border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-t-3xl md:rounded-2xl lg:rounded-none max-h-[85dvh] md:max-h-[78dvh] lg:max-h-full lg:h-full w-full md:w-[520px] lg:w-[560px] xl:w-[600px] md:max-w-[88vw] lg:max-w-full md:mx-auto lg:mx-0 overflow-hidden md:shadow-2xl lg:shadow-none" onclick="event.stopPropagation()">
             <div class="relative flex items-center justify-between gap-2 lg:gap-3 pl-6 pr-3 lg:px-6 py-3.5 lg:py-4 border-b border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shrink-0 bg-surface-container-low z-10 overflow-visible" id="chat-header">
@@ -272,9 +236,6 @@
                             </button>
                             <button type="button" onclick="resetWallpaper()" id="chat-more-item-wp-reset" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer flex items-center gap-2">
                                 <span class="material-symbols-outlined text-[19px]">restart_alt</span>Reset Wallpaper
-                            </button>
-                            <button type="button" onclick="selectMessagesMode()" id="chat-more-item-select" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[19px]">check_box</span>Select Messages
                             </button>
                             <button type="button" onclick="openExportChat()" id="chat-more-item-export" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
                                 <span class="material-symbols-outlined text-[19px]">ios_share</span>Ekspor Chat
@@ -330,6 +291,7 @@
                     </button>
                 </div>
                 <p id="chat-closed-note" class="hidden text-center font-body-sm text-body-sm text-on-surface-variant pt-4">Komplain telah selesai dan tidak dapat dibalas lagi.</p>
+                <p id="chat-readonly-note" class="text-center font-body-sm text-body-sm text-on-surface-variant pt-4">Super Admin hanya dapat melihat komplain. Penanganan komplain dilakukan oleh role Admin.</p>
             </div>
             </div><!-- /#chat-content -->
         </div>
@@ -392,29 +354,6 @@
         </div>
     </div>
 </div>
-    <!-- Modal Konfirmasi Komplain (eskalasi/tutup) -->
-@component('SuperAdmin.partials.premium-confirm', [
-    'id' => 'confirmKomplainModal',
-    'icon' => 'emergency',
-    'iconBox' => 'bg-gold-accent/20 border-gold-accent/30',
-    'iconColor' => 'text-gold-accent',
-    'iconWrapId' => 'confirm-komplain-icon',
-    'iconSymId' => 'confirm-komplain-icon-sym',
-    'zIndex' => 75,
-    'close' => 'closeConfirmKomplain',
-    'dataModal' => true,
-])
-    <div class="p-6">
-        <h3 id="confirm-komplain-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">Konfirmasi</h3>
-        <p id="confirm-komplain-desc" class="text-on-surface-variant text-sm text-center mb-6">Lanjutkan aksi ini?</p>
-    </div>
-    @slot('footer')
-        <div class="flex space-x-3">
-            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeConfirmKomplain()">Batal</button>
-            <button type="button" id="confirm-komplain-submit" class="flex-1 btn-modal btn-modal-primary">Ya, Lanjutkan</button>
-        </div>
-    @endslot
-@endcomponent
 @endsection
 
     @push('styles')
@@ -442,6 +381,9 @@
     #chat-emoji-panel::-webkit-scrollbar { display: none; }
     #chat-edit-emoji-panel { scrollbar-width: none; -ms-overflow-style: none; }
     #chat-edit-emoji-panel::-webkit-scrollbar { display: none; }
+    #chat-container.chat-readonly #chat-composer,
+    #chat-container.chat-readonly #chat-emoji-panel,
+    #chat-container.chat-readonly #chat-select-bar { display: none; }
     .raliva-doodle {
         background-color: var(--surface-container-low);
         background-image: radial-gradient(circle at 1.5px 1.5px, rgba(120, 80, 0, .10) 1.5px, transparent 0);
@@ -560,6 +502,7 @@
     let currentChat = { id: null, polling: null, done: false, closing: false };
     const myId = {{ Auth::id() }};
     const myRole = "{{ Auth::user()->role->nama_role ?? '' }}";
+    const chatReadOnly = true;
 
     function openChatFromCard(el) {
         const card = el.closest('[data-complaint-card]');
@@ -725,7 +668,7 @@
             const bubble = mine ? 'bg-secondary text-white' : 'bg-surface-container-low';
             const meta = mine ? 'text-white/60' : 'text-on-surface-variant';
             const edited = m.edited_at ? ' <span class="italic">(' + escapeHtml('diedit') + ')</span>' : '';
-            const actionsOn = !currentChat.done;
+            const actionsOn = !currentChat.done && !chatReadOnly;
             const selBox = '<span class="chat-sel-box" data-sel-box="' + m.complaint_message_id + '" onclick="event.stopPropagation();toggleSelectMessage(' + m.complaint_message_id + ')" aria-hidden="true"><span class="material-symbols-outlined">check_box_outline_blank</span></span>';
             const rowClass = 'flex items-center gap-2 ' + (mine ? (chatSelMode ? 'justify-between' : 'justify-end') : 'justify-start') + ' group chat-msg';
             const selFirst = selBox;
@@ -1134,36 +1077,6 @@
         document.getElementById('chat-sel-delete-dialog').classList.add('hidden');
     }
 
-    async function deleteSelectedMessages() {
-        const ids = Array.from(chatSelIds);
-        if (ids.length === 0) return;
-        const btn = document.querySelector('#chat-sel-delete-dialog [data-sel-del-ok]');
-        if (btn) btn.disabled = true;
-        let failed = 0;
-        for (const id of ids) {
-            try {
-                const url = '{{ route('superadmin.komplain.messages.destroy', [':cid:', ':mid:']) }}'.replace(':cid:', currentChat.id).replace(':mid:', id);
-                const resp = await fetch(url, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ per: 'me' })
-                });
-                if (!resp.ok) failed++;
-            } catch (_) { failed++; }
-        }
-        closeSelDeleteDialog();
-        if (btn) btn.disabled = false;
-        exitSelectMessages();
-        loadMessages();
-        if (failed === 0) showChatToast(ids.length + ' pesan dihapus untuk diri sendiri.');
-        else showChatToast(failed + ' pesan gagal dihapus.');
-    }
-
     function downloadSelectedMessages() {
         showChatToast('Fitur akan segera hadir.');
     }
@@ -1197,103 +1110,18 @@
         }, 30);
     }
 
+    function closeDeleteDialog() {
+        deleteDialogMsgId = null;
+        const d = document.getElementById('chat-delete-dialog');
+        if (d) d.classList.add('hidden');
+    }
+
     function closeEditDialog() {
         closeEditEmojiPanel();
         chatEditMsgId = null;
         const editInput = document.getElementById('chat-edit-input');
         if (editInput) editInput.style.height = '';
         document.getElementById('chat-edit-dialog').classList.add('hidden');
-    }
-
-    async function saveEditMessage() {
-        const id = chatEditMsgId;
-        if (!id) return;
-        const input = document.getElementById('chat-edit-input');
-        const pesan = input.value.trim();
-        if (pesan.length < 3) { input.focus(); return; }
-        input.disabled = true;
-        document.getElementById('chat-edit-save').disabled = true;
-        try {
-            const url = '{{ route('superadmin.komplain.messages.update', [':cid:', ':mid:']) }}'.replace(':cid:', currentChat.id).replace(':mid:', id);
-            const resp = await fetch(url, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ pesan })
-            });
-            if (resp.ok) {
-                closeEditDialog();
-                await loadMessages();
-            } else {
-                let msg = 'Gagal menyimpan perubahan';
-                try {
-                    const data = await resp.json();
-                    if (data && data.message) msg = data.message;
-                    else if (data && data.errors) msg = Object.values(data.errors).flat().join('\n');
-                } catch (_) {}
-                alert(msg);
-                input.disabled = false;
-                document.getElementById('chat-edit-save').disabled = false;
-                input.focus();
-            }
-        } catch (_) {
-            input.disabled = false;
-            document.getElementById('chat-edit-save').disabled = false;
-            input.focus();
-        }
-    }
-
-    function openDeleteDialog(id, onlyMe) {
-        closeChatMenu();
-        deleteDialogMsgId = id;
-        const optAll = document.getElementById('chat-del-opt-all');
-        if (optAll) optAll.classList.toggle('hidden', !!onlyMe);
-        document.querySelectorAll('#chat-delete-dialog [data-del-per]').forEach(function (b) { b.disabled = false; });
-        document.getElementById('chat-delete-dialog').classList.remove('hidden');
-    }
-
-    function closeDeleteDialog() {
-        deleteDialogMsgId = null;
-        document.querySelectorAll('#chat-delete-dialog [data-del-per]').forEach(function (b) { b.disabled = false; });
-        document.getElementById('chat-delete-dialog').classList.add('hidden');
-    }
-
-    async function deleteMessage(id, per) {
-        if (!id) return;
-        const btnEl = document.querySelector('#chat-delete-dialog [data-del-per="' + per + '"]');
-        if (btnEl) btnEl.disabled = true;
-        try {
-            const url = '{{ route('superadmin.komplain.messages.destroy', [':cid:', ':mid:']) }}'.replace(':cid:', currentChat.id).replace(':mid:', id);
-            const resp = await fetch(url, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ per })
-            });
-            closeDeleteDialog();
-            if (resp.ok) {
-                await loadMessages();
-            } else {
-                let msg = 'Gagal menghapus pesan';
-                try {
-                    const data = await resp.json();
-                    if (data && data.message) msg = data.message;
-                } catch (_) {}
-                alert(msg);
-            }
-        } catch (_) {
-            closeDeleteDialog();
-        } finally {
-            if (btnEl) btnEl.disabled = false;
-        }
     }
 
     const CHAT_EMOJI = ['😀','😁','😂','🤣','😊','😍','🥰','😘','😚','😜','🤪','😎','🥸','🤗','🤭','🫢','😇','🥺','🤔','🤨','😐','😑','😶','🙄','😏','😮','😯','😪','😴','🤤','😌','😢','😭','😅','😆','😉','🙃','😬','👍','👎','👌','✌️','🤞','🤝','🙏','👏','🙌','💪','🤙','👋','❤️','🧡','💛','💚','💙','💜','🖤','🤍','💖','💘','💯','🔥','✨','⭐','🎉','🎁','🎊','👀'];
@@ -1463,55 +1291,6 @@
 
     initWallpaper();
 
-    async function sendMessage() {
-        const composer = document.getElementById('chat-composer');
-        if (composer.classList.contains('hidden')) return;
-        const input = document.getElementById('chat-input');
-        const pesan = input.value.trim();
-        if (!pesan || !currentChat.id) return;
-
-        document.getElementById('chat-send').disabled = true;
-        input.value = '';
-        if (window.autoGrowChatInput) autoGrowChatInput(input);
-
-        try {
-            const url = '{{ route('superadmin.komplain.messages.store', ':id:') }}'.replace(':id:', currentChat.id);
-            const resp = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ pesan })
-            });
-            if (resp.ok) {
-                await loadMessages();
-                if (currentChat.done) {
-                    currentChat.done = false;
-                    document.getElementById('chat-composer').classList.remove('hidden');
-                    document.getElementById('chat-closed-note').classList.add('hidden');
-                }
-            } else {
-                input.value = pesan;
-                if (window.autoGrowChatInput) requestAnimationFrame(function () { autoGrowChatInput(input); });
-                let msg = 'Gagal mengirim pesan';
-                try {
-                    const data = await resp.json();
-                    if (data && data.errors) msg = Object.values(data.errors).flat().join('\n');
-                    else if (data && data.message) msg = data.message;
-                } catch (_) {}
-                alert(msg);
-            }
-        } catch (_) {
-            input.value = pesan;
-            if (window.autoGrowChatInput) requestAnimationFrame(function () { autoGrowChatInput(input); });
-        } finally {
-            document.getElementById('chat-send').disabled = false;
-        }
-    }
-
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             if (chatSearchOpen) { closeChatSearch(); return; }
@@ -1522,12 +1301,8 @@
             const ed = document.getElementById('chat-edit-dialog');
             if (ed && !ed.classList.contains('hidden')) { closeEditDialog(); return; }
             if (chatMenuId !== null) { closeChatMenu(); return; }
-            const dialog = document.getElementById('chat-delete-dialog');
-            if (dialog && !dialog.classList.contains('hidden')) { closeDeleteDialog(); return; }
             const panel = document.getElementById('chat-emoji-panel');
             if (panel && !panel.classList.contains('hidden')) { closeEmojiPanel(); return; }
-            const ck = document.getElementById('confirmKomplainModal');
-            if (ck && !ck.classList.contains('hidden')) { closeConfirmKomplain(); return; }
             closeChatModal();
         }
     });
@@ -1541,43 +1316,7 @@
         }
     });
 
-    // SuperAdmin extras: confirm komplain + table filter
-    let _pendingKomplainForm = null;
-    function openConfirmKomplain(e, aksi, kode) {
-        e.preventDefault();
-        _pendingKomplainForm = e.target;
-        const isEskalasi = aksi === 'eskalasi';
-        document.getElementById('confirm-komplain-title').textContent = isEskalasi ? 'Eskalasi Komplain?' : 'Tutup Komplain?';
-        document.getElementById('confirm-komplain-desc').textContent = (isEskalasi ? 'Eskalasi ' : 'Tutup ') + kode + (isEskalasi ? ' ke Owner?' : ' (status akan menjadi selesai)?');
-        const iconWrap = document.getElementById('confirm-komplain-icon');
-        const iconSym = document.getElementById('confirm-komplain-icon-sym');
-        const submitBtn = document.getElementById('confirm-komplain-submit');
-        if (isEskalasi) {
-            iconWrap.className = 'w-12 h-12 rounded-full bg-gold-accent/25 border border-gold-accent/30 flex items-center justify-center';
-            iconSym.className = 'material-symbols-outlined text-[24px] text-gold-accent';
-            iconSym.textContent = 'emergency';
-            submitBtn.className = 'flex-1 btn-modal btn-modal-primary';
-            submitBtn.textContent = 'Ya, Eskalasi';
-        } else {
-            iconWrap.className = 'w-12 h-12 rounded-full bg-success/25 border border-success/30 flex items-center justify-center';
-            iconSym.className = 'material-symbols-outlined text-[24px] text-success';
-            iconSym.textContent = 'check_circle';
-            submitBtn.className = 'flex-1 btn-modal btn-modal-success';
-            submitBtn.textContent = 'Ya, Tutup';
-        }
-        const m = document.getElementById('confirmKomplainModal');
-        m.classList.remove('hidden'); m.classList.add('flex');
-        return false;
-    }
-    function closeConfirmKomplain() {
-        const m = document.getElementById('confirmKomplainModal');
-        if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
-        _pendingKomplainForm = null;
-    }
-    document.getElementById('confirm-komplain-submit')?.addEventListener('click', () => {
-        if (_pendingKomplainForm) _pendingKomplainForm.submit();
-    });
-
+    // SuperAdmin extras: table filter
     document.addEventListener('DOMContentLoaded', () => {
         const scope = document.querySelector('[data-table-scope]');
         if (!scope) return;
