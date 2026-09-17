@@ -66,7 +66,13 @@
                 elseif (mb_strlen($wP[0] ?? '') > 1) $iP .= mb_substr($wP[0], 1, 1);
                 $initP = strtoupper(mb_substr($iP, 0, 2)) ?: '?';
             @endphp
-            <div class="w-11 h-11 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-[15px] shrink-0 border-2 border-white shadow-sm ring-1 ring-gold-accent/20">{{ $initP }}</div>
+            <div class="w-11 h-11 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-[15px] shrink-0 border-2 border-white shadow-sm ring-1 ring-gold-accent/20 overflow-hidden">
+                @if ($sbUserP?->foto_profil_url)
+                    <img src="{{ $sbUserP->foto_profil_url }}" alt="{{ $sbNameP }}" class="w-full h-full object-cover" />
+                @else
+                    {{ $initP }}
+                @endif
+            </div>
             <div class="min-w-0 flex-1" data-sidebar-text>
                 <h4 class="text-[13px] font-bold text-on-sidebar truncate leading-tight">{{ $sbNameP }}</h4>
                 <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-gold-accent text-white text-[10px] font-bold uppercase tracking-wider truncate shadow-sm mt-1">{{ $sbRoleP }}</span>
