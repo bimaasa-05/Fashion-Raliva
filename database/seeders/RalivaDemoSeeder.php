@@ -813,6 +813,37 @@ class RalivaDemoSeeder extends Seeder
             Supplier::updateOrCreate(['email' => $s['email']], $s);
         }
 
+        // Bahan baku yang dipasok (tampilan Data Supplier SuperAdmin)
+        $bahanBySupplier = [
+            'CV Tekstil Bandung' => [
+                ['nama_bahan' => 'Kain Katun Premium', 'satuan' => 'meter'],
+                ['nama_bahan' => 'Kain Denim', 'satuan' => 'meter'],
+                ['nama_bahan' => 'Kain Satin', 'satuan' => 'meter'],
+                ['nama_bahan' => 'Kain Linen', 'satuan' => 'meter'],
+            ],
+            'Aksesoris Mega' => [
+                ['nama_bahan' => 'Kancing Klasik', 'satuan' => 'lusin'],
+                ['nama_bahan' => 'Ritsleting 30 cm', 'satuan' => 'pcs'],
+                ['nama_bahan' => 'Benang Jahit', 'satuan' => 'gulung'],
+                ['nama_bahan' => 'Label Woven', 'satuan' => 'pcs'],
+            ],
+            'Kemasan Prima' => [
+                ['nama_bahan' => 'Box Kraft 30x20', 'satuan' => 'pcs'],
+                ['nama_bahan' => 'Plastik PP 25x35', 'satuan' => 'pcs'],
+                ['nama_bahan' => 'Tisu Kertas Premium', 'satuan' => 'pak'],
+                ['nama_bahan' => 'Paperbag Polos', 'satuan' => 'pcs'],
+            ],
+        ];
+        foreach ($bahanBySupplier as $namaSup => $bahan) {
+            $sup = Supplier::firstWhere('nama_supplier', $namaSup);
+            if (! $sup) {
+                continue;
+            }
+            foreach ($bahan as $b) {
+                $sup->bahans()->updateOrCreate(['nama_bahan' => $b['nama_bahan']], $b);
+            }
+        }
+
         // Riwayat barang masuk dari supplier (kolom Supplier di halaman Stok SuperAdmin)
         $supIds = Supplier::pluck('supplier_id', 'nama_supplier')->all();
         if ($supIds !== [] && WarehouseStock::exists()) {
