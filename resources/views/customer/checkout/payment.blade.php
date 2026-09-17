@@ -839,15 +839,12 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
 
         .pay-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: .5rem;
-        }
-
-        @media(min-width:768px) {
-            .pay-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: .75rem;
-            }
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: 1fr 1fr;
+            grid-template-areas:
+                'qris ewallet'
+                'saldo bank_transfer';
+            gap: .5rem .75rem;
         }
 
         .detail-row {
@@ -1013,8 +1010,15 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                     <p class="font-body-sm text-body-sm text-on-surface-variant">
                                         {{ __('Belum ada metode pembayaran aktif. Hubungi admin.') }}</p>
                                 @else
-                                    <div class="pay-grid" id="pay-grid">
-                                        @foreach ($paymentMethods as $pm)
+                                    @php
+                                        $leftMethods = $paymentMethods->where('kode_metode', 'qris');
+                                        $rightMethods = $paymentMethods->whereIn('kode_metode', ['ewallet', 'bank_transfer']);
+                                        $rightMethods = $rightMethods->merge(
+                                            $paymentMethods->reject(fn ($pm) => in_array($pm->kode_metode, ['qris', 'ewallet', 'bank_transfer'], true))
+                                        );
+                                    @endphp
+                                    <div id="pay-grid" class="pay-grid">
+                                        @foreach ($leftMethods as $pm)
                                             @php
                                                 $isSelected =
                                                     (string) old('payment_method_id', $payment->payment_method_id) ===
@@ -1028,6 +1032,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                 $qrAccount = $pm->kode_metode === 'qris' ? $pm->accounts->first() : null;
                                             @endphp
                                             <div class="pay-method{{ $isSelected ? ' selected' : '' }}"
+                                                style="grid-area: qris"
                                                 data-id="{{ $pm->payment_method_id }}"
                                                 data-nama="{{ $pm->nama_metode }}"
                                                 data-kode="{{ $pm->kode_metode }}"
@@ -1039,6 +1044,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                             </div>
                                         @endforeach
                                         <div class="pay-method{{ $payment->paymentMethod?->kode_metode === \App\Models\PaymentMethod::KODE_SALDO_AKUN ? ' selected' : '' }}"
+                                            style="grid-area: saldo"
                                             data-id="" data-nama="Saldo Akun" data-kode="saldo_akun"
                                             data-account-id="">
                                             <span
@@ -1046,6 +1052,30 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                             <span class="text-center leading-tight text-sm">Saldo
                                                 Akun</span>
                                         </div>
+                                        @foreach ($rightMethods as $pm)
+                                            @php
+                                                $isSelected =
+                                                    (string) old('payment_method_id', $payment->payment_method_id) ===
+                                                    (string) $pm->payment_method_id;
+                                                $icon = match ($pm->kode_metode) {
+                                                    'qris' => 'qr_code_2',
+                                                    'ewallet' => 'account_balance_wallet',
+                                                    'bank_transfer' => 'account_balance',
+                                                    default => 'payments',
+                                                };
+                                            @endphp
+                                            <div class="pay-method{{ $isSelected ? ' selected' : '' }}"
+                                                style="grid-area: {{ $pm->kode_metode }}"
+                                                data-id="{{ $pm->payment_method_id }}"
+                                                data-nama="{{ $pm->nama_metode }}"
+                                                data-kode="{{ $pm->kode_metode }}"
+                                                data-account-id="">
+                                                <span
+                                                    class="material-symbols-outlined text-[28px]">{{ $icon }}</span>
+                                                <span
+                                                    class="text-center leading-tight text-sm">{{ $pm->nama_metode }}</span>
+                                            </div>
+                                        @endforeach
                                     </div>
 
                                     <div id="pay-detail" class="hidden mt-lg space-y-lg">
