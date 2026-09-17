@@ -9,308 +9,561 @@
 
 @push('styles')
 <style>
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .tab-btn.active { background: var(--chrome-accent); color: #fff; }
-    .tab-btn { transition: all .2s; }
+    .banner-gradient { background-image: linear-gradient(118deg, #141414 0%, #1f0c10 55%, #421329 100%); }
+    .banner-glow { position: absolute; border-radius: 9999px; pointer-events: none; }
+    .banner-glow-1 { top: -90px; right: -50px; width: 260px; height: 260px; background: rgba(139, 30, 63, 0.4); }
+    .banner-glow-2 { bottom: -120px; left: -60px; width: 220px; height: 220px; background: rgba(139, 30, 63, 0.24); }
+    .banner-desc { font-size: 14px; color: rgba(255, 255, 255, 0.72); }
+    .banner-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 9999px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.18); }
+    .banner-badge .dot { width: 7px; height: 7px; border-radius: 9999px; animation: beat 1.6s ease-in-out infinite; }
+    .banner-badge.is-on .dot { background: #4ade80; }
+    @keyframes beat { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+    .stat-chip { display: flex; flex-direction: column; gap: 2px; min-width: 112px; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.16); background: rgba(255, 255, 255, 0.08); }
+    .stat-chip-label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 255, 255, 0.55); }
+    .stat-chip-value { font-size: 16px; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; }
+
+    .tab-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: 9999px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; color: var(--color-on-surface-variant); transition: all 0.18s ease; }
+    .tab-btn:hover { color: var(--color-on-surface); }
+    .tab-btn.active { background: #141414; color: #fff; box-shadow: 0 8px 20px -10px rgb(17 17 17 / 0.45); }
+    .tab-btn.active .material-symbols-outlined { color: var(--color-gold-accent); }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 @endpush
 
 @section('content')
 @include('partials.flash-toast')
 
-<div class="space-y-section-gap">
-    <!-- Toolbar -->
-    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-gold-accent text-[20px]">account_balance</span>
+@php
+    $ewalletCount = $ewallets->count();
+@endphp
+
+<div class="space-y-section-gap w-full">
+    {{--=== Banner hero ===--}}
+    <section class="banner-gradient relative overflow-hidden rounded-2xl border border-muted-border p-6 md:p-8 card-premium">
+        <span class="banner-glow banner-glow-1"></span>
+        <span class="banner-glow banner-glow-2"></span>
+        <div class="relative flex flex-col lg:flex-row lg:items-center gap-6">
+            <div class="flex items-start gap-4 min-w-0">
+                <div class="w-12 h-12 rounded-xl bg-secondary-container/20 border border-secondary/20 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[26px] text-white">account_balance</span>
+                </div>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h2 class="font-headline-md text-headline-md text-white tracking-wide">Data Bank Platform</h2>
+                        <span class="banner-badge is-on"><span class="dot"></span>{{ $stats['aktif'] }} Bank Aktif</span>
+                    </div>
+                    <p class="banner-desc mt-2 max-w-2xl">Kelola rekening penerimaan pembayaran — bank transfer, e-wallet, dan QRIS yang dipakai pelanggan saat checkout.</p>
+                </div>
             </div>
-            <div>
-                <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Data Bank</h2>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Kelola rekening bank, e-wallet, dan QRIS platform.</p>
+            <div class="flex flex-wrap items-center gap-3 lg:ml-auto shrink-0">
+                <div class="stat-chip">
+                    <span class="stat-chip-label">Bank Terdaftar</span>
+                    <span class="stat-chip-value">{{ $stats['total'] }}</span>
+                </div>
+                <div class="stat-chip">
+                    <span class="stat-chip-label">Rekening Platform</span>
+                    <span class="stat-chip-value">{{ $stats['rekening'] }}</span>
+                </div>
+                <div class="stat-chip">
+                    <span class="stat-chip-label">E-Wallet</span>
+                    <span class="stat-chip-value">{{ $ewalletCount }}</span>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Tabs -->
-    <div class="flex gap-2 border-b border-[var(--border-soft)]">
-        <button class="tab-btn active px-4 py-2 rounded-t-lg font-label-sm text-sm" data-tab="bank" onclick="switchTab('bank')">
-            <span class="material-symbols-outlined text-[18px] align-middle">account_balance</span> Bank Transfer
+    {{--=== Tabs premium ===--}}
+    <div class="flex flex-wrap items-center gap-1.5 rounded-xl border border-muted-border bg-surface-container-lowest shadow-sm p-1.5 w-fit no-scrollbar overflow-x-auto max-w-full">
+        <button class="tab-btn active" data-tab="bank" onclick="switchTab('bank')">
+            <span class="material-symbols-outlined text-[18px]">account_balance</span> Bank Transfer
         </button>
-        <button class="tab-btn px-4 py-2 rounded-t-lg font-label-sm text-sm" data-tab="ewallet" onclick="switchTab('ewallet')">
-            <span class="material-symbols-outlined text-[18px] align-middle">account_balance_wallet</span> E-Wallet
+        <button class="tab-btn" data-tab="ewallet" onclick="switchTab('ewallet')">
+            <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span> E-Wallet
         </button>
-        <button class="tab-btn px-4 py-2 rounded-t-lg font-label-sm text-sm" data-tab="qris" onclick="switchTab('qris')">
-            <span class="material-symbols-outlined text-[18px] align-middle">qr_code_2</span> QRIS
+        <button class="tab-btn" data-tab="qris" onclick="switchTab('qris')">
+            <span class="material-symbols-outlined text-[18px]">qr_code_2</span> QRIS
         </button>
     </div>
 
-    <!-- Panel: Bank Transfer -->
+    {{--=== Panel: Bank Transfer ===--}}
     <div id="panel-bank" class="tab-panel">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="font-title-md text-title-md text-on-surface">Bank Transfer</h3>
-            <button type="button" onclick="openBankForm()" class="flex items-center gap-2 px-4 py-2 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">
-                <span class="material-symbols-outlined text-[18px]">add</span> Tambah Bank
-            </button>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="text-left text-on-surface-variant border-b border-[var(--border-soft)]">
-                        <th class="py-3 px-2">Bank</th>
-                        <th class="py-3 px-2">Kode</th>
-                        <th class="py-3 px-2">No. Rekening</th>
-                        <th class="py-3 px-2">Pemilik</th>
-                        <th class="py-3 px-2">Status</th>
-                        <th class="py-3 px-2">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($banks as $bank)
-                        @php $rek = $bank->platformBankAccounts->first(); @endphp
-                        <tr class="border-b border-[var(--border-soft)] hover:bg-surface-container-low/50">
-                            <td class="py-3 px-2 font-medium">{{ $bank->nama_bank }}</td>
-                            <td class="py-3 px-2">{{ $bank->kode_bank }}</td>
-                            <td class="py-3 px-2">{{ $rek?->nomor_rekening ?? '-' }}</td>
-                            <td class="py-3 px-2">{{ $rek?->nama_pemilik ?? '-' }}</td>
-                            <td class="py-3 px-2">
-                                <span class="px-2 py-0.5 rounded text-xs {{ $bank->status === 'aktif' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">{{ $bank->status }}</span>
-                            </td>
-                            <td class="py-3 px-2">
-                                <div class="flex gap-1">
-                                    <button onclick="editBank({{ $bank->bank_id }})" class="text-blue-600 hover:text-blue-800" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></button>
-                                    <form action="{{ route('superadmin.data-bank.hapus', $bank) }}" method="POST" onsubmit="return confirm('Hapus bank {{ $bank->nama_bank }}?')">
-                                        @csrf
-                                        <button type="submit" class="text-red-600 hover:text-red-800" title="Hapus"><span class="material-symbols-outlined text-[18px]">delete</span></button>
-                                    </form>
-                                </div>
-                            </td>
+        <div class="rounded-2xl border border-muted-border bg-surface-container-lowest shadow-sm card-premium overflow-hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-muted-border">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[20px] text-gold-accent">account_balance</span>
+                    </div>
+                    <div>
+                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">Bank Transfer</h3>
+                        <p class="text-on-surface-variant font-body-md text-xs mt-0.5">Rekening bank tujuan transfer pembayaran pelanggan.</p>
+                    </div>
+                </div>
+                <button type="button" onclick="openBankForm()" class="inline-flex items-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded-lg btn-premium w-fit">
+                    <span class="material-symbols-outlined text-[18px]">add</span> Tambah Bank
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="premium-table w-full text-sm">
+                    <thead>
+                        <tr class="text-left text-on-surface-variant border-b border-muted-border">
+                            <th class="py-3 px-5 font-label-sm text-[10px] uppercase tracking-wider">Bank</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] uppercase tracking-wider">No. Rekening</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] uppercase tracking-wider">Pemilik</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] uppercase tracking-wider">Status</th>
+                            <th class="py-3 px-5 font-label-sm text-[10px] uppercase tracking-wider text-right">Aksi</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse ($banks as $bank)
+                            @php $rek = $bank->platformBankAccounts->first(); @endphp
+                            <tr class="border-b border-muted-border/70 last:border-0 hover:bg-surface-container-low/50">
+                                <td class="py-4 px-5">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <div class="w-10 h-10 rounded-xl bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
+                                            <span class="material-symbols-outlined text-[20px] text-gold-accent">account_balance</span>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="font-semibold text-on-surface truncate">{{ $bank->nama_bank }}</p>
+                                            <p class="text-on-surface-variant text-xs mt-0.5 uppercase tracking-wider">{{ $bank->kode_bank }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4 text-on-surface tabular-nums">{{ $rek?->nomor_rekening ?? '-' }}</td>
+                                <td class="py-4 px-4 text-on-surface">{{ $rek?->nama_pemilik ?? '-' }}</td>
+                                <td class="py-4 px-4">
+                                    @if ($bank->status === 'aktif')
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-secondary-container/20 text-secondary border-secondary/20">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-error/10 text-error border-error/20">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Nonaktif
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="py-4 px-5">
+                                    <div class="flex items-center gap-1 justify-end">
+                                        <button onclick="editBank({{ $bank->bank_id }})" title="Edit bank" class="w-9 h-9 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-on-surface-variant hover:text-gold-accent flex items-center justify-center transition-colors">
+                                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                                        </button>
+                                        <button type="button" onclick="confirmDeleteBank({{ $bank->bank_id }}, @js($bank->nama_bank))" title="Hapus bank" class="w-9 h-9 rounded-lg border border-transparent hover:border-error/30 hover:bg-error/10 text-on-surface-variant hover:text-error flex items-center justify-center transition-colors">
+                                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="py-14 text-center">
+                                    <div class="flex flex-col items-center gap-3">
+                                        <div class="w-14 h-14 rounded-2xl bg-surface-container-low border border-muted-border flex items-center justify-center">
+                                            <span class="material-symbols-outlined text-[26px] text-on-surface-variant">account_balance</span>
+                                        </div>
+                                        <p class="font-body-md text-sm text-on-surface-variant">Belum ada bank terdaftar. Klik "Tambah Bank" untuk membuat metode transfer baru.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <!-- Panel: E-Wallet -->
+    {{--=== Panel: E-Wallet ===--}}
     <div id="panel-ewallet" class="tab-panel hidden">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="font-title-md text-title-md text-on-surface">E-Wallet</h3>
-            <button type="button" onclick="openEwalletForm()" class="flex items-center gap-2 px-4 py-2 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">
-                <span class="material-symbols-outlined text-[18px]">add</span> Tambah E-Wallet
-            </button>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="text-left text-on-surface-variant border-b border-[var(--border-soft)]">
-                        <th class="py-3 px-2">Nama</th>
-                        <th class="py-3 px-2">Kode</th>
-                        <th class="py-3 px-2">No. Telepon</th>
-                        <th class="py-3 px-2">Pemilik</th>
-                        <th class="py-3 px-2">Status</th>
-                        <th class="py-3 px-2">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($ewallets as $ew)
-                        <tr class="border-b border-[var(--border-soft)] hover:bg-surface-container-low/50">
-                            <td class="py-3 px-2 font-medium">{{ $ew->nama }}</td>
-                            <td class="py-3 px-2">{{ $ew->kode }}</td>
-                            <td class="py-3 px-2">{{ $ew->nomor_rekening ?? '-' }}</td>
-                            <td class="py-3 px-2">{{ $ew->nama_pemilik ?? '-' }}</td>
-                            <td class="py-3 px-2">
-                                <span class="px-2 py-0.5 rounded text-xs {{ $ew->status === 'aktif' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">{{ $ew->status }}</span>
-                            </td>
-                            <td class="py-3 px-2">
-                                <div class="flex gap-1">
-                                    <button onclick="editEwallet({{ $ew->platform_bank_account_id }})" class="text-blue-600 hover:text-blue-800" title="Edit"><span class="material-symbols-outlined text-[18px]">edit</span></button>
-                                    <form action="{{ route('superadmin.data-bank.account.hapus', $ew) }}" method="POST" onsubmit="return confirm('Hapus e-wallet {{ $ew->nama }}?')">
-                                        @csrf
-                                        <button type="submit" class="text-red-600 hover:text-red-800" title="Hapus"><span class="material-symbols-outlined text-[18px]">delete</span></button>
-                                    </form>
-                                </div>
-                            </td>
+        <div class="rounded-2xl border border-muted-border bg-surface-container-lowest shadow-sm card-premium overflow-hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-muted-border">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[20px] text-gold-accent">account_balance_wallet</span>
+                    </div>
+                    <div>
+                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">E-Wallet</h3>
+                        <p class="text-on-surface-variant font-body-md text-xs mt-0.5">Dompet digital yang bisa dipilih pelanggan saat checkout.</p>
+                    </div>
+                </div>
+                <button type="button" onclick="openEwalletForm()" class="inline-flex items-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded-lg btn-premium w-fit">
+                    <span class="material-symbols-outlined text-[18px]">add</span> Tambah E-Wallet
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="premium-table w-full text-sm">
+                    <thead>
+                        <tr class="text-left text-on-surface-variant border-b border-muted-border">
+                            <th class="py-3 px-5 font-label-sm text-[10px] uppercase tracking-wider">Nama</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] uppercase tracking-wider">No. Telepon</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] uppercase tracking-wider">Pemilik</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] uppercase tracking-wider">Status</th>
+                            <th class="py-3 px-5 font-label-sm text-[10px] uppercase tracking-wider text-right">Aksi</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse ($ewallets as $ew)
+                            <tr class="border-b border-muted-border/70 last:border-0 hover:bg-surface-container-low/50">
+                                <td class="py-4 px-5">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <div class="w-10 h-10 rounded-xl bg-secondary-container/20 border border-secondary/20 flex items-center justify-center shrink-0">
+                                            <span class="material-symbols-outlined text-[20px] text-secondary">account_balance_wallet</span>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="font-semibold text-on-surface truncate">{{ $ew->nama }}</p>
+                                            <p class="text-on-surface-variant text-xs mt-0.5 uppercase tracking-wider">{{ $ew->kode }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4 text-on-surface tabular-nums">{{ $ew->nomor_rekening ?? '-' }}</td>
+                                <td class="py-4 px-4 text-on-surface">{{ $ew->nama_pemilik ?? '-' }}</td>
+                                <td class="py-4 px-4">
+                                    @if ($ew->status === 'aktif')
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-secondary-container/20 text-secondary border-secondary/20">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-error/10 text-error border-error/20">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Nonaktif
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="py-4 px-5">
+                                    <div class="flex items-center gap-1 justify-end">
+                                        <button onclick="editEwallet({{ $ew->platform_bank_account_id }})" title="Edit e-wallet" class="w-9 h-9 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-on-surface-variant hover:text-gold-accent flex items-center justify-center transition-colors">
+                                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                                        </button>
+                                        <button type="button" onclick="confirmDeleteEwallet({{ $ew->platform_bank_account_id }}, @js($ew->nama))" title="Hapus e-wallet" class="w-9 h-9 rounded-lg border border-transparent hover:border-error/30 hover:bg-error/10 text-on-surface-variant hover:text-error flex items-center justify-center transition-colors">
+                                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="py-14 text-center">
+                                    <div class="flex flex-col items-center gap-3">
+                                        <div class="w-14 h-14 rounded-2xl bg-surface-container-low border border-muted-border flex items-center justify-center">
+                                            <span class="material-symbols-outlined text-[26px] text-on-surface-variant">account_balance_wallet</span>
+                                        </div>
+                                        <p class="font-body-md text-sm text-on-surface-variant">Belum ada e-wallet terdaftar. Klik "Tambah E-Wallet" untuk menambahkan.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <!-- Panel: QRIS -->
+    {{--=== Panel: QRIS ===--}}
     <div id="panel-qris" class="tab-panel hidden">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="font-title-md text-title-md text-on-surface">QRIS</h3>
+        <div class="rounded-2xl border border-muted-border bg-surface-container-lowest shadow-sm card-premium overflow-hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-muted-border">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[20px] text-gold-accent">qr_code_2</span>
+                    </div>
+                    <div>
+                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">QRIS</h3>
+                        <p class="text-on-surface-variant font-body-md text-xs mt-0.5">Kode QR pembayaran universal yang dipakai pelanggan.</p>
+                    </div>
+                </div>
+                @if ($qris)
+                    <button type="button" onclick="editQris({{ $qris->platform_bank_account_id }})" class="inline-flex items-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded-lg btn-premium w-fit">
+                        <span class="material-symbols-outlined text-[18px]">edit</span> Edit QRIS
+                    </button>
+                @else
+                    <button type="button" onclick="openQrisForm()" class="inline-flex items-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded-lg btn-premium w-fit">
+                        <span class="material-symbols-outlined text-[18px]">add</span> Tambah QRIS
+                    </button>
+                @endif
+            </div>
             @if ($qris)
-                <button type="button" onclick="editQris({{ $qris->platform_bank_account_id }})" class="flex items-center gap-2 px-4 py-2 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">
-                    <span class="material-symbols-outlined text-[18px]">edit</span> Edit QRIS
-                </button>
+                <div class="flex flex-col sm:flex-row gap-6 p-5 md:p-6">
+                    @if ($qris->file_gambar)
+                        <div class="shrink-0">
+                            <img src="{{ asset('storage/' . ltrim($qris->file_gambar, '/')) }}" alt="{{ $qris->nama }}" class="w-44 h-44 md:w-52 md:h-52 object-contain rounded-xl border border-muted-border bg-surface-container-low p-3 shadow-sm" />
+                        </div>
+                    @endif
+                    <div class="flex-1 space-y-3 min-w-0">
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <h4 class="font-title-md text-title-md text-on-surface">{{ $qris->nama }}</h4>
+                            @if ($qris->status === 'aktif')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-secondary-container/20 text-secondary border-secondary/20">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-error/10 text-error border-error/20">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Nonaktif
+                                </span>
+                            @endif
+                        </div>
+                        @if ($qris->deskripsi)
+                            <p class="text-on-surface-variant text-sm">{{ $qris->deskripsi }}</p>
+                        @endif
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                            <div class="rounded-xl border border-muted-border bg-surface-container-low px-4 py-3">
+                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Nama Pemilik</p>
+                                <p class="text-sm font-semibold text-on-surface mt-0.5">{{ $qris->nama_pemilik ?? '-' }}</p>
+                            </div>
+                            <div class="rounded-xl border border-muted-border bg-surface-container-low px-4 py-3">
+                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Kode</p>
+                                <p class="text-sm font-semibold text-on-surface mt-0.5 uppercase">{{ $qris->kode }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             @else
-                <button type="button" onclick="openQrisForm()" class="flex items-center gap-2 px-4 py-2 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">
-                    <span class="material-symbols-outlined text-[18px]">add</span> Tambah QRIS
-                </button>
+                <div class="flex flex-col items-center justify-center gap-3 py-14 px-5 text-center">
+                    <div class="w-14 h-14 rounded-2xl bg-surface-container-low border border-muted-border flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[26px] text-on-surface-variant">qr_code_2</span>
+                    </div>
+                    <div>
+                        <p class="font-body-md text-sm text-on-surface">Belum ada akun QRIS</p>
+                        <p class="font-body-md text-xs text-on-surface-variant mt-1">Klik "Tambah QRIS" untuk membuat kode QR pembayaran platform.</p>
+                    </div>
+                </div>
             @endif
         </div>
-        @if ($qris)
-            <div class="flex flex-col sm:flex-row gap-6 p-4 border border-[var(--border-soft)] rounded-xl">
-                @if ($qris->file_gambar)
-                    <img src="{{ asset('storage/' . ltrim($qris->file_gambar, '/')) }}" alt="{{ $qris->nama }}" class="w-48 h-48 object-contain rounded-lg border border-[var(--border-soft)] bg-white" />
-                @endif
-                <div class="flex-1 space-y-2">
-                    <p class="font-title-md text-title-md text-on-surface">{{ $qris->nama }}</p>
-                    <p class="text-on-surface-variant text-sm">{{ $qris->deskripsi }}</p>
-                    <p class="text-sm">Nama: <strong>{{ $qris->nama_pemilik }}</strong></p>
-                    <p class="text-sm">Status: <span class="px-2 py-0.5 rounded text-xs {{ $qris->status === 'aktif' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">{{ $qris->status }}</span></p>
-                </div>
-            </div>
-        @else
-            <p class="text-on-surface-variant text-sm">Belum ada akun QRIS. Klik "Tambah QRIS" untuk membuat.</p>
-        @endif
     </div>
 </div>
 
 <!-- Modal: Bank Form -->
-<div id="modal-bank" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
-    <div class="bg-surface-container-high rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
-        <div class="flex justify-between items-center mb-4">
-            <h3 id="bank-modal-title" class="font-title-md text-title-md text-on-surface">Tambah Bank</h3>
-            <button onclick="closeBankForm()" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <form id="form-bank" method="POST" action="{{ route('superadmin.data-bank.store') }}" enctype="multipart/form-data">
-            @csrf
-            <input type="hidden" name="_method" value="POST" id="bank-method" />
-            <input type="hidden" name="bank_id" id="bank-id" />
-            <div class="space-y-4">
+<div id="modal-bank" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeBankForm()"></div>
+    <div class="relative w-full max-w-md m-auto max-h-[88dvh] overflow-y-auto no-scrollbar">
+        <div class="overflow-hidden rounded-2xl border border-muted-border shadow-2xl card-premium bg-surface-container-lowest">
+            <div class="relative overflow-hidden banner-gradient px-6 py-5">
+                <span class="banner-glow banner-glow-1"></span>
+                <span class="banner-glow banner-glow-2"></span>
+                <div class="relative flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[22px] text-white">account_balance</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h3 id="bank-modal-title" class="font-title-md text-title-md text-white">Tambah Bank</h3>
+                        <p class="font-body-md text-xs text-white/70 mt-0.5">Rekening tujuan transfer pembayaran pelanggan.</p>
+                    </div>
+                    <button type="button" onclick="closeBankForm()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white shrink-0 transition-colors"><span class="material-symbols-outlined text-[18px]">close</span></button>
+                </div>
+            </div>
+            <form id="form-bank" method="POST" action="{{ route('superadmin.data-bank.store') }}" enctype="multipart/form-data" class="p-6 space-y-4">
+                @csrf
+                <input type="hidden" name="_method" value="POST" id="bank-method" />
+                <input type="hidden" name="bank_id" id="bank-id" />
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Nama Bank</label>
-                    <input type="text" name="nama_bank" id="bank-nama" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Nama Bank</label>
+                    <input type="text" name="nama_bank" id="bank-nama" required maxlength="100" class="raliva-input" placeholder="Bank Central Asia (BCA)" />
                 </div>
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Kode Bank</label>
-                    <input type="text" name="kode_bank" id="bank-kode" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Kode Bank</label>
+                    <input type="text" name="kode_bank" id="bank-kode" required maxlength="20" class="raliva-input" placeholder="bca" />
                 </div>
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Nomor Rekening</label>
-                    <input type="text" name="nomor_rekening" id="bank-rekening" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Nomor Rekening</label>
+                    <input type="text" name="nomor_rekening" id="bank-rekening" required maxlength="50" class="raliva-input" placeholder="1234567890" />
                 </div>
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Nama Pemilik</label>
-                    <input type="text" name="nama_pemilik" id="bank-pemilik" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Nama Pemilik</label>
+                    <input type="text" name="nama_pemilik" id="bank-pemilik" required maxlength="150" class="raliva-input" placeholder="RALIVA Fashion" />
                 </div>
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Status</label>
-                    <select name="status" id="bank-status" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm">
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
+                    <select name="status" id="bank-status" class="raliva-select">
                         <option value="aktif">Aktif</option>
                         <option value="nonaktif">Nonaktif</option>
                     </select>
                 </div>
-            </div>
-            <div class="flex justify-end gap-2 mt-6">
-                <button type="button" onclick="closeBankForm()" class="px-4 py-2 text-sm rounded-lg border border-[var(--border-soft)] text-on-surface-variant">Batal</button>
-                <button type="submit" class="px-4 py-2 text-sm rounded-lg bg-deep-onyx text-on-primary">Simpan</button>
-            </div>
-        </form>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
+                    <button type="button" onclick="closeBankForm()" class="px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
+                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-gold-accent to-secondary text-on-primary text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 <!-- Modal: E-Wallet Form -->
-<div id="modal-ewallet" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
-    <div class="bg-surface-container-high rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
-        <div class="flex justify-between items-center mb-4">
-            <h3 id="ewallet-modal-title" class="font-title-md text-title-md text-on-surface">Tambah E-Wallet</h3>
-            <button onclick="closeEwalletForm()" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <form id="form-ewallet" method="POST" action="{{ route('superadmin.data-bank.account.store') }}" enctype="multipart/form-data">
-            @csrf
-            <input type="hidden" name="jenis" value="ewallet" />
-            <input type="hidden" name="account_id" id="ewallet-id" />
-            <div class="space-y-4">
+<div id="modal-ewallet" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeEwalletForm()"></div>
+    <div class="relative w-full max-w-md m-auto max-h-[88dvh] overflow-y-auto no-scrollbar">
+        <div class="overflow-hidden rounded-2xl border border-muted-border shadow-2xl card-premium bg-surface-container-lowest">
+            <div class="relative overflow-hidden banner-gradient px-6 py-5">
+                <span class="banner-glow banner-glow-1"></span>
+                <span class="banner-glow banner-glow-2"></span>
+                <div class="relative flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[22px] text-white">account_balance_wallet</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h3 id="ewallet-modal-title" class="font-title-md text-title-md text-white">Tambah E-Wallet</h3>
+                        <p class="font-body-md text-xs text-white/70 mt-0.5">Dompet digital yang ditampilkan ke pelanggan.</p>
+                    </div>
+                    <button type="button" onclick="closeEwalletForm()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white shrink-0 transition-colors"><span class="material-symbols-outlined text-[18px]">close</span></button>
+                </div>
+            </div>
+            <form id="form-ewallet" method="POST" action="{{ route('superadmin.data-bank.account.store') }}" enctype="multipart/form-data" class="p-6 space-y-4">
+                @csrf
+                <input type="hidden" name="jenis" value="ewallet" />
+                <input type="hidden" name="account_id" id="ewallet-id" />
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Nama</label>
-                    <input type="text" name="nama" id="ewallet-nama" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Nama</label>
+                    <input type="text" name="nama" id="ewallet-nama" required maxlength="100" class="raliva-input" placeholder="DANA" />
                 </div>
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Kode</label>
-                    <input type="text" name="kode" id="ewallet-kode" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Kode</label>
+                    <input type="text" name="kode" id="ewallet-kode" required maxlength="50" class="raliva-input" placeholder="dana" />
                 </div>
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">No. Telepon</label>
-                    <input type="text" name="nomor_rekening" id="ewallet-rekening" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">No. Telepon</label>
+                    <input type="text" name="nomor_rekening" id="ewallet-rekening" maxlength="50" class="raliva-input" placeholder="08XXXXXXXXXX" />
                 </div>
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Nama Pemilik</label>
-                    <input type="text" name="nama_pemilik" id="ewallet-pemilik" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" value="RALIVA Fashion" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Nama Pemilik</label>
+                    <input type="text" name="nama_pemilik" id="ewallet-pemilik" maxlength="150" class="raliva-input" value="RALIVA Fashion" />
                 </div>
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Deskripsi</label>
-                    <textarea name="deskripsi" id="ewallet-deskripsi" rows="2" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm"></textarea>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Deskripsi</label>
+                    <textarea name="deskripsi" id="ewallet-deskripsi" rows="2" maxlength="255" class="raliva-textarea"></textarea>
                 </div>
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Logo</label>
-                    <input type="file" name="file_gambar" accept="image/*" class="w-full text-sm" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Logo</label>
+                    <div class="flex items-center gap-3">
+                        <input type="file" name="file_gambar" accept="image/*" class="block w-full text-sm text-on-surface-variant file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-surface-container-low file:text-sm file:text-gold-accent file:cursor-pointer file:font-semibold hover:file:bg-surface-container-high" />
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Status</label>
-                    <select name="status" id="ewallet-status" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm">
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
+                    <select name="status" id="ewallet-status" class="raliva-select">
                         <option value="aktif">Aktif</option>
                         <option value="nonaktif">Nonaktif</option>
                     </select>
                 </div>
-            </div>
-            <div class="flex justify-end gap-2 mt-6">
-                <button type="button" onclick="closeEwalletForm()" class="px-4 py-2 text-sm rounded-lg border border-[var(--border-soft)] text-on-surface-variant">Batal</button>
-                <button type="submit" class="px-4 py-2 text-sm rounded-lg bg-deep-onyx text-on-primary">Simpan</button>
-            </div>
-        </form>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
+                    <button type="button" onclick="closeEwalletForm()" class="px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
+                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-gold-accent to-secondary text-on-primary text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 <!-- Modal: QRIS Form -->
-<div id="modal-qris" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
-    <div class="bg-surface-container-high rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
-        <div class="flex justify-between items-center mb-4">
-            <h3 id="qris-modal-title" class="font-title-md text-title-md text-on-surface">Tambah QRIS</h3>
-            <button onclick="closeQrisForm()" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <form id="form-qris" method="POST" action="{{ route('superadmin.data-bank.account.store') }}" enctype="multipart/form-data">
-            @csrf
-            <input type="hidden" name="jenis" value="qris" />
-            <input type="hidden" name="account_id" id="qris-id" />
-            <div class="space-y-4">
+<div id="modal-qris" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeQrisForm()"></div>
+    <div class="relative w-full max-w-md m-auto max-h-[88dvh] overflow-y-auto no-scrollbar">
+        <div class="overflow-hidden rounded-2xl border border-muted-border shadow-2xl card-premium bg-surface-container-lowest">
+            <div class="relative overflow-hidden banner-gradient px-6 py-5">
+                <span class="banner-glow banner-glow-1"></span>
+                <span class="banner-glow banner-glow-2"></span>
+                <div class="relative flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[22px] text-white">qr_code_2</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h3 id="qris-modal-title" class="font-title-md text-title-md text-white">Tambah QRIS</h3>
+                        <p class="font-body-md text-xs text-white/70 mt-0.5">Kode QR pembayaran universal untuk pelanggan.</p>
+                    </div>
+                    <button type="button" onclick="closeQrisForm()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white shrink-0 transition-colors"><span class="material-symbols-outlined text-[18px]">close</span></button>
+                </div>
+            </div>
+            <form id="form-qris" method="POST" action="{{ route('superadmin.data-bank.account.store') }}" enctype="multipart/form-data" class="p-6 space-y-4">
+                @csrf
+                <input type="hidden" name="jenis" value="qris" />
+                <input type="hidden" name="account_id" id="qris-id" />
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Nama</label>
-                    <input type="text" name="nama" id="qris-nama" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" value="QRIS RALIVA" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Nama</label>
+                    <input type="text" name="nama" id="qris-nama" required maxlength="100" class="raliva-input" value="QRIS RALIVA" />
                 </div>
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Kode</label>
-                    <input type="text" name="kode" id="qris-kode" required class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" value="qris" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Kode</label>
+                    <input type="text" name="kode" id="qris-kode" required maxlength="50" class="raliva-input" value="qris" />
                 </div>
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Nama Pemilik</label>
-                    <input type="text" name="nama_pemilik" id="qris-pemilik" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm" value="RALIVA Fashion" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Nama Pemilik</label>
+                    <input type="text" name="nama_pemilik" id="qris-pemilik" maxlength="150" class="raliva-input" value="RALIVA Fashion" />
                 </div>
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Deskripsi</label>
-                    <textarea name="deskripsi" id="qris-deskripsi" rows="2" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm">Scan kode QR dengan aplikasi apa pun (GoPay, OVO, Dana, ShopeePay, m-Banking).</textarea>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Deskripsi</label>
+                    <textarea name="deskripsi" id="qris-deskripsi" rows="2" maxlength="255" class="raliva-textarea">Scan kode QR dengan aplikasi apa pun (GoPay, OVO, DANA, ShopeePay, m-Banking).</textarea>
                 </div>
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Gambar QR</label>
-                    <input type="file" name="file_gambar" accept="image/*" class="w-full text-sm" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Gambar QR</label>
+                    <input type="file" name="file_gambar" accept="image/*" class="block w-full text-sm text-on-surface-variant file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-surface-container-low file:text-sm file:text-gold-accent file:cursor-pointer file:font-semibold hover:file:bg-surface-container-high" />
                 </div>
                 <div>
-                    <label class="block text-sm text-on-surface-variant mb-1">Status</label>
-                    <select name="status" id="qris-status" class="w-full rounded-lg border border-[var(--border-soft)] px-3 py-2 bg-surface text-sm">
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
+                    <select name="status" id="qris-status" class="raliva-select">
                         <option value="aktif">Aktif</option>
                         <option value="nonaktif">Nonaktif</option>
                     </select>
                 </div>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
+                    <button type="button" onclick="closeQrisForm()" class="px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
+                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-gradient-to-r from-gold-accent to-secondary text-on-primary text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Konfirmasi Hapus Bank -->
+<div id="modal-hapus-bank" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeDeleteBank()"></div>
+    <div class="relative w-full max-w-sm m-auto">
+        <div class="overflow-hidden rounded-2xl border border-muted-border shadow-2xl card-premium bg-surface-container-lowest">
+            <div class="relative overflow-hidden banner-gradient px-6 py-5">
+                <span class="banner-glow banner-glow-1"></span>
+                <span class="banner-glow banner-glow-2"></span>
+                <div class="relative flex items-center justify-center">
+                    <div class="w-12 h-12 rounded-full bg-error/20 border border-error/30 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[24px] text-error">delete_forever</span>
+                    </div>
+                </div>
             </div>
-            <div class="flex justify-end gap-2 mt-6">
-                <button type="button" onclick="closeQrisForm()" class="px-4 py-2 text-sm rounded-lg border border-[var(--border-soft)] text-on-surface-variant">Batal</button>
-                <button type="submit" class="px-4 py-2 text-sm rounded-lg bg-deep-onyx text-on-primary">Simpan</button>
+            <form id="form-hapus-bank" method="POST" action="" class="p-6 space-y-4">
+                @csrf
+                <div class="text-center">
+                    <h3 class="font-title-md text-title-md text-on-surface">Hapus Bank Ini?</h3>
+                    <p id="hapus-bank-text" class="font-body-md text-sm text-on-surface-variant mt-2"></p>
+                </div>
+                <div class="flex items-center justify-center gap-3 pt-2">
+                    <button type="button" onclick="closeDeleteBank()" class="px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
+                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-error text-white text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Konfirmasi Hapus E-Wallet -->
+<div id="modal-hapus-ewallet" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeDeleteEwallet()"></div>
+    <div class="relative w-full max-w-sm m-auto">
+        <div class="overflow-hidden rounded-2xl border border-muted-border shadow-2xl card-premium bg-surface-container-lowest">
+            <div class="relative overflow-hidden banner-gradient px-6 py-5">
+                <span class="banner-glow banner-glow-1"></span>
+                <span class="banner-glow banner-glow-2"></span>
+                <div class="relative flex items-center justify-center">
+                    <div class="w-12 h-12 rounded-full bg-error/20 border border-error/30 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[24px] text-error">delete_forever</span>
+                    </div>
+                </div>
             </div>
-        </form>
+            <form id="form-hapus-ewallet" method="POST" action="" class="p-6 space-y-4">
+                @csrf
+                <div class="text-center">
+                    <h3 class="font-title-md text-title-md text-on-surface">Hapus E-Wallet Ini?</h3>
+                    <p id="hapus-ewallet-text" class="font-body-md text-sm text-on-surface-variant mt-2"></p>
+                </div>
+                <div class="flex items-center justify-center gap-3 pt-2">
+                    <button type="button" onclick="closeDeleteEwallet()" class="px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low transition-colors">Batal</button>
+                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-error text-white text-sm font-bold uppercase tracking-widest btn-premium inline-flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -343,7 +596,6 @@
     }
 
     function editBank(id) {
-        // fetch bank data via AJAX
         fetch(`/superadmin/data-bank/${id}/edit`)
             .then(r => r.json())
             .then(d => {
@@ -357,7 +609,8 @@
                 document.getElementById('bank-status').value = d.status;
                 document.getElementById('modal-bank').classList.remove('hidden');
                 document.getElementById('modal-bank').classList.add('flex');
-            });
+            })
+            .catch(() => window.showRalivaToast('Gagal memuat data bank.', 'error'));
     }
 
     // E-Wallet modal
@@ -395,7 +648,8 @@
                 document.getElementById('ewallet-status').value = d.status;
                 document.getElementById('modal-ewallet').classList.remove('hidden');
                 document.getElementById('modal-ewallet').classList.add('flex');
-            });
+            })
+            .catch(() => window.showRalivaToast('Gagal memuat data e-wallet.', 'error'));
     }
 
     // QRIS modal
@@ -426,7 +680,34 @@
                 document.getElementById('qris-status').value = d.status;
                 document.getElementById('modal-qris').classList.remove('hidden');
                 document.getElementById('modal-qris').classList.add('flex');
-            });
+            })
+            .catch(() => window.showRalivaToast('Gagal memuat data QRIS.', 'error'));
+    }
+
+    // Hapus Bank
+    function confirmDeleteBank(id, nama) {
+        document.getElementById('form-hapus-bank').action = '{{ route('superadmin.data-bank.hapus', ['bank' => ':ID']) }}'.replace(':ID', id);
+        document.getElementById('hapus-bank-text').textContent = 'Bank "' + nama + '" beserta rekening platform-nya akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.';
+        document.getElementById('modal-hapus-bank').classList.remove('hidden');
+        document.getElementById('modal-hapus-bank').classList.add('flex');
+    }
+
+    function closeDeleteBank() {
+        document.getElementById('modal-hapus-bank').classList.add('hidden');
+        document.getElementById('modal-hapus-bank').classList.remove('flex');
+    }
+
+    // Hapus E-Wallet
+    function confirmDeleteEwallet(id, nama) {
+        document.getElementById('form-hapus-ewallet').action = '{{ route('superadmin.data-bank.account.hapus', ['account' => ':ID']) }}'.replace(':ID', id);
+        document.getElementById('hapus-ewallet-text').textContent = 'E-wallet "' + nama + '" akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.';
+        document.getElementById('modal-hapus-ewallet').classList.remove('hidden');
+        document.getElementById('modal-hapus-ewallet').classList.add('flex');
+    }
+
+    function closeDeleteEwallet() {
+        document.getElementById('modal-hapus-ewallet').classList.add('hidden');
+        document.getElementById('modal-hapus-ewallet').classList.remove('flex');
     }
 </script>
 @endpush
