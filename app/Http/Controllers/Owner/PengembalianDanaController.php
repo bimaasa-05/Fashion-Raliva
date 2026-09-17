@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\Refund;
 use App\Models\User;
+use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PengembalianDanaController extends Controller
 {
@@ -21,15 +23,25 @@ class PengembalianDanaController extends Controller
             ->orderByDesc('diajukan_pada')
             ->get();
 
+        $disetujui = Refund::query()
+            ->with(['order', 'requester', 'reviewer', 'items'])
+            ->where('status', Refund::STATUS_DISETUJUI)
+            ->orderByDesc('diajukan_pada')
+            ->get();
+
         if ($storeId) {
             $refunds = $refunds->filter(fn ($r) => (int) $r->order?->store_id === (int) $storeId)->values();
+            $disetujui = $disetujui->filter(fn ($r) => (int) $r->order?->store_id === (int) $storeId)->values();
         } else {
             $refunds = collect();
+            $disetujui = collect();
         }
 
         return view('Owner.pengembalian-dana.index', [
             'refunds' => $refunds,
+            'disetujui' => $disetujui,
             'eskalasiCount' => $refunds->count(),
+            'disetujuiCount' => $disetujui->count(),
         ]);
     }
 
@@ -104,10 +116,40 @@ class PengembalianDanaController extends Controller
             return back()->with('error', 'Hanya refund disetujui yang dapat diselesaikan.');
         }
 
+        $data = $request->validate([
+            'file_bukti' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+            'deskripsi_bukti' => ['nullable', 'string', 'max:1000'],
+        ], [
+            'file_bukti.required' => 'Bukti refund wajib dilampirkan.',
+            'file_bukti.mimes' => 'Bukti refund harus berupa JPG, PNG, atau PDF.',
+            'file_bukti.max' => 'Ukuran bukti refund maksimal 5 MB.',
+            'deskripsi_bukti.max' => 'Deskripsi bukti maksimal 1000 karakter.',
+        ]);
+
+        $lama = $refund->only(['status']);
+
+        $path = $request->file('file_bukti')->store('bukti-refund/' . $refund->refund_id, 'public');
+
+        if ($refund->file_bukti && $refund->file_bukti !== $path) {
+            Storage::disk('public')->delete($refund->file_bukti);
+        }
+
         $refund->update([
             'status' => Refund::STATUS_SELESAI,
             'selesai_pada' => now(),
+            'file_bukti' => $path,
+            'deskripsi_bukti' => $data['deskripsi_bukti'] ?? null,
+            'bukti_diupload_pada' => now(),
         ]);
+
+        ActivityLogger::log(
+            'refund.complete',
+            Refund::class,
+            $refund->refund_id,
+            $lama,
+            ['status' => Refund::STATUS_SELESAI, 'file_bukti' => $path],
+            sprintf('Menyelesaikan refund sebesar Rp %s untuk pesanan %s (bukti terlampir).', number_format((float) $refund->jumlah, 0, ',', '.'), $refund->order->nomor_order ?? '-')
+        );
 
         if ($refund->requested_by) {
             Notification::create([
