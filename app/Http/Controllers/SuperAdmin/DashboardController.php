@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\AdSlot;
 use App\Models\Commission;
 use App\Models\Complaint;
 use App\Models\Order;
@@ -57,6 +58,8 @@ class DashboardController extends Controller
         $topToko = $this->topToko();
         $topKategori = $this->topKategori();
         $topPelanggan = $this->topPelanggan();
+        $topProduk = $this->topProduk();
+        $topProdukIklan = $this->topProdukIklan();
 
         // Aktivitas terbaru dari tabel activity_log
         $aktivitas = ActivityLog::with('user:user_id,nama_lengkap')
@@ -182,6 +185,8 @@ class DashboardController extends Controller
             'topToko' => $topToko,
             'topKategori' => $topKategori,
             'topPelanggan' => $topPelanggan,
+            'topProduk' => $topProduk,
+            'topProdukIklan' => $topProdukIklan,
             'aktivitas' => $aktivitas,
             'chartLabels' => $chartLabels,
             'chartPesanan' => $chartPesanan,
@@ -325,6 +330,63 @@ class DashboardController extends Controller
                 'meta' => $row->jumlah_pesanan . ' pesanan',
                 'display' => 'Rp ' . number_format((float) $row->total_belanja, 0, ',', '.'),
                 'pct' => max(4, (int) round(((float) $row->total_belanja / $max) * 100)),
+            ];
+        })->all();
+    }
+
+    private function topProduk(): array
+    {
+        $rows = DB::table('order_items')
+            ->join('orders', 'orders.order_id', '=', 'order_items.order_id')
+            ->join('product_variants', 'product_variants.product_variant_id', '=', 'order_items.product_variant_id')
+            ->join('products', 'products.product_id', '=', 'product_variants.product_id')
+            ->whereIn('orders.status', [Order::STATUS_DIBAYAR, Order::STATUS_DIPROSES, Order::STATUS_DIKIRIM, Order::STATUS_SELESAI])
+            ->groupBy('products.product_id', 'products.nama_produk')
+            ->selectRaw('products.nama_produk')
+            ->selectRaw('SUM(order_items.quantity) as total_terjual')
+            ->selectRaw('SUM(order_items.total) as total_omzet')
+            ->orderByDesc('total_omzet')
+            ->limit(5)
+            ->get();
+
+        $max = (float) $rows->max('total_omzet') ?: 1;
+
+        return $rows->map(function ($row) use ($max) {
+            return [
+                'name' => $row->nama_produk,
+                'meta' => number_format((float) $row->total_terjual, 0, ',', '.') . ' terjual',
+                'display' => 'Rp ' . number_format((float) $row->total_omzet, 0, ',', '.'),
+                'pct' => max(4, (int) round(((float) $row->total_omzet / $max) * 100)),
+            ];
+        })->all();
+    }
+
+    private function topProdukIklan(): array
+    {
+        $today = now()->toDateString();
+
+        $rows = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko'])
+            ->where('status', AdSlot::STATUS_AKTIF)
+            ->whereNotNull('tanggal_mulai')
+            ->whereNotNull('tanggal_selesai')
+            ->whereDate('tanggal_mulai', '<=', $today)
+            ->whereDate('tanggal_selesai', '>=', $today)
+            ->orderByDesc('nominal_bid')
+            ->limit(5)
+            ->get()
+            ->filter(fn ($slot) => $slot->product !== null && $slot->store !== null)
+            ->values();
+
+        $max = (float) $rows->max('nominal_bid') ?: 1;
+
+        return $rows->map(function ($slot) use ($max) {
+            $periode = $slot->tanggal_mulai->translatedFormat('d M Y') . ' s/d ' . $slot->tanggal_selesai->translatedFormat('d M Y');
+
+            return [
+                'name' => $slot->product->nama_produk,
+                'meta' => $slot->store->nama_toko . ' • ' . $periode,
+                'display' => 'Rp ' . number_format((float) $slot->nominal_bid, 0, ',', '.'),
+                'pct' => max(4, (int) round(((float) $slot->nominal_bid / $max) * 100)),
             ];
         })->all();
     }
