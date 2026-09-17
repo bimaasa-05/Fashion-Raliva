@@ -61,5 +61,14 @@
         <div class="p-6 space-y-4 overflow-y-auto no-scrollbar min-h-0">
             {{ $slot }}
         </div>
+        @isset($footer)
+            <div class="relative overflow-hidden banner-gradient px-6 py-5 shrink-0 modal-footer-band">
+                <span class="banner-glow banner-glow-1"></span>
+                <span class="banner-glow banner-glow-2"></span>
+                <div class="relative">
+                    {{ $footer }}
+                </div>
+            </div>
+        @endisset
     </div>
 </div>

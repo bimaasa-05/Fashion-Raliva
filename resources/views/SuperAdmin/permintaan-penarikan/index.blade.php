@@ -302,10 +302,12 @@
                     class="w-full border border-muted-border bg-surface-container-low p-3 font-body-md text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
             </div>
         </div>
-        <div class="flex justify-end gap-4 mt-6">
-            <button type="button" data-modal-close class="btn-modal btn-modal-ghost"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
-            <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[16px] leading-none">payments</span>Ya, Sudah Dibayar</button>
-        </div>
+        @slot('footer')
+            <div class="flex justify-end gap-4">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
+                <button type="submit" form="paid-form" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[16px] leading-none">payments</span>Ya, Sudah Dibayar</button>
+            </div>
+        @endslot
     </form>
 @endcomponent
 
@@ -322,12 +324,14 @@
         <div class="p-6">
             <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Konfirmasi Pencairan</h3>
             <p class="font-body-md text-body-md text-on-surface-variant mb-6 text-center">Anda akan menyetujui pencairan sebesar <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> ke <span id="approve-toko" class="font-bold text-on-surface">-</span>. Saldo toko akan dikunci untuk proses pembayaran.</p>
-            <div class="flex justify-end gap-4">
-                <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
-                <button type="submit" class="btn-modal btn-modal-success flex-1"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Konfirmasi Persetujuan</button>
-            </div>
-        </div>
+    </div>
     </form>
+    @slot('footer')
+        <div class="flex justify-end gap-4">
+            <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
+            <button type="submit" form="approve-form" class="btn-modal btn-modal-success flex-1"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Konfirmasi Persetujuan</button>
+        </div>
+    @endslot
 @endcomponent
 
 @component('SuperAdmin.partials.premium-confirm', [
@@ -347,12 +351,14 @@
                     class="w-full border border-muted-border bg-surface-container-low p-3 font-body-md text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary h-24"
                     placeholder="Tulis alasan... (minimal 10 karakter)"></textarea>
             </div>
-            <div class="flex justify-end gap-4">
-                <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
-                <button type="submit" class="btn-modal btn-modal-danger flex-1"><span class="material-symbols-outlined text-[16px] leading-none">block</span>Tolak Pengajuan</button>
-            </div>
         </div>
     </form>
+    @slot('footer')
+        <div class="flex justify-end gap-4">
+            <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
+            <button type="submit" form="reject-form" class="btn-modal btn-modal-danger flex-1"><span class="material-symbols-outlined text-[16px] leading-none">block</span>Tolak Pengajuan</button>
+        </div>
+    @endslot
 @endcomponent
 @endsection
 

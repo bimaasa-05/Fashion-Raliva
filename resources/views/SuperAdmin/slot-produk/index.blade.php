@@ -408,10 +408,12 @@
             <label class="block raliva-label mb-2">Keterangan (opsional)</label>
             <textarea name="keterangan" rows="2" maxlength="500" class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors"></textarea>
         </div>
-        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-            <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-            <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[16px]">add</span>Tambah Slot</button>
-        </div>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="tambah-form" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[16px]">add</span>Tambah Slot</button>
+            </div>
+        @endslot
     </form>
 @endcomponent
 
@@ -423,7 +425,7 @@
     'title' => 'Tambah Paket Baru',
     'subtitle' => 'Paket Slot',
 ])
-    <form method="POST" action="{{ route('superadmin.slot-produk.paket.store') }}" class="space-y-5">
+    <form method="POST" action="{{ route('superadmin.slot-produk.paket.store') }}" id="tambah-paket-form" class="space-y-5">
         @csrf
         <div>
             <label class="block raliva-label mb-2">Nama Paket</label>
@@ -443,10 +445,12 @@
             <label class="block raliva-label mb-2">Durasi Berlaku (hari)</label>
             <input type="number" name="durasi_hari" min="1" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
         </div>
-        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-            <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-            <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[16px]">add</span>Tambah Paket</button>
-        </div>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="tambah-paket-form" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[16px]">add</span>Tambah Paket</button>
+            </div>
+        @endslot
     </form>
 @endcomponent
 
@@ -465,10 +469,12 @@
             <label class="block raliva-label mb-2">Alasan Penolakan</label>
             <textarea name="alasan" rows="3" minlength="10" maxlength="1000" required class="w-full bg-transparent border border-muted-border rounded-lg px-4 py-3 font-body-md text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error transition-colors" placeholder="Minimal 10 karakter"></textarea>
         </div>
-        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-            <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-            <button type="submit" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[16px]">block</span>Tolak</button>
-        </div>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="tolak-form" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[16px]">block</span>Tolak</button>
+            </div>
+        @endslot
     </form>
 @endcomponent
 
@@ -485,11 +491,13 @@
     <div class="p-6">
         <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Konfirmasi</h3>
         <p id="confirm-slot-desc" class="text-on-surface-variant text-sm text-center mb-6">Lanjutkan aksi ini?</p>
+    </div>
+    @slot('footer')
         <div class="flex space-x-3">
             <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeConfirmSlot()">Batal</button>
             <button type="button" id="confirm-slot-submit" class="flex-1 btn-modal btn-modal-primary">Ya, Lanjutkan</button>
         </div>
-    </div>
+    @endslot
 @endcomponent
 @endsection
 

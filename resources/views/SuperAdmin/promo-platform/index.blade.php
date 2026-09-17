@@ -193,10 +193,12 @@
                 <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsi">Deskripsi</label>
                 <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsi" name="deskripsi" rows="3" placeholder="Deskripsi singkat promo ini">{{ old('deskripsi') }}</textarea>
             </div>
-            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4 pt-2">
-                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-                <button type="submit" id="promo-submit-btn" class="btn-modal btn-modal-primary">Buat Promo</button>
-            </div>
+            @slot('footer')
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4">
+                    <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                    <button type="submit" form="promo-form" id="promo-submit-btn" class="btn-modal btn-modal-primary">Buat Promo</button>
+                </div>
+            @endslot
         </form>
     @endcomponent
 
@@ -214,11 +216,13 @@
                 <h3 class="font-title-md text-title-md text-on-surface">Hapus Promo</h3>
                 <p class="text-on-surface-variant text-sm mt-2">Promo <span id="hapus-promo-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.</p>
             </div>
+        </form>
+        @slot('footer')
             <div class="flex space-x-3">
                 <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusPromo()">Batal</button>
-                <button type="submit" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
+                <button type="submit" form="hapus-promo-form" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
             </div>
-        </form>
+        @endslot
     @endcomponent
 </div>
 @endsection

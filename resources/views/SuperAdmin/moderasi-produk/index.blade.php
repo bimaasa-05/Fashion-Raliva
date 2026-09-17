@@ -485,11 +485,13 @@ document.addEventListener('DOMContentLoaded', () => {
             <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Alasan Penolakan</h3>
             <p class="text-on-surface-variant text-sm text-center mb-4">Alasan dikirim ke <span id="mod-reject-store" class="font-bold text-on-surface">-</span>.</p>
             <textarea required minlength="10" maxlength="1000" name="alasan" id="reject-alasan-input" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-4" placeholder="Tulis alasan di sini... (minimal 10 karakter)" rows="4"></textarea>
+        </div>
+        @slot('footer')
             <div class="flex space-x-3">
                 <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeRejectModal()">Batal</button>
                 <button type="submit" class="flex-1 btn-modal btn-modal-danger">Konfirmasi</button>
             </div>
-        </div>
+        @endslot
     @endcomponent
 </form>
 @endpush

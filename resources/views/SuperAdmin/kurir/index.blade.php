@@ -161,10 +161,12 @@
                 </label>
             </div>
         </div>
-        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4 pt-2">
-            <button type="button" onclick="closeKurirModal()" class="btn-modal btn-modal-ghost">Batal</button>
-            <button type="submit" id="kurir-submit-btn" class="btn-modal btn-modal-primary">Tambah Kurir</button>
-        </div>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4">
+                <button type="button" onclick="closeKurirModal()" class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="kurir-form" id="kurir-submit-btn" class="btn-modal btn-modal-primary">Tambah Kurir</button>
+            </div>
+        @endslot
     </form>
 @endcomponent
 
@@ -204,10 +206,12 @@
                 </label>
             </div>
         </div>
-        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4 pt-2">
-            <button type="button" onclick="closeLayananModal()" class="btn-modal btn-modal-ghost">Batal</button>
-            <button type="submit" id="layanan-submit-btn" class="btn-modal btn-modal-primary">Tambah Layanan</button>
-        </div>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4">
+                <button type="button" onclick="closeLayananModal()" class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="layanan-form" id="layanan-submit-btn" class="btn-modal btn-modal-primary">Tambah Layanan</button>
+            </div>
+        @endslot
     </form>
 @endcomponent
 
@@ -224,11 +228,13 @@
             <p class="text-on-surface-variant text-sm mt-2 mb-4">Kurir <span id="hapus-nama" class="font-bold text-on-surface">-</span> beserta semua layanannya akan dihapus permanen.</p>
         </div>
         <div id="hapus-warning" class="hidden"></div>
+    </form>
+    @slot('footer')
         <div class="flex space-x-3">
             <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusModal()">Batal</button>
-            <button type="submit" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
+            <button type="submit" form="hapus-kurir-form" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
         </div>
-    </form>
+    @endslot
 @endcomponent
 
 <!-- Modal Hapus Layanan -->
@@ -244,11 +250,13 @@
             <p class="text-on-surface-variant text-sm mt-2 mb-4">Layanan <span id="hapus-layanan-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen.</p>
         </div>
         <div id="hapus-layanan-warning" class="hidden"></div>
+    </form>
+    @slot('footer')
         <div class="flex space-x-3">
             <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusModal()">Batal</button>
-            <button type="submit" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
+            <button type="submit" form="hapus-layanan-form" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
         </div>
-    </form>
+    @endslot
 @endcomponent
 @endsection
 

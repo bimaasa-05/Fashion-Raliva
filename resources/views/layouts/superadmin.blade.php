@@ -191,6 +191,11 @@
         /* Sticky footer pada popup premium: baris tombol (Batal + aksi) tetap terlihat saat konten di-scroll. */
         .modal-footer-sticky,
         [data-modal] .flex:has(> .btn-modal-ghost):has(> .btn-modal-primary, > .btn-modal-danger, > .btn-modal-success) { position: sticky; bottom: 0; z-index: 20; background: var(--color-surface-container-lowest); }
+
+        /* Bandar footer premium (banner-gradient): baris tombol statis di luar area scroll — matikan efek sticky. */
+        .modal-footer-band .flex { position: static !important; z-index: auto !important; background: transparent !important; }
+        .modal-footer-band .btn-modal-ghost { color: #fff; border-color: rgba(255, 255, 255, 0.45); background: rgba(255, 255, 255, 0.06); }
+        .modal-footer-band .btn-modal-ghost:hover { background: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.7); }
     </style>
 </head>
 <body class="text-on-background font-body-md antialiased min-h-screen flex flex-col">

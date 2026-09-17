@@ -330,10 +330,9 @@
                 </div>
             </dl>
         </section>
-
-        <div class="border-t border-muted-border pt-4">
-            <button type="button" data-modal-close class="btn-modal btn-modal-primary w-full">Tutup</button>
-        </div>
+    @slot('footer')
+        <button type="button" data-modal-close class="btn-modal btn-modal-primary w-full">Tutup</button>
+    @endslot
     @endcomponent
 @endforeach
 @endsection

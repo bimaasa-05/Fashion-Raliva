@@ -213,8 +213,10 @@
         <span id="modal-date">-</span>
     </div>
     <!-- Action buttons -->
-    <div id="modal-actions" class="flex gap-3 pt-2">
-    </div>
+    @slot('footer')
+        <div id="modal-actions" class="flex gap-3">
+        </div>
+    @endslot
 @endcomponent
 
 <!-- Toggle Status Modal -->
@@ -229,6 +231,8 @@
     <div class="p-6">
         <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center" id="toggle-title">Ubah Status Ulasan</h3>
         <p class="text-on-surface-variant text-sm text-center mb-6" id="toggle-message">-</p>
+    </div>
+    @slot('footer')
         <form method="POST" action="" id="toggle-form">
             @csrf
             @method('PUT')
@@ -237,7 +241,7 @@
                 <button type="submit" class="flex-1 btn-modal btn-modal-primary">Ya, Ubah</button>
             </div>
         </form>
-    </div>
+    @endslot
 @endcomponent
 @endsection
 

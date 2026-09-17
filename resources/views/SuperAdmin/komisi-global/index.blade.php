@@ -238,10 +238,12 @@
                 <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Pratinjau</span><span class="font-body-md text-body-md">Dari penjualan Rp 1.000.000</span></div>
                 <div class="text-right"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Pendapatan Platform</span><span class="font-title-md text-title-md text-gold-accent" id="preview-amount">Rp {{ number_format($komisi * 10000, 0, ',', '.') }}</span></div>
             </div>
-            <div class="flex gap-4 pt-4">
+        @slot('footer')
+            <div class="flex gap-4">
                 <button class="btn-modal btn-modal-ghost flex-1" onclick="closeEditForm();" type="button">Batal</button>
-                <button class="btn-modal btn-modal-primary flex-1" type="submit">Tinjau Perubahan</button>
+                <button class="btn-modal btn-modal-primary flex-1" type="submit" form="komisi-form">Tinjau Perubahan</button>
             </div>
+        @endslot
         </form>
     @endcomponent
 </div>
@@ -316,10 +318,12 @@
             <h3 class="font-display-lg text-headline-lg-mobile md:text-headline-lg">Konfirmasi Perubahan</h3>
             <p class="font-body-md text-body-md text-on-surface-variant mt-2">Anda akan mengubah tarif komisi global platform. Perubahan ini berlaku untuk semua transaksi selanjutnya dan akan tercatat dalam audit trail.</p>
         </div>
-        <div class="flex flex-col gap-4 pt-2">
+    </div>
+    @slot('footer')
+        <div class="flex flex-col gap-4">
             <button type="button" class="btn-modal btn-modal-primary w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden'); document.getElementById('komisi-form').submit();">Konfirmasi &amp; Terapkan</button>
             <button type="button" class="btn-modal btn-modal-ghost w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden')">Batal</button>
         </div>
-    </div>
+    @endslot
 @endcomponent
 @endpush

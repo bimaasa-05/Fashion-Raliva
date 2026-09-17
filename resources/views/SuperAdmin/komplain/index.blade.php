@@ -407,11 +407,13 @@
     <div class="p-6">
         <h3 id="confirm-komplain-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">Konfirmasi</h3>
         <p id="confirm-komplain-desc" class="text-on-surface-variant text-sm text-center mb-6">Lanjutkan aksi ini?</p>
+    </div>
+    @slot('footer')
         <div class="flex space-x-3">
             <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeConfirmKomplain()">Batal</button>
             <button type="button" id="confirm-komplain-submit" class="flex-1 btn-modal btn-modal-primary">Ya, Lanjutkan</button>
         </div>
-    </div>
+    @endslot
 @endcomponent
 @endsection
 

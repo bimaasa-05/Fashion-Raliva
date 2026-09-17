@@ -304,7 +304,9 @@ $pelanggan = $s->order?->checkout?->user;
             <p id="d-diterima" class="text-sm font-semibold text-on-surface">-</p>
         </div>
     </div>
-    <button type="button" onclick="closeModal()" class="btn-modal btn-modal-ghost w-full">Tutup</button>
+    @slot('footer')
+        <button type="button" onclick="closeModal()" class="btn-modal btn-modal-ghost w-full">Tutup</button>
+    @endslot
 @endcomponent
 
 <!-- Modal Konfirmasi Ubah Status Pengiriman -->
@@ -320,11 +322,13 @@ $pelanggan = $s->order?->checkout?->user;
     <div class="p-6">
         <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Ubah status pengiriman?</h3>
         <p class="text-on-surface-variant text-sm text-center mb-6">Status akan diubah menjadi <span id="confirm-pengiriman-status" class="font-bold text-on-surface">-</span>.</p>
+    </div>
+    @slot('footer')
         <div class="flex space-x-3">
             <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeConfirmPengiriman()">Batal</button>
             <button type="button" id="confirm-pengiriman-submit" class="flex-1 btn-modal btn-modal-primary">Ya, Ubah</button>
         </div>
-    </div>
+    @endslot
 @endcomponent
 @endsection
 

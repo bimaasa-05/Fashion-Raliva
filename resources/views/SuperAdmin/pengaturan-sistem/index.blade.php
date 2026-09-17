@@ -500,7 +500,7 @@
     'title' => 'Tambah Kategori Bantuan',
     'subtitle' => 'Kartu kategori yang tampil di halaman Pusat Bantuan Customer.',
 ])
-    <form method="POST" action="{{ route('superadmin.pengaturan-sistem.help.kategori.store') }}" class="space-y-4">
+    <form method="POST" action="{{ route('superadmin.pengaturan-sistem.help.kategori.store') }}" id="form-help-cat-tambah" class="space-y-4">
         @csrf
         <div>
             <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Ikon (Material Symbols)</label>
@@ -520,10 +520,12 @@
         <div class="flex items-center justified gap-4 p-4 border border-gold-accent/25 rounded-xl bg-gold-accent/5">
             <p class="font-label-sm text-xs text-on-surface-variant inline-flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">auto_awesome</span>Urutan diatur otomatis sesuai urutan pembuatan.</p>
         </div>
-        <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
-            <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-            <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">add</span>Tambah</button>
-        </div>
+        @slot('footer')
+            <div class="flex items-center justify-end gap-3">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="form-help-cat-tambah" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">add</span>Tambah</button>
+            </div>
+        @endslot
     </form>
 @endcomponent
 
@@ -561,10 +563,12 @@
                 <span class="raliva-toggle-knob"></span>
             </label>
         </div>
-        <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
-            <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-            <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
-        </div>
+        @slot('footer')
+            <div class="flex items-center justify-end gap-3">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="form-help-cat-edit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+            </div>
+        @endslot
     </form>
 @endcomponent
 
@@ -577,7 +581,7 @@
     'subtitle' => 'Atur pertanyaan bantuan Customer dalam satu kategori.',
     'size' => 'lg',
 ])
-    <form method="POST" action="{{ route('superadmin.pengaturan-sistem.help.faq.store') }}" class="space-y-4">
+    <form method="POST" action="{{ route('superadmin.pengaturan-sistem.help.faq.store') }}" id="form-help-faq-tambah" class="space-y-4">
         @csrf
         <div>
             <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Kategori</label>
@@ -603,10 +607,12 @@
         <div class="flex items-center justify-between gap-4 p-4 border border-gold-accent/25 rounded-xl bg-gold-accent/5">
             <p class="font-label-sm text-xs text-on-surface-variant inline-flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">auto_awesome</span>Urutan diatur otomatis sesuai urutan pembuatan.</p>
         </div>
-        <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
-            <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-            <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">add</span>Tambah</button>
-        </div>
+        @slot('footer')
+            <div class="flex items-center justify-end gap-3">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="form-help-faq-tambah" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">add</span>Tambah</button>
+            </div>
+        @endslot
     </form>
 @endcomponent
 
@@ -651,10 +657,12 @@
                 <span class="raliva-toggle-knob"></span>
             </label>
         </div>
-        <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
-            <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-            <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
-        </div>
+        @slot('footer')
+            <div class="flex items-center justify-end gap-3">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="form-help-faq-edit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+            </div>
+        @endslot
     </form>
 @endcomponent
 
@@ -672,10 +680,12 @@
             <p class="font-body-md text-sm text-on-surface">Hapus kategori <span id="help-kat-hapus-nama" class="font-bold text-error">…</span>?</p>
         </div>
         <p class="font-body-md text-xs text-on-surface-variant inline-flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent mt-[1px]">info</span>Kategori yang masih dipakai oleh FAQ tidak bisa dihapus.</p>
-        <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
-            <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-            <button type="submit" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
-        </div>
+        @slot('footer')
+            <div class="flex items-center justify-end gap-3">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="form-help-kat-hapus" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
+            </div>
+        @endslot
     </form>
 @endcomponent
 
@@ -693,10 +703,12 @@
             <p class="font-body-md text-sm text-on-surface">Hapus FAQ <span id="help-faq-hapus-teks" class="font-bold text-error">…</span>?</p>
         </div>
         <p class="font-body-md text-xs text-on-surface-variant inline-flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent mt-[1px]">info</span>FAQ yang sudah dihapus tidak bisa dikembalikan.</p>
-        <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
-            <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-            <button type="submit" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
-        </div>
+        @slot('footer')
+            <div class="flex items-center justify-end gap-3">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="form-help-faq-hapus" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
+            </div>
+        @endslot
     </form>
 @endcomponent
 
@@ -707,7 +719,7 @@
     'icon' => 'workspace_premium',
     'title' => 'Tambah Tier',
 ])
-    <form method="POST" action="{{ route('superadmin.pengaturan-sistem.tier.store') }}" class="space-y-4">
+    <form method="POST" action="{{ route('superadmin.pengaturan-sistem.tier.store') }}" id="form-tier-tambah" class="space-y-4">
         @csrf
         <div>
             <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Min (Rp)</label>
@@ -721,10 +733,12 @@
             <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Hari</label>
             <input type="number" name="hari" min="1" max="365" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent" placeholder="7" />
         </div>
-        <div class="flex justify-end gap-2 pt-2">
-            <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-            <button type="submit" class="btn-modal btn-modal-primary">Tambah</button>
-        </div>
+        @slot('footer')
+            <div class="flex justify-end gap-2">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="form-tier-tambah" class="btn-modal btn-modal-primary">Tambah</button>
+            </div>
+        @endslot
     </form>
 @endcomponent
 
@@ -749,10 +763,12 @@
             <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Hari</label>
             <input type="number" name="hari" id="edit-tier-hari" min="1" max="365" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent" />
         </div>
-        <div class="flex justify-end gap-2 pt-2">
-            <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-            <button type="submit" class="btn-modal btn-modal-primary">Simpan</button>
-        </div>
+        @slot('footer')
+            <div class="flex justify-end gap-2">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="form-tier-edit" class="btn-modal btn-modal-primary">Simpan</button>
+            </div>
+        @endslot
     </form>
 @endcomponent
 

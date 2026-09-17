@@ -224,7 +224,9 @@
         <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Status Verifikasi</dt><dd class="text-on-surface text-right"><span data-slot="status"></span></dd></div>
         <div class="flex justify-between gap-4"><dt class="text-on-surface-variant shrink-0">Tanggal</dt><dd class="text-on-surface text-right"><span data-slot="tanggal"></span></dd></div>
     </dl>
-    <button type="button" data-modal-close class="btn-modal btn-modal-primary w-full">Tutup</button>
+    @slot('footer')
+        <button type="button" data-modal-close class="btn-modal btn-modal-primary w-full">Tutup</button>
+    @endslot
 @endcomponent
 @endsection
 

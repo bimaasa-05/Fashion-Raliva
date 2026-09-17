@@ -232,14 +232,16 @@
         </div>
     </section>
 
-    <div class="flex flex-col sm:flex-row gap-3 pt-2 border-t border-muted-border">
-        <button type="button" id="stok-copy-supplier" class="btn-modal btn-modal-ghost flex-1">
-            <span class="material-symbols-outlined text-[16px]">content_copy</span> Salin Kontak Supplier
-        </button>
-        <button type="button" data-modal-close class="btn-modal btn-modal-primary flex-1">
-            <span class="material-symbols-outlined text-[16px]">close</span> Tutup
-        </button>
-    </div>
+    @slot('footer')
+        <div class="flex flex-col sm:flex-row gap-3">
+            <button type="button" id="stok-copy-supplier" class="btn-modal btn-modal-ghost flex-1">
+                <span class="material-symbols-outlined text-[16px]">content_copy</span> Salin Kontak Supplier
+            </button>
+            <button type="button" data-modal-close class="btn-modal btn-modal-primary flex-1">
+                <span class="material-symbols-outlined text-[16px]">close</span> Tutup
+            </button>
+        </div>
+    @endslot
 @endcomponent
 @endsection
 

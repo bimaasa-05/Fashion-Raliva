@@ -197,10 +197,12 @@
                 <span class="font-headline-lg text-headline-lg text-secondary" id="fee-preview-amount">Rp {{ number_format(100000 * $pajak / 100, 0, ',', '.') }}</span>
             </div>
         </div>
-        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4 pt-2">
-            <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-            <button type="submit" class="btn-modal btn-modal-primary">Review Perubahan</button>
-        </div>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="edit-fee-form" class="btn-modal btn-modal-primary">Review Perubahan</button>
+            </div>
+        @endslot
     </form>
 @endcomponent
 
@@ -217,11 +219,13 @@
             <h3 class="font-display-lg text-headline-lg-mobile md:text-headline-lg">Konfirmasi Perubahan</h3>
             <p class="font-body-md text-body-md text-on-surface-variant mt-2">Anda akan mengubah tarif <strong class="text-deep-onyx">Pajak Penjualan (PPN)</strong>. Pajak dipungut atas nama pemerintah dan wajib disetor — bukan pendapatan Raliva.</p>
         </div>
-        <div class="flex flex-col gap-4 pt-2">
+    </div>
+    @slot('footer')
+        <div class="flex flex-col gap-4">
             <button class="btn-modal btn-modal-primary w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden'); document.getElementById('edit-fee-form').submit();">Konfirmasi &amp; Terapkan</button>
             <button class="btn-modal btn-modal-ghost w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden')">Batal</button>
         </div>
-    </div>
+    @endslot
 @endcomponent
 </div>
 @endpush

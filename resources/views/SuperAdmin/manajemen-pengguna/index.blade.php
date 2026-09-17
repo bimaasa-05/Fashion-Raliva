@@ -487,11 +487,13 @@
     <div class="p-6">
         <h3 id="confirm-nonaktifkan-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">Nonaktifkan Pengguna?</h3>
         <p id="confirm-nonaktifkan-desc" class="text-on-surface-variant text-sm text-center mb-6">Status akan diubah dan efek cascade akan dijelaskan di sini.</p>
+    </div>
+    @slot('footer')
         <div class="flex space-x-3">
             <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeConfirmNonaktifkan()">Batal</button>
             <button type="button" id="confirm-nonaktifkan-submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Lanjutkan</button>
         </div>
-    </div>
+    @endslot
 @endcomponent
 
 <!-- Modal Tambah/Edit Pengguna -->
@@ -549,11 +551,13 @@
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-password-confirm" name="password_confirmation" type="password" placeholder="Ulangi password" />
                 </div>
             </div>
-            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+            </div>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
                 <button type="button" onclick="closeUserModal()" class="btn-modal btn-modal-ghost">Batal</button>
                 <button type="submit" id="user-submit-btn" class="btn-modal btn-modal-primary">Tambah Pengguna</button>
             </div>
-        </div>
+        @endslot
     @endcomponent
 </form>
 
@@ -570,11 +574,13 @@
         <div class="p-6">
             <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Hapus Pengguna</h3>
             <p class="text-on-surface-variant text-sm text-center mb-6">Pengguna <span id="hapus-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen dari sistem.</p>
-            <div class="flex space-x-3">
-                <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeHapusModal()">Batal</button>
-                <button type="submit" class="flex-1 btn-modal btn-modal-danger">Ya, Hapus</button>
-            </div>
+    </div>
+    @slot('footer')
+        <div class="flex space-x-3">
+            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeHapusModal()">Batal</button>
+            <button type="submit" class="flex-1 btn-modal btn-modal-danger">Ya, Hapus</button>
         </div>
+    @endslot
     @endcomponent
 </form>
 @endsection

@@ -290,7 +290,9 @@
         <label class="block text-xs font-medium text-on-surface-variant mb-1">Tanggal Penugasan</label>
         <p id="detail-tanggal" class="text-sm font-semibold text-on-surface">-</p>
     </div>
-    <button type="button" data-modal-close class="btn-modal btn-modal-ghost w-full">Tutup</button>
+    @slot('footer')
+        <button type="button" data-modal-close class="btn-modal btn-modal-ghost w-full">Tutup</button>
+    @endslot
 @endcomponent
 
 <!-- Tambah Staff Modal -->
@@ -301,7 +303,7 @@
     'title' => 'Tambah Staff',
     'subtitle' => 'Tugaskan user yang sudah ada ke toko.',
 ])
-    <form method="POST" action="{{ route('superadmin.store-staff.store') }}" class="space-y-5">
+    <form method="POST" action="{{ route('superadmin.store-staff.store') }}" id="tambah-staff-form" class="space-y-5">
         @csrf
         <div>
             <label class="block raliva-label mb-2">Pilih Toko</label>
@@ -322,11 +324,13 @@
             </select>
             <p class="text-xs text-on-surface-variant mt-1">Hanya user dengan role Admin, Produksi, atau Gudang yang muncul.</p>
         </div>
-        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-            <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-            <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[16px]">person_add</span>Tugaskan Staff</button>
-        </div>
     </form>
+    @slot('footer')
+        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
+            <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+            <button type="submit" form="tambah-staff-form" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[16px]">person_add</span>Tugaskan Staff</button>
+        </div>
+    @endslot
 @endcomponent
 @endsection
 

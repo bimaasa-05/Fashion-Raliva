@@ -656,11 +656,13 @@ document.addEventListener('DOMContentLoaded', () => {
             <h3 class="font-display-lg text-headline-lg-mobile text-center mb-2" id="reject-title">Tolak Toko</h3>
             <p class="text-on-surface-variant text-sm text-center mb-6">Berikan alasan penolakan untuk <span id="reject-store-name" class="font-bold text-on-surface">-</span>. Pesan ini akan dikirim ke pemilik toko.</p>
             <textarea required minlength="10" maxlength="1000" name="alasan" id="reject-alasan-input" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-6 min-h-[120px] resize-none" placeholder="Misal: Dokumen izin usaha belum lengkap... (minimal 10 karakter)"></textarea>
+        </div>
+        @slot('footer')
             <div class="flex justify-end gap-3">
                 <button type="button" class="btn-modal btn-modal-ghost" onclick="closeRejectModal()">Batal</button>
                 <button type="submit" class="btn-modal btn-modal-danger">Konfirmasi Penolakan</button>
             </div>
-        </div>
+        @endslot
     @endcomponent
 </form>
 
@@ -677,11 +679,13 @@ document.addEventListener('DOMContentLoaded', () => {
             <h3 class="font-display-lg text-headline-lg-mobile text-center mb-2" id="doc-reject-title">Tolak Dokumen</h3>
             <p class="text-on-surface-variant text-sm text-center mb-6">Berikan alasan penolakan untuk <span id="doc-reject-name" class="font-bold text-on-surface">-</span>. Pesan ini akan dikirim ke pemilik toko.</p>
             <textarea required minlength="3" maxlength="1000" name="alasan" id="doc-reject-alasan-input" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-6 min-h-[120px] resize-none" placeholder="Alasan penolakan dokumen... (minimal 3 karakter)"></textarea>
+        </div>
+        @slot('footer')
             <div class="flex justify-end gap-3">
                 <button type="button" class="btn-modal btn-modal-ghost" onclick="closeDocRejectModal()">Batal</button>
                 <button type="submit" class="btn-modal btn-modal-danger">Konfirmasi Penolakan</button>
             </div>
-        </div>
+        @endslot
     @endcomponent
 </form>
 
@@ -734,11 +738,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 </label>
             </div>
 
+        </div>
+        @slot('footer')
             <div class="flex justify-end gap-3">
                 <button type="button" class="btn-modal btn-modal-ghost" onclick="closeSuspendModal()">Batal</button>
                 <button type="submit" class="btn-modal btn-modal-danger">Konfirmasi Tangguhkan</button>
             </div>
-        </div>
+        @endslot
     @endcomponent
 </form>
 @endpush
