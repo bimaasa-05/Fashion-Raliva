@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Address;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Checkout;
@@ -263,6 +264,22 @@ class CheckoutController extends Controller
                 'grand_total' => $grand,
                 'status' => Checkout::STATUS_PENDING,
             ]);
+
+            // Alamat pelanggan otomatis dibuat (pertama kali) bila customer belum punya alamat tersimpan.
+            if ($actor->addresses()->count() === 0) {
+                Address::create([
+                    'user_id' => $actor->user_id,
+                    'label' => 'Home',
+                    'nama_penerima' => $validated['nama_penerima'],
+                    'nomor_telepon' => $validated['nomor_telepon'],
+                    'alamat' => $validated['alamat'],
+                    'kota' => $validated['kota'],
+                    'provinsi' => $validated['provinsi'],
+                    'kode_pos' => $validated['kode_pos'],
+                    'negara' => 'Indonesia',
+                    'is_default' => true,
+                ]);
+            }
 
             $orders = [];
             $byStore = $items->groupBy(fn ($i) => $i['store_id']);
