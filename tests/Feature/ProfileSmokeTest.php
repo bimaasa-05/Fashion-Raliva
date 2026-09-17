@@ -4,7 +4,9 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProfileSmokeTest extends TestCase
@@ -130,5 +132,27 @@ class ProfileSmokeTest extends TestCase
 
         $after = $this->get(route('superadmin.profil'));
         $this->assertSame(200, $after->status(), 'Sesi ter-logout -> '.$after->headers->get('Location'));
+    }
+
+    public function test_photo_upload_stored_on_public_disk_not_public_dir(): void
+    {
+        $user = $this->roleUsers()['Gudang'];
+        $file = UploadedFile::fake()->image('foto.jpg', 120, 120);
+
+        $res = $this->actingAsFresh($user)->post(route('gudang.profil.update'), [
+            'nama_lengkap' => $user->nama_lengkap,
+            'email' => $user->email,
+            'foto_profil' => $file,
+        ]);
+
+        $res->assertStatus(302);
+
+        $fresh = $user->fresh();
+        $this->assertNotEmpty($fresh->foto_profil);
+        $this->assertTrue(Storage::disk('public')->exists($fresh->foto_profil), 'File harus disimpan di disk public (storage/app/public/profil).');
+        $this->assertFalse(file_exists(public_path($fresh->foto_profil)), 'File TIDAK boleh berada di public/profil.');
+        $this->assertSame(asset('storage/' . $fresh->foto_profil), $fresh->foto_profil_url);
+
+        Storage::disk('public')->delete($fresh->foto_profil);
     }
 }
