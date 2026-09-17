@@ -328,8 +328,8 @@
 <article class="border-b border-outline-variant py-md">
 <div class="flex items-start justify-between gap-md">
 <div class="flex items-center gap-sm min-w-0">
-@if ($u && $u->foto_profil)
-<img src="{{ filter_var($u->foto_profil, FILTER_VALIDATE_URL) ? $u->foto_profil : asset($u->foto_profil) }}" alt="{{ $u->nama_lengkap }}" class="w-9 h-9 rounded-full object-cover shrink-0"/>
+@if ($u && $u->foto_profil_url)
+<img src="{{ $u->foto_profil_url }}" alt="{{ $u->nama_lengkap }}" class="w-9 h-9 rounded-full object-cover shrink-0"/>
 @else
 <div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-caps text-label-caps shrink-0">{{ $initials }}</div>
 @endif
