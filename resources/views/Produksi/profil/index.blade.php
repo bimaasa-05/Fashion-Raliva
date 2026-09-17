@@ -131,7 +131,8 @@
                 </div>
                 <div>
                     <label class="block raliva-label mb-2">Foto Profil <span class="text-on-surface-variant font-normal">(opsional)</span></label>
-                    <input type="file" name="foto_profil" accept="image/*" class="w-full text-sm text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border file:border-muted-border file:bg-surface-container-low file:text-sm" />
+                    <img id="produksi-foto-preview" alt="Pratinjau Foto Profil" src="{{ $user->foto_profil_url ?? '' }}" class="w-20 h-20 rounded-full object-cover border-2 border-gold-accent/40 mb-2 {{ $user->foto_profil_url ? '' : 'hidden' }}" />
+                    <input type="file" name="foto_profil" accept="image/*" data-photo-preview="produksi-foto-preview" class="w-full text-sm text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border file:border-muted-border file:bg-surface-container-low file:text-sm" />
                     <p class="text-xs text-on-surface-variant mt-1">JPG/PNG/WebP, maks 2MB. Kosongkan jika tidak ingin mengubah.</p>
                     @error('foto_profil') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
@@ -164,3 +165,5 @@
     </div>
 </div>
 @endsection
+
+@include('partials.profile-photo-preview')
