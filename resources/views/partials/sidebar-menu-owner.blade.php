@@ -43,6 +43,7 @@
             'label' => 'Tim & Laporan',
             'items' => [
                 ['route' => 'owner.karyawan', 'icon' => 'manage_accounts', 'text' => 'Karyawan'],
+                ['route' => 'owner.rekap-karyawan', 'icon' => 'leaderboard', 'text' => 'Rekap Karyawan'],
                 ['route' => 'owner.laporan', 'icon' => 'monitoring', 'text' => 'Laporan Toko'],
             ],
         ],
