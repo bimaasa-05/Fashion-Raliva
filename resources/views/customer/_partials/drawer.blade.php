@@ -107,7 +107,7 @@
             {{ __('Pesanan') }}
             <span class="material-symbols-outlined drawer-chevron text-[20px] text-[var(--chrome-text-faint)] ml-auto">chevron_right</span>
         </a>
-<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.wishlist') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ auth()->check() ? route('customer.wishlist') : route('login', ['redirect' => route('customer.wishlist')]) }}">
+<a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.wishlist') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ auth()->check() ? route('customer.wishlist') : route('customer.account', ['notice' => 'login']) }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">favorite</span>
             {{ __('Wishlist') }}
             <span class="material-symbols-outlined drawer-chevron text-[20px] text-[var(--chrome-text-faint)] ml-auto">chevron_right</span>
