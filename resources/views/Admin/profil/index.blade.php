@@ -138,7 +138,19 @@
                 </div>
                 <div>
                     <label class="raliva-label" for="telepon">No. Telepon</label>
-                    <input class="raliva-input" id="telepon" name="nomor_telepon" type="tel" value="{{ $user->nomor_telepon ?? '' }}" />
+                    <input class="raliva-input" id="telepon" name="nomor_telepon" type="tel" maxlength="30" value="{{ $user->nomor_telepon ?? '' }}" />
+                </div>
+                <div>
+                    <label class="raliva-label" for="gender">Jenis Kelamin</label>
+                    <select class="raliva-input" id="gender" name="gender">
+                        <option value="" {{ old('gender', $user->gender) === null ? 'selected' : '' }}>—</option>
+                        <option value="male" {{ old('gender', $user->gender) === 'male' ? 'selected' : '' }}>Laki-laki</option>
+                        <option value="female" {{ old('gender', $user->gender) === 'female' ? 'selected' : '' }}>Perempuan</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="raliva-label" for="tanggal-lahir">Tanggal Lahir</label>
+                    <input class="raliva-input" id="tanggal-lahir" name="tanggal_lahir" type="date" value="{{ old('tanggal_lahir', $user->tanggal_lahir?->format('Y-m-d') ?? '') }}" />
                 </div>
                 <div>
                     <label class="raliva-label" for="role">Role</label>
@@ -146,7 +158,15 @@
                 </div>
             </div>
             <div class="flex justify-end pt-gutter border-t border-muted-border">
-                <button type="submit" class="bg-deep-onyx text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Simpan Perubahan</button>
+                <div class="flex items-center gap-gutter flex-wrap">
+                    @if($user->foto_profil_url)
+                        <label class="flex items-center gap-2 text-on-surface-variant text-sm cursor-pointer">
+                            <input type="checkbox" name="remove_photo" value="1" class="rounded border-muted-border text-gold-accent focus:ring-gold-accent/30" />
+                            Hapus foto profil
+                        </label>
+                    @endif
+                    <button type="submit" class="bg-deep-onyx text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Simpan Perubahan</button>
+                </div>
             </div>
         </form>
     </section>
@@ -163,11 +183,11 @@
                 </div>
                 <div>
                     <label class="raliva-label" for="password-baru">Password Baru</label>
-                    <input class="raliva-input" id="password-baru" name="password" type="password" placeholder="Minimal 8 karakter" />
+                    <input class="raliva-input" id="password-baru" name="password_baru" type="password" placeholder="Minimal 8 karakter, 1 huruf kapital & 1 angka" />
                 </div>
                 <div>
                     <label class="raliva-label" for="password-konfirmasi">Konfirmasi Password</label>
-                    <input class="raliva-input" id="password-konfirmasi" name="password_confirmation" type="password" placeholder="Ulangi password baru" />
+                    <input class="raliva-input" id="password-konfirmasi" name="password_baru_confirmation" type="password" placeholder="Ulangi password baru" />
                 </div>
             </div>
             <div class="flex justify-end pt-gutter border-t border-muted-border">
