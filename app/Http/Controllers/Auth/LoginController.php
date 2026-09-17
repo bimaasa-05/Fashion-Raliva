@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\EnsureRole;
 use App\Models\User;
+use App\Support\SessionArea;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +26,10 @@ class LoginController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+        // Remember-me nonaktif saat multi-sesi aktif (cookie remember_web_* sama antar-area).
+        $remember = $request->boolean('remember') && ! SessionArea::isEnabled();
+
+        if (! Auth::attempt($credentials, $remember)) {
             return back()
                 ->withInput($request->only('email'))
                 ->withErrors(['email' => 'Email atau password salah.']);
@@ -42,6 +46,17 @@ class LoginController extends Controller
         }
 
         $request->session()->regenerate();
+
+        if (SessionArea::isEnabled()) {
+            $area = SessionArea::areaForRole($user->role?->nama_role);
+
+            if ($area !== null) {
+                $cookie = SessionArea::cookieNameForArea($area);
+
+                config(['session.cookie' => $cookie]);
+                $request->session()->setName($cookie);
+            }
+        }
 
         $intended = $request->input('redirect');
         if (is_string($intended) && Str::startsWith($intended, '/') && ! Str::contains($intended, '//')) {
