@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Hash;
 class CheckoutController extends Controller
 {
     /**
-     * Opsi pengiriman (config). Default terpilih: Express (Rp 35.000).
+     * Opsi pengiriman (config). Default terpilih: Regular (Rp 0).
      */
     protected const SHIPPING_OPTIONS = [
         ['kode' => 'regular', 'nama' => 'Regular Delivery', 'estimasi' => '3-5 Business Days', 'ongkir' => 0],
@@ -119,7 +119,7 @@ class CheckoutController extends Controller
         $subtotal = $items->sum(fn ($i) => $i->quantity * $i->harga_snapshot);
 
         $shippingOptions = self::SHIPPING_OPTIONS;
-        $shipping = 35000;
+        $shipping = 0;
         $tax = \App\Support\PricingService::taxFor($subtotal);
         $biayaLayanan = (int) round(\App\Support\PricingService::serviceFee());
         $total = $subtotal + $shipping + $tax + $biayaLayanan;
