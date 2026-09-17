@@ -467,6 +467,9 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::delete('/karyawan/{storeStaff}', [KaryawanController::class, 'destroy'])->name('karyawan.destroy');
     Route::get('/laporan', [OwnerLaporanController::class, 'index'])->name('laporan');
     Route::get('/laporan/export', [OwnerLaporanController::class, 'export'])->name('laporan.export');
+    Route::get('/laporan/export-excel', [OwnerLaporanController::class, 'exportExcel'])->name('laporan.export-excel');
+    Route::get('/laporan/cetak', [OwnerLaporanController::class, 'cetak'])->name('laporan.cetak');
+    Route::get('/laporan/export-pdf', [OwnerLaporanController::class, 'exportPdf'])->name('laporan.export-pdf');
     Route::get('/gudang', [OwnerGudangController::class, 'index'])->name('gudang');
     Route::post('/gudang/{stockTransfer}/setujui', [KoordinasiGudangController::class, 'setujui'])->name('gudang.setujui');
     Route::post('/gudang/{stockTransfer}/tolak', [KoordinasiGudangController::class, 'tolak'])->name('gudang.tolak');
