@@ -250,38 +250,46 @@
         $kodeRefund = 'REF-' . str_pad((string) $refund->refund_id, 10, '0', STR_PAD_LEFT);
     @endphp
     @if ($refund->status === 'requested')
-    <div id="modal-setujui-{{ $refund->refund_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-        <form method="POST" action="{{ route('superadmin.pengembalian-dana.setujui', $refund->refund_id) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+    @component('SuperAdmin.partials.premium-confirm', [
+        'id' => 'modal-setujui-' . $refund->refund_id,
+        'dataModal' => true,
+        'icon' => 'task_alt',
+        'iconBox' => 'bg-white/10 border-white/20',
+        'iconColor' => 'text-white',
+    ])
+        <form method="POST" action="{{ route('superadmin.pengembalian-dana.setujui', $refund->refund_id) }}" class="p-6 space-y-4">
             @csrf
-            <div class="w-14 h-14 rounded-full bg-secondary-container/20 flex items-center justify-center mx-auto mb-5">
-                <span class="material-symbols-outlined text-secondary text-[28px]">task_alt</span>
+            <div class="text-center">
+                <h3 class="font-title-md text-title-md text-on-surface">Setujui Refund?</h3>
+                <p class="text-sm text-on-surface-variant mt-2">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> sebesar <span class="font-bold text-on-surface">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</span> untuk pesanan {{ $refund->order?->nomor_order ?? '-' }} akan disetujui.</p>
             </div>
-            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Setujui Refund?</h3>
-            <p class="text-sm text-on-surface-variant text-center">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> sebesar <span class="font-bold text-on-surface">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</span> untuk pesanan {{ $refund->order?->nomor_order ?? '-' }} akan disetujui.</p>
-            <div class="flex gap-3 mt-6">
-                <button type="button" data-modal-close class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded-full hover:bg-surface-container-low transition-colors">
+            <div class="flex gap-3 pt-2">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1">
                     <span class="material-symbols-outlined text-[16px] leading-none">close</span>
                     Batal
                 </button>
-                <button type="submit" class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium">
+                <button type="submit" class="btn-modal btn-modal-primary flex-1">
                     <span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>
                     Ya, Setujui
                 </button>
             </div>
         </form>
-    </div>
+    @endcomponent
     @elseif ($refund->status === 'disetujui')
-    <div id="modal-selesaikan-{{ $refund->refund_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-        <form method="POST" action="{{ route('superadmin.pengembalian-dana.selesaikan', $refund->refund_id) }}" enctype="multipart/form-data" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+    @component('SuperAdmin.partials.premium-confirm', [
+        'id' => 'modal-selesaikan-' . $refund->refund_id,
+        'dataModal' => true,
+        'icon' => 'payments',
+        'iconBox' => 'bg-white/10 border-white/20',
+        'iconColor' => 'text-white',
+    ])
+        <form method="POST" action="{{ route('superadmin.pengembalian-dana.selesaikan', $refund->refund_id) }}" enctype="multipart/form-data" class="p-6 space-y-4">
             @csrf
-            <div class="w-14 h-14 rounded-full bg-secondary-container/20 flex items-center justify-center mx-auto mb-5">
-                <span class="material-symbols-outlined text-secondary text-[28px]">payments</span>
+            <div class="text-center">
+                <h3 class="font-title-md text-title-md text-on-surface">Tandai Selesai?</h3>
+                <p class="text-sm text-on-surface-variant mt-2 mb-4">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> akan ditandai <span class="font-bold text-on-surface">selesai</span> dan Customer dikonfirmasi dana telah dikirim.</p>
             </div>
-            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Tandai Selesai?</h3>
-            <p class="text-sm text-on-surface-variant text-center mb-4">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> akan ditandai <span class="font-bold text-on-surface">selesai</span> dan Customer dikonfirmasi dana telah dikirim.</p>
-            <div class="space-y-4 mb-2 text-left">
+            <div class="space-y-4 text-left">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">Bukti Transfer <span class="text-error">*</span></label>
                     <input type="file" name="file_bukti" required accept=".jpg,.jpeg,.png,.pdf" class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:font-label-sm file:uppercase file:tracking-widest file:cursor-pointer border border-muted-border rounded-lg p-1 focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent" />
@@ -298,42 +306,42 @@
                     <p class="text-xs"><a href="{{ asset('storage/' . $refund->file_bukti) }}" target="_blank" class="text-gold-accent hover:underline inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> Lihat bukti sebelumnya</a></p>
                 @endif
             </div>
-            <div class="flex gap-3 mt-6">
-                <button type="button" data-modal-close class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded-full hover:bg-surface-container-low transition-colors">
+            <div class="flex gap-3 pt-2">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1">
                     <span class="material-symbols-outlined text-[16px] leading-none">close</span>
                     Batal
                 </button>
-                <button type="submit" class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium">
+                <button type="submit" class="btn-modal btn-modal-primary flex-1">
                     <span class="material-symbols-outlined text-[16px] leading-none">payments</span>
                     Ya, Selesaikan
                 </button>
             </div>
         </form>
-    </div>
+    @endcomponent
     @endif
 @endforeach
 
-<form method="POST" action="" id="reject-refund-form" onsubmit="closeRejectRefund()">
-    @csrf
-    <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="rejectRefundModal" onclick="if (event.target === this) closeRejectRefund()">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                    <span class="material-symbols-outlined text-error text-[28px]">block</span>
-                </div>
-                <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Alasan Penolakan Refund</h3>
-                <p class="text-on-surface-variant text-sm text-center mb-4">Refund <span id="reject-refund-kode" class="font-mono font-bold text-on-surface">-</span> akan ditolak dan Customer dinotifikasi.</p>
-                <textarea name="alasan" required minlength="10" maxlength="1000" rows="4"
-                    class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-4"
-                    placeholder="Tulis alasan penolakan... (minimal 10 karakter)"></textarea>
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeRejectRefund()">Batal</button>
-                    <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Konfirmasi</button>
-                </div>
-            </div>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'rejectRefundModal',
+    'icon' => 'block',
+    'zIndex' => 70,
+    'close' => 'closeRejectRefund',
+])
+    <form method="POST" action="" id="reject-refund-form" onsubmit="closeRejectRefund()" class="p-6 space-y-4">
+        @csrf
+        <div class="text-center">
+            <h3 class="font-title-md text-title-md text-on-surface">Alasan Penolakan Refund</h3>
+            <p class="text-on-surface-variant text-sm mt-2 mb-4">Refund <span id="reject-refund-kode" class="font-mono font-bold text-on-surface">-</span> akan ditolak dan Customer dinotifikasi.</p>
         </div>
-    </div>
-</form>
+        <textarea name="alasan" required minlength="10" maxlength="1000" rows="4"
+            class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-error focus:ring-1 focus:ring-error"
+            placeholder="Tulis alasan penolakan... (minimal 10 karakter)"></textarea>
+        <div class="flex space-x-3 pt-2">
+            <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeRejectRefund()">Batal</button>
+            <button type="submit" class="btn-modal btn-modal-danger flex-1">Konfirmasi</button>
+        </div>
+    </form>
+@endcomponent
 @endsection
 
 @push('scripts')

@@ -188,100 +188,82 @@
 </section>
 
 <!-- Modal Detail Produksi -->
-<div id="detail-produksi" data-modal class="fixed inset-0 z-[70] hidden">
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-modal-close></div>
-    <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-2xl bg-surface-container-lowest border border-muted-border rounded-xl shadow-2xl flex flex-col max-h-[90vh] border-t-4 border-t-gold-accent/60">
-        <!-- Header -->
-        <div class="flex items-start justify-between gap-4 px-6 pt-5 pb-4 border-b border-muted-border rounded-t-xl">
-            <div class="flex items-center gap-3 min-w-0">
-                <div class="w-11 h-11 rounded-xl bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0 shadow-sm">
-                    <span class="material-symbols-outlined text-gold-accent">factory</span>
-                </div>
-                <div class="min-w-0">
-                    <h3 class="font-title-md text-title-md text-on-surface premium-heading uppercase">Detail Produksi</h3>
-                    <p class="font-mono text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mt-1 truncate"><span data-slot="nomor">-</span></p>
-                </div>
-            </div>
-            <button type="button" data-modal-close class="p-1 -mr-1 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors shrink-0">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-
-        <!-- Scrollable body -->
-        <div class="overflow-y-auto px-6 py-5 space-y-6">
-            <div class="flex items-center gap-2 flex-wrap">
-                <span data-prioritas-badge class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase border bg-surface-container-high text-on-surface-variant border-outline-variant shadow-sm">Prioritas: -</span>
-                <span data-status-badge class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase border bg-surface-container-high text-on-surface-variant border-outline-variant shadow-sm">-</span>
-            </div>
-
-            <!-- Info Order -->
-            <section>
-                <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">assignment</span> Info Order</p>
-                <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 md:p-5">
-                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 font-body-md text-sm">
-                        <div>
-                            <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">storefront</span> Toko</dt>
-                            <dd class="text-on-surface break-words"><span data-slot="toko">-</span></dd>
-                        </div>
-                        <div>
-                            <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">warehouse</span> Target Gudang</dt>
-                            <dd class="text-on-surface break-words"><span data-slot="gudang">-</span></dd>
-                        </div>
-                        <div>
-                            <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">calendar_month</span> Periode</dt>
-                            <dd class="text-on-surface"><span data-slot="periode">-</span></dd>
-                        </div>
-                        <div>
-                            <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">person</span> Pemohon</dt>
-                            <dd class="text-on-surface break-words"><span data-slot="pemohon">-</span></dd>
-                        </div>
-                        <div>
-                            <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">engineering</span> Penanggung Jawab</dt>
-                            <dd class="text-on-surface break-words"><span data-slot="pelaksana">-</span></dd>
-                        </div>
-                        <div>
-                            <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">event</span> Dibuat Pada</dt>
-                            <dd class="text-on-surface"><span data-slot="dibuat">-</span></dd>
-                        </div>
-                    </dl>
-                </div>
-            </section>
-
-            <!-- Catatan -->
-            <div class="bg-surface-container-lowest border border-muted-border border-l-4 border-l-gold-accent/40 rounded-lg p-4 md:p-5">
-                <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-2"><span class="material-symbols-outlined text-[16px]">notes</span> Catatan</p>
-                <p class="text-on-surface whitespace-pre-line break-words font-body-md text-sm"><span data-slot="catatan">-</span></p>
-            </div>
-
-            <!-- Item Produksi -->
-            <section>
-                <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">checklist</span> Item Produksi <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[9px] font-bold" id="item-count">-</span></p>
-                <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium card-static">
-                    <table class="w-full text-sm premium-table">
-                        <thead class="bg-surface-container-high">
-                            <tr class="border-b border-muted-border text-on-surface-variant font-label-sm text-label-sm uppercase">
-                                <th class="p-3 text-left">Produk</th>
-                                <th class="p-3 text-left">SKU / Varian</th>
-                                <th class="p-3 text-center">Diminta</th>
-                            </tr>
-                        </thead>
-                        <tbody class="font-body-md text-sm" data-items-tbody></tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
-
-        <!-- Footer -->
-        <div class="shrink-0 border-t border-muted-border rounded-b-xl px-6 py-4 bg-surface-container-lowest flex flex-col sm:flex-row gap-3">
-            <button type="button" id="produksi-copy" class="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-muted-border rounded-lg text-on-surface font-label-sm text-[11px] uppercase tracking-widest hover:border-gold-accent hover:text-gold-accent transition-colors">
-                <span class="material-symbols-outlined text-[16px]">content_copy</span> Salin No. Order
-            </button>
-            <button type="button" data-modal-close class="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded-lg btn-premium">
-                <span class="material-symbols-outlined text-[16px]">close</span> Tutup
-            </button>
-        </div>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'detail-produksi',
+    'dataModal' => true,
+    'icon' => 'factory',
+    'title' => 'Detail Produksi',
+    'subtitle' => '<span data-slot="nomor">-</span>',
+    'subtitleRaw' => true,
+    'size' => 'xl',
+])
+    <div class="flex items-center gap-2 flex-wrap">
+        <span data-prioritas-badge class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase border bg-surface-container-high text-on-surface-variant border-outline-variant shadow-sm">Prioritas: -</span>
+        <span data-status-badge class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase border bg-surface-container-high text-on-surface-variant border-outline-variant shadow-sm">-</span>
     </div>
-</div>
+
+    <section>
+        <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">assignment</span> Info Order</p>
+        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 md:p-5">
+            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 font-body-md text-sm">
+                <div>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">storefront</span> Toko</dt>
+                    <dd class="text-on-surface break-words"><span data-slot="toko">-</span></dd>
+                </div>
+                <div>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">warehouse</span> Target Gudang</dt>
+                    <dd class="text-on-surface break-words"><span data-slot="gudang">-</span></dd>
+                </div>
+                <div>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">calendar_month</span> Periode</dt>
+                    <dd class="text-on-surface"><span data-slot="periode">-</span></dd>
+                </div>
+                <div>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">person</span> Pemohon</dt>
+                    <dd class="text-on-surface break-words"><span data-slot="pemohon">-</span></dd>
+                </div>
+                <div>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">engineering</span> Penanggung Jawab</dt>
+                    <dd class="text-on-surface break-words"><span data-slot="pelaksana">-</span></dd>
+                </div>
+                <div>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">event</span> Dibuat Pada</dt>
+                    <dd class="text-on-surface"><span data-slot="dibuat">-</span></dd>
+                </div>
+            </dl>
+        </div>
+    </section>
+
+    <div class="bg-surface-container-lowest border border-muted-border border-l-4 border-l-gold-accent/40 rounded-lg p-4 md:p-5">
+        <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-2"><span class="material-symbols-outlined text-[16px]">notes</span> Catatan</p>
+        <p class="text-on-surface whitespace-pre-line break-words font-body-md text-sm"><span data-slot="catatan">-</span></p>
+    </div>
+
+    <section>
+        <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">checklist</span> Item Produksi <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[9px] font-bold" id="item-count">-</span></p>
+        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium card-static">
+            <table class="w-full text-sm premium-table">
+                <thead class="bg-surface-container-high">
+                    <tr class="border-b border-muted-border text-on-surface-variant font-label-sm text-label-sm uppercase">
+                        <th class="p-3 text-left">Produk</th>
+                        <th class="p-3 text-left">SKU / Varian</th>
+                        <th class="p-3 text-center">Diminta</th>
+                    </tr>
+                </thead>
+                <tbody class="font-body-md text-sm" data-items-tbody></tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="flex flex-col sm:flex-row gap-3 pt-2 border-t border-muted-border">
+        <button type="button" id="produksi-copy" class="btn-modal btn-modal-ghost flex-1">
+            <span class="material-symbols-outlined text-[16px]">content_copy</span> Salin No. Order
+        </button>
+        <button type="button" data-modal-close class="btn-modal btn-modal-primary flex-1">
+            <span class="material-symbols-outlined text-[16px]">close</span> Tutup
+        </button>
+    </div>
+@endcomponent
 @endsection
 
 @push('scripts')

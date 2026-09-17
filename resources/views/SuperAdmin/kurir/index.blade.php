@@ -127,135 +127,129 @@
 </div>
 
 <!-- Modal Form Kurir (Tambah/Edit) -->
-<form method="POST" action="" id="kurir-form" onsubmit="closeKurirModal()">
-    @csrf
-    <div id="modal-form-kurir" data-modal class="fixed inset-0 z-[70] hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close onclick="closeKurirModal()"></div>
-        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
-            <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-                <div>
-                    <h3 id="kurir-modal-title" class="font-title-md text-title-md text-on-surface premium-heading">Tambah Kurir Baru</h3>
-                    <p id="kurir-modal-sub" class="text-on-surface-variant font-body-md text-sm mt-1">Data kurir pengiriman.</p>
-                </div>
-                <button type="button" onclick="closeKurirModal()" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
-            </div>
-            <div class="p-6 space-y-5">
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKurir">Nama Kurir</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKurir" name="nama_kurir" type="text" maxlength="100" placeholder="JNE, J&T, SiCepat..." required />
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="kodeKurir">Kode Kurir</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 uppercase" id="kodeKurir" name="kode_kurir" type="text" maxlength="50" placeholder="JNE" required />
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-3">Status</label>
-                    <div class="flex gap-4">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="status" value="aktif" class="w-4 h-4 accent-gold-accent" checked />
-                            <span class="text-sm text-on-surface">Aktif</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="status" value="nonaktif" class="w-4 h-4 accent-gold-accent" />
-                            <span class="text-sm text-on-surface">Non-aktif</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                    <button type="button" onclick="closeKurirModal()" class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                    <button type="submit" id="kurir-submit-btn" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tambah Kurir</button>
-                </div>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'modal-form-kurir',
+    'dataModal' => true,
+    'icon' => 'local_shipping',
+    'title' => 'Tambah Kurir Baru',
+    'titleId' => 'kurir-modal-title',
+    'subtitle' => 'Data kurir pengiriman.',
+    'subtitleId' => 'kurir-modal-sub',
+    'size' => 'lg',
+    'close' => 'closeKurirModal',
+])
+    <form method="POST" action="" id="kurir-form" onsubmit="closeKurirModal()">
+        @csrf
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKurir">Nama Kurir</label>
+            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKurir" name="nama_kurir" type="text" maxlength="100" placeholder="JNE, J&T, SiCepat..." required />
+        </div>
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="kodeKurir">Kode Kurir</label>
+            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 uppercase" id="kodeKurir" name="kode_kurir" type="text" maxlength="50" placeholder="JNE" required />
+        </div>
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-3">Status</label>
+            <div class="flex gap-4">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="status" value="aktif" class="w-4 h-4 accent-gold-accent" checked />
+                    <span class="text-sm text-on-surface">Aktif</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="status" value="nonaktif" class="w-4 h-4 accent-gold-accent" />
+                    <span class="text-sm text-on-surface">Non-aktif</span>
+                </label>
             </div>
         </div>
-    </div>
-</form>
+        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4 pt-2">
+            <button type="button" onclick="closeKurirModal()" class="btn-modal btn-modal-ghost">Batal</button>
+            <button type="submit" id="kurir-submit-btn" class="btn-modal btn-modal-primary">Tambah Kurir</button>
+        </div>
+    </form>
+@endcomponent
 
 <!-- Modal Form Layanan (Tambah/Edit) -->
-<form method="POST" action="" id="layanan-form" onsubmit="closeLayananModal()">
-    @csrf
-    <div id="modal-form-layanan" data-modal class="fixed inset-0 z-[70] hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close onclick="closeLayananModal()"></div>
-        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
-            <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-                <div>
-                    <h3 id="layanan-modal-title" class="font-title-md text-title-md text-on-surface premium-heading">Tambah Layanan</h3>
-                    <p id="layanan-modal-sub" class="text-on-surface-variant font-body-md text-sm mt-1">Layanan pengiriman untuk kurir ini.</p>
-                </div>
-                <button type="button" onclick="closeLayananModal()" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
-            </div>
-            <div class="p-6 space-y-5">
-                <input type="hidden" name="courier_id" id="layananCourierId" value="" />
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaLayanan">Nama Layanan</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaLayanan" name="nama_layanan" type="text" maxlength="100" placeholder="Reg, Yes, Same Day..." required />
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="estimasiHari">Estimasi Pengiriman</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="estimasiHari" name="estimasi_hari" type="text" maxlength="50" placeholder="1-2 hari, 3 hari..." />
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-3">Status</label>
-                    <div class="flex gap-4">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="status" value="aktif" class="w-4 h-4 accent-gold-accent" checked />
-                            <span class="text-sm text-on-surface">Aktif</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="status" value="nonaktif" class="w-4 h-4 accent-gold-accent" />
-                            <span class="text-sm text-on-surface">Non-aktif</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                    <button type="button" onclick="closeLayananModal()" class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                    <button type="submit" id="layanan-submit-btn" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tambah Layanan</button>
-                </div>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'modal-form-layanan',
+    'dataModal' => true,
+    'icon' => 'inventory_2',
+    'title' => 'Tambah Layanan',
+    'titleId' => 'layanan-modal-title',
+    'subtitle' => 'Layanan pengiriman untuk kurir ini.',
+    'subtitleId' => 'layanan-modal-sub',
+    'size' => 'lg',
+    'close' => 'closeLayananModal',
+])
+    <form method="POST" action="" id="layanan-form" onsubmit="closeLayananModal()">
+        @csrf
+        <input type="hidden" name="courier_id" id="layananCourierId" value="" />
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaLayanan">Nama Layanan</label>
+            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaLayanan" name="nama_layanan" type="text" maxlength="100" placeholder="Reg, Yes, Same Day..." required />
+        </div>
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="estimasiHari">Estimasi Pengiriman</label>
+            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="estimasiHari" name="estimasi_hari" type="text" maxlength="50" placeholder="1-2 hari, 3 hari..." />
+        </div>
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-3">Status</label>
+            <div class="flex gap-4">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="status" value="aktif" class="w-4 h-4 accent-gold-accent" checked />
+                    <span class="text-sm text-on-surface">Aktif</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" name="status" value="nonaktif" class="w-4 h-4 accent-gold-accent" />
+                    <span class="text-sm text-on-surface">Non-aktif</span>
+                </label>
             </div>
         </div>
-    </div>
-</form>
+        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4 pt-2">
+            <button type="button" onclick="closeLayananModal()" class="btn-modal btn-modal-ghost">Batal</button>
+            <button type="submit" id="layanan-submit-btn" class="btn-modal btn-modal-primary">Tambah Layanan</button>
+        </div>
+    </form>
+@endcomponent
 
 <!-- Modal Hapus Kurir -->
-<form method="POST" action="" id="hapus-kurir-form" onsubmit="closeHapusModal()">
-    @csrf
-    <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="hapusKurirModal" onclick="if (event.target === this) closeHapusModal()">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                    <span class="material-symbols-outlined text-error text-[28px]">delete_forever</span>
-                </div>
-                <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Hapus Kurir</h3>
-                <p class="text-on-surface-variant text-sm text-center mb-4">Kurir <span id="hapus-nama" class="font-bold text-on-surface">-</span> beserta semua layanannya akan dihapus permanen.</p>
-                <div id="hapus-warning" class="hidden mb-4"></div>
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeHapusModal()">Batal</button>
-                    <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Hapus</button>
-                </div>
-            </div>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'hapusKurirModal',
+    'zIndex' => 70,
+    'close' => 'closeHapusModal',
+])
+    <form method="POST" action="" id="hapus-kurir-form" onsubmit="closeHapusModal()" class="p-6 space-y-4">
+        @csrf
+        <div class="text-center">
+            <h3 class="font-title-md text-title-md text-on-surface">Hapus Kurir</h3>
+            <p class="text-on-surface-variant text-sm mt-2 mb-4">Kurir <span id="hapus-nama" class="font-bold text-on-surface">-</span> beserta semua layanannya akan dihapus permanen.</p>
         </div>
-    </div>
-</form>
+        <div id="hapus-warning" class="hidden"></div>
+        <div class="flex space-x-3">
+            <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusModal()">Batal</button>
+            <button type="submit" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
+        </div>
+    </form>
+@endcomponent
 
 <!-- Modal Hapus Layanan -->
-<form method="POST" action="" id="hapus-layanan-form" onsubmit="closeHapusModal()">
-    @csrf
-    <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="hapusLayananModal" onclick="if (event.target === this) closeHapusModal()">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                    <span class="material-symbols-outlined text-error text-[28px]">delete_forever</span>
-                </div>
-                <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Hapus Layanan</h3>
-                <p class="text-on-surface-variant text-sm text-center mb-4">Layanan <span id="hapus-layanan-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen.</p>
-                <div id="hapus-layanan-warning" class="hidden mb-4"></div>
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeHapusModal()">Batal</button>
-                    <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Hapus</button>
-                </div>
-            </div>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'hapusLayananModal',
+    'zIndex' => 70,
+    'close' => 'closeHapusModal',
+])
+    <form method="POST" action="" id="hapus-layanan-form" onsubmit="closeHapusModal()" class="p-6 space-y-4">
+        @csrf
+        <div class="text-center">
+            <h3 class="font-title-md text-title-md text-on-surface">Hapus Layanan</h3>
+            <p class="text-on-surface-variant text-sm mt-2 mb-4">Layanan <span id="hapus-layanan-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen.</p>
         </div>
-    </div>
-</form>
+        <div id="hapus-layanan-warning" class="hidden"></div>
+        <div class="flex space-x-3">
+            <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusModal()">Batal</button>
+            <button type="submit" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
+        </div>
+    </form>
+@endcomponent
 @endsection
 
 @push('scripts')

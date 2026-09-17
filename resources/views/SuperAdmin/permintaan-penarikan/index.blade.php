@@ -279,61 +279,67 @@
 </div>
 
 <!-- Dialogs -->
-<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="paid-dialog">
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'paid-dialog',
+    'dataModal' => true,
+    'zIndex' => 60,
+    'icon' => 'local_atm',
+    'title' => 'Tandai Sudah Dibayar',
+])
     <form method="POST" action="" id="paid-form" enctype="multipart/form-data" onsubmit="hideDialog('paid-dialog')">
         @csrf
-        <div class="bg-surface-container-lowest border border-gold-accent/25 p-6 max-w-md w-full shadow-2xl rounded-xl">
-            <div class="w-14 h-14 rounded-full bg-secondary-container/30 border border-secondary/25 flex items-center justify-center mx-auto mb-4">
-                <span class="material-symbols-outlined text-secondary text-[28px]">local_atm</span>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-2">Konfirmasikan bahwa dana sebesar <span id="paid-nominal" class="font-title-md text-gold-accent">-</span> untuk <span id="paid-toko" class="font-bold text-on-surface">-</span> telah dikirim ke rekening tujuan.</p>
+        <div class="mt-5 space-y-4">
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Bukti Transfer <span class="text-error">*</span></label>
+                <input type="file" name="file_bukti" required accept=".jpg,.jpeg,.png,.pdf"
+                    class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
+                <p class="text-on-surface-variant text-[11px] mt-2 inline-flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">info</span>Wajib dilampirkan sebagai bukti transparansi (JPG, PNG, atau PDF, maks 5MB).</p>
             </div>
-            <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4 text-center">Tandai Sudah Dibayar</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant mb-2 text-center">Konfirmasikan bahwa dana sebesar <span id="paid-nominal" class="font-title-md text-gold-accent">-</span> untuk <span id="paid-toko" class="font-bold text-on-surface">-</span> telah dikirim ke rekening tujuan.</p>
-            <div class="mt-5 space-y-4">
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Bukti Transfer <span class="text-error">*</span></label>
-                    <input type="file" name="file_bukti" required accept=".jpg,.jpeg,.png,.pdf"
-                        class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
-                    <p class="text-on-surface-variant text-[11px] mt-2 inline-flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">info</span>Wajib dilampirkan sebagai bukti transparansi (JPG, PNG, atau PDF, maks 5MB).</p>
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Deskripsi / No. Referensi (opsional)</label>
-                    <input type="text" name="deskripsi_bukti" maxlength="1000" placeholder="Contoh: Transfer BCA dari rekening platform Raliva"
-                        class="w-full border border-muted-border bg-surface-container-low p-3 font-body-md text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
-                </div>
-            </div>
-            <div class="flex justify-end gap-4 mt-6">
-                <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('paid-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
-                <button type="submit" class="inline-flex items-center gap-1.5 bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium"><span class="material-symbols-outlined text-[16px] leading-none">payments</span>Ya, Sudah Dibayar</button>
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Deskripsi / No. Referensi (opsional)</label>
+                <input type="text" name="deskripsi_bukti" maxlength="1000" placeholder="Contoh: Transfer BCA dari rekening platform Raliva"
+                    class="w-full border border-muted-border bg-surface-container-low p-3 font-body-md text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
             </div>
         </div>
+        <div class="flex justify-end gap-4 mt-6">
+            <button type="button" data-modal-close class="btn-modal btn-modal-ghost"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
+            <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[16px] leading-none">payments</span>Ya, Sudah Dibayar</button>
+        </div>
     </form>
-</div>
+@endcomponent
 
-<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="approve-dialog">
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'approve-dialog',
+    'dataModal' => true,
+    'zIndex' => 60,
+    'icon' => 'task_alt',
+    'iconBox' => 'bg-gold-accent/20 border-gold-accent/30',
+    'iconColor' => 'text-gold-accent',
+])
     <form method="POST" action="" id="approve-form" onsubmit="hideDialog('approve-dialog')">
         @csrf
-        <div class="bg-surface-container-lowest border border-gold-accent/25 p-6 max-w-md w-full shadow-2xl rounded-xl">
-            <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-4">
-                <span class="material-symbols-outlined text-gold-accent text-[28px]">task_alt</span>
-            </div>
-            <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4 text-center">Konfirmasi Pencairan</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant mb-8 text-center">Anda akan menyetujui pencairan sebesar <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> ke <span id="approve-toko" class="font-bold text-on-surface">-</span>. Saldo toko akan dikunci untuk proses pembayaran.</p>
+        <div class="p-6">
+            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Konfirmasi Pencairan</h3>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-6 text-center">Anda akan menyetujui pencairan sebesar <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> ke <span id="approve-toko" class="font-bold text-on-surface">-</span>. Saldo toko akan dikunci untuk proses pembayaran.</p>
             <div class="flex justify-end gap-4">
-                <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('approve-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
-                <button type="submit" class="inline-flex items-center gap-1.5 bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Konfirmasi Persetujuan</button>
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
+                <button type="submit" class="btn-modal btn-modal-success flex-1"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Konfirmasi Persetujuan</button>
             </div>
         </div>
     </form>
-</div>
+@endcomponent
 
-<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="reject-dialog">
-    <form method="POST" action="" id="reject-form" onsubmit="hideDialog('reject-dialog')" class="w-full max-w-md">
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'reject-dialog',
+    'dataModal' => true,
+    'zIndex' => 60,
+    'icon' => 'gpp_bad',
+])
+    <form method="POST" action="" id="reject-form" onsubmit="hideDialog('reject-dialog')">
         @csrf
-        <div class="bg-surface-container-lowest border border-error/25 p-6 max-w-md w-full shadow-2xl rounded-xl">
-            <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-4">
-                <span class="material-symbols-outlined text-error text-[28px]">gpp_bad</span>
-            </div>
-            <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-error mb-4 text-center">Tolak Pencairan</h3>
+        <div class="p-6">
+            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Tolak Pencairan</h3>
             <p class="font-body-md text-body-md text-on-surface-variant mb-4 text-center">Anda yakin ingin menolak pengajuan dari <span id="reject-toko" class="font-bold text-on-surface">-</span>?</p>
             <div class="mb-6">
                 <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Alasan Penolakan</label>
@@ -342,12 +348,12 @@
                     placeholder="Tulis alasan... (minimal 10 karakter)"></textarea>
             </div>
             <div class="flex justify-end gap-4">
-                <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('reject-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
-                <button type="submit" class="inline-flex items-center gap-1.5 bg-error text-on-error px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full shadow-sm hover:shadow-md hover:-translate-y-px hover:opacity-90 transition-all duration-200"><span class="material-symbols-outlined text-[16px] leading-none">block</span>Tolak Pengajuan</button>
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
+                <button type="submit" class="btn-modal btn-modal-danger flex-1"><span class="material-symbols-outlined text-[16px] leading-none">block</span>Tolak Pengajuan</button>
             </div>
         </div>
     </form>
-</div>
+@endcomponent
 @endsection
 
 @push('scripts')

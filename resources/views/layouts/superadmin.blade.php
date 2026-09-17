@@ -168,6 +168,30 @@
             [data-reveal] .raliva-lb-fill, [data-reveal] .raliva-bar, [data-reveal] .raliva-donut-seg { transition: none !important; }
         }
     </style>
+    <style>
+        /* ===== Popup premium Super Admin (gaya Data Bank) — global untuk semua halaman SA ===== */
+        .banner-gradient { background-image: linear-gradient(118deg, #141414 0%, #1f0c10 55%, #421329 100%); }
+        .banner-glow { position: absolute; border-radius: 9999px; pointer-events: none; }
+        .banner-glow-1 { top: -90px; right: -50px; width: 260px; height: 260px; background: rgba(139, 30, 63, 0.4); }
+        .banner-glow-2 { bottom: -120px; left: -60px; width: 220px; height: 220px; background: rgba(139, 30, 63, 0.24); }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .btn-modal { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 24px; border-radius: 10px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; white-space: normal; min-width: 0; overflow-wrap: break-word; transition: all 0.18s ease; }
+        .btn-modal-ghost { border: 1px solid var(--color-outline); color: var(--color-on-surface-variant); background: transparent; }
+        .btn-modal-ghost:hover { background: var(--color-surface-container-low); border-color: var(--color-outline-variant); }
+        .btn-modal-primary { background: linear-gradient(90deg, #8B1E3F 0%, #c03a5a 100%); color: var(--color-on-primary); box-shadow: 0 10px 22px -12px rgba(139, 30, 63, 0.55); }
+        .btn-modal-primary:hover { filter: brightness(1.1); box-shadow: 0 12px 26px -12px rgba(139, 30, 63, 0.65); }
+        .btn-modal-danger { background: #d32f2f; color: #fff; box-shadow: 0 10px 22px -12px rgba(211, 47, 47, 0.5); }
+        .btn-modal-danger:hover { filter: brightness(1.1); }
+        .btn-modal-success { background: linear-gradient(90deg, #147d46, #2ea15f); color: #fff; box-shadow: 0 10px 22px -12px rgba(46, 161, 95, 0.5); }
+        .btn-modal-success:hover { filter: brightness(1.08); }
+
+        /* Sticky footer pada popup premium: baris tombol (Batal + aksi) tetap terlihat saat konten di-scroll. */
+        .modal-footer-sticky,
+        [data-modal] .flex:has(> .btn-modal-ghost):has(> .btn-modal-primary, > .btn-modal-danger, > .btn-modal-success) { position: sticky; bottom: 0; z-index: 20; background: var(--color-surface-container-lowest); }
+    </style>
 </head>
 <body class="text-on-background font-body-md antialiased min-h-screen flex flex-col">
     <div id="app-shell" class="flex-1 min-w-0 flex flex-col md:flex-row">
