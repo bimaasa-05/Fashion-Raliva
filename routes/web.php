@@ -265,6 +265,8 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/peringkat-iklan/{slot}/tolak', [PeringkatIklanController::class, 'tolak'])->name('peringkat-iklan.tolak');
     Route::delete('/peringkat-iklan/{slot}', [PeringkatIklanController::class, 'destroy'])->name('peringkat-iklan.hapus');
     Route::get('/data-bank', [DataBankController::class, 'index'])->name('data-bank');
+    Route::get('/data-bank/{bank}/edit', [DataBankController::class, 'edit'])->name('data-bank.edit');
+    Route::get('/data-bank/account/{account}/edit', [DataBankController::class, 'editAccount'])->name('data-bank.account.edit');
     Route::post('/data-bank', [DataBankController::class, 'store'])->name('data-bank.store');
     Route::post('/data-bank/account/store', [DataBankController::class, 'storeAccount'])->name('data-bank.account.store');
     Route::post('/data-bank/account/{account}/update', [DataBankController::class, 'updateAccount'])->name('data-bank.account.update');

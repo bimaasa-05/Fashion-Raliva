@@ -207,6 +207,19 @@ class DataBankController extends Controller
         ]);
     }
 
+    public function edit(Bank $bank)
+    {
+        $rek = $bank->platformBankAccounts->first();
+
+        return response()->json([
+            'nama_bank' => $bank->nama_bank,
+            'kode_bank' => $bank->kode_bank,
+            'rekening' => $rek?->nomor_rekening,
+            'pemilik' => $rek?->nama_pemilik,
+            'status' => $bank->status,
+        ]);
+    }
+
     /** ── E-Wallet / QRIS Account CRUD ─────────────────────────── */
 
     public function storeAccount(Request $request)
@@ -306,6 +319,18 @@ class DataBankController extends Controller
         return back()->with('toast', [
             'message' => "Akun {$label} \"{$nama}\" berhasil dihapus.",
             'icon' => 'delete',
+        ]);
+    }
+
+    public function editAccount(PlatformBankAccount $account)
+    {
+        return response()->json([
+            'nama' => $account->nama,
+            'kode' => $account->kode,
+            'nomor_rekening' => $account->nomor_rekening,
+            'nama_pemilik' => $account->nama_pemilik,
+            'deskripsi' => $account->deskripsi,
+            'status' => $account->status,
         ]);
     }
 }

@@ -37,11 +37,16 @@
     <!-- Side Navigation Drawer -->
     <aside id="sidebar" class="flex fixed md:sticky md:self-start top-0 left-0 z-50 flex-col h-screen shrink-0 pt-4 pb-[88px] md:pb-section-gap px-container-margin w-72 border-r border-sidebar-border bg-sidebar -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out">
         <div class="sidebar-head flex items-center justify-between gap-3 pt-1 pb-3">
-            <div class="flex items-center gap-3 min-w-0">
-                <img src="{{ asset('images/logo-raliva.png') }}" alt="Logo Raliva" class="w-11 h-11 rounded-xl shrink-0" />
+            <div class="flex-1 flex items-center justify-center gap-3 min-w-0">
                 <div data-sidebar-text>
                     <span class="font-display-lg text-title-md text-on-sidebar tracking-widest block leading-tight">RALIVA</span>
-                    <span class="text-gold-accent/80 font-label-sm text-[10px] uppercase tracking-wider">Produksi</span>
+                    @php $sbStore = \App\Support\SidebarContext::currentStore(); @endphp
+                    @if ($sbStore?->kategori)
+                        <span class="flex items-center gap-1.5 leading-tight max-w-[10rem] text-on-sidebar/60 font-body-md text-[11px] normal-case tracking-normal">
+                            <span class="material-symbols-outlined text-[12px] text-gold-accent/70 shrink-0">storefront</span>
+                            <span class="truncate">{{ $sbStore->kategori }}</span>
+                        </span>
+                    @endif
                 </div>
             </div>
             <button type="button" id="sidebar-collapse" aria-expanded="true" aria-label="Perkecil menu sidebar" class="sidebar-collapse-btn hidden md:inline-flex w-8 h-8 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-gold-accent/70 hover:text-gold-accent items-center justify-center transition-colors shrink-0">
