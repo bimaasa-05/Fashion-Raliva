@@ -385,3 +385,28 @@ Temuan terbuka (belum dikerjakan):
 1. Kebijakan password final (kandidat: min 8 + 1 kapital + 1 angka).
 2. Setelah ganti password: logout semua perangkat lain atau tidak?
 3. (Opsional) Konfigurasi mail nyata (SMTP) untuk reset password — saat ini `MAIL_MAILER=log`.
+
+---
+
+## Foto Profil: Storage & Simetri Antar Role (SELESAI)
+
+Perbaikan tuntas terkait keluhan asimetri foto profil:
+
+1. **Storage**: `ProfilePhoto::store()` kini memakai `Storage::disk('public')` (folder `profil`),
+   bukan lagi `public_path('profil')`. Semua 7 file `public/profil` dimigrasi ke
+   `storage/app/public/profil`; 4 file ter-track dilepas dari index git (`git rm --cached`),
+   folder `public/profil` dihapus, dan `.gitignore` ditambah `/public/profil`.
+   `User::getFotoProfilUrlAttribute()` disederhanakan jadi kanonis `asset('storage/profil/...)`.
+   Upload-an dicover `.gitignore` Laravel (`storage/app/public/.gitignore`).
+2. **Sidebar avatar**: admin, owner, produksi kini menampilkan foto (pola `<img>` + fallback
+   inisial) seperti superadmin/gudang (sebelumnya hanya inisial).
+3. **Preview seragam**: partial `partials/profile-photo-preview` (FileReader) dipasang pada
+   modal Gudang & Produksi yang sebelumnya tanpa pratinjau; label konsisten "Foto Profil"
+   (perbaiki `alt="Profile Picture"` pada halaman akun customer).
+4. **Avatar ulasan**: `riviews` & `produk-riviews` beralih ke `foto_profil_url` (dengan fallback
+   inisial) sehingga tidak 404 saat file di `/storage`.
+5. **Fallback Owner** disederhanakan ke `foto_profil_url ?? ui-avatars`.
+
+Verifikasi: suite 27 passed + 1 risky (OwnerKomplainTest pre-existing tanpa assertion);
+tambahan `ProfileSmokeTest::test_photo_upload_stored_on_public_disk_not_public_dir`;
+`view:cache` lulus; smoke HTTP `/storage/profil/...` 200 di server nyata.
