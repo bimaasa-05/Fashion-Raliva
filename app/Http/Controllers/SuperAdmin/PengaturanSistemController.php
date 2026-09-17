@@ -36,6 +36,7 @@ class PengaturanSistemController extends Controller
                 'moderasi_otomatis' => Setting::get(Setting::MODERASI_OTOMATIS, '1'),
                 'maks_pengajuan_pencairan' => Setting::get('maks_pengajuan_pencairan', '3'),
                 'batas_waktu_refund' => Setting::get('batas_waktu_refund', '7'),
+                'konfirmasi_selesai_hari' => Setting::get('konfirmasi_selesai_hari', '5'),
             ],
             'tiers' => $tiers,
             'helpCategories' => HelpCategory::terurut()->get(),
@@ -62,6 +63,7 @@ class PengaturanSistemController extends Controller
             'moderasi_otomatis' => 'sometimes|nullable|in:0,1',
             'maks_pengajuan_pencairan' => 'sometimes|nullable|numeric|min:1',
             'batas_waktu_refund' => 'sometimes|nullable|numeric|min:1',
+            'konfirmasi_selesai_hari' => 'sometimes|nullable|numeric|min:1',
         ]);
 
         $map = [
@@ -75,6 +77,7 @@ class PengaturanSistemController extends Controller
             'moderasi_otomatis' => Setting::MODERASI_OTOMATIS,
             'maks_pengajuan_pencairan' => 'maks_pengajuan_pencairan',
             'batas_waktu_refund' => 'batas_waktu_refund',
+            'konfirmasi_selesai_hari' => 'konfirmasi_selesai_hari',
         ];
 
         $lama = [];
