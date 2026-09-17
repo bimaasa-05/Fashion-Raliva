@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Support\ActivityLogger;
 use App\Support\AdminContext;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class DataCustomerController extends Controller
 {
@@ -48,7 +49,7 @@ class DataCustomerController extends Controller
             'nama_lengkap' => $data['nama_lengkap'],
             'email' => $data['email'],
             'nomor_telepon' => $data['nomor_telepon'] ?? null,
-            'password' => \Illuminate\Support\Str::random(16),
+            'password' => Hash::make('Raliva123'),
             'role_id' => $roleId,
             'email_verified_at' => now(),
             'status' => User::STATUS_AKTIF,
@@ -59,7 +60,7 @@ class DataCustomerController extends Controller
             'aktor_id' => ActivityLogger::resolveActorId(),
             'tipe' => \App\Models\Notification::TIPE_SISTEM,
             'judul' => 'Akun Customer Dibuat',
-            'pesan' => sprintf('Akun dengan email %s telah dibuat oleh Admin toko. Password dibuat otomatis, gunakan menu Lupa Password untuk masuk pertama kali.', $customer->email),
+            'pesan' => sprintf('Akun dengan email %s telah dibuat oleh Admin toko. Password default: Raliva123 — segera ganti password di menu Ganti Password.', $customer->email),
             'url' => route('customer.account'),
         ]);
         \App\Models\Notification::fireSelf(
