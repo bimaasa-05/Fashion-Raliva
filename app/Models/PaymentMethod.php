@@ -15,6 +15,8 @@ class PaymentMethod extends Model
 
     public const KODE_BANK_TRANSFER = 'bank_transfer';
 
+    public const KODE_SALDO_AKUN = 'saldo_akun';
+
     public const STATUS_AKTIF = 'aktif';
 
     public const STATUS_NONAKTIF = 'nonaktif';

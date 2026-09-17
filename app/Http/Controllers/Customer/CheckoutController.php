@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
+use App\Models\PaymentVerification;
 use App\Models\PlatformBankAccount;
 use App\Models\PaymentProof;
 use App\Models\Product;
@@ -19,6 +20,8 @@ use App\Models\Role;
 use App\Models\Store;
 use App\Models\User;
 use App\Services\NotificationService;
+use App\Support\ActivityLogger;
+use App\Support\CustomerWalletService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -384,6 +387,7 @@ class CheckoutController extends Controller
 
         $paymentMethods = PaymentMethod::with('accounts')
             ->where('status', PaymentMethod::STATUS_AKTIF)
+            ->where('kode_metode', '!=', PaymentMethod::KODE_SALDO_AKUN)
             ->orderBy('payment_method_id')
             ->get();
 
@@ -522,6 +526,103 @@ return view('customer.checkout.selesai', [
         }
 
         return $redirect;
+    }
+
+    /**
+     * Bayar checkout menggunakan saldo akun (wallet).
+     */
+    public function payWithSaldo(Request $request, int $checkout)
+    {
+        if (! Auth::check()) {
+            return redirect()->route('login');
+        }
+        if (Auth::user()->role?->nama_role !== Role::CUSTOMER) {
+            abort(403);
+        }
+
+        $paymentMethod = PaymentMethod::where('kode_metode', PaymentMethod::KODE_SALDO_AKUN)
+            ->where('status', PaymentMethod::STATUS_AKTIF)
+            ->first();
+        if (! $paymentMethod) {
+            return back()->with('toast', ['message' => 'Metode Saldo Akun belum diaktifkan.', 'icon' => 'gpp_maybe']);
+        }
+
+        $checkoutModel = Checkout::where('checkout_id', $checkout)
+            ->where('user_id', Auth::id())
+            ->with(['payment', 'orders'])
+            ->firstOrFail();
+
+        $payment = $checkoutModel->payment;
+
+        if (! in_array($payment->status, [Payment::STATUS_PENDING, Payment::STATUS_DITOLAK], true)) {
+            return back()->with('toast', ['message' => 'Pembayaran checkout ini sudah diproses.', 'icon' => 'gpp_maybe']);
+        }
+        if ($checkoutModel->status !== Checkout::STATUS_PENDING) {
+            return back()->with('toast', ['message' => 'Checkout tidak berstatus pending.', 'icon' => 'gpp_maybe']);
+        }
+
+        $user = Auth::user();
+        $jumlah = (float) $payment->jumlah;
+        $firstOrder = $checkoutModel->orders->first();
+
+        try {
+            DB::transaction(function () use ($user, $payment, $checkoutModel, $paymentMethod, $jumlah, $firstOrder) {
+                if (CustomerWalletService::balance($user) < $jumlah) {
+                    throw new \RuntimeException('Saldo tidak mencukupi untuk pembayaran ini.');
+                }
+
+                CustomerWalletService::debitForOrder($user, $firstOrder, $jumlah);
+
+                $payment->update([
+                    'payment_method_id' => $paymentMethod->payment_method_id,
+                    'status' => Payment::STATUS_TERVERIFIKASI,
+                    'dibayar_pada' => now(),
+                ]);
+
+                PaymentVerification::create([
+                    'payment_id' => $payment->payment_id,
+                    'verifier_id' => ActivityLogger::resolveActorId(),
+                    'status' => PaymentVerification::STATUS_DITERIMA,
+                    'diverifikasi_pada' => now(),
+                ]);
+
+                $checkoutModel->update(['status' => Checkout::STATUS_DIBAYAR]);
+
+                Order::where('checkout_id', $checkoutModel->checkout_id)
+                    ->where('status', Order::STATUS_PENDING_PAYMENT)
+                    ->update(['status' => Order::STATUS_MENUNGGU_PRODUKSI]);
+            });
+        } catch (\RuntimeException $e) {
+            return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
+        }
+
+        ActivityLogger::log(
+            'customer.payment.saldo',
+            Payment::class,
+            $payment->payment_id,
+            ['status' => Payment::STATUS_PENDING],
+            ['status' => Payment::STATUS_TERVERIFIKASI],
+            sprintf('Checkout #%d dibayar pakai saldo akun sebesar Rp %s.', $checkoutModel->checkout_id, number_format($jumlah, 0, ',', '.'))
+        );
+
+        Notification::create([
+            'user_id' => Auth::id(),
+            'tipe' => Notification::TIPE_WALLET,
+            'judul' => 'Pembayaran dengan Saldo',
+            'pesan' => sprintf('Checkout #%d dibayar sebesar Rp %s dari saldo akun.', $checkoutModel->checkout_id, number_format($jumlah, 0, ',', '.')),
+        ]);
+
+        NotificationService::sendToRole(
+            Role::PRODUKSI,
+            Notification::TIPE_SISTEM,
+            'Pesanan Siap Diproduksi',
+            sprintf('Pembayaran pesanan #%d (saldo) telah diterima. Menunggu input bahan dari Admin.', $checkoutModel->checkout_id),
+            ActivityLogger::resolveActorId(),
+            route('produksi.data-produksi')
+        );
+
+        return redirect()->route('customer.checkout.selesai', $checkoutModel->checkout_id)
+            ->with('toast', ['message' => 'Pembayaran berhasil menggunakan saldo akun.', 'icon' => 'task_alt']);
     }
 
     /**

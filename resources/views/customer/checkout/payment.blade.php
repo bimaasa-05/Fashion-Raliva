@@ -892,6 +892,9 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
 
     @php
         $akunBaruEmail = session('akun_baru');
+        $saldoCust = Auth::check() && Auth::user()->role?->nama_role === \App\Models\Role::CUSTOMER
+            ? (float) \App\Support\CustomerWalletService::balance(Auth::user())
+            : 0.0;
     @endphp
 
     <header
@@ -1035,6 +1038,16 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                     class="text-center leading-tight text-sm">{{ $pm->nama_metode }}</span>
                                             </div>
                                         @endforeach
+                                        @if ($saldoCust > 0)
+                                            <div class="pay-method{{ $payment->paymentMethod?->kode_metode === \App\Models\PaymentMethod::KODE_SALDO_AKUN ? ' selected' : '' }}"
+                                                data-id="" data-nama="Saldo Akun" data-kode="saldo_akun"
+                                                data-account-id="">
+                                                <span
+                                                    class="material-symbols-outlined text-[28px]">account_balance_wallet</span>
+                                                <span class="text-center leading-tight text-sm">Saldo
+                                                    Akun</span>
+                                            </div>
+                                        @endif
                                     </div>
 
                                     <div id="pay-detail" class="hidden mt-lg space-y-lg">
@@ -1173,6 +1186,53 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                 @endif
                                             </div>
                                         @endforeach
+
+                                        @if ($saldoCust > 0)
+                                            <div id="detail-saldo_akun" class="method-detail hidden"
+                                                data-kode="saldo_akun">
+                                                <div
+                                                    class="border border-outline-variant rounded-xl p-md md:p-lg space-y-md">
+                                                    <div class="flex items-center justify-between gap-sm">
+                                                        <span
+                                                            class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Saldo tersedia') }}</span>
+                                                        <strong
+                                                            class="font-title-md text-title-md text-[var(--chrome-accent)]">Rp
+                                                            {{ number_format($saldoCust, 0, ',', '.') }}</strong>
+                                                    </div>
+                                                    <div class="detail-row">
+                                                        <span>{{ __('Total Dibayar') }}</span>
+                                                        <strong>Rp
+                                                            {{ number_format((float) $payment->jumlah, 0, ',', '.') }}</strong>
+                                                    </div>
+@if ($saldoCust >= (float) $payment->jumlah)
+                                                            <button type="submit" form="form-pay-saldo"
+                                                                class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                                                                <span
+                                                                    class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+                                                                <span>{{ __('Bayar dengan Saldo Akun') }}</span>
+                                                            </button>
+                                                        </form>
+                                                        <p
+                                                            class="font-label-sm text-label-sm text-on-surface-variant mt-sm">
+                                                            {{ __('Saldo akan dipotong sebesar total dan pesanan langsung diproses.') }}
+                                                        </p>
+                                                    @else
+                                                        <div
+                                                            class="border border-error/30 bg-error-container/40 rounded-xl p-md">
+                                                            <p class="font-body-sm text-body-sm text-on-error-container">
+                                                                {{ __('Saldo tidak mencukupi. Silakan top up saldo akun melalui halaman Akun, atau pilih metode pembayaran lain.') }}
+                                                            </p>
+                                                            <a href="{{ route('customer.saldo') }}"
+                                                                class="inline-flex items-center gap-1 mt-sm font-label-caps text-label-caps uppercase tracking-widest text-secondary hover:underline">
+                                                                <span
+                                                                    class="material-symbols-outlined text-[18px]">north_east</span>
+                                                                {{ __('Top Up Saldo') }}
+                                                            </a>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 @endif
                                 @error('payment_method_id')
@@ -1239,6 +1299,12 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
     </div>
 </div>
                                 </div>
+                            </form>
+                            <form id="form-pay-saldo" method="POST"
+                                action="{{ route('customer.checkout.payment.saldo', $checkout->checkout_id) }}"
+                                onsubmit="return confirm('@lang('Bayar') Rp {{ number_format((float) $payment->jumlah, 0, ',', '.') }} @lang('pakai saldo akun?')');"
+                                class="hidden">
+                                @csrf
                             </form>
                         </div>
                     </div>
@@ -1463,6 +1529,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                 if (!sel) { hideBukti(); return; }
                 var kode = sel.getAttribute('data-kode');
                 currentKode = kode;
+                if (kode === 'saldo_akun') { hideBukti(); return; }
                 if (kode === 'qris') { applyProofUi(kode); showBukti(); return; }
                 if (kode === 'ewallet' || kode === 'bank_transfer') {
                     var gridEl = document.getElementById('grid-' + kode);
@@ -1592,6 +1659,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                 var kode = sel.getAttribute('data-kode');
                 if (kode) {
                     showPanel(kode);
+                    if (kode === 'saldo_akun') { syncBukti(); return; }
                     if (kode === 'qris') {
                         var autoAcc = sel.getAttribute('data-account-id');
                         if (autoAcc && accountInput && !accountInput.value) accountInput.value = autoAcc;

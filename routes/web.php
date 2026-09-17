@@ -95,6 +95,7 @@ use App\Http\Controllers\SuperAdmin\SlotProdukController;
 use App\Http\Controllers\SuperAdmin\StokController as SaStokController;
 use App\Http\Controllers\SuperAdmin\StoreStaffController;
 use App\Http\Controllers\SuperAdmin\UlasanProdukTokoController;
+use App\Http\Controllers\SuperAdmin\VerifikasiTopupController;
 use App\Http\Controllers\Admin\PermintaanOperasionalController as AdminPermintaanOperasionalController;
 use App\Http\Controllers\PermintaanOperasionalController;
 use Illuminate\Http\Request;
@@ -155,6 +156,13 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('/order-tracking', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'index'])->name('order-tracking');
 
         Route::get('/pesanan', [\App\Http\Controllers\Customer\OrderController::class, 'index'])->name('orders');
+
+        Route::get('/saldo', [\App\Http\Controllers\Customer\SaldoController::class, 'index'])->name('saldo');
+        Route::post('/saldo/topup', [\App\Http\Controllers\Customer\SaldoController::class, 'topup'])->name('saldo.topup');
+        Route::get('/saldo/topup/{topup}/payment', [\App\Http\Controllers\Customer\SaldoController::class, 'payment'])->name('saldo.topup.payment');
+        Route::post('/saldo/topup/{topup}/payment', [\App\Http\Controllers\Customer\SaldoController::class, 'uploadTopupProof'])->name('saldo.topup.payment.upload');
+
+        Route::post('/checkout/{checkout}/payment/saldo', [\App\Http\Controllers\Customer\CheckoutController::class, 'payWithSaldo'])->name('checkout.payment.saldo');
 
         Route::post('/order-tracking/{order}/confirm', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'confirm'])->name('order-tracking.confirm');
         Route::post('/refund', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'storeRefund'])->name('refund.store');
@@ -240,6 +248,9 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::redirect('/kategori-produk', '/superadmin/kategori', 301);
     Route::get('/data-pesanan', [DataPesananController::class, 'index'])->name('data-pesanan');
     Route::get('/data-pembayaran', [DataPembayaranController::class, 'index'])->name('data-pembayaran');
+    Route::get('/verifikasi-topup', [VerifikasiTopupController::class, 'index'])->name('verifikasi-topup');
+    Route::post('/verifikasi-topup/{topup}/setujui', [VerifikasiTopupController::class, 'setujui'])->name('verifikasi-topup.setujui');
+    Route::post('/verifikasi-topup/{topup}/tolak', [VerifikasiTopupController::class, 'tolak'])->name('verifikasi-topup.tolak');
     Route::get('/pengembalian-dana', [PengembalianDanaController::class, 'index'])->name('pengembalian-dana');
     Route::post('/pengembalian-dana/{refund}/setujui', [PengembalianDanaController::class, 'setujui'])->name('pengembalian-dana.setujui');
     Route::post('/pengembalian-dana/{refund}/tolak', [PengembalianDanaController::class, 'tolak'])->name('pengembalian-dana.tolak');

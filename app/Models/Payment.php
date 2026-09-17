@@ -22,6 +22,7 @@ class Payment extends Model
 
     protected $fillable = [
         'checkout_id',
+        'topup_id',
         'payment_method_id',
         'payment_account_id',
         'jumlah',
@@ -29,6 +30,11 @@ class Payment extends Model
         'batas_waktu',
         'dibayar_pada',
     ];
+
+    public function topup(): BelongsTo
+    {
+        return $this->belongsTo(CustomerTopup::class, 'topup_id', 'customer_topup_id');
+    }
 
     protected function casts(): array
     {
