@@ -448,7 +448,7 @@
     </div>
 </div>
 <!-- Active Filter Chips -->
-<div id="active-chips" class="px-container-margin py-sm border-b border-outline-variant flex flex-wrap gap-sm items-center min-h-[2.75rem] opacity-0 pointer-events-none border-transparent transition-opacity duration-200">
+<div id="active-chips" class="px-container-margin py-sm flex flex-wrap gap-sm items-center min-h-[2.75rem] opacity-0 pointer-events-none transition-opacity duration-200">
 <div id="chips-list" class="flex flex-wrap gap-sm items-center grow"></div>
 <button id="clear-all" class="font-label-sm text-label-sm text-secondary underline hover:opacity-80 transition-opacity shrink-0" onclick="clearAll()" type="button">{{ __('Clear all') }}</button>
 </div>
@@ -728,7 +728,6 @@
             var hasChips = countActive() > 0;
             ac.classList.toggle('opacity-0', !hasChips);
             ac.classList.toggle('pointer-events-none', !hasChips);
-            ac.classList.toggle('border-transparent', !hasChips);
         }
         function removeFilter(type, val) {
             if (type === 'category') {
