@@ -477,6 +477,7 @@
     $sImg = $a->images->first()->file_gambar ?? '';
     $sImgUrl = $sImg ? (filter_var($sImg, FILTER_VALIDATE_URL) ? $sImg : asset($sImg)) : 'https://picsum.photos/seed/shopad/900/1200';
     $sWl = in_array($a->product_id, $wishlistedIds, true);
+    $sDefaultVariant = $a->variants->sortBy('harga')->first();
 @endphp
 <div class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', $a->product_id) }}" class="flex flex-col group cursor-pointer">
@@ -484,7 +485,14 @@
 <img class="w-full h-full object-cover " loading="lazy" decoding="async" alt="{{ $a->nama_produk }}" src="{{ $sImgUrl }}"/>
 <span class="absolute top-2 left-2 bg-secondary text-on-secondary text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">{{ __('Iklan') }}</span>
 </div>
+<div class="flex items-center justify-between gap-1 min-w-0">
 <span class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $a->store?->nama_toko ?? __('RALIVA') }}</span>
+@if ($sDefaultVariant)
+<button type="button" data-cart-add data-variant-id="{{ $sDefaultVariant->product_variant_id }}" aria-label="{{ __('Add to cart') }}" class="text-on-surface hover:text-secondary transition-colors flex items-center shrink-0">
+<span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+@endif
+</div>
 <h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $a->nama_produk }}</h3>
 <span class="font-body-sm text-body-sm text-on-surface">Rp {{ number_format($sMin, 0, ',', '.') }}</span>
 </a>
@@ -504,6 +512,7 @@
     $colors = $p->variants->pluck('warna')->unique()->implode(' ');
     $minPrice = $p->variants->min('harga') ?? $p->harga_dasar;
     $firstImage = $p->images->first()->file_gambar ?? '';
+    $defaultVariant = $p->variants->sortBy('harga')->first();
 @endphp
 <!-- Product -->
 <a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col group cursor-pointer" data-category="{{ $parentCat }}" data-size="{{ $sizes }}" data-color="{{ $colors }}" data-price="{{ $minPrice }}" data-created="{{ $p->created_at?->getTimestamp() ?? 0 }}" data-popular="0">
@@ -515,9 +524,16 @@
 </button>
 </div>
 <div class="flex flex-col gap-1">
-<span class="font-label-sm text-label-sm text-on-surface-variant">{{ $p->store?->nama_toko ?? __('RALIVA') }}</span>
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $p->nama_produk }}</h3>
-<span class="font-body-sm text-body-sm text-on-surface">Rp {{ number_format($minPrice, 0, ',', '.') }}</span>
+    <div class="flex items-center justify-between gap-1 min-w-0">
+        <span class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $p->store?->nama_toko ?? __('RALIVA') }}</span>
+@if ($defaultVariant)
+        <button type="button" data-cart-add data-variant-id="{{ $defaultVariant->product_variant_id }}" aria-label="{{ __('Add to cart') }}" class="text-on-surface hover:text-secondary transition-colors flex items-center shrink-0">
+            <span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
+        </button>
+@endif
+    </div>
+    <h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $p->nama_produk }}</h3>
+    <span class="font-body-sm text-body-sm text-on-surface">Rp {{ number_format($minPrice, 0, ',', '.') }}</span>
 </div>
 </a>
 @empty
