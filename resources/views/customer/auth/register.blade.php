@@ -421,11 +421,11 @@
 <!-- Terms Checkbox -->
 <label class="flex items-start gap-sm cursor-pointer mb-sm">
 <input class="terms-checkbox mt-1 w-4 h-4 shrink-0" id="terms" name="terms" type="checkbox"/>
-<span class="font-body-sm text-body-sm text-on-surface-variant">
-            {{ __("I agree to the") }} <span class="text-secondary underline underline-offset-4">{{ __('Terms &amp; Privacy Policy') }}</span>
+                <span class="font-body-sm text-body-sm text-on-surface-variant">
+            Saya menyetujui <button type="button" data-open-doc="syarat" class="text-secondary underline underline-offset-4 hover:opacity-80 transition-opacity">Syarat &amp; Ketentuan</button> dan <button type="button" data-open-doc="kebijakan" class="text-secondary underline underline-offset-4 hover:opacity-80 transition-opacity">Kebijakan Privasi</button>
         </span>
 </label>
-<p class="hidden font-label-sm text-label-sm text-error -mt-sm mb-sm" id="terms-error">{{ __('Please agree to the Terms &amp; Privacy Policy.') }}</p>
+<p class="hidden font-label-sm text-label-sm text-error -mt-sm mb-sm" id="terms-error">Silakan setujui Syarat &amp; Ketentuan dan Kebijakan Privasi.</p>
 <!-- Submit -->
 <button class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="register-btn" type="submit">
 <span id="register-btn-text">{{ __('REGISTER') }}</span>
@@ -476,10 +476,10 @@
     <label class="flex items-start gap-sm cursor-pointer mb-sm">
         <input class="terms-checkbox mt-1 w-4 h-4 shrink-0" id="owner-terms" name="terms" type="checkbox"/>
         <span class="font-body-sm text-body-sm text-on-surface-variant">
-            {{ __("I agree to the") }} <span class="text-secondary underline underline-offset-4">{{ __('Terms &amp; Privacy Policy') }}</span>
+            Saya menyetujui <button type="button" data-open-doc="syarat" class="text-secondary underline underline-offset-4 hover:opacity-80 transition-opacity">Syarat &amp; Ketentuan</button> dan <button type="button" data-open-doc="kebijakan" class="text-secondary underline underline-offset-4 hover:opacity-80 transition-opacity">Kebijakan Privasi</button>
         </span>
     </label>
-    <p class="hidden font-label-sm text-label-sm text-error -mt-sm mb-sm" id="owner-terms-error">{{ __('Please agree to the Terms &amp; Privacy Policy.') }}</p>
+    <p class="hidden font-label-sm text-label-sm text-error -mt-sm mb-sm" id="owner-terms-error">Silakan setujui Syarat &amp; Ketentuan dan Kebijakan Privasi.</p>
     <!-- Submit -->
     <button class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="owner-register-btn" type="submit">
         <span id="owner-register-btn-text">{{ __('REGISTER') }}</span>
@@ -518,6 +518,21 @@
             {{ __('CONTINUE TO LOGIN') }}
         </a>
 </div>
+<!-- Modal Dokumen Legal -->
+<div id="doc-modal" class="hidden fixed inset-0 z-[80] justify-center p-gutter" role="dialog" aria-modal="true" aria-labelledby="doc-modal-title">
+    <div id="doc-modal-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+    <div class="relative z-10 w-full max-w-lg max-h-[80vh] flex flex-col bg-surface-container-lowest border-2 border-secondary rounded-lg frame-gold shadow-xl overflow-hidden">
+        <div class="flex items-center justify-between gap-sm px-md py-sm border-b border-outline-variant">
+            <h3 class="font-title-md text-title-md text-on-surface truncate" id="doc-modal-title"></h3>
+            <button type="button" id="doc-modal-close" aria-label="Tutup" class="w-9 h-9 shrink-0 rounded-full border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary flex items-center justify-center transition-colors">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+        </div>
+        <div class="px-md py-md overflow-y-auto whitespace-pre-line font-body-sm text-body-sm text-on-surface-variant leading-relaxed" id="doc-modal-body">Konten belum tersedia.</div>
+    </div>
+</div>
+<template id="doc-syarat">{{ $syaratKetentuan }}</template>
+<template id="doc-kebijakan">{{ $kebijakanPrivasi }}</template>
 </main>
 <script>
         var redirectParam = new URLSearchParams(window.location.search).get('redirect');
@@ -703,6 +718,47 @@
             var initial = (pillWrap && pillWrap.getAttribute('data-initial-role')) || 'customer';
             if (initial !== 'customer' && initial !== 'owner') initial = 'customer';
             selectRole(initial);
+        })();
+    </script>
+    <script>
+        (function () {
+            var modal = document.getElementById('doc-modal');
+            if (!modal) return;
+            var titleEl = document.getElementById('doc-modal-title');
+            var bodyEl = document.getElementById('doc-modal-body');
+            var titles = { syarat: 'Syarat & Ketentuan', kebijakan: 'Kebijakan Privasi' };
+            var empty = 'Konten belum tersedia.';
+
+            function openDoc(key) {
+                var label = titles[key] || 'Dokumen';
+                var tpl = document.getElementById('doc-' + key);
+                var text = tpl ? (tpl.content.textContent || '').trim() : '';
+                titleEl.textContent = label;
+                bodyEl.textContent = text || empty;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeDoc() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+
+            document.querySelectorAll('[data-open-doc]').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openDoc(btn.getAttribute('data-open-doc'));
+                });
+            });
+
+            document.getElementById('doc-modal-close').addEventListener('click', closeDoc);
+            document.getElementById('doc-modal-backdrop').addEventListener('click', closeDoc);
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeDoc();
+            });
         })();
     </script>
 </body></html>
