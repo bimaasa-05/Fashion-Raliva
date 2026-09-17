@@ -65,6 +65,7 @@ class CheckoutController extends Controller
         $items = collect();
         $count = 0;
         $subtotal = 0;
+        $backProductId = 0;
 
         if ($buyId > 0) {
             $variant = ProductVariant::with([
@@ -75,6 +76,7 @@ class CheckoutController extends Controller
             ])->find($buyId);
 
             if ($variant) {
+                $backProductId = $variant->product_id;
                 $buyItem = new CartItem([
                     'product_variant_id' => $variant->product_variant_id,
                     'quantity' => 1,
@@ -133,7 +135,8 @@ class CheckoutController extends Controller
             'biayaLayanan',
             'total',
             'paymentMethods',
-            'buyId'
+            'buyId',
+            'backProductId'
         ));
     }
 
