@@ -96,4 +96,18 @@
 @include('customer._partials.bottom-nav')
 @include('customer._partials.drawer')
 <script>document.querySelectorAll('.btn-gold').forEach(function(b){b.addEventListener('click',function(){b.classList.remove('flashing');void b.offsetWidth;b.classList.add('flashing');setTimeout(function(){b.classList.remove('flashing');},600);});});document.addEventListener('DOMContentLoaded',function(){var els=document.querySelectorAll('.reveal-up');if(!('IntersectionObserver'in window)){els.forEach(function(e){e.classList.add('is-visible');});return;}var io=new IntersectionObserver(function(entries){entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('is-visible');io.unobserve(en.target);}});},{threshold:0.08});els.forEach(function(e){io.observe(e);});});</script>
+@if (session('toast'))
+    <script>
+        (function () {
+            var msg = @js(session('toast.message'));
+            var icon = @js(session('toast.icon', 'lock'));
+            var toast = document.createElement('div');
+            toast.innerHTML = '<span class="material-symbols-outlined text-[18px]">' + icon + '</span><span>' + msg + '</span>';
+            toast.style.cssText = 'position:fixed;left:50%;bottom:96px;transform:translateX(-50%);display:flex;align-items:center;gap:8px;background:#1c1b1b;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-family:Manrope,sans-serif;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;transition:opacity .3s ease;';
+            document.body.appendChild(toast);
+            requestAnimationFrame(function () { toast.style.opacity = '1'; });
+            setTimeout(function () { toast.style.opacity = '0'; setTimeout(function () { toast.remove(); }, 350); }, 2200);
+        })();
+    </script>
+@endif
 </body></html>
