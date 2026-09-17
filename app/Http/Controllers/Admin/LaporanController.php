@@ -6,11 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Refund;
 use App\Models\StoreExpense;
+use App\Services\KaryawanReportService;
 use App\Support\AdminContext;
 use Illuminate\Http\Request;
 
 class LaporanController extends Controller
 {
+    public function __construct(
+        protected KaryawanReportService $karyawanReport,
+    ) {
+    }
+
     public function index(Request $request)
     {
         $storeIds = AdminContext::assignedStoreIds();
@@ -26,6 +32,11 @@ class LaporanController extends Controller
         $expense = $storeId ? (float) StoreExpense::whereIn('store_id', $storeIds)->sum('nominal') : 0;
         $totalPengeluaran = $refund + $expense;
         $totalBersih = $pendapatan - $totalPengeluaran;
+
+        // per admin ("Penjualanku") — pendapatan = order yg payment-nya diverifikasi admin ini
+        $saya = $storeIds && auth()->check() && auth()->id()
+            ? $this->karyawanReport->rekapKaryawan((int) auth()->id(), $storeIds)
+            : ['pesanan' => 0, 'pendapatan' => 0.0, 'refund' => 0.0, 'expense' => 0.0, 'pengeluaran' => 0.0, 'bersih' => 0.0];
 
         // status counts for admin
         $pesananBaru = $storeId ? Order::whereIn('store_id', $storeIds)->whereIn('status', ['pending_payment','dibayar'])->count() : 0;
@@ -71,6 +82,6 @@ class LaporanController extends Controller
                 ->values();
         }
 
-        return view('Admin.laporan.index', compact('pendapatan', 'pesananDiproses', 'totalPengeluaran', 'totalBersih', 'perToko', 'perMetode', 'pesananBaru', 'menungguVerifikasi'));
+        return view('Admin.laporan.index', compact('pendapatan', 'pesananDiproses', 'totalPengeluaran', 'totalBersih', 'perToko', 'perMetode', 'pesananBaru', 'menungguVerifikasi', 'saya'));
     }
 }
