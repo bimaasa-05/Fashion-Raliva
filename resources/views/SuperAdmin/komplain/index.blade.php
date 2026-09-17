@@ -27,26 +27,34 @@
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Komplain</h2>
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-gutter">
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">radio_button_unchecked</span>
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Terbuka</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">{{ $stats['open'] }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">perlu ditangani</span>
             </div>
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-on-surface/15 fill pointer-events-none select-none" aria-hidden="true">pending</span>
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Diproses</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['diproses'] }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">sedang di follow-up</span>
             </div>
-<div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">support_agent</span>
+            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">emergency</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Eskalasi</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">{{ $stats['escalated'] }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">ditonjolkan ke Owner</span>
+            </div>
+            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-success/15 fill pointer-events-none select-none" aria-hidden="true">check_circle</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Selesai</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-success">{{ $stats['selesai'] }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">sudah ditangani</span>
+            </div>
+            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
+                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-on-surface/15 fill pointer-events-none select-none" aria-hidden="true">support_agent</span>
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Ditutup</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['ditutup'] }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">ditutup manual</span>
-            </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Eskalasi</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-error/15 fill pointer-events-none select-none" aria-hidden="true">emergency</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">{{ $stats['escalated'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">ditonjolkan ke Owner</span>
             </div>
         </div>
     </section>
