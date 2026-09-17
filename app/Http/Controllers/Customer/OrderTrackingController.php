@@ -42,6 +42,7 @@ class OrderTrackingController extends Controller
     public function index(Request $request)
     {
         \App\Support\PaymentExpiry::expireOverdue();
+        \App\Support\OrderAutoComplete::selesaikanOtomatis();
 
         $orders = Auth::user()->orders()
             ->with([

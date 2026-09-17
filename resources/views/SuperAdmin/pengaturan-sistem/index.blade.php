@@ -190,7 +190,7 @@
             @csrf @method('PUT')
             <div>
                 <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">speed</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Batas &amp; Limit</h2></div>
-                <p class="font-body-md text-sm text-on-surface-variant mt-2">Ambang operasional harian dan jendela refund transaksi.</p>
+                <p class="font-body-md text-sm text-on-surface-variant mt-2">Ambang operasional harian, jendela refund transaksi, dan auto-konfirmasi pesanan selesai.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
@@ -200,6 +200,10 @@
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="batas_waktu_refund">Batas Waktu Refund (hari)</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="batas_waktu_refund" name="batas_waktu_refund" type="number" min="1" value="{{ $settings['batas_waktu_refund'] }}" />
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="konfirmasi_selesai_hari">Auto Konfirmasi Selesai (hari)</label>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="konfirmasi_selesai_hari" name="konfirmasi_selesai_hari" type="number" min="1" value="{{ $settings['konfirmasi_selesai_hari'] }}" />
                 </div>
             </div>
             <div class="flex justify-end pt-gutter border-t border-muted-border">
