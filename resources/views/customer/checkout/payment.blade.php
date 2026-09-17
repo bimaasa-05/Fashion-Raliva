@@ -1244,15 +1244,31 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                     </p>
                                                 @else
                                                     <div
-                                                        class="border border-error/30 bg-error-container/40 rounded-xl p-md">
-                                                        <p class="font-body-sm text-body-sm text-on-error-container">
-                                                            {{ __('Saldo Rp 0 atau tidak mencukupi. Silakan top up saldo akun melalui halaman Akun, atau pilih metode pembayaran lain.') }}
-                                                        </p>
+                                                        class="relative overflow-hidden border border-emerald-200 bg-gradient-to-br from-emerald-100 via-emerald-50 to-surface-warm rounded-xl p-md md:p-lg">
+                                                        <span class="absolute -top-7 -right-7 w-32 h-32 rounded-full bg-emerald-200/40 blur-2xl"></span>
+                                                        <div class="relative flex items-start gap-3">
+                                                            <span class="shrink-0 w-11 h-11 rounded-full bg-emerald-900/10 inline-flex items-center justify-center">
+                                                                <span class="material-symbols-outlined text-[22px] text-emerald-700">account_balance_wallet</span>
+                                                            </span>
+                                                            <div class="min-w-0">
+                                                                <p class="font-body-md text-body-md font-bold text-emerald-900">{{ __('Saldo belum mencukupi') }}</p>
+                                                                <p class="font-body-sm text-body-sm text-emerald-900/85 mt-0.5">
+                                                                    {{ __('Saldo tersedia') }}
+                                                                    <strong>Rp {{ number_format($saldoCust, 0, ',', '.') }}</strong>
+                                                                    &middot;
+                                                                    {{ __('Kurang') }}
+                                                                    <strong>Rp {{ number_format(max(0, (float) $payment->jumlah - $saldoCust), 0, ',', '.') }}</strong>
+                                                                </p>
+                                                                <p class="font-body-sm text-body-sm text-emerald-900/70 mt-0.5">
+                                                                    {{ __('Isi saldo dulu untuk melanjutkan, atau pilih metode pembayaran lain.') }}
+                                                                </p>
+                                                            </div>
+                                                        </div>
                                                         <a href="{{ route('customer.saldo') }}"
-                                                            class="inline-flex items-center gap-1 mt-sm font-label-caps text-label-caps uppercase tracking-widest text-secondary hover:underline">
-                                                            <span
-                                                                class="material-symbols-outlined text-[18px]">north_east</span>
-                                                            {{ __('Top Up Saldo') }}
+                                                            class="relative mt-md w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest bg-emerald-800 text-white hover:bg-emerald-700 transition-colors">
+                                                            <span class="material-symbols-outlined text-[20px]">add_card</span>
+                                                            <span>{{ __('Top Up Saldo') }}</span>
+                                                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
                                                         </a>
                                                     </div>
                                                 @endif
