@@ -438,6 +438,26 @@ return view('customer.checkout.selesai', [
         ]);
     }
 
+    public function paymentStatus(int $checkout)
+    {
+        if (! Auth::check()) {
+            return response()->json(['unauthenticated' => true], 401);
+        }
+        if (Auth::user()->role?->nama_role !== Role::CUSTOMER) {
+            abort(403);
+        }
+
+        $checkoutModel = Checkout::where('checkout_id', $checkout)
+            ->where('user_id', Auth::id())
+            ->with('payment')
+            ->firstOrFail();
+
+        return response()->json([
+            'status' => $checkoutModel->payment->status,
+            'verified' => $checkoutModel->payment->status === Payment::STATUS_TERVERIFIKASI,
+        ]);
+    }
+
     /**
      * Unggah bukti pembayaran — sekarang wajib payment_method_id.
      */
