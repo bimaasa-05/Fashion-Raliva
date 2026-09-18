@@ -138,6 +138,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
     Route::get('/checkout/{checkout}/payment', [\App\Http\Controllers\Customer\CheckoutController::class, 'payment'])->name('checkout.payment');
     Route::post('/checkout/{checkout}/payment', [\App\Http\Controllers\Customer\CheckoutController::class, 'uploadProof'])->name('checkout.payment.upload');
     Route::get('/checkout/{checkout}/selesai', [\App\Http\Controllers\Customer\CheckoutController::class, 'selesai'])->name('checkout.selesai');
+    Route::get('/checkout/{checkout}/payment/status', [\App\Http\Controllers\Customer\CheckoutController::class, 'paymentStatus'])->name('checkout.payment.status');
 
     // My Account — publik branching (guest => teaser, member => index)
     Route::get('/account', [\App\Http\Controllers\Customer\AccountController::class, 'index'])->name('account');
