@@ -134,12 +134,32 @@
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
                     <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest">Urutkan:</span>
-                    <select id="sort-select" class="bg-surface-container-low border border-muted-border rounded-lg px-3 py-3 font-label-sm text-[11px] uppercase tracking-wide text-on-surface focus:outline-none focus:border-gold-accent transition-colors">
-                        <option value="nama_asc">Nama A-Z</option>
-                        <option value="nama_desc">Nama Z-A</option>
-                        <option value="role">Peran</option>
-                        <option value="status">Status</option>
-                    </select>
+                    <div class="relative" id="sort-dd">
+                        <button type="button" id="sort-trigger" onclick="toggleDropdown('sort')" aria-haspopup="listbox" aria-expanded="false"
+                            class="flex items-center justify-between gap-3 bg-surface-container-low border border-muted-border rounded-lg px-3 py-3 font-label-sm text-[11px] uppercase tracking-wide text-on-surface focus:outline-none focus:border-gold-accent transition-colors min-w-[150px] cursor-pointer text-left">
+                            <span id="sort-label">Nama A-Z</span>
+                            <span class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200" id="sort-chevron">expand_more</span>
+                        </button>
+                        <div id="sort-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                            class="hidden absolute left-0 top-full mt-2 w-full min-w-[150px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                            <button type="button" role="option" aria-selected="true" data-sort="nama_asc" onclick="selectSort('nama_asc')"
+                                class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Nama A-Z<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check">check</span>
+                            </button>
+                            <button type="button" role="option" aria-selected="false" data-sort="nama_desc" onclick="selectSort('nama_desc')"
+                                class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Nama Z-A<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check hidden">check</span>
+                            </button>
+                            <button type="button" role="option" aria-selected="false" data-sort="role" onclick="selectSort('role')"
+                                class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Peran<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check hidden">check</span>
+                            </button>
+                            <button type="button" role="option" aria-selected="false" data-sort="status" onclick="selectSort('status')"
+                                class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Status<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check hidden">check</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -457,11 +477,23 @@
                 @csrf
                 @method('PUT')
                 <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Ubah Peran</label>
-                <select name="role_id" id="drawer-role-select" class="w-full bg-transparent border border-muted-border rounded-lg p-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors">
-                    @foreach ($roles as $role)
-                        <option value="{{ $role->role_id }}">{{ $role->nama_role }}</option>
-                    @endforeach
-                </select>
+                <input type="hidden" name="role_id" id="drawer-role-value" value="" />
+                <div class="relative" id="role-dd">
+                    <button type="button" id="role-trigger" onclick="toggleDropdown('role')" aria-haspopup="listbox" aria-expanded="false"
+                        class="w-full flex items-center justify-between gap-3 bg-transparent border border-muted-border rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
+                        <span id="drawer-role-label">-</span>
+                        <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" id="role-chevron">expand_more</span>
+                    </button>
+                    <div id="role-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                        class="hidden absolute left-0 top-full mt-2 w-full bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                        @foreach ($roles as $role)
+                            <button type="button" role="option" aria-selected="false" data-role="{{ $role->role_id }}" onclick="selectDrawerRole('{{ $role->role_id }}')"
+                                class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                {{ $role->nama_role }}<span class="material-symbols-outlined text-[18px] text-gold-accent role-check hidden">check</span>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
                 <button type="submit" class="w-full py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Simpan Perubahan</button>
             </form>
 
@@ -525,19 +557,43 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-role">Peran</label>
-                    <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors" id="form-role" name="role_id" required>
-                        @foreach ($roles as $role)
-                            <option value="{{ $role->role_id }}">{{ $role->nama_role }}</option>
-                        @endforeach
-                    </select>
+                    <input type="hidden" name="role_id" id="form-role-value" value="{{ $roles->first()?->role_id }}" />
+                    <div class="relative" id="form-role-dd">
+                        <button type="button" id="form-role-trigger" onclick="toggleDropdown('form-role')" aria-haspopup="listbox" aria-expanded="false"
+                            class="w-full flex items-center justify-between gap-3 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
+                            <span id="form-role-label">{{ $roles->first()?->nama_role }}</span>
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" id="form-role-chevron">expand_more</span>
+                        </button>
+                        <div id="form-role-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                            class="hidden absolute left-0 top-full mt-2 w-full bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                            @foreach ($roles as $index => $role)
+                                <button type="button" role="option" aria-selected="{{ $index === 0 ? 'true' : 'false' }}" data-role="{{ $role->role_id }}" onclick="selectFormRole('{{ $role->role_id }}')"
+                                    class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                    {{ $role->nama_role }}<span class="material-symbols-outlined text-[18px] text-gold-accent form-role-check {{ $index === 0 ? '' : 'hidden' }}">check</span>
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-status">Status</label>
-                    <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors" id="form-status" name="status" required>
-                        <option value="aktif">Aktif</option>
-                        <option value="nonaktif">Non-aktif</option>
-                        <option value="suspend">Suspend</option>
-                    </select>
+                    <input type="hidden" name="status" id="form-status-value" value="aktif" />
+                    <div class="relative" id="form-status-dd">
+                        <button type="button" id="form-status-trigger" onclick="toggleDropdown('form-status')" aria-haspopup="listbox" aria-expanded="false"
+                            class="w-full flex items-center justify-between gap-3 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
+                            <span id="form-status-label">Aktif</span>
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" id="form-status-chevron">expand_more</span>
+                        </button>
+                        <div id="form-status-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                            class="hidden absolute left-0 top-full mt-2 w-full bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                            @foreach (['aktif' => 'Aktif', 'nonaktif' => 'Non-aktif', 'suspend' => 'Suspend'] as $val => $label)
+                                <button type="button" role="option" aria-selected="{{ $loop->first ? 'true' : 'false' }}" data-status="{{ $val }}" onclick="selectFormStatus('{{ $val }}')"
+                                    class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                    {{ $label }}<span class="material-symbols-outlined text-[18px] text-gold-accent form-status-check {{ $loop->first ? '' : 'hidden' }}">check</span>
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="password-fields">
@@ -597,7 +653,90 @@
     };
 
     const rolesJson = @json($roles->pluck('role_id', 'nama_role'));
+    const roleIdLabelMap = @json($roles->pluck('nama_role', 'role_id'));
+    const statusLabelMap = { aktif: 'Aktif', nonaktif: 'Non-aktif', suspend: 'Suspend' };
+    const sortLabels = { nama_asc: 'Nama A-Z', nama_desc: 'Nama Z-A', role: 'Peran', status: 'Status' };
     let isEditMode = false;
+
+    /* ── Custom Dropdown Helpers ── */
+    function toggleDropdown(id) {
+        const menu = document.getElementById(id + '-menu');
+        const chevron = document.getElementById(id + '-chevron');
+        const trigger = document.getElementById(id + '-trigger');
+        if (!menu) return;
+        const open = !menu.classList.contains('hidden');
+        menu.classList.toggle('hidden', open);
+        if (chevron) chevron.classList.toggle('rotate-180', !open);
+        if (trigger) trigger.setAttribute('aria-expanded', String(!open));
+    }
+    function closeDropdown(id) {
+        const menu = document.getElementById(id + '-menu');
+        const chevron = document.getElementById(id + '-chevron');
+        const trigger = document.getElementById(id + '-trigger');
+        if (menu) menu.classList.add('hidden');
+        if (chevron) chevron.classList.remove('rotate-180');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    }
+
+    /* ── Sort Dropdown ── */
+    function selectSort(v) {
+        userState.sort = v;
+        document.getElementById('sort-label').textContent = sortLabels[v] || v;
+        document.querySelectorAll('#sort-menu [data-sort]').forEach(function (b) {
+            b.setAttribute('aria-selected', b.dataset.sort === v ? 'true' : 'false');
+            b.querySelector('.sort-check').classList.toggle('hidden', b.dataset.sort !== v);
+        });
+        closeDropdown('sort');
+        applyUserFilters();
+    }
+
+    /* ── Drawer Role Dropdown ── */
+    function setDrawerRole(id) {
+        id = String(id);
+        document.getElementById('drawer-role-value').value = id;
+        document.getElementById('drawer-role-label').textContent = roleIdLabelMap[id] || '-';
+        document.querySelectorAll('#role-menu [data-role]').forEach(function (b) {
+            b.setAttribute('aria-selected', b.dataset.role === id ? 'true' : 'false');
+            b.querySelector('.role-check').classList.toggle('hidden', b.dataset.role !== id);
+        });
+    }
+    function selectDrawerRole(id) {
+        setDrawerRole(id);
+        closeDropdown('role');
+    }
+
+    /* ── Modal Form Role / Status Dropdowns ── */
+    function setFormRole(id) {
+        id = String(id);
+        document.getElementById('form-role-value').value = id;
+        document.getElementById('form-role-label').textContent = roleIdLabelMap[id] || '-';
+        document.querySelectorAll('#form-role-menu [data-role]').forEach(function (b) {
+            b.setAttribute('aria-selected', b.dataset.role === id ? 'true' : 'false');
+            b.querySelector('.form-role-check').classList.toggle('hidden', b.dataset.role !== id);
+        });
+    }
+    function selectFormRole(id) {
+        setFormRole(id);
+        closeDropdown('form-role');
+    }
+    function setFormStatus(v) {
+        document.getElementById('form-status-value').value = v;
+        document.getElementById('form-status-label').textContent = statusLabelMap[v] || v;
+        document.querySelectorAll('#form-status-menu [data-status]').forEach(function (b) {
+            b.setAttribute('aria-selected', b.dataset.status === v ? 'true' : 'false');
+            b.querySelector('.form-status-check').classList.toggle('hidden', b.dataset.status !== v);
+        });
+    }
+    function selectFormStatus(v) {
+        setFormStatus(v);
+        closeDropdown('form-status');
+    }
+    document.addEventListener('click', function (e) {
+        ['sort', 'role', 'form-role', 'form-status'].forEach(function (id) {
+            const container = document.getElementById(id + '-dd');
+            if (container && !container.contains(e.target)) closeDropdown(id);
+        });
+    });
 
     /* ── Detail Drawer ── */
     const drawerHistory = [];
@@ -649,7 +788,7 @@
         renderDrawerAvatar(data);
 
         const roleId = Object.entries(rolesJson).find(([k, v]) => v && k === data.role);
-        if (roleId) document.getElementById('drawer-role-select').value = roleId[1];
+        if (roleId) setDrawerRole(roleId[1]);
 
         document.getElementById('role-form').action = urls.role(data.user_id);
         document.getElementById('nonaktifkan-form').action = urls.nonaktifkan(data.user_id);
@@ -903,8 +1042,8 @@
         document.getElementById('form-nama').value = '';
         document.getElementById('form-email').value = '';
         document.getElementById('form-phone').value = '';
-        document.getElementById('form-role').value = '{{ $roles->first()?->role_id }}';
-        document.getElementById('form-status').value = 'aktif';
+        setFormRole('{{ $roles->first()?->role_id }}');
+        setFormStatus('aktif');
         document.getElementById('form-password').value = '';
         document.getElementById('form-password-confirm').value = '';
         document.getElementById('form-password').required = true;
@@ -935,8 +1074,8 @@
         document.getElementById('form-nama').value = d.name;
         document.getElementById('form-email').value = d.email;
         document.getElementById('form-phone').value = d.phone || '';
-        document.getElementById('form-role').value = d.roleId;
-        document.getElementById('form-status').value = d.status;
+        setFormRole(d.roleId);
+        setFormStatus(d.status);
         document.getElementById('form-password').value = '';
         document.getElementById('form-password-confirm').value = '';
         document.getElementById('form-password').required = false;
@@ -1113,10 +1252,6 @@
         document.getElementById('clear-search').classList.add('opacity-0');
         applyUserFilters();
     });
-    document.getElementById('sort-select')?.addEventListener('change', (e) => {
-        userState.sort = e.target.value;
-        applyUserFilters();
-    });
     document.querySelectorAll('[data-filter]').forEach(btn => {
         btn.addEventListener('click', () => {
             const f = btn.getAttribute('data-filter');
@@ -1130,6 +1265,7 @@
     /* ── Keyboard ── */
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
+            closeDropdown('sort'); closeDropdown('role'); closeDropdown('form-role'); closeDropdown('form-status');
             closeUserDetail();
             closeUserModal();
             closeHapusModal();

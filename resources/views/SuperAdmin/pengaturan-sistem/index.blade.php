@@ -585,15 +585,22 @@
         @csrf
         <div>
             <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Kategori</label>
-            <div class="relative">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gold-accent text-[18px] pointer-events-none">category</span>
-                <select name="help_category_id" required class="w-full appearance-none bg-surface-container-low border border-muted-border rounded-xl pl-11 pr-10 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors">
-                    <option value="" selected disabled>Pilih kategori...</option>
+            <div class="relative" id="helpAddCat-dd">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gold-accent text-[18px] pointer-events-none z-10">category</span>
+                <button type="button" data-dd-trigger id="helpAddCat-trigger" onclick="toggleDropdown('helpAddCat')" aria-haspopup="listbox" aria-expanded="false"
+                    class="w-full flex items-center justify-between gap-2 appearance-none bg-surface-container-low border border-muted-border rounded-xl pl-11 pr-4 py-3.5 font-body-md text-sm text-on-surface-variant focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
+                    <span id="helpAddCat-label" class="truncate">Pilih kategori...</span>
+                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="helpAddCat-chevron">expand_more</span>
+                </button>
+                <div id="helpAddCat-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                    class="hidden absolute left-0 top-full mt-2 w-full min-w-[220px] bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl z-50 overflow-y-auto max-h-64 py-1">
                     @foreach ($helpCategories as $cat)
-                        <option value="{{ $cat->help_category_id }}">{{ $cat->judul }}</option>
+                        <button type="button" role="option" aria-selected="false" data-dd-option="{{ $cat->help_category_id }}" onclick="selectHelpAddCat('{{ $cat->help_category_id }}')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                            {{ $cat->judul }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                        </button>
                     @endforeach
-                </select>
-                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">expand_more</span>
+                </div>
+                <input type="hidden" name="help_category_id" id="helpAddCategory" value="" />
             </div>
         </div>
         <div>
@@ -629,15 +636,22 @@
         @csrf @method('PUT')
         <div>
             <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Kategori</label>
-            <div class="relative">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gold-accent text-[18px] pointer-events-none">category</span>
-                <select name="help_category_id" id="edit-help-faq-category" required class="w-full appearance-none bg-surface-container-low border border-muted-border rounded-xl pl-11 pr-10 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors">
-                    <option value="" disabled>Pilih kategori...</option>
+            <div class="relative" id="helpEditCat-dd">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gold-accent text-[18px] pointer-events-none z-10">category</span>
+                <button type="button" data-dd-trigger id="helpEditCat-trigger" onclick="toggleDropdown('helpEditCat')" aria-haspopup="listbox" aria-expanded="false"
+                    class="w-full flex items-center justify-between gap-2 appearance-none bg-surface-container-low border border-muted-border rounded-xl pl-11 pr-4 py-3.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
+                    <span id="helpEditCat-label" class="truncate">Pilih kategori...</span>
+                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="helpEditCat-chevron">expand_more</span>
+                </button>
+                <div id="helpEditCat-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                    class="hidden absolute left-0 top-full mt-2 w-full min-w-[220px] bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl z-50 overflow-y-auto max-h-64 py-1">
                     @foreach ($helpCategories as $cat)
-                        <option value="{{ $cat->help_category_id }}">{{ $cat->judul }}</option>
+                        <button type="button" role="option" aria-selected="false" data-dd-option="{{ $cat->help_category_id }}" onclick="selectHelpEditCat('{{ $cat->help_category_id }}')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                            {{ $cat->judul }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                        </button>
                     @endforeach
-                </select>
-                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">expand_more</span>
+                </div>
+                <input type="hidden" name="help_category_id" id="edit-help-faq-category" value="" />
             </div>
         </div>
         <div>
@@ -773,7 +787,32 @@
 @endcomponent
 
 @push('scripts')
+@include('SuperAdmin.partials.dd-helpers')
 <script>
+    const helpCatLabelMap = @json($helpCategories->pluck('judul', 'help_category_id'));
+
+    function selectHelpAddCat(v) {
+        ddSet('helpAddCat', v, helpCatLabelMap[v] ?? 'Pilih kategori...');
+        const label = document.getElementById('helpAddCat-label');
+        label.classList.toggle('text-on-surface-variant', !v);
+        label.classList.toggle('text-on-surface', !!v);
+    }
+    function selectHelpEditCat(v) {
+        ddSet('helpEditCat', v, helpCatLabelMap[v] ?? 'Pilih kategori...');
+        const label = document.getElementById('helpEditCat-label');
+        label.classList.toggle('text-on-surface-variant', !v);
+        label.classList.toggle('text-on-surface', !!v);
+    }
+    function syncHelpEditCat() {
+        selectHelpEditCat(document.getElementById('edit-help-faq-category').value);
+    }
+    document.getElementById('form-help-faq-tambah')?.addEventListener('submit', (e) => {
+        if (!document.getElementById('helpAddCategory').value) {
+            e.preventDefault();
+            window.showRalivaToast?.('Pilih kategori bantuan terlebih dahulu.', 'error');
+        }
+    });
+
     function openTierEdit(index, min, max, hari) {
         document.getElementById('edit-tier-min').value = min;
         document.getElementById('edit-tier-max').value = max || '';
@@ -808,6 +847,7 @@
 
     function openHelpFaqEdit(id, categoryId, pertanyaan, jawaban, isActive) {
         document.getElementById('edit-help-faq-category').value = categoryId || '';
+        syncHelpEditCat();
         document.getElementById('edit-help-faq-pertanyaan').value = pertanyaan || '';
         document.getElementById('edit-help-faq-jawaban').value = jawaban || '';
         document.getElementById('edit-help-faq-active').checked = !!isActive;

@@ -138,10 +138,23 @@
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="tipe_diskon">Tipe Diskon</label>
-                    <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="tipe_diskon" name="tipe_diskon" required>
-                        <option value="persen" {{ old('tipe_diskon') === 'persen' ? 'selected' : '' }}>Persen (%)</option>
-                        <option value="nominal" {{ old('tipe_diskon') === 'nominal' ? 'selected' : '' }}>Nominal (Rp)</option>
-                    </select>
+                    <div class="relative" id="promoTipe-dd">
+                        <button type="button" data-dd-trigger id="promoTipe-trigger" onclick="toggleDropdown('promoTipe')" aria-haspopup="listbox" aria-expanded="false"
+                            class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
+                            <span id="promoTipe-label" class="truncate">-- Pilih Tipe --</span>
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="promoTipe-chevron">expand_more</span>
+                        </button>
+                        <div id="promoTipe-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                            class="hidden absolute left-0 top-full mt-2 w-full min-w-[180px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                            <button type="button" role="option" aria-selected="false" data-dd-option="persen" onclick="selectPromoTipe('persen')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Persen (%)<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                            </button>
+                            <button type="button" role="option" aria-selected="false" data-dd-option="nominal" onclick="selectPromoTipe('nominal')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Nominal (Rp)<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                            </button>
+                        </div>
+                        <input type="hidden" name="tipe_diskon" id="tipe_diskon" value="" />
+                    </div>
                     @error('tipe_diskon')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
             </div>
@@ -164,18 +177,44 @@
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Dapat Digabung</label>
-                    <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="dapat_digabung" name="dapat_digabung">
-                        <option value="0" {{ old('dapat_digabung', 0) == 0 ? 'selected' : '' }}>Tidak</option>
-                        <option value="1" {{ old('dapat_digabung') == 1 ? 'selected' : '' }}>Ya</option>
-                    </select>
+                    <div class="relative" id="promoGabung-dd">
+                        <button type="button" data-dd-trigger id="promoGabung-trigger" onclick="toggleDropdown('promoGabung')" aria-haspopup="listbox" aria-expanded="false"
+                            class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
+                            <span id="promoGabung-label" class="truncate">Tidak</span>
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="promoGabung-chevron">expand_more</span>
+                        </button>
+                        <div id="promoGabung-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                            class="hidden absolute left-0 top-full mt-2 w-full min-w-[140px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                            <button type="button" role="option" aria-selected="true" data-dd-option="0" onclick="selectPromoGabung('0')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Tidak<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                            </button>
+                            <button type="button" role="option" aria-selected="false" data-dd-option="1" onclick="selectPromoGabung('1')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Ya<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                            </button>
+                        </div>
+                        <input type="hidden" name="dapat_digabung" id="dapat_digabung" value="0" />
+                    </div>
                 </div>
             </div>
             <div>
                 <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Status</label>
-                <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="promo_status" name="status">
-                    <option value="aktif" selected>Aktif</option>
-                    <option value="nonaktif">Nonaktif</option>
-                </select>
+                <div class="relative" id="promoStatus-dd">
+                <button type="button" data-dd-trigger id="promoStatus-trigger" onclick="toggleDropdown('promoStatus')" aria-haspopup="listbox" aria-expanded="false"
+                    class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
+                    <span id="promoStatus-label" class="truncate">Aktif</span>
+                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="promoStatus-chevron">expand_more</span>
+                </button>
+                <div id="promoStatus-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                    class="hidden absolute left-0 top-full mt-2 w-full min-w-[140px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                    <button type="button" role="option" aria-selected="true" data-dd-option="aktif" onclick="selectPromoStatus('aktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                        Aktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                    </button>
+                    <button type="button" role="option" aria-selected="false" data-dd-option="nonaktif" onclick="selectPromoStatus('nonaktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                        Nonaktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                    </button>
+                </div>
+                <input type="hidden" name="status" id="promo_status" value="aktif" />
+            </div>
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
@@ -228,6 +267,7 @@
 @endsection
 
 @push('scripts')
+@include('SuperAdmin.partials.dd-helpers')
 <script>
     const promoUrls = {
         store: '{{ route('superadmin.promo-platform.store') }}',
@@ -237,6 +277,40 @@
     };
 
     const promoFields = ['nama_promo', 'kode_promo', 'tipe_diskon', 'nilai_diskon', 'minimal_pembelian', 'maksimal_diskon', 'deskripsi'];
+
+    function selectPromoTipe(v) {
+        document.getElementById('tipe_diskon').value = v;
+        syncPromoTipe();
+    }
+    function syncPromoTipe() {
+        const labels = { persen: 'Persen (%)', nominal: 'Nominal (Rp)' };
+        const v = document.getElementById('tipe_diskon').value;
+        ddSet('promoTipe', v, labels[v] ?? '-- Pilih Tipe --');
+    }
+    function selectPromoGabung(v) {
+        document.getElementById('dapat_digabung').value = v;
+        syncPromoGabung();
+    }
+    function syncPromoGabung() {
+        const labels = { 0: 'Tidak', 1: 'Ya' };
+        const v = document.getElementById('dapat_digabung').value;
+        ddSet('promoGabung', v, labels[v] ?? 'Tidak');
+    }
+    function selectPromoStatus(v) {
+        document.getElementById('promo_status').value = v;
+        syncPromoStatus();
+    }
+    function syncPromoStatus() {
+        const labels = { aktif: 'Aktif', nonaktif: 'Nonaktif' };
+        const v = document.getElementById('promo_status').value;
+        ddSet('promoStatus', v, labels[v] ?? 'Aktif');
+    }
+    document.getElementById('promo-form')?.addEventListener('submit', (e) => {
+        if (!document.getElementById('tipe_diskon').value) {
+            e.preventDefault();
+            window.showRalivaToast?.('Pilih tipe diskon terlebih dahulu.', 'error');
+        }
+    });
 
     function openPromoModal() {
         document.getElementById('modal-buat-promo').classList.remove('hidden');
@@ -258,6 +332,9 @@
         document.getElementById('dapat_digabung').value = '0';
         document.getElementById('promo_status').value = 'aktif';
         document.getElementById('promo-method-input').value = '';
+        syncPromoTipe();
+        syncPromoGabung();
+        syncPromoStatus();
 
         if (isEdit) {
             const id = card.getAttribute('data-id');
@@ -276,6 +353,9 @@
                     document.getElementById('berakhir_pada').value = (d.berakhir_pada || '').slice(0, 10);
                     document.getElementById('dapat_digabung').value = d.dapat_digabung ? '1' : '0';
                     document.getElementById('promo_status').value = d.status || 'aktif';
+                    syncPromoTipe();
+                    syncPromoGabung();
+                    syncPromoStatus();
                     form.action = promoUrls.update(id);
                     document.getElementById('promo-method-input').value = 'PUT';
                 })
@@ -309,7 +389,7 @@
     }
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') { closePromoModal(); closeHapusPromo(); }
+        if (e.key === 'Escape') { closeAllDropdowns(); closePromoModal(); closeHapusPromo(); }
     });
 
     document.addEventListener('DOMContentLoaded', () => {
