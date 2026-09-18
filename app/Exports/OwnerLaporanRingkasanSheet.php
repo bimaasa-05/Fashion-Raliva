@@ -41,8 +41,8 @@ class OwnerLaporanRingkasanSheet implements FromCollection, WithHeadings, WithMa
     {
         $storeId = $this->storeId;
 
-        $pendapatan = (float) \App\Models\Order::where('store_id', $storeId)->where('status', 'selesai')->sum('grand_total');
-        $pesananSelesai = \App\Models\Order::where('store_id', $storeId)->where('status', 'selesai')->count();
+        $pendapatan = (float) \App\Models\Order::where('store_id', $storeId)->whereIn('status', [\App\Models\Order::STATUS_SELESAI, \App\Models\Order::STATUS_REFUND])->sum('grand_total');
+        $pesananSelesai = \App\Models\Order::where('store_id', $storeId)->whereIn('status', [\App\Models\Order::STATUS_SELESAI, \App\Models\Order::STATUS_REFUND])->count();
         $refund = (float) \App\Models\Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
             ->where('orders.store_id', $storeId)->where('refunds.status', 'selesai')->sum('refunds.jumlah');
         $dicairkan = (float) \App\Models\Withdrawal::where('store_id', $storeId)->where('status', 'selesai')->sum('jumlah');

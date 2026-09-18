@@ -1,7 +1,7 @@
 # Plan: Atribusi Refund pada Rekap Karyawan (Raliva-Fashion)
 
 > Dokumen handoff. Repo aktif: `C:\laragon\www\Raliva-Fashion`
-> Status: **BELUM dikerjakan** — ikuti langkah di bawah sampai selesai, lalu verifikasi.
+> Status: **✅ SELESAI — 2026-09-18** (implementasi + verifikasi soak `<%TEMP%>\opencode\soak-refund.php`).
 >
 > Bagian dari suite dokumen komplain/refund:
 > - `alur-komplain-lengkap.md` — sistem komplain saat ini
@@ -42,8 +42,10 @@ Sisa yang belum sempurna: **atribusi refund / pengembalian dana**. Dokumen ini m
 | 2 | Admin | `setujui` | `disetujui` | = Admin ✅ |
 | 2 | Admin | `tolak` | `ditolak` | = Admin (tidak dihitung) |
 | 2 | Admin | `eskalasi` | `escalated` | = Admin ✅ |
-| 3 | Owner | `setujui`/`tolak` (dari `escalated`) | `disetujui`/`ditolak` | **HARUS TIDAK DITIMPA** (fix) |
-| 4 | Owner/SuperAdmin | `selesaikan` (dari `disetujui`) | `selesai` (+ wallet decrement utk SuperAdmin) | tidak berubah ✓ |
+| 3 | Owner | `setujui`/`tolak` (dari `escalated`) | `disetujui`/`ditolak` | **TIDAK DITIMPA** ✅ (guard `if (! $refund->reviewed_by)`) |
+| 4 | Owner/SuperAdmin | `selesaikan` (dari `disetujui`) | `selesai` (+ wallet decrement + kredit saldo akun + flip order full-refund via `RefundCompletionService`) | tidak berubah ✓ |
+
+> **Keputusan lanjutan (2026-09-18):** Owner kini memakai jalur `selesaikan` **yang sama persis** dengan SuperAdmin (bukan "status saja"). Lihat `integrasi-komplain-refund.md` §3.4.
 
 Rute terkait di `routes/web.php`:
 - Admin: `admin.pengembalian-dana.setujui/tolak/eskalasi` (baris ±370-373)
@@ -129,8 +131,8 @@ Semua tes memakai pola transaksional (insert sementara → `rollBack`) supaya da
 
 ## 7. Di Luar Scope (temuan opsional)
 
-- `Admin\PengembalianDanaController::index` dan action `setujui/tolak` **tidak** memfilter scope toko (`AdminContext::assignedStoreIds`) — hanya Owner yang punya `assertStoreOwnerScope`. Bisa dijadikan pekerjaan terpisah (potensi akses lintas toko).
-- Sistem saldo/account (wallet) ala beautycare untuk alur refund-dana-keluar otomatis belum dibangun; saat ini `selesaikan` milik SuperAdmin yang decrement wallet (`WalletTransaction::JENIS_REFUND_KELUAR`).
+- ~~`Admin\PengembalianDanaController::index` dan action `setujui/tolak` tidak memfilter scope toko~~ **✅ Sudah diperbaiki** (scope `AdminContext::assignedStoreIds()` + guard 403 `assertBelongsToStore`) pada 2026-09-18.
+- Sistem saldo/account (wallet) ala beautycare: **inti sudah jalan** — `selesaikan` kredit saldo akun customer (`CustomerWalletService::refundToWallet`) untuk payment saldo akun, dipakai Owner & SA. Sisa = UI "Saldo Saya" & penarikan (menunggu desain).
 
 ---
 
@@ -138,7 +140,9 @@ Semua tes memakai pola transaksional (insert sementara → `rollBack`) supaya da
 
 | File | Perubahan |
 |---|---|
-| `app/Services/KaryawanReportService.php` | `refundKaryawan` hanya status `selesai` |
-| `app/Http/Controllers/Owner/PengembalianDanaController.php` | setujui/tolak jangan timpa `reviewed_by` (+guard NULL) |
-| `resources/views/Owner/rekap-karyawan/index.blade.php` | wording info |
-| `resources/views/Admin/laporan/index.blade.php` | wording blok Penjualanku |
+| `app/Services/KaryawanReportService.php` | `refundKaryawan` hanya status `selesai`; `pendapatanKaryawan`/`pesananKaryawan` → `whereIn([selesai, refund])` ✅ |
+| `app/Http/Controllers/Owner/PengembalianDanaController.php` | setujui/tolak jangan timpa `reviewed_by` (+guard NULL) ✅ |
+| `resources/views/Owner/rekap-karyawan/index.blade.php` | wording info (refund selesai saja) ✅ |
+| `resources/views/Admin/laporan/index.blade.php` | wording blok Penjualanku ✅ |
+| `app/Http/Controllers/Admin/PengembalianDanaController.php` | scope `AdminContext` (baru, di luar dokumen ini) ✅ |
+| `app/Services/RefundCompletionService.php` (baru) | satu jalur `selesaikan` Owner & SA ✅ |

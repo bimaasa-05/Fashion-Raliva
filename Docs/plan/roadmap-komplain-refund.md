@@ -11,18 +11,22 @@
 
 - **Sistem Komplain** — selesai & tersambung DB (customer buat → admin balas/eskalasi → owner tangani eskalasi → SuperAdmin tutup). Detail: `alur-komplain-lengkap.md`.
 - **Sistem Refund** — selesai & tersambung DB (customer ajukan → admin setujui/tolak/eskalasi → owner tangani eskalasi → Owner/SA selesaikan). Detail: `alur-refund-dan-saldo.md`.
-- **Rekap Karyawan** (Owner + blok "Penjualanku" Admin) — selesai & terverifikasi runtime; injak atribusi refund masih menyisakan perbaikan kecil. Detail: `refund-rekap-karyawan.md`.
+- **Rekap Karyawan** (Owner + blok "Penjualanku" Admin) — selesai & terverifikasi runtime; perbaikan atribusi refund sudah dijalankan (Batch A). Detail: `refund-rekap-karyawan.md`.
+- **Batch Integrasi 1–2** (kolom `refunds.complaint_id` + tombol "Ajukan Refund" dari thread komplain) — selesai & terverifikasi.
+- **Batch Integrasi 3** (konsistensi `selesaikan` satu jalur via service) — selesai.
+- **Batch Integrasi 4** (transisi `Order::STATUS_REFUND` + penyesuaian laporan pendapatan) — selesai & terverifikasi soak.
 
 ### Fitur Rencana
 
 | # | Batch | Nama | Status | Estimasi |
 |---|---|---|---|---|
-| A | — | Perbaikan atribusi refund rekap karyawan (`reviewed_by` tetap admin + hitung `selesai` saja) | Rencana disusun | ~1–2 jam |
-| 1 | Integrasi | Kolom `refunds.complaint_id` + relasi | Rencana disusun | ~1 jam |
-| 2 | Integrasi | Tombol "Ajukan Refund" dari thread komplain | Rencana disusun | ~2 jam |
-| 3 | Integrasi | Konsistensi `selesaikan` antar role (opsi A/B) | Perlu keputusan | ~1–2 jam |
-| 4 | Integrasi | Transisi `Order::STATUS_REFUND` + dampak laporan | Perlu kajian | ~2–3 jam |
-| 5 | Saldo | Sistem saldo pelanggan (ala beautycare) | Rancangan (§5) | TBD |
+| A | — | Perbaikan atribusi refund rekap karyawan (`reviewed_by` tetap admin + hitung `selesai` saja) | ✅ Selesai | ~1–2 jam |
+| 1 | Integrasi | Kolom `refunds.complaint_id` + relasi | ✅ Selesai | ~1 jam |
+| 2 | Integrasi | Tombol "Ajukan Refund" dari thread komplain | ✅ Selesai | ~2 jam |
+| 3 | Integrasi | Konsistensi `selesaikan` antar role: **satu jalur sama persis** via `RefundCompletionService` (decrement wallet + kredit saldo akun customer + bukti) | ✅ Selesai | ~2 jam |
+| 4 | Integrasi | Transisi `Order::STATUS_REFUND` (full refund) + dampak laporan (`whereIn [selesai, refund]`) | ✅ Selesai | ~2–3 jam |
+| 5 | Saldo | Sistem saldo pelanggan (ala beautycare) — kredit otomatis saat `selesaikan` bila bayar via saldo akun | ✅ Bagian inti selesai (kredit otomatis); UI penarikan/batas saldo menyusul | — |
+| 6 | — | Scope `AdminContext` pada `Admin/PengembalianDanaController` | ✅ Selesai | ~1 jam |
 
 ---
 
@@ -30,12 +34,14 @@
 
 | Topik | Keputusan |
 |---|---|
-| Status yang dihitung untuk rekap | Refund dihitung hanya status **`selesai`** (dana benar-benar keluar). `disetujui` tidak. |
-| Atribusi eskalasi refund | `reviewed_by` **tetap admin penangan awal**; Owner setujui/tolak **tidak menimpa**. |
+| Status yang dihitung untuk rekap | Refund dihitung hanya status **`selesai`** (dana benar-benar keluar). `disetujui` tidak. **✅ Dieksekusi.** |
+| Atribusi eskalasi refund | `reviewed_by` **tetap admin penangan awal**; Owner setujui/tolak **tidak menimpa**. **✅ Dieksekusi.** |
+| Scope Admin | `Admin\PengembalianDanaController` (index + semua aksi) dibatasi ke toko di `AdminContext::assignedStoreIds()`. **✅ Dieksekusi.** |
+| `selesaikan` antar role | **Satu jalur sama persis** (keputusan user): Owner & SA memanggil `RefundCompletionService::complete` — potong wallet toko (`JENIS_REFUND_KELUAR`), wajib bukti, kredit saldo akun customer bila dibayar saldo akun, error rollback (file dihapus). **✅ Dieksekusi.** |
+| Transisi `Order::STATUS_REFUND` | **AKTIF sekarang** (keputusan user membalik rekomendasi awal). Order di-set `refund` saat refund **full** `selesai` dengan `jumlah >= grand_total`. Model keuangan: laporan **dengan baris Refund** memakai `whereIn(status,[selesai,refund])` di sisi pendapatan (net = 0, anti double-deduct); statistik **tanpa baris Refund** tetap `selesai` (order refund gugur alami). **✅ Dieksekusi.** |
 | Penutupan komplain | Saat ini **eksklusif SuperAdmin** (`tutup`). Desentralisasi ke Owner belum diputuskan. |
 | Komplain ↔ refund | Dua entitas yang bisa berdiri sendiri; integrasi dilakukan lewat `complaint_id`, bukan penggabungan status. |
-| Kelola `Order::STATUS_REFUND` | Belum dipakai sebagai transisi; hanya dijalankan setelah kajian dampak laporan pendapatan (batch 4). |
-| Sistem saldo pelanggan | Ditulis sebagai rancangan/proposal dulu (`alur-refund-dan-saldo.md` §5); keputusan desain menyusul sebelum eksekusi. |
+| Sistem saldo pelanggan | Inti kredit otomatis sudah jalan (`CustomerWalletService::refundToWallet`) saat `selesaikan` untuk payment `KODE_SALDO_AKUN`. Sisa rancangan (UI Saldo, penarikan) mengikuti desain `alur-refund-dan-saldo.md` §5. |
 
 ---
 
@@ -54,11 +60,11 @@ Docs/plan/
 
 ## 4. Urutan Kerja yang Diusulkan
 
-1. **Batch A — Rekap Karyawan** (`refund-rekap-karyawan.md`): kunci keputusan "refund `selesai` saja" + "`reviewed_by` tetap admin". Paling kecil & sudah final.
-2. **Batch Integrasi 1–2**: migrasi `complaint_id` + tombol refund dari thread komplain.
-3. **Batch Integrasi 3**: putuskan opsi A/B konsistensi `selesaikan`.
-4. **Batch Integrasi 4**: transisi `Order::STATUS_REFUND` (setelah kajian dampak laporan).
-5. **Batch Saldo**: sistem saldo pelanggan (menunggu keputusan desain).
+1. **Batch A — Rekap Karyawan** (`refund-rekap-karyawan.md`): kunci keputusan "refund `selesai` saja" + "`reviewed_by` tetap admin". ✅ Selesai.
+2. **Batch Integrasi 1–2**: migrasi `complaint_id` + tombol refund dari thread komplain. ✅ Selesai.
+3. **Batch Integrasi 3**: konsistensi `selesaikan` → satu jalur via service. ✅ Selesai.
+4. **Batch Integrasi 4**: transisi `Order::STATUS_REFUND` + penyesuaian laporan (`whereIn [selesai, refund]` untuk laporan ber-baris Refund). ✅ Selesai.
+5. **Batch Saldo**: kredit otomatis sudah jalan; UI manajemen saldo menyusul (menunggu keputusan desain).
 
 ---
 

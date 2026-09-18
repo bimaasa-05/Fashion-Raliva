@@ -24,8 +24,8 @@
         </div>
     @endif
     {{-- Ringkasan Status — tambah icon watermark agar tidak polos --}}
-    <section data-reveal-group class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-gutter">
-        @foreach ([['Semua', $counts['semua'], 'on-surface', 'inventory_2'], ['Baru', $counts['baru'], 'gold-accent', 'shopping_cart'], ['Diproses', $counts['diproses'], 'secondary', 'precision_manufacturing'], ['Dikirim', $counts['dikirim'], 'on-surface', 'local_shipping'], ['Selesai', $counts['selesai'], 'secondary', 'task_alt'], ['Dibatalkan', $counts['dibatalkan'], 'error', 'cancel']] as $stat)
+    <section data-reveal-group class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-gutter">
+        @foreach ([['Semua', $counts['semua'], 'on-surface', 'inventory_2'], ['Baru', $counts['baru'], 'gold-accent', 'shopping_cart'], ['Diproses', $counts['diproses'], 'secondary', 'precision_manufacturing'], ['Dikirim', $counts['dikirim'], 'on-surface', 'local_shipping'], ['Selesai', $counts['selesai'], 'secondary', 'task_alt'], ['Refund', $counts['refund'], 'error', 'sync_problem'], ['Dibatalkan', $counts['dibatalkan'], 'error', 'cancel']] as $stat)
             <div data-reveal class="bg-surface-container-lowest p-5 md:p-6 border border-muted-border rounded-xl flex flex-col gap-1.5 relative overflow-hidden card-premium">
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none fill" aria-hidden="true">{{ $stat[3] }}</span>
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider relative z-10">{{ $stat[0] }}</span>
@@ -56,6 +56,7 @@
                     <option value="diproses" @selected($status === 'diproses')>Diproses</option>
                     <option value="dikirim" @selected($status === 'dikirim')>Dikirim</option>
                     <option value="selesai" @selected($status === 'selesai')>Selesai</option>
+                    <option value="refund" @selected($status === 'refund')>Refund</option>
                     <option value="dibatalkan" @selected($status === 'dibatalkan')>Dibatalkan</option>
                 </select>
                 <select data-table-filter="period" class="raliva-select lg:w-44">
@@ -88,6 +89,7 @@
                             'diproses' => 'bg-secondary-container/20 text-secondary border-secondary/20',
                             'dikirim' => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
                             'selesai' => 'bg-deep-onyx text-on-primary border-transparent',
+                            'refund' => 'bg-error/10 text-error border-error/20',
                             'dibatalkan' => 'bg-error/10 text-error border-error/20',
                         ];
                     @endphp
@@ -95,6 +97,7 @@
                         @php
                             $key = match($o->status) {
                                 'selesai' => 'selesai',
+                                'refund' => 'refund',
                                 'dibatalkan' => 'dibatalkan',
                                 'dikirim' => 'dikirim',
                                 'diproses' => 'diproses',
@@ -142,6 +145,7 @@
 <?php
     $oKey = match($o->status) {
         'selesai' => 'selesai',
+        'refund' => 'refund',
         'dibatalkan' => 'dibatalkan',
         'dikirim' => 'dikirim',
         'diproses' => 'diproses',

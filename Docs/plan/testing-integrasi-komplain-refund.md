@@ -1,259 +1,199 @@
-# Testing — Integrasi Komplain ↔ Refund + Selesaikan Owner (Opsi A)
+# Testing — Integrasi Komplain ↔ Refund + Selesaikan Satu Jalur (Batch Refund)
 
-> Dibuat: 2026-09-17
-> Panduan pengujian untuk perubahan yang sudah dikerjakan pada batch integrasi komplain/refund. Ikuti langkah A→B→C→D secara berurutan. Semua langkah memakai persiapan default Laravel + seeder.
-> Status: **SIAP DIJALANKAN** — acuan untuk teman yang akan menguji.
+> Dibuat: 2026-09-17 · Diperbarui: 2026-09-18
+> Panduan pengujian untuk batch refund/komplain: selesaikan satu jalur via `RefundCompletionService`, rekap karyawan (refund hanya `selesai`), `reviewed_by` tidak ditimpa Owner, scope Admin `AdminContext`, transisi `Order::STATUS_REFUND` + penyesuaian laporan (R1). Ikuti langkah A→B→C→D→E berurutan.
+> Status: **SIAP DIJALANKAN**
 
 ---
 
 ## 1. Tujuan & Lingkup Test
 
-Perubahan yang harus diverifikasi:
-
 | No | Fitur | Status |
 |---|---|---|
 | 1 | Kolom `refunds.complaint_id` + relasi `Refund.complaint` ↔ `Complaint.refund` | Selesai |
-| 2 | Customer mengajukan refund **dari dalam thread komplain** (tombol + modal + badge status) | Selesai |
-| 3 | `storeRefund` menerima `complaint_id` + guard komplain milik customer & order yang sama | Selesai |
-| 4 | Owner menyelesaikan refund (Opsi A): wajib `file_bukti`, **tanpa** mengurangi saldo wallet | Selesai |
-| 5 | Duplikat pengajuan refund tetap diblokir | Selesai |
+| 2 | Customer mengajukan refund dari dalam thread komplain (`complaint_id`) + guard komplain milik customer & order sama | Selesai |
+| 3 | **Selesaikan Satu Jalur**: Owner & Super Admin sama-sama memanggil `RefundCompletionService` → potong wallet toko, status `selesai`, flip order full-refund ke `refund` | Selesai |
+| 4 | `reviewed_by` tidak ditimpa: Owner `setujui`/`tolak` hanya mengisi bila masih NULL (escalated) | Selesai |
+| 5 | Scope Admin `AdminContext`: index difilter + aksi `setujui`/`tolak`/`eskalasi` diblokir 403 di luar toko | Selesai |
+| 6 | Rekap karyawan: `refund` hanya menghitung refund `selesai`; pendapatan pakai `whereIn([selesai, refund])` | Selesai |
+| 7 | Laporan R1: revenue tidak "terpotong ganda" saat order full-refund; refund jadi expense terpisah | Selesai |
+| 8 | Duplikat pengajuan refund tetap diblokir | Selesai |
 
-**BUKAN bagian test ini** (di luar scope, dikerjakan orang lain):
-- Scope Admin `AdminContext` pada `Admin\PengembalianDanaController`.
-- `KaryawanReportService` + rekap refund (lihat `Docs/plan/refund-rekap-karyawan.md`).
-- Transisi `Order::STATUS_REFUND` & decrement saldo pelanggan (lapisan berikutnya).
-- `SuperAdmin/pengembalian-dana` (pola lama — tidak diubah).
+Model hasil akhir ini dibahas lengkap di `Docs/plan/alur-refund-dan-saldo.md` (`Order::STATUS_REFUND` kini "aktif").
 
 ---
 
 ## 2. Prasyarat
 
-1. Pastikan migrasi sudah jalan:
-
-   ```powershell
-   php artisan migrate
-   ```
-
-2. Jalankan server dev:
-
-   ```powershell
-   php artisan serve
-   ```
-   Buka `http://127.0.0.1:8000`.
-
-3. Akun login (akun seed `UserSeeder`, password semua `123`):
-
-   | Peran | Email |
-   |---|---|
-   | Customer | `c@gmail.com` |
-   | Owner | `o@gmail.com` |
-
-4. Kebutuhan data uji:
-
-   - Minimal satu **komplain** yang terkait **order berstatus `dikirim` atau `selesai`** dan **belum punya refund aktif** (untuk Test B positif).
-   - Minimal satu komplain untuk **order lain** (untuk Test B negatif).
-   - Minimal satu **refund berstatus `disetujui`** milik toko owner (untuk Test C).
-   - Jika belum ada, bisa dibuat cepat lewat `php artisan tinker` atau lewat UI order-tracking.
-
-Status refund yang dikenal: `requested`, `escalated`, `disetujui`, `ditolak`, `selesai`. Pengajuan refund hanya diizinkan saat status order `dikirim`/`selesai` dan belum ada refund aktif (`requested`/`escalated`/`disetujui`).
+1. Migrasi sudah jalan (`php artisan migrate`).
+2. Jalankan server dev: `php artisan serve` → `http://127.0.0.1:8000`.
+3. Akun seed:
+   | Peran | Email | Password |
+   |---|---|---|
+   | Super Admin | `sa@gmail.com` | `123` |
+   | Owner | `o@gmail.com` | `123` |
+   | Admin toko | `admin@raliva.test` | `password` |
+   | Customer | `c@gmail.com` | `123` |
+4. Kebutuhan data uji: order `dikirim`/`selesai` yang punya `checkout.payment` & belum ada refund aktif (untuk Test B/D); kalau belum ada, buat lewat UI checkout/detil order.
 
 ---
 
 ## 3. Test A — Soak Test Otomatis (Logika Backend)
 
-Script memuat aplikasi Laravel, menjalankan serangkaian asersi, lalu **meng-rollback semua transaksi** → data asli di database **tidak berubah**. Aman dijalankan berulang kali.
-
-**Cara menjalankan** (dari root project):
+Script memuat aplikasi Laravel, menjalankan asersi, lalu **rollback semua transaksi** → data asli tidak berubah.
 
 ```powershell
 php C:\Users\ogie\AppData\Local\Temp\opencode\soak-refund.php
 ```
 
-> Jika file itu belum ada di komputer teman, mintalah kopian dari pemilik repo (atau buat ulang berdasarkan bagian 3.1–3.6 berikut).
-
-**Output yang diharapkan** (contoh hasil run terakhir yang lulus):
+**Output yang diharapkan** (run terakhir: semuanya PASS):
 
 ```
-=== 1. SKEMA & RELASI MODEL ===
-[PASS] refunds.complaint_id ada
-[PASS] Refund fillable complaint_id
-[PASS] Refund::complaint relation
-[PASS] Complaint::refund relation
-=== 2. INVENTORI (cari order eligible + payment utk test positif) ===
-[...]
-=== 3. POSITIF storeRefund dgn complaint_id ===
-[PASS] storeRefund ok (...)
-[PASS] refund dibuat dgn complaint_id — refund #N
-[PASS] refund->complaint_id == komplain
-[PASS] refund->order_id cocok
-[PASS] refund->payment_id cocok
-[PASS] relasi refund->complaint mengarah balik
-[PASS] relasi komplain->refund mengarah ke refund
-=== 4. NEGATIF guard (complaint utk order lain) ===
-[PASS] guard tolak complaint utk order lain (refund tidak bertambah) — err=none
-=== 5. OWNER selesaikan POSITIF (opsi A, tanpa wallet) ===
-[PASS] selesaikan ok
-[PASS] status jadi selesai
-[PASS] file_bukti tersimpan — path=bukti-refund/N/xxxx.jpg
-[PASS] reviewed_by tetap 17 — riil=17
-[PASS] wallet TIDAK berubah (opsi A) — sebelum=... sesudah=...
-=== 6. OWNER selesaikan NEGATIF (tanpa file) ===
-[PASS] tanpa file -> ValidationException — Illuminate\Validation\ValidationException
-[PASS] status tetap disetujui
-[PASS] tidak ada ActivityLogger refund.complete utk r2
-=== 7. DUP (order dgn refund aktif tetap ditolak) ===
-[PASS] refund dup ditolak (jml refund tidak bertambah) — err=none
+=== 1. SKEMA & RELASI MODEL ===            [PASS] x4
+=== 2. INVENTORI (cari order eligible) ===
+=== 3. POSITIF storeRefund dgn complaint_id ===            [PASS] x7
+=== 4. NEGATIF guard (complaint utk order lain) ===        [PASS]
+=== 5. OWNER setujui eskalasi — TIDAK menimpa reviewed_by ===  [PASS] x2
+=== 6. OWNER selesaikan POSITIF — SATU JALUR (potong wallet + status selesai) ===  [PASS] x8
+=== 7. OWNER selesaikan NEGATIF (tanpa file) ===  [PASS] x4
+=== 8. SALDO TOKO NEGATIF (jumlah > saldo) — rollback & file dibersihkan ===  [PASS] x4
+=== 9. FLIP ORDER STAT_REFUND (full) vs TETAP SELESAI (partial) ===  [PASS] x12 (termasuk R1/R2/R3)
+=== 9b. DOUBLE-COMPLETE ditolak (status sudah berubah) === [PASS]
+=== 10. REKAP KARYAWAN — refund hanya selesai + reviewed_by admin ===  [PASS] x2
+=== 11. SCOPE AdminContext (index & aksi guard 403) ===  [PASS] x3
+=== 7b. DUP (order dgn refund aktif tetap ditolak) ===  [PASS]
 
 FAIL count: 0
 ROLLBACK OK
 ```
 
-**Kriteria lulus:** semua `[PASS]`, `FAIL count: 0`, dan ada `ROLLBACK OK`. Jika ada `[FAIL]`, laporkan label + detail-nya.
+**Kriteria lulus:** semua `[PASS]`, `FAIL count: 0`, `ROLLBACK OK`. Jika ada `[FAIL]`, laporkan label + detail-nya.
 
-### 3.1–3.6 Apa saja yang diuji
+### Apa yang diuji tiap seksi
 
-| Bagian | Yang diuji |
+| Seksi | Yang diuji |
 |---|---|
-| 1. Skema & relasi | Kolom `complaint_id` ada; terisi di `$fillable`; method `refund()` & `complaint()` |
-| 3. Positif | `storeRefund` dengan `complaint_id` tersimpan benar (`complaint_id`, `order_id`, `payment_id` cocok; relasi dua arah benar; file upload virtual terkurasi) |
-| 4. Negatif guard | Komplain milik order lain → refund tetap 0 |
-| 5. Owner positif | Status → `selesai`, `file_bukti` tersimpan, `reviewed_by` tidak ditimpa, **wallet tidak berubah** |
-| 6. Owner negatif | Tanpa `file_bukti` → `ValidationException`, status tetap `disetujui`, tidak ada log |
-| 7. Duplikat | Order dengan refund aktif → pengajuan baru ditolak |
+| 1 | Kolom `complaint_id`, `$fillable`, relasi dua arah |
+| 3 | `storeRefund` dengan `complaint_id` tersimpan benar (`complaint_id`, `order_id`, `payment_id`, relasi) |
+| 4 | Komplain milik order lain → refund tidak bertambah |
+| 5 | Owner `setujui` refund `escalated`: status → `disetujui`, `reviewed_by` **tetap admin** (17) |
+| 6 | Owner `selesaikan` (satu jalur): status → `selesai`, `file_bukti` tersimpan, wallet toko **terpotong**, `WalletTransaction REFUND_KELUAR`, `ActivityLog refund.complete`, `reviewed_by` tetap 17 |
+| 7 | Tanpa `file_bukti` → `ValidationException`, status tetap, wallet tidak berubah, tanpa log |
+| 8 | Jumlah > saldo → `RuntimeException saldo tidak cukup`, wallet tidak berubah, file bukti dihapus (rollback) |
+| 9 | Refund **full** = grand_total → order flip `STATUS_REFUND` + log `order.refunded`; refund **partial** → order tetap `selesai`. Lalu: R1 `whereIn([selesai,refund])` revenue **tidak turun**, revenue lama (`selesai` saja) turun = grand_total, sum refund (expense) naik; R2 order full keluar dari count selesai & masuk count refund |
+| 9b | `complete()` kedua → `RuntimeException status sudah berubah` |
+| 10 | Rekap karyawan: delta refund = jumlah refund `selesai` saja; refund `disetujui` tidak dihitung |
+| 11 | Scope Admin kosong (assignment dinonaktifkan sementara): index tidak menampilkan refund itu, `setujui` → 403, status tetap `requested` |
+| 7b | Order yang masih punya refund aktif → pengajuan duplikat ditolak (rollback committee count) |
 
 ---
 
 ## 4. Test B — Manual UI Customer (Refund dari Thread Komplain)
 
-1. Login sebagai Customer `c@gmail.com` / `123`.
-2. Buka `http://127.0.0.1:8000/customer/komplain`.
-3. **Buka thread komplain** yang order-nya berstatus `dikirim`/`selesai` dan belum ada refund aktif.
-4. Periksa **badge status refund** di header chat (id `#chat-refund-badge`):
-   - Belum ada refund → badge tersembunyi atau label "-".
-   - Sudah ada refund → menampilkan label status (mis. `Requested`, `Disetujui`, `Selesai`).
-5. Buka **menu "more"** di header chat → item **"Ajukan Refund"** (id `#chat-more-item-refund`) harus muncul.
-6. Klik item tersebut → modal refund (id `#modal-refund`) terbuka, dan `complaint_id` sudah terisi otomatis (field tersembunyi).
-7. Isi form modal:
-   - **Tipe refund**: `Penuh` (full) atau `Sebagian` (partial).
-   - **Jumlah**: harus **≥ 1** dan **tidak boleh melebihi total pesanan** (`grand_total`). Coba isi melebihi total → harus ditolak.
-   - **Alasan**: minimal **20 karakter**, maks 2000.
-   - **File bukti**: wajib, gambar `jpg/jpeg/png`, maks **4 MB** (4096 KB). Coba upload file >4MB atau format lain → harus ditolak.
-   - **Deskripsi bukti** (opsional, max 1000 karakter).
-8. Submit → redirect ke detil order + toast sukses "Pengajuan refund terkirim".
-9. **Verifikasi data**:
-
-   ```powershell
-   php artisan tinker
-   ```
-   ```php
-   $r = App\Models\Refund::where('order_id', <ORDER_ID>)->latest('refund_id')->first();
-   var_dump($r->complaint_id);   // harus = complaint_id thread yang dibuka
-   var_dump($r->complaint->complaint_id); // relasi balik harus sama
-   ```
-   - Buka `storage/app/public/bukti-refund-request/{order_id}/` → file bukti tersimpan.
-   - Buka kembali thread → badge berubah menjadi `Requested`, dan item "Ajukan Refund" **tidak muncul lagi** (sudah ada refund aktif).
-
-10. **Uji negatif**: buka thread komplain milik **order lain** → item "Ajukan Refund" **tidak muncul**. (Jaga-jaga: kalau paksa POST manual `complaint_id` dari order lain, server harus menolak dengan toast "Komplain tidak valid untuk pesanan ini".)
-
-> Catatan: pengajuan refund juga tetap bisa lewat detil order di `/customer/order-tracking` (tanpa `complaint_id` → kolom tetap `NULL`, refund tetap jalan seperti biasa).
+1. Login `c@gmail.com` / `123`, buka `http://127.0.0.1:8000/customer/komplain`.
+2. Buka thread komplain untuk order `dikirim`/`selesai` tanpa refund aktif:
+   - Badge status refund di header chat (`#chat-refund-badge`) → tampil setelah ada refund.
+   - Menu "more" → **"Ajukan Refund"** (`#chat-more-item-refund`) muncul.
+3. Klik → modal refund (`#modal-refund`) terbuka, `complaint_id` terisi otomatis. Isi form: tipe `Penuh`/`Sebagian`, jumlah ≥1 & ≤ `grand_total`, alasan ≥20 karakter, `file_bukti_request` gambar jpg/jpeg/png ≤4MB. Submit → redirect detil order + toast "Pengajuan refund terkirim".
+4. Verifikasi: `$r->complaint_id` = complaint thread; file di `storage/app/public/bukti-refund-request/{order_id}/`; badge berubah `Requested`.
+5. Komplain order lain → item tidak muncul; kalau paksa POST manual `complaint_id` order lain → ditolak.
 
 ---
 
-## 5. Test C — Manual UI Owner (Selesaikan, Opsi A)
+## 5. Test C — Manual UI Owner / Super Admin (Selesaikan Satu Jalur & Flip)
 
-1. Login sebagai Owner `o@gmail.com` / `123`.
-2. Buka `http://127.0.0.1:8000/owner/pengembalian-dana`.
-3. Pada seksi **"Menunggu Penyelesaian Anda"** harus tampil refund berstatus `disetujui` milik toko ini, masing-masing dengan tombol **Selesaikan** (buka modal `#modal-selesaikan-{kode}`).
-   - Jika bukti *request* dari customer ada → ada link untuk melihat buktinya (open in new tab).
-4. **Uji validasi — tanpa file**: klik **Selesaikan** lalu submit tanpa memilih file → browser/form menolak (input `required`) dan/atau server mengembalikan error validasi `file_bukti` wajib.
-5. **Upload bukti**: pilih file `jpg/jpeg/png/pdf`, maks **5 MB**. Coba file >5MB/format lain → ditolak.
-   - Isi **Deskripsi bukti** (opsional, max 1000 karakter, cth. "Transfer ke rekening customer").
-6. Submit → status refund menjadi **`Selesai`** dan kartu berpindah keluar dari "Menunggu Penyelesaian Anda".
-7. **Verifikasi**:
-   - File bukti tersimpan di `storage/app/public/bukti-refund/{refund_id}/`.
-   - Kode ini **tidak** memotong saldo toko (Opsi A):
+1. Login `o@gmail.com` / `123` → `http://127.0.0.1:8000/owner/pengembalian-dana`. Pada seksi **"Menunggu Penyelesaian Anda"** tampil refund `disetujui` milik toko ini + tombol **Selesaikan**.
+2. **Uji validasi**: submit tanpa file → ditolak (`file_bukti` wajib). Upload `jpg/jpeg/png/pdf` ≤5MB + deskripsi opsional → submit.
+3. **Hasil**:
+   - Status refund → `Selesai`, kartu pindah dari "Menunggu Penyelesaian Anda".
+   - **Wallet toko terpotong** sesuai `jumlah` (satu jalur; `superadmin` juga memotong — bukan lagi cara lama "tanpa wallet"):
 
      ```powershell
      php artisan tinker
      ```
      ```php
-     App\Models\Wallet::where('store_id', <STORE_ID_OWNER>)->first(); // saldo_tersedia TIDAK berubah
-     ```
-   - Ada log aktivitas:
-
-     ```php
+     $w = App\Models\Wallet::where('store_id', <STORE_ID>)->first(); // saldo_tersedia turun
+     App\Models\WalletTransaction::where('refund_id', <REFUND_ID>)->latest()->first(); // REFUND_KELUAR
      App\Models\ActivityLog::where('aksi', 'refund.complete')->latest()->first();
      ```
-   - Notifikasi muncul untuk owner (judul terkait pengajuan).
+   - Jika refund **full** dan `jumlah >= grand_total` saat status order `dikirim`/`selesai` → **order berubah status `refund`** dan ada log `order.refunded`. Refund **partial** → order tetap di status semula.
+4. Uji ulang selesaikan pada refund yang sama → ditolak ("status sudah berubah").
 
 ---
 
-## 6. Test D — Sanity (Konfigurasi & Routing)
+## 6. Test D — Manual UI Admin & Laporan (Scope + R1)
 
-1. **Route tidak duplikat** — masing-masing route refund harus muncul **tepat 1 baris**:
-
-   ```powershell
-   php artisan route:list | Select-String "selesaikan"
-   ```
-   Hasil yang benar:
-   - `POST owner/pengembalian-dana/{refund}/selesaikan`
-   - `POST superadmin/pengembalian-dana/{refund}/selesaikan`
-   (sebelumnya ada duplikat blok route owner yang sudah dihapus.)
-
-2. **Blade ter-kompile tanpa error**:
-
-   ```powershell
-   php artisan view:cache
-   ```
-
-3. **Tidak ada syntax error** pada file yang berubah:
-
-   ```powershell
-   php -l app/Http/Controllers/Customer/OrderTrackingController.php
-   php -l app/Http/Controllers/Customer/KomplainController.php
-   php -l app/Http/Controllers/Owner/PengembalianDanaController.php
-   php -l app/Models/Refund.php
-   php -l app/Models/Complaint.php
-   php -l database/migrations/2026_09_17_100000_add_complaint_id_to_refunds_table.php
-   ```
-   Semua harus menampilkan `No syntax errors detected`.
+1. Login `admin@raliva.test` / `password` → `http://127.0.0.1:8000/admin/pengembalian-dana`: hanya refund toko yang ditugaskan yang tampil.
+   - Kalau hanya ada satu toko di DB, uji scope dengan menonaktifkan sementara assignment: **Admin → Penugasan Toko**, set staff `admin@raliva.test` nonaktif → halaman refund jadi kosong & aksi mun = 403. (Undo kembali setelahnya.)
+2. `http://127.0.0.1:8000/admin/laporan` → Ringkasan: **Total Pendapatan** tidak berubah drastis saat ada order full-refund (revenue memakai `whereIn([selesai, refund])`), jumlah **refund** tampil terpisah.
+3. Owner `http://127.0.0.1:8000/owner/pesanan` → chip/kartu **Refund** ada, filter refund menampilkan order `refund`. `http://127.0.0.1:8000/owner/laporan` sama dengan poin 2.
+4. Owner `http://127.0.0.1:8000/owner/rekap-karyawan` → kolom **Refund** hanya menghitung refund `selesai` (yang baru `disetujui` belum dihitung).
 
 ---
 
-## 7. Actions / Endpoint Terkait (Referensi Cepat)
+## 7. Test E — Sanity (Konfigurasi & Routing)
 
-| Method | URL | Nama Route | Fungsi |
-|---|---|---|---|
-| GET | `customer/komplain` | `customer.komplain` | Daftar & thread komplain customer |
-| GET | `customer/order-tracking` | `customer.order-tracking` | Detil order + form refund (lama) |
-| POST | `customer/refund` | `customer.refund.store` | Simpan pengajuan refund (kini menerima `complaint_id`) |
-| GET | `owner/pengembalian-dana` | `owner.pengembalian-dana` | Manajemen refund owner (ada seksi "Menunggu Penyelesaian Anda") |
-| POST | `owner/pengembalian-dana/{refund}/selesaikan` | `owner.pengembalian-dana.selesaikan` | Selesaikan refund — wajib `file_bukti`, tanpa wallet |
+```powershell
+# route selesaikan tidak duplikat → harus TEPAT 2 baris
+php artisan route:list | Select-String "selesaikan"
+# expected: POST owner/pengembalian-dana/{refund}/selesaikan
+#           POST superadmin/pengembalian-dana/{refund}/selesaikan
 
-**Validasi utama `storeRefund`**: `tipe_refund` ∈ `full,partial`; `jumlah` ≥1 & ≤ grand_total; `alasan` min 20 & max 2000; `file_bukti_request` wajib image jpg/jpeg/png ≤ 4MB; `deskripsi_bukti_request` max 1000; `complaint_id` opsional tapi harus `exists` dan dipastikan milik customer & order yang sama.
+php artisan view:cache    # blade ter-kompile tanpa error
 
-**Validasi `selesaikan` (Owner)**: `file_bukti` wajib (mimes jpg/jpeg/png/pdf, max 5120 KB); `deskripsi_bukti` max 1000. Hanya refund berstatus `disetujui` yang boleh diselesaikan → status jadi `selesai`.
+php -l app/Services/RefundCompletionService.php
+php -l app/Services/KaryawanReportService.php
+php -l app/Http/Controllers/Owner/PengembalianDanaController.php
+php -l app/Http/Controllers/Admin/PengembalianDanaController.php
+php -l app/Http/Controllers/SuperAdmin/PengembalianDanaController.php
+php -l app/Http/Controllers/Owner/LaporanController.php
+php -l app/Http/Controllers/Admin/LaporanController.php
+php -l app/Http/Controllers/SuperAdmin/LaporanController.php
+php -l app/Http/Controllers/Owner/PesananController.php
+php -l app/Exports/OwnerLaporanRingkasanSheet.php
+php -l app/Exports/OwnerLaporanPeriodeSheet.php
+# Semua: No syntax errors detected
+```
+
+**HTTP smoke check** (semua halaman harus 200 setelah login):
+- Admin: `/admin/pengembalian-dana`, `/admin/laporan`
+- Owner: `/owner/pengembalian-dana`, `/owner/laporan`, `/owner/pesanan`, `/owner/rekap-karyawan`
+- Super Admin: `/superadmin/pengembalian-dana`, `/superadmin/laporan`
 
 ---
 
-## 8. Troubleshooting
+## 8. Actions / Endpoint Terkait (Referensi Cepat)
+
+| Method | URL | Fungsi |
+|---|---|---|
+| POST | `customer/refund` | Simpan pengajuan refund (menerima `complaint_id`) |
+| POST | `admin/pengembalian-dana/{refund}/setujui|tolak|eskalasi` | Aksi admin (guard `AdminContext`) |
+| POST | `owner/pengembalian-dana/{refund}/setujui|tolak` | Aksi owner — hanya isi `reviewed_by` bila masih NULL |
+| POST | `owner/pengembalian-dana/{refund}/selesaikan` · `superadmin/pengembalian-dana/{refund}/selesaikan` | **Satu jalur** → `RefundCompletionService::complete()` |
+
+**Validasi `selesaikan`**: `file_bukti` wajib (jpg/jpeg/png/pdf, max 5120 KB); `deskripsi_bukti` max 1000; hanya refund `disetujui` yang boleh → jadi `selesai`.
+
+---
+
+## 9. Troubleshooting
 
 | Gejala | Kemungkinan & Solusi |
 |---|---|
-| Soak test output "tidak ada order eligible" | Belum ada order `dikirim`/`selesai` yang punya `checkout.payment` & tanpa refund aktif. Buat order baru + payment (lewat checkout/UI penjualan) lalu ulangi. |
-| Badge/tombol "Ajukan Refund" tidak muncul padahal order eligible | Pastikan membuka **thread komplain**, bukan halaman lain; pastikan `data-open-refund-aktif="0"` dan `data-open-order-elig="1"` di kartu (inspeksi elemen). |
-| Owner tidak melihat seksi "Menunggu Penyelesaian Anda" | Pastikan ada refund `disetujui` milik **toko owner tsb**; Owner hanya melihat data toko sendiri. |
-| `view:cache` gagal | Ada salah satu file blade error sintaks — cek pesan, perbaiki, ulangi. |
-| Login gagal | Akun seed mungkin berbeda di lingkungan teman; gunakan akun dari `UserSeeder` atau buat akun peran sesuai. |
+| Soak: seksi 2 "tidak ada order eligible" | Belum ada order `dikirim`/`selesai` ber-`checkout.payment` tanpa refund aktif. Buat order + payment lalu ulangi. |
+| Soak seksi 11 skip | Admin menangani semua toko → asersi dijalankan lewat "nonaktifkan sementara assignment" (sudah otomatis di script). |
+| `view:cache` gagal | Blade error sintaks — perbaiki lalu ulangi. |
+| Login `admin@raliva.test` gagal | Password staff seed = `password` (bukan `123`). |
 
 ---
 
-## 9. Checklist Ringkas (buat teman)
+## 10. Checklist Ringkas
 
-- [ ] `php artisan migrate` sukses
 - [ ] Soak test → `FAIL count: 0` + `ROLLBACK OK`
-- [ ] `route:list` → route `selesaikan` tidak duplikat
-- [ ] `php -l` semua file → `No syntax errors detected`
-- [ ] Customer: badge, tombol "Ajukan Refund", modal, submit sukses, `complaint_id` terisi
-- [ ] Customer: komplain order lain → item tidak muncul; jumlah > total → ditolak; file >4MB → ditolak
-- [ ] Owner: Selesaikan tanpa file → ditolak; dengan bukti → status `Selesai`; wallet tetap
+- [ ] `route:list` → `selesaikan` persis 2 baris (owner + superadmin)
+- [ ] `php -l` semua file → `No syntax errors detected`; `view:cache` sukses
+- [ ] Halaman Admin/Owner/Super Admin → 200
+- [ ] Owner selesaikan: wallet terpotong, status `selesai`, flip full → order `refund`; partial → tetap
+- [ ] Owner setujui tidak menimpa `reviewed_by` admin
+- [ ] Admin scope: 403 di luar toko
+- [ ] Rekap karyawan: refund hanya `selesai`
+- [ ] Laporan: revenue tidak double-deduct saat order full-refund
