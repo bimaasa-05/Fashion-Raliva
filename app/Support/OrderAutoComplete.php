@@ -15,14 +15,18 @@ class OrderAutoComplete
 {
     public const SETTING_KEY = 'konfirmasi_selesai_hari';
 
+    public const OFFLINE_BATAS_HARI = 3;
+
     public static function batasHari(): int
     {
         return max(1, (int) Setting::get(self::SETTING_KEY, '5'));
     }
 
     /**
-     * Selesaikan otomatis order berstatus dikirim yang telah melewati batas
-     * konfirmasi dan tidak memiliki refund/komplain aktif.
+     * Selesaikan otomatis:
+     *  - order berstatus dikirim yang telah melewati batas konfirmasi, dan
+     *  - order offline berstatus siap_kirim yang sudah melewati batas ambil
+     *    tanpa konfirmasi (tidak memiliki refund/komplain aktif).
      *
      * @return int jumlah order yang diselesaikan
      */
@@ -47,6 +51,14 @@ class OrderAutoComplete
                 return $dikirimPada !== null && $dikirimPada->lte($batas);
             });
 
+        $siapDiambil = Order::where('tipe_pesanan', Order::TIPE_PESANAN_OFFLINE)
+            ->where('status', Order::STATUS_SIAP_KIRIM)
+            ->where('updated_at', '<=', now()->subDays(self::OFFLINE_BATAS_HARI))
+            ->with(['store', 'checkout'])
+            ->get();
+
+        $candidates = $candidates->merge($siapDiambil);
+
         $selesai = 0;
 
         foreach ($candidates as $order) {
@@ -54,7 +66,9 @@ class OrderAutoComplete
                 continue;
             }
 
-            $selesai += self::selesaikan($order);
+            $selesai += $order->status === Order::STATUS_SIAP_KIRIM
+                ? self::selesaikanDiambil($order)
+                : self::selesaikan($order);
         }
 
         return $selesai;
@@ -71,6 +85,56 @@ class OrderAutoComplete
         return Complaint::where('order_id', $order->order_id)
             ->whereIn('status', [Complaint::STATUS_OPEN, Complaint::STATUS_DIPROSES, Complaint::STATUS_ESKALASI])
             ->exists();
+    }
+
+    private static function selesaikanDiambil(Order $order): int
+    {
+        return DB::transaction(function () use ($order) {
+            $locked = Order::whereKey($order->order_id)->lockForUpdate()->first();
+
+            if (! $locked || ! $locked->isOffline() || $locked->status !== Order::STATUS_SIAP_KIRIM) {
+                return 0;
+            }
+
+            $locked->update([
+                'status' => Order::STATUS_SELESAI,
+                'diambil_pada' => now(),
+            ]);
+            WalletService::creditOrder($locked);
+
+            $batasHari = self::OFFLINE_BATAS_HARI;
+
+            if ($locked->store && $locked->store->owner_id) {
+                Notification::create([
+                    'user_id' => $locked->store->owner_id,
+                    'tipe' => Notification::TIPE_ORDER,
+                    'judul' => 'Pesanan Diambil Otomatis',
+                    'pesan' => sprintf('Pesanan offline %s diselesaikan otomatis karena sudah %s hari siap diambil tanpa konfirmasi.', $locked->nomor_order, $batasHari),
+                ]);
+            }
+
+            $customerId = Checkout::whereKey($locked->checkout_id)->value('user_id');
+            if ($customerId) {
+                Notification::create([
+                    'user_id' => $customerId,
+                    'tipe' => Notification::TIPE_ORDER,
+                    'judul' => 'Pesanan Ditandai Selesai',
+                    'pesan' => sprintf('Pesanan %s dianggap selesai karena sudah %s hari tidak diambil. Silakan cek detail pesanan Anda.', $locked->nomor_order, $batasHari),
+                    'url' => route('customer.order-tracking', ['order' => $locked->order_id]),
+                ]);
+            }
+
+            ActivityLogger::log(
+                'order.auto_picked_up',
+                Order::class,
+                $locked->order_id,
+                ['status' => Order::STATUS_SIAP_KIRIM],
+                ['status' => Order::STATUS_SELESAI, 'batas_hari' => $batasHari],
+                sprintf('Pesanan offline %s diselesaikan otomatis karena melewati %s hari siap diambil.', $locked->nomor_order, $batasHari)
+            );
+
+            return 1;
+        });
     }
 
     private static function selesaikan(Order $order): int
