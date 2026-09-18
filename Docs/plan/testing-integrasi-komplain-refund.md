@@ -118,6 +118,11 @@ ROLLBACK OK
      ```
    - Jika refund **full** dan `jumlah >= grand_total` saat status order `dikirim`/`selesai` → **order berubah status `refund`** dan ada log `order.refunded`. Refund **partial** → order tetap di status semula.
 4. Uji ulang selesaikan pada refund yang sama → ditolak ("status sudah berubah").
+5. **Tampilan customer setelah refund selesai** (`/customer/order-tracking` sebagai `c@gmail.com`): order full-refund menampilkan **"Refund selesai"** + "Pengembalian dana untuk pesanan ini telah diselesaikan oleh toko." dan meta header "Pengembalian dana selesai" — **bukan** lagi copy statis "Refund sedang diproses" (fix: `app/Http/Controllers/Customer/OrderTrackingController.php` eager-load `refunds`; `resources/views/customer/order-tracking/index.blade.php` detail `refund` dibuat dinamis dari status refund terakhir).
+   - Refund masih `requested/escalated/disetujui` → copy "sedang diproses" tetap.
+   - Refund `ditolak` → "Refund ditolak" + alasan penolakan.
+6. **Kejelasan aksi & bukti refund untuk customer** (`/customer/order-tracking`): tombol **"Ajukan Refund"** hanya tampil saat tidak ada refund aktif; refund aktif → info "Refund Anda sedang diproses oleh toko." (tombol hilang, menghindari toast error); refund `ditolak` → alert alasan + tombol tetap (boleh ajukan ulang).
+7. **Bukti penyelesaian ke customer**: saat refund **selesai** & `file_bukti` ada → kartu refund menampilkan **"Bukti transfer penyelesaian"** (thumbnail jpg/png atau link pdf dari `assets('storage/...')`) + `deskripsi_bukti`. Thread komplain menampilkan chip **"Refund selesai • Lihat bukti"** (`data-open-refund-bukti` + `syncChatRefundUI`). (Verifikasi HTTP: bukti tersaji 200 `image/jpeg`.)
 
 ---
 
