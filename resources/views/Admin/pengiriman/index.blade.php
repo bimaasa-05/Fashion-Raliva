@@ -5,12 +5,45 @@
 @section('header-title', 'Pengiriman')
 @section('header-badge', 'Kelola')
 
-@section('header-subtitle', 'Siapkan pengiriman, pilih kurir, dan masukkan nomor resi.')
+@section('header-subtitle', 'Kelola pengiriman kurir dan pesanan offline yang siap diambil pelanggan.')
 
 @section('content')
 @include('partials.flash-toast')
 
 <div class="space-y-section-gap">
+    @if ($siapDiambil->isNotEmpty())
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <h2 class="font-title-md text-title-md mb-1 text-on-surface premium-heading">Siap Diambil (Offline)</h2>
+        <p class="font-body-md text-sm text-on-surface-variant mb-6">Pesanan offline sudah melewati produksi &amp; QC. Konfirmasi saat customer mengambil barang — tanpa kurir atau resi.</p>
+        <div class="space-y-gutter">
+            @foreach ($siapDiambil as $pesanan)
+                <div class="border border-muted-border rounded-lg p-5">
+                    <form method="POST" action="{{ route('admin.pesanan.selesai', $pesanan->order_id) }}">
+                        @csrf
+                        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                            <div>
+                                <p class="font-mono text-sm text-on-surface-variant">{{ $pesanan->nomor_order }} &#8226; {{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</p>
+                                <p class="font-title-md text-title-md text-on-surface mt-1">{{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->implode(', '), 60) }}</p>
+                                <p class="font-body-md text-sm text-on-surface-variant mt-1">
+                                    {{ $pesanan->checkout?->user?->nama_lengkap ?? $pesanan->checkout?->nama_penerima ?? '-' }}
+                                    {{ $pesanan->checkout?->nomor_telepon ? '• '.$pesanan->checkout->nomor_telepon : '' }}
+                                    &#8226; {{ $pesanan->checkout?->payment?->payment_account_id === null ? 'Tunai' : 'Transfer' }}
+                                    &#8226; Total: Rp {{ number_format((float) $pesanan->grand_total, 0, ',', '.') }}
+                                </p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-3 shrink-0 items-end">
+                                <input name="catatan" maxlength="500" placeholder="Catatan (opsional)"
+                                    class="raliva-input w-full sm:w-52" type="text" />
+                                <button type="submit" class="px-6 py-3 bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-secondary-container/30 transition-colors btn-premium whitespace-nowrap" onclick="return confirm('Konfirmasi pesanan {{ $pesanan->nomor_order }} selesai & diambil customer?');">Selesai (Diambil)</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Siap Kirim</h2>
         <div class="space-y-gutter">
