@@ -21,8 +21,18 @@ class PengirimanController extends Controller
         $siapDikirim = Order::query()
             ->whereIn('store_id', $storeIds)
             ->where('status', Order::STATUS_SIAP_KIRIM)
+            ->where('tipe_pesanan', Order::TIPE_PESANAN_ONLINE)
             ->whereDoesntHave('shipments')
             ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap', 'items'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        $siapDiambil = Order::query()
+            ->whereIn('store_id', $storeIds)
+            ->where('status', Order::STATUS_SIAP_KIRIM)
+            ->where('tipe_pesanan', Order::TIPE_PESANAN_OFFLINE)
+            ->whereDoesntHave('shipments')
+            ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap', 'checkout.payment', 'items'])
             ->orderByDesc('created_at')
             ->get();
 
@@ -35,6 +45,7 @@ class PengirimanController extends Controller
 
         return view('Admin.pengiriman.index', [
             'siapDikirim' => $siapDikirim,
+            'siapDiambil' => $siapDiambil,
             'shipments' => $shipments,
             'couriers' => Courier::where('status', Courier::STATUS_AKTIF)->with('services')->orderBy('nama_kurir')->get(),
         ]);

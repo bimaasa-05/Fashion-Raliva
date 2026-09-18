@@ -35,6 +35,10 @@ class Order extends Model
 
     public const TIPE_CUSTOM = 'custom';
 
+    public const TIPE_PESANAN_ONLINE = 'online';
+
+    public const TIPE_PESANAN_OFFLINE = 'offline';
+
     protected $fillable = [
         'checkout_id',
         'store_id',
@@ -46,6 +50,8 @@ class Order extends Model
         'total_ongkir',
         'grand_total',
         'status',
+        'tipe_pesanan',
+        'diambil_pada',
         'tgl_mulai_produksi',
         'tgl_berakhir_produksi',
         'produksi_dimulai_pada',
@@ -70,7 +76,13 @@ class Order extends Model
             'produksi_dimulai_pada' => 'datetime',
             'tanggal_qc' => 'datetime',
             'tanggal_packing' => 'datetime',
+            'diambil_pada' => 'datetime',
         ];
+    }
+
+    public function isOffline(): bool
+    {
+        return $this->tipe_pesanan === self::TIPE_PESANAN_OFFLINE;
     }
 
     public function isCustom(): bool
