@@ -285,7 +285,7 @@
     @endphp
     <article data-complaint-card data-open-id="{{ $c->complaint_id }}" data-open-subjek="{{ $c->subjek }}" data-open-kode="{{ $c->complaint_id }}" data-open-statuslabel="{{ $statusLabel }}" data-open-done="{{ $done ? '1' : '0' }}"
         data-open-order-id="{{ $orderData?->order_id ?? '' }}" data-open-nomor-order="{{ $orderData?->nomor_order ?? '' }}" data-open-order-status="{{ $orderStatus ?? '' }}" data-open-order-grand="{{ (float) ($orderData?->grand_total ?? 0) }}"
-        data-open-order-elig="{{ $orderElig ? '1' : '0' }}" data-open-payment-id="{{ $paymentId ?? '' }}" data-open-refund-aktif="{{ $refundAktif ? '1' : '0' }}" data-open-refund-label="{{ $refundLabel }}"
+        data-open-order-elig="{{ $orderElig ? '1' : '0' }}" data-open-payment-id="{{ $paymentId ?? '' }}" data-open-refund-aktif="{{ $refundAktif ? '1' : '0' }}" data-open-refund-label="{{ $refundLabel }}" data-open-refund-bukti="{{ ($latestRefund?->status === 'selesai' && $latestRefund->file_bukti) ? asset('storage/' . ltrim($latestRefund->file_bukti, '/')) : '' }}"
         onclick="openChatFromCard(this)" class="group flex items-start gap-sm md:gap-md p-md border border-outline-variant rounded-xl cursor-pointer transition-colors hover:border-secondary">
         <div class="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center shrink-0 {{ $done ? '' : 'text-[var(--chrome-accent)]' }}">
             <span class="material-symbols-outlined text-[22px]">{{ $done ? 'task_alt' : 'support_agent' }}</span>
@@ -473,6 +473,7 @@
                 </div>
                 <div class="flex items-center gap-2 lg:gap-3 shrink-0 chat-header-item" id="chat-header-actions">
                     <span id="chat-refund-badge" class="hidden inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border border-secondary/20 bg-secondary/10 text-secondary shrink-0 whitespace-nowrap"></span>
+<a id="chat-refund-bukti" href="#" target="_blank" rel="noopener" class="hidden inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border border-gold-accent/40 bg-gold-accent/10 text-gold-accent shrink-0 whitespace-nowrap hover:border-gold-accent transition-colors"><span class="material-symbols-outlined text-[14px]">verified</span>{{ __('Refund selesai • Lihat bukti') }}</a>
                     <span id="chat-status" class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border bg-surface-container-high text-on-surface-variant border-outline-variant shrink-0 whitespace-nowrap"></span>
                     <button type="button" onclick="toggleChatSearch()" id="chat-search-toggle" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Cari pesan') }}" aria-label="{{ __('Cari pesan') }}">
                         <span class="material-symbols-outlined text-[20px]">search</span>
@@ -672,7 +673,8 @@
             elig: card.getAttribute('data-open-order-elig') || '0',
             payment: card.getAttribute('data-open-payment-id') || '',
             refundAktif: card.getAttribute('data-open-refund-aktif') || '0',
-            refundLabel: card.getAttribute('data-open-refund-label') || ''
+            refundLabel: card.getAttribute('data-open-refund-label') || '',
+            bukti: card.getAttribute('data-open-refund-bukti') || ''
         };
         openChatModal(
             card.getAttribute('data-open-id'),
@@ -1017,6 +1019,7 @@
     function syncChatRefundUI() {
         const item = document.getElementById('chat-more-item-refund');
         const badge = document.getElementById('chat-refund-badge');
+        const bukti = document.getElementById('chat-refund-bukti');
         const o = currentChat.order;
 
         if (item) {
@@ -1031,6 +1034,12 @@
             } else {
                 badge.classList.add('hidden');
             }
+        }
+
+        if (bukti) {
+            const show = o && o.refundLabel === 'Selesai' && o.bukti;
+            if (show) { bukti.href = o.bukti; }
+            bukti.classList.toggle('hidden', !show);
         }
     }
 
