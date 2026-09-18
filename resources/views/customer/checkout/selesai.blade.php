@@ -76,6 +76,9 @@
     .co-step .num.loading::after { content:''; display:none; }
     @keyframes co-spin { to { transform: rotate(360deg); } }
 
+    /* ---- spinner menunggu verifikasi ---- */
+    .co-wait-spin { width: 2.5rem; height: 2.5rem; border-radius: 9999px; border: 3.5px solid rgba(16,185,129,.25); border-top-color: #10B981; animation: co-spin .8s linear infinite; }
+
     /* ---- success check icon: filled circle pop + stroke draw ---- */
     .co-success-wrap { animation: co-wrap-pop .5s cubic-bezier(.34,1.3,.5,1) both; }
     .co-success-svg { display:block; width:72px; height:72px; }
@@ -160,20 +163,69 @@
         </div>
         </div>
 
-        @php $akunBaru = session('akun_baru'); @endphp
+        @php
+            $akunBaru = session('akun_baru');
+            $payStatus = $payment->status ?? null;
+            $isVerified = $payStatus === \App\Models\Payment::STATUS_TERVERIFIKASI;
+            $isRejected = in_array($payStatus, [\App\Models\Payment::STATUS_DITOLAK, \App\Models\Payment::STATUS_KADALUARSA], true);
+            $statusLabels = [
+                \App\Models\Payment::STATUS_PENDING => ['Menunggu Pembayaran', 'bg-amber-100 text-amber-800'],
+                \App\Models\Payment::STATUS_MENUNGGU_VERIFIKASI => ['Menunggu Verifikasi', 'bg-blue-100 text-blue-800'],
+                \App\Models\Payment::STATUS_TERVERIFIKASI => ['Terverifikasi', 'bg-emerald-100 text-emerald-800'],
+                \App\Models\Payment::STATUS_DITOLAK => ['Ditolak', 'bg-red-100 text-red-800'],
+                \App\Models\Payment::STATUS_KADALUARSA => ['Kadaluarsa', 'bg-surface-container text-on-surface-variant'],
+            ];
+            $statusLabel = $statusLabels[$payStatus][0] ?? ucfirst((string) $payStatus);
+            $statusClass = $statusLabels[$payStatus][1] ?? 'bg-surface-container text-on-surface-variant';
+        @endphp
 
         {{-- === SUKSES HEADER === --}}
         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-2xl p-md md:p-xl card-premium text-center reveal-up overflow-hidden">
-            <div class="co-success-wrap relative mx-auto mb-md w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center">
-                <svg class="co-success-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true">
-                    <g class="co-success-ring-circle">
-                        <circle class="co-ring-path" cx="40" cy="40" r="36" stroke="#10B981" stroke-width="3.5" stroke-linecap="round"/>
-                    </g>
-                    <path class="co-success-check" d="M28 41 L36.5 49.5 L53 32" stroke="#10B981" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+            <div id="pay-icon-wrap" class="co-success-wrap relative mx-auto mb-md w-20 h-20 rounded-full
+                @if($isVerified) bg-emerald-100 items-center justify-center
+                @elseif($isRejected) bg-error/10 items-center justify-center
+                @else bg-emerald-100 items-center justify-center
+                @endif flex">
+                @if($isVerified)
+                    <svg class="co-success-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+                        <g class="co-success-ring-circle">
+                            <circle class="co-ring-path" cx="40" cy="40" r="36" stroke="#10B981" stroke-width="3.5" stroke-linecap="round"/>
+                        </g>
+                        <path class="co-success-check" d="M28 41 L36.5 49.5 L53 32" stroke="#10B981" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                @elseif($isRejected)
+                    <div class="w-10 h-10 rounded-full bg-error/15 inline-flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[26px] text-error">gpp_bad</span>
+                    </div>
+                @else
+                    <span class="co-wait-spin" role="status" aria-label="{{ __('Menunggu verifikasi') }}"></span>
+                @endif
             </div>
-            <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('Pesanan Berhasil!') }}</h2>
-            <p class="font-body-sm text-body-sm text-on-surface-variant mt-sm max-w-xl mx-auto">{{ __('Terima kasih. Pesananmu telah kami terima dan bukti pembayaran sedang diverifikasi admin.') }}</p>
+            <h2 id="pay-title" class="font-headline-md text-headline-md text-on-surface">
+                @if($isVerified)
+                    {{ __('Pesanan Berhasil!') }}
+                @elseif($isRejected)
+                    {{ __('Pembayaran belum berhasil') }}
+                @else
+                    {{ __('Pesanan Berhasil!') }}
+                @endif
+            </h2>
+            <p id="pay-desc" class="font-body-sm text-body-sm text-on-surface-variant mt-sm max-w-xl mx-auto">
+                @if($isVerified)
+                    {{ __('Pembayaran telah diverifikasi. Pesananmu segera diproses.') }}
+                @elseif($isRejected)
+                    {{ __('Pembayaranmu ditolak atau melewati batas waktu. Silakan lakukan pembayaran ulang sebelum pesanan dibatalkan.') }}
+                @else
+                    {{ __('Terima kasih. Pesananmu telah kami terima dan bukti pembayaran sedang diverifikasi admin.') }}
+                @endif
+            </p>
+            @if($isRejected)
+            <div class="mt-md flex justify-center">
+                <a href="{{ route('customer.checkout.payment', $checkout->checkout_id) }}" class="btn-gold inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                    <span class="material-symbols-outlined text-[18px]">payments</span> {{ __('Bayar Ulang') }}
+                </a>
+            </div>
+            @endif
         </div>
 
         {{-- === DETAIL PESANAN LENGKAP === --}}
@@ -221,13 +273,8 @@
                             <span class="material-symbols-outlined text-[14px]">schedule</span>
                             {{ __('Status') }}:
                             <span
-                                class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ml-1
-                                @if($payment->status === 'pending') bg-amber-100 text-amber-800
-                                @elseif($payment->status === 'menunggu_verifikasi') bg-blue-100 text-blue-800
-                                @elseif($payment->status === 'terverifikasi') bg-emerald-100 text-emerald-800
-                                @elseif($payment->status === 'ditolak') bg-red-100 text-red-800
-                                @else bg-surface-container text-on-surface-variant @endif
-                            ">{{ $payment->status }}</span>
+                                id="pay-status-badge"
+                                class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ml-1 {{ $statusClass }}">{{ $statusLabel }}</span>
                         </p>
                     </div>
                 </div>
@@ -432,6 +479,97 @@
                 bbPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
             });
         }
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var isVerified = @json($isVerified);
+        var isRejected = @json($isRejected);
+        if (isVerified) return;
+
+        var endpoint = @json(route('customer.checkout.payment.status', $checkout->checkout_id));
+        var payAgainUrl = @json(route('customer.checkout.payment', $checkout->checkout_id));
+        var iconWrap = document.getElementById('pay-icon-wrap');
+        var titleEl = document.getElementById('pay-title');
+        var descEl = document.getElementById('pay-desc');
+        var statusEl = document.getElementById('pay-status-badge');
+        var interval = null;
+        var transitioning = false;
+
+        var checkSvg = '<svg class="co-success-svg" viewBox="0 0 80 80" fill="none" aria-hidden="true">' +
+            '<g class="co-success-ring-circle"><circle class="co-ring-path" cx="40" cy="40" r="36" stroke="#10B981" stroke-width="3.5" stroke-linecap="round"/></g>' +
+            '<path class="co-success-check" d="M28 41 L36.5 49.5 L53 32" stroke="#10B981" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+        var rejectedSvg = '<div class="w-10 h-10 rounded-full bg-error/15 inline-flex items-center justify-center shrink-0">' +
+            '<span class="material-symbols-outlined text-[26px] text-error">gpp_bad</span></div>';
+
+        var badgeMap = {
+            'pending': ['Menunggu Pembayaran', 'bg-amber-100 text-amber-800'],
+            'menunggu_verifikasi': ['Menunggu Verifikasi', 'bg-blue-100 text-blue-800'],
+            'terverifikasi': ['Terverifikasi', 'bg-emerald-100 text-emerald-800'],
+            'ditolak': ['Ditolak', 'bg-red-100 text-red-800'],
+            'kadaluarsa': ['Kadaluarsa', 'bg-surface-container text-on-surface-variant']
+        };
+
+        function setUi(mode, statusKey) {
+            if (!iconWrap || transitioning) return;
+            if (mode === 'verified') {
+                iconWrap.className = 'co-success-wrap relative mx-auto mb-md w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center';
+                iconWrap.innerHTML = checkSvg;
+                if (titleEl) titleEl.textContent = '{{ __('Pesanan Berhasil!') }}';
+                if (descEl) descEl.textContent = '{{ __('Pembayaran telah diverifikasi. Pesananmu segera diproses.') }}';
+            } else if (mode === 'rejected') {
+                iconWrap.className = 'co-success-wrap relative mx-auto mb-md w-20 h-20 rounded-full bg-error/10 flex items-center justify-center';
+                iconWrap.innerHTML = rejectedSvg;
+                if (titleEl) titleEl.textContent = '{{ __('Pembayaran belum berhasil') }}';
+                if (descEl) descEl.textContent = '{{ __('Pembayaranmu ditolak atau melewati batas waktu. Silakan lakukan pembayaran ulang sebelum pesanan dibatalkan.') }}';
+                if (descEl && !document.getElementById('pay-again-btn')) {
+                    var btn = document.createElement('a');
+                    btn.id = 'pay-again-btn';
+                    btn.href = payAgainUrl;
+                    btn.className = 'btn-gold inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest mt-md';
+                    btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">payments</span> {{ __('Bayar Ulang') }}';
+                    var wrap = document.createElement('div');
+                    wrap.className = 'mt-md flex justify-center';
+                    wrap.appendChild(btn);
+                    descEl.parentNode.appendChild(wrap);
+                }
+            }
+            if (statusEl && badgeMap[statusKey]) {
+                statusEl.className = 'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ml-1 ' + badgeMap[statusKey][1];
+                statusEl.textContent = badgeMap[statusKey][0];
+            }
+        }
+
+        function poll() {
+            fetch(endpoint, { headers: { 'Accept': 'application/json' } })
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                    if (!d || typeof d.verified === 'undefined') return;
+                    if (d.verified) {
+                        transitioning = true;
+                        if (interval) { clearInterval(interval); interval = null; }
+                        setUi('verified', 'terverifikasi');
+                        setTimeout(function () { window.location.reload(); }, 2400);
+                    } else if ((d.status === 'ditolak' || d.status === 'kadaluarsa') && !isRejected) {
+                        isRejected = true;
+                        setUi('rejected', d.status);
+                    }
+                })
+                .catch(function () {});
+        }
+
+        var onVisibility = function () {
+            if (document.hidden) {
+                if (interval) { clearInterval(interval); interval = null; }
+            } else if (!transitioning && !interval) {
+                interval = setInterval(poll, 6000);
+            }
+        };
+
+        document.addEventListener('visibilitychange', onVisibility);
+        interval = setInterval(poll, 6000);
+        poll();
     });
 </script>
 </body>
