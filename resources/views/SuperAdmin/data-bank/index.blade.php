@@ -471,10 +471,23 @@
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
-                    <select name="status" id="bank-status" class="raliva-select">
-                        <option value="aktif">Aktif</option>
-                        <option value="nonaktif">Nonaktif</option>
-                    </select>
+                    <div class="relative" id="bankStatus-dd">
+                    <button type="button" data-dd-trigger id="bankStatus-trigger" onclick="toggleDropdown('bankStatus')" aria-haspopup="listbox" aria-expanded="false"
+                        class="w-full flex items-center justify-between gap-2 bg-surface-container-lowest border border-muted-border rounded-lg pl-3.5 pr-3.5 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200 cursor-pointer text-left">
+                        <span id="bankStatus-label" class="truncate">Aktif</span>
+                        <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="bankStatus-chevron">expand_more</span>
+                    </button>
+                    <div id="bankStatus-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                        class="hidden absolute left-0 top-full mt-2 w-full min-w-[160px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                        <button type="button" role="option" aria-selected="true" data-dd-option="aktif" onclick="selectBankStatus('aktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                            Aktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                        </button>
+                        <button type="button" role="option" aria-selected="false" data-dd-option="nonaktif" onclick="selectBankStatus('nonaktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                            Nonaktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                        </button>
+                    </div>
+                    <input type="hidden" name="status" id="bank-status" value="aktif" />
+                </div>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
                     <button type="button" onclick="closeBankForm()" class="btn-modal btn-modal-ghost">Batal</button>
@@ -536,10 +549,23 @@
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
-                    <select name="status" id="ewallet-status" class="raliva-select">
-                        <option value="aktif">Aktif</option>
-                        <option value="nonaktif">Nonaktif</option>
-                    </select>
+                    <div class="relative" id="ewalletStatus-dd">
+                    <button type="button" data-dd-trigger id="ewalletStatus-trigger" onclick="toggleDropdown('ewalletStatus')" aria-haspopup="listbox" aria-expanded="false"
+                        class="w-full flex items-center justify-between gap-2 bg-surface-container-lowest border border-muted-border rounded-lg pl-3.5 pr-3.5 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200 cursor-pointer text-left">
+                        <span id="ewalletStatus-label" class="truncate">Aktif</span>
+                        <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="ewalletStatus-chevron">expand_more</span>
+                    </button>
+                    <div id="ewalletStatus-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                        class="hidden absolute left-0 top-full mt-2 w-full min-w-[160px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                        <button type="button" role="option" aria-selected="true" data-dd-option="aktif" onclick="selectEwalletStatus('aktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                            Aktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                        </button>
+                        <button type="button" role="option" aria-selected="false" data-dd-option="nonaktif" onclick="selectEwalletStatus('nonaktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                            Nonaktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                        </button>
+                    </div>
+                    <input type="hidden" name="status" id="ewallet-status" value="aktif" />
+                </div>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
                     <button type="button" onclick="closeEwalletForm()" class="btn-modal btn-modal-ghost">Batal</button>
@@ -595,10 +621,23 @@
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
-                    <select name="status" id="qris-status" class="raliva-select">
-                        <option value="aktif">Aktif</option>
-                        <option value="nonaktif">Nonaktif</option>
-                    </select>
+                    <div class="relative" id="qrisStatus-dd">
+                    <button type="button" data-dd-trigger id="qrisStatus-trigger" onclick="toggleDropdown('qrisStatus')" aria-haspopup="listbox" aria-expanded="false"
+                        class="w-full flex items-center justify-between gap-2 bg-surface-container-lowest border border-muted-border rounded-lg pl-3.5 pr-3.5 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200 cursor-pointer text-left">
+                        <span id="qrisStatus-label" class="truncate">Aktif</span>
+                        <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="qrisStatus-chevron">expand_more</span>
+                    </button>
+                    <div id="qrisStatus-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                        class="hidden absolute left-0 top-full mt-2 w-full min-w-[160px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                        <button type="button" role="option" aria-selected="true" data-dd-option="aktif" onclick="selectQrisStatus('aktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                            Aktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                        </button>
+                        <button type="button" role="option" aria-selected="false" data-dd-option="nonaktif" onclick="selectQrisStatus('nonaktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                            Nonaktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                        </button>
+                    </div>
+                    <input type="hidden" name="status" id="qris-status" value="aktif" />
+                </div>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
                     <button type="button" onclick="closeQrisForm()" class="btn-modal btn-modal-ghost">Batal</button>
@@ -668,12 +707,33 @@
 </div>
 
 @push('scripts')
+@include('SuperAdmin.partials.dd-helpers')
 <script>
     function switchTab(tab) {
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
         document.getElementById('panel-' + tab).classList.remove('hidden');
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
+    }
+
+    // Status dropdown helpers
+    function selectBankStatus(v) {
+        ddSet('bankStatus', v, v === 'aktif' ? 'Aktif' : 'Nonaktif');
+    }
+    function syncBankStatus() {
+        selectBankStatus(document.getElementById('bank-status').value);
+    }
+    function selectEwalletStatus(v) {
+        ddSet('ewalletStatus', v, v === 'aktif' ? 'Aktif' : 'Nonaktif');
+    }
+    function syncEwalletStatus() {
+        selectEwalletStatus(document.getElementById('ewallet-status').value);
+    }
+    function selectQrisStatus(v) {
+        ddSet('qrisStatus', v, v === 'aktif' ? 'Aktif' : 'Nonaktif');
+    }
+    function syncQrisStatus() {
+        selectQrisStatus(document.getElementById('qris-status').value);
     }
 
     // Bank modal
@@ -686,6 +746,7 @@
         document.getElementById('bank-rekening').value = '';
         document.getElementById('bank-pemilik').value = '';
         document.getElementById('bank-status').value = 'aktif';
+        syncBankStatus();
         document.getElementById('modal-bank').classList.remove('hidden');
         document.getElementById('modal-bank').classList.add('flex');
     }
@@ -707,6 +768,7 @@
                 document.getElementById('bank-rekening').value = d.rekening || '';
                 document.getElementById('bank-pemilik').value = d.pemilik || '';
                 document.getElementById('bank-status').value = d.status;
+                syncBankStatus();
                 document.getElementById('modal-bank').classList.remove('hidden');
                 document.getElementById('modal-bank').classList.add('flex');
             })
@@ -724,6 +786,7 @@
         document.getElementById('ewallet-pemilik').value = 'RALIVA Fashion';
         document.getElementById('ewallet-deskripsi').value = '';
         document.getElementById('ewallet-status').value = 'aktif';
+        syncEwalletStatus();
         document.getElementById('modal-ewallet').classList.remove('hidden');
         document.getElementById('modal-ewallet').classList.add('flex');
     }
@@ -746,6 +809,7 @@
                 document.getElementById('ewallet-pemilik').value = d.nama_pemilik || 'RALIVA Fashion';
                 document.getElementById('ewallet-deskripsi').value = d.deskripsi || '';
                 document.getElementById('ewallet-status').value = d.status;
+                syncEwalletStatus();
                 document.getElementById('modal-ewallet').classList.remove('hidden');
                 document.getElementById('modal-ewallet').classList.add('flex');
             })
@@ -757,6 +821,8 @@
         document.getElementById('qris-modal-title').textContent = 'Tambah QRIS';
         document.getElementById('form-qris').action = '{{ route('superadmin.data-bank.account.store') }}';
         document.getElementById('qris-id').value = '';
+        document.getElementById('qris-status').value = 'aktif';
+        syncQrisStatus();
         document.getElementById('modal-qris').classList.remove('hidden');
         document.getElementById('modal-qris').classList.add('flex');
     }
@@ -778,6 +844,7 @@
                 document.getElementById('qris-pemilik').value = d.nama_pemilik || 'RALIVA Fashion';
                 document.getElementById('qris-deskripsi').value = d.deskripsi || '';
                 document.getElementById('qris-status').value = d.status;
+                syncQrisStatus();
                 document.getElementById('modal-qris').classList.remove('hidden');
                 document.getElementById('modal-qris').classList.add('flex');
             })

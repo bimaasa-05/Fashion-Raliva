@@ -78,12 +78,21 @@
             </div>
             <div class="flex items-center gap-3">
                 <span id="trend-total" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gold-accent/10 border border-gold-accent/25 font-title-md text-sm text-gold-accent whitespace-nowrap">Rp 0</span>
-                <div class="w-40">
-                    <select id="trend-range" class="raliva-select !py-2 !text-xs">
+                <div class="w-40 relative" id="trendRange-dd">
+                    <button type="button" data-dd-trigger id="trendRange-trigger" onclick="toggleDropdown('trendRange')" aria-haspopup="listbox" aria-expanded="false"
+                        class="w-full flex items-center justify-between gap-2 bg-surface-container-lowest border border-muted-border rounded-lg pl-3.5 pr-2.5 py-2 font-body-md text-xs text-on-surface focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200 cursor-pointer text-left">
+                        <span id="trendRange-label" class="truncate">{{ $rangeLabels[$activeRange] ?? $activeRange }}</span>
+                        <span class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="trendRange-chevron">expand_more</span>
+                    </button>
+                    <div id="trendRange-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                        class="hidden absolute left-0 top-full mt-2 w-full min-w-[160px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
                         @foreach ($rangeLabels as $rKey => $rLabel)
-                            <option value="{{ $rKey }}" {{ $activeRange === $rKey ? 'selected' : '' }}>{{ $rLabel }}</option>
+                            <button type="button" role="option" aria-selected="{{ $activeRange === $rKey ? 'true' : 'false' }}" data-dd-option="{{ $rKey }}" onclick="selectTrendRange('{{ $rKey }}')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                {{ $rLabel }}<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $activeRange === $rKey ? '' : 'hidden' }}">check</span>
+                            </button>
                         @endforeach
-                    </select>
+                    </div>
+                    <input type="hidden" id="trend-range" value="{{ $activeRange }}" />
                 </div>
             </div>
         </div>
@@ -215,10 +224,20 @@
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@include('SuperAdmin.partials.dd-helpers')
 <script>
     let revenueChart = null;
     let currentTrendRange = @json($activeRange);
     const rangeData = @json($rangeData);
+    const trendRangeLabels = @json($rangeLabels);
+
+    function selectTrendRange(v) {
+        document.getElementById('trend-range').value = v;
+        ddSet('trendRange', v, trendRangeLabels[v] ?? v);
+        currentTrendRange = v;
+        if (badgeText) badgeText.textContent = trendRangeLabels[v] ?? v;
+        renderTrendChart();
+    }
 
     const chartWrap = document.getElementById('trend-chart-wrap');
     const chartEmpty = document.getElementById('trend-empty');
@@ -330,12 +349,6 @@
         revenueChart.options.scales.x.ticks.color = c.tick;
         revenueChart.update();
     };
-
-    document.getElementById('trend-range')?.addEventListener('change', (e) => {
-        currentTrendRange = e.target.value;
-        if (badgeText) badgeText.textContent = e.target.options[e.target.selectedIndex].text;
-        renderTrendChart();
-    });
 
     document.getElementById('trend-retry')?.addEventListener('click', () => {
         renderTrendChart();
