@@ -430,3 +430,151 @@ Perbaikan:
    - akun mirip hasil checkout bisa login pada sesi baru ("tab baru") saat `multi_role=true`;
      password salah (`password`) tetap ditolak;
    - `POST admin.customer.store` → akun tersimpan dgn `Hash::check('Raliva123', ...)` = true.
+
+---
+
+## Bug Tambah Pesanan Admin (Offline & Online) (SELESAI)
+
+Masalah: tambah pesanan admin gagal dengan validasi palsu —
+- Offline → *"The selected user id is invalid."* (field `user_id` dari tab Online yang tersembunyi)
+- Online → *"The nama penerima field must be a string."* → data tidak masuk sama sekali.
+
+Akar: `DataPesananController::store()` menggabungkan aturan implicit `required_if` dgn aturan
+non-implicit (`exists`/`string`/`in`) pada field yang bernilai kosong di tab non-aktif. Karena
+`required_if` implicit, validasi tetap dijalankan walau field kosong; middleware
+`ConvertEmptyStringsToNull` mengubah `""` → `null`, lalu `exists`/`string` menolak `null`.
+Terbukti via tinker (user_id=null offline → "selected user id is invalid"; nama_penerima=null
+online → "must be a string").
+
+Perbaikan:
+1. Tambah `nullable` pada `user_id`, `nama_penerima`, `nomor_telepon`, `alamat`, `metode_bayar`,
+   `payment_account_id`, `bukti` — `required_if` dipertahankan (penjaga server tetap aktif).
+2. UI (`Admin/pesanan/index.blade.php`): `toggleTipePesanan()`/`toggleMetodeBayar()` ikut
+   men-toggle `disabled` pada field tab non-aktif → tidak ikut terkirim (payload bersih).
+3. Dropdown produk (modal Tambah) & bahan (modal Proses): tampilkan **nama** (value ramah-baca,
+   ID di `data-id`, `onVariantInput`/`onBahanInput` tetap mengisi hidden input dgn ID) — bukan ID.
+
+Verifikasi: `DataPesananOrderStoreTest` (3 pass) — offline tanpa user_id sukses, online tanpa
+nama_penerima sukses, online tanpa customer tetap ditolak. Suite penuh 32 passed + 1 risky
+(OwnerKomplainTest pre-existing). `view:cache` lulus.
+
+---
+
+## Batch Data Pesanan / Data Produk / Bahan Produksi (SELESAI)
+
+### 1. Data Pesanan — urutan & status offline tunai
+
+- **Urutan daftar**: `Admin\DataPesananController::index()` sebelumnya
+  `orderByRaw("CASE status …") + orderByDesc('created_at')`. Diganti `orderByDesc('updated_at')`
+  + `orderByDesc('order_id')` — pesanan terbaru OTOMATIS (update/ganti status apa pun dan pesanan
+  baru) naik ke atas.
+- **Offline tunai jadi "Baru"**: `store()` untuk offline `metode_bayar=tunai` kini membuat
+  `Order::STATUS_DIBAYAR` (badge "Baru", bukan langsung "Menunggu Produksi").
+- **Proses**: `proses()` menerima status awal `dibayar` **dan** `menunggu_produksi`; keduanya
+  menuju `STATUS_DIPROSES`. Jadi offline tunai: Baru → Admin Proses (input bahan+tgl) → Diproses;
+  role produksi hanya melihat pesanan yang sudah di-accept admin (tidak ada lagi "bohong").
+- **View**: tombol "Proses" & "Batalkan" kini tampil untuk status `dibayar`.
+- Alur ONLINE tidak berubah (verifikasi pembayaran tetap `pending_payment` → `menunggu_produksi`).
+
+### 2. Data Produk — modal, kategori, warna
+
+- **Modal tidak ikut scroll**: replikasi pattern `lockScroll`+kompensasi gutter dari halaman
+  pesanan; modal detail (dibuka via JS custom) kini mengunci body; panel modal diberi
+  `overscroll-behavior: contain`.
+- **Kategori**: search + `<select>` + tombol "+Kategori" (modal terpisah) digabung menjadi satu
+  **combobox searchable** (`#kategori-combobox`) dengan: pencarian filter, pilih kategori,
+  dan **inline create** (ketik nama → Simpan → kategori dibuat via AJAX `admin.kategori.store` &
+  langsung terpilih). Modal `modal-tambah-kategori` dihapus.
+- **Warna**: preset diperluas dari 5 → 15 (tambah Merah, Biru, Kuning, Marun, Hijau, Abu-abu,
+  Cokelat, Pink, Oranye, Ungu) + [+ Warna Custom] → chip warna custom (checked, bisa dihapus,
+  ikut `renderVarianStok`). `warnaSwatch()` diperbarui + fallback abu-abu. Tanpa ubah controller
+  (`warna.*` sudah `string|max:30`).
+
+### 3. Bahan Produksi (Admin) — restyle tema + edit
+
+- Halaman `Admin/bahan-produksi/index.blade.php` di-restyle penuh mengikuti pola premium halaman
+  admin lain: stat card (3, ikon Material + `card-premium` + `data-reveal`), section
+  `premium-heading`, tombol `btn-premium`, `premium-table`, badge status, search (`data-table-search`).
+- Modal "Tambah Bahan" (menggantikan form toggle) + **tombol Edit** per baris → modal edit,
+  memakai `admin.bahan-produksi.update`. Route update diubah `GET` → **`POST`** (method-spoofing
+  `@method` tidak dipakai karena route binding bervalue). `update()` di controller tetap dipakai.
+
+### Verifikasi batch
+
+- `DataPesananOrderStoreTest` ditambah 2 test (total 5): offline tunai → checkout & order
+  berstatus `dibayar`; `proses()` dari `dibayar` → `diproses`. Lulus.
+- Suite penuh: **34 passed + 1 risky** (OwnerKomplainTest pre-existing).
+- `php -l` + `php artisan view:cache` lulus.
+
+---
+
+## Batch Penyelesaian Offline + Modal Produk + Warna Swatch (SELESAI)
+
+### 1. Pesanan offline sampai tuntas (sebelumnya buntu di `siap_kirim`)
+
+Akar masalah: pesanan offline dibuat tanpa record `Shipment`, tidak punya kurir/resi, dan
+halaman Pengiriman mewajibkan input resi → offline tidak pernah mencapai `dikirim`, dan
+`OrderAutoComplete` hanya bekerja dari status `dikirim` → order offline **tidak pernah selesai**.
+
+Perbaikan:
+
+- **Kolom baru** `orders.tipe_pesanan` (`online`/`offline`, default `online`) + `orders.diambil_pada`
+  (record waktu pengambilan). Backfill offline: `checkout.nama_penerima IS NOT NULL` ATAU email user
+  `%@offline.raliva.test` ATAU ada `payments` tanpa `payment_account_id` (offline tunai). Hasil pada
+  DB dev: 30 order = 14 online / 16 offline.
+- **Model**: `Order` `fillable` + cast `diambil_pada` + helper `isOffline()`.
+- **`store()`** (`DataPesananController`): `tipe_pesanan` kini benar-benar disimpan di order.
+- **Tombol Selesai Admin**: method baru `selesai()` (`POST admin.pesanan.selesai`) — hanya untuk
+  order **offline berstatus `siap_kirim`**: lock → `selesai` + `diambil_pada` + `WalletService::creditOrder`
+  (idempotent) + ActivityLogger `admin.order.pickup` + notifikasi customer & self. Di View Data
+  Pesanan muncul tombol "Selesai" + modal konfirmasi (catatan opsional) + badge "Offline".
+- **Pengiriman**: query `siapDikirim` dikurasi jadi hanya `online`; section baru
+  **"Siap Diambil (Offline)"** menampilkan order offline `siap_kirim` tanpa form kurir/resi,
+  langsung tombol "Selesai (Diambil)". Filter status di Data Pesanan bertambah "Siap Kirim".
+- **Auto-complete offline**: `OrderAutoComplete::selesaikanOtomatis()` kini juga menyelesaikan
+  order offline `siap_kirim` yang melewati **3 hari** (`OFFLINE_BATAS_HARI`) → `selesai` +
+  `diambil_pada` + kredit wallet + notif + ActivityLogger `order.auto_picked_up`. Tetap jalan tiap
+  menit via scheduler (`routes/console.php`). Verifikasi: `php artisan order:auto-complete` di dev
+  melaporkan "Tidak ada pesanan yang perlu diselesaikan otomatis" (data dev semua barusan).
+
+### 2. Modal Tambah Produk — satu scroll container
+
+Akar: panel luar `max-h-[90vh] overflow-y-auto` membungkus `<form class="flex-1 overflow-y-auto">`
+yang juga scroll (nested) dengan sticky footer di dalam form dalam → footer hanyut ke tengah saat
+scroll, konten bisa kebawa jauh. Fix: `<form>` kini menjadi satu-satunya panel scroll
+(`max-h-[90vh] overflow-y-auto` + `overscroll-behavior: contain` + `scrollbar-gutter: stable`),
+header & footer sticky di dalam form (pola `modal-proses` pesanan).
+
+### 3. Warna — kisi swatch klik + warna custom (pilih visual, tanpa ketik hex)
+
+Preset diperluas 15 → **31 warna** (data & hex 15 warna lama identik) dalam grid `grid-cols-4/5`
+swatch toggle sekali klik. `warnaSwatch()` map diperluas (penambahan umum: Burgundy, Emerald, Coral,
+Teal, Cream, dll). `renderVarianStok()`/`getSelectedWarna()` tidak berubah (tetap baca
+`[name="warna[]"]:checked`).
+
+Awalnya blok custom dihapus, lalu **direvisi atas permintaan pemilik** (admin harus bisa membuat
+warna sendiri): blok **"+ Warna Sendiri"** dikembalikan dalam bentuk non-teks berpola baru:
+- `<input type="color">` (color picker visual) dengan preview lingkaran live — **tanpa mengetik
+  hex/kode warna**.
+- Nama warna **opsional** (mis. "Tosca"); jika dikosongkan → auto-nama **"Warna N"** (urut naik),
+  jadi tetap bisa tanpa ketikan sama sekali.
+- Tombol **Tambah** → chip custom masuk ke grid warna terpilih (checked, `name="warna[]"` value =
+  nama, `maxlength=30` cocok validasi `DataProdukController`), bisa dihapus (✕), dan ikut
+  `renderVarianStok()`.
+- Hex custom disimpan di `window.__warnaCustomHex` agar swatch kecil di grid stok varian ikut
+  warnanya (`warnaSwatch()` mencek map itu duluan); chip custom memakai inline `background-color`.
+
+Verifikasi revisi: `view:cache` lulus; semua 9 blok `<script>` inline halaman `/admin/produk` lulus
+`node --check` (v22); smoke HTTP 200 dengan marker `Warna Sendiri` (1), `type="color"` (1),
+preset 31, `warna-custom-fields` & `warna-custom-toggle` hadir.
+
+### Verifikasi batch
+
+- `DataPesananOrderStoreTest` 5 → **12 test** (48 assertion): tipe_pesanan offline/online tersimpan,
+  selesai offline dari siap_kirim (status + `diambil_pada` + Commission aktif), tolak online /
+  non-siap_kirim, auto-complete offline >3 hari, off (baru) tidak ter-complete.
+- Suite penuh: **41 passed + 1 risky** (OwnerKomplainTest pre-existing).
+- `php -l` lulus (7 file), `php artisan view:cache` lulus.
+- Smoke HTTP admin (jar terautentikasi, port 8099): `/admin/pesanan` 200 (badge Offline×16,
+  modal-selesai×4 utk 2 order siap_kirim), `/admin/pengiriman` 200 (section Siap Diambil + 2 tombol),
+  `/admin/produk` 200 (palet Burgundy/Violet hadir, "Warna Custom" 0).
