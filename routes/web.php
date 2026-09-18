@@ -352,6 +352,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::post('/pesanan', [AdminDataPesananController::class, 'store'])->name('pesanan.store');
     Route::post('/pesanan/{pesanan}/proses', [AdminDataPesananController::class, 'proses'])->name('pesanan.proses');
     Route::post('/pesanan/{pesanan}/batalkan', [AdminDataPesananController::class, 'batalkan'])->name('pesanan.batalkan');
+    Route::post('/pesanan/{pesanan}/selesai', [AdminDataPesananController::class, 'selesai'])->name('pesanan.selesai');
     Route::put('/pesanan/{pesanan}/items', [AdminDataPesananController::class, 'updateItems'])->name('pesanan.items.update');
     Route::get('/verifikasi-pembayaran', [VerifikasiPembayaranController::class, 'index'])->name('verifikasi-pembayaran');
     Route::post('/verifikasi-pembayaran/{pembayaran}/setujui', [VerifikasiPembayaranController::class, 'setujui'])->name('verifikasi-pembayaran.setujui');
@@ -367,7 +368,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::delete('/supplier/{supplier}', [SupplierController::class, 'destroy'])->name('supplier.destroy');
     Route::get('/bahan-produksi', [AdminBahanProduksiController::class, 'index'])->name('bahan-produksi');
     Route::post('/bahan-produksi', [AdminBahanProduksiController::class, 'store'])->name('bahan-produksi.store');
-    Route::get('/bahan-produksi/{bahan}/update', [AdminBahanProduksiController::class, 'update'])->name('bahan-produksi.update');
+    Route::post('/bahan-produksi/{bahan}/update', [AdminBahanProduksiController::class, 'update'])->name('bahan-produksi.update');
     Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi');
     Route::post('/transaksi/pemasukan', [TransaksiController::class, 'storePemasukan'])->name('transaksi.pemasukan');
     Route::post('/transaksi/pengeluaran', [TransaksiController::class, 'storePengeluaran'])->name('transaksi.pengeluaran');
