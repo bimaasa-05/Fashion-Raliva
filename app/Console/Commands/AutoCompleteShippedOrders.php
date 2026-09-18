@@ -9,7 +9,7 @@ class AutoCompleteShippedOrders extends Command
 {
     protected $signature = 'order:auto-complete';
 
-    protected $description = 'Selesaikan otomatis order dikirim yang melewati batas konfirmasi';
+    protected $description = 'Selesaikan otomatis order dikirim/offline yang melewati batas konfirmasi';
 
     public function handle(): int
     {
