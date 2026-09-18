@@ -208,8 +208,45 @@ class SaldoController extends Controller
             route('superadmin.verifikasi-topup')
         );
 
-        return redirect()->route('customer.saldo')
+        return redirect()->route('customer.saldo.topup.selesai', $topup->customer_topup_id)
             ->with('toast', ['message' => 'Bukti topup diunggah. Menunggu verifikasi Super Admin.', 'icon' => 'task_alt']);
+    }
+
+    public function selesai(CustomerTopup $topup)
+    {
+        if (! Auth::check()) {
+            return redirect()->route('login', ['redirect' => route('customer.saldo.topup.selesai', $topup->customer_topup_id)]);
+        }
+        if (Auth::user()->role?->nama_role !== Role::CUSTOMER) {
+            abort(403);
+        }
+        if ($topup->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $this->expireOverdue();
+        $topup->load(['payment.paymentMethod', 'payment.account']);
+
+        return view('customer.saldo.selesai', compact('topup'));
+    }
+
+    public function paymentStatus(CustomerTopup $topup)
+    {
+        if (! Auth::check()) {
+            return response()->json(['unauthenticated' => true], 401);
+        }
+
+        if ($topup->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $this->expireOverdue();
+        $topup->refresh();
+
+        return response()->json([
+            'status' => $topup->status,
+            'verified' => $topup->status === CustomerTopup::STATUS_TERVERIFIKASI,
+        ]);
     }
 
     /**
