@@ -125,7 +125,7 @@
 {{-- Modal Detail Produk (shared, read-only) --}}
 <div id="modal-detail-produk" data-modal class="fixed inset-0 z-[70] hidden">
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-    <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-2xl bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
+    <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-2xl bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto" style="overscroll-behavior: contain;">
         <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div class="min-w-0">
                 <h3 id="detail-nama" class="font-title-md text-title-md text-on-surface premium-heading">-</h3>
@@ -163,8 +163,20 @@
 <script>
     (function () {
         const detailModal = document.getElementById('modal-detail-produk');
-        const openModal = (el) => el?.classList.remove('hidden');
-        const closeModal = (el) => el?.classList.add('hidden');
+        const lockScroll = () => {
+            const w = window.innerWidth - document.documentElement.clientWidth;
+            if (w > 0) { document.body.style.paddingRight = w + 'px'; document.documentElement.style.paddingRight = w + 'px'; }
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+        };
+        const unlockScroll = () => {
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            document.documentElement.style.overflow = '';
+            document.documentElement.style.paddingRight = '';
+        };
+        const openModal = (el) => { el?.classList.remove('hidden'); lockScroll(); };
+        const closeModal = (el) => { el?.classList.add('hidden'); if (!document.querySelector('[data-modal]:not(.hidden)')) unlockScroll(); };
 
         const fillGallery = (urls) => {
             const gallery = document.getElementById('detail-gallery');
@@ -323,15 +335,15 @@
 {{-- Modal Form Produk — tengah, pola data-modal --}}
 <div id="modal-form-produk" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-    <div class="relative mx-auto w-full max-w-xl bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl flex flex-col max-h-[90vh] overflow-y-auto">
+    <form method="POST" action="{{ route('admin.produk.store') }}" enctype="multipart/form-data" class="relative mx-auto w-full max-w-xl bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto" style="overscroll-behavior: contain; scrollbar-gutter: stable;">
+        @csrf
     <div class="sticky top-0 bg-surface-container-lowest z-10 flex items-center justify-between px-6 py-5 border-b border-muted-border shrink-0">
         <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Produk Baru</h3>
         <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
             <span class="material-symbols-outlined">close</span>
         </button>
     </div>
-    <form method="POST" action="{{ route('admin.produk.store') }}" enctype="multipart/form-data" class="flex-1 overflow-y-auto p-6 space-y-6">
-        @csrf
+    <div class="p-6 space-y-6">
         {{-- Foto --}}
         <div>
             <label class="block raliva-label mb-2">Foto Produk (maks. 8 foto)</label>
@@ -365,23 +377,36 @@
                     <option value="made_to_order">Made to Order</option>
                 </select>
             </div>
-            <div class="grid grid-cols-2 gap-gutter">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
                 <div>
-                    <label for="fp-kategori" class="block raliva-label mb-2">Kategori</label>
-                    <div class="flex gap-2">
-                        <div class="flex-1 space-y-2">
-                            <div class="relative">
-                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant pointer-events-none">search</span>
-                                <input type="text" id="kategori-search" placeholder="Cari kategori..." autocomplete="off" class="raliva-input text-sm pl-9" />
+                    <label for="kategori-combobox-btn" class="block raliva-label mb-2">Kategori</label>
+                    <div class="relative" id="kategori-combobox">
+                        <button type="button" id="kategori-combobox-btn" aria-haspopup="listbox" aria-expanded="false" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-3.5 pr-10 py-2.5 font-body-md text-sm text-on-surface text-left transition-colors focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10">
+                            <span id="kategori-combobox-label" class="truncate text-on-surface-variant">Cari atau ketik kategori...</span>
+                            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant pointer-events-none">expand_more</span>
+                        </button>
+                        <input type="hidden" name="category_id" id="fp-kategori" value="{{ old('category_id') }}" />
+                        <div id="kategori-combobox-menu" class="hidden absolute z-30 mt-1 w-full bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden">
+                            <div class="relative border-b border-muted-border p-2">
+                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant pointer-events-none">search</span>
+                                <input type="text" id="kategori-combobox-search" placeholder="Cari kategori..." autocomplete="off" class="raliva-input text-sm pl-9" />
                             </div>
-                            <select id="fp-kategori" name="category_id" class="raliva-select w-full">
-                                <option value="">— Pilih —</option>
+                            <ul id="kategori-combobox-list" role="listbox" class="max-h-52 overflow-y-auto overscroll-contain py-1" style="overscroll-behavior: contain;">
                                 @foreach ($categories as $c)
-                                    <option value="{{ $c->category_id }}">{{ $c->nama_kategori }}</option>
+                                    <li role="option" data-category-id="{{ $c->category_id }}" data-category-name="{{ $c->nama_kategori }}" class="px-4 py-2.5 text-sm cursor-pointer hover:bg-surface-container-low transition-colors text-on-surface">{{ $c->nama_kategori }}</li>
                                 @endforeach
-                            </select>
+                            </ul>
+                            <div id="kategori-combobox-inline" class="hidden border-t border-muted-border p-3 space-y-2">
+                                <input type="text" id="ktg-inline-nama" placeholder="Nama kategori baru (cth. Outerwear)" autocomplete="off" maxlength="100" class="raliva-input text-sm" />
+                                <div class="flex gap-2 justify-end">
+                                    <button type="button" id="ktg-inline-batal" class="px-3 py-1.5 border border-muted-border rounded-lg text-xs text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                                    <button type="button" id="ktg-inline-simpan" class="px-3 py-1.5 bg-deep-onyx text-on-primary text-xs rounded btn-premium">Simpan</button>
+                                </div>
+                            </div>
+                            <button type="button" id="kategori-combobox-add" class="w-full flex items-center gap-2 px-4 py-2.5 border-t border-muted-border text-gold-accent text-sm hover:bg-gold-accent/5 transition-colors">
+                                <span class="material-symbols-outlined text-[18px]">add</span> Buat kategori baru
+                            </button>
                         </div>
-                        <button type="button" data-modal-open="modal-tambah-kategori" class="px-3 py-2 border border-gold-accent/40 text-gold-accent rounded-lg text-xs whitespace-nowrap h-fit">+ Kategori</button>
                     </div>
                 </div>
                 <div>
@@ -416,15 +441,30 @@
                 <input type="hidden" name="ukuran_terpilih" id="ukuran-terpilih" />
             </div>
             <div>
-                <p class="raliva-label mb-2">Warna</p>
-                <div class="flex flex-wrap gap-3">
-                    @foreach ([['Hitam', '#1c1b1b'], ['Krem', '#e8dcc8'], ['Navy', '#22304a'], ['Camel', '#c19a6b'], ['Putih', '#f5f3f3']] as $color)
-                        <label class="flex items-center gap-2 cursor-pointer">
+                <p class="raliva-label mb-2">Warna <span class="text-xs font-normal text-on-surface-variant">(klik untuk pilih, bisa lebih dari satu)</span></p>
+                <div class="grid grid-cols-4 sm:grid-cols-5 gap-2" id="warna-presets">
+                    @foreach ([['Navy', '#22304a'], ['Camel', '#c19a6b'], ['Putih', '#f5f3f3'], ['Merah', '#c62828'], ['Biru', '#2360a8'], ['Kuning', '#e6b91e'], ['Marun', '#7d2b33'], ['Hijau', '#2e7d32'], ['Emerald', '#046e4c'], ['Coral', '#f2875c'], ['Teal', '#0f766e'], ['Cream', '#f6ecd9'], ['Violet', '#7c3aed'], ['Sage', '#9caf88']] as $color)
+                        <label class="warna-chip flex flex-col items-center gap-1 py-2 rounded-lg border border-muted-border cursor-pointer hover:border-gold-accent transition-colors has-[:checked]:bg-gold-accent/10 has-[:checked]:border-gold-accent" data-warna-value="{{ $color[0] }}">
                             <input type="checkbox" name="warna[]" value="{{ $color[0] }}" class="sr-only peer" />
                             <span class="w-7 h-7 rounded-full border border-outline-variant shadow-inner peer-checked:ring-2 peer-checked:ring-gold-accent peer-checked:ring-offset-2 ring-offset-surface-container-lowest transition-all" style="background-color: {{ $color[1] }};"></span>
-                            <span class="font-body-md text-xs text-on-surface peer-checked:text-gold-accent">{{ $color[0] }}</span>
+                            <span class="font-body-md text-[10px] text-on-surface-variant peer-checked:text-gold-accent text-center leading-tight">{{ $color[0] }}</span>
                         </label>
                     @endforeach
+                </div>
+                <div class="mt-3">
+                    <button type="button" id="warna-custom-toggle" class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-dashed border-gold-accent/40 text-gold-accent text-xs font-medium hover:bg-gold-accent/5 transition-colors">
+                        <span class="material-symbols-outlined text-[16px]">palette</span> + Warna Sendiri
+                    </button>
+                    <div id="warna-custom-fields" class="hidden mt-3 p-3 border border-muted-border rounded-lg bg-surface-container-low space-y-3">
+                        <div class="flex items-center gap-3">
+                            <label title="Pilih warna" class="relative w-10 h-10 rounded-full border border-muted-border shadow-inner cursor-pointer overflow-hidden shrink-0" id="warna-custom-preview" style="background-color:#1c1b1b;">
+                                <input type="color" id="warna-custom-color" value="#1c1b1b" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" title="Pilih warna" />
+                            </label>
+                            <input type="text" id="warna-custom-name" placeholder="Nama warna (opsional) — cth: Tosca" maxlength="30" class="raliva-input text-sm flex-1" style="width:auto;" />
+                            <button type="button" id="warna-custom-add" class="px-4 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium shrink-0">Tambah</button>
+                        </div>
+                        <div id="warna-custom-chips" class="flex flex-wrap gap-2"></div>
+                    </div>
                 </div>
             </div>
             <div>
@@ -444,38 +484,8 @@
             </button>
         </div>
     </form>
-    </div>
 </div>
 
-{{-- Modal Tambah Kategori (terpisah dari form produk) --}}
-<div id="modal-tambah-kategori" data-modal class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-    <div class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl flex flex-col max-h-[90vh] overflow-y-auto">
-        <div class="sticky top-0 bg-surface-container-lowest z-10 flex items-center justify-between px-6 py-5 border-b border-muted-border shrink-0">
-            <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Kategori Baru</h3>
-            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-        <form id="form-tambah-kategori" class="flex-1 overflow-y-auto p-6 space-y-4">
-            @csrf
-            <div>
-                <label for="ktg-nama" class="block raliva-label mb-2">Nama Kategori</label>
-                <input id="ktg-nama" name="nama_kategori" type="text" placeholder="cth. Outerwear" required maxlength="100" class="raliva-input" />
-            </div>
-            <div>
-                <label for="ktg-deskripsi" class="block raliva-label mb-2">Deskripsi</label>
-                <textarea id="ktg-deskripsi" name="deskripsi" rows="3" maxlength="500" placeholder="Opsional, penjelasan singkat kategori..." class="raliva-textarea"></textarea>
-            </div>
-        </form>
-        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border px-6 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
-            <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-            <button type="button" id="ktg-simpan" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined text-[16px]">check_circle</span>Simpan Kategori
-            </button>
-        </div>
-    </div>
-</div>
 @push('scripts')
 <script>
 document.querySelectorAll('.ukuran-chip').forEach(btn=>{
@@ -557,7 +567,17 @@ function escapeHtml(str) {
 }
 
 function warnaSwatch(name) {
-    const map = {'Hitam':'#1c1b1b','Krem':'#e8dcc8','Navy':'#22304a','Camel':'#c19a6b','Putih':'#f5f3f3'};
+    name = String(name || '').trim();
+    if (window.__warnaCustomHex && window.__warnaCustomHex[name]) return window.__warnaCustomHex[name];
+    const map = {
+        'Hitam':'#1c1b1b','Krem':'#e8dcc8','Navy':'#22304a','Camel':'#c19a6b','Putih':'#f5f3f3',
+        'Merah':'#c62828','Biru':'#2360a8','Kuning':'#e6b91e','Marun':'#7d2b33','Hijau':'#2e7d32',
+        'Abu-abu':'#7c7c7c','Cokelat':'#6d4c41','Pink':'#e29bb0','Oranye':'#e8792f','Ungu':'#6a4c93',
+        'Tosca':'#2f9e94','Lilac':'#b09cc1','Gold':'#c9a24d','Silver':'#b9bdc4','Mint':'#a8d5ba',
+        'Beige':'#d7c9a8','Burgundy':'#6e1423','Emerald':'#046e4c','Coral':'#f2875c','Teal':'#0f766e',
+        'Cream':'#f6ecd9','Mustard':'#d2a13c','Olive':'#708238','Rust':'#b7410e','Violet':'#7c3aed',
+        'Sage':'#9caf88'
+    };
     return map[name] || '#cccccc';
 }
 
@@ -598,36 +618,94 @@ function addCustomSize() {
     document.querySelectorAll('[name^="custom_"]').forEach(i => i.value = '');
 }
 
-// --- Searchable kategori ---
-(function() {
-    const search = document.getElementById('kategori-search');
-    const select = document.getElementById('fp-kategori');
-    if (!search || !select) return;
+// --- Combobox Kategori (searchable + inline create) ---
+(function () {
+    const box = document.getElementById('kategori-combobox');
+    const btn = document.getElementById('kategori-combobox-btn');
+    const menu = document.getElementById('kategori-combobox-menu');
+    const label = document.getElementById('kategori-combobox-label');
+    const hidden = document.getElementById('fp-kategori');
+    const search = document.getElementById('kategori-combobox-search');
+    const list = document.getElementById('kategori-combobox-list');
+    const inline = document.getElementById('kategori-combobox-inline');
+    const inlineNama = document.getElementById('ktg-inline-nama');
+    const inlineSimpan = document.getElementById('ktg-inline-simpan');
+    const inlineBatal = document.getElementById('ktg-inline-batal');
+    const addBtn = document.getElementById('kategori-combobox-add');
+    if (!box || !btn || !menu || !hidden || !list) return;
+
+    const openMenu = () => {
+        menu.classList.remove('hidden');
+        btn.setAttribute('aria-expanded', 'true');
+        requestAnimationFrame(() => search?.focus());
+    };
+    const closeMenu = () => {
+        menu.classList.add('hidden');
+        inline.classList.add('hidden');
+        btn.setAttribute('aria-expanded', 'false');
+    };
+    const selectCategory = (id, name) => {
+        hidden.value = id;
+        label.textContent = name;
+        label.classList.remove('text-on-surface-variant');
+        label.classList.add('text-on-surface');
+        closeMenu();
+    };
+
+    const isOpen = () => !menu.classList.contains('hidden');
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (isOpen()) { closeMenu(); } else { openMenu(); }
+    });
+    document.addEventListener('click', (e) => {
+        if (!box.contains(e.target) && !menu.contains(e.target)) closeMenu();
+    });
+    search.addEventListener('keydown', (e) => { if (e.key === 'Enter') e.preventDefault(); });
     search.addEventListener('input', () => {
         const q = search.value.trim().toLowerCase();
-        Array.from(select.options).forEach(opt => {
-            if (!opt.value) return;
-            opt.style.display = opt.textContent.toLowerCase().includes(q) ? '' : 'none';
+        let visible = 0;
+        list.querySelectorAll('[data-category-id]').forEach((li) => {
+            const show = li.getAttribute('data-category-name').toLowerCase().includes(q);
+            li.classList.toggle('hidden', !show);
+            if (show) visible++;
         });
+        list.querySelector('[data-category-empty]')?.remove();
+        if (!visible) {
+            const empty = document.createElement('li');
+            empty.setAttribute('data-category-empty', '');
+            empty.className = 'px-4 py-6 text-center text-xs text-on-surface-variant';
+            empty.textContent = 'Kategori "' + search.value + '" tidak ditemukan.';
+            list.appendChild(empty);
+        }
     });
-})();
+    list.querySelectorAll('[data-category-id]').forEach((li) => {
+        li.addEventListener('click', () => selectCategory(li.getAttribute('data-category-id'), li.getAttribute('data-category-name')));
+    });
+    addBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        inline.classList.remove('hidden');
+        inlineNama.value = '';
+        requestAnimationFrame(() => inlineNama.focus());
+    });
+    inlineBatal.addEventListener('click', () => inline.classList.add('hidden'));
 
-// --- Tambah Kategori via AJAX ---
-(function() {
-    const btn = document.getElementById('ktg-simpan');
-    const modal = document.getElementById('modal-tambah-kategori');
-    const form = document.getElementById('form-tambah-kategori');
-    if (!btn || !modal || !form) return;
-    btn.addEventListener('click', () => {
-        const nama = document.getElementById('ktg-nama').value.trim();
-        const deskripsi = document.getElementById('ktg-deskripsi').value.trim();
-        if (!nama) { alert('Nama kategori wajib diisi.'); return; }
-        btn.disabled = true;
-        btn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>Menyimpan...';
+    const saveCategory = () => {
+        const nama = inlineNama.value.trim();
+        if (!nama) { window.showRalivaToast('Nama kategori wajib diisi.', 'gpp_bad'); return; }
+        const dup = Array.from(list.querySelectorAll('[data-category-id]')).some(
+            (li) => li.getAttribute('data-category-name').toLowerCase() === nama.toLowerCase()
+        );
+        if (dup) {
+            Array.from(list.querySelectorAll('[data-category-id]')).forEach((li) => {
+                if (li.getAttribute('data-category-name').toLowerCase() === nama.toLowerCase()) selectCategory(li.getAttribute('data-category-id'), nama);
+            });
+            inline.classList.add('hidden');
+            return;
+        }
+        inlineSimpan.disabled = true;
         const data = new FormData();
-        data.append('_token', document.querySelector('input[name="_token"]').value);
+        data.append('_token', document.querySelector('input[name="_token"]')?.value || '');
         data.append('nama_kategori', nama);
-        data.append('deskripsi', deskripsi);
         fetch('{{ route('admin.kategori.store') }}', {
             method: 'POST',
             headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
@@ -636,24 +714,104 @@ function addCustomSize() {
         .then(r => r.json().then(j => ({ ok: r.ok, j })))
         .then(({ ok, j }) => {
             if (!ok || !j.success) throw new Error(j.message || 'Gagal menyimpan kategori.');
-            const opt = document.createElement('option');
-            opt.value = j.kategori.category_id;
-            opt.textContent = j.kategori.nama_kategori;
-            const select = document.getElementById('fp-kategori');
-            select.appendChild(opt);
-            select.value = opt.value;
-            document.getElementById('ktg-nama').value = '';
-            document.getElementById('ktg-deskripsi').value = '';
-            modal.classList.add('hidden');
-            const search = document.getElementById('kategori-search');
-            if (search) search.value = '';
-            alert('Kategori "' + opt.textContent + '" berhasil ditambahkan.');
+            const li = document.createElement('li');
+            li.setAttribute('role', 'option');
+            li.dataset.categoryId = j.kategori.category_id;
+            li.dataset.categoryName = j.kategori.nama_kategori;
+            li.className = 'px-4 py-2.5 text-sm cursor-pointer hover:bg-surface-container-low transition-colors text-on-surface';
+            li.textContent = j.kategori.nama_kategori;
+            li.addEventListener('click', () => selectCategory(j.kategori.category_id, j.kategori.nama_kategori));
+            list.appendChild(li);
+            selectCategory(j.kategori.category_id, j.kategori.nama_kategori);
+            window.showRalivaToast('Kategori "' + j.kategori.nama_kategori + '" berhasil ditambahkan.', 'task_alt');
         })
-        .catch(err => { alert(err.message || 'Terjadi kesalahan.'); })
-        .finally(() => {
-            btn.disabled = false;
-            btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">check_circle</span>Simpan Kategori';
+        .catch(err => window.showRalivaToast(err.message || 'Terjadi kesalahan.', 'gpp_bad'))
+        .finally(() => { inlineSimpan.disabled = false; });
+    };
+    inlineSimpan.addEventListener('click', saveCategory);
+    inlineNama.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); saveCategory(); } });
+})();
+
+// --- Warna Custom (pilih visual, nama opsional) ---
+(function () {
+    const toggleBtn = document.getElementById('warna-custom-toggle');
+    const fields = document.getElementById('warna-custom-fields');
+    const colorInput = document.getElementById('warna-custom-color');
+    const preview = document.getElementById('warna-custom-preview');
+    const nameInput = document.getElementById('warna-custom-name');
+    const addBtn = document.getElementById('warna-custom-add');
+    const chips = document.getElementById('warna-custom-chips');
+    if (!toggleBtn || !fields || !colorInput || !preview || !nameInput || !addBtn || !chips) return;
+
+    window.__warnaCustomHex = window.__warnaCustomHex || {};
+
+    toggleBtn.addEventListener('click', () => {
+        fields.classList.toggle('hidden');
+        if (!fields.classList.contains('hidden')) requestAnimationFrame(() => colorInput.click());
+    });
+
+    colorInput.addEventListener('input', () => {
+        preview.style.background = colorInput.value;
+    });
+
+    const autoName = () => 'Warna ' + (document.querySelectorAll('[name="warna[]"]').length + 1);
+
+    const addCustomWarna = () => {
+        const nama = (nameInput.value || '').trim() || autoName();
+        const exists = Array.from(document.querySelectorAll('[name="warna[]"]')).some((cb) => cb.value.toLowerCase() === nama.toLowerCase());
+        if (exists) { window.showRalivaToast('Warna "' + nama + '" sudah ada.', 'gpp_bad'); return; }
+
+        window.__warnaCustomHex[nama] = colorInput.value;
+
+        const labelEl = document.createElement('label');
+        labelEl.className = 'warna-chip flex items-center gap-2 py-1.5 pr-2 pl-2 rounded-lg border border-muted-border cursor-pointer hover:border-gold-accent transition-colors has-[:checked]:bg-gold-accent/10 has-[:checked]:border-gold-accent';
+        labelEl.innerHTML = `
+            <input type="checkbox" name="warna[]" value="${escapeHtml(nama)}" class="sr-only peer" checked />
+            <span class="w-6 h-6 rounded-full border border-outline-variant shadow-inner peer-checked:ring-2 peer-checked:ring-gold-accent peer-checked:ring-offset-1 ring-offset-surface-container-lowest transition-all" style="background-color: ${colorInput.value};"></span>
+            <span class="font-body-md text-xs text-on-surface peer-checked:text-gold-accent">${escapeHtml(nama)}</span>
+            <button type="button" class="text-on-surface-variant hover:text-error transition-colors" title="Hapus warna" onclick="(function(el){var cb=el.closest('label').querySelector('input[type=checkbox]'); if(cb&&window.__warnaCustomHex)delete window.__warnaCustomHex[cb.value]; el.closest('label').remove(); renderVarianStok();})(this)">
+                <span class="material-symbols-outlined text-[14px]">close</span>
+            </button>
+        `;
+        labelEl.querySelector('input').addEventListener('change', renderVarianStok);
+        chips.appendChild(labelEl);
+        nameInput.value = '';
+        renderVarianStok();
+        window.showRalivaToast('Warna custom "' + nama + '" ditambahkan.', 'task_alt');
+    };
+
+    addBtn.addEventListener('click', addCustomWarna);
+    nameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addCustomWarna(); } });
+})();
+
+// --- Anti scroll-page saat modal terbuka (padanan halaman pesanan) ---
+(function () {
+    const lockScroll = () => {
+        const w = window.innerWidth - document.documentElement.clientWidth;
+        if (w > 0) { document.body.style.paddingRight = w + 'px'; document.documentElement.style.paddingRight = w + 'px'; }
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+    };
+    const unlockScroll = () => {
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+        document.documentElement.style.overflow = '';
+        document.documentElement.style.paddingRight = '';
+    };
+    document.querySelectorAll('[data-modal-open]').forEach((btn) => {
+        btn.addEventListener('click', () => setTimeout(lockScroll, 0));
+    });
+    document.querySelectorAll('[data-modal-close]').forEach((el) => {
+        el.addEventListener('click', () => {
+            setTimeout(() => {
+                if (!document.querySelector('[data-modal]:not(.hidden)')) unlockScroll();
+            }, 50);
         });
+    });
+    document.addEventListener('click', (e) => {
+        if (e.target.matches('[data-modal]')) setTimeout(() => {
+            if (!document.querySelector('[data-modal]:not(.hidden)')) unlockScroll();
+        }, 50);
     });
 })();
 </script>
