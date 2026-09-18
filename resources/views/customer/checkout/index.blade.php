@@ -490,11 +490,12 @@
         'kode_pos' => old('kode_pos', $isGuest ? '' : ($address?->kode_pos ?? '')),
         'catatan' => old('catatan', ''),
     ];
+    $hasSavedAddress = ! $isGuest && $address ? true : false;
 @endphp
 
 <!-- TopAppBar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-    <a href="{{ $buyId > 0 ? route('customer.shop.produk-detail', $buyId) : route('customer.chart') }}" aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+    <a href="{{ $backProductId > 0 ? route('customer.shop.produk-detail', $backProductId) : route('customer.chart') }}" aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
         <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
     </a>
     <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('Review') }}</h1>
@@ -542,7 +543,7 @@
         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium mb-lg reveal-up">
             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('ORDER') }}</p>
             <h2 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ __('Review Pesanan') }}</h2>
-            <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Periksa data pemesan, catatan, dan rincian pesanan sebelum melanjutkan ke pembayaran. Akun akan dibuat otomatis saat lanjut.') }}</p>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Periksa data pemesan, catatan, dan rincian pesanan sebelum melanjutkan ke pembayaran. Akun dan alamat akan dibuat otomatis saat lanjut.') }}</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,.95fr)] gap-lg items-start">
@@ -555,6 +556,29 @@
                     <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('DATA PEMESAN') }}</p>
                     <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Data Pemesan') }}</h3>
 
+                    @if($hasSavedAddress)
+                    <div class="rounded-xl border border-[var(--border-soft)] bg-surface-warm p-md">
+                        <div class="flex items-start justify-between gap-sm">
+                            <div class="space-y-sm min-w-0">
+                                <p class="font-body-md text-body-md font-semibold text-on-surface">{{ $address->nama_penerima }}</p>
+                                <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $address->nomor_telepon }}</p>
+                                <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $address->alamat }}<br/>{{ $address->kota }}, {{ $address->provinsi }} {{ $address->kode_pos }}</p>
+                                <p class="font-label-sm text-label-sm text-on-surface-variant/70 flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">location_on</span> {{ __('Alamat diisi otomatis dari alamat tersimpan.') }}</p>
+                            </div>
+                            <a href="{{ route('customer.address.index') }}" class="shrink-0 flex items-center gap-xs text-secondary font-label-sm text-label-sm hover:opacity-75 transition-opacity">
+                                <span class="material-symbols-outlined text-[18px]">settings</span> {{ __('Kelola Alamat') }}
+                            </a>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="nama_penerima" value="{{ $prefill['nama_penerima'] }}"/>
+                    <input type="hidden" name="nomor_telepon" value="{{ $prefill['nomor_telepon'] }}"/>
+                    <input type="hidden" name="email_pelanggan" value="{{ $prefill['email_pelanggan'] }}"/>
+                    <input type="hidden" name="provinsi" value="{{ $prefill['provinsi'] }}"/>
+                    <input type="hidden" name="kota" value="{{ $prefill['kota'] }}"/>
+                    <input type="hidden" name="kode_pos" value="{{ $prefill['kode_pos'] }}"/>
+                    <input type="hidden" name="alamat" value="{{ $prefill['alamat'] }}"/>
+                    @else
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-md">
                         <label class="flex flex-col gap-1.5 lg:col-span-3">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Nama Lengkap') }} <span class="text-error">*</span></span>
@@ -570,7 +594,7 @@
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Email') }} <span class="text-error">*</span></span>
                             <input name="email_pelanggan" type="email" value="{{ $prefill['email_pelanggan'] }}" required maxlength="150" class="co-input @error('email_pelanggan') is-error @enderror" placeholder="nama@email.com"/>
                             @error('email_pelanggan')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
-                            <span class="font-label-sm text-label-sm text-on-surface-variant/70">{{ __('Dipakai sebagai username akun. Password default: Raliva123') }}</span>
+                            @if($isGuest)<span class="font-label-sm text-label-sm text-on-surface-variant/70">{{ __('Dipakai sebagai username akun. Password default: Raliva123') }}</span>@endif
                         </label>
                         <label class="flex flex-col gap-1.5 lg:col-span-2">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Provinsi') }} <span class="text-error">*</span></span>
@@ -593,8 +617,9 @@
                             @error('alamat')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
                         </label>
                     </div>
-                    @if(!$isGuest && $address)
-                    <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-md flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">location_on</span> {{ __('Diisi otomatis dari alamat default. Ubah bila perlu.') }} <a href="{{ route('customer.address.index') }}" class="text-secondary underline underline-offset-2">{{ __('Kelola alamat') }}</a></p>
+                    @if(!$isGuest)
+                    <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-md flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">location_on</span> {{ __('Alamat akan tersimpan otomatis setelah pesanan dibuat.') }}</p>
+                    @endif
                     @endif
                 </div>
 
@@ -715,7 +740,9 @@
                         <span>Total Payment</span>
                         <span id="co-total">Rp {{ number_format((float)$total, 0, ',', '.') }}</span>
                     </div>
-                    <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Akun akan dibuat otomatis (password: Raliva123) saat lanjut ke pembayaran.') }}</p>
+                    @if($isGuest)
+                    <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Akun dan alamat akan dibuat otomatis (password: Raliva123) saat lanjut ke pembayaran.') }}</p>
+                    @endif
                 </div>
 
                 {{-- ========== METODE PENGIRIMAN (desktop) ========== --}}

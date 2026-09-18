@@ -839,15 +839,12 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
 
         .pay-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: .5rem;
-        }
-
-        @media(min-width:768px) {
-            .pay-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: .75rem;
-            }
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: 1fr 1fr;
+            grid-template-areas:
+                'qris ewallet'
+                'saldo bank_transfer';
+            gap: .5rem .75rem;
         }
 
         .detail-row {
@@ -892,6 +889,9 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
 
     @php
         $akunBaruEmail = session('akun_baru');
+        $saldoCust = Auth::check() && Auth::user()->role?->nama_role === \App\Models\Role::CUSTOMER
+            ? (float) \App\Support\CustomerWalletService::balance(Auth::user())
+            : 0.0;
     @endphp
 
     <header
@@ -1010,8 +1010,15 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                     <p class="font-body-sm text-body-sm text-on-surface-variant">
                                         {{ __('Belum ada metode pembayaran aktif. Hubungi admin.') }}</p>
                                 @else
-                                    <div class="pay-grid" id="pay-grid">
-                                        @foreach ($paymentMethods as $pm)
+                                    @php
+                                        $leftMethods = $paymentMethods->where('kode_metode', 'qris');
+                                        $rightMethods = $paymentMethods->whereIn('kode_metode', ['ewallet', 'bank_transfer']);
+                                        $rightMethods = $rightMethods->merge(
+                                            $paymentMethods->reject(fn ($pm) => in_array($pm->kode_metode, ['qris', 'ewallet', 'bank_transfer'], true))
+                                        );
+                                    @endphp
+                                    <div id="pay-grid" class="pay-grid">
+                                        @foreach ($leftMethods as $pm)
                                             @php
                                                 $isSelected =
                                                     (string) old('payment_method_id', $payment->payment_method_id) ===
@@ -1025,10 +1032,44 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                 $qrAccount = $pm->kode_metode === 'qris' ? $pm->accounts->first() : null;
                                             @endphp
                                             <div class="pay-method{{ $isSelected ? ' selected' : '' }}"
+                                                style="grid-area: qris"
                                                 data-id="{{ $pm->payment_method_id }}"
                                                 data-nama="{{ $pm->nama_metode }}"
                                                 data-kode="{{ $pm->kode_metode }}"
                                                 data-account-id="{{ $qrAccount?->platform_bank_account_id ?? '' }}">
+                                                <span
+                                                    class="material-symbols-outlined text-[28px]">{{ $icon }}</span>
+                                                <span
+                                                    class="text-center leading-tight text-sm">{{ $pm->nama_metode }}</span>
+                                            </div>
+                                        @endforeach
+                                        <div class="pay-method{{ $payment->paymentMethod?->kode_metode === \App\Models\PaymentMethod::KODE_SALDO_AKUN ? ' selected' : '' }}"
+                                            style="grid-area: saldo"
+                                            data-id="" data-nama="Saldo Akun" data-kode="saldo_akun"
+                                            data-account-id="">
+                                            <span
+                                                class="material-symbols-outlined text-[28px]">account_balance_wallet</span>
+                                            <span class="text-center leading-tight text-sm">Saldo
+                                                Akun</span>
+                                        </div>
+                                        @foreach ($rightMethods as $pm)
+                                            @php
+                                                $isSelected =
+                                                    (string) old('payment_method_id', $payment->payment_method_id) ===
+                                                    (string) $pm->payment_method_id;
+                                                $icon = match ($pm->kode_metode) {
+                                                    'qris' => 'qr_code_2',
+                                                    'ewallet' => 'account_balance_wallet',
+                                                    'bank_transfer' => 'account_balance',
+                                                    default => 'payments',
+                                                };
+                                            @endphp
+                                            <div class="pay-method{{ $isSelected ? ' selected' : '' }}"
+                                                style="grid-area: {{ $pm->kode_metode }}"
+                                                data-id="{{ $pm->payment_method_id }}"
+                                                data-nama="{{ $pm->nama_metode }}"
+                                                data-kode="{{ $pm->kode_metode }}"
+                                                data-account-id="">
                                                 <span
                                                     class="material-symbols-outlined text-[28px]">{{ $icon }}</span>
                                                 <span
@@ -1173,6 +1214,66 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                 @endif
                                             </div>
                                         @endforeach
+
+                                        <div id="detail-saldo_akun" class="method-detail hidden"
+                                            data-kode="saldo_akun">
+                                            <div
+                                                class="border border-outline-variant rounded-xl p-md md:p-lg space-y-md">
+                                                <div class="flex items-center justify-between gap-sm">
+                                                    <span
+                                                        class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Saldo tersedia') }}</span>
+                                                    <strong
+                                                        class="font-title-md text-title-md text-[var(--chrome-accent)]">Rp
+                                                        {{ number_format($saldoCust, 0, ',', '.') }}</strong>
+                                                </div>
+                                                <div class="detail-row">
+                                                    <span>{{ __('Total Dibayar') }}</span>
+                                                    <strong>Rp
+                                                        {{ number_format((float) $payment->jumlah, 0, ',', '.') }}</strong>
+                                                </div>
+@if ($saldoCust >= (float) $payment->jumlah)
+                                                    <button type="submit" form="form-pay-saldo"
+                                                        class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                                                        <span
+                                                            class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+                                                        <span>{{ __('Bayar dengan Saldo Akun') }}</span>
+                                                    </button>
+                                                    <p
+                                                        class="font-label-sm text-label-sm text-on-surface-variant mt-sm">
+                                                        {{ __('Saldo akan dipotong sebesar total dan pesanan langsung diproses.') }}
+                                                    </p>
+                                                @else
+                                                    <div
+                                                        class="relative overflow-hidden border border-emerald-200 bg-gradient-to-br from-emerald-100 via-emerald-50 to-surface-warm rounded-xl p-md md:p-lg">
+                                                        <span class="absolute -top-7 -right-7 w-32 h-32 rounded-full bg-emerald-200/40 blur-2xl"></span>
+                                                        <div class="relative flex items-start gap-3">
+                                                            <span class="shrink-0 w-11 h-11 rounded-full bg-emerald-900/10 inline-flex items-center justify-center">
+                                                                <span class="material-symbols-outlined text-[22px] text-emerald-700">account_balance_wallet</span>
+                                                            </span>
+                                                            <div class="min-w-0">
+                                                                <p class="font-body-md text-body-md font-bold text-emerald-900">{{ __('Saldo belum mencukupi') }}</p>
+                                                                <p class="font-body-sm text-body-sm text-emerald-900/85 mt-0.5">
+                                                                    {{ __('Saldo tersedia') }}
+                                                                    <strong>Rp {{ number_format($saldoCust, 0, ',', '.') }}</strong>
+                                                                    &middot;
+                                                                    {{ __('Kurang') }}
+                                                                    <strong>Rp {{ number_format(max(0, (float) $payment->jumlah - $saldoCust), 0, ',', '.') }}</strong>
+                                                                </p>
+                                                                <p class="font-body-sm text-body-sm text-emerald-900/70 mt-0.5">
+                                                                    {{ __('Isi saldo dulu untuk melanjutkan, atau pilih metode pembayaran lain.') }}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <a href="{{ route('customer.saldo') }}"
+                                                            class="relative mt-md w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest bg-emerald-800 text-white hover:bg-emerald-700 transition-colors">
+                                                            <span class="material-symbols-outlined text-[20px]">add_card</span>
+                                                            <span>{{ __('Top Up Saldo') }}</span>
+                                                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                                        </a>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </div>
                                 @endif
                                 @error('payment_method_id')
@@ -1239,6 +1340,12 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
     </div>
 </div>
                                 </div>
+                            </form>
+                            <form id="form-pay-saldo" method="POST"
+                                action="{{ route('customer.checkout.payment.saldo', $checkout->checkout_id) }}"
+                                onsubmit="return confirm('@lang('Bayar') Rp {{ number_format((float) $payment->jumlah, 0, ',', '.') }} @lang('pakai saldo akun?')');"
+                                class="hidden">
+                                @csrf
                             </form>
                         </div>
                     </div>
@@ -1463,6 +1570,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                 if (!sel) { hideBukti(); return; }
                 var kode = sel.getAttribute('data-kode');
                 currentKode = kode;
+                if (kode === 'saldo_akun') { hideBukti(); return; }
                 if (kode === 'qris') { applyProofUi(kode); showBukti(); return; }
                 if (kode === 'ewallet' || kode === 'bank_transfer') {
                     var gridEl = document.getElementById('grid-' + kode);
@@ -1592,6 +1700,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                 var kode = sel.getAttribute('data-kode');
                 if (kode) {
                     showPanel(kode);
+                    if (kode === 'saldo_akun') { syncBukti(); return; }
                     if (kode === 'qris') {
                         var autoAcc = sel.getAttribute('data-account-id');
                         if (autoAcc && accountInput && !accountInput.value) accountInput.value = autoAcc;

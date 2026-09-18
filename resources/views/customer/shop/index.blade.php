@@ -311,6 +311,10 @@
     }
     .shop-action-btn:hover { background-color: var(--chrome-hover); }
     .shop-sort-trigger { min-height: 40px; }
+    /* ============ SHOP: active filter chips smooth expand ============ */
+    #active-chips { display: grid; grid-template-rows: 0fr; min-height: 0; transition: grid-template-rows .32s cubic-bezier(.32,.72,0,1), opacity .25s ease; }
+    #active-chips.chip-open { grid-template-rows: 1fr; }
+    #active-chips > * { min-height: 0; overflow: hidden; }
     /* ============ SHOP CONTENT CONTAINER (single product-area container, mirrors Wishlist card feel) ============ */
     .shop-content-container {
         background-color: #ffffff;
@@ -386,10 +390,10 @@
 </button>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
 <div class="flex items-center gap-sm">
-<button aria-label="{{ __('Filter') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center relative" onclick="openFilter()" type="button">
-<span class="material-symbols-outlined text-[22px]" data-icon="tune">tune</span>
-<span id="filter-badge" class="absolute -top-0.5 -right-1 bg-secondary text-on-secondary text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold hidden">0</span>
-</button>
+<a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart', ['from' => 'shop']) }}" class="hover:opacity-80 transition-opacity relative flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
+<span class="cart-badge absolute -top-0.5 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
+</a>
 </div>
 </header>
 <!-- Main Content -->
@@ -401,7 +405,8 @@
 <!-- Shop Toolbar (parent container: category navigation left, actions right) -->
 <div class="shop-toolbar flex flex-row items-center gap-sm md:gap-md px-container-margin py-sm">
     <!-- Category Navigation Card (Super-Admin card-premium style) -->
-    <div class="shop-category-card flex-1 min-w-0 flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm">
+    <div class="shop-category-card flex-1 min-w-0 flex flex-col card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm">
+    <div class="shop-category-row flex items-center gap-sm md:gap-md min-w-0">
     <div class="shop-category-nav flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar">
         <button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-pill shrink-0 px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('All') }}</button>
 @php
@@ -410,16 +415,39 @@
         ->filter()
         ->unique()
         ->values();
+    $filterSizes = $products
+        ->flatMap(fn ($p) => $p->variants->pluck('ukuran'))
+        ->filter()
+        ->unique()
+        ->values();
+    $filterColors = $products
+        ->flatMap(fn ($p) => $p->variants->pluck('warna'))
+        ->filter()
+        ->unique()
+        ->values();
+    $colorHexMap = [
+        'white' => '#f5f5f5', 'black' => '#1b1b1b', 'beige' => '#e6d3b3',
+        'ivory' => '#f6f1e7', 'muted sand' => '#cfc0a8', 'charcoal' => '#3a3a3a',
+        'warm sand' => '#cfc1a6', 'taupe' => '#8b7d6b', 'blush' => '#f4c2c2',
+        'sand' => '#d8c7ad', 'grey' => '#8f9396', 'gray' => '#8f9396',
+        'navy' => '#1f2a44', 'brown' => '#7a5636', 'green' => '#5c6b4a',
+        'blue' => '#2f5f8f', 'red' => '#b03a3a', 'cream' => '#f3e9d8',
+        'gold' => '#d4af37', 'olive' => '#7a7a3a', 'khaki' => '#b5a06b',
+        'sage' => '#9caf88', 'camel' => '#b98d5f', 'indigo' => '#3f3f67',
+        'washed' => '#7f93a8', 'denim' => '#4a5d7a', 'coral' => '#e07a6a',
+        'pink' => '#e5a2b8', 'purple' => '#7a5f8f', 'lilac' => '#b0a6d1',
+        'yellow' => '#e7d15c', 'orange' => '#d9823f', 'mustard' => '#d1a53f',
+    ];
 @endphp
 @foreach ($parentCats as $pc)
         <button type="button" data-cat="{{ $pc }}" onclick="selectCategory('{{ $pc }}')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ $pc }}</button>
 @endforeach
     </div>
-        <!-- Shop Actions (Cart · Sort) -->
-        <a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart', ['from' => 'shop']) }}" class="shop-action-btn relative order-2 border border-outline-variant hover:text-secondary hover:border-secondary transition-colors">
-            <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
-            <span class="cart-badge absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
-        </a>
+        <!-- Shop Actions (Filter · Sort) -->
+        <button aria-label="{{ __('Filter') }}" class="shop-action-btn relative order-2 border border-outline-variant hover:text-secondary hover:border-secondary transition-colors" onclick="openFilter()" type="button">
+            <span class="material-symbols-outlined text-[22px]" data-icon="tune">tune</span>
+            <span id="filter-badge" class="absolute -top-0.5 -right-1 bg-secondary text-on-secondary text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold hidden">0</span>
+        </button>
         <div class="relative shop-sort-trigger order-1 ml-auto" id="sort-menu-container">
             <button class="shop-action-btn md:px-md gap-1 border border-outline-variant font-label-sm text-label-sm text-on-surface hover:text-secondary hover:border-secondary transition-colors" onclick="toggleSortMenu()" type="button">
                 <span id="sort-label" class="hidden md:inline">{{ __('Sort') }}</span>
@@ -446,12 +474,15 @@
             </div>
         </div>
     </div>
-</div>
-<!-- Active Filter Chips -->
-<div id="active-chips" class="px-container-margin py-sm border-b border-outline-variant flex flex-wrap gap-sm items-center min-h-[2.75rem] opacity-0 pointer-events-none border-transparent transition-opacity duration-200">
-<div id="chips-list" class="flex flex-wrap gap-sm items-center grow"></div>
-<button id="clear-all" class="font-label-sm text-label-sm text-secondary underline hover:opacity-80 transition-opacity shrink-0" onclick="clearAll()" type="button">{{ __('Clear all') }}</button>
-</div>
+    <div id="active-chips" class="opacity-0 pointer-events-none">
+    <div>
+    <div class="py-xs flex flex-wrap gap-sm items-center">
+    <div id="chips-list" class="flex flex-wrap gap-sm items-center grow"></div>
+    <button id="clear-all" class="font-label-sm text-label-sm text-secondary underline hover:opacity-80 transition-opacity shrink-0" onclick="clearAll()" type="button">{{ __('Clear all') }}</button>
+    </div>
+    </div>
+    </div>
+    </div>
 </div>
 <!-- Shop Content Container -->
 <div class="mx-auto max-w-[1400px] px-container-margin shop-content-wrap">
@@ -461,7 +492,7 @@
 <div class="atl-eyebrow">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary shop-content-heading">{{ __('Shop') }}</span>
 </div>
-<div class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Showing') }} <span id="result-count">{{ $products->count() }}</span> {{ __('items') }}</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Showing') }} <span id="result-count" data-ads="{{ count($ads) }}">{{ min(count($ads) + $products->count(), 6) }}</span> {{ __('items') }}</div>
 </div>
 @if (count($ads))
 <!-- Sponsored Ads -->
@@ -470,13 +501,14 @@
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary inline-flex items-center gap-xs"><span class="material-symbols-outlined text-[18px]" data-icon="campaign">campaign</span>{{ __('Sponsored') }}</span>
 <span class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Iklan') }}</span>
 </div>
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-gutter">
+<div id="ad-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-gutter">
 @foreach ($ads as $a)
 @php
     $sMin = $a->variants->min('harga') ?? $a->harga_dasar;
     $sImg = $a->images->first()->file_gambar ?? '';
     $sImgUrl = $sImg ? (filter_var($sImg, FILTER_VALIDATE_URL) ? $sImg : asset($sImg)) : 'https://picsum.photos/seed/shopad/900/1200';
     $sWl = in_array($a->product_id, $wishlistedIds, true);
+    $sDefaultVariant = $a->variants->sortBy('harga')->first();
 @endphp
 <div class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', $a->product_id) }}" class="flex flex-col group cursor-pointer">
@@ -484,7 +516,14 @@
 <img class="w-full h-full object-cover " loading="lazy" decoding="async" alt="{{ $a->nama_produk }}" src="{{ $sImgUrl }}"/>
 <span class="absolute top-2 left-2 bg-secondary text-on-secondary text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">{{ __('Iklan') }}</span>
 </div>
+<div class="flex items-center justify-between gap-1 min-w-0">
 <span class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $a->store?->nama_toko ?? __('RALIVA') }}</span>
+@if ($sDefaultVariant)
+<button type="button" data-cart-add data-variant-id="{{ $sDefaultVariant->product_variant_id }}" aria-label="{{ __('Add to cart') }}" class="text-on-surface hover:text-secondary transition-colors flex items-center shrink-0">
+<span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+@endif
+</div>
 <h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $a->nama_produk }}</h3>
 <span class="font-body-sm text-body-sm text-on-surface">Rp {{ number_format($sMin, 0, ',', '.') }}</span>
 </a>
@@ -500,10 +539,11 @@
 @forelse ($products as $p)
 @php
     $parentCat = $p->category?->parent?->nama_kategori ?? $p->category?->nama_kategori;
-    $sizes = $p->variants->pluck('ukuran')->unique()->implode(' ');
-    $colors = $p->variants->pluck('warna')->unique()->implode(' ');
+    $sizes = $p->variants->pluck('ukuran')->unique()->implode('|');
+    $colors = $p->variants->pluck('warna')->unique()->implode('|');
     $minPrice = $p->variants->min('harga') ?? $p->harga_dasar;
     $firstImage = $p->images->first()->file_gambar ?? '';
+    $defaultVariant = $p->variants->sortBy('harga')->first();
 @endphp
 <!-- Product -->
 <a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col group cursor-pointer" data-category="{{ $parentCat }}" data-size="{{ $sizes }}" data-color="{{ $colors }}" data-price="{{ $minPrice }}" data-created="{{ $p->created_at?->getTimestamp() ?? 0 }}" data-popular="0">
@@ -515,9 +555,16 @@
 </button>
 </div>
 <div class="flex flex-col gap-1">
-<span class="font-label-sm text-label-sm text-on-surface-variant">{{ $p->store?->nama_toko ?? __('RALIVA') }}</span>
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $p->nama_produk }}</h3>
-<span class="font-body-sm text-body-sm text-on-surface">Rp {{ number_format($minPrice, 0, ',', '.') }}</span>
+    <div class="flex items-center justify-between gap-1 min-w-0">
+        <span class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $p->store?->nama_toko ?? __('RALIVA') }}</span>
+@if ($defaultVariant)
+        <button type="button" data-cart-add data-variant-id="{{ $defaultVariant->product_variant_id }}" aria-label="{{ __('Add to cart') }}" class="text-on-surface hover:text-secondary transition-colors flex items-center shrink-0">
+            <span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
+        </button>
+@endif
+    </div>
+    <h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $p->nama_produk }}</h3>
+    <span class="font-body-sm text-body-sm text-on-surface">Rp {{ number_format($minPrice, 0, ',', '.') }}</span>
 </div>
 </a>
 @empty
@@ -526,7 +573,7 @@
 <div id="product-empty" class="hidden w-full flex-col items-center justify-center text-center gap-md py-2xl min-h-[40vh]">
 <span class="material-symbols-outlined text-[72px] lg:text-[96px] text-on-surface-variant/40" data-icon="inventory_2">inventory_2</span>
 <p class="font-body-lg text-body-lg text-on-surface-variant max-w-sm lg:max-w-md mx-auto">{{ __('No products found for this selection.') }}</p>
-<button class="btn-gold font-label-caps text-label-caps px-lg py-3 lg:px-xl rounded-full uppercase tracking-widest mt-xs" type="button" onclick="selectCategory(null)">{{ __('Reset filters') }}</button>
+<button class="btn-gold font-label-caps text-label-caps px-lg py-3 lg:px-xl rounded-full uppercase tracking-widest mt-xs" type="button" onclick="clearAll()">{{ __('Reset filters') }}</button>
 </div>
 <div id="load-more-wrap" class="flex justify-center py-xl mt-md" data-total="{{ $totalProducts }}">
 <button id="load-more-btn" class="border border-[var(--chrome-accent)] text-[var(--chrome-accent)] bg-transparent font-label-caps text-label-caps px-xl py-sm hover:bg-surface-container-low transition-colors w-full md:w-auto rounded-lg flex items-center justify-center gap-2 uppercase tracking-widest" type="button" onclick="loadMoreProducts()" style="display:none;">
@@ -556,27 +603,28 @@
 <div class="overflow-y-auto px-container-margin pb-md grow">
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Category') }}</h3>
 <div class="grid grid-cols-2 gap-sm">
-<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">Women</span></label>
-<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">Men</span></label>
-<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">Accessories</span></label>
-<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">Shoes</span></label>
-<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">Bags</span></label>
+@forelse ($parentCats as $pc)
+<label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">{{ $pc }}</span></label>
+@empty
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('No categories available.') }}</p>
+@endforelse
 </div>
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Size') }}</h3>
 <div class="flex flex-wrap gap-sm">
-<button data-type="size" class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">XS</button>
-<button data-type="size" class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">S</button>
-<button data-type="size" class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">M</button>
-<button data-type="size" class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">L</button>
-<button data-type="size" class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">XL</button>
+@forelse ($filterSizes as $fs)
+<button data-type="size" class="f-opt px-md py-xs border border-outline-variant rounded-full font-label-sm text-label-sm text-on-surface-variant transition-shadow" onclick="toggleSel(this)" type="button">{{ $fs }}</button>
+@empty
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('No sizes available.') }}</p>
+@endforelse
 </div>
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Color') }}</h3>
 <div class="flex flex-wrap gap-md">
-<button data-type="color" aria-label="Black" class="f-opt w-8 h-8 rounded-full bg-[#111111] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
-<button data-type="color" aria-label="White" class="f-opt w-8 h-8 rounded-full bg-[#FFFFFF] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
-<button data-type="color" aria-label="Beige" class="f-opt w-8 h-8 rounded-full bg-[#E5DCC5] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
-<button data-type="color" aria-label="Brown" class="f-opt w-8 h-8 rounded-full bg-[#6B4F3A] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
-<button data-type="color" aria-label="Gold" class="f-opt w-8 h-8 rounded-full bg-[#D4AF37] border border-outline-variant transition-shadow" onclick="toggleSel(this)" type="button"></button>
+@forelse ($filterColors as $fc)
+@php $fHex = $colorHexMap[strtolower($fc)] ?? ''; @endphp
+<button data-type="color" aria-label="{{ $fc }}" title="{{ $fc }}" class="f-opt w-8 h-8 rounded-full border border-outline-variant transition-shadow{{ $fHex ? '' : ' text-on-surface-variant font-label-sm text-label-sm' }}" style="{{ $fHex ? 'background-color:' . $fHex . ';' : 'background-color:var(--surface-container-high);' }}" onclick="toggleSel(this)" type="button">{{ $fHex ? '' : mb_substr($fc, 0, 1) }}</button>
+@empty
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('No colors available.') }}</p>
+@endforelse
 </div>
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Price Range') }}</h3>
 <div class="flex items-end gap-gutter">
@@ -600,6 +648,10 @@
         var activeFilters = { category: [], size: [], color: [], price: { min: null, max: null } };
         var currentSort = 'Newest';
         var revealedCount = 6;
+
+        function resetReveal() {
+            revealedCount = 6;
+        }
 
         function openFilter() {
             document.getElementById('filter-sheet').classList.remove('translate-y-full');
@@ -637,6 +689,7 @@
             renderChips();
             updateBadge();
             updateAppliedLabel();
+            resetReveal();
             applyGridFilter();
             syncCategoryBar();
             closeFilter();
@@ -654,6 +707,7 @@
             renderChips();
             updateBadge();
             updateAppliedLabel();
+            resetReveal();
             applyGridFilter();
         }
         function syncCategoryBar() {
@@ -712,7 +766,7 @@
             var hasChips = countActive() > 0;
             ac.classList.toggle('opacity-0', !hasChips);
             ac.classList.toggle('pointer-events-none', !hasChips);
-            ac.classList.toggle('border-transparent', !hasChips);
+            ac.classList.toggle('chip-open', hasChips);
         }
         function removeFilter(type, val) {
             if (type === 'category') {
@@ -735,6 +789,7 @@
             renderChips();
             updateBadge();
             updateAppliedLabel();
+            resetReveal();
             applyGridFilter();
             syncCategoryBar();
         }
@@ -744,6 +799,7 @@
             renderChips();
             updateBadge();
             updateAppliedLabel();
+            resetReveal();
             applyGridFilter();
             syncCategoryBar();
         }
@@ -758,31 +814,44 @@
             document.getElementById('applied-count').textContent = n > 0 ? '· ' + n + ' Applied' : '';
         }
         function applyGridFilter() {
+            var countEl = document.getElementById('result-count');
+            var adsCount = countEl ? (parseInt(countEl.getAttribute('data-ads') || '0', 10) || 0) : 0;
+            var adCards = document.querySelectorAll('#ad-grid > div');
             var cards = document.querySelectorAll('#product-grid > a');
-            var shown = 0;
-            cards.forEach(function (card, idx) {
-                var cat = (card.getAttribute('data-category') || '').split(' ');
-                var sizes = (card.getAttribute('data-size') || '').split(' ');
-                var colors = (card.getAttribute('data-color') || '').split(' ');
+            var visibleCount = 0;
+            var matched = 0;
+            adCards.forEach(function (ad, i) {
+                var vis = i < revealedCount;
+                ad.style.display = vis ? '' : 'none';
+                if (vis) visibleCount++;
+            });
+            cards.forEach(function (card) {
+                var catRaw = (card.getAttribute('data-category') || '').trim();
+                var sizes = (card.getAttribute('data-size') || '').split('|').map(function (s) { return s.trim(); });
+                var colors = (card.getAttribute('data-color') || '').split('|').map(function (c) { return c.trim(); });
                 var price = parseInt(card.getAttribute('data-price'), 10) || 0;
                 var ok = true;
-                if (activeFilters.category.length && !activeFilters.category.some(function (c) { return cat.indexOf(c) >= 0; })) ok = false;
+                if (activeFilters.category.length && !activeFilters.category.some(function (c) { return catRaw === c; })) ok = false;
                 if (activeFilters.size.length && !activeFilters.size.some(function (s) { return sizes.indexOf(s) >= 0; })) ok = false;
                 if (activeFilters.color.length && !activeFilters.color.some(function (c) { return colors.indexOf(c) >= 0; })) ok = false;
                 if (activeFilters.price.min !== null && price < activeFilters.price.min) ok = false;
                 if (activeFilters.price.max !== null && price > activeFilters.price.max) ok = false;
-                var visible = ok && idx < revealedCount;
+                var visible = false;
+                if (ok) {
+                    visible = (adsCount + matched) < revealedCount;
+                    matched++;
+                }
                 card.style.display = visible ? '' : 'none';
-                if (visible) shown++;
+                if (visible) visibleCount++;
             });
-            var countEl = document.getElementById('result-count');
-            if (countEl) countEl.textContent = shown;
+            window.__shopMatched = matched;
+            if (countEl) countEl.textContent = visibleCount;
             var boxEl = document.getElementById('shop-content-box');
-            if (boxEl) boxEl.classList.toggle('is-empty', shown === 0);
+            if (boxEl) boxEl.classList.toggle('is-empty', matched === 0);
             var emptyEl = document.getElementById('product-empty');
             if (emptyEl) {
-                emptyEl.classList.toggle('hidden', shown > 0);
-                emptyEl.classList.toggle('flex', shown === 0);
+                emptyEl.classList.toggle('hidden', matched > 0);
+                emptyEl.classList.toggle('flex', matched === 0);
             }
             updateLoadMoreButton();
         }
@@ -790,21 +859,13 @@
             var wrap = document.getElementById('load-more-wrap');
             var btn = document.getElementById('load-more-btn');
             if (!wrap || !btn) return;
-            var total = parseInt(wrap.getAttribute('data-total') || '0', 10);
-            var hiddenCount = 0;
-            document.querySelectorAll('#product-grid > a').forEach(function (c, idx) {
-                if (idx >= revealedCount) hiddenCount++;
-            });
-            var show = total > 6 && hiddenCount > 0 && !btn.hasAttribute('disabled');
+            var countEl = document.getElementById('result-count');
+            var adsCount = countEl ? (parseInt(countEl.getAttribute('data-ads') || '0', 10) || 0) : 0;
+            var matched = (typeof window.__shopMatched === 'number') ? window.__shopMatched : 0;
+            var totalItems = adsCount + matched;
+            var show = totalItems > revealedCount;
             btn.style.display = show ? 'inline-flex' : 'none';
-            wrap.classList.toggle('hidden', shownCount() === 0);
-        }
-        function shownCount() {
-            var n = 0;
-            document.querySelectorAll('#product-grid > a').forEach(function (c) {
-                if (c.style.display !== 'none') n++;
-            });
-            return n;
+            wrap.classList.toggle('hidden', totalItems === 0);
         }
         function loadMoreProducts() {
             var btn = document.getElementById('load-more-btn');
@@ -816,8 +877,6 @@
             if (spinner) spinner.style.display = 'inline-block';
             if (btn.classList) btn.classList.add('flashing');
             setTimeout(function () {
-                var wrap = document.getElementById('load-more-wrap');
-                var total = wrap ? parseInt(wrap.getAttribute('data-total') || '0', 10) : 0;
                 revealedCount += 6;
                 if (txt) txt.textContent = 'Load More';
                 if (spinner) spinner.style.display = 'none';

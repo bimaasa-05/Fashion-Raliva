@@ -791,13 +791,13 @@
         });
     </script>
     <script>
-        /* Arrow back = kembali ke halaman customer sebelumnya */
+        /* Arrow back = kembali ke halaman customer sebelumnya (kecuali dari checkout, agar tidak bolak-balik) */
         document.addEventListener('click', function (e) {
             var back = e.target.closest('[data-go-back]');
             if (!back) return;
             e.preventDefault();
             var ref = document.referrer;
-            if (ref && ref.indexOf(window.location.origin) === 0) {
+            if (ref && ref.indexOf(window.location.origin) === 0 && ref.indexOf('/checkout') === -1) {
                 window.history.back();
             } else {
                 window.location.href = back.getAttribute('href');

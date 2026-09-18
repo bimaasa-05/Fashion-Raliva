@@ -391,6 +391,7 @@
     $aImg = $a->images->first()->file_gambar ?? '';
     $aImgUrl = $aImg ? (filter_var($aImg, FILTER_VALIDATE_URL) ? $aImg : asset($aImg)) : 'https://picsum.photos/seed/ad/900/1200';
     $aWl = in_array($a->product_id, $wishlistedIds, true);
+    $aDefaultVariant = $a->variants->sortBy('harga')->first();
 @endphp
 <div class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', $a->product_id) }}" class="flex flex-col group cursor-pointer">
@@ -398,7 +399,14 @@
 <img loading="lazy" decoding="async" class="object-cover w-full h-full " alt="{{ $a->nama_produk }}" src="{{ $aImgUrl }}"/>
 <span class="absolute top-2 left-2 bg-secondary text-on-secondary text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">{{ __('Iklan') }}</span>
 </div>
+<div class="flex items-center justify-between gap-1 min-w-0">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider truncate">{{ $a->store?->nama_toko ?? __('RALIVA') }}</span>
+@if ($aDefaultVariant)
+<button type="button" data-cart-add data-variant-id="{{ $aDefaultVariant->product_variant_id }}" aria-label="{{ __('Add to cart') }}" class="text-on-surface hover:text-secondary transition-colors flex items-center shrink-0">
+<span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+@endif
+</div>
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $a->nama_produk }}</h4>
 <span class="font-body-sm text-body-sm text-on-surface">Rp {{ number_format($aPrice, 0, ',', '.') }}</span>
 </a>
@@ -427,13 +435,21 @@
     $firstImage = $p->images->first()->file_gambar ?? '';
     $homeImg = $firstImage ? (filter_var($firstImage, FILTER_VALIDATE_URL) ? $firstImage : asset($firstImage)) : 'https://picsum.photos/seed/product/900/1200';
     $homeWl = in_array($p->product_id, $wishlistedIds, true);
+    $homeDefaultVariant = $p->variants->sortBy('harga')->first();
 @endphp
 <div data-category="{{ $homeCat }}" class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
 <img loading="lazy" decoding="async" class="object-cover w-full h-full " alt="{{ $p->nama_produk }}" src="{{ $homeImg }}"/>
 </div>
+<div class="flex items-center justify-between gap-1 min-w-0">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $p->store?->nama_toko ?? __('RALIVA') }}</span>
+@if ($homeDefaultVariant)
+<button type="button" data-cart-add data-variant-id="{{ $homeDefaultVariant->product_variant_id }}" aria-label="{{ __('Add to cart') }}" class="text-on-surface hover:text-secondary transition-colors flex items-center shrink-0">
+<span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+@endif
+</div>
 <h4 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $p->nama_produk }}</h4>
 <span class="font-body-sm text-body-sm text-on-surface">Rp {{ number_format($minPrice, 0, ',', '.') }}</span>
 </a>

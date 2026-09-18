@@ -49,7 +49,7 @@ class CartController extends Controller
     public function add(Request $request): JsonResponse
     {
         if (! Auth::check()) {
-            return response()->json(['status' => 'error', 'message' => 'Masuk untuk memakai keranjang, atau klik Beli Sekarang.'], 401);
+            return response()->json(['status' => 'error', 'message' => 'Anda belum login.'], 401);
         }
         if (Auth::user()->role?->nama_role !== Role::CUSTOMER) {
             return response()->json(['status' => 'error', 'message' => 'Hanya customer yang dapat memakai keranjang.'], 403);
