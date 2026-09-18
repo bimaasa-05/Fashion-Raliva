@@ -8,6 +8,8 @@ use App\Models\Refund;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Support\ActivityLogger;
+use App\Support\CustomerWalletService;
+use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -185,6 +187,20 @@ class PengembalianDanaController extends Controller
                     'deskripsi_bukti' => $data['deskripsi_bukti'] ?? null,
                     'bukti_diupload_pada' => now(),
                 ]);
+
+                $payment = $locked->order?->checkout?->payment;
+
+                if (
+                    $payment
+                    && $payment->paymentMethod?->kode_metode === PaymentMethod::KODE_SALDO_AKUN
+                    && $locked->order?->checkout?->user
+                ) {
+                    CustomerWalletService::refundToWallet(
+                        $locked->order,
+                        (float) $locked->jumlah,
+                        sprintf('Refund %s pesanan %s dikembalikan ke saldo akun.', $locked->tipe_refund, $locked->order->nomor_order ?? '-')
+                    );
+                }
             });
         } catch (\Throwable $e) {
             if (isset($path) && Storage::disk('public')->exists($path)) {

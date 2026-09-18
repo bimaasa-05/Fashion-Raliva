@@ -39,6 +39,7 @@ class DataBankSeeder extends Seeder
             ['kode_metode' => PaymentMethod::KODE_QRIS,          'nama_metode' => 'QRIS',          'batas_waktu_menit' => 5],
             ['kode_metode' => PaymentMethod::KODE_EWALLET,       'nama_metode' => 'E-Wallet',      'batas_waktu_menit' => 5],
             ['kode_metode' => PaymentMethod::KODE_BANK_TRANSFER, 'nama_metode' => 'Bank Transfer', 'batas_waktu_menit' => 30],
+            ['kode_metode' => PaymentMethod::KODE_SALDO_AKUN,    'nama_metode' => 'Saldo Akun',    'batas_waktu_menit' => 0],
         ];
 
         foreach ($methods as $method) {

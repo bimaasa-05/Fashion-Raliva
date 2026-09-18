@@ -57,7 +57,7 @@
                     <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Staff Toko</h2>
                     <span class="text-xs text-on-surface-variant mt-0.5 w-full">Semua staff yang ditugaskan di seluruh toko.</span>
                 </div>
-                <button type="button" onclick="openModal('modal-tambah-staff')" class="py-2.5 px-5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center gap-2 shrink-0">
+                <button type="button" onclick="openAddStaffModal()" class="py-2.5 px-5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center gap-2 shrink-0">
                     <span class="material-symbols-outlined text-[18px]">person_add</span>Tambah Staff
                 </button>
             </div>
@@ -76,23 +76,68 @@
                     <input type="text" id="searchInput" placeholder="Cari nama staff atau toko..." class="w-full bg-transparent border border-muted-border rounded-lg pl-10 pr-4 py-2.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" oninput="applyFilter()" />
                 </div>
                 <div class="flex flex-wrap items-center gap-3 lg:justify-end">
-                    <select id="filterStatus" class="raliva-select lg:w-40" onchange="applyFilter()">
-                        <option value="">Semua Status</option>
-                        <option value="aktif">Aktif</option>
-                        <option value="nonaktif">Nonaktif</option>
-                    </select>
-                    <select id="filterRole" class="raliva-select lg:w-40" onchange="applyFilter()">
-                        <option value="">Semua Role</option>
-                        <option value="admin">Admin Toko</option>
-                        <option value="produksi">Produksi</option>
-                        <option value="gudang">Gudang</option>
-                    </select>
-                    <select id="filterToko" class="raliva-select lg:w-44" onchange="applyFilter()">
-                        <option value="">Semua Toko</option>
-                        @foreach ($stores as $store)
-                            <option value="{{ $store->store_id }}">{{ $store->nama_toko }}</option>
-                        @endforeach
-                    </select>
+                    <div class="relative w-full lg:w-40" id="filterStatus-dd">
+                        <button type="button" data-dd-trigger id="filterStatus-trigger" onclick="toggleDropdown('filterStatus')" aria-haspopup="listbox" aria-expanded="false"
+                            class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
+                            <span id="filterStatus-label" class="truncate">Semua Status</span>
+                            <span class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="filterStatus-chevron">expand_more</span>
+                        </button>
+                        <div id="filterStatus-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                            class="hidden absolute left-0 top-full mt-2 w-full min-w-[160px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                            <button type="button" role="option" aria-selected="true" data-dd-option="" onclick="selectFilterStatus(''); applyFilter()" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Semua Status<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                            </button>
+                            <button type="button" role="option" aria-selected="false" data-dd-option="aktif" onclick="selectFilterStatus('aktif'); applyFilter()" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Aktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                            </button>
+                            <button type="button" role="option" aria-selected="false" data-dd-option="nonaktif" onclick="selectFilterStatus('nonaktif'); applyFilter()" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Nonaktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                            </button>
+                        </div>
+                        <input type="hidden" id="filterStatus" value="" />
+                    </div>
+                    <div class="relative w-full lg:w-40" id="filterRole-dd">
+                        <button type="button" data-dd-trigger id="filterRole-trigger" onclick="toggleDropdown('filterRole')" aria-haspopup="listbox" aria-expanded="false"
+                            class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
+                            <span id="filterRole-label" class="truncate">Semua Role</span>
+                            <span class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="filterRole-chevron">expand_more</span>
+                        </button>
+                        <div id="filterRole-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                            class="hidden absolute left-0 top-full mt-2 w-full min-w-[160px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                            <button type="button" role="option" aria-selected="true" data-dd-option="" onclick="selectFilterRole(''); applyFilter()" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Semua Role<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                            </button>
+                            <button type="button" role="option" aria-selected="false" data-dd-option="admin" onclick="selectFilterRole('admin'); applyFilter()" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Admin Toko<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                            </button>
+                            <button type="button" role="option" aria-selected="false" data-dd-option="produksi" onclick="selectFilterRole('produksi'); applyFilter()" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Produksi<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                            </button>
+                            <button type="button" role="option" aria-selected="false" data-dd-option="gudang" onclick="selectFilterRole('gudang'); applyFilter()" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Gudang<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                            </button>
+                        </div>
+                        <input type="hidden" id="filterRole" value="" />
+                    </div>
+                    <div class="relative w-full lg:w-44" id="filterToko-dd">
+                        <button type="button" data-dd-trigger id="filterToko-trigger" onclick="toggleDropdown('filterToko')" aria-haspopup="listbox" aria-expanded="false"
+                            class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
+                            <span id="filterToko-label" class="truncate">Semua Toko</span>
+                            <span class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="filterToko-chevron">expand_more</span>
+                        </button>
+                        <div id="filterToko-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                            class="hidden absolute left-0 top-full mt-2 w-full min-w-[180px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-y-auto max-h-64 py-1">
+                            <button type="button" role="option" aria-selected="true" data-dd-option="" onclick="selectFilterToko(''); applyFilter()" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Semua Toko<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                            </button>
+                            @foreach ($stores as $store)
+                                <button type="button" role="option" aria-selected="false" data-dd-option="{{ $store->store_id }}" onclick="selectFilterToko('{{ $store->store_id }}'); applyFilter()" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                    {{ $store->nama_toko }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                                </button>
+                            @endforeach
+                        </div>
+                        <input type="hidden" id="filterToko" value="" />
+                    </div>
                     <button type="button" onclick="resetFilter()" class="py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Reset</button>
                 </div>
             </div>
@@ -152,10 +197,23 @@
                                     <form method="POST" action="{{ route('superadmin.store-staff.update', $s->store_staff_id) }}" class="inline-flex items-center gap-1.5">
                                         @csrf
                                         @method('PUT')
-                                        <select name="status" class="bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ $s->status === 'aktif' ? 'text-secondary border-secondary/30' : 'text-error border-error/30' }}">
-                                            <option value="aktif" {{ $s->status === 'aktif' ? 'selected' : '' }}>Aktif</option>
-                                            <option value="nonaktif" {{ $s->status === 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
-                                        </select>
+                                        <div class="relative" id="rowStatus-{{ $s->store_staff_id }}-dd">
+                                            <button type="button" data-dd-trigger id="rowStatus-{{ $s->store_staff_id }}-trigger" onclick="toggleDropdown('rowStatus-{{ $s->store_staff_id }}')" aria-haspopup="listbox" aria-expanded="false"
+                                                class="flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer text-left min-w-[110px] {{ $s->status === 'aktif' ? 'text-secondary border-secondary/30' : 'text-error border-error/30' }}">
+                                                <span id="rowStatus-{{ $s->store_staff_id }}-label" class="truncate">{{ $s->status === 'aktif' ? 'Aktif' : 'Nonaktif' }}</span>
+                                                <span class="material-symbols-outlined text-[14px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="rowStatus-{{ $s->store_staff_id }}-chevron">expand_more</span>
+                                            </button>
+                                            <div id="rowStatus-{{ $s->store_staff_id }}-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                                                class="hidden absolute left-0 top-full mt-1 w-full min-w-[130px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                                                <button type="button" role="option" aria-selected="{{ $s->status === 'aktif' ? 'true' : 'false' }}" data-dd-option="aktif" onclick="selectRowStatus({{ $s->store_staff_id }}, 'aktif')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                                    Aktif<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'aktif' ? '' : 'hidden' }}">check</span>
+                                                </button>
+                                                <button type="button" role="option" aria-selected="{{ $s->status === 'nonaktif' ? 'true' : 'false' }}" data-dd-option="nonaktif" onclick="selectRowStatus({{ $s->store_staff_id }}, 'nonaktif')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                                    Nonaktif<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'nonaktif' ? '' : 'hidden' }}">check</span>
+                                                </button>
+                                            </div>
+                                            <input type="hidden" name="status" value="{{ $s->status }}" />
+                                        </div>
                                         <button type="submit" class="inline-flex items-center px-2 py-1 rounded-md bg-deep-onyx text-on-primary text-[10px] font-bold uppercase tracking-wider hover:bg-black transition-colors">Simpan</button>
                                     </form>
                                 </td>
@@ -219,10 +277,23 @@
                             <form method="POST" action="{{ route('superadmin.store-staff.update', $s->store_staff_id) }}" class="flex items-center gap-1.5 shrink-0">
                                 @csrf
                                 @method('PUT')
-                                <select name="status" class="bg-transparent border border-muted-border rounded-lg px-2 py-2 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ $s->status === 'aktif' ? 'text-secondary border-secondary/30' : 'text-error border-error/30' }}">
-                                    <option value="aktif" {{ $s->status === 'aktif' ? 'selected' : '' }}>Aktif</option>
-                                    <option value="nonaktif" {{ $s->status === 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
-                                </select>
+                                <div class="relative" id="rowStatus-m-{{ $s->store_staff_id }}-dd">
+                                        <button type="button" data-dd-trigger id="rowStatus-m-{{ $s->store_staff_id }}-trigger" onclick="toggleDropdown('rowStatus-m-{{ $s->store_staff_id }}')" aria-haspopup="listbox" aria-expanded="false"
+                                            class="flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-2 py-2 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer text-left min-w-[110px] {{ $s->status === 'aktif' ? 'text-secondary border-secondary/30' : 'text-error border-error/30' }}">
+                                            <span id="rowStatus-m-{{ $s->store_staff_id }}-label" class="truncate">{{ $s->status === 'aktif' ? 'Aktif' : 'Nonaktif' }}</span>
+                                            <span class="material-symbols-outlined text-[14px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="rowStatus-m-{{ $s->store_staff_id }}-chevron">expand_more</span>
+                                        </button>
+                                        <div id="rowStatus-m-{{ $s->store_staff_id }}-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                                            class="hidden absolute left-0 top-full mt-1 w-full min-w-[130px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                                            <button type="button" role="option" aria-selected="{{ $s->status === 'aktif' ? 'true' : 'false' }}" data-dd-option="aktif" onclick="selectRowStatus({{ $s->store_staff_id }}, 'aktif')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                                Aktif<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'aktif' ? '' : 'hidden' }}">check</span>
+                                            </button>
+                                            <button type="button" role="option" aria-selected="{{ $s->status === 'nonaktif' ? 'true' : 'false' }}" data-dd-option="nonaktif" onclick="selectRowStatus({{ $s->store_staff_id }}, 'nonaktif')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                                Nonaktif<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'nonaktif' ? '' : 'hidden' }}">check</span>
+                                            </button>
+                                        </div>
+                                        <input type="hidden" name="status" value="{{ $s->status }}" />
+                                    </div>
                                 <button type="submit" class="inline-flex items-center px-2.5 py-2 rounded-lg bg-deep-onyx text-on-primary text-[10px] font-bold uppercase tracking-wider">Simpan</button>
                             </form>
                             <button type="button" onclick="openDetail({{ $s->store_staff_id }})" class="flex-1 min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
@@ -307,21 +378,41 @@
         @csrf
         <div>
             <label class="block raliva-label mb-2">Pilih Toko</label>
-            <select name="store_id" class="raliva-select" required>
-                <option value="">-- Pilih Toko --</option>
-                @foreach ($stores as $store)
-                    <option value="{{ $store->store_id }}">{{ $store->nama_toko }}</option>
-                @endforeach
-            </select>
+            <div class="relative" id="formStore-dd">
+                <button type="button" data-dd-trigger id="formStore-trigger" onclick="toggleDropdown('formStore')" aria-haspopup="listbox" aria-expanded="false"
+                    class="w-full flex items-center justify-between gap-2 bg-surface-container-lowest border border-muted-border rounded-lg px-3.5 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200 cursor-pointer text-left">
+                    <span id="formStore-label" class="truncate">-- Pilih Toko --</span>
+                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="formStore-chevron">expand_more</span>
+                </button>
+                <div id="formStore-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                    class="hidden absolute left-0 top-full mt-2 w-full min-w-[240px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-y-auto max-h-64 py-1">
+                    @foreach ($stores as $store)
+                        <button type="button" role="option" aria-selected="false" data-dd-option="{{ $store->store_id }}" onclick="selectFormStore('{{ $store->store_id }}')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                            {{ $store->nama_toko }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                        </button>
+                    @endforeach
+                </div>
+                <input type="hidden" name="store_id" id="formStore" value="" required />
+            </div>
         </div>
         <div>
             <label class="block raliva-label mb-2">Pilih User</label>
-            <select name="user_id" class="raliva-select" required>
-                <option value="">-- Pilih User --</option>
-                @foreach ($users as $user)
-                    <option value="{{ $user->user_id }}">{{ $user->nama_lengkap }} ({{ $roleLabel[$user->role_id] ?? '-' }})</option>
-                @endforeach
-            </select>
+            <div class="relative" id="formUser-dd">
+                <button type="button" data-dd-trigger id="formUser-trigger" onclick="toggleDropdown('formUser')" aria-haspopup="listbox" aria-expanded="false"
+                    class="w-full flex items-center justify-between gap-2 bg-surface-container-lowest border border-muted-border rounded-lg px-3.5 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200 cursor-pointer text-left">
+                    <span id="formUser-label" class="truncate">-- Pilih User --</span>
+                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="formUser-chevron">expand_more</span>
+                </button>
+                <div id="formUser-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                    class="hidden absolute left-0 top-full mt-2 w-full min-w-[260px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-y-auto max-h-64 py-1">
+                    @foreach ($users as $user)
+                        <button type="button" role="option" aria-selected="false" data-dd-option="{{ $user->user_id }}" onclick="selectFormUser('{{ $user->user_id }}')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                            <span class="truncate">{{ $user->nama_lengkap }} ({{ $roleLabel[$user->role_id] ?? '-' }})</span><span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden shrink-0">check</span>
+                        </button>
+                    @endforeach
+                </div>
+                <input type="hidden" name="user_id" id="formUser" value="" required />
+            </div>
             <p class="text-xs text-on-surface-variant mt-1">Hanya user dengan role Admin, Produksi, atau Gudang yang muncul.</p>
         </div>
     </form>
@@ -335,6 +426,7 @@
 @endsection
 
 @push('scripts')
+@include('SuperAdmin.partials.dd-helpers')
 <script>
     // === MODAL SYSTEM ===
     function openModal(id) {
@@ -345,8 +437,16 @@
         document.getElementById(id)?.classList.add('hidden');
         document.body.style.overflow = '';
     }
+    function openAddStaffModal() {
+        closeDropdown('formStore');
+        closeDropdown('formUser');
+        ddSet('formStore', '', '-- Pilih Toko --');
+        ddSet('formUser', '', '-- Pilih User --');
+        openModal('modal-tambah-staff');
+    }
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
+            closeAllDropdowns();
             document.querySelectorAll('[id^="modal-"]').forEach(m => {
                 if (!m.classList.contains('hidden')) {
                     m.classList.add('hidden');
@@ -358,6 +458,47 @@
 
     // === FILTER & SEARCH ===
     const allData = @json($staffJson);
+    const storeLabelMap = @json($stores->pluck('nama_toko', 'store_id'));
+    const userLabelMap = @json($users->mapWithKeys(fn ($u) => [$u->user_id => $u->nama_lengkap . ' (' . ($roleLabel[$u->role_id] ?? '-') . ')']));
+
+    function selectFilterStatus(v) {
+        const labels = { '': 'Semua Status', aktif: 'Aktif', nonaktif: 'Nonaktif' };
+        ddSet('filterStatus', v, labels[v] ?? labels['']);
+    }
+    function selectFilterRole(v) {
+        const labels = { '': 'Semua Role', admin: 'Admin Toko', produksi: 'Produksi', gudang: 'Gudang' };
+        ddSet('filterRole', v, labels[v] ?? labels['']);
+    }
+    function selectFilterToko(v) {
+        ddSet('filterToko', v, v === '' ? 'Semua Toko' : (storeLabelMap[v] ?? 'Semua Toko'));
+    }
+
+    function applyRowStatusClass(id, status) {
+        ['rowStatus-' + id, 'rowStatus-m-' + id].forEach((suffix) => {
+            const trigger = document.getElementById(suffix + '-trigger');
+            if (!trigger) return;
+            trigger.classList.remove('text-secondary', 'text-error', 'border-secondary/30', 'border-error/30');
+            trigger.classList.add.apply(trigger.classList, status === 'aktif' ? ['text-secondary', 'border-secondary/30'] : ['text-error', 'border-error/30']);
+        });
+    }
+    function selectRowStatus(id, status) {
+        ddSet('rowStatus-' + id, status, status === 'aktif' ? 'Aktif' : 'Nonaktif');
+        ddSet('rowStatus-m-' + id, status, status === 'aktif' ? 'Aktif' : 'Nonaktif');
+        applyRowStatusClass(id, status);
+    }
+
+    function selectFormStore(v) {
+        ddSet('formStore', v, v === '' ? '-- Pilih Toko --' : (storeLabelMap[v] ?? '-- Pilih Toko --'));
+    }
+    function selectFormUser(v) {
+        ddSet('formUser', v, v === '' ? '-- Pilih User --' : (userLabelMap[v] ?? '-- Pilih User --'));
+    }
+    document.getElementById('tambah-staff-form')?.addEventListener('submit', (e) => {
+        if (!document.getElementById('formStore').value || !document.getElementById('formUser').value) {
+            e.preventDefault();
+            window.showRalivaToast?.('Pilih toko dan user terlebih dahulu.', 'error');
+        }
+    });
 
     function applyFilter() {
         const search = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -396,9 +537,9 @@
 
     function resetFilter() {
         document.getElementById('searchInput').value = '';
-        document.getElementById('filterStatus').value = '';
-        document.getElementById('filterRole').value = '';
-        document.getElementById('filterToko').value = '';
+        selectFilterStatus('');
+        selectFilterRole('');
+        selectFilterToko('');
         applyFilter();
     }
 

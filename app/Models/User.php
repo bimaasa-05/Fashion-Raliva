@@ -148,6 +148,16 @@ class User extends Authenticatable
         return $this->hasOne(Cart::class, 'user_id', 'user_id');
     }
 
+    public function walletSaldo(): HasOne
+    {
+        return $this->hasOne(CustomerWallet::class, 'user_id', 'user_id');
+    }
+
+    public function topups(): HasMany
+    {
+        return $this->hasMany(CustomerTopup::class, 'user_id', 'user_id');
+    }
+
     public function orders(): HasManyThrough
     {
         return $this->hasManyThrough(Order::class, Checkout::class, 'user_id', 'checkout_id', 'user_id', 'checkout_id');

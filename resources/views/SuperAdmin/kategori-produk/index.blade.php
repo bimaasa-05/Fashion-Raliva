@@ -370,12 +370,25 @@
         </div>
         <div>
             <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="parentId">Kategori Induk (opsional)</label>
-            <select name="parent_id" id="parentId" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors">
-                <option value="">— Tanpa induk (kategori utama) —</option>
+            <div class="relative" id="parentId-dd">
+            <button type="button" data-dd-trigger id="parentId-trigger" onclick="toggleDropdown('parentId')" aria-haspopup="listbox" aria-expanded="false"
+                class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
+                <span id="parentId-label" class="truncate">— Tanpa induk (kategori utama) —</span>
+                <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="parentId-chevron">expand_more</span>
+            </button>
+            <div id="parentId-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                class="hidden absolute left-0 top-full mt-2 w-full min-w-[240px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-y-auto max-h-64 py-1">
+                <button type="button" role="option" aria-selected="true" data-dd-option="" onclick="selectParentId('')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                    — Tanpa induk (kategori utama) —<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                </button>
                 @foreach ($parents as $induk)
-                    <option value="{{ $induk->category_id }}">{{ $induk->nama_kategori }}</option>
+                    <button type="button" role="option" aria-selected="false" data-dd-option="{{ $induk->category_id }}" onclick="selectParentId('{{ $induk->category_id }}')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                        {{ $induk->nama_kategori }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                    </button>
                 @endforeach
-            </select>
+            </div>
+            <input type="hidden" name="parent_id" id="parentId" value="" />
+        </div>
         </div>
         <div>
             <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsiKategori">Deskripsi</label>
@@ -436,10 +449,23 @@
         </div>
         <div>
             <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="statusKategoriToko">Status</label>
-            <select name="status" id="statusKategoriToko" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors">
-                <option value="aktif">Aktif</option>
-                <option value="nonaktif">Nonaktif</option>
-            </select>
+            <div class="relative" id="katTokoStatus-dd">
+                <button type="button" data-dd-trigger id="katTokoStatus-trigger" onclick="toggleDropdown('katTokoStatus')" aria-haspopup="listbox" aria-expanded="false"
+                    class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
+                    <span id="katTokoStatus-label" class="truncate">Aktif</span>
+                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="katTokoStatus-chevron">expand_more</span>
+                </button>
+                <div id="katTokoStatus-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                    class="hidden absolute left-0 top-full mt-2 w-full min-w-[140px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                    <button type="button" role="option" aria-selected="true" data-dd-option="aktif" onclick="selectKatTokoStatus('aktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                        Aktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                    </button>
+                    <button type="button" role="option" aria-selected="false" data-dd-option="nonaktif" onclick="selectKatTokoStatus('nonaktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                        Nonaktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                    </button>
+                </div>
+                <input type="hidden" name="status" id="statusKategoriToko" value="aktif" />
+            </div>
         </div>
         @slot('footer')
             <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4">
@@ -474,12 +500,21 @@
 @endsection
 
 @push('scripts')
+@include('SuperAdmin.partials.dd-helpers')
 <script>
     const kategoriUrls = {
         store: '{{ route('superadmin.kategori.store') }}',
         update: (id) => '{{ route('superadmin.kategori.update', ':id:') }}'.replace(':id:', id),
         hapus: (id) => '{{ route('superadmin.kategori.hapus', ':id:') }}'.replace(':id:', id)
     };
+    const parentsLabelMap = @json($parents->pluck('nama_kategori', 'category_id'));
+
+    function selectParentId(v) {
+        ddSet('parentId', v, v === '' ? '— Tanpa induk (kategori utama) —' : (parentsLabelMap[v] ?? '— Tanpa induk (kategori utama) —'));
+    }
+    function selectKatTokoStatus(v) {
+        ddSet('katTokoStatus', v, v === 'aktif' ? 'Aktif' : 'Nonaktif');
+    }
 
     function openKategoriForm(card = null) {
         const isEdit = !!card;
@@ -492,6 +527,7 @@
             document.getElementById('namaKategori').value = d.nama;
             document.getElementById('deskripsiKategori').value = d.deskripsi || '';
             document.getElementById('parentId').value = d.parent || '';
+            selectParentId(d.parent || '');
             form.action = kategoriUrls.update(d.id);
             document.getElementById('kategori-submit-btn').textContent = 'Simpan Perubahan';
         } else {
@@ -500,6 +536,7 @@
             document.getElementById('namaKategori').value = '';
             document.getElementById('deskripsiKategori').value = '';
             document.getElementById('parentId').value = '';
+            selectParentId('');
             form.action = kategoriUrls.store;
             document.getElementById('kategori-submit-btn').textContent = 'Tambah Kategori';
         }
@@ -545,7 +582,7 @@
     }
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') { closeKategoriModal(); closeHapusModal(); }
+        if (e.key === 'Escape') { closeAllDropdowns(); closeKategoriModal(); closeHapusModal(); }
     });
 </script>
 @endpush
@@ -666,6 +703,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('namaKategoriToko').value = d.nama;
             document.getElementById('deskripsiKategoriToko').value = d.deskripsi || '';
             document.getElementById('statusKategoriToko').value = d.status || 'aktif';
+            selectKatTokoStatus(d.status || 'aktif');
             form.action = kategoriTokoUrls.update(d.id);
             document.getElementById('kategori-toko-submit-btn').textContent = 'Simpan Perubahan';
         } else {
@@ -674,6 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('namaKategoriToko').value = '';
             document.getElementById('deskripsiKategoriToko').value = '';
             document.getElementById('statusKategoriToko').value = 'aktif';
+            selectKatTokoStatus('aktif');
             form.action = kategoriTokoUrls.store;
             document.getElementById('kategori-toko-submit-btn').textContent = 'Tambah Kategori Toko';
         }
@@ -771,7 +810,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') { closeKategoriTokoModal(); closeHapusKategoriTokoModal(); }
+        if (e.key === 'Escape') { closeAllDropdowns(); closeKategoriTokoModal(); closeHapusKategoriTokoModal(); }
     });
 </script>
 @endpush

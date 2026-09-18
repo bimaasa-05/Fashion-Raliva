@@ -18,7 +18,7 @@ use App\Models\Role;
 use App\Services\NotificationService;
 use App\Support\ActivityLogger;
 use App\Support\AdminContext;
-use App\Support\WalletService;
+use App\Support\CustomerWalletService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -415,7 +415,36 @@ class DataPesananController extends Controller
 
         $lama = $pesanan->only(['status']);
 
-        $pesanan->update(['status' => Order::STATUS_DIBATALKAN]);
+        $isSaldoRefund = false;
+
+        DB::transaction(function () use ($pesanan, $data, &$isSaldoRefund) {
+            $order = Order::with(['checkout.payment.paymentMethod'])
+                ->where('order_id', $pesanan->order_id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $order->update(['status' => Order::STATUS_DIBATALKAN]);
+
+            $payment = $order->checkout?->payment;
+
+            if (
+                $payment
+                && $payment->status === Payment::STATUS_TERVERIFIKASI
+                && $payment->paymentMethod?->kode_metode === PaymentMethod::KODE_SALDO_AKUN
+                && $order->checkout?->user
+            ) {
+                try {
+                    CustomerWalletService::refundToWallet(
+                        $order,
+                        (float) $order->grand_total,
+                        'Refund otomatis pembatalan pesanan '.$order->nomor_order.' (saldo akun)'
+                    );
+                    $isSaldoRefund = true;
+                } catch (\RuntimeException $e) {
+                    \Illuminate\Support\Facades\Log::warning('Refund saldo dibatalkan: '.$e->getMessage());
+                }
+            }
+        });
 
         ActivityLogger::log(
             'admin.order.cancel',
@@ -428,8 +457,19 @@ class DataPesananController extends Controller
 
         $this->notifyCustomer($pesanan, 'Pesanan Dibatalkan', sprintf('Pesanan %s dibatalkan. Alasan: %s', $pesanan->nomor_order, $data['alasan']));
 
+        if ($isSaldoRefund && $pesanan->checkout?->user) {
+            Notification::create([
+                'user_id' => $pesanan->checkout->user->user_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_WALLET,
+                'judul' => 'Dana Dikembalikan ke Saldo',
+                'pesan' => sprintf('Pembatalan pesanan %s. Dana Rp %s dikembalikan ke saldo akun Anda.', $pesanan->nomor_order, number_format((float) $pesanan->grand_total, 0, ',', '.')),
+                'url' => route('customer.saldo'),
+            ]);
+        }
+
         return back()->with('toast', [
-            'message' => "Pesanan {$pesanan->nomor_order} dibatalkan.",
+            'message' => "Pesanan {$pesanan->nomor_order} dibatalkan.".($isSaldoRefund ? ' Dana dikembalikan ke saldo customer.' : ''),
             'icon' => 'block',
         ]);
     }

@@ -49,7 +49,7 @@
             e.stopPropagation();
 
             if (IS_GUEST_CART) {
-                showToast('Masuk untuk memakai keranjang, atau klik Beli Sekarang.');
+                showToast('Anda belum login.');
                 return;
             }
 

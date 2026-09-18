@@ -112,6 +112,7 @@
                             @php
 $pelanggan = $s->order?->checkout?->user;
                                 $pelNama = $pelanggan?->nama_lengkap ?? $s->order?->checkout?->nama_penerima ?? '-';
+                                $statusClass = match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant' };
                             @endphp
                             <tr data-table-row
                                         data-status="{{ $s->status }}"
@@ -127,13 +128,32 @@ $pelanggan = $s->order?->checkout?->user;
                                     <form method="POST" action="{{ route('superadmin.pengiriman.status', $s->shipment_id) }}" class="inline-flex">
                                         @csrf
                                         @method('PUT')
-                                        <select name="status" data-prev="{{ $s->status }}" onchange="openConfirmPengiriman(this)" class="bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant', } }}">
-                                            <option value="pending" {{ $s->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                            <option value="diproses" {{ $s->status === 'diproses' ? 'selected' : '' }}>Diproses</option>
-                                            <option value="dikirim" {{ $s->status === 'dikirim' ? 'selected' : '' }}>Dikirim</option>
-                                            <option value="diterima" {{ $s->status === 'diterima' ? 'selected' : '' }}>Diterima</option>
-                                            <option value="gagal" {{ $s->status === 'gagal' ? 'selected' : '' }}>Gagal</option>
-                                        </select>
+                                        <div class="relative" id="kirim-{{ $s->shipment_id }}-dd">
+                                            <button type="button" data-dd-trigger id="kirim-{{ $s->shipment_id }}-trigger" onclick="toggleDropdown('kirim-{{ $s->shipment_id }}')" aria-haspopup="listbox" aria-expanded="false"
+                                                class="flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer text-left min-w-[120px] {{ $statusClass }}">
+                                                <span id="kirim-{{ $s->shipment_id }}-label" class="truncate">{{ ucfirst($s->status) }}</span>
+                                                <span class="material-symbols-outlined text-[14px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="kirim-{{ $s->shipment_id }}-chevron">expand_more</span>
+                                            </button>
+                                            <div id="kirim-{{ $s->shipment_id }}-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                                                class="hidden absolute left-0 top-full mt-1 w-full min-w-[140px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                                                <button type="button" role="option" aria-selected="{{ $s->status === 'pending' ? 'true' : 'false' }}" data-dd-option="pending" onclick="openConfirmPengiriman('kirim', {{ $s->shipment_id }}, 'pending')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                                    Pending<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'pending' ? '' : 'hidden' }}">check</span>
+                                                </button>
+                                                <button type="button" role="option" aria-selected="{{ $s->status === 'diproses' ? 'true' : 'false' }}" data-dd-option="diproses" onclick="openConfirmPengiriman('kirim', {{ $s->shipment_id }}, 'diproses')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                                    Diproses<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diproses' ? '' : 'hidden' }}">check</span>
+                                                </button>
+                                                <button type="button" role="option" aria-selected="{{ $s->status === 'dikirim' ? 'true' : 'false' }}" data-dd-option="dikirim" onclick="openConfirmPengiriman('kirim', {{ $s->shipment_id }}, 'dikirim')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                                    Dikirim<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'dikirim' ? '' : 'hidden' }}">check</span>
+                                                </button>
+                                                <button type="button" role="option" aria-selected="{{ $s->status === 'diterima' ? 'true' : 'false' }}" data-dd-option="diterima" onclick="openConfirmPengiriman('kirim', {{ $s->shipment_id }}, 'diterima')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                                    Diterima<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diterima' ? '' : 'hidden' }}">check</span>
+                                                </button>
+                                                <button type="button" role="option" aria-selected="{{ $s->status === 'gagal' ? 'true' : 'false' }}" data-dd-option="gagal" onclick="openConfirmPengiriman('kirim', {{ $s->shipment_id }}, 'gagal')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                                    Gagal<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'gagal' ? '' : 'hidden' }}">check</span>
+                                                </button>
+                                            </div>
+                                            <input type="hidden" name="status" value="{{ $s->status }}" />
+                                        </div>
                                     </form>
                                 </td>
                                 <td class="p-6 text-right">
@@ -180,6 +200,7 @@ $pelanggan = $s->order?->checkout?->user;
                     @php
 $pelanggan = $s->order?->checkout?->user;
                         $pelNama = $pelanggan?->nama_lengkap ?? $s->order?->checkout?->nama_penerima ?? '-';
+                        $statusClass = match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant' };
                     @endphp
                     <article data-table-row data-status="{{ $s->status }}" data-search="{{ strtolower(($s->order->nomor_order ?? '').' '.($s->order->store->nama_toko ?? '').' '.($s->courier->nama_kurir ?? '').' '.($s->nomor_resi ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
                         <div class="flex items-start justify-between gap-3 mb-3">
@@ -190,13 +211,32 @@ $pelanggan = $s->order?->checkout?->user;
                             <form method="POST" action="{{ route('superadmin.pengiriman.status', $s->shipment_id) }}" class="shrink-0">
                                 @csrf
                                 @method('PUT')
-                                <select name="status" data-prev="{{ $s->status }}" onchange="openConfirmPengiriman(this)" class="bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant', } }}">
-                                    <option value="pending" {{ $s->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="diproses" {{ $s->status === 'diproses' ? 'selected' : '' }}>Diproses</option>
-                                    <option value="dikirim" {{ $s->status === 'dikirim' ? 'selected' : '' }}>Dikirim</option>
-                                    <option value="diterima" {{ $s->status === 'diterima' ? 'selected' : '' }}>Diterima</option>
-                                    <option value="gagal" {{ $s->status === 'gagal' ? 'selected' : '' }}>Gagal</option>
-                                </select>
+                                <div class="relative" id="kirim-m-{{ $s->shipment_id }}-dd">
+                                    <button type="button" data-dd-trigger id="kirim-m-{{ $s->shipment_id }}-trigger" onclick="toggleDropdown('kirim-m-{{ $s->shipment_id }}')" aria-haspopup="listbox" aria-expanded="false"
+                                        class="flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer text-left min-w-[120px] {{ $statusClass }}">
+                                        <span id="kirim-m-{{ $s->shipment_id }}-label" class="truncate">{{ ucfirst($s->status) }}</span>
+                                        <span class="material-symbols-outlined text-[14px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="kirim-m-{{ $s->shipment_id }}-chevron">expand_more</span>
+                                    </button>
+                                    <div id="kirim-m-{{ $s->shipment_id }}-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                                        class="hidden absolute left-0 top-full mt-1 w-full min-w-[140px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                                        <button type="button" role="option" aria-selected="{{ $s->status === 'pending' ? 'true' : 'false' }}" data-dd-option="pending" onclick="openConfirmPengiriman('kirim-m', {{ $s->shipment_id }}, 'pending')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                            Pending<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'pending' ? '' : 'hidden' }}">check</span>
+                                        </button>
+                                        <button type="button" role="option" aria-selected="{{ $s->status === 'diproses' ? 'true' : 'false' }}" data-dd-option="diproses" onclick="openConfirmPengiriman('kirim-m', {{ $s->shipment_id }}, 'diproses')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                            Diproses<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diproses' ? '' : 'hidden' }}">check</span>
+                                        </button>
+                                        <button type="button" role="option" aria-selected="{{ $s->status === 'dikirim' ? 'true' : 'false' }}" data-dd-option="dikirim" onclick="openConfirmPengiriman('kirim-m', {{ $s->shipment_id }}, 'dikirim')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                            Dikirim<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'dikirim' ? '' : 'hidden' }}">check</span>
+                                        </button>
+                                        <button type="button" role="option" aria-selected="{{ $s->status === 'diterima' ? 'true' : 'false' }}" data-dd-option="diterima" onclick="openConfirmPengiriman('kirim-m', {{ $s->shipment_id }}, 'diterima')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                            Diterima<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diterima' ? '' : 'hidden' }}">check</span>
+                                        </button>
+                                        <button type="button" role="option" aria-selected="{{ $s->status === 'gagal' ? 'true' : 'false' }}" data-dd-option="gagal" onclick="openConfirmPengiriman('kirim-m', {{ $s->shipment_id }}, 'gagal')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                            Gagal<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'gagal' ? '' : 'hidden' }}">check</span>
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="status" value="{{ $s->status }}" />
+                                </div>
                             </form>
                         </div>
 
@@ -333,6 +373,7 @@ $pelanggan = $s->order?->checkout?->user;
 @endsection
 
 @push('scripts')
+@include('SuperAdmin.partials.dd-helpers')
 <script>
     // === FILTER & SEARCH ===
     const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
@@ -437,11 +478,35 @@ $pelanggan = $s->order?->checkout?->user;
         document.body.style.overflow = '';
     }
 
-    let _pendingPengirimanSelect = null;
-    function openConfirmPengiriman(sel) {
-        _pendingPengirimanSelect = sel;
-        const label = sel.options[sel.selectedIndex]?.text?.trim() || sel.value;
-        document.getElementById('confirm-pengiriman-status').textContent = label;
+    const pengStatusLabels = { pending: 'Pending', diproses: 'Diproses', dikirim: 'Dikirim', diterima: 'Diterima', gagal: 'Gagal' };
+    const pengStatusTokens = {
+        diterima: ['text-success', 'border-success/30'],
+        dikirim: ['text-secondary', 'border-secondary/30'],
+        diproses: ['text-info', 'border-info/30'],
+        gagal: ['text-error', 'border-error/30'],
+        pending: ['text-on-surface-variant', 'border-outline-variant'],
+    };
+    function applyPengStatusClass(suffix, id, status) {
+        const trigger = document.getElementById(suffix + '-' + id + '-trigger');
+        if (!trigger) return;
+        const known = Object.values(pengStatusTokens).flat();
+        known.forEach((c) => trigger.classList.remove(c));
+        (pengStatusTokens[status] ?? pengStatusTokens.pending).forEach((c) => trigger.classList.add(c));
+    }
+    let _pendingPengiriman = null;
+    function openConfirmPengiriman(suffix, id, value) {
+        if (_pendingPengiriman && (_pendingPengiriman.suffix !== suffix || _pendingPengiriman.id !== id)) {
+            const p = _pendingPengiriman;
+            ddSet(p.suffix + '-' + p.id, p.prev, pengStatusLabels[p.prev] ?? p.prev);
+            applyPengStatusClass(p.suffix, p.id, p.prev);
+        }
+        const root = document.getElementById(suffix + '-' + id + '-dd');
+        if (!root) return;
+        const pre = root.querySelector('[data-dd-value]');
+        _pendingPengiriman = { suffix, id, prev: pre ? pre.value : 'pending', value };
+        ddSet(suffix + '-' + id, value, pengStatusLabels[value] ?? value);
+        applyPengStatusClass(suffix, id, value);
+        document.getElementById('confirm-pengiriman-status').textContent = pengStatusLabels[value] ?? value;
         const m = document.getElementById('confirmPengirimanModal');
         m.classList.remove('hidden');
         m.classList.add('flex');
@@ -449,15 +514,18 @@ $pelanggan = $s->order?->checkout?->user;
     function closeConfirmPengiriman() {
         const m = document.getElementById('confirmPengirimanModal');
         if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
-        if (_pendingPengirimanSelect) {
-            _pendingPengirimanSelect.value = _pendingPengirimanSelect.dataset.prev;
-            _pendingPengirimanSelect = null;
+        if (_pendingPengiriman) {
+            const { suffix, id, prev } = _pendingPengiriman;
+            ddSet(suffix + '-' + id, prev, pengStatusLabels[prev] ?? prev);
+            applyPengStatusClass(suffix, id, prev);
+            _pendingPengiriman = null;
         }
     }
     document.getElementById('confirm-pengiriman-submit')?.addEventListener('click', () => {
-        if (_pendingPengirimanSelect) {
-            const f = _pendingPengirimanSelect.closest('form');
-            _pendingPengirimanSelect = null;
+        if (_pendingPengiriman) {
+            const root = document.getElementById(_pendingPengiriman.suffix + '-' + _pendingPengiriman.id + '-dd');
+            const f = root?.closest('form');
+            _pendingPengiriman = null;
             if (f) f.submit();
         }
         const m = document.getElementById('confirmPengirimanModal');
@@ -465,7 +533,7 @@ $pelanggan = $s->order?->checkout?->user;
     });
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') { closeModal(); closeConfirmPengiriman(); }
+        if (e.key === 'Escape') { closeAllDropdowns(); closeModal(); closeConfirmPengiriman(); }
     });
 </script>
 @endpush

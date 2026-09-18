@@ -23,7 +23,7 @@
         e.stopPropagation();
 
         if (!AUTHD) {
-            window.location.href = '{{ route("login", ["redirect" => "__REDIRECT__"]) }}'.replace('__REDIRECT__', encodeURIComponent(window.location.pathname + window.location.search));
+            showWlToast('Anda belum login.');
             return;
         }
 

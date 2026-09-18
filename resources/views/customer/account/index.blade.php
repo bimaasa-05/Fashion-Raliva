@@ -294,6 +294,16 @@
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-secondary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
+<a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.saldo') }}">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-body-lg text-body-lg text-on-surface">{{ __('Saldo Akun') }}</span>
+</div>
+<span class="flex items-center gap-sm">
+<span class="font-body-sm text-body-sm font-semibold text-[var(--chrome-accent)]">Rp {{ number_format((float) \App\Support\CustomerWalletService::balance(Auth::user()), 0, ',', '.') }}</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-secondary transition-colors" data-icon="chevron_right">chevron_right</span>
+</span>
+</a>
         <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.wishlist') }}">
             <div class="flex items-center gap-sm">
                 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors" data-icon="favorite_border">favorite_border</span>
