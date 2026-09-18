@@ -23,8 +23,8 @@ class LaporanController extends Controller
         $storeId = $storeIds[0] ?? null;
 
         // pendapatan = sum grand_total where status selesai for admin's stores
-        $pendapatan = $storeId ? (float) Order::whereIn('store_id', $storeIds)->where('status', 'selesai')->sum('grand_total') : 0;
-        $pesananDiproses = $storeId ? Order::whereIn('store_id', $storeIds)->where('status', 'selesai')->count() : 0;
+        $pendapatan = $storeId ? (float) Order::whereIn('store_id', $storeIds)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->sum('grand_total') : 0;
+        $pesananDiproses = $storeId ? Order::whereIn('store_id', $storeIds)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->count() : 0;
 
         // pengeluaran = refund selesai + store expense
         $refund = $storeId ? (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
@@ -47,12 +47,12 @@ class LaporanController extends Controller
         if ($storeIds) {
             $stores = \App\Models\Store::whereIn('store_id', $storeIds)->get();
             foreach ($stores as $s) {
-                $p = (float) Order::where('store_id', $s->store_id)->where('status','selesai')->sum('grand_total');
+                $p = (float) Order::where('store_id', $s->store_id)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->sum('grand_total');
                 $exp = (float) StoreExpense::where('store_id', $s->store_id)->sum('nominal');
                 $ref = (float) Refund::join('orders','orders.order_id','=','refunds.order_id')->where('orders.store_id',$s->store_id)->where('refunds.status','selesai')->sum('refunds.jumlah');
                 $perToko->push((object)[
                     'nama_toko'=>$s->nama_toko,
-                    'pesanan'=> Order::where('store_id',$s->store_id)->where('status','selesai')->count(),
+                    'pesanan'=> Order::where('store_id',$s->store_id)->whereIn('status',[Order::STATUS_SELESAI, Order::STATUS_REFUND])->count(),
                     'pendapatan'=>$p,
                     'pengeluaran'=>$exp+$ref,
                     'bersih'=>$p - ($exp+$ref),

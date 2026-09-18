@@ -30,7 +30,7 @@ class LaporanController extends Controller
         $buildRange = function ($days) use ($storeId) {
             $start = now()->subDays($days - 1)->startOfDay();
             $orders = Order::where('store_id', $storeId)
-                ->where('status', 'selesai')
+                ->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])
                 ->where('created_at', '>=', $start)
                 ->selectRaw('DATE(created_at) as tgl, SUM(grand_total) as pendapatan')
                 ->groupBy('tgl')->pluck('pendapatan', 'tgl');
@@ -41,7 +41,7 @@ class LaporanController extends Controller
                     $end = now()->subDays($i);
                     $startW = $end->copy()->subDays(6)->startOfDay();
                     $labels[] = $startW->translatedFormat('d M');
-                    $pend[] = (float) Order::where('store_id', $storeId)->where('status', 'selesai')
+                    $pend[] = (float) Order::where('store_id', $storeId)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])
                         ->whereBetween('created_at', [$startW, $end->endOfDay()])->sum('grand_total');
                     $ref[] = (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
                         ->where('orders.store_id', $storeId)->where('refunds.status', 'selesai')
@@ -49,7 +49,7 @@ class LaporanController extends Controller
                 }
                 return ['labels' => $labels, 'pendapatan' => $pend, 'refund' => $ref];
             }
-            $agg = Order::where('store_id', $storeId)->where('status', 'selesai')
+            $agg = Order::where('store_id', $storeId)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])
                 ->where('created_at', '>=', $start)
                 ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as bln, SUM(grand_total) as pendapatan")
                 ->groupBy('bln')->orderBy('bln')->pluck('pendapatan', 'bln');
@@ -70,8 +70,8 @@ class LaporanController extends Controller
     {
         $storeId = $storeId ?? 0;
 
-        $pendapatan = (float) Order::where('store_id', $storeId)->where('status', 'selesai')->sum('grand_total');
-        $pesananSelesai = Order::where('store_id', $storeId)->where('status', 'selesai')->count();
+        $pendapatan = (float) Order::where('store_id', $storeId)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->sum('grand_total');
+        $pesananSelesai = Order::where('store_id', $storeId)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->count();
 
         $refund = (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
             ->where('orders.store_id', $storeId)
@@ -86,7 +86,7 @@ class LaporanController extends Controller
             return [
                 'periode' => $label,
                 'pesanan' => Order::where('store_id', $storeId)->whereBetween('created_at', [$s, $e])->count(),
-                'pendapatan' => (float) Order::where('store_id', $storeId)->where('status', 'selesai')->whereBetween('created_at', [$s, $e])->sum('grand_total'),
+                'pendapatan' => (float) Order::where('store_id', $storeId)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->whereBetween('created_at', [$s, $e])->sum('grand_total'),
                 'refund' => (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
                     ->where('orders.store_id', $storeId)->where('refunds.status', 'selesai')
                     ->whereBetween('refunds.diajukan_pada', [$s, $e])->sum('refunds.jumlah'),
@@ -204,7 +204,7 @@ class LaporanController extends Controller
             return [
                 $label,
                 Order::where('store_id', $storeId)->whereBetween('created_at', [$s, $e])->count(),
-                (float) Order::where('store_id', $storeId)->where('status', 'selesai')->whereBetween('created_at', [$s, $e])->sum('grand_total'),
+                (float) Order::where('store_id', $storeId)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->whereBetween('created_at', [$s, $e])->sum('grand_total'),
                 (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
                     ->where('orders.store_id', $storeId)->where('refunds.status', 'selesai')
                     ->whereBetween('refunds.diajukan_pada', [$s, $e])->sum('refunds.jumlah'),

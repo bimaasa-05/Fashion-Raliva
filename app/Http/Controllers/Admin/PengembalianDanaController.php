@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\Refund;
 use App\Models\User;
+use App\Support\AdminContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,12 +15,16 @@ class PengembalianDanaController extends Controller
 {
     public function index()
     {
+        $storeIds = AdminContext::assignedStoreIds();
+
         $pengajuan = Refund::with(['order.store', 'requester', 'items.orderItem.productVariant.product', 'payment'])
+            ->whereHas('order', fn ($q) => $q->whereIn('store_id', $storeIds))
             ->whereIn('status', [Refund::STATUS_REQUESTED, Refund::STATUS_ESKALASI])
             ->orderByDesc('diajukan_pada')
             ->get();
 
         $riwayat = Refund::with(['order.store', 'requester', 'reviewer', 'items.orderItem.productVariant.product', 'payment'])
+            ->whereHas('order', fn ($q) => $q->whereIn('store_id', $storeIds))
             ->whereNotIn('status', [Refund::STATUS_REQUESTED, Refund::STATUS_ESKALASI])
             ->orderByDesc('diajukan_pada')
             ->paginate(15);
@@ -29,6 +34,8 @@ class PengembalianDanaController extends Controller
 
     public function setujui(Request $request, Refund $refund): RedirectResponse
     {
+        $this->assertBelongsToStore($refund);
+
         if ($refund->status !== Refund::STATUS_REQUESTED && $refund->status !== Refund::STATUS_ESKALASI) {
             return back()->with('error', 'Refund sudah diproses.');
         }
@@ -56,6 +63,8 @@ class PengembalianDanaController extends Controller
 
     public function tolak(Request $request, Refund $refund): RedirectResponse
     {
+        $this->assertBelongsToStore($refund);
+
         if ($refund->status !== Refund::STATUS_REQUESTED && $refund->status !== Refund::STATUS_ESKALASI) {
             return back()->with('error', 'Refund sudah diproses.');
         }
@@ -84,6 +93,8 @@ class PengembalianDanaController extends Controller
 
     public function eskalasi(Request $request, Refund $refund): RedirectResponse
     {
+        $this->assertBelongsToStore($refund);
+
         if ($refund->status !== Refund::STATUS_REQUESTED) {
             return back()->with('error', 'Refund tidak dapat dieskalasi.');
         }
@@ -109,5 +120,14 @@ class PengembalianDanaController extends Controller
         Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Refund Dieskalasi', sprintf('Refund %s dieskalasi ke Owner.', $refund->kode), route('admin.pengembalian-dana'));
 
         return back()->with('success', 'Refund ' . $refund->kode . ' dieskalasi ke Owner Toko.');
+    }
+
+    protected function assertBelongsToStore(Refund $refund): void
+    {
+        $storeIds = AdminContext::assignedStoreIds();
+
+        if (! in_array((int) $refund->order?->store_id, array_map('intval', $storeIds), true)) {
+            abort(403, 'Refund ini bukan untuk toko Anda.');
+        }
     }
 }

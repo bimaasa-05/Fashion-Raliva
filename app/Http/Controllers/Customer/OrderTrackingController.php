@@ -49,6 +49,7 @@ class OrderTrackingController extends Controller
                 'store',
                 'items.productVariant.product.images',
                 'shipments.courier',
+                'refunds',
                 'checkout.payment.paymentMethod',
                 'checkout.payment.account',
             ])

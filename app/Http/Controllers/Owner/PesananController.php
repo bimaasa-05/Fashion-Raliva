@@ -15,6 +15,7 @@ class PesananController extends Controller
         'diproses' => ['diproses'],
         'dikirim' => ['dikirim'],
         'selesai' => ['selesai'],
+        'refund' => ['refund'],
         'dibatalkan' => ['dibatalkan'],
     ];
 
@@ -48,6 +49,7 @@ class PesananController extends Controller
             'diproses' => Order::where('store_id', $storeId)->where('status', Order::STATUS_DIPROSES)->count(),
             'dikirim' => Order::where('store_id', $storeId)->where('status', Order::STATUS_DIKIRIM)->count(),
             'selesai' => Order::where('store_id', $storeId)->where('status', Order::STATUS_SELESAI)->count(),
+            'refund' => Order::where('store_id', $storeId)->where('status', Order::STATUS_REFUND)->count(),
             'dibatalkan' => Order::where('store_id', $storeId)->where('status', Order::STATUS_DIBATALKAN)->count(),
         ];
 
