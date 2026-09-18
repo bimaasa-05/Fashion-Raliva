@@ -88,6 +88,21 @@
         .chip-quick { border: 1px solid var(--border-soft); background: var(--surface-warm); }
         .chip-quick.active { border-color: #8B1E3F; background: rgba(139,30,63,.08); color: #8B1E3F; font-weight: 600; box-shadow: inset 0 0 0 1px rgba(139,30,63,.15); }
         html.theme-dark .chip-quick.active { background: rgba(139,30,63,.18); color: #FFC2C9; }
+        .co-stepper { display: flex; align-items: center; justify-content: center; gap: .5rem; }
+        .co-step { display: flex; align-items: center; gap: .45rem; font-family: 'Manrope', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+        .co-step .num { width: 28px; height: 28px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; border: 1.5px solid var(--border-soft); background: var(--surface-warm); color: var(--text-muted); }
+        .co-step.active .num { background: #8B1E3F; border-color: #8B1E3F; color: #fff; }
+        .co-step.done .num { background: #8B1E3F; border-color: #8B1E3F; color: #fff; }
+        .co-step.active { color: #8B1E3F; }
+        .co-step:not(.active):not(.done) { color: var(--text-muted); }
+        .co-step-line { width: 32px; height: 1px; background: var(--border-soft); }
+        .co-step-line.done { background: #8B1E3F; }
+        @media (max-width: 374px) { .co-step { font-size: 0; gap: .3rem; } .co-step-line { display: none; } }
+        .co-step .num.loading { border: 2px solid var(--border-soft); border-top-color: #8B1E3F; background: transparent !important; color: transparent !important; animation: co-spin 0.75s linear infinite; }
+        .co-step .num.loading::after { content: ''; display: none; }
+        @keyframes co-spin { to { transform: rotate(360deg); } }
+        .co-step.done { cursor: pointer; text-decoration: none; transition: opacity .2s ease; }
+        .co-step.done:hover { opacity: .75; }
     </style>
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] lg:pl-72">
@@ -102,6 +117,16 @@
 
     <main class="pt-6 pb-10 w-full overflow-x-hidden">
         <div class="mx-auto max-w-[1400px] px-container-margin space-y-lg">
+
+            <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center">
+                <div class="co-stepper">
+                    <span class="co-step active"><span class="num">1</span> {{ __('Review') }}</span>
+                    <span class="co-step-line"></span>
+                    <span class="co-step"><span class="num loading"></span> {{ __('Bayar') }}</span>
+                    <span class="co-step-line"></span>
+                    <span class="co-step"><span class="num loading"></span> {{ __('Selesai') }}</span>
+                </div>
+            </div>
 
             @if (session('toast'))
                 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-md flex items-center gap-sm">
