@@ -286,7 +286,7 @@
 @php
     $sMin = $a->variants->min('harga') ?? $a->harga_dasar;
     $sImg = $a->images->first()->file_gambar ?? '';
-    $sImgUrl = $sImg ? (filter_var($sImg, FILTER_VALIDATE_URL) ? $sImg : asset($sImg)) : 'https://picsum.photos/seed/searchad/900/1200';
+    $sImgUrl = $sImg ? (photo_url($sImg)) : 'https://picsum.photos/seed/searchad/900/1200';
     $sWl = in_array($a->product_id, $wishlistedIds, true);
     $sDefaultVariant = $a->variants->sortBy('harga')->first();
 @endphp
@@ -320,7 +320,7 @@
 @php
     $sMin = $p->variants->min('harga') ?? $p->harga_dasar;
     $sImg = $p->images->first()?->file_gambar ?? '';
-    $sImgUrl = $sImg ? (filter_var($sImg, FILTER_VALIDATE_URL) ? $sImg : asset($sImg)) : 'https://picsum.photos/seed/search/900/1200';
+    $sImgUrl = $sImg ? (photo_url($sImg)) : 'https://picsum.photos/seed/search/900/1200';
     $sWl = in_array($p->product_id, $wishlistedIds, true);
     $sDefaultVariant = $p->variants->sortBy('harga')->first();
 @endphp
