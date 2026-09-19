@@ -19,8 +19,13 @@
         ])
         ->all();
 @endphp
+@php
+    /* Mode "minimal motion": semua halaman Super Admin kecuali Komplain.
+       Halaman komplain sengaja diadakan animasinya (user minta dibiarkan). */
+    $saMotionMinimal = ! request()->routeIs('superadmin.komplain*');
+@endphp
 <!DOCTYPE html>
-<html class="light" lang="id">
+<html class="light" lang="id" @if ($saMotionMinimal) data-motion="minimal" @endif>
 <head>
     <meta charset="utf-8" />
     <meta name="user-id" content="{{ Auth::id() }}" />
@@ -197,6 +202,21 @@
         .modal-footer-band .btn-modal-ghost { color: #fff; border-color: rgba(255, 255, 255, 0.45); background: rgba(255, 255, 255, 0.06); }
         .modal-footer-band .btn-modal-ghost:hover { background: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.7); }
     </style>
+    <style>
+        /* ===== Mode Minimal Motion (semua halaman SA kecuali Komplain) =====
+           Hanya animasi DEKORATIF yang dipangkas. Loader/spinner, toast, dan
+           fungsi interaktif (drag, klik) tetap normal — lengkap & bisa dipakai. */
+        html[data-motion="minimal"] .page-enter,
+        html[data-motion="minimal"] .rise { animation: none !important; opacity: 1 !important; transform: none !important; pointer-events: auto !important; }
+        html[data-motion="minimal"] [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+        html[data-motion="minimal"] [data-reveal][style*="translate"] { transform: none !important; }
+        html[data-motion="minimal"] .raliva-donut-seg,
+        html[data-motion="minimal"] .raliva-bar,
+        html[data-motion="minimal"] .raliva-lb-fill,
+        html[data-motion="minimal"] .gauge-progress { transition: none !important; }
+        /* Transisi kecil tetap jalan tapi super cepat (hover tetap terasa, popup tidak dipotong). */
+        html[data-motion="minimal"] * { transition-duration: 0.05s !important; transition-delay: 0s !important; }
+    </style>
 </head>
 <body class="text-on-background font-body-md antialiased min-h-screen flex flex-col">
     <div id="app-shell" class="flex-1 min-w-0 flex flex-col md:flex-row">
@@ -358,11 +378,19 @@
             return false;
         };
 
+        /* Mode minimal motion: reveal langsung tampil, count-up seketika (tanpa animasi). */
+        const _minimalMotion = document.documentElement.dataset.motion === 'minimal';
+        if (_minimalMotion && typeof window.ralivaCountUp === 'function') {
+            const _mo = window.ralivaCountUp;
+            window.ralivaCountUp = (el, t, s) => _mo(el, t, s, 1);
+        }
+
         /* Count-up ditahan sampai card-nya terlihat di viewport */
         const pendingCounts = [];
         if (window.ralivaCountUp) {
             const origCountUp = window.ralivaCountUp;
             window.ralivaCountUp = (el, target, suffix, duration) => {
+                if (_minimalMotion) return origCountUp(el, target, suffix, duration || 1);
                 const host = el ? el.closest('[data-reveal]') : null;
                 if (!host || host.classList.contains('revealed')) return origCountUp(el, target, suffix, duration);
                 pendingCounts.push({ el, target, suffix, duration });
@@ -378,6 +406,11 @@
         };
 
         window.initRalivaReveal = () => {
+            if (_minimalMotion) {
+                document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('revealed'));
+                flushPendingCounts(document);
+                return;
+            }
             /* Grup eksplisit: anak-anaknya dapat delay berurutan.
                page-enter TIDAK lagi auto jadi reveal-group —
                view yang pakai reveal harus pasang data-reveal-group sendiri. */
