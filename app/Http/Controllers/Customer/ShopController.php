@@ -51,7 +51,7 @@ class ShopController extends Controller
                 'store:store_id,nama_toko,logo,deskripsi',
                 'category:category_id,nama_kategori',
                 'images' => fn ($q) => $q->orderBy('urutan'),
-                'variants' => fn ($q) => $q->where('status', 'aktif')->orderBy('product_variant_id'),
+                'variants' => fn ($q) => $q->where('status', 'aktif')->with('warehouseStocks')->orderBy('product_variant_id'),
             ])
             ->firstOrFail();
 
@@ -74,7 +74,7 @@ class ShopController extends Controller
             ->with([
                 'store:store_id,nama_toko',
                 'images' => fn ($q) => $q->orderBy('urutan'),
-                'variants' => fn ($q) => $q->where('status', 'aktif'),
+                'variants' => fn ($q) => $q->where('status', 'aktif')->with('warehouseStocks'),
             ])
             ->latest()
             ->take(6)
