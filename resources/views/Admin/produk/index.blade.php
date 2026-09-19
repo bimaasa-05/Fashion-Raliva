@@ -335,7 +335,7 @@
 {{-- Modal Form Produk — tengah, pola data-modal --}}
 <div id="modal-form-produk" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-    <form method="POST" action="{{ route('admin.produk.store') }}" enctype="multipart/form-data" class="relative mx-auto w-full max-w-xl bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto" style="overscroll-behavior: contain; scrollbar-gutter: stable;">
+    <form id="form-produk" method="POST" action="{{ route('admin.produk.store') }}" enctype="multipart/form-data" class="relative mx-auto w-full max-w-xl bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto" style="overscroll-behavior: contain; scrollbar-gutter: stable;">
         @csrf
     <div class="sticky top-0 bg-surface-container-lowest z-10 flex items-center justify-between px-6 py-5 border-b border-muted-border shrink-0">
         <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Produk Baru</h3>
@@ -444,7 +444,7 @@
                 <p class="raliva-label mb-2">Warna <span class="text-xs font-normal text-on-surface-variant">(klik untuk pilih, bisa lebih dari satu)</span></p>
                 <div class="grid grid-cols-4 sm:grid-cols-5 gap-2" id="warna-presets">
                     @foreach ([['Navy', '#22304a'], ['Camel', '#c19a6b'], ['Putih', '#f5f3f3'], ['Merah', '#c62828'], ['Biru', '#2360a8'], ['Kuning', '#e6b91e'], ['Marun', '#7d2b33'], ['Hijau', '#2e7d32'], ['Emerald', '#046e4c'], ['Coral', '#f2875c'], ['Teal', '#0f766e'], ['Cream', '#f6ecd9'], ['Violet', '#7c3aed'], ['Sage', '#9caf88']] as $color)
-                        <label class="warna-chip flex flex-col items-center gap-1 py-2 rounded-lg border border-muted-border cursor-pointer hover:border-gold-accent transition-colors has-[:checked]:bg-gold-accent/10 has-[:checked]:border-gold-accent" data-warna-value="{{ $color[0] }}">
+                        <label class="warna-chip flex flex-col items-center gap-1 py-2 rounded-lg border border-muted-border cursor-pointer hover:border-gold-accent transition-colors has-[:checked]:bg-gold-accent/10 has-[:checked]:border-gold-accent" data-warna-value="{{ $color[0] }}" data-hex="{{ $color[1] }}">
                             <input type="checkbox" name="warna[]" value="{{ $color[0] }}" class="sr-only peer" />
                             <span class="w-7 h-7 rounded-full border border-outline-variant shadow-inner peer-checked:ring-2 peer-checked:ring-gold-accent peer-checked:ring-offset-2 ring-offset-surface-container-lowest transition-all" style="background-color: {{ $color[1] }};"></span>
                             <span class="font-body-md text-[10px] text-on-surface-variant peer-checked:text-gold-accent text-center leading-tight">{{ $color[0] }}</span>
@@ -568,17 +568,10 @@ function escapeHtml(str) {
 
 function warnaSwatch(name) {
     name = String(name || '').trim();
+    window.__warnaPresetHex = window.__warnaPresetHex || @json(\App\Support\WarnaPalet::all());
+    if (!window.__warnaPresetHex) window.__warnaPresetHex = {};
     if (window.__warnaCustomHex && window.__warnaCustomHex[name]) return window.__warnaCustomHex[name];
-    const map = {
-        'Hitam':'#1c1b1b','Krem':'#e8dcc8','Navy':'#22304a','Camel':'#c19a6b','Putih':'#f5f3f3',
-        'Merah':'#c62828','Biru':'#2360a8','Kuning':'#e6b91e','Marun':'#7d2b33','Hijau':'#2e7d32',
-        'Abu-abu':'#7c7c7c','Cokelat':'#6d4c41','Pink':'#e29bb0','Oranye':'#e8792f','Ungu':'#6a4c93',
-        'Tosca':'#2f9e94','Lilac':'#b09cc1','Gold':'#c9a24d','Silver':'#b9bdc4','Mint':'#a8d5ba',
-        'Beige':'#d7c9a8','Burgundy':'#6e1423','Emerald':'#046e4c','Coral':'#f2875c','Teal':'#0f766e',
-        'Cream':'#f6ecd9','Mustard':'#d2a13c','Olive':'#708238','Rust':'#b7410e','Violet':'#7c3aed',
-        'Sage':'#9caf88'
-    };
-    return map[name] || '#cccccc';
+    return window.__warnaPresetHex[name] || '#cccccc';
 }
 
 function updateUkuranTerpilih() {
@@ -782,6 +775,27 @@ function addCustomSize() {
 
     addBtn.addEventListener('click', addCustomWarna);
     nameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addCustomWarna(); } });
+})();
+
+// --- Sinkronkan hex warna custom/preset ke hidden warna_hex[] saat submit ---
+(function () {
+    const form = document.getElementById('form-produk');
+    if (!form) return;
+    form.addEventListener('submit', () => {
+        form.querySelectorAll('input[name="warna_hex[]"]').forEach((h) => h.remove());
+        const hexOf = (name) => {
+            if (window.__warnaCustomHex && window.__warnaCustomHex[name]) return window.__warnaCustomHex[name];
+            window.__warnaPresetHex = window.__warnaPresetHex || @json(\App\Support\WarnaPalet::all());
+            return (window.__warnaPresetHex && window.__warnaPresetHex[name]) || '';
+        };
+        form.querySelectorAll('input[name="warna[]"]:checked').forEach((cb) => {
+            const h = document.createElement('input');
+            h.type = 'hidden';
+            h.name = 'warna_hex[]';
+            h.value = cb.closest('label')?.getAttribute('data-hex') || hexOf(cb.value);
+            form.appendChild(h);
+        });
+    });
 })();
 
 // --- Anti scroll-page saat modal terbuka (padanan halaman pesanan) ---
