@@ -45,6 +45,8 @@ class DataProdukController extends Controller
             'ukuran_terpilih' => 'nullable|string|max:255',
             'warna' => 'nullable|array',
             'warna.*' => 'string|max:30',
+            'warna_hex' => 'nullable|array',
+            'warna_hex.*' => 'nullable|string|regex:/^#([0-9a-fA-F]{6})$/i',
             'varian_stok' => 'nullable|array',
             'varian_stok.*.ukuran' => 'required|string|max:255',
             'varian_stok.*.warna' => 'required|string|max:100',
@@ -108,6 +110,16 @@ class DataProdukController extends Controller
         $ukuranList = $data['ukuran_terpilih'] ? explode(',', $data['ukuran_terpilih']) : ['All Size'];
         $warnaList = $data['warna'] ?? ['Hitam'];
 
+        $warnaHexMap = collect($warnaList)->values()->mapWithKeys(function ($warna, $i) use ($data) {
+            $name = trim($warna);
+            $hex = trim((string) ($data['warna_hex'][$i] ?? ''));
+            $resolved = ($hex && preg_match('/^#[0-9a-fA-F]{6}$/', $hex))
+                ? $hex
+                : (\App\Support\WarnaPalet::hex($name) ?? '');
+
+            return [$name => $resolved];
+        })->all();
+
         $perVarian = collect($data['varian_stok'] ?? [])->keyBy(function ($v) {
             return trim($v['ukuran']) . '|' . trim($v['warna']);
         });
@@ -131,6 +143,7 @@ class DataProdukController extends Controller
                     'sku' => strtoupper(substr($product->nama_produk, 0, 3)).'-'.str_pad($product->product_id, 4, '0').'-'.strtoupper(substr($uk,0,1)).substr($wr,0,1).rand(10,99),
                     'ukuran' => trim($uk),
                     'warna' => trim($wr),
+                    'warna_hex' => $warnaHexMap[trim($wr)] ?? (\App\Support\WarnaPalet::hex(trim($wr)) ?? null),
                     'harga' => $data['harga_dasar'],
                     'status' => 'aktif',
                 ]);
