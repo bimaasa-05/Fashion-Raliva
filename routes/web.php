@@ -159,6 +159,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('/pesanan', [\App\Http\Controllers\Customer\OrderController::class, 'index'])->name('orders');
 
         Route::get('/saldo', [\App\Http\Controllers\Customer\SaldoController::class, 'index'])->name('saldo');
+        Route::get('/saldo/isi', [\App\Http\Controllers\Customer\SaldoController::class, 'isiSaldo'])->name('saldo.isi');
         Route::post('/saldo/topup', [\App\Http\Controllers\Customer\SaldoController::class, 'topup'])->name('saldo.topup');
         Route::get('/saldo/topup/{topup}/payment', [\App\Http\Controllers\Customer\SaldoController::class, 'payment'])->name('saldo.topup.payment');
         Route::post('/saldo/topup/{topup}/payment', [\App\Http\Controllers\Customer\SaldoController::class, 'uploadTopupProof'])->name('saldo.topup.payment.upload');
