@@ -23,6 +23,8 @@
         let queue = [];
         let showing = false;
 
+        const _mMinimal = document.documentElement.dataset.motion === 'minimal';
+
         let soundScheduled = false;
         /* Bunyi notif "ting" ala beautycare — murni Web Audio, tanpa mp3. */
         function sound() {
@@ -78,8 +80,8 @@
             requestAnimationFrame(() => {
                 el.classList.remove('translate-y-[-16px]', 'opacity-0');
             });
-            setTimeout(() => sound(), 300);
-            setTimeout(() => hide(el), 5000);
+            if (!_mMinimal) setTimeout(() => sound(), 300);
+            setTimeout(() => hide(el), _mMinimal ? 2200 : 5000);
         }
 
         function hide(el) {
@@ -88,7 +90,7 @@
                 el.remove();
                 showing = false;
                 next();
-            }, 300);
+            }, _mMinimal ? 20 : 300);
         }
 
         function next() {
