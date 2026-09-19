@@ -19,6 +19,7 @@ use App\Services\NotificationService;
 use App\Support\ActivityLogger;
 use App\Support\AdminContext;
 use App\Support\CustomerWalletService;
+use App\Support\WalletService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
