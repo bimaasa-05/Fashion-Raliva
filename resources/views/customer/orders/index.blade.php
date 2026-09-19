@@ -315,7 +315,7 @@
 @php
     $v = $item->productVariant;
     $img = $v?->product?->images->first()?->file_gambar ?? '';
-    $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/order-' . $item->order_item_id . '/900/1200';
+    $imgUrl = $img ? (photo_url($img)) : 'https://picsum.photos/seed/order-' . $item->order_item_id . '/900/1200';
     $warna = $v?->warna;
     $ukuran = $v?->ukuran;
 @endphp
