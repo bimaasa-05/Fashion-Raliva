@@ -389,7 +389,7 @@
 @php
     $aPrice = $a->variants->min('harga') ?? $a->harga_dasar;
     $aImg = $a->images->first()->file_gambar ?? '';
-    $aImgUrl = $aImg ? (filter_var($aImg, FILTER_VALIDATE_URL) ? $aImg : asset($aImg)) : 'https://picsum.photos/seed/ad/900/1200';
+    $aImgUrl = $aImg ? (photo_url($aImg)) : 'https://picsum.photos/seed/ad/900/1200';
     $aWl = in_array($a->product_id, $wishlistedIds, true);
     $aDefaultVariant = $a->variants->sortBy('harga')->first();
 @endphp
@@ -433,7 +433,7 @@
     $homeCat = $p->category?->parent?->nama_kategori ?? $p->category?->nama_kategori;
     $minPrice = $p->variants->min('harga') ?? $p->harga_dasar;
     $firstImage = $p->images->first()->file_gambar ?? '';
-    $homeImg = $firstImage ? (filter_var($firstImage, FILTER_VALIDATE_URL) ? $firstImage : asset($firstImage)) : 'https://picsum.photos/seed/product/900/1200';
+    $homeImg = $firstImage ? (photo_url($firstImage)) : 'https://picsum.photos/seed/product/900/1200';
     $homeWl = in_array($p->product_id, $wishlistedIds, true);
     $homeDefaultVariant = $p->variants->sortBy('harga')->first();
 @endphp
@@ -484,7 +484,7 @@
 @forelse ($stores as $s)
 @php
     $storeImg = $s->logo;
-    $storeImgUrl = $storeImg ? (filter_var($storeImg, FILTER_VALIDATE_URL) ? $storeImg : asset($storeImg)) : 'https://picsum.photos/seed/store/900/600';
+    $storeImgUrl = $storeImg ? (photo_url($storeImg)) : 'https://picsum.photos/seed/store/900/600';
 @endphp
 <a href="{{ route('customer.shop.store', $s->store_id) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
