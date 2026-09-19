@@ -390,7 +390,7 @@
 </button>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
 <div class="flex items-center gap-sm">
-<a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart', ['from' => 'shop']) }}" class="hover:opacity-80 transition-opacity relative flex items-center justify-center">
+<a aria-label="{{ __('Cart') }}" href="{{ auth()->check() ? route('customer.chart', ['from' => 'shop']) : route('customer.account', ['notice' => 'login']) }}" class="hover:opacity-80 transition-opacity relative flex items-center justify-center">
 <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
 <span class="cart-badge absolute -top-0.5 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
 </a>
