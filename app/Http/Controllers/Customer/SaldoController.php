@@ -48,21 +48,61 @@ class SaldoController extends Controller
             ->orderByDesc('customer_wallet_transaction_id')
             ->paginate(12);
 
-        $chart = collect(range(5, 0))->map(function ($i) use ($wallet) {
-            $month = Carbon::now()->subMonths($i);
-            $pemasukan = (float) $wallet->transactions()
-                ->whereIn('jenis_transaksi', [
-                    CustomerWalletTransaction::JENIS_TOPUP,
-                    CustomerWalletTransaction::JENIS_REFUND_MASUK,
-                ])
-                ->whereBetween('created_at', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
-                ->sum('jumlah');
+        $since = Carbon::now()->subYear()->startOfDay();
 
-            return [
-                'label' => $month->translatedFormat('M'),
-                'value' => $pemasukan,
+        $transaksiMasuk = $wallet->transactions()
+            ->whereIn('jenis_transaksi', [
+                CustomerWalletTransaction::JENIS_TOPUP,
+                CustomerWalletTransaction::JENIS_REFUND_MASUK,
+            ])
+            ->where('created_at', '>=', $since)
+            ->get(['jumlah', 'created_at']);
+
+        $transaksiKeluar = $wallet->transactions()
+            ->where('jenis_transaksi', CustomerWalletTransaction::JENIS_PEMBAYARAN_KELUAR)
+            ->where('created_at', '>=', $since)
+            ->get(['jumlah', 'created_at']);
+
+        $masukBulanan = $transaksiMasuk->groupBy(fn ($t) => $t->created_at->format('Y-m'));
+        $keluarBulanan = $transaksiKeluar->groupBy(fn ($t) => $t->created_at->format('Y-m'));
+        $masukHarian = $transaksiMasuk->groupBy(fn ($t) => $t->created_at->format('Y-m-d'));
+        $keluarHarian = $transaksiKeluar->groupBy(fn ($t) => $t->created_at->format('Y-m-d'));
+
+        $ranges = [];
+        $rangeDefs = [
+            '1tahun' => ['label' => '1 Tahun', 'bulan' => 12, 'hari' => null],
+            '6bulan' => ['label' => '6 Bulan', 'bulan' => 6, 'hari' => null],
+            '3bulan' => ['label' => '3 Bulan', 'bulan' => 3, 'hari' => null],
+            '1minggu' => ['label' => '1 Minggu', 'bulan' => null, 'hari' => 7],
+        ];
+
+        foreach ($rangeDefs as $key => $def) {
+            $inSeries = [];
+            $outSeries = [];
+
+            if ($def['hari'] !== null) {
+                for ($i = $def['hari'] - 1; $i >= 0; $i--) {
+                    $d = Carbon::now()->subDays($i);
+                    $k = $d->format('Y-m-d');
+                    $inSeries[] = ['label' => $d->translatedFormat('j'), 'value' => (float) ($masukHarian->get($k) ?? collect())->sum('jumlah')];
+                    $outSeries[] = ['label' => $d->translatedFormat('j'), 'value' => abs((float) ($keluarHarian->get($k) ?? collect())->sum('jumlah'))];
+                }
+            } else {
+                for ($i = $def['bulan'] - 1; $i >= 0; $i--) {
+                    $m = Carbon::now()->subMonths($i);
+                    $k = $m->format('Y-m');
+                    $inSeries[] = ['label' => $m->translatedFormat('M'), 'value' => (float) ($masukBulanan->get($k) ?? collect())->sum('jumlah')];
+                    $outSeries[] = ['label' => $m->translatedFormat('M'), 'value' => abs((float) ($keluarBulanan->get($k) ?? collect())->sum('jumlah'))];
+                }
+            }
+
+            $ranges[$key] = [
+                'label' => $def['label'],
+                'bulanan' => $def['hari'] === null,
+                'pemasukan' => $inSeries,
+                'pengeluaran' => $outSeries,
             ];
-        });
+        }
 
         $activeTopups = CustomerTopup::where('user_id', $user->user_id)
             ->with(['payment.paymentMethod', 'payment.account', 'payment.proofs'])
@@ -74,20 +114,7 @@ class SaldoController extends Controller
             ->orderByDesc('customer_topup_id')
             ->get();
 
-        $chartKeluar = collect(range(5, 0))->map(function ($i) use ($wallet) {
-            $month = Carbon::now()->subMonths($i);
-            $pengeluaran = (float) $wallet->transactions()
-                ->where('jenis_transaksi', CustomerWalletTransaction::JENIS_PEMBAYARAN_KELUAR)
-                ->whereBetween('created_at', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
-                ->sum('jumlah');
-
-            return [
-                'label' => $month->translatedFormat('M'),
-                'value' => abs($pengeluaran),
-            ];
-        });
-
-        return view('customer.saldo.index', compact('saldo', 'totalTopup', 'totalBelanja', 'transactions', 'activeTopups', 'chart', 'chartKeluar'));
+        return view('customer.saldo.index', compact('saldo', 'totalTopup', 'totalBelanja', 'transactions', 'activeTopups', 'ranges'));
     }
 
     public function isiSaldo()
