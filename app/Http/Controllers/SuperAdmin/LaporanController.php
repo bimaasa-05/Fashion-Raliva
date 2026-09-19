@@ -65,7 +65,7 @@ class LaporanController extends Controller
             return [
                 $label,
                 Order::whereBetween('created_at', [$start, $end])->count(),
-                (float) Order::where('status', Order::STATUS_SELESAI)->whereBetween('created_at', [$start, $end])->sum('grand_total'),
+                (float) Order::whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->whereBetween('created_at', [$start, $end])->sum('grand_total'),
                 (float) Refund::where('status', Refund::STATUS_SELESAI)->whereBetween('diajukan_pada', [$start, $end])->sum('jumlah'),
                 (float) Withdrawal::where('status', Withdrawal::STATUS_DIBAYAR)->whereBetween('diajukan_pada', [$start, $end])->sum('jumlah'),
             ];

@@ -60,7 +60,7 @@
                 <span class="raliva-figure text-[26px] {{ $saya['bersih'] >= 0 ? 'text-secondary' : 'text-error' }}">Rp {{ number_format($saya['bersih'],0,',','.') }}</span>
             </div>
         </div>
-        <p class="text-xs text-on-surface-variant mt-2">Pengeluaran saya = refund yang saya tinjau + pengeluaran toko yang saya catat. Berlaku untuk toko yang ditugaskan (AdminContext).</p>
+        <p class="text-xs text-on-surface-variant mt-2">Pengeluaran saya = refund yang saya selesaikan (hanya refund berstatus selesai) + pengeluaran toko yang saya catat. Berlaku untuk toko yang ditugaskan (AdminContext).</p>
     </section>
 
     <section class="space-y-gutter">

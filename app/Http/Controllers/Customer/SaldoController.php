@@ -14,6 +14,7 @@ use App\Models\PlatformBankAccount;
 use App\Models\Role;
 use App\Services\NotificationService;
 use App\Support\CustomerWalletService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -47,6 +48,62 @@ class SaldoController extends Controller
             ->orderByDesc('customer_wallet_transaction_id')
             ->paginate(12);
 
+        $since = Carbon::now()->subYear()->startOfDay();
+
+        $transaksiMasuk = $wallet->transactions()
+            ->whereIn('jenis_transaksi', [
+                CustomerWalletTransaction::JENIS_TOPUP,
+                CustomerWalletTransaction::JENIS_REFUND_MASUK,
+            ])
+            ->where('created_at', '>=', $since)
+            ->get(['jumlah', 'created_at']);
+
+        $transaksiKeluar = $wallet->transactions()
+            ->where('jenis_transaksi', CustomerWalletTransaction::JENIS_PEMBAYARAN_KELUAR)
+            ->where('created_at', '>=', $since)
+            ->get(['jumlah', 'created_at']);
+
+        $masukBulanan = $transaksiMasuk->groupBy(fn ($t) => $t->created_at->format('Y-m'));
+        $keluarBulanan = $transaksiKeluar->groupBy(fn ($t) => $t->created_at->format('Y-m'));
+        $masukHarian = $transaksiMasuk->groupBy(fn ($t) => $t->created_at->format('Y-m-d'));
+        $keluarHarian = $transaksiKeluar->groupBy(fn ($t) => $t->created_at->format('Y-m-d'));
+
+        $ranges = [];
+        $rangeDefs = [
+            '1tahun' => ['label' => '1 Tahun', 'bulan' => 12, 'hari' => null],
+            '6bulan' => ['label' => '6 Bulan', 'bulan' => 6, 'hari' => null],
+            '3bulan' => ['label' => '3 Bulan', 'bulan' => 3, 'hari' => null],
+            '1minggu' => ['label' => '1 Minggu', 'bulan' => null, 'hari' => 7],
+        ];
+
+        foreach ($rangeDefs as $key => $def) {
+            $inSeries = [];
+            $outSeries = [];
+
+            if ($def['hari'] !== null) {
+                for ($i = $def['hari'] - 1; $i >= 0; $i--) {
+                    $d = Carbon::now()->subDays($i);
+                    $k = $d->format('Y-m-d');
+                    $inSeries[] = ['label' => $d->translatedFormat('j'), 'value' => (float) ($masukHarian->get($k) ?? collect())->sum('jumlah')];
+                    $outSeries[] = ['label' => $d->translatedFormat('j'), 'value' => abs((float) ($keluarHarian->get($k) ?? collect())->sum('jumlah'))];
+                }
+            } else {
+                for ($i = $def['bulan'] - 1; $i >= 0; $i--) {
+                    $m = Carbon::now()->subMonths($i);
+                    $k = $m->format('Y-m');
+                    $inSeries[] = ['label' => $m->translatedFormat('M'), 'value' => (float) ($masukBulanan->get($k) ?? collect())->sum('jumlah')];
+                    $outSeries[] = ['label' => $m->translatedFormat('M'), 'value' => abs((float) ($keluarBulanan->get($k) ?? collect())->sum('jumlah'))];
+                }
+            }
+
+            $ranges[$key] = [
+                'label' => $def['label'],
+                'bulanan' => $def['hari'] === null,
+                'pemasukan' => $inSeries,
+                'pengeluaran' => $outSeries,
+            ];
+        }
+
         $activeTopups = CustomerTopup::where('user_id', $user->user_id)
             ->with(['payment.paymentMethod', 'payment.account', 'payment.proofs'])
             ->whereIn('status', [
@@ -57,7 +114,16 @@ class SaldoController extends Controller
             ->orderByDesc('customer_topup_id')
             ->get();
 
-        return view('customer.saldo.index', compact('saldo', 'totalTopup', 'totalBelanja', 'transactions', 'activeTopups'));
+        return view('customer.saldo.index', compact('saldo', 'totalTopup', 'totalBelanja', 'transactions', 'activeTopups', 'ranges'));
+    }
+
+    public function isiSaldo()
+    {
+        $nominalCepat = static::NOMINAL_CEPAT;
+        $minNominal = static::MIN_NOMINAL;
+        $maxNominal = static::MAX_NOMINAL;
+
+        return view('customer.saldo.isi-saldo', compact('nominalCepat', 'minNominal', 'maxNominal'));
     }
 
     public function topup(Request $request)
@@ -208,8 +274,45 @@ class SaldoController extends Controller
             route('superadmin.verifikasi-topup')
         );
 
-        return redirect()->route('customer.saldo')
+        return redirect()->route('customer.saldo.topup.selesai', $topup->customer_topup_id)
             ->with('toast', ['message' => 'Bukti topup diunggah. Menunggu verifikasi Super Admin.', 'icon' => 'task_alt']);
+    }
+
+    public function selesai(CustomerTopup $topup)
+    {
+        if (! Auth::check()) {
+            return redirect()->route('login', ['redirect' => route('customer.saldo.topup.selesai', $topup->customer_topup_id)]);
+        }
+        if (Auth::user()->role?->nama_role !== Role::CUSTOMER) {
+            abort(403);
+        }
+        if ($topup->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $this->expireOverdue();
+        $topup->load(['payment.paymentMethod', 'payment.account']);
+
+        return view('customer.saldo.selesai', compact('topup'));
+    }
+
+    public function paymentStatus(CustomerTopup $topup)
+    {
+        if (! Auth::check()) {
+            return response()->json(['unauthenticated' => true], 401);
+        }
+
+        if ($topup->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $this->expireOverdue();
+        $topup->refresh();
+
+        return response()->json([
+            'status' => $topup->status,
+            'verified' => $topup->status === CustomerTopup::STATUS_TERVERIFIKASI,
+        ]);
     }
 
     /**

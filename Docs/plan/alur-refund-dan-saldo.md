@@ -28,19 +28,20 @@ Order yang boleh di-refund: status `dikirim` atau `selesai` (`Customer\OrderTrac
 
 ```
 Customer ajukan refund (order dikirim/selesai) — wajib foto bukti barang
-  Refund: requested     (jumlah ≤ grand_total, tipe full/partial)
+  Refund: requested     (jumlah ≤ grand_total, tipe full/partial, dapat berisi complaint_id)
         │
         ▼
-Admin toko
-  ├── setujui ──────► disetujui  (reviewed_by = Admin) ──────► selesai (Owner/SA)
-  ├── tolak  ──────► ditolak     (reviewed_by = Admin, + alasan)
+Admin toko (scope AdminContext — hanya toko yang ditugaskan)
+  ├── setujui ──────► disetujui  (reviewed_by = Admin sedapatnya) ──────► selesai (Owner/SA)
+  ├── tolak  ──────► ditolak     (reviewed_by = Admin sedapatnya, + alasan)
   └── eskalasi ─────► escalated  (reviewed_by = Admin) ──► Owner: setujui/tolak
-                                                            (reviewed_by TETAP Admin — keputusan user)
+                                                            (reviewed_by TETAP Admin — tidak ditimpa)
                                     ▲
 SuperAdmin (observability) ─────────┘
   ├── setujui (requested → disetujui)
   ├── tolak  (requested → ditolak, alasan min 10)
-  └── selesaikan (disetujui → selesai + wajib file_bukti + DECREMENT WALLET)
+  └── selesaikan (disetujui → selesai) — SATU JALUR via RefundCompletionService:
+      pemotongan Wallet toko + kredit saldo akun customer + bukti + flip order full-refund
 ```
 
 ---
@@ -62,34 +63,36 @@ SuperAdmin (observability) ─────────┘
 
 **Role:** Admin — `app/Http/Controllers/Admin/PengembalianDanaController.php` (web.php ±370-373)
 
-- `index()`: `pengajuan` = status `requested`+`escalated`; `riwayat` = sisanya (paginated).
-- `setujui()`: dari `requested` atau `escalated` → `disetujui`, `reviewed_by = Auth::id()`.
+- `index()`: `pengajuan` = status `requested`+`escalated`; `riwayat` = sisanya (paginated). **Semua dibatasi** ke toko milik `AdminContext::assignedStoreIds()` (pola `whereHas('order', …)`).
+- `setujui()`: dari `requested` atau `escalated` → `disetujui`, `reviewed_by = Auth::id()` (bila masih NULL).
 - `tolak()`: → `ditolak`, `reviewed_by`, `alasan_penolakan` dari input, `selesai_pada=now()`.
 - `eskalasi()`: hanya dari `requested` → `escalated`, `reviewed_by = Auth::id()`, notif ke Owner toko.
-- Semua aksi menotifikasi customer (`TIPE_KOMPLAIN`) + self-notification.
-- ⚠️ **Temuan:** `index`/aksi Admin **tidak** memfilter `AdminContext::assignedStoreIds()` (beda dengan Komplain). Potensi akses lintas toko — dijadwalkan di `refund-rekap-karyawan.md` §7.
+- Semua aksi **guard `assertBelongsToStore` (403)** di luar toko yang ditugaskan, menotifikasi customer (`TIPE_KOMPLAIN`) + self-notification.
 
-### Tahap 3: Owner menangani eskalasi
+### Tahap 3: Owner menangani eskalasi & penyelesaian
 
 **Role:** Owner — `app/Http/Controllers/Owner/PengembalianDanaController.php` (web.php ±484-487 & 500-502)
 
-- `index()`: **hanya** refund `escalated` milik toko Owner (`OwnerContext::firstStoreId()`).
+- `index()`: **hanya** refund `escalated`/`disetujui` milik toko Owner (`OwnerContext::firstStoreId()`).
 - `setujui()`/`tolak()`: hanya dari `escalated` (guard `assertStoreOwnerScope`).
-  - **Keputusan user (final):** `reviewed_by` **tidak boleh ditimpa** dengan ID Owner; harus tetap admin yang menangani (lihat `refund-rekap-karyawan.md` untuk perbaikan kodenya).
-- `selesaikan()`: dari `disetujui` → `selesai` + `selesai_pada`. **Tanpa sentuhan wallet/saldo** (dana secara operasional ditangani di luar sistem).
+  - **Keputusan user (final):** `reviewed_by` **tidak boleh ditimpa** dengan ID Owner; dibiarkan tetap admin yang menangani (guard `if (! $refund->reviewed_by)`).
+- `selesaikan()`: dari `disetujui` → memanggil `RefundCompletionService::complete` — **satu jalur sama persis dengan SuperAdmin** (potong wallet toko + kredit saldo akun customer bila dibayar saldo akun + wajib `file_bukti`).
 
-### Tahap 4: SuperAdmin menuntaskan dana
+### Tahap 4: Penyelesaian dana (Service Bersama)
 
-**Role:** SuperAdmin — `app/Http/Controllers/SuperAdmin/PengembalianDanaController.php` (web.php ±244-247)
+**Role:** SuperAdmin & Owner — via `app/Services/RefundCompletionService.php`
 
-- `setujui()`/`tolak()`: dari `requested` (tolak wajib alasan min 10). Dicatat `ActivityLogger` (`refund.approve`/`refund.reject`).
-- `selesaikan()`: dari `disetujui` → **wajib** `file_bukti` (JPG/PNG/PDF ≤5MB) + `deskripsi_bukti` opsional.
-  - `DB::transaction` + `lockForUpdate` pada Refund & Wallet.
-  - Cek saldo cukup → `wallet->decrement('saldo_tersedia', jumlah)`.
-  - `WalletTransaction` dibuat dengan `jenis_transaksi = JENIS_REFUND_KELUAR`, `saldo_sebelum`/`saldo_sesudah`.
+- `SuperAdmin/PengembalianDanaController::selesaikan()` (web.php ±244-247) dan `Owner::selesaikan()` keduanya menjadi pemanggil thin dari `RefundCompletionService::complete($refund, $path, $deskripsi)`.
+- `complete()`:
+  - Wajib status `disetujui` (guard `lockForUpdate` pada Refund & Wallet toko) → error "sudah berubah oleh pihak lain".
+  - Cek saldo toko cukup → `wallet->decrement('saldo_tersedia', jumlah)`.
+  - `WalletTransaction` `JENIS_REFUND_KELUAR` dengan `saldo_sebelum`/`saldo_sesudah`.
   - Update `status=selesai`, `file_bukti`, `deskripsi_bukti`, `bukti_diupload_pada`.
-  - Pada error, file bukti dihapus dari storage (rollback).
-  - Dicatat `ActivityLogger` (`refund.complete`) + notif customer & Owner.
+  - **Kredit saldo akun customer** bila payment `KODE_SALDO_AKUN`: `CustomerWalletService::refundToWallet` (mutasi `JENIS_REFUND_MASUK`; guard anti double-credit).
+  - **Flip order**: full refund & `jumlah >= grand_total` & status order ∈ {`dikirim`,`selesai`} → `Order::STATUS_REFUND` (log `order.refunded`).
+  - Pada error apa pun, file bukti dihapus dari storage (rollback) & exception dilempar; controller memetakan pesan error → flash/toast.
+  - `ActivityLogger` `refund.complete` + notif customer & Owner. Perbedaan antar role hanya di styling flash & teks notifikasi.
+- SuperAdmin juga punya `setujui()`/`tolak()` untuk refund `requested` (tolak wajib alasan min 10), dicatat `ActivityLogger` (`refund.approve`/`refund.reject`).
 
 ---
 
@@ -104,10 +107,8 @@ refunds ──belongsTo──▶ orders (order_id)
    └──hasMany────▶ wallet_transactions (refund_id)   [SA selesaikan]
 
 Catatan:
-- TIDAK ada kolom complaint_id → komplain & refund belum terhubung.
-- Order::STATUS_REFUND = 'refund' ADA di konstanta Order & label tracking,
-  tetapi TIDAK pernah dipakai sebagai transisi — order yang di-refund penuh
-  tetap berstatus `selesai` dan masih dihitung sebagai pendapatan.
+- Ada kolom `complaint_id` (nullable, FK) → komplain & refund terhubung ketika customer mengajukan refund dari thread komplain.
+- Order::STATUS_REFUND = 'refund' AKTIF: order yang di-refund **penuh** (`tipe_refund=full`, `jumlah >= grand_total`) di-set `refund` saat `selesaikan`. Dampak dikoordinasikan di laporan (lihat §5.4).
 ```
 
 ---
@@ -139,15 +140,16 @@ Saat ini `selesaikan` milik SuperAdmin men-decrement **wallet toko** (`Wallet.sa
 
 ## 6. Temuan Jujur (kondisi saat ini)
 
-1. `wallet.saldo_tersedia` di-decrement **hanya oleh SuperAdmin** saat `selesaikan`; alurnya tidak dibuka untuk Owner (Owner hanya menandai status).
-2. `Order::STATUS_REFUND` tidak terpakai → laporan "pendapatan" masih menganggap order yang sudah di-refund penuh sebagai penjualan. Perlu keputusan kapan order di-set `refund` (lihat `integrasi-komplain-refund.md`).
+1. ~~`wallet.saldo_tersedia` di-decrement hanya oleh SuperAdmin~~ **Tidak lagi:** Owner & SA memakai jalur sama (`RefundCompletionService`) — decrement wallet + kredit saldo akun customer + bukti. Owner kini memotong wallet tokonya sendiri.
+2. ~~`Order::STATUS_REFUND` tidak terpakai~~ **Sudah dipakai:** full refund (`selesai`, `jumlah >= grand_total`) mengubah order ke `refund`. Laporan yang punya baris Refund menghitung pendapatan `whereIn([selesai, refund])` → net 0; statistik tanpa baris Refund tetap `selesai` (order refund gugur alami).
 3. Refund legacy di DB `Raliva_Fashion` seluruhnya `reviewed_by = NULL` — tidak teratribusi ke karyawan mana pun (jangan di-backfill manual).
-4. Aksi Admin refund belum di-scope `AdminContext` (bandingkan: komplain admin sudah) — dijadwalkan perbaikan.
+4. ~~Aksi Admin refund belum di-scope~~ **Sudah di-scope** `AdminContext::assignedStoreIds()` di `index` + semua aksi (guard 403 `assertBelongsToStore`).
+5. Temuan minor (dibiarkan, dicatat): `selesai_pada` diisi saat `setujui`/`ditolak` oleh Admin/Owner padahal maknanya "dana keluar"; SA mengisinya hanya saat `selesaikan`. Tidak diubah agar tidak memutus navigasi UI.
 
 ---
 
 ## 7. Batasan & Urutan Nanti
 
-- Batch attibusi rekap karyawan: `refund-rekap-karyawan.md`.
-- Batch integrasi komplain↔refund + status order refund: `integrasi-komplain-refund.md`.
-- Batch saldo pelanggan: menunggu persetujuan desain (baru sketsa di §5).
+- Batch atribusi rekap karyawan: `refund-rekap-karyawan.md` — ✅ selesai.
+- Batch integrasi komplain↔refund + status order refund: `integrasi-komplain-refund.md` — ✅ selesai (termasuk `Order::STATUS_REFUND`).
+- Batch saldo pelanggan: inti kredit otomatis (`CustomerWalletService`) sudah jalan; sisa = UI halaman "Saldo Saya", penarikan, dan pengelolaan batas saldo (menunggu persetujuan desain).

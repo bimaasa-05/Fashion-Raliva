@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - {{ __('Pesanan Berhasil') }}</title>
+<title>RALIVA - {{ __('Top Up Berhasil') }}</title>
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -122,20 +122,6 @@
         padding-left:1.25rem; padding-right:1.25rem; }
     .co-bottom-bar.open .co-bb-panel { max-height:100vh; overflow-y:auto; padding-bottom:.5rem; }
     .co-bb-rows { display:flex; flex-direction:column; gap:.4rem; padding:.625rem 0; }
-    .co-bb-store + .co-bb-rows { border-top:1px dashed var(--border-soft); }
-
-    /* ---- daftar produk dalam panel ---- */
-    .co-bb-store { padding:.75rem 0 1rem; }
-    .co-bb-store + .co-bb-store { padding-top:0; border-top:1px dashed var(--border-soft); }
-    .co-bb-store-name { font-family:'Manrope',sans-serif; font-size:12px; font-weight:700;
-        letter-spacing:.06em; text-transform:uppercase; color:var(--chrome-accent); margin-bottom:.5rem; }
-    .co-bb-item { display:flex; align-items:flex-start; justify-content:space-between;
-        gap:.75rem; padding:.4rem 0; }
-    .co-bb-item + .co-bb-item { border-top:1px dashed var(--border-soft); }
-    .co-bb-item-name { font-family:'Manrope',sans-serif; font-size:13px; font-weight:600; color:var(--on-surface); line-height:1.3; }
-    .co-bb-item-note { font-size:11px; color:var(--text-muted); }
-    .co-bb-item-qty { font-size:12px; color:var(--text-muted); margin-top:.15rem; }
-    .co-bb-item-total { font-family:'Manrope',sans-serif; font-size:13px; font-weight:600; color:var(--on-surface); white-space:nowrap; }
     .co-bb-row { display:flex; align-items:center; justify-content:space-between;
         font-family:'Manrope',sans-serif; font-size:13px; color:var(--on-surface); }
     .co-bb-row.total { padding-top:.6rem; margin-top:.2rem; border-top:1px dashed var(--border-soft); font-weight:700; }
@@ -155,25 +141,24 @@
     <div class="mx-auto max-w-[1400px] px-container-margin">
         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center reveal-up">
 <div class="co-stepper">
-            <a href="{{ route('customer.checkout') }}" class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Review') }}</a>
+            <a href="{{ route('customer.saldo.isi') }}" class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Isi') }}</a>
             <span class="co-step-line done"></span>
-            <a href="{{ route('customer.checkout.payment', $checkout->checkout_id) }}" class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Bayar') }}</a>
+            <a href="{{ route('customer.saldo.topup.payment', $topup->customer_topup_id) }}" class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Bayar') }}</a>
             <span class="co-step-line done"></span>
             <span class="co-step active"><span class="num">3</span> {{ __('Selesai') }}</span>
         </div>
         </div>
 
         @php
-            $akunBaru = session('akun_baru');
-            $payStatus = $payment->status ?? null;
-            $isVerified = $payStatus === \App\Models\Payment::STATUS_TERVERIFIKASI;
-            $isRejected = in_array($payStatus, [\App\Models\Payment::STATUS_DITOLAK, \App\Models\Payment::STATUS_KADALUARSA], true);
+            $payStatus = $topup->status;
+            $isVerified = $payStatus === \App\Models\CustomerTopup::STATUS_TERVERIFIKASI;
+            $isRejected = in_array($payStatus, [\App\Models\CustomerTopup::STATUS_DITOLAK, \App\Models\CustomerTopup::STATUS_KADALUARSA], true);
             $statusLabels = [
-                \App\Models\Payment::STATUS_PENDING => ['Menunggu Pembayaran', 'bg-amber-100 text-amber-800'],
-                \App\Models\Payment::STATUS_MENUNGGU_VERIFIKASI => ['Menunggu Verifikasi', 'bg-blue-100 text-blue-800'],
-                \App\Models\Payment::STATUS_TERVERIFIKASI => ['Terverifikasi', 'bg-emerald-100 text-emerald-800'],
-                \App\Models\Payment::STATUS_DITOLAK => ['Ditolak', 'bg-red-100 text-red-800'],
-                \App\Models\Payment::STATUS_KADALUARSA => ['Kadaluarsa', 'bg-surface-container text-on-surface-variant'],
+                \App\Models\CustomerTopup::STATUS_PENDING => ['Menunggu Pembayaran', 'bg-amber-100 text-amber-800'],
+                \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI => ['Menunggu Verifikasi', 'bg-blue-100 text-blue-800'],
+                \App\Models\CustomerTopup::STATUS_TERVERIFIKASI => ['Terverifikasi', 'bg-emerald-100 text-emerald-800'],
+                \App\Models\CustomerTopup::STATUS_DITOLAK => ['Ditolak', 'bg-red-100 text-red-800'],
+                \App\Models\CustomerTopup::STATUS_KADALUARSA => ['Kadaluarsa', 'bg-surface-container text-on-surface-variant'],
             ];
             $statusLabel = $statusLabels[$payStatus][0] ?? ucfirst((string) $payStatus);
             $statusClass = $statusLabels[$payStatus][1] ?? 'bg-surface-container text-on-surface-variant';
@@ -203,68 +188,61 @@
             </div>
             <h2 id="pay-title" class="font-headline-md text-headline-md text-on-surface">
                 @if($isVerified)
-                    {{ __('Pesanan Berhasil!') }}
+                    {{ __('Top Up Berhasil!') }}
                 @elseif($isRejected)
                     {{ __('Pembayaran belum berhasil') }}
                 @else
-                    {{ __('Pesanan Berhasil!') }}
+                    {{ __('Top Up Berhasil!') }}
                 @endif
             </h2>
             <p id="pay-desc" class="font-body-sm text-body-sm text-on-surface-variant mt-sm max-w-xl mx-auto">
                 @if($isVerified)
-                    {{ __('Pembayaran telah diverifikasi. Pesananmu segera diproses.') }}
+                    {{ __('Top up telah diverifikasi dan saldo Anda bertambah.') }}
                 @elseif($isRejected)
-                    {{ __('Pembayaranmu ditolak atau melewati batas waktu. Silakan lakukan pembayaran ulang sebelum pesanan dibatalkan.') }}
+                    {{ __('Pembayaranmu ditolak atau melewati batas waktu. Silakan lakukan pembayaran ulang.') }}
                 @else
-                    {{ __('Terima kasih. Pesananmu telah kami terima dan bukti pembayaran sedang diverifikasi admin.') }}
+                    {{ __('Terima kasih. Top up saldo telah kami terima dan bukti pembayaran sedang diverifikasi admin.') }}
                 @endif
             </p>
             @if($isRejected)
             <div class="mt-md flex justify-center">
-                <a href="{{ route('customer.checkout.payment', $checkout->checkout_id) }}" class="btn-gold inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                <a href="{{ route('customer.saldo.topup.payment', $topup->customer_topup_id) }}" class="btn-gold inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
                     <span class="material-symbols-outlined text-[18px]">payments</span> {{ __('Bayar Ulang') }}
                 </a>
             </div>
             @endif
         </div>
 
-        {{-- === DETAIL PESANAN LENGKAP === --}}
+        {{-- === DETAIL TOP UP === --}}
         <div class="mt-lg max-w-3xl mx-auto space-y-md">
 
-            {{-- Header: Nomor Order & Tanggal --}}
+            {{-- Header: Nomor Top Up & Tanggal --}}
             <div class="bg-surface-container-low border border-outline-variant rounded-xl p-md reveal-up">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-xs">
                     <div>
-                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Nomor Pesanan') }}</p>
-                        @foreach($checkout->orders as $o)
-                            <p class="font-body-lg text-body-lg font-semibold text-on-surface">{{ $o->nomor_order }}</p>
-                        @endforeach
+                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Nomor Top Up') }}</p>
+                        <p class="font-body-lg text-body-lg font-semibold text-on-surface">#{{ $topup->customer_topup_id }}</p>
                     </div>
                     <div class="text-right">
                         <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Tanggal') }}</p>
-                        <p class="font-body-lg text-body-lg font-semibold text-on-surface">{{ $checkout->created_at ? $checkout->created_at->format('d M Y, H:i') : '—' }}</p>
+                        <p class="font-body-lg text-body-lg font-semibold text-on-surface">{{ $topup->created_at ? $topup->created_at->format('d M Y, H:i') : '—' }}</p>
                     </div>
                 </div>
-                @if($checkout->email_pelanggan)
-                <div class="mt-sm pt-sm border-t border-[var(--border-soft)]">
-                    <p class="font-label-sm text-label-sm text-on-surface-variant/70">{{ __('Email pemesan') }}: {{ $checkout->email_pelanggan }}</p>
-                </div>
-                @endif
             </div>
 
-            {{-- Grid: Metode Pembayaran + Alamat Pengiriman --}}
+            {{-- Grid: Metode Pembayaran + Rincian Biaya --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
                 {{-- Metode Pembayaran --}}
                 <div class="border border-outline-variant rounded-lg p-md reveal-up">
                     <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider flex items-center gap-1.5 mb-sm">
                         <span class="material-symbols-outlined text-[16px]">payments</span> {{ __('Metode Pembayaran') }}
                     </p>
-                    <p class="font-body-lg text-body-lg font-semibold text-on-surface">{{ $payment->paymentMethod?->nama_metode ?? '—' }}</p>
-                    @if($payment->account)
+                    <p class="font-body-lg text-body-lg font-semibold text-on-surface">{{ $topup->payment?->paymentMethod?->nama_metode ?? '—' }}</p>
+                    @if($topup->payment?->account)
                     <div class="mt-sm space-y-1">
-                        <p class="text-sm text-on-surface-variant"><span class="font-medium text-on-surface">{{ $payment->account->nama_pemilik ?? $payment->account->nama }}</span></p>
-                        @if($payment->account->nomor_rekening)
-                        <p class="text-sm text-on-surface-variant font-mono">{{ $payment->account->nomor_rekening }}</p>
+                        <p class="text-sm text-on-surface-variant"><span class="font-medium text-on-surface">{{ $topup->payment->account->nama_pemilik ?? $topup->payment->account->nama }}</span></p>
+                        @if($topup->payment->account->nomor_rekening)
+                        <p class="text-sm text-on-surface-variant font-mono">{{ $topup->payment->account->nomor_rekening }}</p>
                         @endif
                     </div>
                     @endif
@@ -279,173 +257,62 @@
                     </div>
                 </div>
 
-                {{-- Alamat Pengiriman --}}
-                <div class="border border-outline-variant rounded-lg p-md reveal-up">
-                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider flex items-center gap-1.5 mb-sm">
-                        <span class="material-symbols-outlined text-[16px]">local_shipping</span> {{ __('Alamat Pengiriman') }}
-                    </p>
-                    <p class="font-body-lg text-body-lg font-semibold text-on-surface">{{ $checkout->nama_penerima }}</p>
-                    <div class="mt-sm space-y-0.5 text-sm text-on-surface-variant">
-                        <p>{{ $checkout->nomor_telepon }}</p>
-                        <p>{{ $checkout->alamat }}</p>
-                        <p>{{ $checkout->kota }}, {{ $checkout->provinsi }}{{ $checkout->kode_pos ? ', ' . $checkout->kode_pos : '' }}</p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Daftar Produk per Toko (desktop; di mobile ada di sticky footer) --}}
-            @foreach($checkout->orders as $order)
-            <div class="hidden lg:block border border-outline-variant rounded-lg p-md reveal-up">
-                <p class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-sm flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[16px]">storefront</span>
-                    {{ $order->store?->nama_toko ?? __('Toko') }}
-                </p>
-                @if($order->items && $order->items->count() > 0)
-                <div class="divide-y divide-outline-variant/50">
-                    @foreach($order->items as $item)
-                    <div class="flex justify-between items-start py-3 gap-sm">
-                        <div class="min-w-0">
-                            <p class="font-medium text-on-surface text-sm leading-snug">{{ $item->nama_produk_snapshot }}</p>
-                            @if($item->catatan_custom)
-                            <p class="text-xs text-on-surface-variant mt-0.5 italic">{{ $item->catatan_custom }}</p>
-                            @endif
-                            <p class="text-sm text-on-surface-variant mt-1">{{ $item->quantity }} × Rp {{ number_format((float)$item->harga_snapshot, 0,',','.') }}</p>
+                {{-- Rincian Biaya --}}
+                <div class="bg-surface-container-low border border-outline-variant rounded-xl p-md reveal-up">
+                    <p class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-sm">{{ __('Rincian Biaya') }}</p>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-on-surface-variant">{{ __('Nominal Top Up') }}</span>
+                            <span class="text-on-surface">Rp {{ number_format((float)$topup->jumlah, 0, ',', '.') }}</span>
                         </div>
-                        <p class="font-semibold text-on-surface text-sm whitespace-nowrap">Rp {{ number_format((float)$item->total, 0,',','.') }}</p>
+                        <div class="h-px bg-[var(--border-soft)] my-2"></div>
+                        <div class="flex justify-between">
+                            <span class="font-semibold text-on-surface">{{ __('Total Dibayar') }}</span>
+                            <span class="font-title-md text-title-md font-bold text-[var(--chrome-accent)]">Rp {{ number_format((float)$topup->jumlah, 0, ',', '.') }}</span>
+                        </div>
                     </div>
-                    @endforeach
+                    <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Saldo akun akan bertambah setelah diverifikasi.') }}</p>
                 </div>
-                @else
-                <p class="text-sm text-on-surface-variant italic py-3">{{ __('Tidak ada item.') }}</p>
-                @endif
-            </div>
-            @endforeach
-
-            {{-- Rincian Biaya (desktop; di mobile ada di sticky footer) --}}
-            <div class="hidden lg:block bg-surface-container-low border border-outline-variant rounded-xl p-md reveal-up">
-                <p class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-sm">{{ __('Rincian Biaya') }}</p>
-                <div class="space-y-2">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-on-surface-variant">{{ __('Subtotal Produk') }}</span>
-                        <span class="text-on-surface">Rp {{ number_format((float)$checkout->subtotal, 0,',','.') }}</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-on-surface-variant">{{ __('Ongkos Kirim') }}</span>
-                        <span class="text-on-surface">Rp {{ number_format((float)$checkout->total_ongkir, 0,',','.') }}</span>
-                    </div>
-                    @if($checkout->total_diskon > 0)
-                    <div class="flex justify-between text-sm">
-                        <span class="text-on-surface-variant">{{ __('Diskon') }}</span>
-                        <span class="text-emerald-600 font-medium">− Rp {{ number_format((float)$checkout->total_diskon, 0,',','.') }}</span>
-                    </div>
-                    @endif
-                    @if($checkout->total_pajak > 0)
-                    <div class="flex justify-between text-sm">
-                        <span class="text-on-surface-variant">{{ __('Pajak') }}</span>
-                        <span class="text-on-surface">Rp {{ number_format((float)$checkout->total_pajak, 0,',','.') }}</span>
-                    </div>
-                    @endif
-                    @if($checkout->biaya_layanan > 0)
-                    <div class="flex justify-between text-sm">
-                        <span class="text-on-surface-variant">{{ __('Biaya Layanan') }}</span>
-                        <span class="text-on-surface">Rp {{ number_format((float)$checkout->biaya_layanan, 0,',','.') }}</span>
-                    </div>
-                    @endif
-                    <div class="h-px bg-[var(--border-soft)] my-2"></div>
-                    <div class="flex justify-between">
-                        <span class="font-semibold text-on-surface">{{ __('Total Dibayar') }}</span>
-                        <span class="font-title-md text-title-md font-bold text-[var(--chrome-accent)]">Rp {{ number_format((float)$payment->jumlah, 0,',','.') }}</span>
-                    </div>
-                </div>
-                <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Nomor order disimpan. Gunakan untuk lacak resi.') }}</p>
             </div>
 
         </div> {{-- end max-w-3xl space-y-md --}}
-
-        {{-- === BANNER AKUN BARU === --}}
-        @if($akunBaru)
-        <div class="mt-lg max-w-3xl mx-auto bg-emerald-50 border border-emerald-200 rounded-xl p-md text-left flex gap-sm reveal-up">
-            <span class="material-symbols-outlined text-emerald-600 shrink-0">key</span>
-            <div>
-                <p class="font-body-sm text-body-sm font-semibold text-emerald-800">{{ __('Akun berhasil dibuat') }}</p>
-                <p class="font-body-sm text-body-sm text-emerald-700 mt-xs">{{ __('Email') }}: <strong>{{ $akunBaru }}</strong> • {{ __('Password') }}: <strong>Raliva123</strong></p>
-                <p class="font-label-sm text-label-sm text-emerald-700/80 mt-xs">{{ __('Segera ganti password untuk keamanan.') }} <a href="{{ route('customer.account.password') }}" class="underline font-semibold">{{ __('Ganti Password') }}</a></p>
-            </div>
-        </div>
-        @endif
 
         {{-- === TOMBOL AKSI (desktop; di mobile ada di sticky footer) === --}}
         <div class="hidden lg:flex mt-lg max-w-3xl mx-auto flex flex-col sm:flex-row gap-sm justify-center reveal-up">
             <a href="{{ route('customer.shop') }}" class="btn-gold inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
                 <span class="material-symbols-outlined text-[18px]">storefront</span> {{ __('Lanjut Belanja') }}
             </a>
-            <a href="{{ route('customer.order-tracking') }}" class="inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full border border-outline-variant font-label-caps text-label-caps uppercase tracking-widest hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">
-                <span class="material-symbols-outlined text-[18px]">receipt_long</span> {{ __('Lacak Pesanan') }}
+            <a href="{{ route('customer.saldo') }}" class="inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full border border-outline-variant font-label-caps text-label-caps uppercase tracking-widest hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">
+                <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span> {{ __('Lihat Saldo') }}
             </a>
         </div>
     </div>
 
-    {{-- ===== STICKY FOOTER MOBILE: Rincian Pesanan ===== --}}
+    {{-- ===== STICKY FOOTER MOBILE: Rincian Top Up ===== --}}
     <div class="co-bottom-bar lg:hidden" id="co-bottom-bar">
         <button type="button" class="co-bb-toggle" id="co-bb-toggle" aria-expanded="false" aria-controls="co-bb-panel">
             <span class="inline-flex items-center gap-2 font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
                 <span class="material-symbols-outlined text-[16px]">tune</span>
-                {{ __('Rincian Pesanan') }}
+                {{ __('Rincian Top Up') }}
             </span>
             <span class="material-symbols-outlined co-bb-chev text-[18px]">expand_more</span>
         </button>
 
         <div class="co-bb-panel" id="co-bb-panel" aria-hidden="true">
-            {{-- Daftar Produk --}}
-            @foreach($checkout->orders as $order)
-            <div class="co-bb-store">
-                <p class="co-bb-store-name flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[14px]">storefront</span>
-                    {{ $order->store?->nama_toko ?? __('Toko') }}
-                </p>
-                @if($order->items && $order->items->count() > 0)
-                <div>
-                    @foreach($order->items as $item)
-                    <div class="co-bb-item">
-                        <div>
-                            <p class="co-bb-item-name">{{ $item->nama_produk_snapshot }}</p>
-                            @if($item->catatan_custom)
-                            <p class="co-bb-item-note italic">{{ $item->catatan_custom }}</p>
-                            @endif
-                            <p class="co-bb-item-qty">{{ $item->quantity }} × Rp {{ number_format((float)$item->harga_snapshot, 0, ',', '.') }}</p>
-                        </div>
-                        <p class="co-bb-item-total">Rp {{ number_format((float)$item->total, 0, ',', '.') }}</p>
-                    </div>
-                    @endforeach
-                </div>
-                @endif
-            </div>
-            @endforeach
-
             <div class="co-bb-rows">
-                <div class="co-bb-row"><span>{{ __('Subtotal') }}</span><span>Rp {{ number_format((float)$checkout->subtotal, 0, ',', '.') }}</span></div>
-                <div class="co-bb-row"><span>{{ __('Ongkos Kirim') }}</span><span>Rp {{ number_format((float)$checkout->total_ongkir, 0, ',', '.') }}</span></div>
-                @if($checkout->total_diskon > 0)
-                <div class="co-bb-row"><span>{{ __('Diskon') }}</span><span class="text-emerald-600">− Rp {{ number_format((float)$checkout->total_diskon, 0, ',', '.') }}</span></div>
-                @endif
-                @if($checkout->total_pajak > 0)
-                <div class="co-bb-row"><span>{{ __('Pajak') }}</span><span>Rp {{ number_format((float)$checkout->total_pajak, 0, ',', '.') }}</span></div>
-                @endif
-                @if($checkout->biaya_layanan > 0)
-                <div class="co-bb-row"><span>{{ __('Biaya Layanan') }}</span><span>Rp {{ number_format((float)$checkout->biaya_layanan, 0, ',', '.') }}</span></div>
-                @endif
-                <div class="co-bb-row total"><span>{{ __('Total Dibayar') }}</span><span>Rp {{ number_format((float)$payment->jumlah, 0, ',', '.') }}</span></div>
+                <div class="co-bb-row"><span>{{ __('Nominal Top Up') }}</span><span>Rp {{ number_format((float)$topup->jumlah, 0, ',', '.') }}</span></div>
+                <div class="co-bb-row total"><span>{{ __('Total Dibayar') }}</span><span>Rp {{ number_format((float)$topup->jumlah, 0, ',', '.') }}</span></div>
             </div>
         </div>
 
         <div class="co-bb-foot">
             <div class="summary">
                 <p class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Total Dibayar') }}</p>
-                <p class="font-body-lg text-body-lg font-semibold text-on-surface">Rp {{ number_format((float)$payment->jumlah, 0, ',', '.') }}</p>
+                <p class="font-body-lg text-body-lg font-semibold text-on-surface">Rp {{ number_format((float)$topup->jumlah, 0, ',', '.') }}</p>
             </div>
             <div class="shrink-0 flex items-center gap-sm">
-                <a href="{{ route('customer.order-tracking') }}" class="inline-flex items-center justify-center gap-1.5 px-sm py-3 rounded-full border border-outline-variant font-label-caps text-label-caps uppercase tracking-widest hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+                <a href="{{ route('customer.saldo') }}" class="inline-flex items-center justify-center gap-1.5 px-sm py-3 rounded-full border border-outline-variant font-label-caps text-label-caps uppercase tracking-widest hover:border-[var(--chrome-accent)] hover:text-[var(--chrome-accent)] transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
                 </a>
                 <a href="{{ route('customer.shop') }}" class="btn-gold shrink-0 inline-flex items-center justify-center gap-1 px-sm py-2.5 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
                     <span class="material-symbols-outlined text-[16px]">storefront</span>
@@ -487,8 +354,8 @@
         var isRejected = @json($isRejected);
         if (isVerified) return;
 
-        var endpoint = @json(route('customer.checkout.payment.status', $checkout->checkout_id));
-        var payAgainUrl = @json(route('customer.checkout.payment', $checkout->checkout_id));
+        var endpoint = @json(route('customer.saldo.topup.payment.status', $topup->customer_topup_id));
+        var payAgainUrl = @json(route('customer.saldo.topup.payment', $topup->customer_topup_id));
         var iconWrap = document.getElementById('pay-icon-wrap');
         var titleEl = document.getElementById('pay-title');
         var descEl = document.getElementById('pay-desc');
@@ -516,13 +383,13 @@
             if (mode === 'verified') {
                 iconWrap.className = 'co-success-wrap relative mx-auto mb-md w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center';
                 iconWrap.innerHTML = checkSvg;
-                if (titleEl) titleEl.textContent = '{{ __('Pesanan Berhasil!') }}';
-                if (descEl) descEl.textContent = '{{ __('Pembayaran telah diverifikasi. Pesananmu segera diproses.') }}';
+                if (titleEl) titleEl.textContent = '{{ __('Top Up Berhasil!') }}';
+                if (descEl) descEl.textContent = '{{ __('Top up telah diverifikasi dan saldo Anda bertambah.') }}';
             } else if (mode === 'rejected') {
                 iconWrap.className = 'co-success-wrap relative mx-auto mb-md w-20 h-20 rounded-full bg-error/10 flex items-center justify-center';
                 iconWrap.innerHTML = rejectedSvg;
                 if (titleEl) titleEl.textContent = '{{ __('Pembayaran belum berhasil') }}';
-                if (descEl) descEl.textContent = '{{ __('Pembayaranmu ditolak atau melewati batas waktu. Silakan lakukan pembayaran ulang sebelum pesanan dibatalkan.') }}';
+                if (descEl) descEl.textContent = '{{ __('Pembayaranmu ditolak atau melewati batas waktu. Silakan lakukan pembayaran ulang.') }}';
                 if (descEl && !document.getElementById('pay-again-btn')) {
                     var btn = document.createElement('a');
                     btn.id = 'pay-again-btn';

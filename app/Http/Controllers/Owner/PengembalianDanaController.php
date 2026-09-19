@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\Refund;
 use App\Models\User;
-use App\Support\ActivityLogger;
+use App\Services\RefundCompletionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -53,11 +53,16 @@ class PengembalianDanaController extends Controller
             return back()->with('error', 'Refund sudah diproses.');
         }
 
-        $refund->update([
+        $data = [
             'status' => Refund::STATUS_DISETUJUI,
-            'reviewed_by' => Auth::id(),
             'selesai_pada' => now(),
-        ]);
+        ];
+
+        if (! $refund->reviewed_by) {
+            $data['reviewed_by'] = Auth::id();
+        }
+
+        $refund->update($data);
 
         if ($refund->requested_by) {
             Notification::create([
@@ -86,12 +91,17 @@ class PengembalianDanaController extends Controller
             'alasan_penolakan' => 'nullable|string|max:1000',
         ]);
 
-        $refund->update([
+        $update = [
             'status' => Refund::STATUS_DITOLAK,
-            'reviewed_by' => Auth::id(),
             'alasan_penolakan' => $data['alasan_penolakan'] ?? null,
             'selesai_pada' => now(),
-        ]);
+        ];
+
+        if (! $refund->reviewed_by) {
+            $update['reviewed_by'] = Auth::id();
+        }
+
+        $refund->update($update);
 
         if ($refund->requested_by) {
             Notification::create([
@@ -126,30 +136,29 @@ class PengembalianDanaController extends Controller
             'deskripsi_bukti.max' => 'Deskripsi bukti maksimal 1000 karakter.',
         ]);
 
-        $lama = $refund->only(['status']);
-
         $path = $request->file('file_bukti')->store('bukti-refund/' . $refund->refund_id, 'public');
 
         if ($refund->file_bukti && $refund->file_bukti !== $path) {
             Storage::disk('public')->delete($refund->file_bukti);
         }
 
-        $refund->update([
-            'status' => Refund::STATUS_SELESAI,
-            'selesai_pada' => now(),
-            'file_bukti' => $path,
-            'deskripsi_bukti' => $data['deskripsi_bukti'] ?? null,
-            'bukti_diupload_pada' => now(),
-        ]);
+        try {
+            RefundCompletionService::complete($refund, $path, $data['deskripsi_bukti'] ?? null);
+        } catch (\Throwable $e) {
+            if (str_contains($e->getMessage(), 'Saldo toko tidak cukup')) {
+                return back()->with('error', 'Saldo toko tidak cukup untuk menyelesaikan refund ini.');
+            }
 
-        ActivityLogger::log(
-            'refund.complete',
-            Refund::class,
-            $refund->refund_id,
-            $lama,
-            ['status' => Refund::STATUS_SELESAI, 'file_bukti' => $path],
-            sprintf('Menyelesaikan refund sebesar Rp %s untuk pesanan %s (bukti terlampir).', number_format((float) $refund->jumlah, 0, ',', '.'), $refund->order->nomor_order ?? '-')
-        );
+            if (
+                str_contains($e->getMessage(), 'tidak terhubung ke toko')
+                || str_contains($e->getMessage(), 'Wallet toko tidak ditemukan')
+                || str_contains($e->getMessage(), 'sudah berubah')
+            ) {
+                return back()->with('error', 'Refund tidak dapat diselesaikan: ' . $e->getMessage());
+            }
+
+            throw $e;
+        }
 
         if ($refund->requested_by) {
             Notification::create([

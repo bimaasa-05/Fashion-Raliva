@@ -30,7 +30,7 @@
         <span class="material-symbols-outlined text-gold-accent mt-0.5">info</span>
         <div class="text-sm text-on-surface">
             <p class="font-bold">Pendapatan karyawan dihitung dari order yang pembayarannya diverifikasi karyawan tersebut.</p>
-            <p class="text-on-surface-variant text-xs mt-1">Pengeluaran = refund yang ditinjau karyawan + pengeluaran toko yang dicatatnya. Pengeluaran toko lama tanpa nama pencatat tidak termasuk hitungan per karyawan.</p>
+            <p class="text-on-surface-variant text-xs mt-1">Pengeluaran = refund yang diselesaikan karyawan (hanya refund berstatus selesai) + pengeluaran toko yang dicatatnya. Pengeluaran toko lama tanpa nama pencatat tidak termasuk hitungan per karyawan.</p>
         </div>
     </section>
 

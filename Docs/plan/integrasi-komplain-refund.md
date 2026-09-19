@@ -2,7 +2,7 @@
 
 > Dibuat: 2026-09-17
 > Rencana penyambungan sistem **komplain** dan **refund** yang saat ini berdiri sendiri (ditemukan saat audit `alur-komplain-lengkap.md` dan `alur-refund-dan-saldo.md`).
-> Status: **RENCANA** — belum disetujui detail untuk dieksekusi. Ikuti langkah di bawah setelah disetujui.
+> Status: **✅ SEMUA BATCH SELESAI 2026-09-18** (termasuk konsistensi `selesaikan` satu-jalur dan transisi `Order::STATUS_REFUND`).
 
 ---
 
@@ -19,10 +19,12 @@
 
 | No | Keputusan |
 |---|---|
-| 1 | Refund dihitung di Rekap Karyawan **hanya saat status `selesai`** (dana benar-benar keluar). `disetujui` tidak dihitung. |
-| 2 | Saat refund dieskalasi, `reviewed_by` **tetap admin penangan awal** — Owner tidak menimpa. |
+| 1 | Refund dihitung di Rekap Karyawan **hanya saat status `selesai`** (dana benar-benar keluar). `disetujui` tidak dihitung. ✅ |
+| 2 | Saat refund dieskalasi, `reviewed_by` **tetap admin penangan awal** — Owner tidak menimpa. ✅ |
 | 3 | Tidak ada perubahan status komplain yang dipaksakan oleh refund: komplain dan refund tetap dua entitas yang bisa berdiri sendiri. |
 | 4 | Semua dokumen plan di `Docs\plan` gaya kebab-case tanpa angka; file ini bagian dari suite komplain/refund. |
+| 5 | `selesaikan` antar role = **satu jalur sama persis** via `RefundCompletionService` (user memilih, bukan opsi A "tanpa wallet"). ✅ |
+| 6 | Transisi `Order::STATUS_REFUND` **dikerjakan sekarang** (user membalik rekomendasi "tunda"). ✅ |
 
 ---
 
@@ -48,19 +50,23 @@
 
 - Ikuti perbaikan `refund-rekap-karyawan.md` §4.2 (guard `if (! $refund->reviewed_by)`).
 
-### 3.4 Konsistensi `selesaikan` (opsional, butuh keputusan user)
+### 3.4 Konsistensi `selesaikan` (✅ SELESAI — keputusan user: Satu Jalur Sama Persis)
 
-Dua opsi (pilih satu):
-- **A. Standarisasi Owner seperti SA, tanpa wallet:** Owner wajib `file_bukti` juga, tapi TANPA decrement `Wallet.saldo_tersedia` (karena alur dana toko di luar sistem). Keuntungan: bukti seragam.
-- **B. Hitung dana via saldo pelanggan (future):** setelah sistem saldo pelanggan (`alur-refund-dan-saldo.md` §5) dibangun, `selesaikan` = debit wallet toko + kredit saldo pelanggan, berlaku seragam untuk Owner & SA.
+> **Keputusan final (2026-09-18):** tidak memakai opsi A ("tanpa wallet"). Owner & SuperAdmin memanggil **service yang sama** `app/Services/RefundCompletionService::complete()`:
+>
+> - Potong `Wallet.saldo_tersedia` toko (`JENIS_REFUND_KELUAR`) + cek saldo cukup.
+> - Wajib `file_bukti` (JPG/PNG/PDF ≤5MB) + `deskripsi_bukti` opsional.
+> - **Kredit saldo akun customer** (`CustomerWalletService::refundToWallet`) bila order dibayar via `KODE_SALDO_AKUN`.
+> - Rollback file bukti saat error; guard `lockForUpdate` anti-double-process.
+> - Controller masing-masing tinggal memetakan error → flash (`Owner:error` / `SA:toast`) + notifikasi.
 
-> Belum diputuskan. Rekomendasi: kerjakan B sebagai bagian batch saldo; untuk saat ini biarkan A sebagai penyesuaian kecil bila disetujui.
+### 3.5 Status order `refund` (✅ SELESAI — transisi aktif)
 
-### 3.5 Status order `refund` (inkonsistensi pendapatan)
-
-- Proposal: saat refund **full** mencapai `selesai`, dan tidak ada sisa item yang dikirim, transisikan order ke `Order::STATUS_REFUND` di dalam `selesaikan` (SA) dan `selesaikan` (Owner).
-- Dampak yang perlu dikaji ulang: `confirm()` dan `STATUS_STEPS` tracking, laporan pendapatan (`KaryawanReportService` memakai `orders.status = selesai`), dashboard, filter data pesanan.
-- **Rekomendasi:** jangan dieksekusi sebelum kajian dampak laporan selesai (lapisan kedua batch ini).
+- Saat refund **full** mencapai `selesai` **dan** `jumlah >= grand_total` **dan** order berstatus `dikirim`/`selesai`, order di-set `Order::STATUS_REFUND` (dalam transaction `selesaikan`, log `order.refunded`). Partial / jumlah kurang dari total → tidak flip.
+- **Model keuangan** (anti double-deduct):
+  - Laporan **dengan baris Refund** → pendapatan dibaca `whereIn([selesai, refund])` sehingga order refund tetap dihitung sebagai pendapatan kotor yang diimbangi baris Refund → **net 0**, konsisten lintas periode (`created_at` vs `diajukan_pada`) & all-time. Diterapkan di: `OwnerLaporanRingkasanSheet`, `OwnerLaporanPeriodeSheet`, `Owner/LaporanController`, `Admin/LaporanController`, `SuperAdmin/LaporanController::export`, `KaryawanReportService`.
+  - Statistik **tanpa baris Refund** (dashboard SA/Owner, count filter) tetap `selesai` → order refund gugur alami (lebih akurat).
+  - Sum Refund (expense) di semua laporan **tidak diubah** (partial & full tetap dihitung untuk mengimbangi pendapatan W1).
 
 ---
 
@@ -68,29 +74,37 @@ Dua opsi (pilih satu):
 
 | File | Perubahan |
 |---|---|
-| `database/migrations/*_add_complaint_id_to_refunds_table.php` (baru) | kolom + FK + index |
-| `app/Models/Refund.php` | relasi `complaint()` |
-| `app/Models/Complaint.php` | relasi `refund()` |
-| `app/Http/Controllers/Customer/OrderTrackingController.php` | `storeRefund` simpan `complaint_id` (input opsional) |
-| View thread komplain (customer) | tombol + modal "Ajukan Refund" + badge status refund |
-| `app/Http/Controllers/Owner/PengembalianDanaController.php` | guard `reviewed_by` (rekap-karyawan §4.2) |
-| (opsional) `SuperAdmin/Owner selesaikan` | standarisasi bukti / sistem saldo |
+| `database/migrations/*_add_complaint_id_to_refunds_table.php` (baru) | kolom + FK + index ✅ |
+| `app/Models/Refund.php` | relasi `complaint()` ✅ |
+| `app/Models/Complaint.php` | relasi `refund()` ✅ |
+| `app/Http/Controllers/Customer/OrderTrackingController.php` | `storeRefund` simpan `complaint_id` (input opsional) ✅ |
+| View thread komplain (customer) | tombol + modal "Ajukan Refund" + badge status refund ✅ |
+| `app/Http/Controllers/Owner/PengembalianDanaController.php` | guard `reviewed_by` + `selesaikan` via service ✅ |
+| `app/Services/RefundCompletionService.php` (baru) | satu jalur `selesaikan`: wallet + kredit saldo akun + flip `STATUS_REFUND` ✅ |
+| `app/Http/Controllers/SuperAdmin/PengembalianDanaController.php` | `selesaikan` via service ✅ |
+| `app/Http/Controllers/Admin/PengembalianDanaController.php` | scope `AdminContext` (index + 403) ✅ |
+| `app/Services/KaryawanReportService.php` | `refundKaryawan` hanya `selesai`; pendapatan/pesanan `whereIn([selesai, refund])` ✅ |
+| Export & controller laporan (Owner/Admin/SA) | pendapatan `whereIn([selesai, refund])` pada laporan ber-baris Refund ✅ |
+| `Owner/PesananController` + view | filter & chip status `refund` ✅ |
 
 ---
 
 ## 5. Urutan Kerja yang Diusulkan
 
-1. Batch atribusi rekap karyawan dulu (`refund-rekap-karyawan.md`) — berujung pada keputusan "refund dihitung hanya `selesai`" yang sudah final.
-2. Migrasi `complaints.complaint_id` + relasi.
-3. Tombol ajukan refund dari thread komplain.
-4. (Pilih 3.4 A/B) konsistensi `selesaikan`.
-5. (Setelah kajian) transisi order → `refund` dan dampak laporan.
-6. (Terpisah) sistem saldo pelanggan.
+Semua sudah dieksekusi 2026-09-18 dalam satu batch:
+
+1. Batch atribusi rekap karyawan (`refund-rekap-karyawan.md`) — rekap hanya `selesai`, `reviewed_by` tetap admin.
+2. Scope `AdminContext` pada `Admin/PengembalianDanaController`.
+3. `RefundCompletionService` → Owner & SA `selesaikan` satu jalur (wallet + kredit saldo akun).
+4. Transisi `Order::STATUS_REFUND` (full refund) + penyesuaian R1 di laporan ber-baris Refund + filter `refund` di Owner pesanan.
 
 ## 6. QA Ideas
 
-- Komplain dibuat → ajukan refund dari thread → `refunds.complaint_id` terisi.
-- Guard duplikat: ajukan refund kedua dari thread → ditolak UI (+ backend).
-- Refund `escalated` → Owner `setujui` → `reviewed_by` tetap admin.
-- Refund `selesai` tampil di Rekap Karyawan; `disetujui` tidak.
-- (Bila 3.5) order full-refund berubah `refund`, laporan pendapatan turun sesuai.
+- Komplain dibuat → ajukan refund dari thread → `refunds.complaint_id` terisi. ✅
+- Guard duplikat: ajukan refund kedua dari thread → ditolak UI (+ backend). ✅
+- Refund `escalated` → Owner `setujui` → `reviewed_by` tetap admin. ✅
+- Refund `selesai` tampil di Rekap Karyawan; `disetujui` tidak. ✅
+- Owner `selesaikan` = potong wallet toko + kredit saldo akun customer + status `selesai` (bukan opsi A). ✅
+- Order full-refund → status `refund`; partial → tetap `selesai`. ✅
+- Laporan ber-baris Refund: pendapatan `whereIn([selesai, refund])` → net 0 dengan baris Refund. ✅
+- Admin di luar toko → `403` saat mengakses/index refund lintas toko. ✅

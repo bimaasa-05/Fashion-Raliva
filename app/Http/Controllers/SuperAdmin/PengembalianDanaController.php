@@ -5,13 +5,10 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\Refund;
-use App\Models\Wallet;
-use App\Models\WalletTransaction;
+use App\Services\RefundCompletionService;
 use App\Support\ActivityLogger;
-use App\Support\CustomerWalletService;
 use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class PengembalianDanaController extends Controller
@@ -138,75 +135,13 @@ class PengembalianDanaController extends Controller
 
         $path = $request->file('file_bukti')->store('bukti-refund/'.$refund->refund_id, 'public');
 
-        $refund->loadMissing(['order.store']);
+        if ($refund->file_bukti && $refund->file_bukti !== $path) {
+            Storage::disk('public')->delete($refund->file_bukti);
+        }
 
         try {
-            $store = $refund->order?->store;
-
-            if (! $store) {
-                throw new \RuntimeException('Pesanan tidak terhubung ke toko, refund tidak dapat diselesaikan.');
-            }
-
-            $lama = $refund->only(['status']);
-
-            DB::transaction(function () use ($refund, $store, $path, $data, $lama) {
-                $locked = Refund::whereKey($refund->refund_id)->lockForUpdate()->first();
-
-                if (! $locked || $locked->status !== Refund::STATUS_DISETUJUI) {
-                    throw new \RuntimeException('Status refund sudah berubah oleh pihak lain.');
-                }
-
-                $wallet = Wallet::where('store_id', $store->store_id)->lockForUpdate()->first();
-
-                if (! $wallet) {
-                    throw new \RuntimeException('Wallet toko tidak ditemukan, refund dibatalkan.');
-                }
-
-                $saldoSebelum = (float) $wallet->saldo_tersedia;
-
-                if ($saldoSebelum < (float) $locked->jumlah) {
-                    throw new \RuntimeException('Saldo toko tidak cukup untuk refund.');
-                }
-
-                $wallet->decrement('saldo_tersedia', (float) $locked->jumlah);
-
-                WalletTransaction::create([
-                    'wallet_id' => $wallet->wallet_id,
-                    'refund_id' => $locked->refund_id,
-                    'jenis_transaksi' => WalletTransaction::JENIS_REFUND_KELUAR,
-                    'jumlah' => (float) $locked->jumlah,
-                    'saldo_sebelum' => $saldoSebelum,
-                    'saldo_sesudah' => $saldoSebelum - (float) $locked->jumlah,
-                    'keterangan' => sprintf('Refund %s untuk pesanan %s.', $locked->order->nomor_order ?? '-', $locked->tipe_refund),
-                ]);
-
-                $locked->update([
-                    'status' => Refund::STATUS_SELESAI,
-                    'selesai_pada' => now(),
-                    'file_bukti' => $path,
-                    'deskripsi_bukti' => $data['deskripsi_bukti'] ?? null,
-                    'bukti_diupload_pada' => now(),
-                ]);
-
-                $payment = $locked->order?->checkout?->payment;
-
-                if (
-                    $payment
-                    && $payment->paymentMethod?->kode_metode === PaymentMethod::KODE_SALDO_AKUN
-                    && $locked->order?->checkout?->user
-                ) {
-                    CustomerWalletService::refundToWallet(
-                        $locked->order,
-                        (float) $locked->jumlah,
-                        sprintf('Refund %s pesanan %s dikembalikan ke saldo akun.', $locked->tipe_refund, $locked->order->nomor_order ?? '-')
-                    );
-                }
-            });
+            RefundCompletionService::complete($refund, $path, $data['deskripsi_bukti'] ?? null);
         } catch (\Throwable $e) {
-            if (isset($path) && Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->delete($path);
-            }
-
             if (str_contains($e->getMessage(), 'Saldo toko tidak cukup')) {
                 return back()->with('toast', [
                     'message' => 'Saldo toko tidak cukup untuk menyelesaikan refund ini.',
@@ -227,15 +162,6 @@ class PengembalianDanaController extends Controller
 
             throw $e;
         }
-
-        ActivityLogger::log(
-            'refund.complete',
-            Refund::class,
-            $refund->refund_id,
-            $lama,
-            ['status' => Refund::STATUS_SELESAI, 'file_bukti' => $path],
-            sprintf('Menyelesaikan refund sebesar Rp %s untuk pesanan %s (bukti terlampir).', number_format((float) $refund->jumlah, 0, ',', '.'), $refund->order->nomor_order ?? '-')
-        );
 
         $this->notifyPihak($refund, 'Refund Selesai', sprintf('Dana refund sebesar Rp %s telah dikirim ke akun Anda.', number_format((float) $refund->jumlah, 0, ',', '.')));
         Notification::fireSelf(Notification::TIPE_PEMBAYARAN, 'Refund Selesai', sprintf('Refund Rp %s ditandai selesai.', number_format((float) $refund->jumlah, 0, ',', '.')), route('superadmin.pengembalian-dana'));

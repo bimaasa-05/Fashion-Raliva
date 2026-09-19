@@ -29,7 +29,7 @@
                         "tertiary-fixed": "#e3e2df", "surface-container-high": "#e9e8e7", "on-secondary-fixed": "#6D1428",
                         "background": "#fbf9f9", "surface": "#fbf9f9", "secondary-container": "#8B1E3F", "on-surface-variant": "#444748",
                         "primary-container": "#1c1b1b", "inverse-primary": "#c8c6c5", "surface-container-low": "#f5f3f3",
-                        "on-tertiary-fixed-variant": "#464745", "on-background": "#1b1c1c"
+                        "on-tertiary-fixed-variant": "#464745", "on-background": "#1b1c1c", "gold-accent": "#C9A24D"
                     },
                     "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
                     "spacing": { "gutter": "12px", "base": "4px", "xl": "48px", "lg": "32px", "container-margin": "20px", "sm": "16px", "md": "24px", "xs": "8px" },
@@ -83,11 +83,39 @@
         .premium-heading::before { content: ''; display: inline-block; width: 4px; height: .95em; margin-right: .65rem; background: #8B1E3F; border-radius: 9999px; vertical-align: -.05em; }
         .atl-eyebrow { display: inline-flex; align-items: center; gap: .65rem; }
         .atl-eyebrow::before { content: ''; width: 30px; height: 1px; background: var(--chrome-accent); opacity: .7; }
-        .btn-gold { position: relative; overflow: hidden; background-color: #8B1E3F !important; color: #ffffff !important; }
-        html.theme-dark .btn-gold { background-color: #6D1428 !important; }
-        .chip-quick { border: 1px solid var(--border-soft); background: var(--surface-warm); }
-        .chip-quick.active { border-color: #8B1E3F; background: rgba(139,30,63,.08); color: #8B1E3F; font-weight: 600; box-shadow: inset 0 0 0 1px rgba(139,30,63,.15); }
-        html.theme-dark .chip-quick.active { background: rgba(139,30,63,.18); color: #FFC2C9; }
+        .btn-gold { position: relative; overflow: hidden; background-color: var(--btn-gold-bg) !important; color: var(--btn-gold-text) !important; }
+        .btn-gold::after { content: ''; position: absolute; top: -10%; bottom: -10%; left: -80%; width: 45%; background: rgba(255,255,255,.55); transform: skewX(-24deg); pointer-events: none; }
+        .btn-gold:hover::after { animation: authFlash 1.4s linear infinite; }
+        @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
+        :root { --btn-gold-bg: #8B1E3F; --btn-gold-text: #ffffff; }
+        html.theme-dark { --btn-gold-bg: #6D1428; --btn-gold-text: #ffffff; }
+        .tp-pending { background: #FFFBEB; border-color: #FCD34D; }
+        .tp-verif { background: #EFF6FF; border-color: #93C5FD; }
+        .tp-ditolak { background: #FEF2F2; border-color: #FCA5A5; }
+        html.theme-dark .tp-pending { background: rgba(251,191,36,.12); border-color: rgba(251,191,36,.4); }
+        html.theme-dark .tp-verif { background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.4); }
+        html.theme-dark .tp-ditolak { background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.4); }
+        .tp-icon { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 9999px; }
+        .tp-icon.ic-pending { background: rgba(252,211,77,.28); color: #B45309; }
+        .tp-icon.ic-verif { background: rgba(147,197,253,.32); color: #2563EB; }
+        .tp-icon.ic-ditolak { background: rgba(252,165,165,.32); color: #DC2626; }
+        html.theme-dark .tp-icon.ic-pending { color: #FCD34D; }
+        html.theme-dark .tp-icon.ic-verif { color: #93C5FD; }
+        html.theme-dark .tp-icon.ic-ditolak { color: #FCA5A5; }
+        .tp-pulse { animation: tp-pulse 2s ease-in-out infinite; }
+        @keyframes tp-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(59,130,246,.35); } 50% { box-shadow: 0 0 0 10px rgba(59,130,246,0); } }
+        .tp-shake { animation: tp-shake 1.6s ease-in-out infinite; }
+        @keyframes tp-shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-2px); } 40% { transform: translateX(2px); } 60% { transform: translateX(-1px); } 80% { transform: translateX(1px); } }
+        .tp-breathe { animation: tp-breathe 2.4s ease-in-out infinite; }
+        @keyframes tp-breathe { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .5; transform: scale(.9); } }
+        @media (prefers-reduced-motion: reduce) { .tp-pulse, .tp-shake, .tp-breathe { animation: none; } }
+        .raliva-bar { transition: height 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+        @media (prefers-reduced-motion: reduce) { .raliva-bar { transition: none; } }
+        [data-bars] { opacity: 1; transform: translateY(0); transition: opacity .55s cubic-bezier(0.22, 1, 0.36, 1), transform .55s cubic-bezier(0.22, 1, 0.36, 1); }
+        [data-bars].chart-hide { opacity: 0; transform: translateY(12px); }
+        .col-enter { animation: colFadeUp .6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+        @keyframes colFadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        @media (prefers-reduced-motion: reduce) { .col-enter { animation: none; } [data-bars] { transition: none; } }
     </style>
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] lg:pl-72">
@@ -111,49 +139,67 @@
             @endif
 
             <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-md items-center">
-                    <div class="md:col-span-1">
-                        <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('SALDO TERSEDIA') }}</p>
-                        <p class="font-display-lg text-display-lg text-on-surface">Rp {{ number_format($saldo, 0, ',', '.') }}</p>
-                        <div class="flex gap-lg mt-sm">
-                            <div>
-                                <p class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Total Top Up') }}</p>
-                                <p class="font-body-lg text-body-lg font-semibold text-on-surface">Rp {{ number_format($totalTopup, 0, ',', '.') }}</p>
-                            </div>
-                            <div>
-                                <p class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Total Belanja') }}</p>
-                                <p class="font-body-lg text-body-lg font-semibold text-on-surface">Rp {{ number_format($totalBelanja, 0, ',', '.') }}</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-lg items-center">
+                    <div class="min-w-0">
+                        <div class="flex items-center justify-between gap-sm">
+                            <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)]">{{ __('SALDO TERSEDIA') }}</p>
+                            <a href="{{ route('customer.saldo.isi') }}"
+                                class="btn-gold inline-flex items-center justify-center gap-1 px-md py-2.5 rounded-full font-label-caps text-label-caps uppercase tracking-widest whitespace-nowrap">
+                                <span class="material-symbols-outlined text-[16px]">add</span>
+                                <span>{{ __('Isi Saldo') }}</span>
+                            </a>
+                        </div>
+                        <p class="font-display-lg text-display-lg text-on-surface mt-sm">Rp {{ number_format($saldo, 0, ',', '.') }}</p>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Top up saldo untuk berbelanja lebih mudah.') }}</p>
+                    </div>
+                    <div class="border-t lg:border-t-0 lg:border-l border-[var(--border-soft)] pt-lg lg:pt-0 lg:pl-lg">
+                        <div class="grid grid-cols-2 gap-gutter mb-md">
+                            <button type="button" data-chart-mode="in"
+                                class="flex items-center justify-center gap-xs py-sm border-2 rounded-DEFAULT bg-surface-container-low cursor-pointer hover:border-emerald-500 transition-colors font-body-sm text-body-sm">
+                                <span class="material-symbols-outlined text-[20px]">trending_up</span>
+                                <span>{{ __('Pemasukan') }}</span>
+                            </button>
+                            <button type="button" data-chart-mode="out"
+                                class="flex items-center justify-center gap-xs py-sm border-2 rounded-DEFAULT bg-surface-container-low cursor-pointer hover:border-secondary transition-colors font-body-sm text-body-sm">
+                                <span class="material-symbols-outlined text-[20px]">trending_down</span>
+                                <span>{{ __('Pengeluaran') }}</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 flex-wrap mb-sm">
+                            <h3 class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)]">{{ __('Aktivitas Saldo') }}</h3>
+                            <div class="relative" id="range-menu-container">
+                                <button type="button" onclick="toggleRangeMenu()"
+                                    class="inline-flex items-center justify-center gap-1 min-h-8 rounded-DEFAULT border border-outline-variant px-3 py-1.5 font-label-sm text-label-sm text-on-surface hover:text-secondary hover:border-secondary transition-colors">
+                                    <span id="range-label">{{ __('6 Bulan') }}</span>
+                                    <span class="material-symbols-outlined text-[16px] transition-transform duration-200" id="range-chevron">expand_more</span>
+                                </button>
+                                <div id="range-menu" class="absolute right-0 top-full mt-xs w-44 bg-surface rounded-lg border border-outline-variant shadow-xl z-20 py-xs origin-top-right transition-all duration-200 ease-out invisible opacity-0 scale-95 -translate-y-1">
+                                    <p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest px-md pt-xs pb-sm">{{ __('Periode') }}</p>
+                                    <button type="button" data-range="1tahun" data-label="{{ __('1 Tahun') }}" onclick="selectRange(this)"
+                                        class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors">
+                                        <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">calendar_month</span>{{ __('1 Tahun') }}</span>
+                                        <span class="material-symbols-outlined text-[18px] text-secondary range-check invisible">check</span>
+                                    </button>
+                                    <button type="button" data-range="6bulan" data-label="{{ __('6 Bulan') }}" onclick="selectRange(this)"
+                                        class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors">
+                                        <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">date_range</span>{{ __('6 Bulan') }}</span>
+                                        <span class="material-symbols-outlined text-[18px] text-secondary range-check">check</span>
+                                    </button>
+                                    <button type="button" data-range="3bulan" data-label="{{ __('3 Bulan') }}" onclick="selectRange(this)"
+                                        class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors">
+                                        <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">calendar_view_month</span>{{ __('3 Bulan') }}</span>
+                                        <span class="material-symbols-outlined text-[18px] text-secondary range-check invisible">check</span>
+                                    </button>
+                                    <button type="button" data-range="1minggu" data-label="{{ __('1 Minggu') }}" onclick="selectRange(this)"
+                                        class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors">
+                                        <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">view_week</span>{{ __('1 Minggu') }}</span>
+                                        <span class="material-symbols-outlined text-[18px] text-secondary range-check invisible">check</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="md:col-span-2">
-                        <form method="POST" action="{{ route('customer.saldo.topup') }}" class="space-y-sm" id="form-topup">
-                            @csrf
-                            <p class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('TOP UP SALDO') }}</p>
-                            <div class="flex flex-wrap gap-sm">
-                                @foreach ([50000, 100000, 250000, 500000, 1000000] as $nominal)
-                                    <button type="button" data-nominal="{{ $nominal }}"
-                                        class="chip-quick px-4 py-2 rounded-full font-label-caps text-label-caps uppercase tracking-widest transition-colors">
-                                        Rp {{ number_format($nominal, 0, ',', '.') }}
-                                    </button>
-                                @endforeach
-                            </div>
-                            <div class="flex flex-col sm:flex-row gap-sm">
-                                <input type="number" name="nominal" id="input-nominal" min="10000" max="100000000"
-                                    placeholder="Nominal top up (min Rp 10.000)"
-                                    class="flex-1 border border-outline-variant rounded-xl px-md py-3 bg-surface-container-low text-on-surface focus:border-secondary outline-none"
-                                    value="{{ old('nominal') }}" />
-                                <button type="submit"
-                                    class="btn-gold inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
-                                    <span class="material-symbols-outlined text-[20px]">add_card</span>
-                                    <span>{{ __('Top Up') }}</span>
-                                </button>
-                            </div>
-                            @error('nominal')
-                                <p class="font-label-sm text-label-sm text-error">{{ $message }}</p>
-                            @enderror
-                            <button type="button" id="btn-batal-nominal" class="hidden font-label-sm text-label-sm text-on-surface-variant hover:underline">Bersihkan nominal</button>
-                        </form>
+                        <p id="chart-subline" class="font-label-sm text-label-sm text-on-surface-variant mb-sm">{{ __('Pemasukan saldo per bulan — 6 bulan terakhir') }}</p>
+                        <div class="h-48" data-bars></div>
                     </div>
                 </div>
             </div>
@@ -163,10 +209,18 @@
                     <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Top Up Berjalan') }}</h3>
                     <div class="space-y-sm">
                         @foreach ($activeTopups as $tp)
-                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-sm border border-outline-variant rounded-xl p-md bg-surface-container-low/40">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-sm rounded-xl p-md border-l-4
+                                    @if($tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI) tp-verif border-blue-500
+                                    @elseif($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK) tp-ditolak border-red-500
+                                    @else tp-pending border-amber-500 @endif">
                                 <div class="flex items-center gap-md">
-                                    <span class="material-symbols-outlined text-[28px] text-on-surface-variant">
-                                        {{ $tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI ? 'hourglass_top' : ($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK ? 'error' : 'schedule') }}
+                                    <span class="tp-icon
+                                        @if($tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI) ic-verif tp-pulse
+                                        @elseif($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK) ic-ditolak tp-shake
+                                        @else ic-pending tp-breathe @endif">
+                                        <span class="material-symbols-outlined text-[26px]">
+                                            {{ $tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI ? 'hourglass_top' : ($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK ? 'error' : 'schedule') }}
+                                        </span>
                                     </span>
                                     <div class="min-w-0">
                                         <p class="font-body-lg text-body-lg font-semibold text-on-surface">Rp {{ number_format((float) $tp->jumlah, 0, ',', '.') }}</p>
@@ -178,7 +232,9 @@
                                         @if($tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI) bg-blue-100 text-blue-800
                                         @elseif($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK) bg-red-100 text-red-800
                                         @else bg-amber-100 text-amber-800 @endif">
-                                        {{ $tp->status }}
+                                        @if($tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI) {{ __('Menunggu Verifikasi') }}
+                                        @elseif($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK) {{ __('Ditolak') }}
+                                        @else {{ __('Menunggu Pembayaran') }} @endif
                                     </span>
                                     @if (in_array($tp->status, [\App\Models\CustomerTopup::STATUS_PENDING, \App\Models\CustomerTopup::STATUS_DITOLAK], true))
                                         <a href="{{ route('customer.saldo.topup.payment', $tp->customer_topup_id) }}"
@@ -241,32 +297,167 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var chips = document.querySelectorAll('.chip-quick');
-            var input = document.getElementById('input-nominal');
-            var btnBatal = document.getElementById('btn-batal-nominal');
-            chips.forEach(function(c) {
-                c.addEventListener('click', function() {
-                    chips.forEach(function(x) { x.classList.remove('active'); });
-                    c.classList.add('active');
-                    if (input) {
-                        input.value = c.getAttribute('data-nominal');
-                        if (btnBatal) btnBatal.classList.remove('hidden');
-                    }
-                });
-            });
-            if (input && btnBatal) {
-                input.addEventListener('input', function() {
-                    chips.forEach(function(x) {
-                        x.classList.toggle('active', x.getAttribute('data-nominal') === input.value);
-                    });
-                    btnBatal.classList.toggle('hidden', input.value === '');
-                });
-                btnBatal.addEventListener('click', function() {
-                    input.value = '';
-                    chips.forEach(function(x) { x.classList.remove('active'); });
-                    btnBatal.classList.add('hidden');
+            var el = document.querySelector('[data-bars]');
+            if (!el) return;
+            var ranges = @json($ranges);
+            var range = '6bulan';
+            var mode = 'in';
+            var subline = document.getElementById('chart-subline');
+
+            function shortNum(v) {
+                v = Math.round(v || 0);
+                if (v >= 1000000) return (v / 1000000).toLocaleString('id-ID', { maximumFractionDigits: 2 }) + 'jt';
+                if (v >= 1000) return (v / 1000).toLocaleString('id-ID', { maximumFractionDigits: 2 }) + 'k';
+                return String(v);
+            }
+
+            function renderBars() {
+                var data = ranges[range][mode === 'in' ? 'pemasukan' : 'pengeluaran'];
+                el.classList.remove('flex', 'items-center', 'justify-center', 'items-end', 'gap-2', 'md:gap-3');
+                el.innerHTML = '';
+                var hasData = data.some(function(s) { return (s.value || 0) > 0; });
+                if (!hasData) {
+                    el.classList.add('flex', 'items-center', 'justify-center');
+                    el.innerHTML = '<div class="w-full flex flex-col items-center justify-center py-6 text-center gap-2 text-on-surface-variant">'
+                        + '<span class="material-symbols-outlined text-[28px] opacity-50">bar_chart</span>'
+                        + '<p class="font-body-sm text-body-sm">' + '{{ __('Belum ada aktivitas saldo.') }}' + '</p></div>';
+                    return;
+                }
+                el.classList.add('flex', 'items-end', 'gap-2', 'md:gap-3');
+                var barCls = mode === 'in'
+                    ? 'w-full max-w-[36px] rounded-t-md raliva-bar bg-gradient-to-t from-emerald-500/45 to-emerald-500 hover:from-emerald-500/70 hover:shadow-[0_0_12px_rgba(16,185,129,0.35)] transition-shadow'
+                    : 'w-full max-w-[36px] rounded-t-md raliva-bar bg-gradient-to-t from-[#BA1A1A]/45 to-[#BA1A1A] hover:from-[#BA1A1A]/70 hover:shadow-[0_0_12px_rgba(186,26,26,0.35)] transition-shadow';
+                var max = Math.max.apply(null, data.map(function(s) { return s.value || 0; })) || 1;
+
+                data.forEach(function(s, i) {
+                    var pct = Math.round(((s.value || 0) / max) * 100);
+                    var col = document.createElement('div');
+                    col.className = 'flex-1 min-w-0 flex flex-col items-center justify-end gap-2 h-full col-enter';
+                    col.style.animationDelay = (i * 80) + 'ms';
+
+                    var val = document.createElement('span');
+                    val.className = 'text-[10px] font-bold text-on-surface leading-none';
+                    val.textContent = shortNum(s.value || 0);
+
+                    var barZone = document.createElement('div');
+                    barZone.className = 'w-full h-full flex items-end justify-center';
+                    var bar = document.createElement('div');
+                    bar.className = barCls;
+                    bar.style.height = '0%';
+                    bar.title = (s.label || '') + ': ' + shortNum(s.value || 0);
+                    barZone.appendChild(bar);
+
+                    var lab = document.createElement('span');
+                    lab.className = 'font-label-sm text-[10px] uppercase tracking-wide text-on-surface-variant truncate max-w-full';
+                    lab.textContent = s.label || '';
+
+                    col.appendChild(val); col.appendChild(barZone); col.appendChild(lab);
+                    el.appendChild(col);
+                    setTimeout(function() { bar.style.height = Math.max(pct, 4) + '%'; }, 140 + i * 90);
                 });
             }
+
+            function updateSubline() {
+                var isBulanan = ranges[range].bulanan;
+                var kata = mode === 'in' ? 'Pemasukan' : 'Pengeluaran';
+                subline.textContent = kata + ' saldo per ' + (isBulanan ? 'bulan' : 'hari') + ' - ' + ranges[range].label;
+            }
+
+            var renderTimer = null;
+
+            function refreshChart() {
+                clearTimeout(renderTimer);
+                el.classList.add('chart-hide');
+                renderTimer = setTimeout(function() {
+                    updateSubline();
+                    renderBars();
+                    void el.offsetWidth;
+                    el.classList.remove('chart-hide');
+                }, 260);
+            }
+
+            function switchMode(m) {
+                if (m === mode) return;
+                mode = m;
+                setActiveMode(m);
+                refreshChart();
+            }
+
+            function setActiveMode(m) {
+                document.querySelectorAll('[data-chart-mode]').forEach(function(b) {
+                    var on = b.getAttribute('data-chart-mode') === m;
+                    b.classList.toggle('font-semibold', on);
+                    if (b.getAttribute('data-chart-mode') === 'in') {
+                        b.classList.toggle('border-emerald-500', on);
+                        b.classList.toggle('text-emerald-600', on);
+                        b.classList.toggle('border-outline-variant', !on);
+                    } else {
+                        b.classList.toggle('border-secondary', on);
+                        b.classList.toggle('border-outline-variant', !on);
+                    }
+                });
+            }
+
+            document.querySelectorAll('[data-chart-mode]').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    switchMode(btn.getAttribute('data-chart-mode'));
+                });
+            });
+
+            var rangeMenu = document.getElementById('range-menu');
+            var rangeLabel = document.getElementById('range-label');
+            var rangeChevron = document.getElementById('range-chevron');
+
+            function toggleRangeMenu() {
+                if (rangeMenu.classList.contains('invisible')) {
+                    rangeMenu.classList.remove('invisible', 'opacity-0', 'scale-95', '-translate-y-1');
+                    rangeChevron.classList.add('rotate-180');
+                } else {
+                    closeRangeMenu();
+                }
+            }
+
+            function closeRangeMenu() {
+                rangeMenu.classList.add('invisible', 'opacity-0', 'scale-95', '-translate-y-1');
+                rangeChevron.classList.remove('rotate-180');
+            }
+
+            function selectRange(btn) {
+                range = btn.getAttribute('data-range');
+                rangeLabel.textContent = btn.getAttribute('data-label');
+                document.querySelectorAll('#range-menu [data-range]').forEach(function(b) {
+                    var check = b.querySelector('.range-check');
+                    if (b === btn) {
+                        check.classList.remove('invisible');
+                        b.classList.add('font-semibold');
+                    } else {
+                        check.classList.add('invisible');
+                        b.classList.remove('font-semibold');
+                    }
+                });
+                updateSubline();
+                refreshChart();
+                closeRangeMenu();
+            }
+
+            document.addEventListener('click', function(e) {
+                var container = document.getElementById('range-menu-container');
+                if (container && !container.contains(e.target)) closeRangeMenu();
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeRangeMenu();
+            });
+
+            window.toggleRangeMenu = toggleRangeMenu;
+            window.closeRangeMenu = closeRangeMenu;
+            window.selectRange = selectRange;
+
+            setActiveMode('in');
+            el.classList.add('chart-hide');
+            renderBars();
+            void el.offsetWidth;
+            requestAnimationFrame(function() { el.classList.remove('chart-hide'); });
         });
     </script>
 </body>

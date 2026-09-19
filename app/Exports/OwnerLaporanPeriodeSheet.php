@@ -37,7 +37,7 @@ class OwnerLaporanPeriodeSheet implements FromCollection, WithHeadings, WithMapp
             return [
                 'periode' => $label,
                 'pesanan' => Order::where('store_id', $storeId)->whereBetween('created_at', [$s, $e])->count(),
-                'pendapatan' => (float) Order::where('store_id', $storeId)->where('status', 'selesai')->whereBetween('created_at', [$s, $e])->sum('grand_total'),
+                'pendapatan' => (float) Order::where('store_id', $storeId)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->whereBetween('created_at', [$s, $e])->sum('grand_total'),
                 'refund' => (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
                     ->where('orders.store_id', $storeId)->where('refunds.status', 'selesai')
                     ->whereBetween('refunds.diajukan_pada', [$s, $e])->sum('refunds.jumlah'),
