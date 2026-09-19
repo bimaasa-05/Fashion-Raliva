@@ -18,6 +18,7 @@ class ProductVariant extends Model
         'product_id',
         'sku',
         'warna',
+        'warna_hex',
         'ukuran',
         'harga',
         'status',
