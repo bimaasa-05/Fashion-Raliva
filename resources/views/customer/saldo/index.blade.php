@@ -83,8 +83,12 @@
         .premium-heading::before { content: ''; display: inline-block; width: 4px; height: .95em; margin-right: .65rem; background: #8B1E3F; border-radius: 9999px; vertical-align: -.05em; }
         .atl-eyebrow { display: inline-flex; align-items: center; gap: .65rem; }
         .atl-eyebrow::before { content: ''; width: 30px; height: 1px; background: var(--chrome-accent); opacity: .7; }
-        .btn-gold { position: relative; overflow: hidden; background-color: #8B1E3F !important; color: #ffffff !important; }
-        html.theme-dark .btn-gold { background-color: #6D1428 !important; }
+        .btn-gold { position: relative; overflow: hidden; background-color: var(--btn-gold-bg) !important; color: var(--btn-gold-text) !important; }
+        .btn-gold::after { content: ''; position: absolute; top: -10%; bottom: -10%; left: -80%; width: 45%; background: rgba(255,255,255,.55); transform: skewX(-24deg); pointer-events: none; }
+        .btn-gold:hover::after { animation: authFlash 1.4s linear infinite; }
+        @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
+        :root { --btn-gold-bg: #8B1E3F; --btn-gold-text: #ffffff; }
+        html.theme-dark { --btn-gold-bg: #6D1428; --btn-gold-text: #ffffff; }
         .tp-pending { background: #FFFBEB; border-color: #FCD34D; }
         .tp-verif { background: #EFF6FF; border-color: #93C5FD; }
         .tp-ditolak { background: #FEF2F2; border-color: #FCA5A5; }
@@ -140,7 +144,7 @@
                         <div class="flex items-center justify-between gap-sm">
                             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)]">{{ __('SALDO TERSEDIA') }}</p>
                             <a href="{{ route('customer.saldo.isi') }}"
-                                class="inline-flex items-center gap-1 px-3.5 py-2 rounded-full border border-[var(--chrome-accent)]/25 bg-[var(--chrome-accent)]/5 text-[var(--chrome-accent)] font-label-sm text-label-sm uppercase tracking-wider hover:bg-[var(--chrome-accent)]/10 transition-colors whitespace-nowrap">
+                                class="btn-gold inline-flex items-center justify-center gap-1 px-md py-2.5 rounded-full font-label-caps text-label-caps uppercase tracking-widest whitespace-nowrap">
                                 <span class="material-symbols-outlined text-[16px]">add</span>
                                 <span>{{ __('Isi Saldo') }}</span>
                             </a>
