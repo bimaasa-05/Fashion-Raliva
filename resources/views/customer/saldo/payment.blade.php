@@ -75,13 +75,20 @@
         html.theme-dark .border-error { border-color: #ffb4ab !important; }
         html.theme-dark .hover\:bg-surface-container-low:hover { background-color: #201f1e !important; }
         .card-premium { box-shadow: 0 1px 2px rgb(17 17 17 / .04), 0 12px 32px -16px rgb(17 17 17 / .16); transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+        .card-premium:hover { box-shadow: 0 2px 4px rgb(17 17 17 / .05), 0 20px 48px -20px rgb(17 17 17 / .22); border-color: rgba(139,30,63,.45); }
         html.theme-dark .card-premium { background-color: var(--surface-ivory); border-color: var(--border-soft); box-shadow: 0 1px 2px rgb(0 0 0 / .3), 0 8px 24px -12px rgb(0 0 0 / .5); }
+        html.theme-dark .card-premium:hover { box-shadow: 0 2px 4px rgb(0 0 0 / .4), 0 20px 48px -20px rgb(0 0 0 / .7); border-color: rgba(139,30,63,.55); }
         .premium-heading { display: block; }
         .premium-heading::before { content: ''; display: inline-block; width: 4px; height: .95em; margin-right: .65rem; background: #8B1E3F; border-radius: 9999px; vertical-align: -.05em; }
         .atl-eyebrow { display: inline-flex; align-items: center; gap: .65rem; }
         .atl-eyebrow::before { content: ''; width: 30px; height: 1px; background: var(--chrome-accent); opacity: .7; }
-        .btn-gold { position: relative; overflow: hidden; background-color: #8B1E3F !important; color: #ffffff !important; }
-        html.theme-dark .btn-gold { background-color: #6D1428 !important; }
+        .btn-gold { position: relative; overflow: hidden; background-color: var(--btn-gold-bg) !important; color: var(--btn-gold-text) !important; }
+        .btn-gold::after { content: ''; position: absolute; top: -10%; bottom: -10%; left: -80%; width: 45%; background: rgba(255,255,255,.55); transform: skewX(-24deg); pointer-events: none; }
+        .btn-gold:hover::after { animation: authFlash 1.4s linear infinite; }
+        .btn-gold.flashing::after { animation: authFlash 1.4s cubic-bezier(.4,0,.2,1) 1; }
+        @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
+        :root { --btn-gold-bg: #8B1E3F; --btn-gold-text: #ffffff; }
+        html.theme-dark { --btn-gold-bg: #6D1428; --btn-gold-text: #ffffff; }
         .pay-method { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem; padding: .75rem; border: 1px solid var(--border-soft); border-radius: .75rem; background: var(--surface-warm); cursor: pointer; transition: background .18s, border-color .18s, color .18s; }
         .pay-method:hover { background: #ECE7DF; border-color: #8B1E3F; color: #8B1E3F; }
         .pay-method.selected { border-color: #8B1E3F; background: rgba(139,30,63,.08); color: #8B1E3F; font-weight: 600; box-shadow: inset 0 0 0 1px rgba(139,30,63,.15); }
@@ -175,6 +182,16 @@
         @media (prefers-reduced-motion: reduce) {
             .reveal-up { opacity: 1; transform: none; transition: none; }
         }
+        .carpet-down { animation: carpetDown .45s cubic-bezier(.4,0,.2,1) both; }
+        @keyframes carpetDown {
+            from { clip-path: inset(0 0 100% 0); opacity: 0; }
+            to { clip-path: inset(0 0 0 0); opacity: 1; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .carpet-down { animation: none; }
+        }
+        #drawer-panel { --chrome-accent: #8B1E3F; --gold-wash: rgba(139,30,63,.10); }
+        html.theme-dark #drawer-panel { --chrome-accent: #8B1E3F; --gold-wash: rgba(163,38,63,.16); }
         <noscript><style>.reveal-up { opacity: 1 !important; transform: none !important; }</style></noscript>
     </style>
 </head>
@@ -201,9 +218,9 @@
 
             <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center reveal-up">
                 <div class="co-stepper">
-                    <a href="{{ route('customer.saldo') }}" class="co-step done"><span class="num"><span
+                    <a href="{{ route('customer.saldo.isi') }}" class="co-step done"><span class="num"><span
                                 class="material-symbols-outlined text-[14px]">check</span></span>
-                        {{ __('Review') }}</a>
+                        {{ __('Isi') }}</a>
                     <span class="co-step-line done"></span>
                     <span class="co-step active"><span class="num">2</span> {{ __('Bayar') }}</span>
                     <span class="co-step-line"></span>
@@ -213,7 +230,7 @@
 
             @if (session('toast'))
                 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-md flex items-center gap-sm">
-                    <span class="material-symbols-outlined text-secondary">task_alt</span>
+                    <span class="material-symbols-outlined text-secondary">info</span>
                     <p class="font-body-sm text-body-sm text-on-surface-variant">{{ session('toast')['message'] ?? session('toast') }}</p>
                 </div>
             @endif
@@ -384,7 +401,13 @@
                                     @error('bukti')
                                         <p class="font-label-sm text-label-sm text-error mt-xs">{{ $message }}</p>
                                     @enderror
-                                    <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm" id="pay-selected-hint">{{ __('Pilih salah satu metode di atas.') }}</p>
+                                    <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm" id="pay-selected-hint">
+                                        @if (old('payment_method_id', $topup->payment?->payment_method_id))
+                                            {{ __('Metode terpilih akan ditampilkan di rincian.') }}
+                                        @else
+                                            {{ __('Pilih salah satu metode di atas.') }}
+                                        @endif
+                                    </p>
                                 </div>
 
                                 <div id="btn-actions" class="mt-lg">
@@ -413,7 +436,7 @@
                             @if($topup->status === 'pending') bg-amber-100 text-amber-800
                             @elseif($topup->status === 'menunggu_verifikasi') bg-blue-100 text-blue-800
                             @elseif($topup->status === 'terverifikasi') bg-emerald-100 text-emerald-800
-                            @else bg-red-100 text-red-800 @endif">{{ $topup->status }}</span>
+                            @else bg-red-100 text-red-800 @endif">@if($topup->status === 'pending'){{ __('Menunggu Pembayaran') }}@elseif($topup->status === 'menunggu_verifikasi'){{ __('Menunggu Verifikasi') }}@elseif($topup->status === 'terverifikasi'){{ __('Terverifikasi') }}@elseif($topup->status === 'ditolak'){{ __('Ditolak') }}@else{{ __('Kadaluarsa') }}@endif</span>
                     </div>
                     <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-md">{{ __('Transfer sesuai nominal di atas, lalu unggah bukti untuk diverifikasi Super Admin.') }}</p>
                 </div>
@@ -421,7 +444,6 @@
         </div>
     </main>
 
-    @include('customer._partials.bottom-nav')
     @include('customer._partials.drawer')
 
     <script>
@@ -431,6 +453,9 @@
             var accountInput = document.getElementById('input-account-id');
             var rincian = document.getElementById('rincian-metode');
             var hint = document.getElementById('pay-selected-hint');
+            var panelBukti = document.getElementById('panel-bukti');
+            var currentKode = null;
+            var toastShown = {};
             if (!grid || !input) return;
 
             var showPanel = function(kode) {
@@ -439,7 +464,46 @@
                 if (panel) panel.classList.remove('hidden');
                 var wrap = document.getElementById('pay-detail');
                 if (wrap) wrap.classList.remove('hidden');
-                document.getElementById('panel-bukti')?.classList.remove('hidden');
+            };
+
+            var showBukti = function() {
+                if (!panelBukti) return;
+                panelBukti.classList.remove('hidden');
+                panelBukti.classList.remove('carpet-down');
+                void panelBukti.offsetWidth;
+                panelBukti.classList.add('carpet-down');
+            };
+
+            var hideBukti = function() {
+                if (!panelBukti) return;
+                panelBukti.classList.add('hidden');
+                panelBukti.classList.remove('carpet-down');
+            };
+
+            var syncBukti = function() {
+                if (!currentKode) { hideBukti(); return; }
+                if (currentKode === 'saldo_akun') { hideBukti(); return; }
+                if (currentKode === 'qris') { showBukti(); return; }
+                if (currentKode === 'ewallet' || currentKode === 'bank_transfer') {
+                    var gridEl = document.getElementById('grid-' + currentKode);
+                    var selAcc = gridEl ? gridEl.querySelector('.account-opt-ew.selected') : null;
+                    if (selAcc) { showBukti(); return; }
+                    hideBukti();
+                    return;
+                }
+                showBukti();
+            };
+
+            var showToast = function(msg, dur) {
+                var existing = document.getElementById('pay-toast');
+                if (existing) existing.remove();
+                var toast = document.createElement('div');
+                toast.id = 'pay-toast';
+                toast.textContent = msg;
+                toast.style.cssText = 'position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#1c1b1b;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-family:Manrope,sans-serif;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;transition:opacity .3s ease;';
+                document.body.appendChild(toast);
+                requestAnimationFrame(function() { toast.style.opacity = '1'; });
+                setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 350); }, dur || 1800);
             };
 
             var selectMethod = function(el) {
@@ -450,7 +514,9 @@
                 if (hint) hint.textContent = 'Metode terpilih: ' + (el.getAttribute('data-nama') || '');
                 var autoAcc = el.getAttribute('data-account-id');
                 if (autoAcc && accountInput) accountInput.value = autoAcc;
-                showPanel(el.getAttribute('data-kode'));
+                currentKode = el.getAttribute('data-kode');
+                showPanel(currentKode);
+                syncBukti();
             };
 
             grid.querySelectorAll('.pay-method').forEach(function(el) {
@@ -470,6 +536,7 @@
                         if (wrap) wrap.classList.remove('ew-active');
                         if (ewGrid) ewGrid.classList.remove('ew-expanded');
                         if (accountInput) accountInput.value = '';
+                        syncBukti();
                     }, 200);
                     return;
                 }
@@ -479,10 +546,16 @@
                     ewGrid.querySelectorAll('.account-opt-ew').forEach(function(o) { o.classList.remove('selected', 'closing'); });
                 }
 
+                var kodeMet = opt.getAttribute('data-panel');
                 if (wrap) wrap.classList.add('ew-active');
                 opt.classList.add('selected');
                 if (ewGrid) ewGrid.classList.add('ew-expanded');
                 if (accountInput) accountInput.value = opt.getAttribute('data-account-id');
+                syncBukti();
+                if (kodeMet && !toastShown[kodeMet]) {
+                    toastShown[kodeMet] = true;
+                    showToast('Klik lagi untuk mengganti metode pembayaran.', 5000);
+                }
             };
 
             document.querySelectorAll('.account-opt').forEach(function(opt) {
@@ -565,6 +638,15 @@
                     }
                 }
             }
+
+            document.querySelectorAll('.btn-gold').forEach(function(b) {
+                b.addEventListener('click', function() {
+                    b.classList.remove('flashing');
+                    void b.offsetWidth;
+                    b.classList.add('flashing');
+                    setTimeout(function() { b.classList.remove('flashing'); }, 600);
+                });
+            });
         });
     </script>
     <script>

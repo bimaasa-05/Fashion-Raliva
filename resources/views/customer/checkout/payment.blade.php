@@ -1244,28 +1244,34 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                     </p>
                                                 @else
                                                     <div
-                                                        class="relative overflow-hidden border border-emerald-200 bg-gradient-to-br from-emerald-100 via-emerald-50 to-surface-warm rounded-xl p-md md:p-lg">
-                                                        <span class="absolute -top-7 -right-7 w-32 h-32 rounded-full bg-emerald-200/40 blur-2xl"></span>
+                                                        class="relative overflow-hidden rounded-xl border border-[var(--border-soft)] bg-surface-warm p-md md:p-lg">
+                                                        <span
+                                                            class="absolute -top-9 -right-9 w-36 h-36 rounded-full bg-secondary/10 blur-2xl"></span>
                                                         <div class="relative flex items-start gap-3">
-                                                            <span class="shrink-0 w-11 h-11 rounded-full bg-emerald-900/10 inline-flex items-center justify-center">
-                                                                <span class="material-symbols-outlined text-[22px] text-emerald-700">account_balance_wallet</span>
+                                                            <span
+                                                                class="shrink-0 w-11 h-11 rounded-full bg-secondary/10 inline-flex items-center justify-center">
+                                                                <span
+                                                                    class="material-symbols-outlined text-[22px] text-secondary">account_balance_wallet</span>
                                                             </span>
                                                             <div class="min-w-0">
-                                                                <p class="font-body-md text-body-md font-bold text-emerald-900">{{ __('Saldo belum mencukupi') }}</p>
-                                                                <p class="font-body-sm text-body-sm text-emerald-900/85 mt-0.5">
+                                                                <p
+                                                                    class="font-body-md text-body-md font-bold text-on-surface">{{ __('Saldo belum mencukupi') }}</p>
+                                                                <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
                                                                     {{ __('Saldo tersedia') }}
-                                                                    <strong>Rp {{ number_format($saldoCust, 0, ',', '.') }}</strong>
+                                                                    <strong class="font-semibold text-[var(--chrome-accent)]">Rp
+                                                                        {{ number_format($saldoCust, 0, ',', '.') }}</strong>
                                                                     &middot;
                                                                     {{ __('Kurang') }}
-                                                                    <strong>Rp {{ number_format(max(0, (float) $payment->jumlah - $saldoCust), 0, ',', '.') }}</strong>
+                                                                    <strong class="font-semibold text-[var(--chrome-accent)]">Rp
+                                                                        {{ number_format(max(0, (float) $payment->jumlah - $saldoCust), 0, ',', '.') }}</strong>
                                                                 </p>
-                                                                <p class="font-body-sm text-body-sm text-emerald-900/70 mt-0.5">
+                                                                <p class="font-body-sm text-body-sm text-on-surface-variant/70 mt-0.5">
                                                                     {{ __('Isi saldo dulu untuk melanjutkan, atau pilih metode pembayaran lain.') }}
                                                                 </p>
                                                             </div>
                                                         </div>
                                                         <a href="{{ route('customer.saldo') }}"
-                                                            class="relative mt-md w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest bg-emerald-800 text-white hover:bg-emerald-700 transition-colors">
+                                                            class="btn-gold mt-md w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
                                                             <span class="material-symbols-outlined text-[20px]">add_card</span>
                                                             <span>{{ __('Top Up Saldo') }}</span>
                                                             <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
@@ -1343,7 +1349,6 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                             </form>
                             <form id="form-pay-saldo" method="POST"
                                 action="{{ route('customer.checkout.payment.saldo', $checkout->checkout_id) }}"
-                                onsubmit="return confirm('@lang('Bayar') Rp {{ number_format((float) $payment->jumlah, 0, ',', '.') }} @lang('pakai saldo akun?')');"
                                 class="hidden">
                                 @csrf
                             </form>
@@ -1472,6 +1477,44 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
 
         </div>
     </main>
+
+    <div id="modal-saldo-confirm" class="hidden fixed inset-0 z-[100] bg-black/50 backdrop-blur-[2px] flex items-center justify-center p-md">
+        <div
+            class="w-full max-w-sm bg-surface-container-lowest border border-[var(--border-soft)] rounded-2xl card-premium overflow-hidden">
+            <div class="p-md md:p-lg">
+                <div class="flex items-start gap-3 mb-md">
+                    <span
+                        class="shrink-0 w-11 h-11 rounded-full bg-secondary/10 inline-flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[22px] text-secondary">account_balance_wallet</span>
+                    </span>
+                    <div class="min-w-0 pt-0.5">
+                        <p class="font-body-md text-body-md font-bold text-on-surface">{{ __('Bayar dengan Saldo Akun') }}</p>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                            {{ __('Bayar') }}
+                            <strong class="font-semibold text-[var(--chrome-accent)]">Rp {{ number_format((float) $payment->jumlah, 0, ',', '.') }}</strong>
+                            {{ __('pakai saldo akun?') }}
+                        </p>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                            {{ __('Sisa saldo') }}:
+                            <strong class="font-semibold text-[var(--chrome-accent)]">Rp {{ number_format(max(0, $saldoCust - (float) $payment->jumlah), 0, ',', '.') }}</strong>
+                        </p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-sm">
+                    <button type="button" data-confirm-cancel
+                        class="h-12 w-full inline-flex items-center justify-center gap-2 px-sm rounded-full font-label-caps text-label-caps uppercase tracking-widest border border-outline text-on-surface hover:bg-surface-container-high transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">close</span>
+                        <span>{{ __('Cancel') }}</span>
+                    </button>
+                    <button type="button" data-confirm-ok
+                        class="h-12 w-full inline-flex items-center justify-center gap-2 px-sm rounded-full font-label-caps text-label-caps uppercase tracking-widest bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">check</span>
+                        <span>{{ __('Oke') }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     @include('customer._partials.drawer')
 
@@ -1816,6 +1859,45 @@ var btnActions = document.getElementById('btn-actions');
                     }
                 });
             }
+
+            var formSaldo = document.getElementById('form-pay-saldo');
+            var modalConfirm = document.getElementById('modal-saldo-confirm');
+            var btnConfirmOk = modalConfirm ? modalConfirm.querySelector('[data-confirm-ok]') : null;
+            var btnConfirmCancel = modalConfirm ? modalConfirm.querySelector('[data-confirm-cancel]') : null;
+
+            var openSaldoConfirm = function() {
+                if (modalConfirm) modalConfirm.classList.remove('hidden');
+            };
+            var closeSaldoConfirm = function() {
+                if (modalConfirm) modalConfirm.classList.add('hidden');
+            };
+
+            if (formSaldo) {
+                formSaldo.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    openSaldoConfirm();
+                });
+            }
+            if (btnConfirmOk) {
+                btnConfirmOk.addEventListener('click', function() {
+                    closeSaldoConfirm();
+                    if (formSaldo && !btnConfirmOk.disabled) {
+                        btnConfirmOk.disabled = true;
+                        formSaldo.submit();
+                    }
+                });
+            }
+            if (btnConfirmCancel) {
+                btnConfirmCancel.addEventListener('click', closeSaldoConfirm);
+            }
+            if (modalConfirm) {
+                modalConfirm.addEventListener('click', function(e) {
+                    if (e.target === modalConfirm) closeSaldoConfirm();
+                });
+            }
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modalConfirm && !modalConfirm.classList.contains('hidden')) closeSaldoConfirm();
+            });
         });
     </script>
 
