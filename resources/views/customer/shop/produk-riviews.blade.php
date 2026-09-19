@@ -273,7 +273,7 @@
 @php $pImg = $product->images->first()?->file_gambar; @endphp
 <div class="w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden border border-outline-variant shrink-0 bg-surface-container-high">
 @if ($pImg)
-<img alt="{{ $product->nama_produk }}" class="w-full h-full object-cover" src="{{ filter_var($pImg, FILTER_VALIDATE_URL) ? $pImg : asset($pImg) }}"/>
+<img alt="{{ $product->nama_produk }}" class="w-full h-full object-cover" src="{{ photo_url($pImg) }}"/>
 @else
 <div class="w-full h-full flex items-center justify-center bg-surface-container-high text-on-surface-variant">
 <span class="material-symbols-outlined text-[40px]">checkroom</span>
