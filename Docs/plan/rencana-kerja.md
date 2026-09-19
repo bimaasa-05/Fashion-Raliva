@@ -577,4 +577,25 @@ preset 31, `warna-custom-fields` & `warna-custom-toggle` hadir.
 - `php -l` lulus (7 file), `php artisan view:cache` lulus.
 - Smoke HTTP admin (jar terautentikasi, port 8099): `/admin/pesanan` 200 (badge Offline×16,
   modal-selesai×4 utk 2 order siap_kirim), `/admin/pengiriman` 200 (section Siap Diambil + 2 tombol),
-  `/admin/produk` 200 (palet Burgundy/Violet hadir, "Warna Custom" 0).
+  `/admin/produk` 200 (palet Burgundy/Violet hadir, "Warna Custom" 0).---
+## Batch lanjutan (Raliva-Fashion) — 19 Sep 2026
+
+Fokus: (A) SuperAdmin motion minimal (Komplain dikecualikan), (B) `photo_url()` untuk foto unggahan admin, (C) warna_hex + WarnaPalet end-to-end, (D) halaman detail produk customer lengkap.
+
+### Konteks & keputusan
+- **Mode minimal motion** diterapkan luas ke layout SuperAdmin: animasi dekoratif (page-enter, rise/stagger, reveal, count-up, donut/bar/leaderboard, transisi) dipangkas, spin/new-count/loader/skeleton dibiarkan jalan. **Pengecualian** (user): halaman *Komplain* (`superadmin.komplain*`) sengaja mempertahankan animasinya.
+- **Cara kerja**: `data-motion="minimal"` pada `<html>` layout + `<style>` overrides + `data-motion="minimal"` gate pada `partials/ui-scripts.blade.php` (reveal instan, count-up instan, skeleton 0ms) + gate di `partials/notification-popup.blade.php` (suara & slide cepat saat minimal). Indikator fail-aman di `partials/ui-scripts`: tiap query di-scope ke kontainer (`raliva-container` / `data-reveal`), toast/spinner tetap jalan, `pointer-events` di-lock saat reveal.
+- **Pengecualian komplain**: komplain & detail komplain TIDAK pakai minimal → semua animasi aslinya tetap (suara toast, rise, count-up, reveal).
+
+### Perubahan
+- `app/Support/photo_url.php`: helper global (ambiguous string → `asset('storage/...')`, URL → as-is, `assets/` → `asset()`, kosong → `''`); `composer.json` autoload.files; `ui-scripts` & view `Admin/produk/index.blade.php` menerima helper ini.
+- Rombak jalur tampilan Produk SuperAdmin & Admin mengikuti `data-variants` JSON yang lebih lengkap (`warna`, `ukuran`, `harga`, `stok`, `hex`) → pemilih warna/size dikerjakan dari varian asli, bukan hardcode.
+- `resources/views/customer/shop/produk-detail.blade.php`: disambungkan hex + stok (disabled CART/BUY saat stok 0), size guide fungsional (LD=96/PB=60 dst + tabel panduan), breadcrumb kategori + toko, SKU, sparse rating → swatch string diambil dari `warna_hex` varian bila ada.
+- `app/Models/ProductVariant.php` (fillable) + `app/Support/WarnaPalet.php` (31 preset) + migrasi `warna_hex` + backfill + validasi admin `warna_hex.*` + submit injection `warna_hex[]`.
+
+### Verifikasi
+- `php artisan test`: 41 passed / 1 risky (pre-existing OwnerKomplainTest).
+- HTTP smoke (port 8099, session SuperAdmin `sa@gmail.com`): dashboard & SuperAdmin Semua 200 + `data-motion="minimal"`; **Komplain 200 + TIDAK minimal** (data-motion=0) → animasi komplain aman.
+- Produk detail customer (`/customer/shop/produk/29`): 200, `data-variants` berisi `stok`+`hex`, panel size guide + tombol buka, SKU, breadcrumb toko, `pd-stock`.
+- Admin produk view: `id="form-produk"`, `data-hex` presets, inject `warna_hex[]` submit.
+- `php artisan view:cache` lulus; `node --check` lulus untuk partial yang menyangkut script inline.
