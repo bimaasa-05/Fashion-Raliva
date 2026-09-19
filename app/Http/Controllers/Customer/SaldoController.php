@@ -60,6 +60,15 @@ class SaldoController extends Controller
         return view('customer.saldo.index', compact('saldo', 'totalTopup', 'totalBelanja', 'transactions', 'activeTopups'));
     }
 
+    public function isiSaldo()
+    {
+        $nominalCepat = static::NOMINAL_CEPAT;
+        $minNominal = static::MIN_NOMINAL;
+        $maxNominal = static::MAX_NOMINAL;
+
+        return view('customer.saldo.isi-saldo', compact('nominalCepat', 'minNominal', 'maxNominal'));
+    }
+
     public function topup(Request $request)
     {
         $validated = $request->validate([
