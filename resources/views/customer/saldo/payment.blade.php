@@ -218,9 +218,9 @@
 
             <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center reveal-up">
                 <div class="co-stepper">
-                    <a href="{{ route('customer.saldo') }}" class="co-step done"><span class="num"><span
+                    <a href="{{ route('customer.saldo.isi') }}" class="co-step done"><span class="num"><span
                                 class="material-symbols-outlined text-[14px]">check</span></span>
-                        {{ __('Review') }}</a>
+                        {{ __('Isi') }}</a>
                     <span class="co-step-line done"></span>
                     <span class="co-step active"><span class="num">2</span> {{ __('Bayar') }}</span>
                     <span class="co-step-line"></span>
