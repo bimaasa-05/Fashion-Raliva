@@ -264,7 +264,7 @@
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ $store->nama_toko }}</h2>
 <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant mx-auto mb-md shadow-sm">
 @if ($store->logo)
-<img alt="{{ $store->nama_toko }} Logo" class="w-full h-full object-cover" src="{{ filter_var($store->logo, FILTER_VALIDATE_URL) ? $store->logo : asset($store->logo) }}"/>
+<img alt="{{ $store->nama_toko }} Logo" class="w-full h-full object-cover" src="{{ photo_url($store->logo) }}"/>
 @else
 <div class="w-full h-full flex items-center justify-center bg-surface-container-high text-on-surface font-headline-xl">
 <span class="material-symbols-outlined text-[48px]">storefront</span>
