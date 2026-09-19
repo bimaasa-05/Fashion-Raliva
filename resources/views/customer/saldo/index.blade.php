@@ -163,17 +163,36 @@
                         </div>
                         <div class="flex items-center justify-between gap-2 flex-wrap mb-sm">
                             <h3 class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)]">{{ __('Aktivitas Saldo') }}</h3>
-                            <label class="relative inline-flex items-center">
-                                <span class="material-symbols-outlined text-[14px] text-on-surface-variant absolute left-1.5 pointer-events-none">calendar_month</span>
-                                <select id="chart-range"
-                                    class="appearance-none cursor-pointer border border-outline-variant bg-surface-container-low hover:border-secondary transition-colors rounded-DEFAULT font-label-sm text-label-sm text-on-surface pl-6 pr-7 py-1">
-                                    <option value="1tahun">{{ __('1 Tahun') }}</option>
-                                    <option value="6bulan" selected>{{ __('6 Bulan') }}</option>
-                                    <option value="3bulan">{{ __('3 Bulan') }}</option>
-                                    <option value="1minggu">{{ __('1 Minggu') }}</option>
-                                </select>
-                                <span class="material-symbols-outlined text-[14px] text-on-surface-variant absolute right-1.5 pointer-events-none">arrow_drop_down</span>
-                            </label>
+                            <div class="relative" id="range-menu-container">
+                                <button type="button" onclick="toggleRangeMenu()"
+                                    class="inline-flex items-center justify-center gap-1 min-h-8 rounded-DEFAULT border border-outline-variant px-3 py-1.5 font-label-sm text-label-sm text-on-surface hover:text-secondary hover:border-secondary transition-colors">
+                                    <span id="range-label">{{ __('6 Bulan') }}</span>
+                                    <span class="material-symbols-outlined text-[16px] transition-transform duration-200" id="range-chevron">expand_more</span>
+                                </button>
+                                <div id="range-menu" class="absolute right-0 top-full mt-xs w-44 bg-surface rounded-lg border border-outline-variant shadow-xl z-20 py-xs origin-top-right transition-all duration-200 ease-out invisible opacity-0 scale-95 -translate-y-1">
+                                    <p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest px-md pt-xs pb-sm">{{ __('Periode') }}</p>
+                                    <button type="button" data-range="1tahun" data-label="{{ __('1 Tahun') }}" onclick="selectRange(this)"
+                                        class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors">
+                                        <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">calendar_month</span>{{ __('1 Tahun') }}</span>
+                                        <span class="material-symbols-outlined text-[18px] text-secondary range-check invisible">check</span>
+                                    </button>
+                                    <button type="button" data-range="6bulan" data-label="{{ __('6 Bulan') }}" onclick="selectRange(this)"
+                                        class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors">
+                                        <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">date_range</span>{{ __('6 Bulan') }}</span>
+                                        <span class="material-symbols-outlined text-[18px] text-secondary range-check">check</span>
+                                    </button>
+                                    <button type="button" data-range="3bulan" data-label="{{ __('3 Bulan') }}" onclick="selectRange(this)"
+                                        class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors">
+                                        <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">calendar_view_month</span>{{ __('3 Bulan') }}</span>
+                                        <span class="material-symbols-outlined text-[18px] text-secondary range-check invisible">check</span>
+                                    </button>
+                                    <button type="button" data-range="1minggu" data-label="{{ __('1 Minggu') }}" onclick="selectRange(this)"
+                                        class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors">
+                                        <span class="flex items-center gap-sm"><span class="material-symbols-outlined text-[18px] text-on-surface-variant">view_week</span>{{ __('1 Minggu') }}</span>
+                                        <span class="material-symbols-outlined text-[18px] text-secondary range-check invisible">check</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         <p id="chart-subline" class="font-label-sm text-label-sm text-on-surface-variant mb-sm">{{ __('Pemasukan saldo per bulan — 6 bulan terakhir') }}</p>
                         <div class="h-48" data-bars></div>
@@ -381,14 +400,54 @@
                 });
             });
 
-            var rangeSel = document.getElementById('chart-range');
-            if (rangeSel) {
-                rangeSel.addEventListener('change', function() {
-                    range = rangeSel.value;
-                    updateSubline();
-                    refreshChart();
-                });
+            var rangeMenu = document.getElementById('range-menu');
+            var rangeLabel = document.getElementById('range-label');
+            var rangeChevron = document.getElementById('range-chevron');
+
+            function toggleRangeMenu() {
+                if (rangeMenu.classList.contains('invisible')) {
+                    rangeMenu.classList.remove('invisible', 'opacity-0', 'scale-95', '-translate-y-1');
+                    rangeChevron.classList.add('rotate-180');
+                } else {
+                    closeRangeMenu();
+                }
             }
+
+            function closeRangeMenu() {
+                rangeMenu.classList.add('invisible', 'opacity-0', 'scale-95', '-translate-y-1');
+                rangeChevron.classList.remove('rotate-180');
+            }
+
+            function selectRange(btn) {
+                range = btn.getAttribute('data-range');
+                rangeLabel.textContent = btn.getAttribute('data-label');
+                document.querySelectorAll('#range-menu [data-range]').forEach(function(b) {
+                    var check = b.querySelector('.range-check');
+                    if (b === btn) {
+                        check.classList.remove('invisible');
+                        b.classList.add('font-semibold');
+                    } else {
+                        check.classList.add('invisible');
+                        b.classList.remove('font-semibold');
+                    }
+                });
+                updateSubline();
+                refreshChart();
+                closeRangeMenu();
+            }
+
+            document.addEventListener('click', function(e) {
+                var container = document.getElementById('range-menu-container');
+                if (container && !container.contains(e.target)) closeRangeMenu();
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeRangeMenu();
+            });
+
+            window.toggleRangeMenu = toggleRangeMenu;
+            window.closeRangeMenu = closeRangeMenu;
+            window.selectRange = selectRange;
 
             setActiveMode('in');
             el.classList.add('chart-hide');
