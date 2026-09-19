@@ -161,8 +161,21 @@
                                 <span>{{ __('Pengeluaran') }}</span>
                             </button>
                         </div>
-                        <h3 class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)]">{{ __('Aktivitas Saldo') }}</h3>
-                        <p id="chart-subline" class="font-label-sm text-label-sm text-on-surface-variant mt-1 mb-sm">{{ __('Pemasukan saldo per bulan — 6 bulan terakhir') }}</p>
+                        <div class="flex items-center justify-between gap-2 flex-wrap mb-sm">
+                            <h3 class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)]">{{ __('Aktivitas Saldo') }}</h3>
+                            <label class="relative inline-flex items-center">
+                                <span class="material-symbols-outlined text-[14px] text-on-surface-variant absolute left-1.5 pointer-events-none">calendar_month</span>
+                                <select id="chart-range"
+                                    class="appearance-none cursor-pointer border border-outline-variant bg-surface-container-low hover:border-secondary transition-colors rounded-DEFAULT font-label-sm text-label-sm text-on-surface pl-6 pr-7 py-1">
+                                    <option value="1tahun">{{ __('1 Tahun') }}</option>
+                                    <option value="6bulan" selected>{{ __('6 Bulan') }}</option>
+                                    <option value="3bulan">{{ __('3 Bulan') }}</option>
+                                    <option value="1minggu">{{ __('1 Minggu') }}</option>
+                                </select>
+                                <span class="material-symbols-outlined text-[14px] text-on-surface-variant absolute right-1.5 pointer-events-none">arrow_drop_down</span>
+                            </label>
+                        </div>
+                        <p id="chart-subline" class="font-label-sm text-label-sm text-on-surface-variant mb-sm">{{ __('Pemasukan saldo per bulan — 6 bulan terakhir') }}</p>
                         <div class="h-48" data-bars></div>
                     </div>
                 </div>
@@ -263,8 +276,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             var el = document.querySelector('[data-bars]');
             if (!el) return;
-            var para = @json($chart);
-            var keluar = @json($chartKeluar);
+            var ranges = @json($ranges);
+            var range = '6bulan';
             var mode = 'in';
             var subline = document.getElementById('chart-subline');
 
@@ -276,7 +289,7 @@
             }
 
             function renderBars() {
-                var data = mode === 'in' ? para : keluar;
+                var data = ranges[range][mode === 'in' ? 'pemasukan' : 'pengeluaran'];
                 el.classList.remove('flex', 'items-center', 'justify-center', 'items-end', 'gap-2', 'md:gap-3');
                 el.innerHTML = '';
                 var hasData = data.some(function(s) { return (s.value || 0) > 0; });
@@ -321,22 +334,30 @@
                 });
             }
 
+            function updateSubline() {
+                var isBulanan = ranges[range].bulanan;
+                var kata = mode === 'in' ? 'Pemasukan' : 'Pengeluaran';
+                subline.textContent = kata + ' saldo per ' + (isBulanan ? 'bulan' : 'hari') + ' - ' + ranges[range].label;
+            }
+
             var renderTimer = null;
 
-            function switchMode(m) {
-                if (m === mode) return;
+            function refreshChart() {
                 clearTimeout(renderTimer);
                 el.classList.add('chart-hide');
                 renderTimer = setTimeout(function() {
-                    mode = m;
-                    setActiveMode(m);
-                    subline.textContent = mode === 'in'
-                        ? 'Pemasukan saldo per bulan - 6 bulan terakhir'
-                        : 'Pengeluaran saldo per bulan - 6 bulan terakhir';
+                    updateSubline();
                     renderBars();
                     void el.offsetWidth;
                     el.classList.remove('chart-hide');
                 }, 260);
+            }
+
+            function switchMode(m) {
+                if (m === mode) return;
+                mode = m;
+                setActiveMode(m);
+                refreshChart();
             }
 
             function setActiveMode(m) {
@@ -359,6 +380,15 @@
                     switchMode(btn.getAttribute('data-chart-mode'));
                 });
             });
+
+            var rangeSel = document.getElementById('chart-range');
+            if (rangeSel) {
+                rangeSel.addEventListener('change', function() {
+                    range = rangeSel.value;
+                    updateSubline();
+                    refreshChart();
+                });
+            }
 
             setActiveMode('in');
             el.classList.add('chart-hide');
