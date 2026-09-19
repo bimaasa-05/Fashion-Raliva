@@ -429,6 +429,8 @@
         });
     };
 
+    const _mMinimal = document.documentElement.dataset.motion === 'minimal';
+
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.page-enter').forEach((el) => {
             const release = () => el.classList.remove('page-enter');
@@ -484,7 +486,7 @@
             });
             releaseRise(el);
         });
-    }, 700);
+    }, _mMinimal ? 0 : 700);
 
     releaseRise(document);
 </script>
