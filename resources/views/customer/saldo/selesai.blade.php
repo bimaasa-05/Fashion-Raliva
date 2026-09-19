@@ -141,7 +141,7 @@
     <div class="mx-auto max-w-[1400px] px-container-margin">
         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center reveal-up">
 <div class="co-stepper">
-            <a href="{{ route('customer.saldo') }}" class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Review') }}</a>
+            <a href="{{ route('customer.saldo.isi') }}" class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Isi') }}</a>
             <span class="co-step-line done"></span>
             <a href="{{ route('customer.saldo.topup.payment', $topup->customer_topup_id) }}" class="co-step done"><span class="num"><span class="material-symbols-outlined text-[14px]">check</span></span> {{ __('Bayar') }}</a>
             <span class="co-step-line done"></span>
