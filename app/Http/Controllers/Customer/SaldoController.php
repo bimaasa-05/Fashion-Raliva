@@ -14,6 +14,7 @@ use App\Models\PlatformBankAccount;
 use App\Models\Role;
 use App\Services\NotificationService;
 use App\Support\CustomerWalletService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -47,6 +48,22 @@ class SaldoController extends Controller
             ->orderByDesc('customer_wallet_transaction_id')
             ->paginate(12);
 
+        $chart = collect(range(5, 0))->map(function ($i) use ($wallet) {
+            $month = Carbon::now()->subMonths($i);
+            $pemasukan = (float) $wallet->transactions()
+                ->whereIn('jenis_transaksi', [
+                    CustomerWalletTransaction::JENIS_TOPUP,
+                    CustomerWalletTransaction::JENIS_REFUND_MASUK,
+                ])
+                ->whereBetween('created_at', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
+                ->sum('jumlah');
+
+            return [
+                'label' => $month->translatedFormat('M'),
+                'value' => $pemasukan,
+            ];
+        });
+
         $activeTopups = CustomerTopup::where('user_id', $user->user_id)
             ->with(['payment.paymentMethod', 'payment.account', 'payment.proofs'])
             ->whereIn('status', [
@@ -57,7 +74,20 @@ class SaldoController extends Controller
             ->orderByDesc('customer_topup_id')
             ->get();
 
-        return view('customer.saldo.index', compact('saldo', 'totalTopup', 'totalBelanja', 'transactions', 'activeTopups'));
+        $chartKeluar = collect(range(5, 0))->map(function ($i) use ($wallet) {
+            $month = Carbon::now()->subMonths($i);
+            $pengeluaran = (float) $wallet->transactions()
+                ->where('jenis_transaksi', CustomerWalletTransaction::JENIS_PEMBAYARAN_KELUAR)
+                ->whereBetween('created_at', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])
+                ->sum('jumlah');
+
+            return [
+                'label' => $month->translatedFormat('M'),
+                'value' => abs($pengeluaran),
+            ];
+        });
+
+        return view('customer.saldo.index', compact('saldo', 'totalTopup', 'totalBelanja', 'transactions', 'activeTopups', 'chart', 'chartKeluar'));
     }
 
     public function isiSaldo()
