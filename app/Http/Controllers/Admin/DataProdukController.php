@@ -164,4 +164,40 @@ class DataProdukController extends Controller
 
         return back()->with('success', 'Produk diajukan. Menunggu moderasi Super Admin.');
     }
+
+    public function update(Request $request, Product $product): \Illuminate\Http\RedirectResponse
+    {
+        $assignedStores = AdminContext::assignedStoreIds();
+        if (! in_array($product->store_id, $assignedStores, true)) {
+            return back()->with('error', 'Anda tidak memiliki akses untuk mengubah produk toko ini.');
+        }
+
+        $data = $request->validate([
+            'nama_produk' => 'required|string|max:255',
+            'harga_dasar' => 'required|numeric|min:0',
+            'category_id' => 'nullable|exists:categories,category_id',
+            'tipe_produk' => 'sometimes|string|in:regular,preorder,made_to_order',
+            'deskripsi' => 'nullable|string|max:2000',
+        ], [
+            'nama_produk.required' => 'Nama produk wajib diisi.',
+            'harga_dasar.required' => 'Harga dasar wajib diisi.',
+            'harga_dasar.numeric' => 'Harga harus berupa angka.',
+        ]);
+
+        $resetStatus = ($product->status === Product::STATUS_DITOLAK);
+
+        $product->update([
+            'nama_produk' => $data['nama_produk'],
+            'harga_dasar' => $data['harga_dasar'],
+            'category_id' => $data['category_id'] ?? null,
+            'tipe_produk' => $data['tipe_produk'] ?? $product->tipe_produk,
+            'deskripsi' => $data['deskripsi'] ?? null,
+            'status' => $resetStatus ? Product::STATUS_PENDING : $product->status,
+            'alasan_penolakan' => $resetStatus ? 'Diajukan ulang setelah revisi oleh Admin.' : $product->alasan_penolakan,
+        ]);
+
+        ActivityLogger::log('produk.update', Product::class, $product->product_id, [], $data, 'Admin memperbarui data produk');
+
+        return back()->with('success', 'Data produk berhasil diperbarui.');
+    }
 }
