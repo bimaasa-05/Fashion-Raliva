@@ -271,6 +271,7 @@
         $orderStatus = $orderData?->status;
         $orderElig = in_array($orderStatus, ['dikirim', 'selesai'], true);
         $refunds = $orderData?->refunds ?? collect();
+        $refundPernahAda = $refunds->isNotEmpty();
         $refundAktif = $refunds->contains(fn ($r) => in_array($r->status, ['requested', 'escalated', 'disetujui'], true));
         $latestRefund = $refunds->sortByDesc('diajukan_pada')->first();
         $refundLabel = match ($latestRefund?->status) {
@@ -285,7 +286,7 @@
     @endphp
     <article data-complaint-card data-open-id="{{ $c->complaint_id }}" data-open-subjek="{{ $c->subjek }}" data-open-kode="{{ $c->complaint_id }}" data-open-statuslabel="{{ $statusLabel }}" data-open-done="{{ $done ? '1' : '0' }}"
         data-open-order-id="{{ $orderData?->order_id ?? '' }}" data-open-nomor-order="{{ $orderData?->nomor_order ?? '' }}" data-open-order-status="{{ $orderStatus ?? '' }}" data-open-order-grand="{{ (float) ($orderData?->grand_total ?? 0) }}"
-        data-open-order-elig="{{ $orderElig ? '1' : '0' }}" data-open-payment-id="{{ $paymentId ?? '' }}" data-open-refund-aktif="{{ $refundAktif ? '1' : '0' }}" data-open-refund-label="{{ $refundLabel }}" data-open-refund-bukti="{{ ($latestRefund?->status === 'selesai' && $latestRefund->file_bukti) ? asset('storage/' . ltrim($latestRefund->file_bukti, '/')) : '' }}"
+        data-open-order-elig="{{ $orderElig ? '1' : '0' }}" data-open-payment-id="{{ $paymentId ?? '' }}" data-open-refund-aktif="{{ $refundPernahAda ? '1' : '0' }}" data-open-refund-label="{{ $refundLabel }}" data-open-refund-bukti="{{ ($latestRefund?->status === 'selesai' && $latestRefund->file_bukti) ? asset('storage/' . ltrim($latestRefund->file_bukti, '/')) : '' }}"
         onclick="openChatFromCard(this)" class="group flex items-start gap-sm md:gap-md p-md border border-outline-variant rounded-xl cursor-pointer transition-colors hover:border-secondary">
         <div class="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center shrink-0 {{ $done ? '' : 'text-[var(--chrome-accent)]' }}">
             <span class="material-symbols-outlined text-[22px]">{{ $done ? 'task_alt' : 'support_agent' }}</span>
