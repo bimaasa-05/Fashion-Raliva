@@ -40,7 +40,16 @@ class AreaSession
             return $input;
         }
 
-        // (c) Fallback Referer untuk endpoint lintas-area (/notifikasi/*).
+        // (c) Input parameter redirect jika ada (mis. ?redirect=/owner/...).
+        $redirect = $request->input('redirect');
+        if (is_string($redirect)) {
+            $areaRedirect = SessionArea::areaForPath($redirect);
+            if ($areaRedirect !== null) {
+                return $areaRedirect;
+            }
+        }
+
+        // (d) Fallback Referer untuk endpoint lintas-area (/notifikasi/*, /logout, dll).
         return SessionArea::areaForReferer($request->headers->get('referer'));
     }
 }
