@@ -359,6 +359,10 @@
     ({{ Auth::user()->role?->nama_role }}). {{ __('Masuk sebagai akun lain akan mengganti sesi ini.') }}
     <form method="POST" action="{{ route('logout') }}" class="inline">
         @csrf
+        @php $sessionArea = \App\Support\SessionArea::isEnabled() ? \App\Support\SessionArea::areaForRole(Auth::user()?->role?->nama_role) : null; @endphp
+        @if ($sessionArea)
+            <input type="hidden" name="session_area" value="{{ $sessionArea }}">
+        @endif
         <button type="submit" class="text-secondary font-semibold hover:opacity-80 underline ml-1">{{ __('Keluar') }}</button>
     </form>
 </div>
