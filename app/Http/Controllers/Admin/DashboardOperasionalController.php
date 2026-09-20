@@ -47,7 +47,14 @@ class DashboardOperasionalController extends Controller
             ->limit(5)
             ->get();
 
+        $firstStore = Store::whereIn('store_id', $storeIds)->first();
+        $rating = $firstStore ? (float) \App\Models\Review::where('store_id', $firstStore->store_id)->avg('rating') : 0;
+        $ratingCount = $firstStore ? \App\Models\Review::where('store_id', $firstStore->store_id)->count() : 0;
+
         return view('Admin.dashboard-operasional.index', [
+            'store' => $firstStore,
+            'rating' => $rating,
+            'ratingCount' => $ratingCount,
             'stores' => Store::whereIn('store_id', $storeIds)->get(['store_id', 'nama_toko']),
             'stats' => $stats,
             'pesananTerbaru' => $pesananTerbaru,
