@@ -133,8 +133,8 @@ class OrderTrackingController extends Controller
             return back()->with('toast', ['message' => 'Refund hanya dapat diajukan untuk pesanan yang sudah dikirim atau selesai.', 'icon' => 'info']);
         }
 
-        if (\App\Models\Refund::where('order_id', $order->order_id)->whereIn('status', [\App\Models\Refund::STATUS_REQUESTED, \App\Models\Refund::STATUS_ESKALASI, \App\Models\Refund::STATUS_DISETUJUI])->exists()) {
-            return back()->with('toast', ['message' => 'Pesanan ini sudah memiliki pengajuan refund aktif.', 'icon' => 'info']);
+        if (\App\Models\Refund::where('order_id', $order->order_id)->exists()) {
+            return back()->with('toast', ['message' => 'Pengajuan refund untuk pesanan ini hanya dapat dilakukan 1 kali.', 'icon' => 'info']);
         }
 
         $data = $request->validate([
