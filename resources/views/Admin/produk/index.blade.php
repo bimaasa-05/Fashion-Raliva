@@ -106,8 +106,63 @@
                         <p class="font-body-md text-gold-accent font-bold mt-1">Rp {{ number_format((float) $p->harga_dasar, 0, ',', '.') }}</p>
                         <div class="flex items-center justify-between mt-3 pt-3 border-t border-muted-border gap-2 flex-wrap">
                             <span class="text-xs text-on-surface-variant truncate">{{ $p->category?->nama_kategori ?? '-' }}</span>
-                            <button type="button" data-produk-detail class="inline-flex items-center gap-1 px-3 py-1.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">visibility</span>Detail</button>
+                            <div class="flex items-center gap-1.5">
+                                <button type="button" data-produk-detail class="inline-flex items-center gap-1 px-2.5 py-1 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">visibility</span>Detail</button>
+                                <button type="button" data-modal-open="modal-edit-produk-{{ $p->product_id }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gold-accent/10 border border-gold-accent/30 rounded-lg text-xs font-semibold text-gold-accent hover:bg-gold-accent/20 transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">edit</span>Edit</button>
+                            </div>
                         </div>
+                    </div>
+
+                    {{-- Modal Edit Produk --}}
+                    <div id="modal-edit-produk-{{ $p->product_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+                        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+                        <form method="POST" action="{{ route('admin.produk.update', $p) }}" class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6 max-h-[90vh] overflow-y-auto">
+                            @csrf
+                            @method('PUT')
+                            <div class="flex items-center justify-between border-b border-muted-border pb-3 mb-4">
+                                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Edit Produk</h3>
+                                <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface">
+                                    <span class="material-symbols-outlined text-[20px]">close</span>
+                                </button>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Nama Produk *</label>
+                                    <input type="text" name="nama_produk" value="{{ old('nama_produk', $p->nama_produk) }}" required class="raliva-input w-full" />
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Kategori</label>
+                                        <select name="category_id" class="raliva-select w-full">
+                                            <option value="">-- Pilih Kategori --</option>
+                                            @foreach ($categories as $cat)
+                                                <option value="{{ $cat->category_id }}" {{ old('category_id', $p->category_id) == $cat->category_id ? 'selected' : '' }}>{{ $cat->nama_kategori }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Harga Dasar (Rp) *</label>
+                                        <input type="number" name="harga_dasar" value="{{ old('harga_dasar', $p->harga_dasar) }}" required min="0" step="500" class="raliva-input w-full" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Tipe Produk</label>
+                                    <select name="tipe_produk" class="raliva-select w-full">
+                                        <option value="regular" {{ old('tipe_produk', $p->tipe_produk) === 'regular' ? 'selected' : '' }}>Regular</option>
+                                        <option value="preorder" {{ old('tipe_produk', $p->tipe_produk) === 'preorder' ? 'selected' : '' }}>Pre-Order</option>
+                                        <option value="made_to_order" {{ old('tipe_produk', $p->tipe_produk) === 'made_to_order' ? 'selected' : '' }}>Made to Order</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Deskripsi</label>
+                                    <textarea name="deskripsi" rows="4" class="raliva-textarea w-full" placeholder="Deskripsi produk...">{{ old('deskripsi', $p->deskripsi) }}</textarea>
+                                </div>
+                            </div>
+                            <div class="flex gap-3 mt-6 pt-4 border-t border-muted-border">
+                                <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
+                                <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Simpan Perubahan</button>
+                            </div>
+                        </form>
                     </div>
                 </article>
             @empty
