@@ -371,6 +371,7 @@
     $progressWidth = $isCancelled ? 0 : (($step - 1) / 3 * 100);
     $latestRefund = optional($selected->refunds)->sortByDesc('diajukan_pada')->first();
     $refundStatus = $latestRefund?->status;
+    $refundPernahAda = $selected->refunds->isNotEmpty();
     $refundAktif = $selected->refunds->contains(fn ($r) => in_array($r->status, [\App\Models\Refund::STATUS_REQUESTED, \App\Models\Refund::STATUS_ESKALASI, \App\Models\Refund::STATUS_DISETUJUI], true));
     $refundMeta = match ($refundStatus) {
         \App\Models\Refund::STATUS_SELESAI => __('Pengembalian dana selesai'),
@@ -610,9 +611,18 @@ $active = ! $isCancelled && $step && $stepIndex === $step;
 <a href="{{ route('customer.komplain.create', ['order' => $selected->order_id]) }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">
 <span class="material-symbols-outlined text-[18px]">report</span>{{ __('Ajukan Komplain') }}
 </a>
-@if ($refundAktif)
+@if ($refundPernahAda)
 <div class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-body-sm text-body-sm text-on-surface-variant bg-surface-container-low border border-outline-variant rounded-full px-lg py-3 text-center">
-<span class="material-symbols-outlined text-[18px] text-secondary">hourglass_top</span>{{ __('Refund Anda sedang diproses oleh toko.') }}
+<span class="material-symbols-outlined text-[18px] text-secondary">hourglass_top</span>
+@if ($refundAktif)
+{{ __('Refund Anda sedang diproses oleh toko.') }}
+@elseif ($refundStatus === \App\Models\Refund::STATUS_SELESAI)
+{{ __('Pengembalian dana telah selesai.') }}
+@elseif ($refundStatus === \App\Models\Refund::STATUS_DITOLAK)
+{{ __('Pengajuan refund telah ditolak (maksimal 1x per pesanan).') }}
+@else
+{{ __('Pengajuan refund telah dilakukan.') }}
+@endif
 </div>
 @else
 <button type="button" onclick="openRefundModal()" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">
