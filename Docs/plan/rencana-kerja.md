@@ -599,3 +599,21 @@ Fokus: (A) SuperAdmin motion minimal (Komplain dikecualikan), (B) `photo_url()` 
 - Produk detail customer (`/customer/shop/produk/29`): 200, `data-variants` berisi `stok`+`hex`, panel size guide + tombol buka, SKU, breadcrumb toko, `pd-stock`.
 - Admin produk view: `id="form-produk"`, `data-hex` presets, inject `warna_hex[]` submit.
 - `php artisan view:cache` lulus; `node --check` lulus untuk partial yang menyangkut script inline.
+
+---
+
+## Batch Lanjutan (Fix Login 404, Owner Refund Optional Upload, Admin Edit Produk & Card Toko, Customer Refund 1x) — 20 Sep 2026
+
+Fokus: Fix bug login/logout 404 pada multi-role session, Owner Selesai Refund tanpa wajib upload bukti, Admin Edit Produk & Card Toko Dashboard, serta batasan Refund Customer 1x per order.
+
+### Konteks & Keputusan
+- **Fix Login/Logout 404**: Multi-role session tetap menggunakan unified URL `/login` untuk seluruh role. Proses autentikasi & CSRF verifikasi berlangsung aman pada sesi default, lalu cookie area diset pada respon redirect login. Form logout dilindungi `session_area` agar pembongkaran sesi presisi per area.
+- **Owner Refund Optional Upload**: Tombol *Selesaikan* pada `Owner/pengembalian-dana` tidak lagi membalas error jika `file_bukti` tidak diupload (karena pengembalian otomatis ke saldo akun / wallet).
+- **Admin Edit Produk**: Tambah method `update()` di `DataProdukController` + route `PUT /admin/produk/{product}` + modal edit produk lengkap di `Admin/produk/index.blade.php`.
+- **Admin Dashboard Card Toko**: Porting komponen Card Toko (Logo, Rating, Status, Alamat, Tombol Laporan) ke `Admin/dashboard-operasional/index.blade.php`.
+- **Customer Refund 1x**: `OrderTrackingController@storeRefund` dan view customer (`order-tracking` & `komplain`) mengunci pengajuan refund maksimal 1 kali per order ID.
+
+### Verifikasi
+- `php -l` lulus untuk seluruh controller, middleware, service, dan view yang dimodifikasi.
+- `php artisan view:cache` lulus.
+- `php artisan test`: 41 passed / 1 risky (pre-existing OwnerKomplainTest).
