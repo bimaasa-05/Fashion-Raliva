@@ -154,8 +154,8 @@
                             <p class="raliva-label text-gold-accent">Selesaikan Refund</p>
                             <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $r->kode }}</h3>
                             <p class="text-sm text-on-surface-variant mt-3">Tandai refund sebesar <span class="font-bold text-on-surface">Rp {{ number_format((float) $r->jumlah, 0, ',', '.') }}</span> sebagai selesai. Lampirkan bukti dana dikembalikan ke customer.</p>
-                            <label class="block mt-4 text-xs uppercase text-on-surface-variant mb-1">Bukti Refund (JPG/PNG/PDF, maks. 5 MB) *</label>
-                            <input name="file_bukti" type="file" accept="image/jpeg,image/png,image/jpg,application/pdf" required class="w-full text-sm" />
+                            <label class="block mt-4 text-xs uppercase text-on-surface-variant mb-1">Bukti Refund (JPG/PNG/PDF, maks. 5 MB) — Opsional</label>
+                            <input name="file_bukti" type="file" accept="image/jpeg,image/png,image/jpg,application/pdf" class="w-full text-sm" />
                             <label class="block mt-3 text-xs uppercase text-on-surface-variant mb-1">Deskripsi Bukti</label>
                             <input name="deskripsi_bukti" type="text" maxlength="1000" class="raliva-textarea" placeholder="Opsional, cth. transfer ke rekening customer" />
                             <div class="flex gap-3 mt-5">
