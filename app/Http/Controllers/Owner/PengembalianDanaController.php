@@ -127,16 +127,17 @@ class PengembalianDanaController extends Controller
         }
 
         $data = $request->validate([
-            'file_bukti' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+            'file_bukti' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
             'deskripsi_bukti' => ['nullable', 'string', 'max:1000'],
         ], [
-            'file_bukti.required' => 'Bukti refund wajib dilampirkan.',
             'file_bukti.mimes' => 'Bukti refund harus berupa JPG, PNG, atau PDF.',
             'file_bukti.max' => 'Ukuran bukti refund maksimal 5 MB.',
             'deskripsi_bukti.max' => 'Deskripsi bukti maksimal 1000 karakter.',
         ]);
 
-        $path = $request->file('file_bukti')->store('bukti-refund/' . $refund->refund_id, 'public');
+        $path = $request->hasFile('file_bukti')
+            ? $request->file('file_bukti')->store('bukti-refund/' . $refund->refund_id, 'public')
+            : null;
 
         if ($refund->file_bukti && $refund->file_bukti !== $path) {
             Storage::disk('public')->delete($refund->file_bukti);
