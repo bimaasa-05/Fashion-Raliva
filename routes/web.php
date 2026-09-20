@@ -371,6 +371,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::post('/customer', [DataCustomerController::class, 'store'])->name('customer.store');
     Route::get('/produk', [DataProdukController::class, 'index'])->name('produk');
     Route::post('/produk', [DataProdukController::class, 'store'])->name('produk.store');
+    Route::put('/produk/{product}', [DataProdukController::class, 'update'])->name('produk.update');
     Route::post('/kategori', [\App\Http\Controllers\Admin\KategoriController::class, 'store'])->name('kategori.store');
     Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier');
     Route::post('/supplier', [SupplierController::class, 'store'])->name('supplier.store');
