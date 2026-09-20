@@ -21,7 +21,7 @@ class RefundCompletionService
      *
      * @throws \RuntimeException ketika refund tidak dapat diselesaikan.
      */
-    public static function complete(Refund $refund, string $path, ?string $deskripsi = null): void
+    public static function complete(Refund $refund, ?string $path = null, ?string $deskripsi = null): void
     {
         $refund->loadMissing(['order.store', 'order.checkout.payment.paymentMethod', 'order.checkout.user']);
 
@@ -71,7 +71,7 @@ class RefundCompletionService
                     'selesai_pada' => now(),
                     'file_bukti' => $path,
                     'deskripsi_bukti' => $deskripsi,
-                    'bukti_diupload_pada' => now(),
+                    'bukti_diupload_pada' => $path ? now() : null,
                 ]);
 
                 $payment = $locked->order?->checkout?->payment;
@@ -140,9 +140,9 @@ class RefundCompletionService
         $order->update(['status' => Order::STATUS_REFUND]);
     }
 
-    private static function cleanupFile(string $path): void
+    private static function cleanupFile(?string $path): void
     {
-        if (Storage::disk('public')->exists($path)) {
+        if ($path && Storage::disk('public')->exists($path)) {
             Storage::disk('public')->delete($path);
         }
     }
