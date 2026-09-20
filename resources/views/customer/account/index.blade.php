@@ -355,6 +355,10 @@
 </a>
 <form method="POST" action="{{ route('logout') }}">
     @csrf
+    @php $sessionArea = \App\Support\SessionArea::isEnabled() ? \App\Support\SessionArea::areaForRole(Auth::user()?->role?->nama_role) : null; @endphp
+    @if ($sessionArea)
+        <input type="hidden" name="session_area" value="{{ $sessionArea }}">
+    @endif
     <button type="submit" class="w-full flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
         <div class="flex items-center gap-sm">
             <span class="material-symbols-outlined text-error" data-icon="logout">logout</span>
