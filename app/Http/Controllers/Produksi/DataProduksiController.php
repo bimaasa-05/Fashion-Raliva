@@ -128,12 +128,16 @@ class DataProduksiController extends Controller
             return back()->with('toast', ['message' => 'Hanya pesanan yang diproses yang bisa ditambah bahan.', 'icon' => 'gpp_maybe']);
         }
 
+        if (! $order->produksi_dimulai_pada) {
+            return back()->with('toast', ['message' => 'Accept dulu pesanan ini sebelum menambah bahan.', 'icon' => 'gpp_maybe']);
+        }
+
         $data = $request->validate([
             'bahan' => ['required', 'array', 'min:1'],
             'bahan.*.bahan_id' => ['nullable', 'exists:bahan_produksi,bahan_id'],
             'bahan.*.nama_bahan' => ['required', 'string', 'max:150'],
             'bahan.*.jumlah' => ['required', 'numeric', 'min:0.01'],
-            'bahan.*.satuan' => ['required', 'string', 'max:20'],
+            'bahan.*.satuan' => ['required', 'string', 'in:'.implode(',', ProductionOrderBahan::SATUAN)],
             'bahan.*.catatan' => ['nullable', 'string', 'max:500'],
         ], [
             'bahan.required' => 'Input minimal 1 bahan.',
@@ -141,9 +145,12 @@ class DataProduksiController extends Controller
             'bahan.*.nama_bahan.required' => 'Nama bahan wajib diisi.',
             'bahan.*.jumlah.required' => 'Jumlah wajib diisi.',
             'bahan.*.satuan.required' => 'Satuan wajib diisi.',
+            'bahan.*.satuan.in' => 'Satuan harus salah satu: '.implode(', ', ProductionOrderBahan::SATUAN).'.',
         ]);
 
-        DB::transaction(function () use ($order, $data) {
+        $actorRole = $request->user()?->role?->nama_role ?? 'Produksi';
+
+        DB::transaction(function () use ($order, $data, $actorRole) {
             foreach ($data['bahan'] as $bahan) {
                 ProductionOrderBahan::create([
                     'order_id' => $order->order_id,
@@ -152,6 +159,8 @@ class DataProduksiController extends Controller
                     'jumlah' => $bahan['jumlah'],
                     'satuan' => $bahan['satuan'],
                     'catatan' => $bahan['catatan'] ?? null,
+                    'sumber' => ProductionOrderBahan::SUMBER_PRODUKSI,
+                    'dibuat_oleh_role' => $actorRole,
                     'created_by' => ActivityLogger::resolveActorId(),
                 ]);
             }
