@@ -11,18 +11,46 @@
 @include('partials.flash-toast')
 
 <div class="space-y-section-gap">
-    @if ($siapDiambil->isNotEmpty())
-    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <h2 class="font-title-md text-title-md mb-1 text-on-surface premium-heading">Siap Diambil (Offline)</h2>
-        <p class="font-body-md text-sm text-on-surface-variant mb-6">Pesanan offline sudah melewati produksi &amp; QC. Konfirmasi saat customer mengambil barang — tanpa kurir atau resi.</p>
-        <div class="space-y-gutter">
-            @foreach ($siapDiambil as $pesanan)
-                <div class="border border-muted-border rounded-lg p-5">
+    <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div>
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading">Kelola Pengiriman &amp; Penyerahan</h2>
+                <p class="font-body-md text-xs text-on-surface-variant mt-1">Input resi kurir untuk pesanan online atau konfirmasi serah terima barang untuk pesanan offline.</p>
+            </div>
+            <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 overflow-x-auto shrink-0">
+                <button type="button" data-ship-tab="semua" class="ship-tab px-4 py-2 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">Semua</button>
+                <button type="button" data-ship-tab="online" class="ship-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Online (Kurir)</button>
+                <button type="button" data-ship-tab="offline" class="ship-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Offline (Ambil di Toko)</button>
+            </div>
+        </div>
+
+        {{-- Antrian gabungan: satu list, input menyesuaikan tipe pesanan --}}
+        @php
+            $antrian = collect()
+                ->merge($siapDiambil->map(fn ($o) => ['tipe' => 'offline', 'order' => $o]))
+                ->merge($siapDikirim->map(fn ($o) => ['tipe' => 'online', 'order' => $o]))
+                ->sortByDesc(fn ($x) => optional($x['order']->created_at)->timestamp ?? 0)
+                ->values();
+        @endphp
+        <div class="space-y-4" data-ship-queue>
+            <div class="flex items-center gap-2 pb-2 border-b border-muted-border">
+                <span class="material-symbols-outlined text-gold-accent text-[20px]">pending_actions</span>
+                <h3 class="font-title-md text-sm font-bold uppercase tracking-wider text-on-surface">Antrian Penyerahan</h3>
+                <span class="px-2 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold">{{ $antrian->count() }} Paket</span>
+                <span class="text-[11px] text-on-surface-variant">• Online = input resi kurir • Offline = konfirmasi diambil</span>
+            </div>
+            @forelse ($antrian as $item)
+                @php $pesanan = $item['order']; @endphp
+                <div data-ship-type="{{ $item['tipe'] }}" class="border border-muted-border rounded-lg p-5 bg-surface-container-low/50">
+                    @if ($item['tipe'] === 'offline')
                     <form method="POST" action="{{ route('admin.pesanan.selesai', $pesanan->order_id) }}">
                         @csrf
                         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                             <div>
-                                <p class="font-mono text-sm text-on-surface-variant">{{ $pesanan->nomor_order }} &#8226; {{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</p>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-mono text-[10px] font-bold">OFFLINE</span>
+                                    <p class="font-mono text-sm text-on-surface-variant">{{ $pesanan->nomor_order }} &#8226; {{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</p>
+                                </div>
                                 <p class="font-title-md text-title-md text-on-surface mt-1">{{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->implode(', '), 60) }}</p>
                                 <p class="font-body-md text-sm text-on-surface-variant mt-1">
                                     {{ $pesanan->checkout?->user?->nama_lengkap ?? $pesanan->checkout?->nama_penerima ?? '-' }}
@@ -32,41 +60,31 @@
                                 </p>
                             </div>
                             <div class="flex flex-col sm:flex-row gap-3 shrink-0 items-end">
-                                <input name="catatan" maxlength="500" placeholder="Catatan (opsional)"
-                                    class="raliva-input w-full sm:w-52" type="text" />
-                                <button type="submit" class="px-6 py-3 bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-secondary-container/30 transition-colors btn-premium whitespace-nowrap" onclick="return confirm('Konfirmasi pesanan {{ $pesanan->nomor_order }} selesai & diambil customer?');">Selesai (Diambil)</button>
+                                <input name="catatan" maxlength="500" placeholder="Catatan pengambilan (opsional)" class="raliva-input w-full sm:w-52 text-xs" type="text" />
+                                <button type="submit" class="px-5 py-2.5 bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-xs uppercase tracking-widest rounded hover:bg-secondary-container/30 transition-colors btn-premium whitespace-nowrap" onclick="return confirm('Konfirmasi pesanan {{ $pesanan->nomor_order }} selesai & diambil customer?');">Selesai (Diambil)</button>
                             </div>
                         </div>
                     </form>
-                </div>
-            @endforeach
-        </div>
-    </section>
-    @endif
-
-    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Siap Kirim</h2>
-        <div class="space-y-gutter">
-            @forelse ($siapDikirim as $pesanan)
-                <div class="border border-muted-border rounded-lg p-5">
+                    @else
                     <form method="POST" action="{{ route('admin.pengiriman.resi', $pesanan->order_id) }}">
                         @csrf
                         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                             <div>
-                                <p class="font-mono text-sm text-on-surface-variant">{{ $pesanan->nomor_order }} &#8226; {{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</p>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 rounded bg-secondary-container/20 text-secondary font-mono text-[10px] font-bold">ONLINE</span>
+                                    <p class="font-mono text-sm text-on-surface-variant">{{ $pesanan->nomor_order }} &#8226; {{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</p>
+                                </div>
                                 <p class="font-title-md text-title-md text-on-surface mt-1">{{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->implode(', '), 60) }}</p>
                                 <p class="font-body-md text-sm text-on-surface-variant mt-1">Penerima: {{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }} {{ $pesanan->checkout?->nomor_telepon ? '• '.$pesanan->checkout->nomor_telepon : '' }} &#8226; Ongkir: Rp {{ number_format((float) $pesanan->total_ongkir, 0, ',', '.') }}</p>
                             </div>
-                            <div class="flex flex-col sm:flex-row gap-3 shrink-0">
-                                <select name="courier_id" required data-kurir-select
-                                    class="raliva-select">
+                            <div class="flex flex-col sm:flex-row gap-2.5 shrink-0">
+                                <select name="courier_id" required data-kurir-select class="raliva-select text-xs">
                                     <option value="">Pilih Kurir</option>
                                     @foreach ($couriers as $courier)
                                         <option value="{{ $courier->courier_id }}">{{ $courier->nama_kurir }}</option>
                                     @endforeach
                                 </select>
-                                <select name="shipping_service_id" data-layanan-select
-                                    class="raliva-select">
+                                <select name="shipping_service_id" data-layanan-select class="raliva-select text-xs">
                                     <option value="">Layanan (opsional)</option>
                                     @foreach ($couriers as $courier)
                                         @foreach ($courier->services as $service)
@@ -74,21 +92,21 @@
                                         @endforeach
                                     @endforeach
                                 </select>
-                                <input required name="nomor_resi" minlength="4" maxlength="50"
-                                    class="raliva-input w-full sm:w-44"
-                                    type="text" placeholder="Masukkan No. Resi" />
-                                <button type="submit" class="px-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-black transition-colors btn-premium whitespace-nowrap">Simpan Resi</button>
+                                <input required name="nomor_resi" minlength="4" maxlength="50" class="raliva-input w-full sm:w-44 text-xs" type="text" placeholder="Masukkan No. Resi" />
+                                <button type="submit" class="px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-xs uppercase tracking-widest rounded hover:bg-black transition-colors btn-premium whitespace-nowrap">Simpan Resi</button>
                             </div>
                         </div>
                     </form>
+                    @endif
                 </div>
             @empty
-                <p class="text-center text-on-surface-variant font-body-md text-sm py-8">Tidak ada pesanan menunggu pengiriman.</p>
+                <p class="text-center text-on-surface-variant font-body-md text-sm py-4">Tidak ada pesanan menunggu penyerahan.</p>
             @endforelse
+            <p class="text-[11px] text-on-surface-variant" data-ship-empty-hint hidden>Tidak ada paket pada filter ini.</p>
         </div>
-    </section>
+    </div>
 
-    <section class="space-y-gutter">
+    <section data-ship-type="online" class="space-y-gutter">
         <h2 class="font-title-md text-title-md text-on-surface premium-heading">Dalam Pengiriman &amp; Riwayat</h2>
         <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
             <table class="w-full min-w-[850px] premium-table">
@@ -149,6 +167,34 @@
 
 @push('scripts')
 <script>
+    // Tab Filter (Semua / Online / Offline)
+    document.querySelectorAll('[data-ship-tab]').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('[data-ship-tab]').forEach(t => {
+                t.classList.remove('bg-deep-onyx', 'text-on-primary');
+                t.classList.add('text-on-surface-variant', 'hover:text-on-surface');
+            });
+            tab.classList.add('bg-deep-onyx', 'text-on-primary');
+            tab.classList.remove('text-on-surface-variant', 'hover:text-on-surface');
+
+            const mode = tab.dataset.shipTab;
+            document.querySelectorAll('[data-ship-type]').forEach(el => {
+                if (mode === 'semua' || el.dataset.shipType === mode) {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+            const queue = document.querySelector('[data-ship-queue]');
+            const hint = queue?.querySelector('[data-ship-empty-hint]');
+            if (queue && hint) {
+                const visible = queue.querySelectorAll('[data-ship-type]:not(.hidden)').length;
+                const hasData = queue.querySelectorAll('[data-ship-type]').length > 0;
+                hint.hidden = !(hasData && visible === 0);
+            }
+        });
+    });
+
     document.querySelectorAll('[data-kurir-select]').forEach((kurirSelect) => {
         const layananSelect = kurirSelect.closest('form')?.querySelector('[data-layanan-select]');
 
