@@ -518,6 +518,7 @@
 <input type="hidden" name="buy" value="{{ $buyId }}"/>
 @endif
 <input type="hidden" name="shipping" id="co-shipping-input" value="{{ $shipping }}"/>
+<input type="hidden" name="submit_token" value="{{ $submitToken ?? '' }}"/>
 
 <!-- Main Content -->
 <main class="pt-6 pb-[72px] w-full overflow-x-clip">
@@ -1012,6 +1013,16 @@
             });
         }
         // rincian pesanan dropdown (tampil >3 produk) - lihat coToggleRincian() di script bawah
+        // Kunci tombol submit agar tidak double-checkout saat klik ganda
+        var reviewForm = document.getElementById('checkout-review-form');
+        if (reviewForm) {
+            reviewForm.addEventListener('submit', function () {
+                reviewForm.querySelectorAll('button[type="submit"]').forEach(function (b) {
+                    b.disabled = true;
+                    b.classList.add('opacity-70', 'pointer-events-none');
+                });
+            });
+        }
     });
 </script>
 
