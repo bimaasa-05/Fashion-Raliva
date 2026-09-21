@@ -122,7 +122,7 @@
                                 <p class="text-on-surface-variant text-xs">{{ $cust->email ?? '' }}</p>
                             </td>
                             <td class="p-6 text-on-surface">{{ $pay->nama_toko }}</td>
-                            <td class="p-6 text-right font-bold text-gold-accent">Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}</td>
+                            <td class="p-6 text-right font-bold text-gold-accent">@if ((float) $pay->jumlah_saldo > 0)<span class="block">Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}</span><span class="block font-normal text-on-surface-variant text-xs">Saldo {{ number_format((float) $pay->jumlah_saldo, 0, ',', '.') }} + Transfer {{ number_format((float) $pay->sisa_transfer, 0, ',', '.') }}</span>@else Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}@endif</td>
                             <td class="p-6 text-center">
                                 <span class="inline-flex items-center px-2 py-1 rounded {{ $st[1] }} text-xs uppercase">{{ $st[0] }}</span>
                             </td>
@@ -183,7 +183,7 @@
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">Jumlah</dt>
-                            <dd class="font-bold text-gold-accent text-right">Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}</dd>
+                            <dd class="font-bold text-gold-accent text-right">@if ((float) $pay->jumlah_saldo > 0)<span class="block">Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}</span><span class="block font-normal text-on-surface-variant text-xs">Saldo {{ number_format((float) $pay->jumlah_saldo, 0, ',', '.') }} + Transfer {{ number_format((float) $pay->sisa_transfer, 0, ',', '.') }}</span>@else Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}@endif</dd>
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">Tanggal</dt>
