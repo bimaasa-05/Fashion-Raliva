@@ -7,44 +7,7 @@
 
 @section('header-subtitle', 'Kelola informasi akun dan keamanan Anda.')
 
-@push('styles')
-<style>
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-
-    .text-gradient-gold {
-        background: linear-gradient(115deg, #6D1428 0%, #8B1E3F 35%, #c03a5a 55%, #8B1E3F 80%, #6D1428 100%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-    }
-
-    .hero-glow::before {
-        content: '';
-        position: absolute;
-        inset: -30%;
-        background: radial-gradient(circle at 70% 30%, rgba(139, 30, 63, 0.14), transparent 45%),
-                    radial-gradient(circle at 15% 85%, rgba(139, 30, 63, 0.08), transparent 40%);
-        pointer-events: none;
-    }
-
-    @keyframes riseIn {
-        from { opacity: 0; transform: translateY(16px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    .rise { opacity: 0; animation: riseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-    .rise-d1 { animation-delay: 0.1s; }
-    .rise-d2 { animation-delay: 0.2s; }
-    .rise-d3 { animation-delay: 0.3s; }
-
-    .photo-upload-wrapper { position: relative; }
-    .photo-upload-wrapper input[type="file"] { display: none; }
-    .photo-preview { transition: all 0.2s ease; }
-    .photo-preview:hover { transform: scale(1.02); }
-    .photo-upload-label { transition: all 0.2s ease; }
-    .photo-upload-label:hover { background-color: rgba(139, 30, 63, 0.1); border-color: #8B1E3F; }
-</style>
-@endpush
+@include('partials.profil-premium-styles')
 
 @section('content')
 @include('partials.flash-toast')
@@ -55,8 +18,13 @@
     <div class="lg:col-span-5">
 
     <!-- Profile Hero -->
-    <section class="relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl card-premium hero-glow rise">
+    <section class="relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl card-premium hero-glow profil-hero rise">
         <span class="material-symbols-outlined fill absolute -right-6 -bottom-10 text-[220px] text-gold-accent/[0.06] pointer-events-none select-none" aria-hidden="true">person</span>
+        <span class="hero-ornt tl" aria-hidden="true"></span>
+        <span class="hero-ornt tr" aria-hidden="true"></span>
+        <span class="hero-ornt bl" aria-hidden="true"></span>
+        <span class="hero-ornt br" aria-hidden="true"></span>
+        <div class="gold-dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
         <div class="relative z-10 p-8 md:p-12">
             <div class="flex flex-col lg:flex-row lg:items-center gap-8">
                 <div class="flex-1 min-w-0 text-center lg:text-left">
@@ -67,7 +35,7 @@
                         </span>
                         <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant">Terakhir diperbarui {{ now()->translatedFormat('d M Y') }}</span>
                     </div>
-                    <h2 class="font-display-lg text-gradient-gold text-4xl sm:text-5xl lg:text-5xl leading-tight tracking-tight mb-4 break-words hyphens-auto">{{ $user->nama_lengkap }}</h2>
+                    <h2 class="font-display-lg name-shimmer text-4xl sm:text-5xl lg:text-5xl leading-tight tracking-tight mb-4 break-words hyphens-auto">{{ $user->nama_lengkap }}</h2>
                     <p class="font-body-md text-body-md text-on-surface-variant max-w-lg mx-auto lg:mx-0">{{ $user->email }}</p>
                     @if ($user->nomor_telepon)
                         <p class="font-body-md text-body-md text-on-surface-variant max-w-lg mx-auto lg:mx-0 mt-1">{{ $user->nomor_telepon }}</p>
@@ -75,6 +43,23 @@
                     <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2 mt-4">
                         <span class="inline-flex px-2 py-0.5 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">{{ $user->role->nama_role ?? '-' }}</span>
                         <span class="inline-flex px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 text-[9px] font-bold uppercase">{{ $user->status }}</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3 mt-6">
+                        <div class="profil-stat">
+                            <span class="material-symbols-outlined">calendar_month</span>
+                            <span class="lbl">Bergabung</span>
+                            <span class="val">{{ optional($user->created_at)->translatedFormat('d M Y') ?? '-' }}</span>
+                        </div>
+                        <div class="profil-stat">
+                            <span class="material-symbols-outlined">workspace_premium</span>
+                            <span class="lbl">Role</span>
+                            <span class="val">{{ $user->role->nama_role ?? '-' }}</span>
+                        </div>
+                        <div class="profil-stat">
+                            <span class="material-symbols-outlined">verified_user</span>
+                            <span class="lbl">Status</span>
+                            <span class="val">{{ ucfirst($user->status ?? 'aktif') }}</span>
+                        </div>
                     </div>
                 </div>
 
@@ -89,15 +74,18 @@
                 @endphp
                 <div class="shrink-0 mx-auto lg:mx-0">
                     <div class="photo-upload-wrapper relative inline-block">
-                        <div id="hero-avatar" class="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gold-accent text-white flex items-center justify-center border-4 border-surface-container-lowest shadow-xl photo-preview font-bold text-3xl overflow-hidden">
+                        <div class="avatar-ring">
+                            <div id="hero-avatar" class="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gold-accent text-white flex items-center justify-center shadow-xl photo-preview font-bold text-3xl overflow-hidden">
                             @if ($user->foto_profil_url)
                                 <img id="hero-avatar-img" src="{{ $user->foto_profil_url }}" class="w-full h-full object-cover" alt="{{ $user->nama_lengkap }}" />
                                 <span id="hero-avatar-initial" style="display:none">{{ $sinit }}</span>
                             @else
                                 <span id="hero-avatar-initial">{{ $sinit }}</span>
                             @endif
+                            </div>
                         </div>
-                        <label for="foto_profil" class="photo-upload-label absolute bottom-0 right-0 w-8 h-8 rounded-full bg-gold-accent text-on-primary flex items-center justify-center cursor-pointer border-3 border-surface-container-lowest shadow-lg hover:scale-105">
+                        <span class="status-dot" title="Status akun aktif" aria-hidden="true"></span>
+                        <label for="foto_profil" class="photo-upload-label absolute bottom-0 right-0 w-8 h-8 rounded-full bg-gold-accent text-on-primary flex items-center justify-center cursor-pointer border-2 border-surface-container-lowest shadow-lg hover:scale-105">
                             <span class="material-symbols-outlined text-[18px]">camera_alt</span>
                         </label>
                     </div>
@@ -113,11 +101,11 @@
 
     <!-- Informasi Akun -->
     <section class="rise rise-d1">
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium p-6 md:p-8">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium profil-card p-6 md:p-8">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-secondary-container/20 border border-secondary/20 flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-secondary text-[22px]">badge</span>
+                    <div class="w-10 h-10 rounded-lg icon-tile flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[22px]">badge</span>
                     </div>
                     <div>
                         <h3 class="font-title-md text-title-md text-on-surface premium-heading">Informasi Akun</h3>
@@ -150,17 +138,17 @@
                     </div>
                     <div class="md:col-span-2">
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="nama">Nama Lengkap</label>
-                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="nama" name="nama_lengkap" type="text" maxlength="150" value="{{ old('nama_lengkap', $user->nama_lengkap) }}" required />
+                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="nama" name="nama_lengkap" type="text" maxlength="150" value="{{ old('nama_lengkap', $user->nama_lengkap) }}" required />
                         @error('nama_lengkap')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="email">Email</label>
-                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="email" name="email" type="email" maxlength="150" value="{{ old('email', $user->email) }}" required />
+                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="email" name="email" type="email" maxlength="150" value="{{ old('email', $user->email) }}" required />
                         @error('email')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="telepon">Nomor Telepon</label>
-                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="telepon" name="nomor_telepon" type="tel" maxlength="30" value="{{ old('nomor_telepon', $user->nomor_telepon) }}" placeholder="+62..." />
+                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="telepon" name="nomor_telepon" type="tel" maxlength="30" value="{{ old('nomor_telepon', $user->nomor_telepon) }}" placeholder="+62..." />
                         @error('nomor_telepon')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
                     <div>
@@ -171,7 +159,7 @@
                         @endphp
                         <div class="relative" data-cs>
                             <button type="button" data-cs-trigger id="gender-trigger" aria-haspopup="listbox" aria-expanded="false"
-                                class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-left text-on-surface cursor-pointer focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors">
+                                class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-left text-on-surface cursor-pointer focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors profil-input">
                                 <span data-cs-label class="truncate">{{ $genderLabel }}</span>
                                 <span data-cs-chevron class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200">expand_more</span>
                             </button>
@@ -189,7 +177,7 @@
                     </div>
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="tanggal-lahir">Tanggal Lahir</label>
-                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="tanggal-lahir" name="tanggal_lahir" type="date" value="{{ old('tanggal_lahir', $user->tanggal_lahir?->format('Y-m-d') ?? '') }}" />
+                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors profil-input" id="tanggal-lahir" name="tanggal_lahir" type="date" value="{{ old('tanggal_lahir', $user->tanggal_lahir?->format('Y-m-d') ?? '') }}" />
                         @error('tanggal_lahir')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
                     <div>
@@ -204,7 +192,7 @@
                     </label>
                 @endif
                 <div class="flex justify-end pt-4 border-t border-muted-border">
-                    <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium inline-flex items-center gap-2">
+                    <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium btn-sheen inline-flex items-center gap-2">
                         <span class="material-symbols-outlined text-[16px]">save</span>
                         Simpan Perubahan
                     </button>
@@ -215,11 +203,11 @@
 
     <!-- Keamanan -->
     <section class="rise rise-d2">
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium p-6 md:p-8">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium profil-card p-6 md:p-8">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-error/15 border border-error/20 flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-error text-[22px]">lock</span>
+                    <div class="w-10 h-10 rounded-lg icon-tile flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[22px]">lock</span>
                     </div>
                     <div>
                         <h3 class="font-title-md text-title-md text-on-surface premium-heading">Keamanan</h3>
@@ -233,22 +221,22 @@
                 @method('PUT')
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="password-lama">Password Lama</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="password-lama" name="password_lama" type="password" placeholder="Masukkan password lama" required />
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="password-lama" name="password_lama" type="password" placeholder="Masukkan password lama" required />
                     @error('password_lama')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="password-baru">Password Baru</label>
-                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="password-baru" name="password_baru" type="password" placeholder="Minimal 8 karakter" required />
+                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="password-baru" name="password_baru" type="password" placeholder="Minimal 8 karakter" required />
                         @error('password_baru')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="password-konfirmasi">Konfirmasi Password</label>
-                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="password-konfirmasi" name="password_baru_confirmation" type="password" placeholder="Ulangi password baru" required />
+                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="password-konfirmasi" name="password_baru_confirmation" type="password" placeholder="Ulangi password baru" required />
                     </div>
                 </div>
                 <div class="flex justify-end pt-4 border-t border-muted-border">
-                    <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium inline-flex items-center gap-2">
+                    <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium btn-sheen inline-flex items-center gap-2">
                         <span class="material-symbols-outlined text-[16px]">key</span>
                         Ubah Password
                     </button>

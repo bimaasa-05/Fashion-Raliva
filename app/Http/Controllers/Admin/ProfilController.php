@@ -37,6 +37,13 @@ class ProfilController extends Controller
         if ($request->boolean('remove_photo')) {
             ProfilePhoto::delete($user->foto_profil);
             $data['foto_profil'] = null;
+        } elseif ($request->hasFile('foto_profil')) {
+            $data['foto_profil'] = ProfilePhoto::replace(
+                $request->file('foto_profil'),
+                (int) $user->user_id,
+                'admin',
+                $user->foto_profil
+            );
         }
 
         $user->update($data);

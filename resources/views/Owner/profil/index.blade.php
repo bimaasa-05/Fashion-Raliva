@@ -5,15 +5,28 @@
 @section('header-title', 'Profil')
 @section('header-subtitle', 'Kelola informasi akun Owner Anda.')
 
+@include('partials.profil-premium-styles')
+
 @section('content')
 @include('partials.flash-toast')
+
 <div data-skeleton class="space-y-section-gap">
-    <div class="h-48 bg-surface-container-high rounded-lg animate-pulse"></div>
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-section-gap">
-        <div class="h-72 bg-surface-container-high rounded-lg animate-pulse"></div>
-        <div class="h-72 bg-surface-container-high rounded-lg animate-pulse"></div>
+    <div class="h-48 bg-surface-container-high rounded-xl animate-pulse"></div>
+    <div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+        <div class="lg:col-span-5 h-72 bg-surface-container-high rounded-xl animate-pulse"></div>
+        <div class="lg:col-span-7 h-96 bg-surface-container-high rounded-xl animate-pulse"></div>
     </div>
 </div>
+
+@php
+    $onama = $user->nama_lengkap ?? 'Owner';
+    $ow = preg_split('/\s+/', trim($onama));
+    $oi = '';
+    if(!empty($ow[0])) $oi .= mb_substr($ow[0],0,1);
+    if(isset($ow[1])) $oi .= mb_substr($ow[1],0,1);
+    elseif(mb_strlen($ow[0]??'')>1) $oi .= mb_substr($ow[0],1,1);
+    $oinit = strtoupper(mb_substr($oi,0,2)) ?: '?';
+@endphp
 
 <div data-real class="hidden space-y-section-gap">
     @if(! \App\Support\OwnerContext::currentStore())
@@ -25,258 +38,301 @@
             </div>
         </div>
     @endif
-    @php
-        $onama = $user->nama_lengkap ?? 'Owner';
-        $ow = preg_split('/\s+/', trim($onama));
-        $oi = '';
-        if(!empty($ow[0])) $oi .= mb_substr($ow[0],0,1);
-        if(isset($ow[1])) $oi .= mb_substr($ow[1],0,1);
-        elseif(mb_strlen($ow[0]??'')>1) $oi .= mb_substr($ow[0],1,1);
-        $oinit = strtoupper(mb_substr($oi,0,2)) ?: '?';
-    @endphp
-    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <div class="flex flex-col sm:flex-row sm:items-center gap-6">
-            <div class="w-20 h-20 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-xl shrink-0 mx-auto sm:mx-0 border border-gold-accent/30 overflow-hidden">
-                @if ($user->foto_profil_url)
-                    <img src="{{ $user->foto_profil_url }}" alt="{{ $onama }}" class="w-full h-full object-cover" />
-                @else
-                    {{ $oinit }}
-                @endif
-            </div>
-            <div class="flex-1 text-center sm:text-left">
-                <div class="flex flex-col sm:flex-row sm:items-center gap-3 justify-center sm:justify-start">
-                    <h2 class="raliva-figure text-[26px] text-on-surface">{{ $user->nama_lengkap ?? '-' }}</h2>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider w-fit mx-auto sm:mx-0">{{ $roleName }}</span>
+
+    <div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+
+        <!-- Kolom kiri: Hero Profil & Toko Dimiliki -->
+        <div class="lg:col-span-5 space-y-8">
+
+        <!-- Profile Hero -->
+        <section class="relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl card-premium hero-glow profil-hero rise">
+            <span class="material-symbols-outlined fill absolute -right-6 -bottom-10 text-[220px] text-gold-accent/[0.06] pointer-events-none select-none" aria-hidden="true">storefront</span>
+            <span class="hero-ornt tl" aria-hidden="true"></span>
+            <span class="hero-ornt tr" aria-hidden="true"></span>
+            <span class="hero-ornt bl" aria-hidden="true"></span>
+            <span class="hero-ornt br" aria-hidden="true"></span>
+            <div class="gold-dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="relative z-10 p-8 md:p-12">
+                <div class="flex flex-col lg:flex-row lg:items-center gap-8">
+                    <div class="flex-1 min-w-0 text-center lg:text-left">
+                        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-4">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold uppercase tracking-wider border border-gold-accent/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-gold-accent"></span>
+                                Profil Owner
+                            </span>
+                            <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant">Terakhir diperbarui {{ now()->translatedFormat('d M Y') }}</span>
+                        </div>
+                        <h2 class="font-display-lg name-shimmer text-4xl sm:text-5xl lg:text-5xl leading-tight tracking-tight mb-4 break-words hyphens-auto">{{ $user->nama_lengkap }}</h2>
+                        <p class="font-body-md text-body-md text-on-surface-variant max-w-lg mx-auto lg:mx-0">{{ $user->email }}</p>
+                        @if ($user->nomor_telepon)
+                            <p class="font-body-md text-body-md text-on-surface-variant max-w-lg mx-auto lg:mx-0 mt-1">{{ $user->nomor_telepon }}</p>
+                        @endif
+                        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2 mt-4">
+                            <span class="inline-flex px-2 py-0.5 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">{{ $roleName }}</span>
+                            <span class="inline-flex px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 text-[9px] font-bold uppercase">{{ $user->status ?? 'aktif' }}</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3 mt-6">
+                            <div class="profil-stat">
+                                <span class="material-symbols-outlined">calendar_month</span>
+                                <span class="lbl">Bergabung</span>
+                                <span class="val">{{ optional($user->created_at)->translatedFormat('d M Y') ?? '-' }}</span>
+                            </div>
+                            <div class="profil-stat">
+                                <span class="material-symbols-outlined">workspace_premium</span>
+                                <span class="lbl">Role</span>
+                                <span class="val">{{ $roleName }}</span>
+                            </div>
+                            <div class="profil-stat">
+                                <span class="material-symbols-outlined">verified_user</span>
+                                <span class="lbl">Status</span>
+                                <span class="val">{{ ucfirst($user->status ?? 'aktif') }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="shrink-0 mx-auto lg:mx-0">
+                        <div class="photo-upload-wrapper relative inline-block">
+<div class="avatar-ring">
+                            <div id="hero-avatar" class="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gold-accent text-white flex items-center justify-center shadow-xl photo-preview font-bold text-3xl overflow-hidden">
+                            @if ($user->foto_profil_url)
+                                <img id="hero-avatar-img" src="{{ $user->foto_profil_url }}" class="w-full h-full object-cover" alt="{{ $user->nama_lengkap }}" />
+                                <span id="hero-avatar-initial" style="display:none">{{ $oinit }}</span>
+                            @else
+                                <span id="hero-avatar-initial">{{ $oinit }}</span>
+                            @endif
+                            </div>
+                        </div>
+                        <span class="status-dot" title="Status akun aktif" aria-hidden="true"></span>
+                        <label for="foto_profil" class="photo-upload-label absolute bottom-0 right-0 w-8 h-8 rounded-full bg-gold-accent text-on-primary flex items-center justify-center cursor-pointer border-2 border-surface-container-lowest shadow-lg hover:scale-105">
+                                <span class="material-symbols-outlined text-[18px]">camera_alt</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm mt-1">{{ $user->email }} • {{ $user->nomor_telepon ?? '-' }}</p>
             </div>
-            <button type="button" data-modal-open="modal-edit-profil" class="px-5 py-2.5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium shrink-0">Edit Profil</button>
-            <button type="button" data-modal-open="modal-foto" class="px-5 py-2.5 border border-muted-border text-on-primary text-sm font-semibold rounded btn-premium shrink-0">Ganti Foto</button>
-        </div>
-    </section>
+        </section>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-section-gap">
-        <section data-reveal-group class="space-y-section-gap">
-            <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-                <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Informasi Akun</h2>
-                <dl class="space-y-5 font-body-md text-sm">
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Nama Lengkap</dt><dd class="text-on-surface font-bold text-right">{{ $user->nama_lengkap ?? '-' }}</dd></div>
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Email</dt><dd class="text-on-surface text-right break-all">{{ $user->email }}</dd></div>
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Nomor HP</dt><dd class="text-on-surface text-right">{{ $user->nomor_telepon ?? '-' }}</dd></div>
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border items-start"><dt class="text-on-surface-variant shrink-0">Role</dt><dd><span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">{{ $roleName }}</span></dd></div>
-                    <div class="flex justify-between gap-4 items-start"><dt class="text-on-surface-variant shrink-0">Status Akun</dt><dd><span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>Aktif sejak {{ $user->created_at?->translatedFormat('M Y') ?? '-' }}</span></dd></div>
-                </dl>
-            </section>
+        <!-- Toko yang Dimiliki & Hak Akses -->
+        <section class="rise rise-d3">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium profil-card p-6 md:p-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-lg icon-tile flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[22px]">storefront</span>
+                    </div>
+                    <div>
+                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">Toko yang Dimiliki</h3>
+                        <p class="text-on-surface-variant font-body-md text-sm">Toko pemilik akun Anda.</p>
+                    </div>
+                </div>
+                @if($ownedStores->isEmpty())
+                    <div class="border border-dashed border-muted-border rounded-lg px-4 py-8 text-center">
+                        <span class="material-symbols-outlined text-[32px] text-on-surface-variant">store</span>
+                        <p class="text-on-surface-variant text-sm mt-2">Belum memiliki toko.</p>
+                        <a href="{{ route('owner.pengajuan-toko') }}" class="inline-flex mt-3 px-4 py-2 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium">Ajukan Toko Sekarang</a>
+                    </div>
+                @else
+                    @foreach ($ownedStores as $toko)
+                        <div class="border border-muted-border rounded-lg px-4 py-4 flex items-center justify-between gap-3 {{ !$loop->last ? 'mb-gutter' : '' }} hover:border-gold-accent/40 transition-colors">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-10 h-10 rounded-xl bg-deep-onyx text-on-primary flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-[20px]">storefront</span>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="font-title-md text-sm text-on-surface truncate">{{ $toko->nama_toko }}</p>
+                                    <p class="text-xs text-on-surface-variant mt-0.5 truncate">{{ \Illuminate\Support\Str::limit($toko->alamat ?? '-', 32) }} • {{ $toko->status === 'aktif' ? 'Aktif' : ucfirst($toko->status) }}</p>
+                                </div>
+                            </div>
+                            <a href="{{ route('owner.data-toko') }}" class="shrink-0 text-xs font-semibold text-gold-accent hover:underline">Kelola</a>
+                        </div>
+                    @endforeach
+                @endif
 
-            <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-                <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Keamanan Akun</h2>
-                <form method="POST" action="{{ route('owner.profil.password') }}" class="space-y-5">
+                <p class="raliva-label mt-7 mb-4">Hak Akses Owner</p>
+                <div class="flex flex-wrap gap-2">
+                    @foreach ([['storefront', 'Kelola Data Toko'], ['fact_check', 'Pengajuan & Verifikasi'], ['storage', 'Kelola Slot'], ['shopping_bag', 'Pantau Pesanan'], ['groups', 'Data Pelanggan'], ['local_offer', 'Promo Toko'], ['account_balance_wallet', 'Saldo & Pencairan'], ['monitoring', 'Laporan Toko'], ['tune', 'Pengaturan Toko']] as $perm)
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low border border-muted-border text-on-surface-variant font-label-sm text-[11px]">
+                            <span class="material-symbols-outlined text-[14px] text-secondary">{{ $perm[0] }}</span>
+                            {{ $perm[1] }}
+                        </span>
+                    @endforeach
+                </div>
+                <p class="text-xs text-on-surface-variant mt-6 flex items-start gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">lock</span>
+                    Konfigurasi global platform hanya dapat diubah oleh Super Admin.
+                </p>
+            </div>
+        </section>
+
+        </div><!-- /Kolom kiri -->
+
+        <!-- Kolom kanan: Informasi Akun & Keamanan -->
+        <div class="lg:col-span-7 space-y-8">
+
+        <!-- Informasi Akun -->
+        <section class="rise rise-d1">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium profil-card p-6 md:p-8">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg icon-tile flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-[22px]">badge</span>
+                        </div>
+                        <div>
+                            <h3 class="font-title-md text-title-md text-on-surface premium-heading">Informasi Akun</h3>
+                            <p class="text-on-surface-variant font-body-md text-sm">Kelola data pribadi dan kontak Anda.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ route('owner.profil.update') }}" id="profil-form" class="space-y-5" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="md:col-span-2">
+                            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="foto_profil">Foto Profil</label>
+                            <div class="photo-upload-wrapper">
+                                <div id="form-avatar" class="w-24 h-24 rounded-full bg-secondary-container flex items-center justify-center border-2 border-muted-border overflow-hidden photo-preview">
+                                    @if ($user->foto_profil_url)
+                                        <img id="form-avatar-img" src="{{ $user->foto_profil_url }}" class="w-full h-full object-cover" alt="{{ $user->nama_lengkap }}" />
+                                    @else
+                                        <span id="form-avatar-initial" class="font-title-lg text-title-lg text-white">{{ strtoupper(mb_substr($user->nama_lengkap, 0, 2)) }}</span>
+                                    @endif
+                                </div>
+                                <label for="foto_profil" class="photo-upload-label absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-gold-accent text-on-primary flex items-center justify-center cursor-pointer border-2 border-surface-container-lowest shadow hover:scale-105">
+                                    <span class="material-symbols-outlined text-[18px]">camera_alt</span>
+                                </label>
+                                <input type="file" id="foto_profil" name="foto_profil" accept="image/*" onchange="previewPhoto(this)" />
+                                <p id="photo-hint" class="text-on-surface-variant/60 text-xs mt-2">Klik avatar untuk ganti foto (max 2MB: JPG, PNG, WebP)</p>
+                                @error('foto_profil')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="nama">Nama Lengkap</label>
+                            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="nama" name="nama_lengkap" type="text" maxlength="150" value="{{ old('nama_lengkap', $user->nama_lengkap) }}" required />
+                            @error('nama_lengkap')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="email">Email</label>
+                            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="email" name="email" type="email" maxlength="150" value="{{ old('email', $user->email) }}" required />
+                            @error('email')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="telepon">Nomor Telepon</label>
+                            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="telepon" name="nomor_telepon" type="tel" maxlength="30" value="{{ old('nomor_telepon', $user->nomor_telepon) }}" placeholder="+62..." />
+                            @error('nomor_telepon')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="gender-trigger">Jenis Kelamin</label>
+                            @php
+                                $genderVal = old('gender', $user->gender);
+                                $genderLabel = $genderVal === 'male' ? 'Laki-laki' : ($genderVal === 'female' ? 'Perempuan' : '—');
+                            @endphp
+                            <div class="relative" data-cs>
+                                <button type="button" data-cs-trigger id="gender-trigger" aria-haspopup="listbox" aria-expanded="false"
+                                    class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-left text-on-surface cursor-pointer focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors profil-input">
+                                    <span data-cs-label class="truncate">{{ $genderLabel }}</span>
+                                    <span data-cs-chevron class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200">expand_more</span>
+                                </button>
+                                <div data-cs-menu
+                                    class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden py-1">
+                                    @foreach (['' => '—', 'male' => 'Laki-laki', 'female' => 'Perempuan'] as $gKey => $gLabel)
+                                        <button type="button" role="option" data-cs-option="{{ $gKey }}" data-cs-option-label="{{ $gLabel }}"
+                                            class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                            {{ $gLabel }}<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($genderVal ?? '') === $gKey ? '' : 'hidden' }}">check</span>
+                                        </button>
+                                    @endforeach
+                                </div>
+                                <input type="hidden" name="gender" value="{{ $genderVal }}" data-cs-input />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="tanggal-lahir">Tanggal Lahir</label>
+                            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors profil-input" id="tanggal-lahir" name="tanggal_lahir" type="date" value="{{ old('tanggal_lahir', $user->tanggal_lahir?->format('Y-m-d') ?? '') }}" />
+                            @error('tanggal_lahir')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Peran</label>
+                            <input class="w-full bg-surface-container border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface-variant cursor-not-allowed" type="text" value="{{ $roleName }} — {{ $ownedStores->isEmpty() ? 'Belum punya toko' : $ownedStores->pluck('nama_toko')->implode(' & ') }}" disabled />
+                        </div>
+                    </div>
+                    @if($user->foto_profil_url)
+                        <label class="flex items-center gap-2 text-sm text-on-surface-variant cursor-pointer">
+                            <input type="checkbox" name="remove_photo" value="1" class="rounded border-muted-border text-gold-accent" />
+                            Hapus foto profil saat ini
+                        </label>
+                    @endif
+                    <div class="flex justify-end pt-4 border-t border-muted-border">
+                        <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium btn-sheen inline-flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[16px]">save</span>
+                            Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Keamanan -->
+        <section class="rise rise-d2">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium profil-card p-6 md:p-8">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg icon-tile flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-[22px]">lock</span>
+                        </div>
+                        <div>
+                            <h3 class="font-title-md text-title-md text-on-surface premium-heading">Keamanan</h3>
+                            <p class="text-on-surface-variant font-body-md text-sm">Ubah password untuk menjaga keamanan akun.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ route('owner.profil.password') }}" id="password-form" class="space-y-5">
                     @csrf
                     @method('PUT')
                     <div>
-                        <label for="pw-lama" class="block raliva-label mb-2">Kata Sandi Saat Ini</label>
-                        <input id="pw-lama" name="password_lama" type="password" required class="raliva-input" />
-                        @error('password_lama') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="password-lama">Password Lama</label>
+                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="password-lama" name="password_lama" type="password" placeholder="Masukkan password lama" required />
+                        @error('password_lama')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="pw-baru" class="block raliva-label mb-2">Kata Sandi Baru</label>
-                            <input id="pw-baru" name="password_baru" type="password" required minlength="8" class="raliva-input" placeholder="Minimal 8 karakter, 1 huruf kapital & 1 angka" />
-                            @error('password_baru') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="password-baru">Password Baru</label>
+                            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="password-baru" name="password_baru" type="password" placeholder="Minimal 8 karakter" required />
+                            @error('password_baru')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div>
-                            <label for="pw-konfirmasi" class="block raliva-label mb-2">Konfirmasi Kata Sandi</label>
-                            <input id="pw-konfirmasi" name="password_baru_confirmation" type="password" required minlength="8" class="raliva-input" />
+                            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="password-konfirmasi">Konfirmasi Password</label>
+                            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="password-konfirmasi" name="password_baru_confirmation" type="password" placeholder="Ulangi password baru" required />
                         </div>
                     </div>
-                    <div class="flex justify-end">
-                        <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Perbarui Kata Sandi</button>
+                    <div class="flex justify-end pt-4 border-t border-muted-border">
+                        <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium btn-sheen inline-flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[16px]">key</span>
+                            Ubah Password
+                        </button>
                     </div>
                 </form>
-            </section>
+            </div>
         </section>
 
-        <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium self-start">
-            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Toko yang Dimiliki</h2>
-            @if($ownedStores->isEmpty())
-                <div class="border border-dashed border-muted-border rounded-lg px-4 py-8 text-center">
-                    <span class="material-symbols-outlined text-[32px] text-on-surface-variant">store</span>
-                    <p class="text-on-surface-variant text-sm mt-2">Belum memiliki toko.</p>
-                    <a href="{{ route('owner.pengajuan-toko') }}" class="inline-flex mt-3 px-4 py-2 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium">Ajukan Toko Sekarang</a>
-                </div>
-            @else
-                @foreach ($ownedStores as $toko)
-                    <div class="border border-muted-border rounded-lg px-4 py-4 flex items-center justify-between gap-3 {{ !$loop->last ? 'mb-gutter' : '' }} hover:border-gold-accent/40 transition-colors">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <div class="w-10 h-10 rounded-xl bg-deep-onyx text-on-primary flex items-center justify-center shrink-0">
-                                <span class="material-symbols-outlined text-[20px]">storefront</span>
-                            </div>
-                            <div class="min-w-0">
-                                <p class="font-title-md text-sm text-on-surface truncate">{{ $toko->nama_toko }}</p>
-                                <p class="text-xs text-on-surface-variant mt-0.5 truncate">{{ \Illuminate\Support\Str::limit($toko->alamat ?? '-', 32) }} • {{ $toko->status === 'aktif' ? 'Aktif' : ucfirst($toko->status) }}</p>
-                            </div>
-                        </div>
-                        <a href="{{ route('owner.data-toko') }}" class="shrink-0 text-xs font-semibold text-gold-accent hover:underline">Kelola</a>
-                    </div>
-                @endforeach
-            @endif
+        </div><!-- /Kolom kanan -->
 
-            <p class="raliva-label mt-7 mb-4">Hak Akses Owner</p>
-            <div class="flex flex-wrap gap-2">
-                @foreach ([['storefront', 'Kelola Data Toko'], ['fact_check', 'Pengajuan & Verifikasi'], ['storage', 'Kelola Slot'], ['shopping_bag', 'Pantau Pesanan'], ['groups', 'Data Pelanggan'], ['local_offer', 'Promo Toko'], ['account_balance_wallet', 'Saldo & Pencairan'], ['monitoring', 'Laporan Toko'], ['tune', 'Pengaturan Toko']] as $perm)
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low border border-muted-border text-on-surface-variant font-label-sm text-[11px]">
-                        <span class="material-symbols-outlined text-[14px] text-secondary">{{ $perm[0] }}</span>
-                        {{ $perm[1] }}
-                    </span>
-                @endforeach
-            </div>
-            <p class="text-xs text-on-surface-variant mt-6 flex items-start gap-2">
-                <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">lock</span>
-                Konfigurasi global platform hanya dapat diubah oleh Super Admin.
-            </p>
-        </section>
-    </div>
-
-    <div id="modal-edit-profil" data-modal class="fixed inset-0 z-[70] hidden">
-        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
-            <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Edit Profil</h3>
-                <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
-            </div>
-            <form method="POST" action="{{ route('owner.profil.update') }}" enctype="multipart/form-data" class="p-6 space-y-5">
-                @csrf
-                @method('PUT')
-                <div class="flex justify-center">
-                    <div class="relative">
-                        <div class="w-20 h-20 rounded-full overflow-hidden border border-outline-variant">
-                            <img id="ep-foto-preview" alt="Foto Profil" class="w-full h-full object-cover" src="{{ $user->foto_profil_url ?? 'https://ui-avatars.com/api/?name='.urlencode($user->nama_lengkap ?? 'Owner').'&background=FF4F87&color=fff&size=80' }}" />
-                        </div>
-                        <label for="ep-foto" class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center btn-premium shadow-md cursor-pointer" aria-label="Ubah Foto">
-                            <span class="material-symbols-outlined text-[16px]">photo_camera</span>
-                        </label>
-                    </div>
-                </div>
-                <div>
-                    <label for="ep-foto" class="block raliva-label mb-2">Foto Profil <span class="text-on-surface-variant font-normal">(opsional)</span></label>
-                    <input id="ep-foto" name="foto_profil" type="file" accept="image/*" class="w-full text-sm text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border file:border-muted-border file:bg-surface-container-low file:text-sm" onchange="if(this.files[0]){const r=new FileReader();r.onload=e=>document.getElementById('ep-foto-preview').src=e.target.result;r.readAsDataURL(this.files[0]);}" />
-                    <p class="text-xs text-on-surface-variant mt-1">JPG/PNG/WebP, maks 2MB. Kosongkan jika tidak ingin ganti.</p>
-                    @error('foto_profil') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                </div>
-                <div>
-                    <label for="ep-nama" class="block raliva-label mb-2">Nama Lengkap</label>
-                    <input id="ep-nama" name="nama_lengkap" type="text" value="{{ old('nama_lengkap', $user->nama_lengkap ?? '') }}" required class="raliva-input" />
-                    @error('nama_lengkap') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                </div>
-                <div>
-                    <label for="ep-email" class="block raliva-label mb-2">Email</label>
-                    <input id="ep-email" name="email" type="email" value="{{ old('email', $user->email ?? '') }}" required class="raliva-input" />
-                    @error('email') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                </div>
-                <div>
-                    <label for="ep-hp" class="block raliva-label mb-2">Nomor HP <span class="text-on-surface-variant font-normal">(opsional)</span></label>
-                    <input id="ep-hp" name="nomor_telepon" type="text" maxlength="30" value="{{ old('nomor_telepon', $user->nomor_telepon ?? '') }}" class="raliva-input" placeholder="08..." />
-                    @error('nomor_telepon') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
-                    <div>
-                        <label for="ep-gender-trigger" class="block raliva-label mb-2">Jenis Kelamin <span class="text-on-surface-variant font-normal">(opsional)</span></label>
-                        @php
-                            $genderVal = old('gender', $user->gender);
-                            $genderLabel = $genderVal === 'male' ? 'Laki-laki' : ($genderVal === 'female' ? 'Perempuan' : '—');
-                        @endphp
-                        <div class="relative" data-cs>
-                            <button type="button" data-cs-trigger id="ep-gender-trigger" aria-haspopup="listbox" aria-expanded="false"
-                                class="raliva-input flex items-center justify-between gap-2 text-left cursor-pointer">
-                                <span data-cs-label class="truncate">{{ $genderLabel }}</span>
-                                <span data-cs-chevron class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200">expand_more</span>
-                            </button>
-                            <div data-cs-menu
-                                class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden py-1">
-                                @foreach (['' => '—', 'male' => 'Laki-laki', 'female' => 'Perempuan'] as $gKey => $gLabel)
-                                    <button type="button" role="option" data-cs-option="{{ $gKey }}" data-cs-option-label="{{ $gLabel }}"
-                                        class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                        {{ $gLabel }}<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($genderVal ?? '') === $gKey ? '' : 'hidden' }}">check</span>
-                                    </button>
-                                @endforeach
-                            </div>
-                            <input type="hidden" name="gender" value="{{ $genderVal }}" data-cs-input />
-                        </div>
-                    </div>
-                    <div>
-                        <label for="ep-tgl-lahir" class="block raliva-label mb-2">Tanggal Lahir <span class="text-on-surface-variant font-normal">(opsional)</span></label>
-                        <input id="ep-tgl-lahir" name="tanggal_lahir" type="date" value="{{ old('tanggal_lahir', $user->tanggal_lahir?->format('Y-m-d') ?? '') }}" class="raliva-input" />
-                        @error('tanggal_lahir') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                    </div>
-                </div>
-                <div>
-                    <label class="block raliva-label mb-2">Role</label>
-                    <input type="text" value="{{ $roleName }} — {{ $ownedStores->isEmpty() ? 'Belum punya toko' : $ownedStores->pluck('nama_toko')->implode(' & ') }}" readonly disabled class="w-full bg-surface-container-low border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface-variant opacity-80 cursor-not-allowed" />
-                </div>
-                @if($user->foto_profil_url)
-                    <label class="flex items-center gap-2 text-sm text-on-surface-variant cursor-pointer">
-                        <input type="checkbox" name="remove_photo" value="1" class="rounded border-muted-border text-gold-accent" />
-                        Hapus foto profil saat ini
-                    </label>
-                @endif
-                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                    <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                    <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Simpan Perubahan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-foto" data-modal class="fixed inset-0 z-[70] hidden">
-        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl">
-            <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Ganti Foto</h3>
-                <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
-            </div>
-            <form method="POST" action="{{ route('owner.profil.foto') }}" enctype="multipart/form-data" class="p-6 space-y-5">
-                @csrf
-                <div class="flex justify-center">
-                    <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant">
-                        <img id="mf-preview" alt="Foto Profil" class="w-full h-full object-cover" src="{{ $user->foto_profil_url ?? 'https://ui-avatars.com/api/?name='.urlencode($user->nama_lengkap ?? 'Owner').'&background=FF4F87&color=fff&size=96' }}" />
-                    </div>
-                </div>
-                <div>
-                    <label for="mf-foto" class="block raliva-label mb-2">Pilih Foto Baru</label>
-                    <input id="mf-foto" name="foto_profil" type="file" accept="image/*" required class="w-full text-sm text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border file:border-muted-border file:bg-surface-container-low file:text-sm" onchange="if(this.files[0]){const r=new FileReader();r.onload=e=>document.getElementById('mf-preview').src=e.target.result;r.readAsDataURL(this.files[0]);}" />
-                    @error('foto_profil') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                </div>
-                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                    <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                    <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Unggah Foto</button>
-                </div>
-            </form>
-        </div>
     </div>
 </div>
+@endsection
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function(){
   if (!document.querySelector('[data-real]')) return;
-  // Check if no store banner exists (means no store)
   const noStore = document.querySelector('[data-no-store-banner]');
   if (!noStore) return;
-  // Disable all primary action buttons except Ajukan Toko
   document.querySelectorAll('[data-modal-open], button[type="submit"], a[href*="pengajuan-toko"]:not([href*="ajukan"])').forEach(el=>{
-    // Keep Ajukan Toko enabled
     if (el.textContent.includes('Ajukan Toko') || el.getAttribute('data-modal-open')?.includes('modal-tambah')) {
-      // For tambah buttons, disable if no store
       el.setAttribute('disabled','');
       el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
       el.title = 'Ajukan toko dulu';
     }
   });
-  // More generic: disable all buttons in data-real except those inside pengajuan
   document.querySelectorAll('[data-real] button, [data-real] a.btn-premium').forEach(el=>{
     if (el.closest('[data-modal]')) return;
     if (el.textContent.trim().includes('Ajukan')) return;
@@ -284,6 +340,47 @@ document.addEventListener('DOMContentLoaded', function(){
     el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
   });
 });
+</script>
+<script>
+function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const heroImg = document.getElementById('hero-avatar-img');
+            const heroInitial = document.getElementById('hero-avatar-initial');
+            if (heroImg) {
+                heroImg.src = e.target.result;
+                heroImg.style.display = 'block';
+                if (heroInitial) heroInitial.style.display = 'none';
+            } else if (heroInitial) {
+                heroInitial.style.display = 'none';
+                const newImg = document.createElement('img');
+                newImg.id = 'hero-avatar-img';
+                newImg.src = e.target.result;
+                newImg.className = 'w-full h-full object-cover';
+                newImg.alt = '{{ $user->nama_lengkap }}';
+                document.getElementById('hero-avatar').appendChild(newImg);
+            }
+
+            const formImg = document.getElementById('form-avatar-img');
+            const formInitial = document.getElementById('form-avatar-initial');
+            if (formImg) {
+                formImg.src = e.target.result;
+                formImg.style.display = 'block';
+                if (formInitial) formInitial.style.display = 'none';
+            } else if (formInitial) {
+                formInitial.style.display = 'none';
+                const newImg = document.createElement('img');
+                newImg.id = 'form-avatar-img';
+                newImg.src = e.target.result;
+                newImg.className = 'w-full h-full object-cover';
+                newImg.alt = '{{ $user->nama_lengkap }}';
+                document.getElementById('form-avatar').appendChild(newImg);
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
 </script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -334,5 +431,3 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 @endpush
-
-@endsection
