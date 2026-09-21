@@ -473,6 +473,12 @@
     #co-rincian-grid .co-extra.is-in { animation: co-extra-in .35s ease both; }
     @keyframes co-extra-in { from { opacity:0; transform:translateY(8px) scale(.98); } to { opacity:1; transform:none; } }
     @media (prefers-reduced-motion: reduce) { #co-rincian-grid .co-extra.is-in { animation:none; } }
+    /* Item ke-3: selalu tampil di desktop (lg = 3 kolom = 1 baris), disembunyikan di mobile sampai Show more */
+    #co-rincian-grid .co-extra-mobile.is-in { animation: co-extra-in .35s ease both; }
+    @media (max-width: 1023.98px) {
+        #co-rincian-grid .co-extra-mobile.collapsed { display:none; }
+    }
+    @media (prefers-reduced-motion: reduce) { #co-rincian-grid .co-extra-mobile.is-in { animation:none; } }
 </style>
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-10 lg:pl-72">
@@ -634,8 +640,8 @@
                             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN PESANAN') }}</p>
                             <h3 class="premium-heading font-title-md text-title-md text-on-surface">{{ __('Rincian Pesanan') }}</h3>
                         </div>
-                        @if($coShowCount > 3)
-                        <button id="co-rincian-toggle" type="button" aria-expanded="false" aria-controls="co-rincian-grid" aria-label="{{ __('Tampilkan semua produk') }}" data-label-open="{{ __('Show less') }}" data-label-close="{{ __('Show more') }}" class="co-rincian-toggle shrink-0" onclick="coToggleRincian(this)">
+                        @if($coShowCount > 2)
+                        <button id="co-rincian-toggle" type="button" aria-expanded="false" aria-controls="co-rincian-grid" aria-label="{{ __('Tampilkan semua produk') }}" data-label-open="{{ __('Show less') }}" data-label-close="{{ __('Show more') }}" class="co-rincian-toggle shrink-0{{ $coShowCount <= 3 ? ' lg:hidden' : '' }}" onclick="coToggleRincian(this)">
                             <span class="co-rincian-label">{{ __('Show more') }}</span>
                             <span class="material-symbols-outlined">expand_more</span>
                         </button>
@@ -649,8 +655,9 @@
                         $img = $pr?->images->first()?->file_gambar ?? '';
                         $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/checkout/600/800';
                         $isExtra = $idx >= 3;
+                        $isThird = $idx === 2;
                     @endphp
-                        <div class="flex flex-col bg-surface-container border border-[var(--border-soft)] rounded-lg overflow-hidden{{ $isExtra ? ' co-extra hidden' : '' }}"@if($isExtra) aria-hidden="true"@endif>
+                        <div class="flex flex-col bg-surface-container border border-[var(--border-soft)] rounded-lg overflow-hidden{{ $isExtra ? ' co-extra hidden' : '' }}{{ $isThird ? ' co-extra-mobile collapsed' : '' }}"@if($isExtra || $isThird) aria-hidden="true"@endif>
                             <div class="relative w-full aspect-[3/4] bg-surface-container-high overflow-hidden">
                                 <img class="w-full h-full object-cover" loading="lazy" alt="{{ $pr?->nama_produk ?? __('Produk') }}" src="{{ $imgUrl }}"/>
                             </div>
@@ -837,31 +844,55 @@
 @include('customer._partials.drawer')
 
 <script>
+    var coRincianMQ = window.matchMedia('(max-width: 1023.98px)');
+    function coIsMobileView() { return coRincianMQ.matches; }
+    function coRevealExtra(el) {
+        el.classList.remove('hidden');
+        el.classList.remove('collapsed');
+        el.classList.remove('is-in');
+        void el.offsetWidth;
+        el.classList.add('is-in');
+        el.setAttribute('aria-hidden', 'false');
+    }
+    function coHideExtra(el, isThird) {
+        el.classList.remove('is-in');
+        if (isThird) {
+            el.classList.add('collapsed');
+            el.setAttribute('aria-hidden', coIsMobileView() ? 'true' : 'false');
+        } else {
+            el.classList.add('hidden');
+            el.setAttribute('aria-hidden', 'true');
+        }
+    }
+    function coSyncThirdAria() {
+        var btn = document.getElementById('co-rincian-toggle');
+        if (btn && btn.classList.contains('open')) return;
+        document.querySelectorAll('#co-rincian-grid .co-extra-mobile').forEach(function (el) {
+            el.setAttribute('aria-hidden', coIsMobileView() ? 'true' : 'false');
+        });
+    }
     if (typeof coToggleRincian !== 'function') {
         function coToggleRincian(btn) {
             var grid = document.getElementById('co-rincian-grid');
             if (!grid) return;
-            var extras = grid.querySelectorAll('.co-extra');
+            var extras = grid.querySelectorAll('.co-extra, .co-extra-mobile');
             if (!extras.length) return;
             var open = btn.classList.toggle('open');
             btn.setAttribute('aria-expanded', open ? 'true' : 'false');
             extras.forEach(function (el) {
-                if (open) {
-                    el.classList.remove('hidden');
-                    el.classList.remove('is-in');
-                    void el.offsetWidth;
-                    el.classList.add('is-in');
-                    el.setAttribute('aria-hidden', 'false');
-                } else {
-                    el.classList.add('hidden');
-                    el.classList.remove('is-in');
-                    el.setAttribute('aria-hidden', 'true');
-                }
+                if (open) coRevealExtra(el);
+                else coHideExtra(el, el.classList.contains('co-extra-mobile'));
             });
             var label = btn.querySelector('.co-rincian-label');
             if (label) label.textContent = open ? btn.getAttribute('data-label-open') : btn.getAttribute('data-label-close');
         }
     }
+    if (typeof coRincianMQ.addEventListener === 'function') {
+        coRincianMQ.addEventListener('change', coSyncThirdAria);
+    } else if (typeof coRincianMQ.addListener === 'function') {
+        coRincianMQ.addListener(coSyncThirdAria);
+    }
+    document.addEventListener('DOMContentLoaded', coSyncThirdAria);
 </script>
 
 <script>
