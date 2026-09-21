@@ -115,14 +115,22 @@
                             </td>
                             <td class="py-3.5 px-4 max-w-[220px]">
                                 @if ($o->bahanList->isNotEmpty())
-                                    @foreach ($o->bahanList as $bahan)
-                                        <p class="text-xs {{ $bahan->creator?->role?->nama_role === 'Produksi' ? 'text-secondary' : 'text-on-surface-variant' }}">
-                                            {{ $bahan->nama_bahan }}: {{ $bahan->jumlah }} {{ $bahan->satuan }}
-                                            @if ($bahan->creator?->role?->nama_role === 'Produksi')
-                                                <span class="text-secondary">(Produksi)</span>
-                                            @endif
-                                        </p>
-                                    @endforeach
+                                    @php
+                                        $bahanAdmin = $o->bahanList->reject(fn ($b) => $b->isDariProduksi());
+                                        $bahanTambahan = $o->bahanList->filter(fn ($b) => $b->isDariProduksi());
+                                    @endphp
+                                    @if ($bahanAdmin->isNotEmpty())
+                                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Bahan dari Admin ({{ $bahanAdmin->count() }})</p>
+                                        @foreach ($bahanAdmin as $bahan)
+                                            <p class="text-xs text-on-surface-variant">{{ $bahan->nama_bahan }}: {{ $bahan->jumlah }} {{ $bahan->satuan }}</p>
+                                        @endforeach
+                                    @endif
+                                    @if ($bahanTambahan->isNotEmpty())
+                                        <p class="text-[10px] uppercase tracking-wider text-secondary mt-1.5 mb-1">Tambahan Produksi ({{ $bahanTambahan->count() }})</p>
+                                        @foreach ($bahanTambahan as $bahan)
+                                            <p class="text-xs text-secondary">{{ $bahan->nama_bahan }}: {{ $bahan->jumlah }} {{ $bahan->satuan }} <span>(Produksi)</span></p>
+                                        @endforeach
+                                    @endif
                                 @else
                                     <span class="text-on-surface-variant text-xs">Belum ada bahan</span>
                                 @endif
@@ -358,7 +366,12 @@
                 <input type="number" name="bahan[${idx}][jumlah]" required min="0.01" step="0.01" class="raliva-input w-full py-2 text-center" placeholder="Jumlah" />
             </div>
             <div class="grid grid-cols-[110px_1fr] gap-3">
-                <input type="text" name="bahan[${idx}][satuan]" required class="raliva-input w-full" placeholder="Satuan" />
+                <select name="bahan[${idx}][satuan]" required class="raliva-select w-full">
+                    <option value="">— Satuan —</option>
+                    @foreach (\App\Models\ProductionOrderBahan::SATUAN as $st)
+                        <option value="{{ $st }}">{{ $st }}</option>
+                    @endforeach
+                </select>
                 <input type="text" name="bahan[${idx}][catatan]" class="raliva-input w-full" placeholder="Catatan (opsional)" />
             </div>
         `;
@@ -376,7 +389,8 @@
         if (!row) return;
         if (opt.value) {
             row.querySelector('input[name*="[nama_bahan]"]').value = opt.dataset.nama;
-            row.querySelector('input[name*="[satuan]"]').value = opt.dataset.satuan;
+            const sat = row.querySelector('[name*="[satuan]"]');
+            if (sat && sat.querySelector(`option[value="${opt.dataset.satuan}"]`)) sat.value = opt.dataset.satuan;
         }
     }
 
