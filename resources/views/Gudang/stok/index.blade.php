@@ -33,25 +33,68 @@
                         <input type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Cari produk, SKU..." class="raliva-search" />
                     </div>
                     <div class="flex flex-wrap gap-gutter">
-                        <select name="kategori" aria-label="Filter kategori" class="raliva-select">
-                            <option value="">Semua Kategori</option>
-                            @foreach ($categories as $cat)
-                                <option value="{{ $cat }}" {{ ($filters['kategori'] ?? '') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
-                            @endforeach
-                        </select>
-                        <select name="status" aria-label="Filter status stok" class="raliva-select">
-                            <option value="">Semua Status</option>
-                            <option value="aman" {{ ($filters['status'] ?? '') === 'aman' ? 'selected' : '' }}>Aman</option>
-                            <option value="menipis" {{ ($filters['status'] ?? '') === 'menipis' ? 'selected' : '' }}>Menipis</option>
-                            <option value="kritis" {{ ($filters['status'] ?? '') === 'kritis' ? 'selected' : '' }}>Kritis</option>
-                            <option value="habis" {{ ($filters['status'] ?? '') === 'habis' ? 'selected' : '' }}>Habis</option>
-                        </select>
-                        <select name="sort" aria-label="Urutkan" class="raliva-select">
-                            <option value="terbaru" {{ ($filters['sort'] ?? 'terbaru') === 'terbaru' ? 'selected' : '' }}>Terbaru</option>
-                            <option value="nama" {{ ($filters['sort'] ?? '') === 'nama' ? 'selected' : '' }}>Nama A-Z</option>
-                            <option value="stok_kecil" {{ ($filters['sort'] ?? '') === 'stok_kecil' ? 'selected' : '' }}>Stok Terkecil</option>
-                            <option value="stok_besar" {{ ($filters['sort'] ?? '') === 'stok_besar' ? 'selected' : '' }}>Stok Terbanyak</option>
-                        </select>
+                        @php
+                            $csKategori = !empty($filters['kategori']) && $categories->contains($filters['kategori']) ? $filters['kategori'] : 'Semua Kategori';
+                            $csStatusMap = ['aman' => 'Aman', 'menipis' => 'Menipis', 'kritis' => 'Kritis', 'habis' => 'Habis'];
+                            $csStatus = !empty($filters['status']) && isset($csStatusMap[$filters['status']]) ? $csStatusMap[$filters['status']] : 'Semua Status';
+                            $csSortMap = ['terbaru' => 'Terbaru', 'nama' => 'Nama A-Z', 'stok_kecil' => 'Stok Terkecil', 'stok_besar' => 'Stok Terbanyak'];
+                            $csSortKey = $filters['sort'] ?? 'terbaru';
+                            $csSort = isset($csSortMap[$csSortKey]) ? $csSortMap[$csSortKey] : 'Terbaru';
+                        @endphp
+                        <div class="relative min-w-[180px]" data-cs>
+                            <button type="button" data-cs-trigger aria-haspopup="listbox" aria-expanded="false"
+                                class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-3 py-2.5 min-h-11 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
+                                <span data-cs-label class="truncate">{{ $csKategori }}</span>
+                                <span data-cs-chevron class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200">expand_more</span>
+                            </button>
+                            <div data-cs-menu role="listbox" style="transform-origin: top left"
+                                class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden py-1">
+                                <button type="button" role="option" data-cs-option="" data-cs-option-label="Semua Kategori" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                    Semua Kategori<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($filters['kategori'] ?? '') === '' ? '' : 'hidden' }}">check</span>
+                                </button>
+                                @foreach ($categories as $cat)
+                                    <button type="button" role="option" data-cs-option="{{ $cat }}" data-cs-option-label="{{ $cat }}" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                        {{ $cat }}<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($filters['kategori'] ?? '') === $cat ? '' : 'hidden' }}">check</span>
+                                    </button>
+                                @endforeach
+                            </div>
+                            <input type="hidden" name="kategori" value="{{ $filters['kategori'] ?? '' }}" data-cs-input />
+                        </div>
+                        <div class="relative min-w-[180px]" data-cs>
+                            <button type="button" data-cs-trigger aria-haspopup="listbox" aria-expanded="false"
+                                class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-3 py-2.5 min-h-11 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
+                                <span data-cs-label class="truncate">{{ $csStatus }}</span>
+                                <span data-cs-chevron class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200">expand_more</span>
+                            </button>
+                            <div data-cs-menu role="listbox" style="transform-origin: top left"
+                                class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden py-1">
+                                <button type="button" role="option" data-cs-option="" data-cs-option-label="Semua Status" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                    Semua Status<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($filters['status'] ?? '') === '' ? '' : 'hidden' }}">check</span>
+                                </button>
+                                @foreach ($csStatusMap as $key => $label)
+                                    <button type="button" role="option" data-cs-option="{{ $key }}" data-cs-option-label="{{ $label }}" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                        {{ $label }}<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($filters['status'] ?? '') === $key ? '' : 'hidden' }}">check</span>
+                                    </button>
+                                @endforeach
+                            </div>
+                            <input type="hidden" name="status" value="{{ $filters['status'] ?? '' }}" data-cs-input />
+                        </div>
+                        <div class="relative min-w-[180px]" data-cs>
+                            <button type="button" data-cs-trigger aria-haspopup="listbox" aria-expanded="false"
+                                class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-3 py-2.5 min-h-11 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
+                                <span data-cs-label class="truncate">{{ $csSort }}</span>
+                                <span data-cs-chevron class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200">expand_more</span>
+                            </button>
+                            <div data-cs-menu role="listbox" style="transform-origin: top left"
+                                class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden py-1">
+                                @foreach ($csSortMap as $key => $label)
+                                    <button type="button" role="option" data-cs-option="{{ $key }}" data-cs-option-label="{{ $label }}" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                        {{ $label }}<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($csSortKey ?? 'terbaru') === $key ? '' : 'hidden' }}">check</span>
+                                    </button>
+                                @endforeach
+                            </div>
+                            <input type="hidden" name="sort" value="{{ $csSortKey }}" data-cs-input />
+                        </div>
                         <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Terapkan</button>
                         <a href="{{ route('gudang.stok') }}" class="px-3 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface-variant hover:text-on-surface hover:border-gold-accent transition-colors">Reset</a>
                     </div>

@@ -40,83 +40,55 @@
             <p class="text-sm text-on-surface-variant">Dompet akan dibuat otomatis saat transaksi pertama. Keuangan tetap bisa dicatat manual (Pemasukan/Pengeluaran).</p>
         </div>
     @endif
-    <div class="flex flex-wrap items-center justify-between gap-4">
+<div class="flex flex-wrap items-center justify-between gap-4">
         <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 overflow-x-auto max-w-full">
             <button type="button" data-saldo-tab="ringkasan" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">Ringkasan</button>
             <button type="button" data-saldo-tab="pemasukan" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pemasukan</button>
             <button type="button" data-saldo-tab="pengeluaran" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pengeluaran</button>
         </div>
-        <form method="GET" action="{{ route('owner.keuangan') }}" class="flex items-center gap-2">
-            <select name="period" onchange="this.form.submit()" class="raliva-select text-xs py-2">
-                <option value="7" {{ ($period ?? 30)==7 ? 'selected' : '' }}>7 Hari</option>
-                <option value="30" {{ ($period ?? 30)==30 ? 'selected' : '' }}>30 Hari</option>
-                <option value="90" {{ ($period ?? 30)==90 ? 'selected' : '' }}>90 Hari</option>
-                <option value="365" {{ ($period ?? 30)==365 ? 'selected' : '' }}>1 Tahun</option>
-            </select>
-        </form>
     </div>
 
     {{-- ============ PANEL: RINGKASAN ============ --}}
     <div data-saldo-panel="ringkasan" class="space-y-section-gap">
-        {{-- Kartu Saldo --}}
-        <section data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-section-gap">
-            <div data-reveal class="bg-deep-onyx text-on-primary rounded-lg p-6 relative overflow-hidden flex flex-col">
-                <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-on-primary/5 pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
-                <p class="raliva-label text-gold-accent relative">Saldo Tersedia</p>
-                <p class="raliva-figure text-[34px] md:text-[42px] mt-4 relative">{{ $fmt($wallet->saldo_tersedia) }}</p>
-                <div class="flex items-center justify-between mt-auto pt-6 relative gap-gutter flex-wrap">
-                    <p class="font-body-md text-xs text-inverse-on-surface/60">Siap dicairkan kapan saja</p>
-                    <a href="{{ route('owner.pencairan-dana') }}" class="py-2.5 px-5 bg-gold-accent text-[#111] text-xs font-semibold rounded btn-premium shrink-0">Cairkan</a>
-                </div>
-            </div>
-
-            <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col relative overflow-hidden">
-                <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
-                <p class="raliva-label relative">Saldo Tertahan</p>
-                <p class="raliva-figure text-[26px] mt-4 text-on-surface relative">{{ $fmt($wallet->saldo_tertahan) }}</p>
-                <p class="text-on-surface-variant font-body-md text-xs mt-auto pt-6 relative">Dana yang terkunci saat pencairan disetujui dan sedang diproses.</p>
-            </div>
-
-            <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col relative overflow-hidden">
-                <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">savings</span>
-                <p class="raliva-label relative">Total Dicairkan</p>
-                <p class="raliva-figure text-[26px] mt-4 text-secondary relative">{{ $fmt($totalDicairkan) }}</p>
-                <div class="flex items-center justify-between mt-auto pt-6 relative gap-gutter flex-wrap">
-                    <p class="font-body-md text-xs text-on-surface-variant">{{ $withdrawals->count() }} pencairan tercatat</p>
-                    <a href="{{ route('owner.pencairan-dana') }}" class="py-2.5 px-5 border border-muted-border text-xs font-semibold rounded-lg hover:border-gold-accent transition-colors shrink-0">Riwayat</a>
-                </div>
-            </div>
-        </section>
-
         {{-- Estimasi Margin (5 lapis) — bahasa awam --}}
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-            <div class="flex items-center justify-between gap-4 mb-6">
+            <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">
                 <div>
                     <h2 class="font-title-md text-title-md text-on-surface premium-heading">Perkiraan Keuntungan Toko</h2>
                     <p class="text-xs text-on-surface-variant mt-1">Estimasi laba dari total penjualan, setelah potong HPP dan pajak.</p>
                 </div>
-                <span class="text-[10px] uppercase tracking-wider text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">Asumsi: HPP 60% · Pajak 25%</span>
+                <div class="flex items-center gap-3 flex-wrap">
+                    <span class="text-[10px] uppercase tracking-wider text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">Asumsi: HPP 60% · Pajak 25%</span>
+                    <form method="GET" action="{{ route('owner.keuangan') }}" class="flex items-center gap-2">
+                        <select name="period" onchange="this.form.submit()" class="raliva-select text-xs py-2">
+                            <option value="7" {{ ($period ?? 30)==7 ? 'selected' : '' }}>7 Hari</option>
+                            <option value="30" {{ ($period ?? 30)==30 ? 'selected' : '' }}>30 Hari</option>
+                            <option value="90" {{ ($period ?? 30)==90 ? 'selected' : '' }}>90 Hari</option>
+                            <option value="365" {{ ($period ?? 30)==365 ? 'selected' : '' }}>1 Tahun</option>
+                        </select>
+                    </form>
+                </div>
             </div>
             <div data-reveal-group class="grid grid-cols-2 md:grid-cols-5 gap-gutter">
-                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Total Omzet <span class="normal-case text-[9px] italic text-gold-accent/70">Revenue</span></span>
-                    <span class="raliva-figure text-[20px] text-on-surface">{{ $fmt($margin['revenue']) }}</span>
+                <div data-reveal class="bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
+                    <span class="text-on-surface-variant font-label-sm text-[12px] uppercase">Total Omzet <span class="normal-case text-[10px] italic text-gold-accent/70">Revenue</span></span>
+                    <span class="raliva-figure text-[24px] text-on-surface">{{ $fmt($margin['revenue']) }}</span>
                 </div>
-                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Kotor <span class="normal-case text-[9px] italic text-gold-accent/70">Gross Profit</span></span>
-                    <span class="raliva-figure text-[20px] text-secondary">{{ $fmt($margin['gross']) }}</span>
+                <div data-reveal class="bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
+                    <span class="text-on-surface-variant font-label-sm text-[12px] uppercase">Laba Kotor <span class="normal-case text-[10px] italic text-gold-accent/70">Gross Profit</span></span>
+                    <span class="raliva-figure text-[24px] text-secondary">{{ $fmt($margin['gross']) }}</span>
                 </div>
-                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Operasional <span class="normal-case text-[9px] italic text-gold-accent/70">EBITDA</span></span>
-                    <span class="raliva-figure text-[20px] text-on-surface">{{ $fmt($margin['ebitda']) }}</span>
+                <div data-reveal class="bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
+                    <span class="text-on-surface-variant font-label-sm text-[12px] uppercase">Laba Operasional <span class="normal-case text-[10px] italic text-gold-accent/70">EBITDA</span></span>
+                    <span class="raliva-figure text-[24px] text-on-surface">{{ $fmt($margin['ebitda']) }}</span>
                 </div>
-                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Sebelum Pajak <span class="normal-case text-[9px] italic text-gold-accent/70">EBT</span></span>
-                    <span class="raliva-figure text-[20px] text-on-surface">{{ $fmt($margin['ebt']) }}</span>
+                <div data-reveal class="bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
+                    <span class="text-on-surface-variant font-label-sm text-[12px] uppercase">Laba Sebelum Pajak <span class="normal-case text-[10px] italic text-gold-accent/70">EBT</span></span>
+                    <span class="raliva-figure text-[24px] text-on-surface">{{ $fmt($margin['ebt']) }}</span>
                 </div>
-                <div data-reveal class="bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Bersih <span class="normal-case text-[9px] italic text-gold-accent/70">Net Profit</span></span>
-                    <span class="raliva-figure text-[20px] text-gold-accent">{{ $fmt($margin['net']) }}</span>
+                <div data-reveal class="bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
+                    <span class="text-on-surface-variant font-label-sm text-[12px] uppercase">Laba Bersih <span class="normal-case text-[10px] italic text-gold-accent/70">Net Profit</span></span>
+                    <span class="raliva-figure text-[24px] text-gold-accent">{{ $fmt($margin['net']) }}</span>
                 </div>
             </div>
         </section>
@@ -317,14 +289,13 @@ document.addEventListener('DOMContentLoaded', function(){
   // Check if no store banner exists (means no store)
   const noStore = document.querySelector('[data-no-store-banner]');
   if (!noStore) return;
-  // Disable all primary action buttons except Ajukan Toko
-  document.querySelectorAll('[data-modal-open], button[type="submit"], a[href*="pengajuan-toko"]:not([href*="ajukan"])').forEach(el=>{
-    el.setAttribute('disabled','');
-    el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
+  // Keep tab buttons working (Ringkasan/Pemasukan/Pengeluaran) — only disable action buttons
+  document.querySelectorAll('[data-saldo-tab]').forEach(el => {
+    el.classList.remove('pointer-events-none');
   });
-  // More generic: disable all buttons in data-real except those inside pengajuan
   document.querySelectorAll('[data-real] button, [data-real] a.btn-premium').forEach(el=>{
     if (el.closest('[data-modal]')) return;
+    if (el.hasAttribute('data-saldo-tab')) return;
     if (el.textContent.trim().includes('Ajukan')) return;
     el.setAttribute('disabled','');
     el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');

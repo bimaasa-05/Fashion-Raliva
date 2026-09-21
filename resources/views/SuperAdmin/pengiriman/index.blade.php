@@ -16,6 +16,16 @@
 @include('partials.flash-toast')
 
 <div class="space-y-section-gap">
+    <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+        </span>
+        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Pengiriman diperbarui real-time
+        </span>
+    </div>
     <!-- Hero Section -->
     <section class="relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl card-premium hero-glow">
         <span class="material-symbols-outlined fill absolute -right-6 -bottom-10 text-[220px] text-gold-accent/[0.06] pointer-events-none select-none" aria-hidden="true">local_shipping</span>
@@ -49,7 +59,7 @@
         </div>
     </section>
 
-    <section data-table-scope class="rise rise-d1 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section data-table-scope data-reveal class="rise rise-d1 bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Pengiriman</h2>
             <button type="button" data-filter-toggle data-filter-target="#pengiriman-filter" class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
@@ -86,25 +96,26 @@
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[14px]">inventory_2</span>
                     <span id="pengiriman-result-count">{{ $shipments->total() }}</span> pengiriman
-                </p>
+                </span>
             </div>
         </div>
 
         <!-- Table -->
         <div class="overflow-x-auto hidden md:block">
-                <table class="w-full min-w-full bg-surface-container-lowest rounded-lg overflow-hidden premium-table">
+                <table class="w-full min-w-full bg-surface-container-lowest rounded-xl overflow-hidden premium-table">
                     <thead>
                         <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
-                            <th class="p-6 w-12 text-center">No.</th>
-                            <th class="p-6">ID Pesanan</th>
-                            <th class="p-6">Toko</th>
-                            <th class="p-6">Kurir</th>
-                            <th class="p-6">No. Resi</th>
-                            <th class="p-6">Ongkir</th>
-                            <th class="p-6">Status</th>
-                            <th class="p-6 text-right">Aksi</th>
+                            <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">No.</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">ID Pesanan</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Toko</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Kurir</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">No. Resi</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Ongkir</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Status</th>
+                            <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -112,6 +123,7 @@
                             @php
 $pelanggan = $s->order?->checkout?->user;
                                 $pelNama = $pelanggan?->nama_lengkap ?? $s->order?->checkout?->nama_penerima ?? '-';
+                                $statusClass = match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant' };
                             @endphp
                             <tr data-table-row
                                         data-status="{{ $s->status }}"
@@ -127,13 +139,32 @@ $pelanggan = $s->order?->checkout?->user;
                                     <form method="POST" action="{{ route('superadmin.pengiriman.status', $s->shipment_id) }}" class="inline-flex">
                                         @csrf
                                         @method('PUT')
-                                        <select name="status" data-prev="{{ $s->status }}" onchange="openConfirmPengiriman(this)" class="bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant', } }}">
-                                            <option value="pending" {{ $s->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                            <option value="diproses" {{ $s->status === 'diproses' ? 'selected' : '' }}>Diproses</option>
-                                            <option value="dikirim" {{ $s->status === 'dikirim' ? 'selected' : '' }}>Dikirim</option>
-                                            <option value="diterima" {{ $s->status === 'diterima' ? 'selected' : '' }}>Diterima</option>
-                                            <option value="gagal" {{ $s->status === 'gagal' ? 'selected' : '' }}>Gagal</option>
-                                        </select>
+                                        <div class="relative" id="kirim-{{ $s->shipment_id }}-dd">
+                                            <button type="button" data-dd-trigger id="kirim-{{ $s->shipment_id }}-trigger" onclick="toggleDropdown('kirim-{{ $s->shipment_id }}')" aria-haspopup="listbox" aria-expanded="false"
+                                                class="flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer text-left min-w-[120px] {{ $statusClass }}">
+                                                <span id="kirim-{{ $s->shipment_id }}-label" class="truncate">{{ ucfirst($s->status) }}</span>
+                                                <span class="material-symbols-outlined text-[14px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="kirim-{{ $s->shipment_id }}-chevron">expand_more</span>
+                                            </button>
+                                            <div id="kirim-{{ $s->shipment_id }}-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                                                class="hidden absolute left-0 top-full mt-1 w-full min-w-[140px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                                                <button type="button" role="option" aria-selected="{{ $s->status === 'pending' ? 'true' : 'false' }}" data-dd-option="pending" onclick="openConfirmPengiriman('kirim', {{ $s->shipment_id }}, 'pending')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                                    Pending<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'pending' ? '' : 'hidden' }}">check</span>
+                                                </button>
+                                                <button type="button" role="option" aria-selected="{{ $s->status === 'diproses' ? 'true' : 'false' }}" data-dd-option="diproses" onclick="openConfirmPengiriman('kirim', {{ $s->shipment_id }}, 'diproses')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                                    Diproses<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diproses' ? '' : 'hidden' }}">check</span>
+                                                </button>
+                                                <button type="button" role="option" aria-selected="{{ $s->status === 'dikirim' ? 'true' : 'false' }}" data-dd-option="dikirim" onclick="openConfirmPengiriman('kirim', {{ $s->shipment_id }}, 'dikirim')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                                    Dikirim<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'dikirim' ? '' : 'hidden' }}">check</span>
+                                                </button>
+                                                <button type="button" role="option" aria-selected="{{ $s->status === 'diterima' ? 'true' : 'false' }}" data-dd-option="diterima" onclick="openConfirmPengiriman('kirim', {{ $s->shipment_id }}, 'diterima')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                                    Diterima<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diterima' ? '' : 'hidden' }}">check</span>
+                                                </button>
+                                                <button type="button" role="option" aria-selected="{{ $s->status === 'gagal' ? 'true' : 'false' }}" data-dd-option="gagal" onclick="openConfirmPengiriman('kirim', {{ $s->shipment_id }}, 'gagal')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                                    Gagal<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'gagal' ? '' : 'hidden' }}">check</span>
+                                                </button>
+                                            </div>
+                                            <input type="hidden" name="status" value="{{ $s->status }}" />
+                                        </div>
                                     </form>
                                 </td>
                                 <td class="p-6 text-right">
@@ -180,8 +211,10 @@ $pelanggan = $s->order?->checkout?->user;
                     @php
 $pelanggan = $s->order?->checkout?->user;
                         $pelNama = $pelanggan?->nama_lengkap ?? $s->order?->checkout?->nama_penerima ?? '-';
+                        $statusClass = match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant' };
                     @endphp
-                    <article data-table-row data-status="{{ $s->status }}" data-search="{{ strtolower(($s->order->nomor_order ?? '').' '.($s->order->store->nama_toko ?? '').' '.($s->courier->nama_kurir ?? '').' '.($s->nomor_resi ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    <article data-table-row data-status="{{ $s->status }}" data-search="{{ strtolower(($s->order->nomor_order ?? '').' '.($s->order->store->nama_toko ?? '').' '.($s->courier->nama_kurir ?? '').' '.($s->nomor_resi ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">local_shipping</span>
                         <div class="flex items-start justify-between gap-3 mb-3">
                             <div class="min-w-0">
                                 <p class="font-mono font-bold text-on-surface leading-tight">{{ $s->order->nomor_order ?? '-' }}</p>
@@ -190,13 +223,32 @@ $pelanggan = $s->order?->checkout?->user;
                             <form method="POST" action="{{ route('superadmin.pengiriman.status', $s->shipment_id) }}" class="shrink-0">
                                 @csrf
                                 @method('PUT')
-                                <select name="status" data-prev="{{ $s->status }}" onchange="openConfirmPengiriman(this)" class="bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer {{ match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant', } }}">
-                                    <option value="pending" {{ $s->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="diproses" {{ $s->status === 'diproses' ? 'selected' : '' }}>Diproses</option>
-                                    <option value="dikirim" {{ $s->status === 'dikirim' ? 'selected' : '' }}>Dikirim</option>
-                                    <option value="diterima" {{ $s->status === 'diterima' ? 'selected' : '' }}>Diterima</option>
-                                    <option value="gagal" {{ $s->status === 'gagal' ? 'selected' : '' }}>Gagal</option>
-                                </select>
+                                <div class="relative" id="kirim-m-{{ $s->shipment_id }}-dd">
+                                    <button type="button" data-dd-trigger id="kirim-m-{{ $s->shipment_id }}-trigger" onclick="toggleDropdown('kirim-m-{{ $s->shipment_id }}')" aria-haspopup="listbox" aria-expanded="false"
+                                        class="flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer text-left min-w-[120px] {{ $statusClass }}">
+                                        <span id="kirim-m-{{ $s->shipment_id }}-label" class="truncate">{{ ucfirst($s->status) }}</span>
+                                        <span class="material-symbols-outlined text-[14px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="kirim-m-{{ $s->shipment_id }}-chevron">expand_more</span>
+                                    </button>
+                                    <div id="kirim-m-{{ $s->shipment_id }}-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                                        class="hidden absolute left-0 top-full mt-1 w-full min-w-[140px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                                        <button type="button" role="option" aria-selected="{{ $s->status === 'pending' ? 'true' : 'false' }}" data-dd-option="pending" onclick="openConfirmPengiriman('kirim-m', {{ $s->shipment_id }}, 'pending')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                            Pending<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'pending' ? '' : 'hidden' }}">check</span>
+                                        </button>
+                                        <button type="button" role="option" aria-selected="{{ $s->status === 'diproses' ? 'true' : 'false' }}" data-dd-option="diproses" onclick="openConfirmPengiriman('kirim-m', {{ $s->shipment_id }}, 'diproses')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                            Diproses<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diproses' ? '' : 'hidden' }}">check</span>
+                                        </button>
+                                        <button type="button" role="option" aria-selected="{{ $s->status === 'dikirim' ? 'true' : 'false' }}" data-dd-option="dikirim" onclick="openConfirmPengiriman('kirim-m', {{ $s->shipment_id }}, 'dikirim')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                            Dikirim<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'dikirim' ? '' : 'hidden' }}">check</span>
+                                        </button>
+                                        <button type="button" role="option" aria-selected="{{ $s->status === 'diterima' ? 'true' : 'false' }}" data-dd-option="diterima" onclick="openConfirmPengiriman('kirim-m', {{ $s->shipment_id }}, 'diterima')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                            Diterima<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diterima' ? '' : 'hidden' }}">check</span>
+                                        </button>
+                                        <button type="button" role="option" aria-selected="{{ $s->status === 'gagal' ? 'true' : 'false' }}" data-dd-option="gagal" onclick="openConfirmPengiriman('kirim-m', {{ $s->shipment_id }}, 'gagal')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                            Gagal<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'gagal' ? '' : 'hidden' }}">check</span>
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="status" value="{{ $s->status }}" />
+                                </div>
                             </form>
                         </div>
 
@@ -251,89 +303,89 @@ $pelanggan = $s->order?->checkout?->user;
 </div>
 
 <!-- Detail Modal -->
-<div id="detail-modal" class="fixed inset-0 z-[70] hidden">
-    <div class="absolute inset-0 bg-black/50" onclick="closeModal()"></div>
-    <div class="relative mx-auto w-full max-w-md mt-[10vh] bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[80vh] overflow-y-auto">
-        <div class="flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-            <div>
-                <p class="raliva-label text-gold-accent">Detail Pengiriman</p>
-                <h3 id="d-order" class="font-title-md text-title-md text-on-surface premium-heading mt-1">-</h3>
-            </div>
-            <button type="button" onclick="closeModal()" class="text-on-surface-variant hover:text-on-surface transition-colors">
-                <span class="material-symbols-outlined">close</span>
-            </button>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'detail-modal',
+    'dataModal' => true,
+    'close' => 'closeModal',
+    'icon' => 'local_shipping',
+    'title' => 'Detail Pengiriman',
+    'subtitle' => '<span id="d-order">-</span>',
+    'subtitleRaw' => true,
+])
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Toko</label>
+            <p id="d-toko" class="text-sm font-semibold text-on-surface">-</p>
         </div>
-        <div class="p-6 space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Toko</label>
-                    <p id="d-toko" class="text-sm font-semibold text-on-surface">-</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Pelanggan</label>
-                    <p id="d-pelanggan" class="text-sm font-semibold text-on-surface">-</p>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Kurir</label>
-                    <p id="d-kurir" class="text-sm font-semibold text-on-surface">-</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">No. Resi</label>
-                    <p id="d-resi" class="text-sm font-semibold text-on-surface font-mono">-</p>
-                </div>
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-on-surface-variant mb-1">Ongkir</label>
-                <p id="d-ongkir" class="text-sm font-bold text-gold-accent">-</p>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Estimasi Tiba</label>
-                    <p id="d-estimasi" class="text-sm font-semibold text-on-surface">-</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Status</label>
-                    <p id="d-status" class="text-sm font-semibold">-</p>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Dikirim Pada</label>
-                    <p id="d-dikirim" class="text-sm font-semibold text-on-surface">-</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-on-surface-variant mb-1">Diterima Pada</label>
-                    <p id="d-diterima" class="text-sm font-semibold text-on-surface">-</p>
-                </div>
-            </div>
-        </div>
-        <div class="px-6 pb-6">
-            <button type="button" onclick="closeModal()" class="w-full py-3 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Pelanggan</label>
+            <p id="d-pelanggan" class="text-sm font-semibold text-on-surface">-</p>
         </div>
     </div>
-</div>
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Kurir</label>
+            <p id="d-kurir" class="text-sm font-semibold text-on-surface">-</p>
+        </div>
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">No. Resi</label>
+            <p id="d-resi" class="text-sm font-semibold text-on-surface font-mono">-</p>
+        </div>
+    </div>
+    <div>
+        <label class="block text-xs font-medium text-on-surface-variant mb-1">Ongkir</label>
+        <p id="d-ongkir" class="text-sm font-bold text-gold-accent">-</p>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Estimasi Tiba</label>
+            <p id="d-estimasi" class="text-sm font-semibold text-on-surface">-</p>
+        </div>
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Status</label>
+            <p id="d-status" class="text-sm font-semibold">-</p>
+        </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Dikirim Pada</label>
+            <p id="d-dikirim" class="text-sm font-semibold text-on-surface">-</p>
+        </div>
+        <div>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">Diterima Pada</label>
+            <p id="d-diterima" class="text-sm font-semibold text-on-surface">-</p>
+        </div>
+    </div>
+    @slot('footer')
+        <button type="button" onclick="closeModal()" class="btn-modal btn-modal-ghost w-full">Tutup</button>
+    @endslot
+@endcomponent
 
 <!-- Modal Konfirmasi Ubah Status Pengiriman -->
-<div id="confirmPengirimanModal" class="fixed inset-0 z-[75] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeConfirmPengiriman()">
-    <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-        <div class="p-8">
-            <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-5">
-                <span class="material-symbols-outlined text-gold-accent text-[28px]">local_shipping</span>
-            </div>
-            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Ubah status pengiriman?</h3>
-            <p class="text-on-surface-variant text-sm text-center mb-4">Status akan diubah menjadi <span id="confirm-pengiriman-status" class="font-bold text-on-surface">-</span>.</p>
-            <div class="flex space-x-3">
-                <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeConfirmPengiriman()">Batal</button>
-                <button type="button" id="confirm-pengiriman-submit" class="flex-1 bg-deep-onyx text-on-primary font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-black transition-colors rounded-lg btn-premium">Ya, Ubah</button>
-            </div>
-        </div>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'confirmPengirimanModal',
+    'icon' => 'local_shipping',
+    'iconBox' => 'bg-gold-accent/20 border-gold-accent/30',
+    'iconColor' => 'text-gold-accent',
+    'zIndex' => 75,
+    'close' => 'closeConfirmPengiriman',
+    'dataModal' => true,
+])
+    <div class="p-6">
+        <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Ubah status pengiriman?</h3>
+        <p class="text-on-surface-variant text-sm text-center mb-6">Status akan diubah menjadi <span id="confirm-pengiriman-status" class="font-bold text-on-surface">-</span>.</p>
     </div>
-</div>
+    @slot('footer')
+        <div class="flex space-x-3">
+            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeConfirmPengiriman()">Batal</button>
+            <button type="button" id="confirm-pengiriman-submit" class="flex-1 btn-modal btn-modal-primary">Ya, Ubah</button>
+        </div>
+    @endslot
+@endcomponent
 @endsection
 
 @push('scripts')
+@include('SuperAdmin.partials.dd-helpers')
 <script>
     // === FILTER & SEARCH ===
     const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
@@ -438,11 +490,35 @@ $pelanggan = $s->order?->checkout?->user;
         document.body.style.overflow = '';
     }
 
-    let _pendingPengirimanSelect = null;
-    function openConfirmPengiriman(sel) {
-        _pendingPengirimanSelect = sel;
-        const label = sel.options[sel.selectedIndex]?.text?.trim() || sel.value;
-        document.getElementById('confirm-pengiriman-status').textContent = label;
+    const pengStatusLabels = { pending: 'Pending', diproses: 'Diproses', dikirim: 'Dikirim', diterima: 'Diterima', gagal: 'Gagal' };
+    const pengStatusTokens = {
+        diterima: ['text-success', 'border-success/30'],
+        dikirim: ['text-secondary', 'border-secondary/30'],
+        diproses: ['text-info', 'border-info/30'],
+        gagal: ['text-error', 'border-error/30'],
+        pending: ['text-on-surface-variant', 'border-outline-variant'],
+    };
+    function applyPengStatusClass(suffix, id, status) {
+        const trigger = document.getElementById(suffix + '-' + id + '-trigger');
+        if (!trigger) return;
+        const known = Object.values(pengStatusTokens).flat();
+        known.forEach((c) => trigger.classList.remove(c));
+        (pengStatusTokens[status] ?? pengStatusTokens.pending).forEach((c) => trigger.classList.add(c));
+    }
+    let _pendingPengiriman = null;
+    function openConfirmPengiriman(suffix, id, value) {
+        if (_pendingPengiriman && (_pendingPengiriman.suffix !== suffix || _pendingPengiriman.id !== id)) {
+            const p = _pendingPengiriman;
+            ddSet(p.suffix + '-' + p.id, p.prev, pengStatusLabels[p.prev] ?? p.prev);
+            applyPengStatusClass(p.suffix, p.id, p.prev);
+        }
+        const root = document.getElementById(suffix + '-' + id + '-dd');
+        if (!root) return;
+        const pre = root.querySelector('[data-dd-value]');
+        _pendingPengiriman = { suffix, id, prev: pre ? pre.value : 'pending', value };
+        ddSet(suffix + '-' + id, value, pengStatusLabels[value] ?? value);
+        applyPengStatusClass(suffix, id, value);
+        document.getElementById('confirm-pengiriman-status').textContent = pengStatusLabels[value] ?? value;
         const m = document.getElementById('confirmPengirimanModal');
         m.classList.remove('hidden');
         m.classList.add('flex');
@@ -450,15 +526,18 @@ $pelanggan = $s->order?->checkout?->user;
     function closeConfirmPengiriman() {
         const m = document.getElementById('confirmPengirimanModal');
         if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
-        if (_pendingPengirimanSelect) {
-            _pendingPengirimanSelect.value = _pendingPengirimanSelect.dataset.prev;
-            _pendingPengirimanSelect = null;
+        if (_pendingPengiriman) {
+            const { suffix, id, prev } = _pendingPengiriman;
+            ddSet(suffix + '-' + id, prev, pengStatusLabels[prev] ?? prev);
+            applyPengStatusClass(suffix, id, prev);
+            _pendingPengiriman = null;
         }
     }
     document.getElementById('confirm-pengiriman-submit')?.addEventListener('click', () => {
-        if (_pendingPengirimanSelect) {
-            const f = _pendingPengirimanSelect.closest('form');
-            _pendingPengirimanSelect = null;
+        if (_pendingPengiriman) {
+            const root = document.getElementById(_pendingPengiriman.suffix + '-' + _pendingPengiriman.id + '-dd');
+            const f = root?.closest('form');
+            _pendingPengiriman = null;
             if (f) f.submit();
         }
         const m = document.getElementById('confirmPengirimanModal');
@@ -466,7 +545,7 @@ $pelanggan = $s->order?->checkout?->user;
     });
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') { closeModal(); closeConfirmPengiriman(); }
+        if (e.key === 'Escape') { closeAllDropdowns(); closeModal(); closeConfirmPengiriman(); }
     });
 </script>
 @endpush

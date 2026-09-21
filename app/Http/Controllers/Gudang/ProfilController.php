@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Gudang;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Profile\UpdatePasswordRequest;
+use App\Http\Requests\Profile\UpdateProfileRequest;
 use App\Models\Notification;
 use App\Models\User;
 use App\Support\ActivityLogger;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Support\ProfilePhoto;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class ProfilController extends Controller
 {
@@ -27,51 +27,26 @@ class ProfilController extends Controller
         ]);
     }
 
-    public function updateProfile(Request $request)
+    public function updateProfile(UpdateProfileRequest $request)
     {
         $user = User::firstWhere('user_id', auth()->id());
 
-        $data = $request->validate([
-            'nama_lengkap' => 'required|string|max:150',
-            'email' => 'required|email|max:150|unique:users,email,'.$user->user_id.',user_id',
-            'nomor_telepon' => 'nullable|string|max:30',
-            'foto_profil' => 'nullable|image|max:2048',
-        ], [
-            'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
-            'nama_lengkap.max' => 'Nama lengkap maksimal 150 karakter.',
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email sudah digunakan.',
-            'nomor_telepon.max' => 'Nomor telepon maksimal 30 karakter.',
-            'foto_profil.image' => 'File harus berupa gambar.',
-            'foto_profil.max' => 'Ukuran foto maksimal 2MB.',
-        ]);
+        $data = $request->validated();
+        $lama = $user->only(['nama_lengkap', 'email', 'nomor_telepon', 'foto_profil', 'gender', 'tanggal_lahir']);
 
-        $lama = $user->only(['nama_lengkap', 'email', 'nomor_telepon', 'foto_profil']);
-
-        if ($request->hasFile('foto_profil')) {
-            $destDir = public_path('profil');
-            if (! is_dir($destDir)) {
-                mkdir($destDir, 0755, true);
-            }
-
-            if ($user->foto_profil) {
-                $oldFile = public_path($user->foto_profil);
-                if (file_exists($oldFile)) {
-                    @unlink($oldFile);
-                }
-            }
-
-            $file = $request->file('foto_profil');
-            $filename = 'gudang-'.$user->user_id.'-'.Str::random(20).'.'.$file->getClientOriginalExtension();
-            $file->move($destDir, $filename);
-
-            $data['foto_profil'] = 'profil/'.$filename;
+        if ($request->boolean('remove_photo')) {
+            ProfilePhoto::delete($user->foto_profil);
+            $data['foto_profil'] = null;
+        } elseif ($request->hasFile('foto_profil')) {
+            $data['foto_profil'] = ProfilePhoto::replace(
+                $request->file('foto_profil'),
+                (int) $user->user_id,
+                'gudang',
+                $user->foto_profil
+            );
         }
 
         $user->update($data);
-
-        Auth::login($user);
 
         ActivityLogger::log(
             'profile.update',
@@ -90,30 +65,17 @@ class ProfilController extends Controller
         ]);
     }
 
-    public function updatePassword(Request $request)
+    public function updatePassword(UpdatePasswordRequest $request)
     {
         $user = User::firstWhere('user_id', auth()->id());
 
-        $data = $request->validate([
-            'password_lama' => 'required',
-            'password_baru' => 'required|string|min:8|confirmed',
-        ], [
-            'password_lama.required' => 'Password lama wajib diisi.',
-            'password_baru.required' => 'Password baru wajib diisi.',
-            'password_baru.min' => 'Password baru minimal 8 karakter.',
-            'password_baru.confirmed' => 'Konfirmasi password baru tidak cocok.',
-        ]);
+        $data = $request->validated();
 
         if (! Hash::check($data['password_lama'], $user->password)) {
-            return back()->with('toast', [
-                'message' => 'Password lama salah.',
-                'icon' => 'gpp_maybe',
-            ]);
+            return back()->withErrors(['password_lama' => 'Kata sandi saat ini salah.'])->withInput();
         }
 
         $user->update(['password' => $data['password_baru']]);
-
-        Auth::login($user);
 
         ActivityLogger::log(
             'profile.password.update',

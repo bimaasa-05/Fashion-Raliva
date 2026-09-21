@@ -162,65 +162,70 @@
 
 @push('modals')
 <!-- Modal Edit Biaya -->
-<form method="POST" action="{{ route('superadmin.pajak-biaya.update-pajak') }}" id="edit-fee-form">
-    @csrf
-    @method('PUT')
-<div id="modal-edit-biaya" data-modal class="fixed inset-0 z-[80] hidden">
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close></div>
-    <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
-        <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'modal-edit-biaya',
+    'dataModal' => true,
+    'icon' => 'percent',
+    'title' => 'Ubah Pajak Penjualan (PPN)',
+    'subtitle' => 'Sesuaikan dengan tarif PPN yang berlaku.',
+    'size' => 'lg',
+    'zIndex' => 80,
+])
+    <form method="POST" action="{{ route('superadmin.pajak-biaya.update-pajak') }}" id="edit-fee-form">
+        @csrf
+        @method('PUT')
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Ubah Pajak Penjualan (PPN)</h3>
-                <p class="text-on-surface-variant font-body-md text-sm mt-1">Sesuaikan dengan tarif PPN yang berlaku.</p>
-            </div>
-            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <div class="p-6 space-y-5">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="feePercentage">Tarif Pajak (%)</label>
-                    <div class="relative">
-                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors placeholder-on-surface-variant/50" id="feePercentage" name="pajak_persen" max="50" min="0" step="0.1" type="number" value="{{ $pajak }}" required />
-                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">%</div>
-                    </div>
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="feeName">Label Pajak</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors placeholder-on-surface-variant/50" id="feeName" type="text" value="PPN" disabled />
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="feePercentage">Tarif Pajak (%)</label>
+                <div class="relative">
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors placeholder-on-surface-variant/50" id="feePercentage" name="pajak_persen" max="50" min="0" step="0.1" type="number" value="{{ $pajak }}" required />
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">%</div>
                 </div>
             </div>
-            <div class="bg-surface-container border border-muted-border rounded-lg p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-gutter">
-                <div>
-                    <span class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Preview Perhitungan</span>
-                    <span class="font-body-md text-body-md">Pada subtotal Rp 100.000</span>
-                </div>
-                <div class="text-right">
-                    <span class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Pajak Terkumpul</span>
-                    <span class="font-headline-lg text-headline-lg text-secondary" id="fee-preview-amount">Rp {{ number_format(100000 * $pajak / 100, 0, ',', '.') }}</span>
-                </div>
-            </div>
-            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Review Perubahan</button>
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="feeName">Label Pajak</label>
+                <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors placeholder-on-surface-variant/50" id="feeName" type="text" value="PPN" disabled />
             </div>
         </div>
-    </div>
-</div>
-</form>
+        <div class="bg-surface-container border border-muted-border rounded-lg p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <span class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Preview Perhitungan</span>
+                <span class="font-body-md text-body-md">Pada subtotal Rp 100.000</span>
+            </div>
+            <div class="text-right">
+                <span class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Pajak Terkumpul</span>
+                <span class="font-headline-lg text-headline-lg text-secondary" id="fee-preview-amount">Rp {{ number_format(100000 * $pajak / 100, 0, ',', '.') }}</span>
+            </div>
+        </div>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="edit-fee-form" class="btn-modal btn-modal-primary">Review Perubahan</button>
+            </div>
+        @endslot
+    </form>
+@endcomponent
 
 <!-- Confirmation Dialog Overlay -->
-<div class="fixed inset-0 z-[95] hidden bg-surface-container/80 backdrop-blur-sm flex items-center justify-center p-gutter" id="confirm-dialog">
-    <div class="bg-surface border border-muted-border p-section-gap max-w-md w-full shadow-2xl relative rounded-xl">
-        <button class="absolute top-4 right-4 text-on-surface-variant hover:text-deep-onyx transition-colors" onclick="document.getElementById('confirm-dialog').classList.add('hidden')"><span class="material-symbols-outlined">close</span></button>
-        <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-gutter">
-            <span class="material-symbols-outlined text-gold-accent text-[28px]">published_with_changes</span>
-        </div>
-        <h3 class="font-display-lg text-headline-lg-mobile md:text-headline-lg mb-gutter text-center">Konfirmasi Perubahan</h3>
-        <p class="font-body-md text-body-md text-on-surface-variant mb-container-margin text-center">Anda akan mengubah tarif <strong class="text-deep-onyx">Pajak Penjualan (PPN)</strong>. Pajak dipungut atas nama pemerintah dan wajib disetor — bukan pendapatan Raliva.</p>
-        <div class="flex flex-col gap-gutter">
-            <button class="w-full bg-secondary text-on-secondary font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-secondary/85 transition-colors" onclick="document.getElementById('confirm-dialog').classList.add('hidden'); document.getElementById('edit-fee-form').submit();">Konfirmasi & Terapkan</button>
-            <button class="w-full border border-muted-border text-deep-onyx font-label-sm text-label-sm uppercase py-4 tracking-widest hover:bg-surface-container-lowest transition-colors" onclick="document.getElementById('confirm-dialog').classList.add('hidden')">Batal</button>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'confirm-dialog',
+    'icon' => 'published_with_changes',
+    'iconBox' => 'bg-gold-accent/10 border-gold-accent/25',
+    'iconColor' => 'text-gold-accent',
+    'zIndex' => 95,
+])
+    <div class="p-6 space-y-4">
+        <div class="text-center">
+            <h3 class="font-display-lg text-headline-lg-mobile md:text-headline-lg">Konfirmasi Perubahan</h3>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-2">Anda akan mengubah tarif <strong class="text-deep-onyx">Pajak Penjualan (PPN)</strong>. Pajak dipungut atas nama pemerintah dan wajib disetor — bukan pendapatan Raliva.</p>
         </div>
     </div>
+    @slot('footer')
+        <div class="flex flex-col gap-4">
+            <button class="btn-modal btn-modal-primary w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden'); document.getElementById('edit-fee-form').submit();">Konfirmasi &amp; Terapkan</button>
+            <button class="btn-modal btn-modal-ghost w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden')">Batal</button>
+        </div>
+    @endslot
+@endcomponent
 </div>
 @endpush

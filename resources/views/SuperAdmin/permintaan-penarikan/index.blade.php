@@ -26,43 +26,41 @@
 @include('partials.flash-toast')
 
 <div class="space-y-section-gap">
+    <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+        </span>
+        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Data pencairan diperbarui real-time
+        </span>
+    </div>
     <section>
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Pengajuan</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-surface-container-high flex items-center justify-center rounded-full">
-                        <span class="material-symbols-outlined text-on-surface">pending_actions</span>
-                    </div>
-                    <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Pengajuan Menunggu</h3>
-                </div>
-                <p class="font-headline-lg-mobile text-headline-lg-mobile text-primary">{{ $stats['pending'] }}</p>
-                <p class="font-body-md text-body-md text-on-surface-variant mt-2">Menunggu verifikasi dan persetujuan</p>
+        <div data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pengajuan Menunggu</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-primary break-words">{{ $stats['pending'] }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">menunggu verifikasi &amp; persetujuan</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">pending_actions</span>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-secondary-container flex items-center justify-center rounded-full">
-                        <span class="material-symbols-outlined text-white">account_balance_wallet</span>
-                    </div>
-                    <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Total Nominal Menunggu</h3>
-                </div>
-                <p class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp {{ number_format($stats['nominal_menunggu'], 0, ',', '.') }}</p>
-                <p class="font-body-md text-body-md text-on-surface-variant mt-2">Total nominal diajukan Owner</p>
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-gold-accent/25 rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium hover:border-gold-accent transition-colors hero-glow">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Nominal Menunggu</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold break-words">Rp {{ number_format($stats['nominal_menunggu'], 0, ',', '.') }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">diajukan Owner</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-gold-accent/10 flex items-center justify-center rounded-full">
-                        <span class="material-symbols-outlined text-gold-accent">task_alt</span>
-                    </div>
-                    <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Total Disetujui</h3>
-                </div>
-                <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Rp {{ number_format($stats['total_semua'], 0, ',', '.') }}</p>
-                <p class="font-body-md text-body-md text-on-surface-variant mt-2">Akumulasi pencairan diproses / dibayar</p>
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Disetujui</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">Rp {{ number_format($stats['total_semua'], 0, ',', '.') }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">pencairan diproses / dibayar</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">task_alt</span>
             </div>
         </div>
     </section>
 
-    <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Pengajuan Pencairan</h2>
             <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
@@ -98,9 +96,10 @@
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[14px]">inventory_2</span>
                     <span id="result-count">{{ $withdrawals->count() }}</span> pengajuan
-                </p>
+                </span>
             </div>
         </div>
 
@@ -109,13 +108,13 @@
             <table class="w-full min-w-[850px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
-                        <th class="p-6 w-12 text-center">No.</th>
-                        <th class="p-6">Toko / Pemilik</th>
-                        <th class="p-6">Detail Pengajuan</th>
-                        <th class="p-6">Info Tujuan</th>
-                        <th class="p-6 text-center">Status</th>
-                        <th class="p-6 text-center">Dibayar</th>
-                        <th class="p-6 text-center">Aksi</th>
+                        <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">No.</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Toko / Pemilik</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Detail Pengajuan</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Info Tujuan</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Dibayar</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -210,7 +209,8 @@
                     $initialStore = $w->store?->nama_toko;
                     $initial = strtoupper(substr(collect(preg_split('/\s+/', trim($initialStore ?? '')))->map(fn ($k) => mb_substr($k, 0, 1))->implode(''), 0, 2)) ?: '?';
                 @endphp
-                <article data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store?->nama_toko ?? '').' '.($w->store?->owner?->nama_lengkap ?? '').' '.($w->tujuan_penyedia)) }}" data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store?->nama_toko ?? '-' }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                <article data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store?->nama_toko ?? '').' '.($w->store?->owner?->nama_lengkap ?? '').' '.($w->tujuan_penyedia)) }}" data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store?->nama_toko ?? '-' }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-10 h-10 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center font-label-sm shrink-0">{{ $initial }}</div>
@@ -279,61 +279,71 @@
 </div>
 
 <!-- Dialogs -->
-<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="paid-dialog">
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'paid-dialog',
+    'dataModal' => true,
+    'zIndex' => 60,
+    'icon' => 'local_atm',
+    'title' => 'Tandai Sudah Dibayar',
+])
     <form method="POST" action="" id="paid-form" enctype="multipart/form-data" onsubmit="hideDialog('paid-dialog')">
         @csrf
-        <div class="bg-surface-container-lowest border border-gold-accent/25 p-6 max-w-md w-full shadow-2xl rounded-xl">
-            <div class="w-14 h-14 rounded-full bg-secondary-container/30 border border-secondary/25 flex items-center justify-center mx-auto mb-4">
-                <span class="material-symbols-outlined text-secondary text-[28px]">local_atm</span>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-2">Konfirmasikan bahwa dana sebesar <span id="paid-nominal" class="font-title-md text-gold-accent">-</span> untuk <span id="paid-toko" class="font-bold text-on-surface">-</span> telah dikirim ke rekening tujuan.</p>
+        <div class="mt-5 space-y-4">
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Bukti Transfer <span class="text-error">*</span></label>
+                <input type="file" name="file_bukti" required accept=".jpg,.jpeg,.png,.pdf"
+                    class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
+                <p class="text-on-surface-variant text-[11px] mt-2 inline-flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">info</span>Wajib dilampirkan sebagai bukti transparansi (JPG, PNG, atau PDF, maks 5MB).</p>
             </div>
-            <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4 text-center">Tandai Sudah Dibayar</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant mb-2 text-center">Konfirmasikan bahwa dana sebesar <span id="paid-nominal" class="font-title-md text-gold-accent">-</span> untuk <span id="paid-toko" class="font-bold text-on-surface">-</span> telah dikirim ke rekening tujuan.</p>
-            <div class="mt-5 space-y-4">
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Bukti Transfer <span class="text-error">*</span></label>
-                    <input type="file" name="file_bukti" required accept=".jpg,.jpeg,.png,.pdf"
-                        class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
-                    <p class="text-on-surface-variant text-[11px] mt-2 inline-flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">info</span>Wajib dilampirkan sebagai bukti transparansi (JPG, PNG, atau PDF, maks 5MB).</p>
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Deskripsi / No. Referensi (opsional)</label>
-                    <input type="text" name="deskripsi_bukti" maxlength="1000" placeholder="Contoh: Transfer BCA dari rekening platform Raliva"
-                        class="w-full border border-muted-border bg-surface-container-low p-3 font-body-md text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
-                </div>
-            </div>
-            <div class="flex justify-end gap-4 mt-6">
-                <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('paid-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
-                <button type="submit" class="inline-flex items-center gap-1.5 bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium"><span class="material-symbols-outlined text-[16px] leading-none">payments</span>Ya, Sudah Dibayar</button>
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Deskripsi / No. Referensi (opsional)</label>
+                <input type="text" name="deskripsi_bukti" maxlength="1000" placeholder="Contoh: Transfer BCA dari rekening platform Raliva"
+                    class="w-full border border-muted-border bg-surface-container-low p-3 font-body-md text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
             </div>
         </div>
+        @slot('footer')
+            <div class="flex justify-end gap-4">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
+                <button type="submit" form="paid-form" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[16px] leading-none">payments</span>Ya, Sudah Dibayar</button>
+            </div>
+        @endslot
     </form>
-</div>
+@endcomponent
 
-<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="approve-dialog">
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'approve-dialog',
+    'dataModal' => true,
+    'zIndex' => 60,
+    'icon' => 'task_alt',
+    'iconBox' => 'bg-gold-accent/20 border-gold-accent/30',
+    'iconColor' => 'text-gold-accent',
+])
     <form method="POST" action="" id="approve-form" onsubmit="hideDialog('approve-dialog')">
         @csrf
-        <div class="bg-surface-container-lowest border border-gold-accent/25 p-6 max-w-md w-full shadow-2xl rounded-xl">
-            <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-4">
-                <span class="material-symbols-outlined text-gold-accent text-[28px]">task_alt</span>
-            </div>
-            <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4 text-center">Konfirmasi Pencairan</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant mb-8 text-center">Anda akan menyetujui pencairan sebesar <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> ke <span id="approve-toko" class="font-bold text-on-surface">-</span>. Saldo toko akan dikunci untuk proses pembayaran.</p>
-            <div class="flex justify-end gap-4">
-                <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('approve-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
-                <button type="submit" class="inline-flex items-center gap-1.5 bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Konfirmasi Persetujuan</button>
-            </div>
-        </div>
+        <div class="p-6">
+            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Konfirmasi Pencairan</h3>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-6 text-center">Anda akan menyetujui pencairan sebesar <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> ke <span id="approve-toko" class="font-bold text-on-surface">-</span>. Saldo toko akan dikunci untuk proses pembayaran.</p>
+    </div>
     </form>
-</div>
+    @slot('footer')
+        <div class="flex justify-end gap-4">
+            <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
+            <button type="submit" form="approve-form" class="btn-modal btn-modal-success flex-1"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Konfirmasi Persetujuan</button>
+        </div>
+    @endslot
+@endcomponent
 
-<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="reject-dialog">
-    <form method="POST" action="" id="reject-form" onsubmit="hideDialog('reject-dialog')" class="w-full max-w-md">
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'reject-dialog',
+    'dataModal' => true,
+    'zIndex' => 60,
+    'icon' => 'gpp_bad',
+])
+    <form method="POST" action="" id="reject-form" onsubmit="hideDialog('reject-dialog')">
         @csrf
-        <div class="bg-surface-container-lowest border border-error/25 p-6 max-w-md w-full shadow-2xl rounded-xl">
-            <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-4">
-                <span class="material-symbols-outlined text-error text-[28px]">gpp_bad</span>
-            </div>
-            <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-error mb-4 text-center">Tolak Pencairan</h3>
+        <div class="p-6">
+            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Tolak Pencairan</h3>
             <p class="font-body-md text-body-md text-on-surface-variant mb-4 text-center">Anda yakin ingin menolak pengajuan dari <span id="reject-toko" class="font-bold text-on-surface">-</span>?</p>
             <div class="mb-6">
                 <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Alasan Penolakan</label>
@@ -341,13 +351,15 @@
                     class="w-full border border-muted-border bg-surface-container-low p-3 font-body-md text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary h-24"
                     placeholder="Tulis alasan... (minimal 10 karakter)"></textarea>
             </div>
-            <div class="flex justify-end gap-4">
-                <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('reject-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
-                <button type="submit" class="inline-flex items-center gap-1.5 bg-error text-on-error px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full shadow-sm hover:shadow-md hover:-translate-y-px hover:opacity-90 transition-all duration-200"><span class="material-symbols-outlined text-[16px] leading-none">block</span>Tolak Pengajuan</button>
-            </div>
         </div>
     </form>
-</div>
+    @slot('footer')
+        <div class="flex justify-end gap-4">
+            <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
+            <button type="submit" form="reject-form" class="btn-modal btn-modal-danger flex-1"><span class="material-symbols-outlined text-[16px] leading-none">block</span>Tolak Pengajuan</button>
+        </div>
+    @endslot
+@endcomponent
 @endsection
 
 @push('scripts')

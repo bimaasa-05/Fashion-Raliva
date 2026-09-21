@@ -30,4 +30,9 @@ class Supplier extends Model
     {
         return $this->hasMany(WarehouseStock::class, 'supplier_id', 'supplier_id');
     }
+
+    public function bahans(): HasMany
+    {
+        return $this->hasMany(SupplierBahan::class, 'supplier_id', 'supplier_id');
+    }
 }

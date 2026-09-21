@@ -364,10 +364,20 @@
     $step = $selectedStep;
     $statusLabel = \App\Http\Controllers\Customer\OrderTrackingController::STATUS_LABELS[$selected->status] ?? ucfirst(str_replace('_', ' ', $selected->status));
     $isCancelled = $step === null;
+    $isRefund = $selected->status === \App\Models\Order::STATUS_REFUND;
     $shipment = $selected->shipments->first();
     $estDeliv = $shipment?->estimasi_tiba;
     $itemsCount = $selected->items->count();
     $progressWidth = $isCancelled ? 0 : (($step - 1) / 3 * 100);
+    $latestRefund = optional($selected->refunds)->sortByDesc('diajukan_pada')->first();
+    $refundStatus = $latestRefund?->status;
+    $refundPernahAda = $selected->refunds->isNotEmpty();
+    $refundAktif = $selected->refunds->contains(fn ($r) => in_array($r->status, [\App\Models\Refund::STATUS_REQUESTED, \App\Models\Refund::STATUS_ESKALASI, \App\Models\Refund::STATUS_DISETUJUI], true));
+    $refundMeta = match ($refundStatus) {
+        \App\Models\Refund::STATUS_SELESAI => __('Pengembalian dana selesai'),
+        \App\Models\Refund::STATUS_DITOLAK => __('Refund ditolak'),
+        default => $refundStatus ? __('Pengajuan refund sedang diproses') : null,
+    };
     $details = [
         'pending_payment' => match ($selected->checkout?->payment?->status) {
             \App\Models\Payment::STATUS_PENDING => [__('Menunggu pembayaran'), __('Selesaikan pembayaran sebelum batas waktu. Klik Lanjutkan Pembayaran untuk memilih metode dan mengunggah bukti.')],
@@ -379,7 +389,11 @@
         'dikirim' => [__('Sedang dalam perjalanan'), __('Pesanan sudah dikirim dan sedang dalam perjalanan menuju alamat Anda.')],
         'selesai' => [__('Pesanan selesai'), __('Pesanan telah sampai dan selesai. Terima kasih sudah berbelanja di RALIVA.')],
         'dibatalkan' => [__('Pesanan dibatalkan'), __('Pesanan ini telah dibatalkan. Hubungi layanan pelanggan jika ada pertanyaan.')],
-        'refund' => [__('Refund sedang diproses'), __('Pengembalian dana untuk pesanan ini sedang diproses.')],
+        'refund' => match ($refundStatus) {
+            \App\Models\Refund::STATUS_SELESAI => [__('Refund selesai'), __('Pengembalian dana untuk pesanan ini telah diselesaikan oleh toko.')],
+            \App\Models\Refund::STATUS_DITOLAK => [__('Refund ditolak'), ($latestRefund?->alasan_penolakan ?: __('Pengajuan refund Anda ditolak oleh toko.'))],
+            default => [__('Refund sedang diproses'), __('Pengembalian dana untuk pesanan ini sedang diproses.')],
+        },
     ];
     $detail = $details[$selected->status] ?? [__('Pesanan diterima'), __('Pesanan Anda telah tercatat.')];
 @endphp
@@ -414,7 +428,11 @@
 <span class="w-2 h-2 rounded-full {{ $isCancelled ? 'bg-error' : 'bg-secondary' }} animate-pulse"></span>
 <span class="font-label-sm text-label-sm {{ $isCancelled ? 'text-error' : 'text-secondary' }} uppercase tracking-wider font-semibold">{{ $statusLabel }}</span>
 </div>
+@if ($selected->status === \App\Models\Order::STATUS_REFUND && $refundMeta)
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ $refundMeta }}</p>
+@else
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ $estDeliv ? __('Est. delivery:').' '.$estDeliv->format('M j, Y') : __('Menunggu konfirmasi pengiriman') }}</p>
+@endif
 @if($shipment && $shipment->nomor_resi)
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ __('Resi') }}: <strong class="text-on-surface">{{ $shipment->nomor_resi }}</strong> @if($shipment->courier) • {{ $shipment->courier->nama_kurir }}@endif @if($shipment->shippingService) • {{ $shipment->shippingService->nama_layanan }}@endif</p>
 @elseif($shipment)
@@ -509,7 +527,68 @@
 <!-- Visual Tracking Timeline -->
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
-@if ($isCancelled)
+@if ($isRefund)
+<div class="text-center py-1">
+<span class="material-symbols-outlined text-[40px] text-secondary mb-xs block">assignment_return</span>
+<h3 class="font-title-md text-title-md text-on-surface mb-xs">{{ $detail[0] }}</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-md mx-auto">{{ $detail[1] }}</p>
+@if ($latestRefund)
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-md mx-auto mt-2">{{ $latestRefund->kode }} • Rp {{ number_format((float) $latestRefund->jumlah, 0, ',', '.') }} @if($latestRefund->selesai_pada) • {{ $latestRefund->selesai_pada->translatedFormat('d M Y, H:i') }}@endif</p>
+@if ($latestRefund->file_bukti_request || ($latestRefund->status === \App\Models\Refund::STATUS_SELESAI && $latestRefund->file_bukti))
+@php
+$buktiReqUrl = $latestRefund->file_bukti_request ? asset('storage/' . ltrim($latestRefund->file_bukti_request, '/')) : null;
+$buktiReqExt = $latestRefund->file_bukti_request ? strtolower(pathinfo($latestRefund->file_bukti_request, PATHINFO_EXTENSION)) : '';
+$buktiReqNama = $latestRefund->file_bukti_request ? \Illuminate\Support\Str::afterLast($latestRefund->file_bukti_request, '/') : '';
+$buktiTokoUrl = $latestRefund->file_bukti ? asset('storage/' . ltrim($latestRefund->file_bukti, '/')) : null;
+$buktiTokoExt = $latestRefund->file_bukti ? strtolower(pathinfo($latestRefund->file_bukti, PATHINFO_EXTENSION)) : '';
+$buktiTokoNama = $latestRefund->file_bukti ? \Illuminate\Support\Str::afterLast($latestRefund->file_bukti, '/') : '';
+@endphp
+<div class="max-w-2xl mx-auto mt-4 flex flex-wrap justify-center items-start gap-3">
+@if ($buktiReqUrl)
+<div class="w-full sm:max-w-xs rounded-xl border border-outline-variant bg-surface-container-low p-2">
+<p class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant mb-2 flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[16px]">inventory_2</span>{{ __('Foto bukti dari customer') }}</p>
+@if (in_array($buktiReqExt, ['jpg', 'jpeg', 'png'], true))
+<a href="{{ $buktiReqUrl }}" target="_blank" rel="noopener" class="block hover:opacity-90 transition-opacity">
+<img src="{{ $buktiReqUrl }}" alt="{{ $buktiReqNama }}" class="w-full max-h-48 h-auto object-contain rounded-lg" loading="lazy" />
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2 flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[16px]">visibility</span>{{ __('Perbesar foto') }}</p>
+</a>
+@else
+<a href="{{ $buktiReqUrl }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-lg px-3 py-3">
+<span class="material-symbols-outlined text-[18px]">description</span>
+<span class="font-body-sm text-body-sm text-on-surface truncate">{{ $buktiReqNama }}</span>
+<span class="material-symbols-outlined text-[16px]">open_in_new</span>
+</a>
+@endif
+@if ($latestRefund->deskripsi_bukti_request)
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">{{ $latestRefund->deskripsi_bukti_request }}</p>
+@endif
+</div>
+@endif
+@if ($buktiTokoUrl && $latestRefund->status === \App\Models\Refund::STATUS_SELESAI)
+<div class="w-full sm:max-w-xs rounded-xl border border-gold-accent/30 bg-gold-accent/5 p-2">
+<p class="font-label-caps text-label-caps uppercase tracking-wider text-secondary mb-2 flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[16px]">verified</span>{{ __('Bukti transfer penyelesaian') }}</p>
+@if (in_array($buktiTokoExt, ['jpg', 'jpeg', 'png'], true))
+<a href="{{ $buktiTokoUrl }}" target="_blank" rel="noopener" class="block hover:opacity-90 transition-opacity">
+<img src="{{ $buktiTokoUrl }}" alt="{{ $buktiTokoNama }}" class="w-full max-h-48 h-auto object-contain rounded-lg" loading="lazy" />
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2 flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[16px]">visibility</span>{{ __('Perbesar foto') }}</p>
+</a>
+@else
+<a href="{{ $buktiTokoUrl }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-lg px-3 py-3">
+<span class="material-symbols-outlined text-[18px]">description</span>
+<span class="font-body-sm text-body-sm text-on-surface truncate">{{ $buktiTokoNama }}</span>
+<span class="material-symbols-outlined text-[16px]">open_in_new</span>
+</a>
+@endif
+@if ($latestRefund->deskripsi_bukti)
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">{{ $latestRefund->deskripsi_bukti }}</p>
+@endif
+</div>
+@endif
+</div>
+@endif
+@endif
+</div>
+@elseif ($isCancelled)
 <div class="text-center py-1">
 <span class="material-symbols-outlined text-[40px] text-error mb-xs block">cancel</span>
 <h3 class="font-title-md text-title-md text-on-surface mb-xs">{{ $detail[0] }}</h3>
@@ -563,10 +642,30 @@ $active = ! $isCancelled && $step && $stepIndex === $step;
 <a href="{{ route('customer.komplain.create', ['order' => $selected->order_id]) }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">
 <span class="material-symbols-outlined text-[18px]">report</span>{{ __('Ajukan Komplain') }}
 </a>
+@if ($refundPernahAda)
+<div class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-body-sm text-body-sm text-on-surface-variant bg-surface-container-low border border-outline-variant rounded-full px-lg py-3 text-center">
+<span class="material-symbols-outlined text-[18px] text-secondary">hourglass_top</span>
+@if ($refundAktif)
+{{ __('Refund Anda sedang diproses oleh toko.') }}
+@elseif ($refundStatus === \App\Models\Refund::STATUS_SELESAI)
+{{ __('Pengembalian dana telah selesai.') }}
+@elseif ($refundStatus === \App\Models\Refund::STATUS_DITOLAK)
+{{ __('Pengajuan refund telah ditolak (maksimal 1x per pesanan).') }}
+@else
+{{ __('Pengajuan refund telah dilakukan.') }}
+@endif
+</div>
+@else
 <button type="button" onclick="openRefundModal()" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">
 <span class="material-symbols-outlined text-[18px]">assignment_return</span>{{ __('Ajukan Refund') }}
 </button>
+@endif
 </div>
+@if ($refundStatus === \App\Models\Refund::STATUS_DITOLAK)
+<div class="mt-lg text-center bg-error/10 border border-error/15 rounded-xl p-md">
+<p class="font-body-sm text-body-sm text-error">{{ __('Refund Anda ditolak') }}: {{ $latestRefund->alasan_penolakan ?: __('Tidak ada keterangan tambahan.') }} @if(! $refundAktif){{ __('Anda dapat mengajukan refund ulang.') }}@endif</p>
+</div>
+@endif
 <div id="modal-refund" class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
 <div class="absolute inset-0 bg-black/50" onclick="closeRefundModal()"></div>
 <form method="POST" action="{{ route('customer.refund.store') }}" enctype="multipart/form-data" class="relative mx-auto w-full max-w-md bg-surface border border-outline-variant rounded-xl shadow-xl max-h-[85vh] overflow-y-auto p-6 space-y-4">
@@ -642,7 +741,7 @@ $active = ! $isCancelled && $step && $stepIndex === $step;
 @php
 $v = $item->productVariant;
 $img = $v?->product?->images->first()?->file_gambar ?? '';
-$imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/order-'.$item->order_item_id.'/900/1200';
+$imgUrl = $img ? (photo_url($img)) : 'https://picsum.photos/seed/order-'.$item->order_item_id.'/900/1200';
 $warna = $v?->warna;
 $ukuran = $v?->ukuran;
 @endphp

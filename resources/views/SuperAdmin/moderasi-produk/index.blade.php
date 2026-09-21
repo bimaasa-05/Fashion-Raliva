@@ -475,21 +475,23 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- Reject Reason Modal -->
 <form id="reject-product-form" method="POST" action="" onsubmit="closeRejectModal(); closeDetailModal()">
     @csrf
-    <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="rejectModal" onclick="if (event.target === this) closeRejectModal()">
-        <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                    <span class="material-symbols-outlined text-error text-[28px]">block</span>
-                </div>
-                <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Alasan Penolakan</h3>
-                <p class="text-on-surface-variant text-sm text-center mb-4">Alasan dikirim ke <span id="mod-reject-store" class="font-bold text-on-surface">-</span>.</p>
-                <textarea required minlength="10" maxlength="1000" name="alasan" id="reject-alasan-input" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-4" placeholder="Tulis alasan di sini... (minimal 10 karakter)" rows="4"></textarea>
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeRejectModal()">Batal</button>
-                    <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Konfirmasi</button>
-                </div>
-            </div>
+    @component('SuperAdmin.partials.premium-confirm', [
+        'id' => 'rejectModal',
+        'icon' => 'block',
+        'close' => 'closeRejectModal',
+        'dataModal' => true,
+    ])
+        <div class="p-6">
+            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Alasan Penolakan</h3>
+            <p class="text-on-surface-variant text-sm text-center mb-4">Alasan dikirim ke <span id="mod-reject-store" class="font-bold text-on-surface">-</span>.</p>
+            <textarea required minlength="10" maxlength="1000" name="alasan" id="reject-alasan-input" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-4" placeholder="Tulis alasan di sini... (minimal 10 karakter)" rows="4"></textarea>
         </div>
-    </div>
+        @slot('footer')
+            <div class="flex space-x-3">
+                <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeRejectModal()">Batal</button>
+                <button type="submit" class="flex-1 btn-modal btn-modal-danger">Konfirmasi</button>
+            </div>
+        @endslot
+    @endcomponent
 </form>
 @endpush

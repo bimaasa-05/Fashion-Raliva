@@ -15,18 +15,36 @@
             </div>
         </div>
     @endif
-    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-                <p class="raliva-label text-gold-accent">Saldo Tersedia</p>
-                <p class="raliva-figure text-[28px] mt-1">Rp {{ number_format($wallet?->saldo_tersedia ?? 0,0,',','.') }}</p>
-                <p class="text-xs text-on-surface-variant mt-1">{{ $store?->nama_toko ?? '-' }}</p>
+    <section data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-section-gap">
+        <div data-reveal class="bg-deep-onyx text-on-primary rounded-lg p-6 relative overflow-hidden flex flex-col">
+            <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-on-primary/5 pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
+            <p class="raliva-label text-gold-accent relative">Saldo Tersedia</p>
+            <p class="raliva-figure text-[34px] md:text-[42px] mt-4 relative">Rp {{ number_format($wallet?->saldo_tersedia ?? 0,0,',','.') }}</p>
+            <div class="flex items-center justify-between mt-auto pt-6 relative gap-gutter flex-wrap">
+                <p class="font-body-md text-xs text-inverse-on-surface/60">{{ $store?->nama_toko ?? '-' }}</p>
+                <button type="button" data-modal-open="modal-cair" class="py-2.5 px-5 bg-gold-accent text-[#111] text-xs font-semibold rounded btn-premium shrink-0">Cairkan</button>
             </div>
-            <button type="button" data-modal-open="modal-cair" class="px-6 py-3 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Ajukan Pencairan</button>
+        </div>
+
+        <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col relative overflow-hidden">
+            <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
+            <p class="raliva-label relative">Saldo Tertahan</p>
+            <p class="raliva-figure text-[26px] mt-4 text-on-surface relative">Rp {{ number_format($wallet?->saldo_tertahan ?? 0,0,',','.') }}</p>
+            <p class="text-on-surface-variant font-body-md text-xs mt-auto pt-6 relative">Dana yang terkunci saat pencairan disetujui dan sedang diproses.</p>
+        </div>
+
+        <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col relative overflow-hidden">
+            <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">savings</span>
+            <p class="raliva-label relative">Total DiCairkan</p>
+            <p class="raliva-figure text-[26px] mt-4 text-secondary relative">Rp {{ number_format($totalDicairkan ?? 0,0,',','.') }}</p>
+            <div class="flex items-center justify-between mt-auto pt-6 relative gap-gutter flex-wrap">
+                <p class="font-body-md text-xs text-on-surface-variant">{{ $withdrawals->count() }} pencairan tercatat</p>
+                <a href="#riwayat" class="py-2.5 px-5 border border-muted-border text-xs font-semibold rounded-lg hover:border-gold-accent transition-colors shrink-0">Riwayat</a>
+            </div>
         </div>
     </section>
 
-    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope id="riwayat">
         <h2 class="font-title-md text-title-md premium-heading">Riwayat Pencairan</h2>
         <div data-table-wrap class="overflow-x-auto mt-6">
             <table class="premium-table w-full min-w-[700px] font-body-md text-sm">

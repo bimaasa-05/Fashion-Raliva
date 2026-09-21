@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Owner;
 
+use App\Exports\OwnerLaporanExport;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Refund;
@@ -10,35 +11,26 @@ use App\Models\OrderItem;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LaporanController extends Controller
 {
     public function index(Request $request)
     {
-        $storeId = OwnerContext::firstStoreId();
+        $storeId = OwnerContext::firstStoreId() ?? 0;
 
         $period = (int) $request->input('period', 30);
         if (! in_array($period, [7, 30, 90, 365])) {
             $period = 30;
         }
 
-        $pendapatan = (float) Order::where('store_id', $storeId)->where('status', 'selesai')->sum('grand_total');
-        $pesananSelesai = Order::where('store_id', $storeId)->where('status', 'selesai')->count();
-
-        $refund = (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
-            ->where('orders.store_id', $storeId)
-            ->where('refunds.status', 'selesai')
-            ->sum('refunds.jumlah');
-
-        $dicairkan = (float) Withdrawal::where('store_id', $storeId)
-            ->where('status', 'selesai')
-            ->sum('jumlah');
+        $data = $this->reportData($storeId, $period);
 
         // chart data per range
         $buildRange = function ($days) use ($storeId) {
             $start = now()->subDays($days - 1)->startOfDay();
             $orders = Order::where('store_id', $storeId)
-                ->where('status', 'selesai')
+                ->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])
                 ->where('created_at', '>=', $start)
                 ->selectRaw('DATE(created_at) as tgl, SUM(grand_total) as pendapatan')
                 ->groupBy('tgl')->pluck('pendapatan', 'tgl');
@@ -49,7 +41,7 @@ class LaporanController extends Controller
                     $end = now()->subDays($i);
                     $startW = $end->copy()->subDays(6)->startOfDay();
                     $labels[] = $startW->translatedFormat('d M');
-                    $pend[] = (float) Order::where('store_id', $storeId)->where('status', 'selesai')
+                    $pend[] = (float) Order::where('store_id', $storeId)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])
                         ->whereBetween('created_at', [$startW, $end->endOfDay()])->sum('grand_total');
                     $ref[] = (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
                         ->where('orders.store_id', $storeId)->where('refunds.status', 'selesai')
@@ -57,7 +49,7 @@ class LaporanController extends Controller
                 }
                 return ['labels' => $labels, 'pendapatan' => $pend, 'refund' => $ref];
             }
-            $agg = Order::where('store_id', $storeId)->where('status', 'selesai')
+            $agg = Order::where('store_id', $storeId)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])
                 ->where('created_at', '>=', $start)
                 ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as bln, SUM(grand_total) as pendapatan")
                 ->groupBy('bln')->orderBy('bln')->pluck('pendapatan', 'bln');
@@ -71,12 +63,30 @@ class LaporanController extends Controller
             '365' => $buildRange(365),
         ];
 
-        // report table per periode
+        return view('Owner.laporan.index', array_merge($data, ['chartData' => $chartData, 'period' => $period]));
+    }
+
+    private function reportData(?int $storeId, int $period): array
+    {
+        $storeId = $storeId ?? 0;
+
+        $pendapatan = (float) Order::where('store_id', $storeId)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->sum('grand_total');
+        $pesananSelesai = Order::where('store_id', $storeId)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->count();
+
+        $refund = (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
+            ->where('orders.store_id', $storeId)
+            ->where('refunds.status', 'selesai')
+            ->sum('refunds.jumlah');
+
+        $dicairkan = (float) Withdrawal::where('store_id', $storeId)
+            ->where('status', 'selesai')
+            ->sum('jumlah');
+
         $bucket = function ($s, $e, $label) use ($storeId) {
             return [
                 'periode' => $label,
                 'pesanan' => Order::where('store_id', $storeId)->whereBetween('created_at', [$s, $e])->count(),
-                'pendapatan' => (float) Order::where('store_id', $storeId)->where('status', 'selesai')->whereBetween('created_at', [$s, $e])->sum('grand_total'),
+                'pendapatan' => (float) Order::where('store_id', $storeId)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->whereBetween('created_at', [$s, $e])->sum('grand_total'),
                 'refund' => (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
                     ->where('orders.store_id', $storeId)->where('refunds.status', 'selesai')
                     ->whereBetween('refunds.diajukan_pada', [$s, $e])->sum('refunds.jumlah'),
@@ -130,10 +140,55 @@ class LaporanController extends Controller
                 ];
             })->all();
 
-        return view('Owner.laporan.index', compact(
-            'pendapatan', 'pesananSelesai', 'refund', 'dicairkan',
-            'chartData', 'top', 'report', 'totals', 'period'
-        ));
+        return compact('pendapatan', 'pesananSelesai', 'refund', 'dicairkan', 'report', 'totals', 'top');
+    }
+
+    public function cetak(Request $request)
+    {
+        $storeId = OwnerContext::firstStoreId() ?? 0;
+
+        $period = (int) $request->input('period', 30);
+        if (! in_array($period, [7, 30, 90, 365])) {
+            $period = 30;
+        }
+
+        $data = $this->reportData($storeId, $period);
+        $store = \App\Models\Store::where('store_id', $storeId)->first();
+
+        $periodeLabel = [7 => '1 Minggu', 30 => '30 Hari', 90 => '3 Bulan', 365 => '1 Tahun'][$period] ?? '30 Hari';
+        $fmt = fn ($v) => 'Rp ' . number_format($v, 0, ',', '.');
+
+        return view('Owner.laporan.cetak', array_merge($data, [
+            'period' => $period,
+            'store' => $store,
+            'periodeLabel' => $periodeLabel,
+            'fmt' => $fmt,
+        ]));
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $storeId = OwnerContext::firstStoreId() ?? 0;
+
+        $period = (int) $request->input('period', 30);
+        if (! in_array($period, [7, 30, 90, 365])) {
+            $period = 30;
+        }
+
+        $data = $this->reportData($storeId, $period);
+        $store = \App\Models\Store::where('store_id', $storeId)->first();
+
+        $periodeLabel = [7 => '1 Minggu', 30 => '30 Hari', 90 => '3 Bulan', 365 => '1 Tahun'][$period] ?? '30 Hari';
+        $fmt = fn ($v) => 'Rp ' . number_format($v, 0, ',', '.');
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('Owner.laporan.pdf', array_merge($data, [
+            'period' => $period,
+            'store' => $store,
+            'periodeLabel' => $periodeLabel,
+            'fmt' => $fmt,
+        ]))->setPaper('a4', 'portrait');
+
+        return $pdf->download('laporan-toko-' . now()->translatedFormat('Y-m-d') . '.pdf');
     }
 
     public function export(Request $request)
@@ -149,7 +204,7 @@ class LaporanController extends Controller
             return [
                 $label,
                 Order::where('store_id', $storeId)->whereBetween('created_at', [$s, $e])->count(),
-                (float) Order::where('store_id', $storeId)->where('status', 'selesai')->whereBetween('created_at', [$s, $e])->sum('grand_total'),
+                (float) Order::where('store_id', $storeId)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->whereBetween('created_at', [$s, $e])->sum('grand_total'),
                 (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
                     ->where('orders.store_id', $storeId)->where('refunds.status', 'selesai')
                     ->whereBetween('refunds.diajukan_pada', [$s, $e])->sum('refunds.jumlah'),
@@ -200,5 +255,23 @@ class LaporanController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $storeId = OwnerContext::firstStoreId();
+
+        if (! $storeId) {
+            return back()->with('toast', ['message' => 'Belum ada toko untuk diekspor.', 'icon' => 'storefront']);
+        }
+
+        $period = (int) $request->input('period', 30);
+        if (! in_array($period, [7, 30, 90, 365])) {
+            $period = 30;
+        }
+
+        $fileName = 'laporan-toko-' . now()->translatedFormat('Y-m-d') . '.xlsx';
+
+        return Excel::download(new OwnerLaporanExport($storeId, $period), $fileName);
     }
 }

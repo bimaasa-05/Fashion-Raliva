@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Profile\UpdatePasswordRequest;
+use App\Http\Requests\Profile\UpdateProfileRequest;
 use App\Models\Notification;
 use App\Models\StoreStaff;
+use App\Support\ProfilePhoto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -25,15 +28,23 @@ class ProfilController extends Controller
         return view('Admin.profil.index', compact('user', 'roleName', 'assignedStores'));
     }
 
-    public function update(Request $request)
+    public function update(UpdateProfileRequest $request)
     {
         $user = Auth::user();
 
-        $data = $request->validate([
-            'nama_lengkap' => ['required', 'string', 'max:150'],
-            'email' => ['required', 'email', 'max:150', 'unique:users,email,' . $user->user_id . ',user_id'],
-            'nomor_telepon' => ['nullable', 'string', 'max:20'],
-        ]);
+        $data = $request->validated();
+
+        if ($request->boolean('remove_photo')) {
+            ProfilePhoto::delete($user->foto_profil);
+            $data['foto_profil'] = null;
+        } elseif ($request->hasFile('foto_profil')) {
+            $data['foto_profil'] = ProfilePhoto::replace(
+                $request->file('foto_profil'),
+                (int) $user->user_id,
+                'admin',
+                $user->foto_profil
+            );
+        }
 
         $user->update($data);
 
@@ -54,12 +65,12 @@ class ProfilController extends Controller
         ]);
 
         if ($request->hasFile('foto_profil')) {
-            if ($user->foto_profil && ! str_starts_with($user->foto_profil, 'http')) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->foto_profil);
-                $oldPublic = public_path($user->foto_profil);
-                if (is_file($oldPublic)) @unlink($oldPublic);
-            }
-            $path = $request->file('foto_profil')->store('profil', 'public');
+            $path = ProfilePhoto::replace(
+                $request->file('foto_profil'),
+                (int) $user->user_id,
+                'admin',
+                $user->foto_profil
+            );
             $user->update(['foto_profil' => $path]);
 
             Notification::fireSelf(Notification::TIPE_SISTEM, 'Foto Profil Diperbarui', 'Foto profil Anda berhasil diperbarui.', route('admin.profil'));
@@ -71,21 +82,18 @@ class ProfilController extends Controller
         ]);
     }
 
-    public function updatePassword(Request $request)
+    public function updatePassword(UpdatePasswordRequest $request)
     {
         $user = Auth::user();
 
-        $data = $request->validate([
-            'password_lama' => ['required', 'string'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+        $data = $request->validated();
 
         if (! Hash::check($data['password_lama'], $user->password)) {
             return redirect()->route('admin.profil')->withErrors(['password_lama' => 'Kata sandi saat ini salah.']);
         }
 
         $user->update([
-            'password' => Hash::make($data['password']),
+            'password' => $data['password_baru'],
         ]);
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Kata Sandi Diperbarui', 'Kata sandi akun Anda berhasil diperbarui.', route('admin.profil'));

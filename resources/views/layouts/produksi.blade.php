@@ -37,11 +37,16 @@
     <!-- Side Navigation Drawer -->
     <aside id="sidebar" class="flex fixed md:sticky md:self-start top-0 left-0 z-50 flex-col h-screen shrink-0 pt-4 pb-[88px] md:pb-section-gap px-container-margin w-72 border-r border-sidebar-border bg-sidebar -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out">
         <div class="sidebar-head flex items-center justify-between gap-3 pt-1 pb-3">
-            <div class="flex items-center gap-3 min-w-0">
-                <img src="{{ asset('images/logo-raliva.png') }}" alt="Logo Raliva" class="w-11 h-11 rounded-xl shrink-0" />
+            <div class="flex-1 flex items-center justify-center gap-3 min-w-0">
                 <div data-sidebar-text>
                     <span class="font-display-lg text-title-md text-on-sidebar tracking-widest block leading-tight">RALIVA</span>
-                    <span class="text-gold-accent/80 font-label-sm text-[10px] uppercase tracking-wider">Produksi</span>
+                    @php $sbStore = \App\Support\SidebarContext::currentStore(); @endphp
+                    @if ($sbStore?->kategori)
+                        <span class="flex items-center gap-1.5 leading-tight max-w-[10rem] text-on-sidebar/60 font-body-md text-[11px] normal-case tracking-normal">
+                            <span class="material-symbols-outlined text-[12px] text-gold-accent/70 shrink-0">storefront</span>
+                            <span class="truncate">{{ $sbStore->kategori }}</span>
+                        </span>
+                    @endif
                 </div>
             </div>
             <button type="button" id="sidebar-collapse" aria-expanded="true" aria-label="Perkecil menu sidebar" class="sidebar-collapse-btn hidden md:inline-flex w-8 h-8 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-gold-accent/70 hover:text-gold-accent items-center justify-center transition-colors shrink-0">
@@ -61,7 +66,13 @@
                 elseif (mb_strlen($wP[0] ?? '') > 1) $iP .= mb_substr($wP[0], 1, 1);
                 $initP = strtoupper(mb_substr($iP, 0, 2)) ?: '?';
             @endphp
-            <div class="w-11 h-11 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-[15px] shrink-0 border-2 border-white shadow-sm ring-1 ring-gold-accent/20">{{ $initP }}</div>
+            <div class="w-11 h-11 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-[15px] shrink-0 border-2 border-white shadow-sm ring-1 ring-gold-accent/20 overflow-hidden">
+                @if ($sbUserP?->foto_profil_url)
+                    <img src="{{ $sbUserP->foto_profil_url }}" alt="{{ $sbNameP }}" class="w-full h-full object-cover" />
+                @else
+                    {{ $initP }}
+                @endif
+            </div>
             <div class="min-w-0 flex-1" data-sidebar-text>
                 <h4 class="text-[13px] font-bold text-on-sidebar truncate leading-tight">{{ $sbNameP }}</h4>
                 <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-gold-accent text-white text-[10px] font-bold uppercase tracking-wider truncate shadow-sm mt-1">{{ $sbRoleP }}</span>

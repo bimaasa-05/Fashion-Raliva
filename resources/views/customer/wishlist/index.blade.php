@@ -381,7 +381,7 @@
 <div class="flex flex-col group" data-wishlist-item data-product-id="{{ $p?->product_id }}">
 <a href="{{ $p ? route('customer.shop.produk-detail', $p->product_id) : '#' }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden rounded-lg w-[94%] mx-auto">
-<img loading="lazy" decoding="async" alt="{{ $p?->nama_produk ?? '' }}" class="object-cover w-full h-full " src="{{ $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/product/900/1200' }}"/>
+<img loading="lazy" decoding="async" alt="{{ $p?->nama_produk ?? '' }}" class="object-cover w-full h-full " src="{{ $img ? (photo_url($img)) : 'https://picsum.photos/seed/product/900/1200' }}"/>
 <button type="button" aria-label="{{ __('Remove from wishlist') }}" data-wishlist-remove data-product-id="{{ $p?->product_id }}" class="absolute top-2 right-2 p-2 rounded-full bg-black/15 backdrop-blur-sm text-white hover:bg-black/30 hover:text-secondary transition-colors flex items-center">
 <span class="material-symbols-outlined" data-icon="favorite" data-weight="fill">favorite</span>
 </button>

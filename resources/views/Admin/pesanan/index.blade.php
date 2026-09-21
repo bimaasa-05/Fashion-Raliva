@@ -101,16 +101,22 @@
                         <td class="p-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format((float) ($pesanan->grand_total ?? 0), 0, ',', '.') }}</td>
                         <td class="p-4 text-center">
                             <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $badge['class'] }}">{{ $badge['label'] }}</span>
+                            @if ($pesanan->isOffline())
+                                <span class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-gold-accent/10 border-gold-accent/25 text-gold-accent">Offline</span>
+                            @endif
                             @if ($pesanan->checkout?->payment?->status === \App\Models\Payment::STATUS_DITOLAK)
                                 <span class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-error/10 border-error/20 text-error">Bayar Ditolak</span>
                             @endif
                         </td>
                         <td class="p-4 text-right whitespace-nowrap">
-                            @if ($pesanan->status === \App\Models\Order::STATUS_MENUNGGU_PRODUKSI)
+                            @if (in_array($pesanan->status, [\App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIBAYAR], true))
                                 <button type="button" data-modal-open="modal-proses-{{ $pesanan->order_id }}" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Proses</button>
                             @endif
-                            @if (in_array($pesanan->status, [\App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIPROSES], true))
+                            @if (in_array($pesanan->status, [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIPROSES], true))
                                 <button type="button" data-modal-open="modal-batalkan-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Batalkan</button>
+                            @endif
+                            @if ($pesanan->isOffline() && $pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+                                <button type="button" data-modal-open="modal-selesai-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-[10px] uppercase rounded hover:bg-secondary-container/30 transition-colors">Selesai</button>
                             @endif
                             <button type="button" data-modal-open="modal-detail-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
                             <button type="button" onclick="openDetailProduksi('{{ $pesanan->order_id }}')" class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">Produksi</button>
@@ -173,7 +179,7 @@
         </div>
     </div>
 </div>
-@if ($pesanan->status === \App\Models\Order::STATUS_MENUNGGU_PRODUKSI)
+@if (in_array($pesanan->status, [\App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIBAYAR], true))
 <div id="modal-proses-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
     <form method="POST" action="{{ route('admin.pesanan.proses', $pesanan->order_id) }}" class="relative mx-auto w-[calc(100%-2rem)] max-w-xl bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl max-h-[85vh] overflow-y-auto">
@@ -214,7 +220,7 @@
     </form>
 </div>
 @endif
-@if (in_array($pesanan->status, [\App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIPROSES], true))
+@if (in_array($pesanan->status, [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIPROSES], true))
 <div id="modal-batalkan-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
     <form method="POST" action="{{ route('admin.pesanan.batalkan', $pesanan->order_id) }}" class="relative mx-auto w-[calc(100%-2rem)] max-w-md bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl p-8">
@@ -228,6 +234,24 @@
         <div class="flex space-x-3 mt-4">
             <button type="button" data-modal-close class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg">Batal</button>
             <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Konfirmasi</button>
+        </div>
+    </form>
+</div>
+@endif
+@if ($pesanan->isOffline() && $pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+<div id="modal-selesai-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <form method="POST" action="{{ route('admin.pesanan.selesai', $pesanan->order_id) }}" class="relative mx-auto w-[calc(100%-2rem)] max-w-md bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl p-8">
+        @csrf
+        <div class="w-14 h-14 rounded-full bg-secondary-container/20 border border-secondary/25 flex items-center justify-center mx-auto mb-5">
+            <span class="material-symbols-outlined text-secondary text-[28px]">storefront</span>
+        </div>
+        <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Selesai — Sudah Diambil</h3>
+        <p class="text-on-surface-variant text-sm text-center mb-4">Pesanan offline <span class="font-mono font-bold text-on-surface">{{ $pesanan->nomor_order ?? ('#'.$pesanan->order_id) }}</span> akan ditandai <b>Selesai</b> dan dana penjualan masuk ke saldo toko. Konfirmasi bahwa customer sudah mengambil barangnya.</p>
+        <input type="text" name="catatan" maxlength="500" class="raliva-input" placeholder="Catatan (opsional)" />
+        <div class="flex space-x-3 mt-4">
+            <button type="button" data-modal-close class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg">Batal</button>
+            <button type="submit" class="flex-1 bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-secondary-container/30 transition-colors rounded-lg btn-premium">Konfirmasi Selesai</button>
         </div>
     </form>
 </div>
@@ -415,7 +439,7 @@
                 <input type="text" list="${dlId}" autocomplete="off" placeholder="Ketik / pilih bahan..." oninput="onBahanInput(this)" class="raliva-input flex-1 min-w-0" />
                 <input type="hidden" name="bahan[${idx}][bahan_id]" value="" />
                 <datalist id="${dlId}">
-                    ${bahanMaster.map(b => `<option value="${b.bahan_id}" label="${b.nama_bahan} (stok ${b.stok} ${b.satuan})">${b.nama_bahan}</option>`).join('')}
+                    ${bahanMaster.map(b => `<option value="${b.nama_bahan}" data-id="${b.bahan_id}" label="${b.nama_bahan} (stok ${b.stok} ${b.satuan})">${b.nama_bahan} (stok ${b.stok} ${b.satuan})</option>`).join('')}
                 </datalist>
                 <button type="button" onclick="removeBahanRow(this)" class="shrink-0 px-2.5 py-2.5 rounded-lg border border-error/20 text-error hover:bg-error/10 transition-colors" title="Hapus baris">
                     <span class="material-symbols-outlined text-[18px]">delete</span>
@@ -458,7 +482,7 @@
         const b = bahanMaster.find(x => x.bahan_id == textInput.value || x.nama_bahan == textInput.value);
         if (b) {
             hiddenInput.value = b.bahan_id;
-            textInput.value = b.bahan_id;
+            textInput.value = b.nama_bahan;
             const namaInput = row.querySelector('input[name$="[nama_bahan]"]');
             if (namaInput && !namaInput.value) namaInput.value = b.nama_bahan;
             const satuanInput = row.querySelector('input[name$="[satuan]"]');
@@ -498,6 +522,10 @@
     @endphp
     const itemVariants = {!! $itemVariantsJson !!};
 
+    function variantLabel(v) {
+        return [v.nama_produk, v.ukuran, v.warna].filter((item) => typeof item === 'string' && item !== '').join(' — ');
+    }
+
     let itemIdx = 0;
 
     function toggleTipePesanan() {
@@ -510,6 +538,12 @@
             const el = document.querySelector(`[name="${n}"]`);
             if (el) el.toggleAttribute('required', !online);
         });
+        // field non-aktif tidak ikut terkirim (disabled)
+        document.querySelector('#tp-cust')?.toggleAttribute('disabled', !online);
+        ['nama_penerima','nomor_telepon','alamat','email_pelanggan'].forEach(n => {
+            const el = document.querySelector(`[name="${n}"]`);
+            if (el) el.toggleAttribute('disabled', online);
+        });
         recalculateTotal();
     }
 
@@ -520,6 +554,8 @@
         const bukti = document.querySelector('#tp-bukti');
         if (acc) acc.toggleAttribute('required', transfer);
         if (bukti) bukti.toggleAttribute('required', transfer);
+        if (acc) acc.toggleAttribute('disabled', !transfer);
+        if (bukti) bukti.toggleAttribute('disabled', !transfer);
     }
 
     function addItemRow() {
@@ -536,7 +572,11 @@
                 <input type="text" list="${dlId}" autocomplete="off" placeholder="Ketik nama produk / pilih varian..." oninput="onVariantInput(this)" class="raliva-input w-full" />
                 <input type="hidden" name="items[${i}][product_variant_id]" value="" />
                 <datalist id="${dlId}">
-                    ${itemVariants.map(v => `<option value="${v.product_variant_id}" label="${v.nama_produk} — ${[v.ukuran, v.warna].filter(Boolean).join(' ')} (stok ${v.stok}) — Rp ${v.harga.toLocaleString('id-ID')}">${v.nama_produk} — ${[v.ukuran, v.warna].filter(Boolean).join(' ')}</option>`).join('')}
+                    ${itemVariants.map(v => {
+                        const nama = variantLabel(v);
+                        const detail = ` (stok ${v.stok}) — Rp ${v.harga.toLocaleString('id-ID')}`;
+                        return `<option value="${nama}" data-id="${v.product_variant_id}" label="${nama}${detail}">${nama}${detail}</option>`;
+                    }).join('')}
                 </datalist>
             </div>
             <div>
@@ -568,10 +608,10 @@
         if (!row) return;
         const hiddenInput = row.querySelector('input[name$="[product_variant_id]"]');
         if (!hiddenInput) return;
-        const v = itemVariants.find(x => x.product_variant_id == textInput.value || x.nama_produk == textInput.value);
+        const v = itemVariants.find(x => x.product_variant_id == textInput.value || x.nama_produk == textInput.value || variantLabel(x) == textInput.value);
         if (v) {
             hiddenInput.value = v.product_variant_id;
-            textInput.value = v.product_variant_id;
+            textInput.value = variantLabel(v);
             recalculateRow(row);
             recalculateTotal();
         } else {

@@ -425,7 +425,7 @@
                 <section class="relative w-full aspect-[3/4] md:aspect-[4/5] lg:w-[42%] lg:shrink-0 lg:aspect-auto lg:h-[calc(100vh-8rem)] lg:sticky lg:top-24 lg:self-start bg-surface-variant overflow-hidden snap-x snap-mandatory flex overflow-x-auto hide-scrollbar">
 @forelse ($product->images as $img)
                     <div class="min-w-full snap-start relative">
-                        <img class="w-full h-full object-cover" alt="{{ $product->nama_produk }}" src="{{ filter_var($img->file_gambar, FILTER_VALIDATE_URL) ? $img->file_gambar : asset($img->file_gambar) }}"/>
+                        <img class="w-full h-full object-cover" alt="{{ $product->nama_produk }}" src="{{ photo_url($img->file_gambar) }}"/>
                         </div>
 @empty
                     <div class="min-w-full snap-start relative">
@@ -443,25 +443,39 @@
                         $allVariants = $product->variants;
                         $colors = $allVariants->pluck('warna')->unique()->values();
                         $sizes = $allVariants->pluck('ukuran')->unique()->values();
-                        $colorHexMap = [
-                            'white' => '#f5f5f5', 'black' => '#1b1b1b', 'beige' => '#e6d3b3',
-                            'ivory' => '#f6f1e7', 'muted sand' => '#cfc0a8', 'charcoal' => '#3a3a3a',
-                            'warm sand' => '#cfc1a6', 'taupe' => '#8b7d6b', 'blush' => '#f4c2c2',
-                            'sand' => '#d8c7ad', 'grey' => '#8f9396', 'gray' => '#8f9396',
-                            'navy' => '#1f2a44', 'brown' => '#7a5636', 'green' => '#5c6b4a',
-                            'blue' => '#2f5f8f', 'red' => '#b03a3a', 'cream' => '#f3e9d8',
-                        ];
+                        $colorHexMap = $allVariants
+                            ->groupBy('warna')
+                            ->map(fn ($vs) => $vs->first()->warna_hex ?: (\App\Support\WarnaPalet::hex($vs->first()->warna) ?? ''))
+                            ->all();
+                        $produkSku = $allVariants->first()?->sku ?? '';
                     @endphp
-                        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium" data-variants="{{ $allVariants->map(fn($v) => ['id' => $v->product_variant_id, 'warna' => $v->warna, 'ukuran' => $v->ukuran, 'harga' => (float)$v->harga])->toJson(JSON_UNESCAPED_UNICODE) }}">
+                        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium" data-variants="{{ $allVariants->map(fn($v) => ['id' => $v->product_variant_id, 'warna' => $v->warna, 'ukuran' => $v->ukuran, 'harga' => (float)$v->harga, 'stok' => (int) $v->warehouseStocks->sum('jumlah_stok'), 'hex' => ($v->warna_hex ?: (\App\Support\WarnaPalet::hex($v->warna) ?? ''))])->toJson(JSON_UNESCAPED_UNICODE) }}">
                             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('PRODUCT DETAILS') }}</p>
+                            <nav class="flex items-center gap-1.5 flex-wrap mb-xs font-label-sm text-label-sm text-on-surface-variant">
+                                <a href="{{ route('customer.shop') }}" class="hover:text-[var(--chrome-accent)] transition-colors">Shop</a>
+                                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                                @if ($product->category)
+                                    <span><a href="{{ route('customer.shop') }}" class="hover:text-[var(--chrome-accent)] transition-colors">{{ $product->category->nama_kategori }}</a></span>
+                                    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                                @endif
+                                <span class="truncate text-on-surface">{{ $product->nama_produk }}</span>
+                            </nav>
                             <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ $product->nama_produk }}</h2>
-                            <div class="flex items-center gap-xs mb-sm">
+                            <div class="flex items-center gap-xs mb-xs">
                                 <div class="flex text-secondary-fixed-dim">
                                     <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
                                     </div>
                                 <span class="font-label-sm text-label-sm text-on-surface-variant">{{ number_format($averageRating ?: 0, 1) }} ({{ $reviewCount }} {{ __('reviews') }})</span>
+                                <span class="text-on-surface-variant/40">·</span>
+                                <a href="{{ route('customer.shop.store', $product->store_id) }}" class="font-label-sm text-label-sm text-[var(--chrome-accent)] hover:underline">
+                                    <span class="material-symbols-outlined text-[14px] align-[-2px]">storefront</span> {{ $product->store?->nama_toko ?? 'Toko' }}
+                                </a>
                                 </div>
-                            <p id="pd-price" class="font-title-md text-title-md text-on-surface mb-lg">Rp {{ number_format($product->variants->min('harga') ?? $product->harga_dasar, 0, ',', '.') }}</p>
+                            @if ($produkSku)
+                                <p class="font-label-sm text-label-sm text-on-surface-variant mb-xs">SKU: {{ $produkSku }}</p>
+                            @endif
+                            <p id="pd-price" class="font-title-md text-title-md text-on-surface mb-xs">Rp {{ number_format($product->variants->min('harga') ?? $product->harga_dasar, 0, ',', '.') }}</p>
+                            <p id="pd-stock" class="font-label-sm text-label-sm text-on-surface-variant mb-lg"></p>
                             <!-- Color Selection -->
                             <div class="mb-lg">
                                 <p class="font-label-caps text-label-caps text-on-surface mb-sm">{{ __('COLOR') }}: <span id="pd-color-label">{{ strtoupper($colors->first() ?? __('N/A')) }}</span></p>
@@ -476,13 +490,43 @@
                             <div class="mb-lg">
                                 <div class="flex justify-between items-center mb-sm">
                                     <p class="font-label-caps text-label-caps text-on-surface">{{ __('SIZE') }}</p>
-                                    <button class="font-label-sm text-label-sm text-on-surface-variant underline decoration-1 underline-offset-4">{{ __('Size Guide') }}</button>
+                                    <button type="button" data-size-guide-open class="font-label-sm text-label-sm text-on-surface-variant underline decoration-1 underline-offset-4 hover:text-[var(--chrome-accent)] transition-colors">{{ __('Size Guide') }}</button>
                                     </div>
                                 <div class="flex flex-wrap gap-md">
 @foreach ($sizes as $size)
-<button type="button" data-size-btn data-size="{{ $size }}" class="size-pill{{ $loop->first ? ' size-pill-selected' : '' }}">{{ $size }}</button>
+@php $sizeParts = collect(explode(' / ', $size))->map(fn ($part) => preg_split('/=/', trim($part), 2)); @endphp
+<button type="button" data-size-btn data-size="{{ $size }}" class="size-pill{{ $loop->first ? ' size-pill-selected' : '' }} items-center">
+    @foreach ($sizeParts as $sp)
+        <span class="flex flex-col items-center leading-tight {{ $loop->last ? '' : 'mr-2' }}">
+            <span class="font-label-sm text-[9px] uppercase tracking-wide opacity-70">{{ $sp[0] }}</span>
+            @if (isset($sp[1]))
+                <span class="text-[13px] font-bold">{{ $sp[1] }}</span>
+            @endif
+        </span>
+    @endforeach
+</button>
 @endforeach
                                     </div>
+                                <div id="size-guide" class="hidden mt-sm bg-surface-container-low border border-outline-variant rounded-lg p-md">
+                                    <p class="font-label-caps text-label-caps text-on-surface mb-xs">{{ __('Ukuran (cm)') }} · <span class="font-label-sm text-label-sm text-on-surface-variant normal-case tracking-normal">{{ __('contoh untuk S/M/L') }}</span></p>
+                                    <table class="w-full text-left text-sm">
+                                        <thead>
+                                            <tr class="text-[10px] uppercase tracking-wider text-on-surface-variant">
+                                                <th class="py-1 pr-3 font-semibold">Singkatan</th>
+                                                <th class="py-1 pr-3 font-semibold">Keterangan</th>
+                                                <th class="py-1 font-semibold text-right">Contoh</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-on-surface">
+                                            <tr class="border-t border-outline-variant"><td class="py-1 pr-3 font-bold">LD</td><td class="py-1 pr-3">Lingkar Dada</td><td class="py-1 text-right">96</td></tr>
+                                            <tr class="border-t border-outline-variant"><td class="py-1 pr-3 font-bold">PB</td><td class="py-1 pr-3">Panjang Baju</td><td class="py-1 text-right">62</td></tr>
+                                            <tr class="border-t border-outline-variant"><td class="py-1 pr-3 font-bold">LB</td><td class="py-1 pr-3">Lingkar Bawah</td><td class="py-1 text-right">92</td></tr>
+                                            <tr class="border-t border-outline-variant"><td class="py-1 pr-3 font-bold">LT</td><td class="py-1 pr-3">Lingkar Tangan</td><td class="py-1 text-right">38</td></tr>
+                                            <tr class="border-t border-outline-variant"><td class="py-1 pr-3 font-bold">PL</td><td class="py-1 pr-3">Panjang Lengan</td><td class="py-1 text-right">48</td></tr>
+                                        </tbody>
+                                    </table>
+                                    <p class="text-[10px] text-on-surface-variant mt-2">{{ __('Angka pada ukuran produk adalah ukuran sebenarnya dalam cm.') }}</p>
+                                </div>
                                 </div>
                             <!-- Accordions -->
                             <section class="border-t border-outline-variant">
@@ -595,7 +639,7 @@
                         <!-- Related -->
                         <a href="{{ route('customer.shop.produk-detail', $rp->product_id) }}" class="block group cursor-pointer">
                             <div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant overflow-hidden">
-                                <img class="w-full h-full object-cover " alt="{{ $rp->nama_produk }}" src="{{ $rpImage ? (filter_var($rpImage, FILTER_VALIDATE_URL) ? $rpImage : asset($rpImage)) : 'https://picsum.photos/seed/related/900/1200' }}"/>
+                                <img class="w-full h-full object-cover " alt="{{ $rp->nama_produk }}" src="{{ $rpImage ? (photo_url($rpImage)) : 'https://picsum.photos/seed/related/900/1200' }}"/>
 @php $rpWl = in_array($rp->product_id, $wishlistedIds, true); @endphp
 <button type="button" data-wishlist-toggle data-product-id="{{ $rp->product_id }}" aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center{{ $rpWl ? ' wishlisted-active' : '' }}">
 <span class="material-symbols-outlined" data-icon="favorite{{ $rpWl ? '' : '_border' }}"@if($rpWl) data-weight="fill"@endif>favorite{{ $rpWl ? '' : '_border' }}</span>
@@ -709,6 +753,21 @@
 
                 if (colorLabel && selectedColor) colorLabel.textContent = selectedColor.toUpperCase();
                 if (priceEl && match) priceEl.textContent = rupiah(match.harga);
+
+                var stok = match ? (Number(match.stok) || 0) : 0;
+                var stockEl = document.getElementById('pd-stock');
+                if (stockEl) {
+                    stockEl.textContent = stok > 0 ? 'Sisa stok: ' + stok.toLocaleString('id-ID') : 'Stok habis';
+                    stockEl.classList.toggle('text-error', stok === 0);
+                }
+                var kosong = !match || stok < 1;
+                function setLocked(btn, locked) {
+                    if (!btn) return;
+                    if (locked) { btn.setAttribute('disabled', ''); btn.classList.add('opacity-40', 'pointer-events-none'); }
+                    else { btn.removeAttribute('disabled'); btn.classList.remove('opacity-40', 'pointer-events-none'); }
+                }
+                addBtns.forEach(function (b) { setLocked(b, kosong); });
+                if (buyNow) setLocked(buyNow, kosong);
             }
 
             colorBtns.forEach(function (b) {
@@ -726,6 +785,14 @@
 
             applySelection();
         })();
+
+        /* Size Guide toggle */
+        document.querySelectorAll('[data-size-guide-open]').forEach(function (b) {
+            b.addEventListener('click', function () {
+                var g = document.getElementById('size-guide');
+                if (g) g.classList.toggle('hidden');
+            });
+        });
 
         function toggleReviewMenu(e, id) {
             e.stopPropagation();

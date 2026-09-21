@@ -31,7 +31,7 @@
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:66%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:58%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:74%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:68%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:88%"></i>
             </div>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
         </div>
 
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
@@ -41,7 +41,7 @@
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:50%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:70%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:64%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:80%"></i>
             </div>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
         </div>
 
         <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hero-glow">
@@ -51,7 +51,7 @@
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:72%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:84%"></i>
             </div>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">percent</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">percent</span>
         </div>
 
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
@@ -61,7 +61,7 @@
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:30%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:35%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:32%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:42%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:52%"></i>
             </div>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">storefront</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">storefront</span>
         </div>
     </div>
 </section>
@@ -78,12 +78,21 @@
             </div>
             <div class="flex items-center gap-3">
                 <span id="trend-total" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gold-accent/10 border border-gold-accent/25 font-title-md text-sm text-gold-accent whitespace-nowrap">Rp 0</span>
-                <div class="w-40">
-                    <select id="trend-range" class="raliva-select !py-2 !text-xs">
+                <div class="w-40 relative" id="trendRange-dd">
+                    <button type="button" data-dd-trigger id="trendRange-trigger" onclick="toggleDropdown('trendRange')" aria-haspopup="listbox" aria-expanded="false"
+                        class="w-full flex items-center justify-between gap-2 bg-surface-container-lowest border border-muted-border rounded-lg pl-3.5 pr-2.5 py-2 font-body-md text-xs text-on-surface focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200 cursor-pointer text-left">
+                        <span id="trendRange-label" class="truncate">{{ $rangeLabels[$activeRange] ?? $activeRange }}</span>
+                        <span class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="trendRange-chevron">expand_more</span>
+                    </button>
+                    <div id="trendRange-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                        class="hidden absolute left-0 top-full mt-2 w-full min-w-[160px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
                         @foreach ($rangeLabels as $rKey => $rLabel)
-                            <option value="{{ $rKey }}" {{ $activeRange === $rKey ? 'selected' : '' }}>{{ $rLabel }}</option>
+                            <button type="button" role="option" aria-selected="{{ $activeRange === $rKey ? 'true' : 'false' }}" data-dd-option="{{ $rKey }}" onclick="selectTrendRange('{{ $rKey }}')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                {{ $rLabel }}<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $activeRange === $rKey ? '' : 'hidden' }}">check</span>
+                            </button>
                         @endforeach
-                    </select>
+                    </div>
+                    <input type="hidden" id="trend-range" value="{{ $activeRange }}" />
                 </div>
             </div>
         </div>
@@ -120,7 +129,7 @@
 </div>
 
 <!-- Recent Transactions Table -->
-<section class="mb-section-gap">
+<section data-reveal class="mb-section-gap">
     <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
         <h3 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Transaksi Terbaru</h3>
         <div class="flex items-center gap-3">
@@ -133,7 +142,7 @@
             </a>
         </div>
     </div>
-    <div class="border border-muted-border bg-surface-container-lowest rounded-lg overflow-x-auto hidden md:block card-premium">
+    <div class="border border-muted-border bg-surface-container-lowest rounded-xl overflow-x-auto hidden md:block card-premium">
         <table class="w-full text-left border-collapse premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low/50">
@@ -186,7 +195,8 @@
                 ];
                 $st = $statusMap[$tx->status] ?? [$tx->status, 'bg-surface-container-high text-on-surface-variant'];
             @endphp
-            <article class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+            <article class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">receipt_long</span>
                 <div class="flex items-start justify-between gap-3 mb-3">
                     <p class="font-mono text-sm text-on-surface leading-tight">{{ $tx->nomor_order }}</p>
                     <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $st[1] }} text-[10px] font-bold uppercase border shrink-0">{{ $st[0] }}</span>
@@ -215,10 +225,20 @@
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@include('SuperAdmin.partials.dd-helpers')
 <script>
     let revenueChart = null;
     let currentTrendRange = @json($activeRange);
     const rangeData = @json($rangeData);
+    const trendRangeLabels = @json($rangeLabels);
+
+    function selectTrendRange(v) {
+        document.getElementById('trend-range').value = v;
+        ddSet('trendRange', v, trendRangeLabels[v] ?? v);
+        currentTrendRange = v;
+        if (badgeText) badgeText.textContent = trendRangeLabels[v] ?? v;
+        renderTrendChart();
+    }
 
     const chartWrap = document.getElementById('trend-chart-wrap');
     const chartEmpty = document.getElementById('trend-empty');
@@ -330,12 +350,6 @@
         revenueChart.options.scales.x.ticks.color = c.tick;
         revenueChart.update();
     };
-
-    document.getElementById('trend-range')?.addEventListener('change', (e) => {
-        currentTrendRange = e.target.value;
-        if (badgeText) badgeText.textContent = e.target.options[e.target.selectedIndex].text;
-        renderTrendChart();
-    });
 
     document.getElementById('trend-retry')?.addEventListener('click', () => {
         renderTrendChart();

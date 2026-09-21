@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('payment:expire')->everyMinute()->withoutOverlapping();
 Schedule::command('store:auto-reactivate')->everyMinute()->withoutOverlapping();
+Schedule::command('order:auto-complete')->everyMinute()->withoutOverlapping();

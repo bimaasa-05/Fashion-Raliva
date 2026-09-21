@@ -42,12 +42,14 @@ class OrderTrackingController extends Controller
     public function index(Request $request)
     {
         \App\Support\PaymentExpiry::expireOverdue();
+        \App\Support\OrderAutoComplete::selesaikanOtomatis();
 
         $orders = Auth::user()->orders()
             ->with([
                 'store',
                 'items.productVariant.product.images',
                 'shipments.courier',
+                'refunds',
                 'checkout.payment.paymentMethod',
                 'checkout.payment.account',
             ])
@@ -131,8 +133,8 @@ class OrderTrackingController extends Controller
             return back()->with('toast', ['message' => 'Refund hanya dapat diajukan untuk pesanan yang sudah dikirim atau selesai.', 'icon' => 'info']);
         }
 
-        if (\App\Models\Refund::where('order_id', $order->order_id)->whereIn('status', [\App\Models\Refund::STATUS_REQUESTED, \App\Models\Refund::STATUS_ESKALASI, \App\Models\Refund::STATUS_DISETUJUI])->exists()) {
-            return back()->with('toast', ['message' => 'Pesanan ini sudah memiliki pengajuan refund aktif.', 'icon' => 'info']);
+        if (\App\Models\Refund::where('order_id', $order->order_id)->exists()) {
+            return back()->with('toast', ['message' => 'Pengajuan refund untuk pesanan ini hanya dapat dilakukan 1 kali.', 'icon' => 'info']);
         }
 
         $data = $request->validate([
@@ -141,12 +143,25 @@ class OrderTrackingController extends Controller
             'alasan' => ['required', 'string', 'min:20', 'max:2000'],
             'file_bukti_request' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:4096'],
             'deskripsi_bukti_request' => ['nullable', 'string', 'max:1000'],
+            'complaint_id' => ['nullable', 'integer', 'exists:complaints,complaint_id'],
         ]);
+
+        if (! empty($data['complaint_id'])) {
+            $complaint = \App\Models\Complaint::where('complaint_id', $data['complaint_id'])
+                ->where('user_id', Auth::id())
+                ->where('order_id', $order->order_id)
+                ->first();
+
+            if (! $complaint) {
+                return back()->with('toast', ['message' => 'Komplain tidak valid untuk pesanan ini.', 'icon' => 'info']);
+            }
+        }
 
         $path = $request->file('file_bukti_request')->store('bukti-refund-request/' . $order->order_id, 'public');
 
         $refund = \App\Models\Refund::create([
             'order_id' => $order->order_id,
+            'complaint_id' => $data['complaint_id'] ?? null,
             'payment_id' => $order->checkout?->payment?->payment_id,
             'requested_by' => Auth::id(),
             'tipe_refund' => $data['tipe_refund'],

@@ -8,39 +8,49 @@
 
 @section('content')
 <div class="space-y-section-gap">
+    <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+        </span>
+        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Data pembayaran diperbarui real-time
+        </span>
+    </div>
     <!-- Ringkasan -->
     <section>
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Pembayaran</h2>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+        <div data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Transaksi</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['semua'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">semua status</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface relative break-words">{{ $stats['semua'] }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">semua status</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">payments</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Verifikasi</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary">{{ $stats['menunggu_verifikasi'] + $stats['pending'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">perlu ditinjau</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary relative break-words">{{ $stats['menunggu_verifikasi'] + $stats['pending'] }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">perlu ditinjau</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Berhasil</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">check_circle</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['terverifikasi'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">terverifikasi</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface relative break-words">{{ $stats['terverifikasi'] }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">terverifikasi</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">check_circle</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Gagal / Dibatalkan</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">cancel</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-error">{{ $stats['ditolak'] + $stats['kadaluarsa'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">ditolak / kadaluarsa</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-error relative break-words">{{ $stats['ditolak'] + $stats['kadaluarsa'] }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">ditolak / kadaluarsa</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">cancel</span>
             </div>
         </div>
     </section>
 
     <!-- Tabel -->
-    <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Transaksi Pembayaran</h2>
             <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
@@ -77,9 +87,10 @@
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[14px]">inventory_2</span>
                     <span id="result-count">{{ $stats['semua'] }}</span> transaksi
-                </p>
+                </span>
             </div>
         </div>
 
@@ -88,15 +99,15 @@
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
-                        <th class="p-6 w-12 text-center">No.</th>
-                        <th class="p-6">ID Pembayaran</th>
-                        <th class="p-6">Metode</th>
-                        <th class="p-6">Pelanggan</th>
-                        <th class="p-6">Toko</th>
-                        <th class="p-6 text-right">Jumlah</th>
-                        <th class="p-6 text-center">Status</th>
-                        <th class="p-6">Tanggal</th>
-                        <th class="p-6 text-right">Aksi</th>
+                        <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">No.</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">ID Pembayaran</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Metode</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Pelanggan</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Toko</th>
+                        <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">Jumlah</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Tanggal</th>
+                        <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -163,7 +174,8 @@
                     $cust = $pay->checkout?->user;
                     $tanggal = $pay->created_at ? Illuminate\Support\Carbon::parse($pay->created_at)->locale('id')->translatedFormat('d M Y • H.i') : '-';
                 @endphp
-                <article data-table-row data-status="{{ $pay->status }}" data-search="{{ strtolower('PAY-'.$pay->payment_id.' '.($cust->nama_lengkap ?? '').' '.($cust->email ?? '').' '.$pay->nama_toko.' '.($pay->paymentMethod->nama_metode ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                <article data-table-row data-status="{{ $pay->status }}" data-search="{{ strtolower('PAY-'.$pay->payment_id.' '.($cust->nama_lengkap ?? '').' '.($cust->email ?? '').' '.$pay->nama_toko.' '.($pay->paymentMethod->nama_metode ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="min-w-0">
                             <p class="font-mono font-bold text-on-surface leading-tight">PAY-{{ $pay->payment_id }}</p>
@@ -207,29 +219,27 @@
 </div>
 
 <!-- Modal Detail -->
-<div id="detail-pembayaran" data-modal class="fixed inset-0 z-[70] hidden">
-    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-    <div class="relative mx-auto mt-16 md:mt-24 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6 max-h-[80vh] overflow-y-auto">
-        <div class="flex items-start justify-between gap-4 mb-6">
-            <div>
-                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Detail Pembayaran</h3>
-                <p class="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mt-1"><span data-slot="nomor"></span></p>
-            </div>
-            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-        <dl class="space-y-4 font-body-md text-sm">
-            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Metode</dt><dd class="text-on-surface text-right"><span data-slot="metode"></span></dd></div>
-            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Pelanggan</dt><dd class="text-on-surface text-right"><span data-slot="pelanggan"></span></dd></div>
-            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Toko</dt><dd class="text-on-surface text-right"><span data-slot="toko"></span></dd></div>
-            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Jumlah</dt><dd class="font-bold text-gold-accent text-right"><span data-slot="jumlah"></span></dd></div>
-            <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Status Verifikasi</dt><dd class="text-on-surface text-right"><span data-slot="status"></span></dd></div>
-            <div class="flex justify-between gap-4"><dt class="text-on-surface-variant shrink-0">Tanggal</dt><dd class="text-on-surface text-right"><span data-slot="tanggal"></span></dd></div>
-        </dl>
-        <button type="button" data-modal-close class="w-full mt-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tutup</button>
-    </div>
-</div>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'detail-pembayaran',
+    'dataModal' => true,
+    'icon' => 'payments',
+    'title' => 'Detail Pembayaran',
+    'subtitle' => '<span data-slot="nomor"></span>',
+    'subtitleRaw' => true,
+    'size' => 'lg',
+])
+    <dl class="space-y-4 font-body-md text-sm">
+        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Metode</dt><dd class="text-on-surface text-right"><span data-slot="metode"></span></dd></div>
+        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Pelanggan</dt><dd class="text-on-surface text-right"><span data-slot="pelanggan"></span></dd></div>
+        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Toko</dt><dd class="text-on-surface text-right"><span data-slot="toko"></span></dd></div>
+        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Jumlah</dt><dd class="font-bold text-gold-accent text-right"><span data-slot="jumlah"></span></dd></div>
+        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Status Verifikasi</dt><dd class="text-on-surface text-right"><span data-slot="status"></span></dd></div>
+        <div class="flex justify-between gap-4"><dt class="text-on-surface-variant shrink-0">Tanggal</dt><dd class="text-on-surface text-right"><span data-slot="tanggal"></span></dd></div>
+    </dl>
+    @slot('footer')
+        <button type="button" data-modal-close class="btn-modal btn-modal-primary w-full">Tutup</button>
+    @endslot
+@endcomponent
 @endsection
 
 @push('scripts')

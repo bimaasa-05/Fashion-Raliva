@@ -6,19 +6,25 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Refund;
 use App\Models\StoreExpense;
+use App\Services\KaryawanReportService;
 use App\Support\AdminContext;
 use Illuminate\Http\Request;
 
 class LaporanController extends Controller
 {
+    public function __construct(
+        protected KaryawanReportService $karyawanReport,
+    ) {
+    }
+
     public function index(Request $request)
     {
         $storeIds = AdminContext::assignedStoreIds();
         $storeId = $storeIds[0] ?? null;
 
         // pendapatan = sum grand_total where status selesai for admin's stores
-        $pendapatan = $storeId ? (float) Order::whereIn('store_id', $storeIds)->where('status', 'selesai')->sum('grand_total') : 0;
-        $pesananDiproses = $storeId ? Order::whereIn('store_id', $storeIds)->where('status', 'selesai')->count() : 0;
+        $pendapatan = $storeId ? (float) Order::whereIn('store_id', $storeIds)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->sum('grand_total') : 0;
+        $pesananDiproses = $storeId ? Order::whereIn('store_id', $storeIds)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->count() : 0;
 
         // pengeluaran = refund selesai + store expense
         $refund = $storeId ? (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
@@ -26,6 +32,11 @@ class LaporanController extends Controller
         $expense = $storeId ? (float) StoreExpense::whereIn('store_id', $storeIds)->sum('nominal') : 0;
         $totalPengeluaran = $refund + $expense;
         $totalBersih = $pendapatan - $totalPengeluaran;
+
+        // per admin ("Penjualanku") — pendapatan = order yg payment-nya diverifikasi admin ini
+        $saya = $storeIds && auth()->check() && auth()->id()
+            ? $this->karyawanReport->rekapKaryawan((int) auth()->id(), $storeIds)
+            : ['pesanan' => 0, 'pendapatan' => 0.0, 'refund' => 0.0, 'expense' => 0.0, 'pengeluaran' => 0.0, 'bersih' => 0.0];
 
         // status counts for admin
         $pesananBaru = $storeId ? Order::whereIn('store_id', $storeIds)->whereIn('status', ['pending_payment','dibayar'])->count() : 0;
@@ -36,12 +47,12 @@ class LaporanController extends Controller
         if ($storeIds) {
             $stores = \App\Models\Store::whereIn('store_id', $storeIds)->get();
             foreach ($stores as $s) {
-                $p = (float) Order::where('store_id', $s->store_id)->where('status','selesai')->sum('grand_total');
+                $p = (float) Order::where('store_id', $s->store_id)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->sum('grand_total');
                 $exp = (float) StoreExpense::where('store_id', $s->store_id)->sum('nominal');
                 $ref = (float) Refund::join('orders','orders.order_id','=','refunds.order_id')->where('orders.store_id',$s->store_id)->where('refunds.status','selesai')->sum('refunds.jumlah');
                 $perToko->push((object)[
                     'nama_toko'=>$s->nama_toko,
-                    'pesanan'=> Order::where('store_id',$s->store_id)->where('status','selesai')->count(),
+                    'pesanan'=> Order::where('store_id',$s->store_id)->whereIn('status',[Order::STATUS_SELESAI, Order::STATUS_REFUND])->count(),
                     'pendapatan'=>$p,
                     'pengeluaran'=>$exp+$ref,
                     'bersih'=>$p - ($exp+$ref),
@@ -71,6 +82,6 @@ class LaporanController extends Controller
                 ->values();
         }
 
-        return view('Admin.laporan.index', compact('pendapatan', 'pesananDiproses', 'totalPengeluaran', 'totalBersih', 'perToko', 'perMetode', 'pesananBaru', 'menungguVerifikasi'));
+        return view('Admin.laporan.index', compact('pendapatan', 'pesananDiproses', 'totalPengeluaran', 'totalBersih', 'perToko', 'perMetode', 'pesananBaru', 'menungguVerifikasi', 'saya'));
     }
 }

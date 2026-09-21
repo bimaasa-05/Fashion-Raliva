@@ -22,34 +22,59 @@
 @include('partials.flash-toast')
 
 <div class="space-y-section-gap">
+    <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+        </span>
+        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Data refund diperbarui real-time
+        </span>
+    </div>
     <section>
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Refund</h2>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+        <div data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Kasus Menunggu</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary">{{ $stats['requested'] }}</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary break-words">{{ $stats['requested'] }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">perlu keputusan</span>
+                <div class="flex items-end gap-[3px] h-6 mt-auto">
+                    <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:72%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:64%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:84%"></i>
+                </div>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-gold-accent/25 rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium hover:border-gold-accent transition-colors hero-glow">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Nominal Menunggu</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp {{ number_format($stats['nominal_menunggu'], 0, ',', '.') }}</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold break-words">Rp {{ number_format($stats['nominal_menunggu'], 0, ',', '.') }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">diajukan Customer</span>
+                <div class="flex items-end gap-[3px] h-6 mt-auto">
+                    <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:66%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:58%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:74%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:88%"></i>
+                </div>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">payments</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Disetujui</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['disetujui'] }}</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">{{ $stats['disetujui'] }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">sedang diproses</span>
+                <div class="flex items-end gap-[3px] h-6 mt-auto">
+                    <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:72%"></i>
+                </div>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">task_alt</span>
             </div>
-            <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Selesai</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['selesai'] }}</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">{{ $stats['selesai'] }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">dana dikembalikan</span>
+                <div class="flex items-end gap-[3px] h-6 mt-auto">
+                    <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:38%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:56%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:50%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:66%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:78%"></i>
+                </div>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">verified</span>
             </div>
         </div>
     </section>
 
-    <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Pengembalian Dana</h2>
             <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
@@ -86,9 +111,10 @@
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[14px]">inventory_2</span>
                     <span id="result-count">{{ $refunds->total() }}</span> refund
-                </p>
+                </span>
             </div>
         </div>
 
@@ -97,15 +123,15 @@
             <table class="w-full min-w-[950px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
-                        <th class="p-6 w-12 text-center">No.</th>
-                        <th class="p-6">ID Refund</th>
-                        <th class="p-6">Pesanan</th>
-                        <th class="p-6">Pelanggan / Toko</th>
-                        <th class="p-6">Alasan</th>
-                        <th class="p-6 text-right">Jumlah</th>
-                        <th class="p-6 text-center">Status</th>
-                        <th class="p-6">Diajukan</th>
-                        <th class="p-6 text-center">Aksi</th>
+                        <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">No.</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">ID Refund</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Pesanan</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Pelanggan / Toko</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Alasan</th>
+                        <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">Jumlah</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Diajukan</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -123,10 +149,10 @@
                             </td>
                             <td class="p-6 font-mono text-on-surface-variant">{{ $refund->order?->nomor_order ?? '-' }}</td>
                             <td class="p-6">
-                                <p class="text-on-surface">{{ $refund->requester?->nama_lengkap ?? '-' }}</p>
-                                <p class="text-on-surface-variant text-xs">{{ $refund->order?->store?->nama_toko ?? '-' }}</p>
+                                <p class="text-on-surface break-words">{{ $refund->requester?->nama_lengkap ?? '-' }}</p>
+                                <p class="text-on-surface-variant text-xs break-words">{{ $refund->order?->store?->nama_toko ?? '-' }}</p>
                             </td>
-                            <td class="p-6 text-on-surface max-w-[240px]" title="{{ $refund->alasan }}">{{ \Illuminate\Support\Str::limit($refund->alasan, 60) }}</td>
+                            <td class="p-6 text-on-surface max-w-[240px] w-[240px] break-words [overflow-wrap:anywhere]" title="{{ $refund->alasan }}">{{ \Illuminate\Support\Str::limit($refund->alasan, 60) }}</td>
                             <td class="p-6 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</td>
                             <td class="p-6 text-center">
                                 <span class="inline-flex items-center px-2 py-1 rounded {{ $badge['class'] }} text-xs uppercase">{{ $badge['label'] }}</span>
@@ -177,7 +203,8 @@
                     $badge = $badgeMap[$refund->status];
                     $kode = 'REF-' . str_pad((string) $refund->refund_id, 10, '0', STR_PAD_LEFT);
                 @endphp
-                <article data-table-row data-status="{{ $refund->status }}" data-search="{{ strtolower($kode.' '.$refund->order?->nomor_order.' '.($refund->requester?->nama_lengkap ?? '').' '.($refund->order?->store?->nama_toko ?? '').' '.$refund->alasan) }}" data-id="{{ $refund->refund_id }}" data-kode="{{ $kode }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                <article data-table-row data-status="{{ $refund->status }}" data-search="{{ strtolower($kode.' '.$refund->order?->nomor_order.' '.($refund->requester?->nama_lengkap ?? '').' '.($refund->order?->store?->nama_toko ?? '').' '.$refund->alasan) }}" data-id="{{ $refund->refund_id }}" data-kode="{{ $kode }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">assignment_return</span>
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="min-w-0">
                             <p class="font-mono font-bold text-on-surface leading-tight">{{ $kode }}</p>
@@ -189,27 +216,27 @@
                     <dl class="space-y-2 font-body-md text-sm mb-4">
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">Pesanan</dt>
-                            <dd class="font-mono text-on-surface-variant text-right">{{ $refund->order?->nomor_order ?? '-' }}</dd>
+                            <dd class="font-mono text-on-surface-variant text-right min-w-0 break-words">{{ $refund->order?->nomor_order ?? '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">Pelanggan</dt>
-                            <dd class="text-on-surface text-right">{{ $refund->requester?->nama_lengkap ?? '-' }}</dd>
+                            <dd class="text-on-surface text-right min-w-0 break-words">{{ $refund->requester?->nama_lengkap ?? '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">Toko</dt>
-                            <dd class="text-on-surface text-right">{{ $refund->order?->store?->nama_toko ?? '-' }}</dd>
+                            <dd class="text-on-surface text-right min-w-0 break-words">{{ $refund->order?->store?->nama_toko ?? '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">Jumlah</dt>
-                            <dd class="font-bold text-gold-accent text-right whitespace-nowrap">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</dd>
+                            <dd class="font-bold text-gold-accent text-right whitespace-nowrap min-w-0">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">Diajukan</dt>
-                            <dd class="text-on-surface text-right">{{ $refund->diajukan_pada ? \Carbon\Carbon::parse($refund->diajukan_pada)->locale('id')->diffForHumans() : '-' }}</dd>
+                            <dd class="text-on-surface text-right min-w-0 break-words">{{ $refund->diajukan_pada ? \Carbon\Carbon::parse($refund->diajukan_pada)->locale('id')->diffForHumans() : '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3 items-start">
                             <dt class="text-on-surface-variant shrink-0">Alasan</dt>
-                            <dd class="text-on-surface text-right">{{ \Illuminate\Support\Str::limit($refund->alasan, 60) }}</dd>
+                            <dd class="text-on-surface text-right min-w-0 break-words [overflow-wrap:anywhere]">{{ \Illuminate\Support\Str::limit($refund->alasan, 60) }}</dd>
                         </div>
                     </dl>
 
@@ -250,38 +277,48 @@
         $kodeRefund = 'REF-' . str_pad((string) $refund->refund_id, 10, '0', STR_PAD_LEFT);
     @endphp
     @if ($refund->status === 'requested')
-    <div id="modal-setujui-{{ $refund->refund_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-        <form method="POST" action="{{ route('superadmin.pengembalian-dana.setujui', $refund->refund_id) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+    @component('SuperAdmin.partials.premium-confirm', [
+        'id' => 'modal-setujui-' . $refund->refund_id,
+        'dataModal' => true,
+        'icon' => 'task_alt',
+        'iconBox' => 'bg-white/10 border-white/20',
+        'iconColor' => 'text-white',
+    ])
+        <form method="POST" action="{{ route('superadmin.pengembalian-dana.setujui', $refund->refund_id) }}" id="setujui-form-{{ $refund->refund_id }}" class="p-6 space-y-4">
             @csrf
-            <div class="w-14 h-14 rounded-full bg-secondary-container/20 flex items-center justify-center mx-auto mb-5">
-                <span class="material-symbols-outlined text-secondary text-[28px]">task_alt</span>
+            <div class="text-center">
+                <h3 class="font-title-md text-title-md text-on-surface">Setujui Refund?</h3>
+                <p class="text-sm text-on-surface-variant mt-2">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> sebesar <span class="font-bold text-on-surface">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</span> untuk pesanan {{ $refund->order?->nomor_order ?? '-' }} akan disetujui.</p>
             </div>
-            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Setujui Refund?</h3>
-            <p class="text-sm text-on-surface-variant text-center">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> sebesar <span class="font-bold text-on-surface">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</span> untuk pesanan {{ $refund->order?->nomor_order ?? '-' }} akan disetujui.</p>
-            <div class="flex gap-3 mt-6">
-                <button type="button" data-modal-close class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded-full hover:bg-surface-container-low transition-colors">
+        </form>
+        @slot('footer')
+            <div class="flex gap-3">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1">
                     <span class="material-symbols-outlined text-[16px] leading-none">close</span>
                     Batal
                 </button>
-                <button type="submit" class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium">
+                <button type="submit" form="setujui-form-{{ $refund->refund_id }}" class="btn-modal btn-modal-primary flex-1">
                     <span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>
                     Ya, Setujui
                 </button>
             </div>
-        </form>
-    </div>
+        @endslot
+    @endcomponent
     @elseif ($refund->status === 'disetujui')
-    <div id="modal-selesaikan-{{ $refund->refund_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-        <form method="POST" action="{{ route('superadmin.pengembalian-dana.selesaikan', $refund->refund_id) }}" enctype="multipart/form-data" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+    @component('SuperAdmin.partials.premium-confirm', [
+        'id' => 'modal-selesaikan-' . $refund->refund_id,
+        'dataModal' => true,
+        'icon' => 'payments',
+        'iconBox' => 'bg-white/10 border-white/20',
+        'iconColor' => 'text-white',
+    ])
+        <form method="POST" action="{{ route('superadmin.pengembalian-dana.selesaikan', $refund->refund_id) }}" id="selesaikan-form-{{ $refund->refund_id }}" enctype="multipart/form-data" class="p-6 space-y-4">
             @csrf
-            <div class="w-14 h-14 rounded-full bg-secondary-container/20 flex items-center justify-center mx-auto mb-5">
-                <span class="material-symbols-outlined text-secondary text-[28px]">payments</span>
+            <div class="text-center">
+                <h3 class="font-title-md text-title-md text-on-surface">Tandai Selesai?</h3>
+                <p class="text-sm text-on-surface-variant mt-2 mb-4">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> akan ditandai <span class="font-bold text-on-surface">selesai</span> dan Customer dikonfirmasi dana telah dikirim.</p>
             </div>
-            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Tandai Selesai?</h3>
-            <p class="text-sm text-on-surface-variant text-center mb-4">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> akan ditandai <span class="font-bold text-on-surface">selesai</span> dan Customer dikonfirmasi dana telah dikirim.</p>
-            <div class="space-y-4 mb-2 text-left">
+            <div class="space-y-4 text-left">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">Bukti Transfer <span class="text-error">*</span></label>
                     <input type="file" name="file_bukti" required accept=".jpg,.jpeg,.png,.pdf" class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:font-label-sm file:uppercase file:tracking-widest file:cursor-pointer border border-muted-border rounded-lg p-1 focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent" />
@@ -292,48 +329,52 @@
                     <input type="text" name="deskripsi_bukti" maxlength="1000" placeholder="Contoh: Transfer BCA dari rekening platform Raliva" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent placeholder-on-surface-variant/50" />
                 </div>
                 @if ($refund->file_bukti_request)
-                    <p class="text-xs"><a href="{{ asset('storage/' . ltrim($refund->file_bukti_request, '/')) }}" target="_blank" class="text-gold-accent hover:underline inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> Foto bukti barang dari customer</a>@if ($refund->deskripsi_bukti_request)<span class="text-on-surface-variant"> — {{ $refund->deskripsi_bukti_request }}</span>@endif</p>
+                    <p class="text-xs break-words min-w-0"><a href="{{ asset('storage/' . ltrim($refund->file_bukti_request, '/')) }}" target="_blank" class="text-gold-accent hover:underline inline-flex items-center gap-1 max-w-full"><span class="material-symbols-outlined text-[14px] shrink-0">visibility</span> Foto bukti barang dari customer</a>@if ($refund->deskripsi_bukti_request)<span class="text-on-surface-variant break-words"> — {{ $refund->deskripsi_bukti_request }}</span>@endif</p>
                 @endif
                 @if ($refund->file_bukti)
-                    <p class="text-xs"><a href="{{ asset('storage/' . $refund->file_bukti) }}" target="_blank" class="text-gold-accent hover:underline inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> Lihat bukti sebelumnya</a></p>
+                    <p class="text-xs break-words min-w-0"><a href="{{ asset('storage/' . $refund->file_bukti) }}" target="_blank" class="text-gold-accent hover:underline inline-flex items-center gap-1 max-w-full"><span class="material-symbols-outlined text-[14px] shrink-0">visibility</span> Lihat bukti sebelumnya</a></p>
                 @endif
             </div>
-            <div class="flex gap-3 mt-6">
-                <button type="button" data-modal-close class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded-full hover:bg-surface-container-low transition-colors">
+        </form>
+        @slot('footer')
+            <div class="flex gap-3">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1">
                     <span class="material-symbols-outlined text-[16px] leading-none">close</span>
                     Batal
                 </button>
-                <button type="submit" class="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium">
+                <button type="submit" form="selesaikan-form-{{ $refund->refund_id }}" class="btn-modal btn-modal-primary flex-1">
                     <span class="material-symbols-outlined text-[16px] leading-none">payments</span>
                     Ya, Selesaikan
                 </button>
             </div>
-        </form>
-    </div>
+        @endslot
+    @endcomponent
     @endif
 @endforeach
 
-<form method="POST" action="" id="reject-refund-form" onsubmit="closeRejectRefund()">
-    @csrf
-    <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="rejectRefundModal" onclick="if (event.target === this) closeRejectRefund()">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                    <span class="material-symbols-outlined text-error text-[28px]">block</span>
-                </div>
-                <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Alasan Penolakan Refund</h3>
-                <p class="text-on-surface-variant text-sm text-center mb-4">Refund <span id="reject-refund-kode" class="font-mono font-bold text-on-surface">-</span> akan ditolak dan Customer dinotifikasi.</p>
-                <textarea name="alasan" required minlength="10" maxlength="1000" rows="4"
-                    class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-4"
-                    placeholder="Tulis alasan penolakan... (minimal 10 karakter)"></textarea>
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeRejectRefund()">Batal</button>
-                    <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Konfirmasi</button>
-                </div>
-            </div>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'rejectRefundModal',
+    'icon' => 'block',
+    'zIndex' => 70,
+    'close' => 'closeRejectRefund',
+])
+    <form method="POST" action="" id="reject-refund-form" onsubmit="closeRejectRefund()" class="p-6 space-y-4">
+        @csrf
+        <div class="text-center">
+            <h3 class="font-title-md text-title-md text-on-surface">Alasan Penolakan Refund</h3>
+            <p class="text-on-surface-variant text-sm mt-2 mb-4">Refund <span id="reject-refund-kode" class="font-mono font-bold text-on-surface">-</span> akan ditolak dan Customer dinotifikasi.</p>
         </div>
-    </div>
-</form>
+        <textarea name="alasan" required minlength="10" maxlength="1000" rows="4"
+            class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-error focus:ring-1 focus:ring-error"
+            placeholder="Tulis alasan penolakan... (minimal 10 karakter)"></textarea>
+        </form>
+        @slot('footer')
+            <div class="flex space-x-3">
+                <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeRejectRefund()">Batal</button>
+                <button type="submit" form="reject-refund-form" class="btn-modal btn-modal-danger flex-1">Konfirmasi</button>
+            </div>
+        @endslot
+    @endcomponent
 @endsection
 
 @push('scripts')

@@ -288,7 +288,7 @@
     $color = $pv?->warna ?? '';
     $size = $pv?->ukuran ?? '';
     $itemTotal = $i->quantity * $i->harga_snapshot;
-    $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/cart/900/1200';
+    $imgUrl = $img ? (photo_url($img)) : 'https://picsum.photos/seed/cart/900/1200';
 @endphp
 <div class="card-premium p-md md:p-lg flex gap-md relative" data-cart-row data-item-id="{{ $i->cart_item_id }}">
 <!-- Item Image -->

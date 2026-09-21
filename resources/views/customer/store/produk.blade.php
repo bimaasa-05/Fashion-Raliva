@@ -259,7 +259,7 @@
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ $store->nama_toko }}</h2>
 <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant mx-auto mb-md shadow-sm">
 @if ($store->logo)
-<img alt="{{ $store->nama_toko }} Logo" class="w-full h-full object-cover" src="{{ filter_var($store->logo, FILTER_VALIDATE_URL) ? $store->logo : asset($store->logo) }}"/>
+<img alt="{{ $store->nama_toko }} Logo" class="w-full h-full object-cover" src="{{ photo_url($store->logo) }}"/>
 @else
 <div class="w-full h-full flex items-center justify-center bg-surface-container-high text-on-surface font-headline-xl">
 <span class="material-symbols-outlined text-[48px]">storefront</span>
@@ -306,7 +306,7 @@
 <div class="group relative flex flex-col cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col w-full">
 <div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
-<img alt="{{ $p->nama_produk }}" class="w-full h-full object-cover " src="{{ $pImg ? (filter_var($pImg, FILTER_VALIDATE_URL) ? $pImg : asset($pImg)) : 'https://picsum.photos/seed/store'.$p->product_id.'/900/1200' }}"/>
+<img alt="{{ $p->nama_produk }}" class="w-full h-full object-cover " src="{{ $pImg ? (photo_url($pImg)) : 'https://picsum.photos/seed/store'.$p->product_id.'/900/1200' }}"/>
 </div>
 <div class="flex flex-col gap-1">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $store->nama_toko }}</span>

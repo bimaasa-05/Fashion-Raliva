@@ -15,6 +15,7 @@ class StoreExpense extends Model
         'kategori',
         'nominal',
         'tanggal',
+        'dibuat_oleh',
     ];
 
     protected $casts = [
@@ -25,5 +26,10 @@ class StoreExpense extends Model
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class, 'store_id', 'store_id');
+    }
+
+    public function pembuat(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'dibuat_oleh', 'user_id');
     }
 }

@@ -20,7 +20,7 @@ class KomplainController extends Controller
     public function index()
     {
         $complaints = Auth::user()->complaints()
-            ->with(['order.store', 'messages.sender'])
+            ->with(['order.store', 'order.refunds', 'order.checkout.payment', 'messages.sender'])
             ->orderByDesc('dibuat_pada')
             ->paginate(10);
 

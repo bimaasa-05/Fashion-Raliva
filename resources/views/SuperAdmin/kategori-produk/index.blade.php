@@ -17,6 +17,16 @@
 @include('partials.flash-toast')
 
 <div class="space-y-section-gap">
+    <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+        </span>
+        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Data kategori diperbarui real-time
+        </span>
+    </div>
     <!-- Toolbar -->
     <section class="relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl p-6 md:p-8 hero-glow">
         <div class="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-gold-accent/10 blur-3xl pointer-events-none"></div>
@@ -73,9 +83,10 @@
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[14px]">category</span>
                     <span id="kategori-result-count">{{ $categories->count() }}</span> kategori
-                </p>
+                </span>
             </div>
         </div>
 
@@ -180,9 +191,9 @@
             <table class="w-full premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-4 text-center w-12">No</th>
-                        <th class="p-4 text-left">Kategori Komplain</th>
-                        <th class="p-4 text-center">Total Komplain</th>
+                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Kategori Komplain</th>
+                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Total Komplain</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -240,10 +251,10 @@
             <table class="w-full premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-4 text-center w-12">No</th>
-                        <th class="p-4 text-left">Kategori Pengeluaran</th>
-                        <th class="p-4 text-center">Total Transaksi</th>
-                        <th class="p-4 text-right">Total Nominal</th>
+                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Kategori Pengeluaran</th>
+                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Total Transaksi</th>
+                        <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">Total Nominal</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -294,9 +305,10 @@
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[14px]">storefront</span>
                     <span id="toko-result-count">{{ $kategoriToko->count() }}</span> kategori toko
-                </p>
+                </span>
             </div>
         </div>
 
@@ -305,12 +317,12 @@
             <table class="w-full min-w-[720px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-4 text-center w-12">No</th>
-                        <th class="p-4 text-left">Kategori Toko</th>
-                        <th class="p-4 text-left">Deskripsi</th>
-                        <th class="p-4 text-center">Status</th>
-                        <th class="p-4 text-center">Total Toko</th>
-                        <th class="p-4 text-center w-24">Aksi</th>
+                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Kategori Toko</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Deskripsi</th>
+                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
+                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Total Toko</th>
+                        <th class="px-4 py-4 text-center w-24 text-[10px] font-semibold tracking-widest">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -351,133 +363,170 @@
 </div>
 
 <!-- Modal Form Kategori (Tambah/Edit) -->
-<form method="POST" action="" id="kategori-form" onsubmit="closeKategoriModal()">
-    @csrf
-    <div id="modal-form-kategori" data-modal class="fixed inset-0 z-[70] hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close onclick="closeKategoriModal()"></div>
-        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
-            <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-                <div>
-                    <h3 id="kategori-modal-title" class="font-title-md text-title-md text-on-surface premium-heading">Tambah Kategori Baru</h3>
-                    <p id="kategori-modal-sub" class="text-on-surface-variant font-body-md text-sm mt-1">Kategori berlaku untuk seluruh toko di platform.</p>
-                </div>
-                <button type="button" onclick="closeKategoriModal()" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
-            </div>
-            <div class="p-6 space-y-5">
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKategori">Nama Kategori</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKategori" name="nama_kategori" type="text" maxlength="100" placeholder="Misal: Pakaian, Aksesoris" required />
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="parentId">Kategori Induk (opsional)</label>
-                    <select name="parent_id" id="parentId" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors">
-                        <option value="">— Tanpa induk (kategori utama) —</option>
-                        @foreach ($parents as $induk)
-                            <option value="{{ $induk->category_id }}">{{ $induk->nama_kategori }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsiKategori">Deskripsi</label>
-                    <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsiKategori" name="deskripsi" rows="3" maxlength="500" placeholder="Deskripsi kategori..."></textarea>
-                </div>
-                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                    <button type="button" onclick="closeKategoriModal()" class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                    <button type="submit" id="kategori-submit-btn" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tambah Kategori</button>
-                </div>
-            </div>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'modal-form-kategori',
+    'dataModal' => true,
+    'icon' => 'category',
+    'title' => 'Tambah Kategori Baru',
+    'titleId' => 'kategori-modal-title',
+    'subtitle' => 'Kategori berlaku untuk seluruh toko di platform.',
+    'subtitleId' => 'kategori-modal-sub',
+    'size' => 'lg',
+    'close' => 'closeKategoriModal',
+])
+    <form method="POST" action="" id="kategori-form" onsubmit="closeKategoriModal()">
+        @csrf
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKategori">Nama Kategori</label>
+            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKategori" name="nama_kategori" type="text" maxlength="100" placeholder="Misal: Pakaian, Aksesoris" required />
         </div>
-    </div>
-</form>
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="parentId">Kategori Induk (opsional)</label>
+            <div class="relative" id="parentId-dd">
+            <button type="button" data-dd-trigger id="parentId-trigger" onclick="toggleDropdown('parentId')" aria-haspopup="listbox" aria-expanded="false"
+                class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
+                <span id="parentId-label" class="truncate">— Tanpa induk (kategori utama) —</span>
+                <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="parentId-chevron">expand_more</span>
+            </button>
+            <div id="parentId-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                class="hidden absolute left-0 top-full mt-2 w-full min-w-[240px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-y-auto max-h-64 py-1">
+                <button type="button" role="option" aria-selected="true" data-dd-option="" onclick="selectParentId('')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                    — Tanpa induk (kategori utama) —<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                </button>
+                @foreach ($parents as $induk)
+                    <button type="button" role="option" aria-selected="false" data-dd-option="{{ $induk->category_id }}" onclick="selectParentId('{{ $induk->category_id }}')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                        {{ $induk->nama_kategori }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                    </button>
+                @endforeach
+            </div>
+            <input type="hidden" name="parent_id" id="parentId" value="" />
+        </div>
+        </div>
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsiKategori">Deskripsi</label>
+            <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsiKategori" name="deskripsi" rows="3" maxlength="500" placeholder="Deskripsi kategori..."></textarea>
+        </div>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4">
+                <button type="button" onclick="closeKategoriModal()" class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="kategori-form" id="kategori-submit-btn" class="btn-modal btn-modal-primary">Tambah Kategori</button>
+            </div>
+        @endslot
+    </form>
+@endcomponent
 
 <!-- Modal Hapus Kategori -->
-<form method="POST" action="" id="hapus-kategori-form" onsubmit="closeHapusModal()">
-    @csrf
-    <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="hapusKategoriModal" onclick="if (event.target === this) closeHapusModal()">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                    <span class="material-symbols-outlined text-error text-[28px]">delete_forever</span>
-                </div>
-                <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Hapus Kategori</h3>
-                <p class="text-on-surface-variant text-sm text-center mb-4">Kategori <span id="hapus-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.</p>
-                <div id="hapus-warning" class="hidden mb-4"></div>
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeHapusModal()">Batal</button>
-                    <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Hapus</button>
-                </div>
-            </div>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'hapusKategoriModal',
+    'zIndex' => 70,
+    'close' => 'closeHapusModal',
+])
+    <form method="POST" action="" id="hapus-kategori-form" onsubmit="closeHapusModal()" class="p-6 space-y-4">
+        @csrf
+        <div class="text-center">
+            <h3 class="font-title-md text-title-md text-on-surface">Hapus Kategori</h3>
+            <p class="text-on-surface-variant text-sm mt-2 mb-4">Kategori <span id="hapus-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.</p>
         </div>
-    </div>
-</form>
+        <div id="hapus-warning" class="hidden"></div>
+    </form>
+    @slot('footer')
+        <div class="flex space-x-3">
+            <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusModal()">Batal</button>
+            <button type="submit" form="hapus-kategori-form" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
+        </div>
+    @endslot
+@endcomponent
 
 <!-- Modal Form Kategori Toko (Tambah/Edit) -->
-<form method="POST" action="" id="kategori-toko-form" onsubmit="closeKategoriTokoModal()">
-    @csrf
-    <div id="modal-form-kategori-toko" data-modal class="fixed inset-0 z-[70] hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close onclick="closeKategoriTokoModal()"></div>
-        <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
-            <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-                <div>
-                    <h3 id="kategori-toko-modal-title" class="font-title-md text-title-md text-on-surface premium-heading">Tambah Kategori Toko</h3>
-                    <p id="kategori-toko-modal-sub" class="text-on-surface-variant font-body-md text-sm mt-1">Kategori toko yang owner harus pilih saat mengisi data toko.</p>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'modal-form-kategori-toko',
+    'dataModal' => true,
+    'icon' => 'storefront',
+    'title' => 'Tambah Kategori Toko',
+    'titleId' => 'kategori-toko-modal-title',
+    'subtitle' => 'Kategori toko yang owner harus pilih saat mengisi data toko.',
+    'subtitleId' => 'kategori-toko-modal-sub',
+    'size' => 'lg',
+    'close' => 'closeKategoriTokoModal',
+])
+    <form method="POST" action="" id="kategori-toko-form" onsubmit="closeKategoriTokoModal()">
+        @csrf
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKategoriToko">Nama Kategori Toko</label>
+            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKategoriToko" name="nama_kategori" type="text" maxlength="100" placeholder="Misal: Fashion & Lifestyle" required />
+        </div>
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsiKategoriToko">Deskripsi</label>
+            <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsiKategoriToko" name="deskripsi" rows="3" maxlength="500" placeholder="Deskripsi kategori toko..."></textarea>
+        </div>
+        <div>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="statusKategoriToko">Status</label>
+            <div class="relative" id="katTokoStatus-dd">
+                <button type="button" data-dd-trigger id="katTokoStatus-trigger" onclick="toggleDropdown('katTokoStatus')" aria-haspopup="listbox" aria-expanded="false"
+                    class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
+                    <span id="katTokoStatus-label" class="truncate">Aktif</span>
+                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="katTokoStatus-chevron">expand_more</span>
+                </button>
+                <div id="katTokoStatus-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                    class="hidden absolute left-0 top-full mt-2 w-full min-w-[140px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                    <button type="button" role="option" aria-selected="true" data-dd-option="aktif" onclick="selectKatTokoStatus('aktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                        Aktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                    </button>
+                    <button type="button" role="option" aria-selected="false" data-dd-option="nonaktif" onclick="selectKatTokoStatus('nonaktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                        Nonaktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                    </button>
                 </div>
-                <button type="button" onclick="closeKategoriTokoModal()" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
-            </div>
-            <div class="p-6 space-y-5">
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKategoriToko">Nama Kategori Toko</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKategoriToko" name="nama_kategori" type="text" maxlength="100" placeholder="Misal: Fashion & Lifestyle" required />
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsiKategoriToko">Deskripsi</label>
-                    <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsiKategoriToko" name="deskripsi" rows="3" maxlength="500" placeholder="Deskripsi kategori toko..."></textarea>
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="statusKategoriToko">Status</label>
-                    <select name="status" id="statusKategoriToko" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors">
-                        <option value="aktif">Aktif</option>
-                        <option value="nonaktif">Nonaktif</option>
-                    </select>
-                </div>
-                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                    <button type="button" onclick="closeKategoriTokoModal()" class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                    <button type="submit" id="kategori-toko-submit-btn" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tambah Kategori Toko</button>
-                </div>
+                <input type="hidden" name="status" id="statusKategoriToko" value="aktif" />
             </div>
         </div>
-    </div>
-</form>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4">
+                <button type="button" onclick="closeKategoriTokoModal()" class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" form="kategori-toko-form" id="kategori-toko-submit-btn" class="btn-modal btn-modal-primary">Tambah Kategori Toko</button>
+            </div>
+        @endslot
+    </form>
+@endcomponent
 
 <!-- Modal Hapus Kategori Toko -->
-<form method="POST" action="" id="hapus-kategori-toko-form" onsubmit="closeHapusKategoriTokoModal()">
-    @csrf
-    <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="hapusKategoriTokoModal" onclick="if (event.target === this) closeHapusKategoriTokoModal()">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                    <span class="material-symbols-outlined text-error text-[28px]">delete_forever</span>
-                </div>
-                <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Hapus Kategori Toko</h3>
-                <p class="text-on-surface-variant text-sm text-center mb-4">Kategori toko <span id="hapus-toko-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.</p>
-                <div id="hapus-toko-warning" class="hidden mb-4"></div>
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeHapusKategoriTokoModal()">Batal</button>
-                    <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Hapus</button>
-                </div>
-            </div>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'hapusKategoriTokoModal',
+    'zIndex' => 70,
+    'close' => 'closeHapusKategoriTokoModal',
+])
+    <form method="POST" action="" id="hapus-kategori-toko-form" onsubmit="closeHapusKategoriTokoModal()" class="p-6 space-y-4">
+        @csrf
+        <div class="text-center">
+            <h3 class="font-title-md text-title-md text-on-surface">Hapus Kategori Toko</h3>
+            <p class="text-on-surface-variant text-sm mt-2 mb-4">Kategori toko <span id="hapus-toko-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.</p>
         </div>
-    </div>
-</form>
+        <div id="hapus-toko-warning" class="hidden"></div>
+    </form>
+    @slot('footer')
+        <div class="flex space-x-3">
+            <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusKategoriTokoModal()">Batal</button>
+            <button type="submit" form="hapus-kategori-toko-form" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
+        </div>
+    @endslot
+@endcomponent
 @endsection
 
 @push('scripts')
+@include('SuperAdmin.partials.dd-helpers')
 <script>
     const kategoriUrls = {
         store: '{{ route('superadmin.kategori.store') }}',
         update: (id) => '{{ route('superadmin.kategori.update', ':id:') }}'.replace(':id:', id),
         hapus: (id) => '{{ route('superadmin.kategori.hapus', ':id:') }}'.replace(':id:', id)
     };
+    const parentsLabelMap = @json($parents->pluck('nama_kategori', 'category_id'));
+
+    function selectParentId(v) {
+        ddSet('parentId', v, v === '' ? '— Tanpa induk (kategori utama) —' : (parentsLabelMap[v] ?? '— Tanpa induk (kategori utama) —'));
+    }
+    function selectKatTokoStatus(v) {
+        ddSet('katTokoStatus', v, v === 'aktif' ? 'Aktif' : 'Nonaktif');
+    }
 
     function openKategoriForm(card = null) {
         const isEdit = !!card;
@@ -490,6 +539,7 @@
             document.getElementById('namaKategori').value = d.nama;
             document.getElementById('deskripsiKategori').value = d.deskripsi || '';
             document.getElementById('parentId').value = d.parent || '';
+            selectParentId(d.parent || '');
             form.action = kategoriUrls.update(d.id);
             document.getElementById('kategori-submit-btn').textContent = 'Simpan Perubahan';
         } else {
@@ -498,6 +548,7 @@
             document.getElementById('namaKategori').value = '';
             document.getElementById('deskripsiKategori').value = '';
             document.getElementById('parentId').value = '';
+            selectParentId('');
             form.action = kategoriUrls.store;
             document.getElementById('kategori-submit-btn').textContent = 'Tambah Kategori';
         }
@@ -543,7 +594,7 @@
     }
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') { closeKategoriModal(); closeHapusModal(); }
+        if (e.key === 'Escape') { closeAllDropdowns(); closeKategoriModal(); closeHapusModal(); }
     });
 </script>
 @endpush
@@ -664,6 +715,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('namaKategoriToko').value = d.nama;
             document.getElementById('deskripsiKategoriToko').value = d.deskripsi || '';
             document.getElementById('statusKategoriToko').value = d.status || 'aktif';
+            selectKatTokoStatus(d.status || 'aktif');
             form.action = kategoriTokoUrls.update(d.id);
             document.getElementById('kategori-toko-submit-btn').textContent = 'Simpan Perubahan';
         } else {
@@ -672,6 +724,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('namaKategoriToko').value = '';
             document.getElementById('deskripsiKategoriToko').value = '';
             document.getElementById('statusKategoriToko').value = 'aktif';
+            selectKatTokoStatus('aktif');
             form.action = kategoriTokoUrls.store;
             document.getElementById('kategori-toko-submit-btn').textContent = 'Tambah Kategori Toko';
         }
@@ -769,7 +822,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') { closeKategoriTokoModal(); closeHapusKategoriTokoModal(); }
+        if (e.key === 'Escape') { closeAllDropdowns(); closeKategoriTokoModal(); closeHapusKategoriTokoModal(); }
     });
 </script>
 @endpush

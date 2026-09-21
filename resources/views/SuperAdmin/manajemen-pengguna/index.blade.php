@@ -82,7 +82,16 @@
 @include('partials.flash-toast')
 
 <div class="w-full max-w-7xl mx-auto space-y-section-gap">
-
+    <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+        </span>
+        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Data pengguna diperbarui real-time
+        </span>
+    </div>
     <!-- Hero Section -->
     <section class="relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl card-premium hero-glow">
         <span class="material-symbols-outlined fill absolute -right-6 -bottom-10 text-[220px] text-gold-accent/10 pointer-events-none select-none" aria-hidden="true">group</span>
@@ -134,12 +143,32 @@
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
                     <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest">Urutkan:</span>
-                    <select id="sort-select" class="bg-surface-container-low border border-muted-border rounded-lg px-3 py-3 font-label-sm text-[11px] uppercase tracking-wide text-on-surface focus:outline-none focus:border-gold-accent transition-colors">
-                        <option value="nama_asc">Nama A-Z</option>
-                        <option value="nama_desc">Nama Z-A</option>
-                        <option value="role">Peran</option>
-                        <option value="status">Status</option>
-                    </select>
+                    <div class="relative" id="sort-dd">
+                        <button type="button" id="sort-trigger" onclick="toggleDropdown('sort')" aria-haspopup="listbox" aria-expanded="false"
+                            class="flex items-center justify-between gap-3 bg-surface-container-low border border-muted-border rounded-lg px-3 py-3 font-label-sm text-[11px] uppercase tracking-wide text-on-surface focus:outline-none focus:border-gold-accent transition-colors min-w-[150px] cursor-pointer text-left">
+                            <span id="sort-label">Nama A-Z</span>
+                            <span class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200" id="sort-chevron">expand_more</span>
+                        </button>
+                        <div id="sort-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                            class="hidden absolute left-0 top-full mt-2 w-full min-w-[150px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                            <button type="button" role="option" aria-selected="true" data-sort="nama_asc" onclick="selectSort('nama_asc')"
+                                class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Nama A-Z<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check">check</span>
+                            </button>
+                            <button type="button" role="option" aria-selected="false" data-sort="nama_desc" onclick="selectSort('nama_desc')"
+                                class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Nama Z-A<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check hidden">check</span>
+                            </button>
+                            <button type="button" role="option" aria-selected="false" data-sort="role" onclick="selectSort('role')"
+                                class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Peran<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check hidden">check</span>
+                            </button>
+                            <button type="button" role="option" aria-selected="false" data-sort="status" onclick="selectSort('status')"
+                                class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                Status<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check hidden">check</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -457,11 +486,23 @@
                 @csrf
                 @method('PUT')
                 <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Ubah Peran</label>
-                <select name="role_id" id="drawer-role-select" class="w-full bg-transparent border border-muted-border rounded-lg p-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors">
-                    @foreach ($roles as $role)
-                        <option value="{{ $role->role_id }}">{{ $role->nama_role }}</option>
-                    @endforeach
-                </select>
+                <input type="hidden" name="role_id" id="drawer-role-value" value="" />
+                <div class="relative" id="role-dd">
+                    <button type="button" id="role-trigger" onclick="toggleDropdown('role')" aria-haspopup="listbox" aria-expanded="false"
+                        class="w-full flex items-center justify-between gap-3 bg-transparent border border-muted-border rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
+                        <span id="drawer-role-label">-</span>
+                        <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" id="role-chevron">expand_more</span>
+                    </button>
+                    <div id="role-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                        class="hidden absolute left-0 top-full mt-2 w-full bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                        @foreach ($roles as $role)
+                            <button type="button" role="option" aria-selected="false" data-role="{{ $role->role_id }}" onclick="selectDrawerRole('{{ $role->role_id }}')"
+                                class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                {{ $role->nama_role }}<span class="material-symbols-outlined text-[18px] text-gold-accent role-check hidden">check</span>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
                 <button type="submit" class="w-full py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Simpan Perubahan</button>
             </form>
 
@@ -475,105 +516,137 @@
 </div>
 
 <!-- Modal Konfirmasi Nonaktifkan/Aktifkan (cascade info) -->
-<div id="confirmNonaktifkanModal" class="fixed inset-0 z-[75] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if (event.target === this) closeConfirmNonaktifkan()">
-    <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-        <div class="p-8">
-            <div id="confirm-nonaktifkan-icon" class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                <span id="confirm-nonaktifkan-icon-sym" class="material-symbols-outlined text-error text-[28px]">block</span>
-            </div>
-            <h3 id="confirm-nonaktifkan-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">Nonaktifkan Pengguna?</h3>
-            <p id="confirm-nonaktifkan-desc" class="text-on-surface-variant text-sm text-center mb-4">Status akan diubah dan efek cascade akan dijelaskan di sini.</p>
-            <div class="flex space-x-3">
-                <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeConfirmNonaktifkan()">Batal</button>
-                <button type="button" id="confirm-nonaktifkan-submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Lanjutkan</button>
-            </div>
-        </div>
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'confirmNonaktifkanModal',
+    'icon' => 'block',
+    'iconWrapId' => 'confirm-nonaktifkan-icon',
+    'iconSymId' => 'confirm-nonaktifkan-icon-sym',
+    'zIndex' => 75,
+    'close' => 'closeConfirmNonaktifkan',
+    'dataModal' => true,
+])
+    <div class="p-6">
+        <h3 id="confirm-nonaktifkan-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">Nonaktifkan Pengguna?</h3>
+        <p id="confirm-nonaktifkan-desc" class="text-on-surface-variant text-sm text-center mb-6">Status akan diubah dan efek cascade akan dijelaskan di sini.</p>
     </div>
-</div>
+    @slot('footer')
+        <div class="flex space-x-3">
+            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeConfirmNonaktifkan()">Batal</button>
+            <button type="button" id="confirm-nonaktifkan-submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Lanjutkan</button>
+        </div>
+    @endslot
+@endcomponent
 
 <!-- Modal Tambah/Edit Pengguna -->
 <form method="POST" action="" id="user-form" onsubmit="closeUserModal()">
     @csrf
-    <div id="modal-form-user" data-modal class="fixed inset-0 z-[70] hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close onclick="closeUserModal()"></div>
-        <div class="relative mx-auto mt-6 md:mt-10 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[90vh] overflow-y-auto">
-            <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-                <div>
-                    <h3 id="user-modal-title" class="font-title-md text-title-md text-on-surface premium-heading">Tambah Pengguna Baru</h3>
-                    <p id="user-modal-sub" class="text-on-surface-variant font-body-md text-sm mt-1">Lengkapi data untuk membuat akun baru.</p>
-                </div>
-                <button type="button" onclick="closeUserModal()" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
+    @component('SuperAdmin.partials.premium-modal', [
+        'id' => 'modal-form-user',
+        'dataModal' => true,
+        'close' => 'closeUserModal',
+        'icon' => 'person_add',
+        'title' => 'Tambah Pengguna Baru',
+        'titleId' => 'user-modal-title',
+        'subtitle' => 'Lengkapi data untuk membuat akun baru.',
+        'subtitleId' => 'user-modal-sub',
+    ])
+        <div class="p-6 space-y-5">
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-nama">Nama Lengkap</label>
+                <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-nama" name="nama_lengkap" type="text" maxlength="150" placeholder="Masukkan nama lengkap" required />
             </div>
-            <div class="p-6 space-y-5">
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-email">Email</label>
+                <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-email" name="email" type="email" maxlength="150" placeholder="nama@email.com" required />
+            </div>
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-phone">Nomor Telepon</label>
+                <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-phone" name="nomor_telepon" type="tel" maxlength="30" placeholder="+62 812-3456-7890" />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-nama">Nama Lengkap</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-nama" name="nama_lengkap" type="text" maxlength="150" placeholder="Masukkan nama lengkap" required />
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-email">Email</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-email" name="email" type="email" maxlength="150" placeholder="nama@email.com" required />
-                </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-phone">Nomor Telepon</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-phone" name="nomor_telepon" type="tel" maxlength="30" placeholder="+62 812-3456-7890" />
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-role">Peran</label>
-                        <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors" id="form-role" name="role_id" required>
-                            @foreach ($roles as $role)
-                                <option value="{{ $role->role_id }}">{{ $role->nama_role }}</option>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-role">Peran</label>
+                    <input type="hidden" name="role_id" id="form-role-value" value="{{ $roles->first()?->role_id }}" />
+                    <div class="relative" id="form-role-dd">
+                        <button type="button" id="form-role-trigger" onclick="toggleDropdown('form-role')" aria-haspopup="listbox" aria-expanded="false"
+                            class="w-full flex items-center justify-between gap-3 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
+                            <span id="form-role-label">{{ $roles->first()?->nama_role }}</span>
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" id="form-role-chevron">expand_more</span>
+                        </button>
+                        <div id="form-role-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                            class="hidden absolute left-0 top-full mt-2 w-full bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                            @foreach ($roles as $index => $role)
+                                <button type="button" role="option" aria-selected="{{ $index === 0 ? 'true' : 'false' }}" data-role="{{ $role->role_id }}" onclick="selectFormRole('{{ $role->role_id }}')"
+                                    class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                    {{ $role->nama_role }}<span class="material-symbols-outlined text-[18px] text-gold-accent form-role-check {{ $index === 0 ? '' : 'hidden' }}">check</span>
+                                </button>
                             @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-status">Status</label>
-                        <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors" id="form-status" name="status" required>
-                            <option value="aktif">Aktif</option>
-                            <option value="nonaktif">Non-aktif</option>
-                            <option value="suspend">Suspend</option>
-                        </select>
+                        </div>
                     </div>
                 </div>
-                <div id="password-fields">
-                    <div>
-                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-password">Password</label>
-                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-password" name="password" type="password" minlength="8" placeholder="Minimal 8 karakter" />
-                        <p id="form-password-hint" class="text-on-surface-variant/60 text-xs mt-1 hidden">Kosongkan jika tidak ingin mengubah password.</p>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-status">Status</label>
+                    <input type="hidden" name="status" id="form-status-value" value="aktif" />
+                    <div class="relative" id="form-status-dd">
+                        <button type="button" id="form-status-trigger" onclick="toggleDropdown('form-status')" aria-haspopup="listbox" aria-expanded="false"
+                            class="w-full flex items-center justify-between gap-3 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
+                            <span id="form-status-label">Aktif</span>
+                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" id="form-status-chevron">expand_more</span>
+                        </button>
+                        <div id="form-status-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
+                            class="hidden absolute left-0 top-full mt-2 w-full bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
+                            @foreach (['aktif' => 'Aktif', 'nonaktif' => 'Non-aktif', 'suspend' => 'Suspend'] as $val => $label)
+                                <button type="button" role="option" aria-selected="{{ $loop->first ? 'true' : 'false' }}" data-status="{{ $val }}" onclick="selectFormStatus('{{ $val }}')"
+                                    class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                    {{ $label }}<span class="material-symbols-outlined text-[18px] text-gold-accent form-status-check {{ $loop->first ? '' : 'hidden' }}">check</span>
+                                </button>
+                            @endforeach
+                        </div>
                     </div>
-                    <div class="mt-4">
-                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-password-confirm">Konfirmasi Password</label>
-                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-password-confirm" name="password_confirmation" type="password" placeholder="Ulangi password" />
-                    </div>
-                </div>
-                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                    <button type="button" onclick="closeUserModal()" class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                    <button type="submit" id="user-submit-btn" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tambah Pengguna</button>
                 </div>
             </div>
-        </div>
-    </div>
+            <div id="password-fields">
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-password">Password</label>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-password" name="password" type="password" minlength="8" placeholder="Minimal 8 karakter" />
+                    <p id="form-password-hint" class="text-on-surface-variant/60 text-xs mt-1 hidden">Kosongkan jika tidak ingin mengubah password.</p>
+                </div>
+                <div class="mt-4">
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-password-confirm">Konfirmasi Password</label>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-password-confirm" name="password_confirmation" type="password" placeholder="Ulangi password" />
+                </div>
+            </div>
+            </div>
+        @slot('footer')
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
+                <button type="button" onclick="closeUserModal()" class="btn-modal btn-modal-ghost">Batal</button>
+                <button type="submit" id="user-submit-btn" class="btn-modal btn-modal-primary">Tambah Pengguna</button>
+            </div>
+        @endslot
+    @endcomponent
 </form>
 
 <!-- Modal Hapus Pengguna -->
 <form method="POST" action="" id="hapus-user-form" onsubmit="closeHapusModal()">
     @csrf
     @method('DELETE')
-    <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="hapusUserModal" onclick="if (event.target === this) closeHapusModal()">
-        <div class="bg-surface-container-lowest w-full max-w-md rounded-xl border border-muted-border shadow-2xl overflow-hidden">
-            <div class="p-8">
-                <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                    <span class="material-symbols-outlined text-error text-[28px]">delete_forever</span>
-                </div>
-                <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Hapus Pengguna</h3>
-                <p class="text-on-surface-variant text-sm text-center mb-4">Pengguna <span id="hapus-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen dari sistem.</p>
-                <div class="flex space-x-3">
-                    <button type="button" class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg" onclick="closeHapusModal()">Batal</button>
-                    <button type="submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Hapus</button>
-                </div>
-            </div>
-        </div>
+    @component('SuperAdmin.partials.premium-confirm', [
+        'id' => 'hapusUserModal',
+        'icon' => 'delete_forever',
+        'close' => 'closeHapusModal',
+        'dataModal' => true,
+    ])
+        <div class="p-6">
+            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Hapus Pengguna</h3>
+            <p class="text-on-surface-variant text-sm text-center mb-6">Pengguna <span id="hapus-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen dari sistem.</p>
     </div>
+    @slot('footer')
+        <div class="flex space-x-3">
+            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeHapusModal()">Batal</button>
+            <button type="submit" class="flex-1 btn-modal btn-modal-danger">Ya, Hapus</button>
+        </div>
+    @endslot
+    @endcomponent
 </form>
 @endsection
 
@@ -589,7 +662,90 @@
     };
 
     const rolesJson = @json($roles->pluck('role_id', 'nama_role'));
+    const roleIdLabelMap = @json($roles->pluck('nama_role', 'role_id'));
+    const statusLabelMap = { aktif: 'Aktif', nonaktif: 'Non-aktif', suspend: 'Suspend' };
+    const sortLabels = { nama_asc: 'Nama A-Z', nama_desc: 'Nama Z-A', role: 'Peran', status: 'Status' };
     let isEditMode = false;
+
+    /* ── Custom Dropdown Helpers ── */
+    function toggleDropdown(id) {
+        const menu = document.getElementById(id + '-menu');
+        const chevron = document.getElementById(id + '-chevron');
+        const trigger = document.getElementById(id + '-trigger');
+        if (!menu) return;
+        const open = !menu.classList.contains('hidden');
+        menu.classList.toggle('hidden', open);
+        if (chevron) chevron.classList.toggle('rotate-180', !open);
+        if (trigger) trigger.setAttribute('aria-expanded', String(!open));
+    }
+    function closeDropdown(id) {
+        const menu = document.getElementById(id + '-menu');
+        const chevron = document.getElementById(id + '-chevron');
+        const trigger = document.getElementById(id + '-trigger');
+        if (menu) menu.classList.add('hidden');
+        if (chevron) chevron.classList.remove('rotate-180');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    }
+
+    /* ── Sort Dropdown ── */
+    function selectSort(v) {
+        userState.sort = v;
+        document.getElementById('sort-label').textContent = sortLabels[v] || v;
+        document.querySelectorAll('#sort-menu [data-sort]').forEach(function (b) {
+            b.setAttribute('aria-selected', b.dataset.sort === v ? 'true' : 'false');
+            b.querySelector('.sort-check').classList.toggle('hidden', b.dataset.sort !== v);
+        });
+        closeDropdown('sort');
+        applyUserFilters();
+    }
+
+    /* ── Drawer Role Dropdown ── */
+    function setDrawerRole(id) {
+        id = String(id);
+        document.getElementById('drawer-role-value').value = id;
+        document.getElementById('drawer-role-label').textContent = roleIdLabelMap[id] || '-';
+        document.querySelectorAll('#role-menu [data-role]').forEach(function (b) {
+            b.setAttribute('aria-selected', b.dataset.role === id ? 'true' : 'false');
+            b.querySelector('.role-check').classList.toggle('hidden', b.dataset.role !== id);
+        });
+    }
+    function selectDrawerRole(id) {
+        setDrawerRole(id);
+        closeDropdown('role');
+    }
+
+    /* ── Modal Form Role / Status Dropdowns ── */
+    function setFormRole(id) {
+        id = String(id);
+        document.getElementById('form-role-value').value = id;
+        document.getElementById('form-role-label').textContent = roleIdLabelMap[id] || '-';
+        document.querySelectorAll('#form-role-menu [data-role]').forEach(function (b) {
+            b.setAttribute('aria-selected', b.dataset.role === id ? 'true' : 'false');
+            b.querySelector('.form-role-check').classList.toggle('hidden', b.dataset.role !== id);
+        });
+    }
+    function selectFormRole(id) {
+        setFormRole(id);
+        closeDropdown('form-role');
+    }
+    function setFormStatus(v) {
+        document.getElementById('form-status-value').value = v;
+        document.getElementById('form-status-label').textContent = statusLabelMap[v] || v;
+        document.querySelectorAll('#form-status-menu [data-status]').forEach(function (b) {
+            b.setAttribute('aria-selected', b.dataset.status === v ? 'true' : 'false');
+            b.querySelector('.form-status-check').classList.toggle('hidden', b.dataset.status !== v);
+        });
+    }
+    function selectFormStatus(v) {
+        setFormStatus(v);
+        closeDropdown('form-status');
+    }
+    document.addEventListener('click', function (e) {
+        ['sort', 'role', 'form-role', 'form-status'].forEach(function (id) {
+            const container = document.getElementById(id + '-dd');
+            if (container && !container.contains(e.target)) closeDropdown(id);
+        });
+    });
 
     /* ── Detail Drawer ── */
     const drawerHistory = [];
@@ -641,7 +797,7 @@
         renderDrawerAvatar(data);
 
         const roleId = Object.entries(rolesJson).find(([k, v]) => v && k === data.role);
-        if (roleId) document.getElementById('drawer-role-select').value = roleId[1];
+        if (roleId) setDrawerRole(roleId[1]);
 
         document.getElementById('role-form').action = urls.role(data.user_id);
         document.getElementById('nonaktifkan-form').action = urls.nonaktifkan(data.user_id);
@@ -895,8 +1051,8 @@
         document.getElementById('form-nama').value = '';
         document.getElementById('form-email').value = '';
         document.getElementById('form-phone').value = '';
-        document.getElementById('form-role').value = '{{ $roles->first()?->role_id }}';
-        document.getElementById('form-status').value = 'aktif';
+        setFormRole('{{ $roles->first()?->role_id }}');
+        setFormStatus('aktif');
         document.getElementById('form-password').value = '';
         document.getElementById('form-password-confirm').value = '';
         document.getElementById('form-password').required = true;
@@ -927,8 +1083,8 @@
         document.getElementById('form-nama').value = d.name;
         document.getElementById('form-email').value = d.email;
         document.getElementById('form-phone').value = d.phone || '';
-        document.getElementById('form-role').value = d.roleId;
-        document.getElementById('form-status').value = d.status;
+        setFormRole(d.roleId);
+        setFormStatus(d.status);
         document.getElementById('form-password').value = '';
         document.getElementById('form-password-confirm').value = '';
         document.getElementById('form-password').required = false;
@@ -1105,10 +1261,6 @@
         document.getElementById('clear-search').classList.add('opacity-0');
         applyUserFilters();
     });
-    document.getElementById('sort-select')?.addEventListener('change', (e) => {
-        userState.sort = e.target.value;
-        applyUserFilters();
-    });
     document.querySelectorAll('[data-filter]').forEach(btn => {
         btn.addEventListener('click', () => {
             const f = btn.getAttribute('data-filter');
@@ -1122,6 +1274,7 @@
     /* ── Keyboard ── */
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
+            closeDropdown('sort'); closeDropdown('role'); closeDropdown('form-role'); closeDropdown('form-status');
             closeUserDetail();
             closeUserModal();
             closeHapusModal();
@@ -1156,10 +1309,10 @@
             } else {
                 descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> akan menjadi <span class="font-bold text-error">nonaktif</span>.';
             }
-            iconWrap.className = 'w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5';
-            iconSym.className = 'material-symbols-outlined text-error text-[28px]';
+            iconWrap.className = 'w-12 h-12 rounded-full bg-error/25 border border-error/30 flex items-center justify-center';
+            iconSym.className = 'material-symbols-outlined text-[24px] text-error';
             iconSym.textContent = 'block';
-            submitBtn.className = 'flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium';
+            submitBtn.className = 'flex-1 btn-modal btn-modal-danger';
             submitBtn.textContent = 'Ya, Nonaktifkan';
         } else {
             titleEl.textContent = 'Aktifkan Pengguna?';
@@ -1169,10 +1322,10 @@
             } else {
                 descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> akan menjadi <span class="font-bold text-success">aktif</span>.';
             }
-            iconWrap.className = 'w-14 h-14 rounded-full bg-success/10 border border-success/25 flex items-center justify-center mx-auto mb-5';
-            iconSym.className = 'material-symbols-outlined text-success text-[28px]';
+            iconWrap.className = 'w-12 h-12 rounded-full bg-success/25 border border-success/30 flex items-center justify-center';
+            iconSym.className = 'material-symbols-outlined text-[24px] text-success';
             iconSym.textContent = 'check_circle';
-            submitBtn.className = 'flex-1 bg-success text-white font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium';
+            submitBtn.className = 'flex-1 btn-modal btn-modal-success';
             submitBtn.textContent = 'Ya, Aktifkan';
         }
 

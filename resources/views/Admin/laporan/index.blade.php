@@ -40,6 +40,30 @@
     </section>
 
     <section class="space-y-gutter">
+        <h2 class="font-title-md text-title-md text-on-surface premium-heading">Penjualanku</h2>
+        <p class="text-xs text-on-surface-variant -mt-2">Order yang pembayarannya kamu verifikasi sendiri — sebagai kasir, kontribusimu terpisah dari angka toko.</p>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+            <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pesanan Saya</span>
+                <span class="raliva-figure text-[26px] text-on-surface">{{ $saya['pesanan'] }}</span>
+            </div>
+            <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pendapatan Saya</span>
+                <span class="raliva-figure text-[26px] text-secondary">Rp {{ number_format($saya['pendapatan'],0,',','.') }}</span>
+            </div>
+            <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pengeluaran Saya</span>
+                <span class="raliva-figure text-[26px] text-error">Rp {{ number_format($saya['pengeluaran'],0,',','.') }}</span>
+            </div>
+            <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Bersih Saya</span>
+                <span class="raliva-figure text-[26px] {{ $saya['bersih'] >= 0 ? 'text-secondary' : 'text-error' }}">Rp {{ number_format($saya['bersih'],0,',','.') }}</span>
+            </div>
+        </div>
+        <p class="text-xs text-on-surface-variant mt-2">Pengeluaran saya = refund yang saya selesaikan (hanya refund berstatus selesai) + pengeluaran toko yang saya catat. Berlaku untuk toko yang ditugaskan (AdminContext).</p>
+    </section>
+
+    <section class="space-y-gutter">
         <h2 class="font-title-md text-title-md text-on-surface premium-heading">Rincian per Toko (Scope Admin)</h2>
         <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
             <table class="w-full min-w-[750px] premium-table">

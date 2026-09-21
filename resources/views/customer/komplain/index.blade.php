@@ -267,8 +267,27 @@
             default => ucfirst($c->status),
         };
         $done = in_array($c->status, ['selesai', 'ditutup'], true);
+        $orderData = $c->order;
+        $orderStatus = $orderData?->status;
+        $orderElig = in_array($orderStatus, ['dikirim', 'selesai'], true);
+        $refunds = $orderData?->refunds ?? collect();
+        $refundPernahAda = $refunds->isNotEmpty();
+        $refundAktif = $refunds->contains(fn ($r) => in_array($r->status, ['requested', 'escalated', 'disetujui'], true));
+        $latestRefund = $refunds->sortByDesc('diajukan_pada')->first();
+        $refundLabel = match ($latestRefund?->status) {
+            'requested' => __('Menunggu'),
+            'escalated' => __('Eskalasi'),
+            'disetujui' => __('Disetujui'),
+            'selesai' => __('Selesai'),
+            'ditolak' => __('Ditolak'),
+            default => '',
+        };
+        $paymentId = $orderData?->checkout?->payment?->payment_id;
     @endphp
-    <article data-complaint-card data-open-id="{{ $c->complaint_id }}" data-open-subjek="{{ $c->subjek }}" data-open-kode="{{ $c->complaint_id }}" data-open-statuslabel="{{ $statusLabel }}" data-open-done="{{ $done ? '1' : '0' }}" onclick="openChatFromCard(this)" class="group flex items-start gap-sm md:gap-md p-md border border-outline-variant rounded-xl cursor-pointer transition-colors hover:border-secondary">
+    <article data-complaint-card data-open-id="{{ $c->complaint_id }}" data-open-subjek="{{ $c->subjek }}" data-open-kode="{{ $c->complaint_id }}" data-open-statuslabel="{{ $statusLabel }}" data-open-done="{{ $done ? '1' : '0' }}"
+        data-open-order-id="{{ $orderData?->order_id ?? '' }}" data-open-nomor-order="{{ $orderData?->nomor_order ?? '' }}" data-open-order-status="{{ $orderStatus ?? '' }}" data-open-order-grand="{{ (float) ($orderData?->grand_total ?? 0) }}"
+        data-open-order-elig="{{ $orderElig ? '1' : '0' }}" data-open-payment-id="{{ $paymentId ?? '' }}" data-open-refund-aktif="{{ $refundPernahAda ? '1' : '0' }}" data-open-refund-label="{{ $refundLabel }}" data-open-refund-bukti="{{ ($latestRefund?->status === 'selesai' && $latestRefund->file_bukti) ? asset('storage/' . ltrim($latestRefund->file_bukti, '/')) : '' }}"
+        onclick="openChatFromCard(this)" class="group flex items-start gap-sm md:gap-md p-md border border-outline-variant rounded-xl cursor-pointer transition-colors hover:border-secondary">
         <div class="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center shrink-0 {{ $done ? '' : 'text-[var(--chrome-accent)]' }}">
             <span class="material-symbols-outlined text-[22px]">{{ $done ? 'task_alt' : 'support_agent' }}</span>
         </div>
@@ -286,6 +305,9 @@
         </div>
         <div class="shrink-0 self-stretch flex flex-col items-end gap-md">
             <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $done ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }}">{{ $statusLabel }}</span>
+            @if ($latestRefund)
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border border-secondary/20 bg-secondary/10 text-secondary">{{ __('Refund') }}: {{ $refundLabel }}</span>
+            @endif
             <span class="mt-auto mb-auto inline-flex items-center gap-1 px-3 py-2 rounded-full border border-outline-variant text-on-surface-variant group-hover:border-secondary group-hover:text-secondary transition-colors font-label-caps text-label-caps uppercase tracking-widest">
                 <span class="material-symbols-outlined text-[16px]">chat</span>{{ __('Buka') }}
             </span>
@@ -451,6 +473,8 @@
                     <p class="font-mono text-on-surface-variant text-xs mt-0.5 truncate" id="chat-kode">-</p>
                 </div>
                 <div class="flex items-center gap-2 lg:gap-3 shrink-0 chat-header-item" id="chat-header-actions">
+                    <span id="chat-refund-badge" class="hidden inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border border-secondary/20 bg-secondary/10 text-secondary shrink-0 whitespace-nowrap"></span>
+<a id="chat-refund-bukti" href="#" target="_blank" rel="noopener" class="hidden inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border border-gold-accent/40 bg-gold-accent/10 text-gold-accent shrink-0 whitespace-nowrap hover:border-gold-accent transition-colors"><span class="material-symbols-outlined text-[14px]">verified</span>{{ __('Refund selesai • Lihat bukti') }}</a>
                     <span id="chat-status" class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border bg-surface-container-high text-on-surface-variant border-outline-variant shrink-0 whitespace-nowrap"></span>
                     <button type="button" onclick="toggleChatSearch()" id="chat-search-toggle" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Cari pesan') }}" aria-label="{{ __('Cari pesan') }}">
                         <span class="material-symbols-outlined text-[20px]">search</span>
@@ -471,6 +495,9 @@
                             </button>
                             <button type="button" onclick="openExportChat()" id="chat-more-item-export" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
                                 <span class="material-symbols-outlined text-[19px]">ios_share</span>{{ __('Ekspor Chat') }}
+                            </button>
+                            <button type="button" onclick="openRefundFromChat()" id="chat-more-item-refund" class="hidden border-t border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] w-full text-left px-4 py-2.5 font-body-md text-sm text-secondary hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2 mt-1">
+                                <span class="material-symbols-outlined text-[19px]">assignment_return</span>{{ __('Ajukan Refund') }}
                             </button>
                         </div>
                     </div>
@@ -583,7 +610,43 @@
                 </div>
             </div>
         </div>
-    </div>
+    <div id="modal-refund" class="fixed inset-0 z-[90] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" onclick="closeRefundFromChat()"></div>
+    <form method="POST" action="{{ route('customer.refund.store') }}" enctype="multipart/form-data" class="relative mx-auto w-full max-w-md bg-surface border border-outline-variant rounded-xl shadow-xl max-h-[85vh] overflow-y-auto p-6 space-y-4">
+        @csrf
+        <input type="hidden" name="order_id" id="refund-order-id" value="" />
+        <input type="hidden" name="complaint_id" id="refund-complaint-id" value="" />
+        <h3 class="font-title-md text-title-md text-on-surface">Ajukan Refund</h3>
+        <p class="font-body-sm text-body-sm text-on-surface-variant" id="refund-order-info">-</p>
+        <div>
+            <label class="block font-label-sm text-label-sm mb-2">Jenis Refund</label>
+            <select name="tipe_refund" required class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3">
+                <option value="full">Penuh (full)</option>
+                <option value="partial">Sebagian (partial)</option>
+            </select>
+        </div>
+        <div>
+            <label class="block font-label-sm text-label-sm mb-2">Nominal Diajukan (Rp)</label>
+            <input id="refund-jumlah" name="jumlah" type="number" min="1" required class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3" />
+        </div>
+        <div>
+            <label class="block font-label-sm text-label-sm mb-2">Alasan (min. 20 karakter)</label>
+            <textarea name="alasan" rows="4" required minlength="20" maxlength="2000" class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3" placeholder="Jelaskan kondisi barang..."></textarea>
+        </div>
+        <div>
+            <label class="block font-label-sm text-label-sm mb-2">Foto Bukti Barang (JPG/PNG, maks. 4 MB)</label>
+            <input name="file_bukti_request" type="file" accept="image/jpeg,image/png,image/jpg" required class="w-full font-body-sm text-body-sm" />
+        </div>
+        <div>
+            <label class="block font-label-sm text-label-sm mb-2">Keterangan Foto (opsional)</label>
+            <input name="deskripsi_bukti_request" type="text" maxlength="1000" class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3" placeholder="cth. Foto bagian sobek" />
+        </div>
+        <div class="flex gap-3">
+            <button type="button" onclick="closeRefundFromChat()" class="flex-1 py-3 rounded-lg border border-outline-variant text-sm font-semibold">Batal</button>
+            <button type="submit" class="btn-gold flex-1 py-3 rounded-lg text-sm font-semibold">Kirim Pengajuan</button>
+        </div>
+    </form>
+</div>
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -596,13 +659,24 @@
     });
 </script>
 <script>
-    let currentChat = { id: null, polling: null, done: false, closing: false };
+    let currentChat = { id: null, polling: null, done: false, closing: false, order: null };
     const myId = {{ Auth::id() }};
     const myRole = "{{ Auth::user()->role->nama_role ?? '' }}";
 
     function openChatFromCard(el) {
         const card = el.closest('[data-complaint-card]');
         if (!card) return;
+        currentChat.order = {
+            id: card.getAttribute('data-open-order-id') || '',
+            nomor: card.getAttribute('data-open-nomor-order') || '',
+            status: card.getAttribute('data-open-order-status') || '',
+            grand: card.getAttribute('data-open-order-grand') || '0',
+            elig: card.getAttribute('data-open-order-elig') || '0',
+            payment: card.getAttribute('data-open-payment-id') || '',
+            refundAktif: card.getAttribute('data-open-refund-aktif') || '0',
+            refundLabel: card.getAttribute('data-open-refund-label') || '',
+            bukti: card.getAttribute('data-open-refund-bukti') || ''
+        };
         openChatModal(
             card.getAttribute('data-open-id'),
             card.getAttribute('data-open-subjek'),
@@ -633,6 +707,7 @@
         const statusEl = document.getElementById('chat-status');
         statusEl.textContent = statusLabel || '';
         statusEl.className = 'shrink-0 inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border ' + (done ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant');
+        syncChatRefundUI();
         document.getElementById('chat-composer').classList.toggle('hidden', done);
         document.getElementById('chat-closed-note').classList.toggle('hidden', !done);
         document.getElementById('chat-messages').innerHTML = '<div class="flex justify-center items-center py-8"><div class="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div></div>';
@@ -675,6 +750,8 @@
         closeDeleteDialog();
         closeEditDialog();
         closeEmojiPanel();
+        closeRefundFromChat();
+        currentChat.order = null;
         document.body.style.overflow = '';
         const drawer2 = document.getElementById('drawer-panel');
         if (drawer2) { drawer2.style.filter = ''; drawer2.style.pointerEvents = ''; drawer2.style.opacity = ''; }
@@ -939,6 +1016,59 @@
         if (menu) menu.classList.add('hidden');
         chatMoreOpen = false;
     }
+
+    function syncChatRefundUI() {
+        const item = document.getElementById('chat-more-item-refund');
+        const badge = document.getElementById('chat-refund-badge');
+        const bukti = document.getElementById('chat-refund-bukti');
+        const o = currentChat.order;
+
+        if (item) {
+            const show = o && o.elig === '1' && o.refundAktif !== '1' && o.id !== '';
+            item.classList.toggle('hidden', !show);
+        }
+
+        if (badge) {
+            if (o && o.refundLabel) {
+                badge.textContent = 'Refund: ' + o.refundLabel;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        if (bukti) {
+            const show = o && o.refundLabel === 'Selesai' && o.bukti;
+            if (show) { bukti.href = o.bukti; }
+            bukti.classList.toggle('hidden', !show);
+        }
+    }
+
+    function openRefundFromChat() {
+        const o = currentChat.order;
+        if (!o || o.elig !== '1' || o.refundAktif === '1' || o.id === '') return;
+
+        const orderInput = document.getElementById('refund-order-id');
+        const complaintInput = document.getElementById('refund-complaint-id');
+        const jumlah = document.getElementById('refund-jumlah');
+        const info = document.getElementById('refund-order-info');
+        const modal = document.getElementById('modal-refund');
+
+        if (orderInput) orderInput.value = o.id;
+        if (complaintInput) complaintInput.value = currentChat.id || '';
+        if (jumlah) { jumlah.value = o.grand || ''; jumlah.max = o.grand || ''; }
+        if (info) info.textContent = 'Pesanan ' + (o.nomor || '-') + ' • Total Rp ' + Number(o.grand || 0).toLocaleString('id-ID');
+
+        closeChatMoreMenu();
+        if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); document.body.style.overflow = 'hidden'; }
+    }
+
+    function closeRefundFromChat() {
+        const modal = document.getElementById('modal-refund');
+        if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); document.body.style.overflow = ''; }
+    }
+
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeRefundFromChat(); });
 
     let chatSearchOpen = false;
 

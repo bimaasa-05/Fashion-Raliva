@@ -100,6 +100,7 @@ class TransaksiController extends Controller
 
         $data['store_id'] = $storeId;
         $data['kategori'] = $data['kategori'] ?? 'Lainnya';
+        $data['dibuat_oleh'] = ActivityLogger::resolveActorId();
 
         StoreExpense::create($data);
 

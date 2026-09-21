@@ -292,7 +292,7 @@
 @php
 $prod = $rv->product;
 $img = $prod?->images->first()?->file_gambar ?? '';
-$imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/review-'.$rv->review_id.'/900/1200';
+$imgUrl = $img ? (photo_url($img)) : 'https://picsum.photos/seed/review-'.$rv->review_id.'/900/1200';
 $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 @endphp
 <article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline">
@@ -344,7 +344,7 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 @php
 $prod = $item->productVariant?->product;
 $img = $prod?->images->first()?->file_gambar ?? '';
-$imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/toreview-'.$item->order_item_id.'/900/1200';
+$imgUrl = $img ? (photo_url($img)) : 'https://picsum.photos/seed/toreview-'.$item->order_item_id.'/900/1200';
 $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 @endphp
 <article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline flex items-center gap-sm md:gap-md">

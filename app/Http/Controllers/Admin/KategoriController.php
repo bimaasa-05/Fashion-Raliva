@@ -22,6 +22,13 @@ class KategoriController extends Controller
 
         $existing = Category::whereRaw('LOWER(nama_kategori) = ?', [strtolower($data['nama_kategori'])])->first();
         if ($existing) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Kategori dengan nama tersebut sudah ada.',
+                ], 422);
+            }
+
             return back()->with('toast', ['message' => 'Kategori dengan nama tersebut sudah ada.', 'icon' => 'gpp_maybe']);
         }
 
@@ -41,6 +48,17 @@ class KategoriController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Kategori Ditambahkan',
             sprintf('Kategori "%s" berhasil dibuat.', $category->nama_kategori),
             route('admin.produk'));
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Kategori "' . $category->nama_kategori . '" berhasil ditambahkan.',
+                'kategori' => [
+                    'category_id' => $category->category_id,
+                    'nama_kategori' => $category->nama_kategori,
+                ],
+            ]);
+        }
 
         return back()->with('toast', [
             'message' => 'Kategori "' . $category->nama_kategori . '" berhasil ditambahkan.',

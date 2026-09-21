@@ -186,23 +186,33 @@
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Reset Password') }}</h2>
 <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('Create a new password for your account.') }}</p>
 </div>
-<form id="reset-form" novalidate>
+<form id="reset-form" method="POST" action="{{ route('password.update') }}">
+@csrf
+<input type="hidden" name="token" value="{{ $token }}"/>
+<input type="hidden" name="email" value="{{ old('email', $email) }}"/>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-md">
+    {{ __('Reset password for') }} <span class="text-on-surface font-medium">{{ old('email', $email) }}</span>
+</p>
+@error('email')
+<p class="font-label-sm text-label-sm text-error mb-md">{{ $message }}</p>
+@enderror
 <!-- New Password -->
 <div class="mb-md">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password">{{ __('New Password') }}</label>
 <div class="relative">
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password" placeholder="{{ __('Minimum 8 characters') }}" type="password"/>
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors @error('password') border-error @enderror" id="password" name="password" placeholder="{{ __('Minimum 8 characters') }}" type="password" required autofocus/>
 <button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="password-toggle" type="button">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </button>
 </div>
-<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="password-error">{{ __('Password must be at least 8 characters.') }}</p>
+@error('password')
+<p class="font-label-sm text-label-sm text-error mt-xs">{{ $message }}</p>
+@enderror
 </div>
 <!-- Confirm New Password -->
 <div class="mb-md">
-<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="confirm-password">{{ __('Confirm New Password') }}</label>
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="confirm-password" placeholder="{{ __('Re-enter your new password') }}" type="password"/>
-<p class="hidden font-label-sm text-label-sm text-error mt-xs" id="confirm-error">{{ __('Password does not match.') }}</p>
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password_confirmation">{{ __('Confirm New Password') }}</label>
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password_confirmation" name="password_confirmation" placeholder="{{ __('Re-enter your new password') }}" type="password" required/>
 </div>
 <!-- Submit -->
 <button class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="reset-btn" type="submit">
@@ -210,15 +220,6 @@
 <span class="material-symbols-outlined text-[20px] animate-spin hidden" id="reset-spinner">progress_activity</span>
 </button>
 </form>
-</div>
-<!-- Success State -->
-<div class="hidden text-center py-xl" id="reset-success">
-<span class="material-symbols-outlined text-secondary text-[64px]">lock_reset</span>
-<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-md mb-sm">{{ __('Password Updated') }}</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">{{ __('Your password has been updated successfully.') }}</p>
-<a class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('login') }}">
-            {{ __('GO TO LOGIN') }}
-        </a>
 </div>
 </main>
 <script>
@@ -230,31 +231,9 @@
             icon.textContent = show ? 'visibility_off' : 'visibility';
         });
 
-        function setError(id, show) {
-            document.getElementById(id).classList.toggle('hidden', !show);
-        }
-
-        document.getElementById('reset-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            var password = document.getElementById('password').value;
-            var confirm = document.getElementById('confirm-password').value;
-            var valid = true;
-
-            setError('password-error', false);
-            setError('confirm-error', false);
-
-            if (password.length < 8) { setError('password-error', true); valid = false; }
-            if (password !== confirm) { setError('confirm-error', true); valid = false; }
-            if (!valid) return;
-
-            var btn = document.getElementById('reset-btn');
-            btn.disabled = true;
+        document.getElementById('reset-form').addEventListener('submit', function () {
+            document.getElementById('reset-btn').disabled = true;
             document.getElementById('reset-spinner').classList.remove('hidden');
-
-            setTimeout(function () {
-                document.getElementById('reset-section').classList.add('hidden');
-                document.getElementById('reset-success').classList.remove('hidden');
-            }, 800);
         });
     </script>
 <script>

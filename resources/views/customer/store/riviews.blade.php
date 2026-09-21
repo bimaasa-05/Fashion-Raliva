@@ -273,7 +273,7 @@
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ $store->nama_toko }}</h2>
 <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant mx-auto mb-md shadow-sm">
 @if ($store->logo)
-<img alt="{{ $store->nama_toko }} Logo" class="w-full h-full object-cover" src="{{ filter_var($store->logo, FILTER_VALIDATE_URL) ? $store->logo : asset($store->logo) }}"/>
+<img alt="{{ $store->nama_toko }} Logo" class="w-full h-full object-cover" src="{{ photo_url($store->logo) }}"/>
 @else
 <div class="w-full h-full flex items-center justify-center bg-surface-container-high text-on-surface font-headline-xl">
 <span class="material-symbols-outlined text-[48px]">storefront</span>
@@ -333,8 +333,8 @@
 <article class="border-b border-outline-variant py-md">
 <div class="flex items-start justify-between gap-md">
 <div class="flex items-center gap-sm min-w-0">
-@if ($u && $u->foto_profil)
-<img src="{{ filter_var($u->foto_profil, FILTER_VALIDATE_URL) ? $u->foto_profil : asset($u->foto_profil) }}" alt="{{ $u->nama_lengkap }}" class="w-9 h-9 rounded-full object-cover shrink-0"/>
+@if ($u && $u->foto_profil_url)
+<img src="{{ $u->foto_profil_url }}" alt="{{ $u->nama_lengkap }}" class="w-9 h-9 rounded-full object-cover shrink-0"/>
 @else
 <div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-caps text-label-caps shrink-0">{{ $initials }}</div>
 @endif

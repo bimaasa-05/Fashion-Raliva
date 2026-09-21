@@ -9,8 +9,12 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Order;
 
+/**
+ * @property-read \Carbon\Carbon|null $tanggal_lahir
+ */
 class User extends Authenticatable
 {
     use Notifiable;
@@ -51,9 +55,8 @@ class User extends Authenticatable
     }
 
     /**
-     * URL lengkap foto profil. Menangani dua lokasi penyimpanan:
-     * - baru: public/profil/... (path disimpan sebagai "profil/namafile.jpg")
-     * - lama: storage/app/public/profil/... (juga "profil/namafile.jpg")
+     * URL lengkap foto profil. Kanonis: storage/app/public/profil/...
+     * (path disimpan sebagai "profil/namafile.jpg", diakses lewat /storage).
      */
     public function getFotoProfilUrlAttribute(): ?string
     {
@@ -61,13 +64,14 @@ class User extends Authenticatable
             return null;
         }
 
-        if (file_exists(public_path($this->foto_profil))) {
-            return asset($this->foto_profil);
+        if (str_starts_with($this->foto_profil, 'http')) {
+            return $this->foto_profil;
         }
 
-        $legacy = 'profil/' . basename($this->foto_profil);
-        if (file_exists(storage_path('app/public/' . $legacy))) {
-            return asset('storage/' . $legacy);
+        $path = 'profil/' . basename($this->foto_profil);
+
+        if (Storage::disk('public')->exists($path)) {
+            return asset('storage/' . $path);
         }
 
         return null;

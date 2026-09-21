@@ -28,6 +28,34 @@
 
 @include('partials.banner-suspended')
 
+{{-- Identitas Toko --}}
+<section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-5 card-premium mb-6 {{ ! $store ? 'opacity-60 pointer-events-none' : '' }}">
+    <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-xl overflow-hidden border border-outline-variant shrink-0 bg-surface-container-high flex items-center justify-center {{ ! $store ? 'grayscale' : '' }}">
+            <img src="{{ asset('images/logo.svg') }}" alt="Logo {{ $store?->nama_toko ?? 'Toko' }}" class="w-full h-full object-cover" />
+        </div>
+        <div>
+            <div class="flex items-center gap-2 flex-wrap">
+                <p class="raliva-figure text-xl {{ ! $store ? 'text-on-surface-variant' : 'text-on-surface' }}">{{ $store?->nama_toko ?? 'Toko' }}</p>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full {{ $store?->status === 'aktif' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }} text-[10px] font-bold uppercase border">
+                    <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : 'schedule' }}</span>{{ $store ? ucfirst($store->status) : 'Menunggu' }}
+                </span>
+            </div>
+            <p class="text-on-surface-variant font-body-md text-sm mt-0.5">{{ $store?->alamat ?? 'Alamat toko' }} • {{ $store ? 'Aktif sejak ' . optional($store->created_at)->translatedFormat('M Y') : 'Toko' }}</p>
+        </div>
+    </div>
+    <div class="flex flex-wrap items-center gap-gutter self-start md:self-auto">
+        <div class="flex items-center gap-2 px-3 py-2 bg-surface-container-low rounded-lg border border-muted-border">
+            <span class="material-symbols-outlined text-[18px] text-gold-accent fill">star</span>
+            <span class="font-title-md text-sm text-on-surface">{{ number_format($rating ?? 0, 1, ',', '.') }}</span>
+            <span class="text-[11px] text-on-surface-variant">{{ $ratingCount ?? 0 }} ulasan</span>
+        </div>
+        <a href="{{ route('admin.laporan') }}" class="flex items-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">
+            <span class="material-symbols-outlined text-[16px]">monitoring</span>Laporan
+        </a>
+    </div>
+</section>
+
 <section>
     <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Hari Ini</h2>
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">

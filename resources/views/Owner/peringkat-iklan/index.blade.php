@@ -127,7 +127,7 @@
                 </tbody>
             </table>
         </div>
-        @if($slots->hasPages())
+        @if($slots instanceof \Illuminate\Pagination\AbstractPaginator && $slots->hasPages())
             <div class="mt-6 flex justify-center">{{ $slots->links() }}</div>
         @endif
     </section>

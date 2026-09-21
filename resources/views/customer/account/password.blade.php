@@ -254,12 +254,12 @@
 <div>
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="current-password">{{ __('Current Password') }}</label>
 <div class="relative">
-<input autocomplete="current-password" name="current_password" class="w-full bg-surface border border-outline-variant rounded-lg pl-md pr-xl py-2.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors {{ $errors->has('current_password') ? 'border-error' : '' }}" id="current-password" placeholder="{{ __('Enter your current password') }}" type="password"/>
+<input autocomplete="current-password" name="password_lama" class="w-full bg-surface border border-outline-variant rounded-lg pl-md pr-xl py-2.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors {{ $errors->has('password_lama') ? 'border-error' : '' }}" id="current-password" placeholder="{{ __('Enter your current password') }}" type="password"/>
 <span aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 cursor-pointer text-on-surface-variant hover:text-on-surface transition-colors flex" role="button" tabindex="0">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </span>
 </div>
-@error('current_password')
+@error('password_lama')
 <p class="text-error text-label-sm mt-xs">{{ $message }}</p>
 @enderror
 </div>
@@ -267,13 +267,13 @@
 <div>
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="new-password">{{ __('New Password') }}</label>
 <div class="relative">
-<input autocomplete="new-password" name="new_password" class="w-full bg-surface border border-outline-variant rounded-lg pl-md pr-xl py-2.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors {{ $errors->has('new_password') ? 'border-error' : '' }}" id="new-password" placeholder="{{ __('Enter a new password') }}" type="password"/>
+<input autocomplete="new-password" name="password_baru" class="w-full bg-surface border border-outline-variant rounded-lg pl-md pr-xl py-2.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors {{ $errors->has('password_baru') ? 'border-error' : '' }}" id="new-password" placeholder="{{ __('Enter a new password') }}" type="password"/>
 <span aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 cursor-pointer text-on-surface-variant hover:text-on-surface transition-colors flex" role="button" tabindex="0">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </span>
 </div>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __("Choose a strong password you don't use elsewhere.") }}</p>
-@error('new_password')
+@error('password_baru')
 <p class="text-error text-label-sm mt-xs">{{ $message }}</p>
 @enderror
 </div>
@@ -281,7 +281,7 @@
 <div>
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="confirm-password">{{ __('Confirm New Password') }}</label>
 <div class="relative">
-<input autocomplete="new-password" name="new_password_confirmation" class="w-full bg-surface border border-outline-variant rounded-lg pl-md pr-xl py-2.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors {{ $errors->has('new_password') ? 'border-error' : '' }}" id="confirm-password" placeholder="{{ __('Re-enter your new password') }}" type="password"/>
+<input autocomplete="new-password" name="password_baru_confirmation" class="w-full bg-surface border border-outline-variant rounded-lg pl-md pr-xl py-2.5 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors {{ $errors->has('password_baru') ? 'border-error' : '' }}" id="confirm-password" placeholder="{{ __('Re-enter your new password') }}" type="password"/>
 <span aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 cursor-pointer text-on-surface-variant hover:text-on-surface transition-colors flex" role="button" tabindex="0">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </span>

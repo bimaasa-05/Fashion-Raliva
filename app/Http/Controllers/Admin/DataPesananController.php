@@ -19,6 +19,7 @@ use App\Services\NotificationService;
 use App\Support\ActivityLogger;
 use App\Support\AdminContext;
 use App\Support\CustomerWalletService;
+use App\Support\WalletService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -31,8 +32,10 @@ class DataPesananController extends Controller
 
         $statuses = [
             Order::STATUS_PENDING_PAYMENT => 'Menunggu Pembayaran',
+            Order::STATUS_DIBAYAR => 'Baru',
             Order::STATUS_MENUNGGU_PRODUKSI => 'Menunggu Produksi',
             Order::STATUS_DIPROSES => 'Diproses',
+            Order::STATUS_SIAP_KIRIM => 'Siap Kirim',
             Order::STATUS_DIKIRIM => 'Dikirim',
             Order::STATUS_SELESAI => 'Selesai',
             Order::STATUS_DIBATALKAN => 'Dibatalkan',
@@ -46,8 +49,8 @@ class DataPesananController extends Controller
                 array_key_exists($status, $statuses),
                 fn ($query) => $query->where('status', $status)
             )
-            ->orderByRaw("CASE status WHEN 'pending_payment' THEN 0 WHEN 'menunggu_produksi' THEN 1 WHEN 'diproses' THEN 2 WHEN 'dikirim' THEN 3 WHEN 'selesai' THEN 4 ELSE 5 END")
-            ->orderByDesc('created_at')
+            ->orderByDesc('updated_at')
+            ->orderByDesc('order_id')
             ->get();
 
         $variants = \App\Models\ProductVariant::with(['product:product_id,store_id,nama_produk', 'warehouseStocks:warehouse_stock_id,product_variant_id,jumlah_stok'])
@@ -88,9 +91,9 @@ class DataPesananController extends Controller
             ]);
         }
 
-        if ($pesanan->status !== Order::STATUS_MENUNGGU_PRODUKSI) {
+        if (! in_array($pesanan->status, [Order::STATUS_MENUNGGU_PRODUKSI, Order::STATUS_DIBAYAR], true)) {
             return back()->with('toast', [
-                'message' => 'Hanya pesanan menunggu produksi yang dapat diproses.',
+                'message' => 'Hanya pesanan berstatus Baru atau Menunggu Produksi yang dapat diproses.',
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -178,14 +181,14 @@ class DataPesananController extends Controller
             'items.*.product_variant_id' => ['required', 'exists:product_variants,product_variant_id'],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:100'],
             'tipe_pesanan' => ['required', 'in:online,offline'],
-            'user_id' => ['required_if:tipe_pesanan,online', 'exists:users,user_id'],
-            'nama_penerima' => ['required_if:tipe_pesanan,offline', 'string', 'max:150'],
-            'nomor_telepon' => ['required_if:tipe_pesanan,offline', 'string', 'max:30'],
+            'user_id' => ['required_if:tipe_pesanan,online', 'nullable', 'exists:users,user_id'],
+            'nama_penerima' => ['required_if:tipe_pesanan,offline', 'nullable', 'string', 'max:150'],
+            'nomor_telepon' => ['required_if:tipe_pesanan,offline', 'nullable', 'string', 'max:30'],
             'email_pelanggan' => ['nullable', 'email', 'max:150'],
-            'alamat' => ['required_if:tipe_pesanan,offline', 'string', 'max:500'],
-            'metode_bayar' => ['required_if:tipe_pesanan,offline', 'in:tunai,transfer'],
-            'payment_account_id' => ['required_if:metode_bayar,transfer', 'exists:platform_bank_accounts,platform_bank_account_id'],
-            'bukti' => ['required_if:metode_bayar,transfer', 'image', 'mimes:jpeg,png,jpg', 'max:4096'],
+            'alamat' => ['required_if:tipe_pesanan,offline', 'nullable', 'string', 'max:500'],
+            'metode_bayar' => ['required_if:tipe_pesanan,offline', 'nullable', 'in:tunai,transfer'],
+            'payment_account_id' => ['required_if:metode_bayar,transfer', 'nullable', 'exists:platform_bank_accounts,platform_bank_account_id'],
+            'bukti' => ['required_if:metode_bayar,transfer', 'nullable', 'image', 'mimes:jpeg,png,jpg', 'max:4096'],
         ], [
             'items.required' => 'Pilih minimal 1 produk.',
             'items.min' => 'Pilih minimal 1 produk.',
@@ -301,6 +304,7 @@ class DataPesananController extends Controller
                 'biaya_layanan' => $biaya,
                 'grand_total' => $grand,
                 'status' => Order::STATUS_PENDING_PAYMENT,
+                'tipe_pesanan' => $isOffline ? Order::TIPE_PESANAN_OFFLINE : Order::TIPE_PESANAN_ONLINE,
             ]);
 
             foreach ($prepared as $p) {
@@ -340,7 +344,7 @@ class DataPesananController extends Controller
                     ]);
 
                     $checkout->update(['status' => \App\Models\Checkout::STATUS_DIBAYAR]);
-                    $newOrder->update(['status' => Order::STATUS_MENUNGGU_PRODUKSI]);
+                    $newOrder->update(['status' => Order::STATUS_DIBAYAR]);
                 } else {
                     $fileName = 'bukti-' . $checkout->checkout_id . '-' . time() . '.' . $request->file('bukti')->extension();
                     $path = $request->file('bukti')->storeAs('payment_proofs', $fileName, 'public');
@@ -378,7 +382,7 @@ class DataPesananController extends Controller
         Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Manual Dibuat', sprintf('Pesanan %s berhasil dibuat.', $newOrder->nomor_order), route('admin.pesanan'));
 
         $msg = $isOffline && $metodeBayar === 'tunai'
-            ? 'Pesanan offline dibuat (Tunai — Terverifikasi).'
+            ? 'Pesanan offline dibuat (Tunai — Baru).'
             : 'Pesanan dibuat (Menunggu Pembayaran).';
 
         return back()->with('toast', [
@@ -396,7 +400,7 @@ class DataPesananController extends Controller
             ]);
         }
 
-        if (! in_array($pesanan->status, [Order::STATUS_PENDING_PAYMENT, Order::STATUS_MENUNGGU_PRODUKSI, Order::STATUS_DIPROSES], true)) {
+        if (! in_array($pesanan->status, [Order::STATUS_PENDING_PAYMENT, Order::STATUS_DIBAYAR, Order::STATUS_MENUNGGU_PRODUKSI, Order::STATUS_DIPROSES], true)) {
             return back()->with('toast', [
                 'message' => 'Pesanan yang sudah dikirim tidak dapat dibatalkan.',
                 'icon' => 'gpp_maybe',
@@ -468,6 +472,69 @@ class DataPesananController extends Controller
         return back()->with('toast', [
             'message' => "Pesanan {$pesanan->nomor_order} dibatalkan.".($isSaldoRefund ? ' Dana dikembalikan ke saldo customer.' : ''),
             'icon' => 'block',
+        ]);
+    }
+
+    public function selesai(Request $request, Order $pesanan)
+    {
+        if (! AdminContext::canAccessStore($pesanan->store_id)) {
+            return back()->with('toast', [
+                'message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.',
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
+        if (! $pesanan->isOffline()) {
+            return back()->with('toast', [
+                'message' => 'Hanya pesanan offline yang dapat diselesaikan langsung oleh Admin.',
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
+        if ($pesanan->status !== Order::STATUS_SIAP_KIRIM) {
+            return back()->with('toast', [
+                'message' => 'Hanya pesanan offline berstatus Siap Kirim/Diambil yang dapat ditandai selesai.',
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
+        $data = $request->validate([
+            'catatan' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $lama = $pesanan->only(['status']);
+
+        DB::transaction(function () use ($pesanan, $data) {
+            $locked = Order::whereKey($pesanan->order_id)->lockForUpdate()->firstOrFail();
+
+            if (! $locked->isOffline() || $locked->status !== Order::STATUS_SIAP_KIRIM) {
+                throw new \RuntimeException('Status pesanan berubah, tidak dapat diselesaikan.');
+            }
+
+            $locked->update([
+                'status' => Order::STATUS_SELESAI,
+                'diambil_pada' => now(),
+            ]);
+
+            WalletService::creditOrder($locked);
+        });
+
+        ActivityLogger::log(
+            'admin.order.pickup',
+            Order::class,
+            $pesanan->order_id,
+            $lama,
+            ['status' => Order::STATUS_SELESAI, 'diambil_pada' => now()->format('Y-m-d H:i:s'), 'catatan' => $data['catatan'] ?? null],
+            sprintf('Pesanan %s ditandai selesai — diambil langsung oleh customer.', $pesanan->nomor_order)
+        );
+
+        $this->notifyCustomer($pesanan, 'Pesanan Selesai', sprintf('Pesanan %s telah selesai dan diambil. Terima kasih sudah berbelanja!', $pesanan->nomor_order));
+
+        Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Diselesaikan', sprintf('Pesanan %s ditandai selesai (diambil langsung).', $pesanan->nomor_order), route('admin.pesanan'));
+
+        return back()->with('toast', [
+            'message' => "Pesanan {$pesanan->nomor_order} diselesaikan.",
+            'icon' => 'task_alt',
         ]);
     }
 

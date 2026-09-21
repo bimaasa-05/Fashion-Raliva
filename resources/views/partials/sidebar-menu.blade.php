@@ -44,6 +44,7 @@
                 ['route' => 'superadmin.stok', 'icon' => 'inventory', 'text' => 'Stok'],
                 ['route' => 'superadmin.produksi', 'icon' => 'precision_manufacturing', 'text' => 'Produksi'],
                 ['route' => 'superadmin.gudang', 'icon' => 'warehouse', 'text' => 'Gudang'],
+                ['route' => 'superadmin.supplier', 'icon' => 'handshake', 'text' => 'Data Supplier'],
             ],
         ],
         [

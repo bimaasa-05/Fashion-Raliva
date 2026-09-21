@@ -3,10 +3,14 @@
 namespace App\Providers;
 
 use App\Models\Warehouse;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,6 +28,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Batasi percobaan login per kombinasi email + IP (5x per menit).
+        RateLimiter::for('login', function (Request $request) {
+            $key = Str::transliterate(Str::lower((string) $request->input('email')).'|'.$request->ip());
+
+            return Limit::perMinute(5)->by($key)->response(function () use ($request) {
+                return back()
+                    ->withInput($request->only('email'))
+                    ->withErrors(['email' => 'Terlalu banyak percobaan login. Silakan coba lagi dalam 1 menit.']);
+            });
+        });
+
         // Sediakan daftar gudang & gudang aktif ke seluruh view layout Gudang,
         // agar dropdown "Ganti Gudang" bisa tampil di semua halaman role Gudang.
         \Illuminate\Support\Facades\View::composer(

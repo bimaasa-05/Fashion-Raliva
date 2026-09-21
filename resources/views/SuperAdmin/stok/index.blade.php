@@ -15,7 +15,17 @@
 @endphp
 
 @section('content')
-<section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+<div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+        <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+        {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+    </span>
+    <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+        Stok diperbarui real-time
+    </span>
+</div>
+<section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Monitor Stok Platform</h2>
         <div class="flex items-center gap-3 flex-wrap">
@@ -39,21 +49,27 @@
             </div>
             <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
             <div id="chip-group" class="flex flex-wrap gap-2">
-                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
-                <button type="button" data-chip="aman" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Aman ({{ $stats['aman'] }})</button>
-                <button type="button" data-chip="menipis" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menipis ({{ $stats['menipis'] }})</button>
-                <button type="button" data-chip="habis" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Habis ({{ $stats['habis'] }})</button>
+                @php
+                    $chipStatuses = ['semua', 'aman', 'menipis', 'habis'];
+                @endphp
+                @foreach ($chipStatuses as $chipStatus)
+                    @php $isActive = $activeStatus === $chipStatus; @endphp
+                    <a href="{{ route('superadmin.stok', ['status' => $chipStatus, 'q' => $q]) }}" data-chip="{{ $chipStatus }}" class="chip-btn px-4 py-2 rounded-lg font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200 {{ $isActive ? 'bg-deep-onyx border border-deep-onyx text-on-primary' : 'border border-muted-border text-on-surface-variant hover:bg-surface-container-high' }}">
+                        {{ ucfirst($chipStatus) }} ({{ $stats[$chipStatus] }})
+                    </a>
+                @endforeach
             </div>
         </div>
 
         <!-- Search -->
-        <div class="relative">
-            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-            <input id="stok-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama produk, SKU, toko, gudang, atau supplier..." />
-            <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
+        <form method="GET" action="{{ route('superadmin.stok') }}" class="relative">
+            <input type="hidden" name="status" value="{{ $activeStatus }}">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] pointer-events-none">search</span>
+            <input name="q" value="{{ $q }}" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama produk, SKU, toko, gudang, atau supplier..." />
+            <a href="{{ route('superadmin.stok', ['status' => $activeStatus]) }}" aria-label="Hapus pencarian" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent transition-opacity {{ $q ? 'opacity-100' : 'opacity-0 pointer-events-none' }}">
                 <span class="material-symbols-outlined text-[20px]">close</span>
-            </button>
-        </div>
+            </a>
+        </form>
     </div>
 
     <!-- Table -->
@@ -61,23 +77,23 @@
         <table class="w-full min-w-[1180px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                    <th class="p-4 text-center w-12">No.</th>
-                    <th class="p-4 text-left">Produk</th>
-                    <th class="p-4 text-left">SKU</th>
-                    <th class="p-4 text-left">Toko</th>
-                    <th class="p-4 text-left">Supplier</th>
-                    <th class="p-4 text-center">Stok</th>
-                    <th class="p-4 text-center">Direservasi</th>
-                    <th class="p-4 text-center">Minimum</th>
-                    <th class="p-4 text-center">Status</th>
-                    <th class="p-4 text-center">Aksi</th>
+                    <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No.</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Produk</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">SKU</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Toko</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Supplier</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Stok</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Direservasi</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Minimum</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Aksi</th>
                 </tr>
             </thead>
             <tbody class="font-body-md text-sm">
                 @forelse($stocks as $stock)
                     @php $badge = $statusBadgeMap[$stock->status_stok] ?? ['label' => $stock->status_stok, 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant']; @endphp
                     <tr data-table-row data-status="{{ $stock->status_stok }}" data-search="{{ strtolower($stock->nama_produk.' '.($stock->sku ?? '').' '.($stock->warna ?? '').' '.($stock->ukuran ?? '').' '.$stock->nama_toko.' '.($stock->nama_gudang ?? '').' '.($stock->nama_supplier ?? '')) }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                        <td class="p-4 text-center text-on-surface-variant font-mono row-num"></td>
+                        <td class="p-4 text-center text-on-surface-variant font-mono">{{ ($stocks->firstItem() ?? 0) + $loop->index }}</td>
                         <td class="p-4">
                             <p class="text-on-surface">{{ $stock->nama_produk }}</p>
                             <p class="text-on-surface-variant text-xs">{{ $stock->warna ? $stock->warna.' • ' : '' }}{{ $stock->ukuran ?? '-' }}</p>
@@ -106,27 +122,29 @@
                         </td>
                     </tr>
                 @empty
-                    <tr>
-                        <td colspan="10" class="p-8 text-center text-on-surface-variant">Belum ada data stok tercatat.</td>
-                    </tr>
-                @endforelse
-                <tr id="empty-search" class="hidden">
-                    <td colspan="10" class="p-8 text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
-                            <p class="text-on-surface-variant font-body-md text-sm">Tidak ada data stok yang cocok.</p>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+                        <tr>
+                            <td colspan="10" class="p-8 text-center">
+                                @if ($activeStatus !== 'semua' || $q)
+                                <div class="flex flex-col items-center gap-2">
+                                    <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
+                                    <p class="text-on-surface-variant font-body-md text-sm">Tidak ada data stok yang cocok.</p>
+                                </div>
+                                @else
+                                <p class="text-on-surface-variant">Belum ada data stok tercatat.</p>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
     <!-- Mobile: kartu per item stok -->
     <div class="md:hidden grid grid-cols-1 gap-gutter">
         @forelse($stocks as $stock)
             @php $badge = $statusBadgeMap[$stock->status_stok] ?? ['label' => $stock->status_stok, 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant']; @endphp
-            <article data-table-row data-status="{{ $stock->status_stok }}" data-search="{{ strtolower($stock->nama_produk.' '.($stock->sku ?? '').' '.($stock->warna ?? '').' '.($stock->ukuran ?? '').' '.$stock->nama_toko.' '.($stock->nama_gudang ?? '').' '.($stock->nama_supplier ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+            <article data-table-row data-status="{{ $stock->status_stok }}" data-search="{{ strtolower($stock->nama_produk.' '.($stock->sku ?? '').' '.($stock->warna ?? '').' '.($stock->ukuran ?? '').' '.$stock->nama_toko.' '.($stock->nama_gudang ?? '').' '.($stock->nama_supplier ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">inventory_2</span>
                 <div class="flex items-start justify-between gap-3 mb-3">
                     <div class="min-w-0">
                         <p class="font-title-md text-title-md text-on-surface leading-tight">{{ $stock->nama_produk }}</p>
@@ -170,94 +188,88 @@
                 </button>
             </article>
         @empty
-            <p class="text-center text-on-surface-variant py-10">Belum ada data stok tercatat.</p>
+            <p class="text-center text-on-surface-variant py-10">
+                @if ($activeStatus !== 'semua' || $q)
+                Tidak ada data stok yang cocok.
+                @else
+                Belum ada data stok tercatat.
+                @endif
+            </p>
         @endforelse
-        <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada data stok yang cocok.</p>
     </div>
+
+    @if ($stocks->hasPages())
+        <div class="mt-6 flex justify-center">{{ $stocks->links() }}</div>
+    @endif
 </section>
 
 <!-- Modal Detail Stok -->
-<div id="detail-stok" data-modal class="fixed inset-0 z-[70] hidden">
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-modal-close></div>
-    <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-2xl bg-surface-container-lowest border border-muted-border rounded-xl shadow-2xl flex flex-col max-h-[90vh] border-t-4 border-t-gold-accent/60">
-        <!-- Header -->
-        <div class="flex items-start justify-between gap-4 px-6 pt-5 pb-4 border-b border-muted-border rounded-t-xl">
-            <div class="flex items-center gap-3 min-w-0">
-                <div class="w-11 h-11 rounded-xl bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0 shadow-sm">
-                    <span class="material-symbols-outlined text-gold-accent">inventory_2</span>
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'detail-stok',
+    'dataModal' => true,
+    'icon' => 'inventory_2',
+    'title' => 'Detail Stok',
+    'subtitle' => '<span data-slot="judul-nama">-</span>',
+    'subtitleRaw' => true,
+    'size' => 'xl',
+])
+    <section>
+        <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">inventory_2</span> Info Stok</p>
+        <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 md:p-5">
+            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 font-body-md text-sm">
+                <div>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">storefront</span> Toko</dt>
+                    <dd class="text-on-surface break-words"><span data-slot="toko">-</span></dd>
                 </div>
-                <div class="min-w-0">
-                    <h3 class="font-title-md text-title-md text-on-surface premium-heading uppercase">Detail Stok</h3>
-                    <p class="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mt-1 truncate"><span data-slot="judul-nama">-</span></p>
+                <div>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">warehouse</span> Gudang</dt>
+                    <dd class="text-on-surface break-words"><span data-slot="gudang">-</span></dd>
                 </div>
+                <div class="sm:col-span-2">
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">tag</span> SKU / Varian</dt>
+                    <dd class="font-mono text-on-surface break-words"><span data-slot="sku">-</span></dd>
+                </div>
+                <div>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">warehouse</span> Stok Tersedia</dt>
+                    <dd class="font-bold text-on-surface"><span data-slot="jumlah">-</span></dd>
+                </div>
+                <div>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">event_available</span> Direservasi</dt>
+                    <dd class="text-on-surface"><span data-slot="reservasi">-</span></dd>
+                </div>
+                <div>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">warning</span> Minimum</dt>
+                    <dd class="text-on-surface"><span data-slot="minimum">-</span></dd>
+                </div>
+                <div>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">verified</span> Status</dt>
+                    <dd><span data-slot="status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border bg-surface-container-high text-on-surface-variant border-outline-variant"></span></dd>
+                </div>
+            </dl>
+        </div>
+    </section>
+
+    <section>
+        <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">local_shipping</span> Supplier Terakhir</p>
+        <div data-supplier-wrap>
+            <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 md:p-5 space-y-2">
+                <div class="h-3 rounded bg-surface-container-high animate-pulse"></div>
+                <div class="h-3 w-2/3 rounded bg-surface-container-high animate-pulse"></div>
             </div>
-            <button type="button" data-modal-close class="p-1 -mr-1 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors shrink-0">
-                <span class="material-symbols-outlined">close</span>
-            </button>
         </div>
+    </section>
 
-        <!-- Scrollable body -->
-        <div class="overflow-y-auto px-6 py-5 space-y-6">
-            <!-- Info Stok -->
-            <section>
-                <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">inventory_2</span> Info Stok</p>
-                <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 md:p-5">
-                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 font-body-md text-sm">
-                        <div>
-                            <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">storefront</span> Toko</dt>
-                            <dd class="text-on-surface break-words"><span data-slot="toko">-</span></dd>
-                        </div>
-                        <div>
-                            <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">warehouse</span> Gudang</dt>
-                            <dd class="text-on-surface break-words"><span data-slot="gudang">-</span></dd>
-                        </div>
-                        <div class="sm:col-span-2">
-                            <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">tag</span> SKU / Varian</dt>
-                            <dd class="font-mono text-on-surface break-words"><span data-slot="sku">-</span></dd>
-                        </div>
-                        <div>
-                            <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">warehouse</span> Stok Tersedia</dt>
-                            <dd class="font-bold text-on-surface"><span data-slot="jumlah">-</span></dd>
-                        </div>
-                        <div>
-                            <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">event_available</span> Direservasi</dt>
-                            <dd class="text-on-surface"><span data-slot="reservasi">-</span></dd>
-                        </div>
-                        <div>
-                            <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">warning</span> Minimum</dt>
-                            <dd class="text-on-surface"><span data-slot="minimum">-</span></dd>
-                        </div>
-                        <div>
-                            <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">verified</span> Status</dt>
-                            <dd><span data-slot="status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border bg-surface-container-high text-on-surface-variant border-outline-variant"></span></dd>
-                        </div>
-                    </dl>
-                </div>
-            </section>
-
-            <!-- Supplier Terakhir -->
-            <section>
-                <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">local_shipping</span> Supplier Terakhir</p>
-                <div data-supplier-wrap>
-                    <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 md:p-5 space-y-2">
-                        <div class="h-3 rounded bg-surface-container-high animate-pulse"></div>
-                        <div class="h-3 w-2/3 rounded bg-surface-container-high animate-pulse"></div>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- Footer -->
-        <div class="shrink-0 border-t border-muted-border rounded-b-xl px-6 py-4 bg-surface-container-lowest flex flex-col sm:flex-row gap-3">
-            <button type="button" id="stok-copy-supplier" class="flex-1 inline-flex items-center justify-center gap-2 py-3 border border-muted-border rounded-lg text-on-surface font-label-sm text-[11px] uppercase tracking-widest hover:border-gold-accent hover:text-gold-accent transition-colors">
+    @slot('footer')
+        <div class="flex flex-col sm:flex-row gap-3">
+            <button type="button" id="stok-copy-supplier" class="btn-modal btn-modal-ghost flex-1">
                 <span class="material-symbols-outlined text-[16px]">content_copy</span> Salin Kontak Supplier
             </button>
-            <button type="button" data-modal-close class="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded-lg btn-premium">
+            <button type="button" data-modal-close class="btn-modal btn-modal-primary flex-1">
                 <span class="material-symbols-outlined text-[16px]">close</span> Tutup
             </button>
         </div>
-    </div>
-</div>
+    @endslot
+@endcomponent
 @endsection
 
 @push('scripts')
@@ -265,75 +277,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         const scope = document.querySelector('[data-table-scope]');
         if (!scope) return;
-
-        const desktopRows = Array.from(scope.querySelectorAll('tr[data-table-row]'));
-        const mobileRows = Array.from(scope.querySelectorAll('article[data-table-row]'));
-        const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
-        const searchInput = document.getElementById('stok-search');
-        const clearBtn = document.getElementById('clear-search');
-        const emptySearch = document.getElementById('empty-search');
-        const emptySearchMobile = document.getElementById('empty-search-mobile');
-
-        const activeClasses = ['bg-deep-onyx', 'text-on-primary', 'border-deep-onyx'];
-        const idleClasses = ['border-muted-border', 'text-on-surface-variant'];
-
-        let activeStatus = 'semua';
-
-        function applyFilter() {
-            const term = searchInput.value.trim().toLowerCase();
-            let desktopVisible = 0;
-            let mobileVisible = 0;
-
-            desktopRows.forEach((row) => {
-                const matchStatus = activeStatus === 'semua' || row.getAttribute('data-status') === activeStatus;
-                const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
-                const show = matchStatus && matchSearch;
-                row.classList.toggle('hidden', !show);
-                if (show) {
-                    desktopVisible++;
-                    const num = row.querySelector('.row-num');
-                    if (num) num.textContent = desktopVisible;
-                }
-            });
-
-            mobileRows.forEach((row) => {
-                const matchStatus = activeStatus === 'semua' || row.getAttribute('data-status') === activeStatus;
-                const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
-                const show = matchStatus && matchSearch;
-                row.classList.toggle('hidden', !show);
-                if (show) mobileVisible++;
-            });
-
-            const hasResults = desktopVisible > 0 || mobileVisible > 0;
-            if (emptySearch) emptySearch.classList.toggle('hidden', hasResults);
-            if (emptySearchMobile) emptySearchMobile.classList.toggle('hidden', hasResults);
-        }
-
-        chipBtns.forEach((btn) => {
-            btn.addEventListener('click', () => {
-                chipBtns.forEach((b) => {
-                    b.classList.remove(...activeClasses);
-                    b.classList.add(...idleClasses, 'hover:bg-surface-container-high');
-                });
-                btn.classList.remove(...idleClasses, 'hover:bg-surface-container-high');
-                btn.classList.add(...activeClasses);
-                activeStatus = btn.getAttribute('data-chip');
-                applyFilter();
-            });
-        });
-
-        let debounce;
-        searchInput.addEventListener('input', () => {
-            clearBtn.classList.toggle('opacity-0', !searchInput.value);
-            clearTimeout(debounce);
-            debounce = setTimeout(applyFilter, 200);
-        });
-
-        clearBtn.addEventListener('click', () => {
-            searchInput.value = '';
-            clearBtn.classList.add('opacity-0');
-            applyFilter();
-        });
 
         const saStatusBadge = (status) => ({
             'aman': ['Aman', 'bg-secondary-container/20 text-secondary border-secondary/20'],
@@ -515,8 +458,6 @@
                 }
             });
         }
-
-        applyFilter();
     });
 </script>
 @endpush
