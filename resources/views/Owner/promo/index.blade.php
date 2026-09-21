@@ -117,7 +117,7 @@
                 </article>
 
                 {{-- Modal Detail Promo --}}
-                <div id="modal-detail-promo-{{ $promo->promotion_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+                <div id="modal-detail-promo-{{ $promo->promotion_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
                     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
                     <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
                         <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
@@ -168,7 +168,7 @@
                     </div>
                 </div>
                 {{-- Modal Edit Promo --}}
-                <div id="modal-edit-promo-{{ $promo->promotion_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+                <div id="modal-edit-promo-{{ $promo->promotion_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
                     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
                     <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
                         <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
@@ -244,7 +244,7 @@
 </div>
 
 {{-- Modal Tambah Promo (centered) --}}
-<div id="modal-tambah-promo" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+<div id="modal-tambah-promo" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
     <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
