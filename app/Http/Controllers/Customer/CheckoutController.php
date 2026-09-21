@@ -27,6 +27,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
 {
@@ -128,6 +129,10 @@ class CheckoutController extends Controller
             ->orderBy('payment_method_id')
             ->get();
 
+        // Token idempotensi: cegah double-checkout akibat klik ganda.
+        $submitToken = (string) Str::uuid();
+        session()->put('checkout_submit_token', $submitToken);
+
         return view('customer.checkout.index', compact(
             'address',
             'items',
@@ -140,7 +145,8 @@ class CheckoutController extends Controller
             'total',
             'paymentMethods',
             'buyId',
-            'backProductId'
+            'backProductId',
+            'submitToken'
         ));
     }
 
@@ -170,6 +176,22 @@ class CheckoutController extends Controller
             'kode_pos.required' => 'Kode pos wajib diisi.',
             'shipping.required' => 'Pilih metode pengiriman terlebih dahulu.',
         ]);
+
+        // Tolak submit ganda: token sudah dipakai -> arahkan ke checkout yang sudah dibuat.
+        $submitToken = (string) $request->input('submit_token', '');
+        $expectedToken = (string) session()->pull('checkout_submit_token', '');
+        if ($submitToken !== '' && $expectedToken !== '' && $submitToken !== $expectedToken) {
+            $mappedId = (int) session('checkout_token_'.$submitToken, 0);
+            if ($mappedId > 0) {
+                $existing = Checkout::where('checkout_id', $mappedId)
+                    ->when(Auth::check(), fn ($q) => $q->where('user_id', Auth::id()))
+                    ->first();
+                if ($existing) {
+                    return redirect()->route('customer.checkout.payment', $existing->checkout_id)
+                        ->with('toast', ['message' => 'Pesanan sudah dibuat sebelumnya. Silakan selesaikan pembayaran.', 'icon' => 'task_alt']);
+                }
+            }
+        }
 
         $isGuest = ! Auth::check();
         $isNewAccount = false;
@@ -369,6 +391,10 @@ class CheckoutController extends Controller
                     ),
                 ]);
             }
+        }
+
+        if ($submitToken !== '') {
+            session()->put('checkout_token_'.$submitToken, $checkout->checkout_id);
         }
 
         $redirect = redirect()->route('customer.checkout.payment', $checkout->checkout_id)
