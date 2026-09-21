@@ -43,8 +43,6 @@ class ProfilController extends Controller
 
         $user->update($data);
 
-        Auth::login($user);
-
         ActivityLogger::log(
             'profile.update',
             User::class,
@@ -73,8 +71,6 @@ class ProfilController extends Controller
         }
 
         $user->update(['password' => $data['password_baru']]);
-
-        Auth::login($user);
 
         ActivityLogger::log(
             'profile.password.update',

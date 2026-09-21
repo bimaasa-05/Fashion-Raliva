@@ -251,6 +251,7 @@
 @endsection
 
 @push('scripts')
+@include('partials.form-submit-guard')
 <script>
     function previewPhoto(input) {
         if (input.files && input.files[0]) {
