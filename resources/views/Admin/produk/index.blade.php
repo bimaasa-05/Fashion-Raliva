@@ -71,6 +71,8 @@
                         return asset('storage/' . $raw);
                     };
                     $fotosA = $p->images->map(fn ($img) => $normFotoA($img->file_gambar))->values()->all();
+                    $editFotosJson = json_encode($p->images->map(fn ($img) => ['id' => $img->product_image_id, 'url' => $normFotoA($img->file_gambar)])->values()->all());
+                    $editVarianJson = json_encode($p->variants->map(fn ($v) => ['id' => $v->product_variant_id, 'ukuran' => $v->ukuran, 'warna' => $v->warna, 'stok' => (int) $v->warehouseStocks->sum('jumlah_stok'), 'min' => (int) ($v->warehouseStocks->min('stok_minimum') ?? 0)])->values()->all());
                 @endphp
                 <article data-reveal data-adm-row data-status="{{ $statusA === 'aktif' ? 'disetujui' : $statusA }}" data-produk-id="{{ $p->product_id }}" data-produk-nama="{{ $p->nama_produk }}" data-produk-sku="{{ $skuA }}" data-produk-created="{{ $p->created_at?->translatedFormat('d M Y') }}" data-produk-harga="Rp {{ number_format((float) $p->harga_dasar, 0, ',', '.') }}" data-produk-kategori="{{ $p->category?->nama_kategori ?? '-' }}" data-produk-tipe="{{ ucfirst($p->tipe_produk ?? 'regular') }}" data-produk-varian="{{ $p->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}" data-produk-deskripsi="{{ $p->deskripsi }}" data-produk-status="{{ $statusA }}" data-produk-alasan="{{ $statusA === 'ditolak' ? ($p->alasan_penolakan ?? '') : '' }}" data-produk-images='@json($fotosA)' class="group bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium flex flex-col">
                     <div class="relative aspect-[3/4] bg-surface-container-low overflow-hidden max-h-48" data-produk-gallery>
@@ -108,61 +110,9 @@
                             <span class="text-xs text-on-surface-variant truncate">{{ $p->category?->nama_kategori ?? '-' }}</span>
                             <div class="flex items-center gap-1.5">
                                 <button type="button" data-produk-detail class="inline-flex items-center gap-1 px-2.5 py-1 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">visibility</span>Detail</button>
-                                <button type="button" data-modal-open="modal-edit-produk-{{ $p->product_id }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gold-accent/10 border border-gold-accent/30 rounded-lg text-xs font-semibold text-gold-accent hover:bg-gold-accent/20 transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">edit</span>Edit</button>
+                                <button type="button" data-produk-edit data-action="{{ route('admin.produk.update', $p) }}" data-nama="{{ $p->nama_produk }}" data-kategori="{{ $p->category_id }}" data-harga="{{ $p->harga_dasar }}" data-tipe="{{ $p->tipe_produk }}" data-deskripsi="{{ $p->deskripsi }}" data-fotos="{{ $editFotosJson }}" data-varian="{{ $editVarianJson }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gold-accent/10 border border-gold-accent/30 rounded-lg text-xs font-semibold text-gold-accent hover:bg-gold-accent/20 transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">edit</span>Edit</button>
                             </div>
                         </div>
-                    </div>
-
-                    {{-- Modal Edit Produk --}}
-                    <div id="modal-edit-produk-{{ $p->product_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
-                        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-                        <form method="POST" action="{{ route('admin.produk.update', $p) }}" class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6 max-h-[90vh] overflow-y-auto">
-                            @csrf
-                            @method('PUT')
-                            <div class="flex items-center justify-between border-b border-muted-border pb-3 mb-4">
-                                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Edit Produk</h3>
-                                <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface">
-                                    <span class="material-symbols-outlined text-[20px]">close</span>
-                                </button>
-                            </div>
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Nama Produk *</label>
-                                    <input type="text" name="nama_produk" value="{{ old('nama_produk', $p->nama_produk) }}" required class="raliva-input w-full" />
-                                </div>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <div>
-                                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Kategori</label>
-                                        <select name="category_id" class="raliva-select w-full">
-                                            <option value="">-- Pilih Kategori --</option>
-                                            @foreach ($categories as $cat)
-                                                <option value="{{ $cat->category_id }}" {{ old('category_id', $p->category_id) == $cat->category_id ? 'selected' : '' }}>{{ $cat->nama_kategori }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Harga Dasar (Rp) *</label>
-                                        <input type="number" name="harga_dasar" value="{{ old('harga_dasar', $p->harga_dasar) }}" required min="0" step="500" class="raliva-input w-full" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Tipe Produk</label>
-                                    <select name="tipe_produk" class="raliva-select w-full">
-                                        <option value="regular" {{ old('tipe_produk', $p->tipe_produk) === 'regular' ? 'selected' : '' }}>Regular</option>
-                                        <option value="preorder" {{ old('tipe_produk', $p->tipe_produk) === 'preorder' ? 'selected' : '' }}>Pre-Order</option>
-                                        <option value="made_to_order" {{ old('tipe_produk', $p->tipe_produk) === 'made_to_order' ? 'selected' : '' }}>Made to Order</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Deskripsi</label>
-                                    <textarea name="deskripsi" rows="4" class="raliva-textarea w-full" placeholder="Deskripsi produk...">{{ old('deskripsi', $p->deskripsi) }}</textarea>
-                                </div>
-                            </div>
-                            <div class="flex gap-3 mt-6 pt-4 border-t border-muted-border">
-                                <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
-                                <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Simpan Perubahan</button>
-                            </div>
-                        </form>
                     </div>
                 </article>
             @empty
@@ -214,24 +164,299 @@
     </div>
 </div>
 
+{{-- Modal Edit Produk (full parity dengan form tambah: teks + foto + varian + stok) --}}
+<div id="modal-edit-produk" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <form id="form-edit-produk" method="POST" action="" enctype="multipart/form-data" class="relative mx-auto w-full max-w-xl bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto" style="overscroll-behavior: contain; scrollbar-gutter: stable;">
+        @csrf
+        @method('PUT')
+        <div class="sticky top-0 bg-surface-container-lowest z-10 flex items-center justify-between px-6 py-5 border-b border-muted-border">
+            <h3 class="font-title-md text-title-md text-on-surface premium-heading">Edit Produk</h3>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+        </div>
+        <div class="p-6 space-y-6">
+            {{-- Foto: lama (centang untuk hapus) + tambah baru --}}
+            <div>
+                <label class="block raliva-label mb-2">Foto Saat Ini <span class="normal-case font-normal">(centang untuk hapus)</span></label>
+                <div id="edit-foto-lama" class="grid grid-cols-4 gap-2"></div>
+                <p id="edit-foto-kosong" class="hidden text-xs text-on-surface-variant">Belum ada foto.</p>
+                <label class="block raliva-label mt-4 mb-2">Tambah Foto Baru <span class="normal-case font-normal">(maks. total 8)</span></label>
+                <input type="file" name="foto_produk[]" accept="image/*" multiple class="raliva-input w-full text-sm" />
+            </div>
+            <div class="space-y-4">
+                <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">Informasi Dasar</p>
+                <div>
+                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Nama Produk *</label>
+                    <input type="text" id="edit-nama-produk" name="nama_produk" required class="raliva-input w-full" />
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Kategori</label>
+                        <select id="edit-category-id" name="category_id" class="raliva-select w-full">
+                            <option value="">-- Pilih Kategori --</option>
+                            @foreach ($categories as $cat)
+                                <option value="{{ $cat->category_id }}">{{ $cat->nama_kategori }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Harga Dasar (Rp) *</label>
+                        <input type="number" id="edit-harga-dasar" name="harga_dasar" required min="0" step="500" class="raliva-input w-full" />
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Tipe Produk</label>
+                    <select id="edit-tipe-produk" name="tipe_produk" class="raliva-select w-full">
+                        <option value="regular">Regular</option>
+                        <option value="preorder">Pre-Order</option>
+                        <option value="made_to_order">Made to Order</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Deskripsi</label>
+                    <textarea id="edit-deskripsi" name="deskripsi" rows="3" class="raliva-textarea w-full" placeholder="Deskripsi produk..."></textarea>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">Variasi &amp; Stok</p>
+                <div>
+                    <p class="raliva-label mb-2">Ukuran</p>
+                    <div class="flex flex-wrap gap-2" id="edit-ukuran-chips">
+                        @foreach (['XS', 'S', 'M', 'L', 'XL', 'XXL', 'All Size'] as $size)
+                            <button type="button" class="edit-ukuran-chip px-4 py-2 rounded-lg border border-muted-border text-xs font-medium text-on-surface hover:border-gold-accent transition-colors" data-size="{{ $size }}">{{ $size }}</button>
+                        @endforeach
+                    </div>
+                    <input type="hidden" name="ukuran_terpilih" id="edit-ukuran-terpilih" />
+                </div>
+                <div>
+                    <p class="raliva-label mb-2">Warna <span class="text-xs font-normal text-on-surface-variant">(klik untuk pilih, bisa lebih dari satu)</span></p>
+                    <div class="grid grid-cols-4 sm:grid-cols-5 gap-2" id="edit-warna-presets">
+                        @foreach ([['Navy', '#22304a'], ['Camel', '#c19a6b'], ['Putih', '#f5f3f3'], ['Merah', '#c62828'], ['Biru', '#2360a8'], ['Kuning', '#e6b91e'], ['Marun', '#7d2b33'], ['Hijau', '#2e7d32'], ['Emerald', '#046e4c'], ['Coral', '#f2875c'], ['Teal', '#0f766e'], ['Cream', '#f6ecd9'], ['Violet', '#7c3aed'], ['Sage', '#9caf88']] as $color)
+                            <label class="edit-warna-chip flex flex-col items-center gap-1 py-2 rounded-lg border border-muted-border cursor-pointer hover:border-gold-accent transition-colors has-[:checked]:bg-gold-accent/10 has-[:checked]:border-gold-accent" data-warna-value="{{ $color[0] }}" data-hex="{{ $color[1] }}">
+                                <input type="checkbox" name="warna[]" value="{{ $color[0] }}" class="sr-only peer" />
+                                <span class="w-7 h-7 rounded-full border border-outline-variant shadow-inner transition-all" style="background-color: {{ $color[1] }};"></span>
+                                <span class="font-body-md text-[10px] text-on-surface-variant text-center leading-tight">{{ $color[0] }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                    <div id="edit-warna-custom-chips" class="flex flex-wrap gap-2 mt-2"></div>
+                    <div class="flex items-center gap-2 mt-3">
+                        <input type="text" id="edit-warna-custom-name" placeholder="Warna baru (cth: Tosca)" maxlength="30" class="raliva-input text-sm flex-1" />
+                        <input type="color" id="edit-warna-custom-color" value="#1c1b1b" class="w-10 h-10 rounded cursor-pointer shrink-0" title="Pilih warna" />
+                        <button type="button" id="edit-warna-custom-add" class="px-4 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded shrink-0">Tambah</button>
+                    </div>
+                </div>
+                <div>
+                    <p class="raliva-label mb-1">Stok per Varian</p>
+                    <p class="text-xs text-on-surface-variant mb-3">Ubah stok untuk setiap kombinasi varian. Kombinasi baru akan dibuat otomatis.</p>
+                    <div id="edit-varian-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                    <p id="edit-varian-empty" class="mt-2 p-4 border border-dashed border-outline-variant rounded-lg text-center text-xs text-on-surface-variant">Belum ada varian. Pilih ukuran &amp; warna di atas.</p>
+                </div>
+            </div>
+        </div>
+        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border px-6 py-4 flex gap-3">
+            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
+            <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded transition-colors btn-premium">Simpan Perubahan</button>
+        </div>
+    </form>
+</div>
+
 @push('scripts')
 <script>
     (function () {
         const detailModal = document.getElementById('modal-detail-produk');
-        const lockScroll = () => {
-            const w = window.innerWidth - document.documentElement.clientWidth;
-            if (w > 0) { document.body.style.paddingRight = w + 'px'; document.documentElement.style.paddingRight = w + 'px'; }
-            document.body.style.overflow = 'hidden';
-            document.documentElement.style.overflow = 'hidden';
-        };
-        const unlockScroll = () => {
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
-            document.documentElement.style.overflow = '';
-            document.documentElement.style.paddingRight = '';
-        };
-        const openModal = (el) => { el?.classList.remove('hidden'); lockScroll(); };
-        const closeModal = (el) => { el?.classList.add('hidden'); if (!document.querySelector('[data-modal]:not(.hidden)')) unlockScroll(); };
+        const openModal = (el) => { if (window.ralivaOpenModal) window.ralivaOpenModal(el); else el?.classList.remove('hidden'); };
+        const closeModal = (el) => { if (window.ralivaCloseModal) window.ralivaCloseModal(el); else el?.classList.add('hidden'); };
+
+        const editUkuranSelected = new Set();
+        let editVarianExisting = [];
+
+        const editGetUkuran = () => Array.from(editUkuranSelected);
+        const editGetWarna = () => Array.from(document.querySelectorAll('#edit-warna-presets input[name="warna[]"]:checked, #edit-warna-custom-chips input[name="warna[]"]:checked')).map(cb => cb.value);
+
+        function editSyncUkuranHidden() {
+            document.getElementById('edit-ukuran-terpilih').value = editGetUkuran().join(',');
+        }
+
+        function editRenderVarian() {
+            const ukuran = editGetUkuran();
+            const warna = editGetWarna();
+            const grid = document.getElementById('edit-varian-grid');
+            const empty = document.getElementById('edit-varian-empty');
+            if (!grid || !empty) return;
+            const byKey = {};
+            editVarianExisting.forEach(v => { byKey[(v.ukuran || '') + '|' + (v.warna || '')] = v; });
+            const count = ukuran.length * warna.length;
+            empty.style.display = count > 0 ? 'none' : 'block';
+            grid.innerHTML = '';
+            let i = 0;
+            ukuran.forEach(uk => {
+                warna.forEach(wr => {
+                    const ex = byKey[uk + '|' + wr];
+                    const row = document.createElement('div');
+                    row.className = 'p-3 border border-muted-border rounded-lg bg-surface-container-low space-y-2';
+                    row.innerHTML = `
+                        <input type="hidden" name="varian_stok[${i}][variant_id]" value="${ex ? ex.id : ''}" />
+                        <input type="hidden" name="varian_stok[${i}][ukuran]" value="${escapeHtml(uk)}" />
+                        <input type="hidden" name="varian_stok[${i}][warna]" value="${escapeHtml(wr)}" />
+                        <div class="flex items-center gap-2">
+                            <span class="w-4 h-4 rounded-full border border-outline-variant shrink-0 inline-block" style="background-color: ${warnaSwatch(wr)}"></span>
+                            <span class="text-xs font-bold text-on-surface truncate">${escapeHtml(uk)} · ${escapeHtml(wr)}${ex ? '' : ' <span class="text-gold-accent font-normal">(baru)</span>'}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Stok</label>
+                                <input type="number" name="varian_stok[${i}][stok]" value="${ex ? ex.stok : 0}" min="0" class="raliva-input text-sm" />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Ambang Menipis</label>
+                                <input type="number" name="varian_stok[${i}][stok_minimum]" value="${ex ? ex.min : 0}" min="0" class="raliva-input text-sm" />
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(row);
+                    i++;
+                });
+            });
+        }
+
+        function editSetUkuranChip(size, on) {
+            document.querySelectorAll('#edit-ukuran-chips .edit-ukuran-chip').forEach(ch => {
+                if ((ch.dataset.size || ch.textContent.trim()) !== size) return;
+                ch.classList.toggle('bg-gold-accent', on);
+                ch.classList.toggle('text-white', on);
+                ch.classList.toggle('border-gold-accent', on);
+            });
+        }
+
+        function editEnsureUkuranChip(size) {
+            let found = false;
+            document.querySelectorAll('#edit-ukuran-chips .edit-ukuran-chip').forEach(ch => {
+                if ((ch.dataset.size || ch.textContent.trim()) === size) found = true;
+            });
+            if (found) return;
+            const box = document.getElementById('edit-ukuran-chips');
+            const chip = document.createElement('button');
+            chip.type = 'button';
+            chip.className = 'edit-ukuran-chip px-4 py-2 rounded-lg border text-xs font-medium';
+            chip.dataset.size = size;
+            chip.textContent = size;
+            chip.addEventListener('click', () => {
+                const s = chip.dataset.size;
+                if (editUkuranSelected.has(s)) { editUkuranSelected.delete(s); editSetUkuranChip(s, false); }
+                else { editUkuranSelected.add(s); editSetUkuranChip(s, true); }
+                editSyncUkuranHidden();
+                editRenderVarian();
+            });
+            box.appendChild(chip);
+        }
+
+        function editEnsureWarnaChecked(name) {
+            let cb = document.querySelector(`#edit-warna-presets input[name="warna[]"][value="${CSS.escape(name)}"]`);
+            if (cb) { cb.checked = true; return; }
+            cb = document.querySelector(`#edit-warna-custom-chips input[name="warna[]"][value="${CSS.escape(name)}"]`);
+            if (cb) { cb.checked = true; return; }
+            const wrap = document.getElementById('edit-warna-custom-chips');
+            const label = document.createElement('label');
+            label.className = 'flex items-center gap-2 py-1.5 pr-2 pl-2 rounded-lg border border-gold-accent bg-gold-accent/10 cursor-pointer';
+            label.innerHTML = `<input type="checkbox" name="warna[]" value="${escapeHtml(name)}" class="sr-only" checked />
+                <span class="w-6 h-6 rounded-full border border-outline-variant shadow-inner inline-block" style="background-color: ${warnaSwatch(name)};"></span>
+                <span class="font-body-md text-xs text-on-surface">${escapeHtml(name)}</span>`;
+            label.querySelector('input').addEventListener('change', editRenderVarian);
+            wrap.appendChild(label);
+        }
+
+        document.querySelectorAll('#edit-ukuran-chips .edit-ukuran-chip').forEach(ch => {
+            ch.addEventListener('click', () => {
+                const s = ch.dataset.size || ch.textContent.trim();
+                if (editUkuranSelected.has(s)) { editUkuranSelected.delete(s); editSetUkuranChip(s, false); }
+                else { editUkuranSelected.add(s); editSetUkuranChip(s, true); }
+                editSyncUkuranHidden();
+                editRenderVarian();
+            });
+        });
+        document.querySelectorAll('#edit-warna-presets input[name="warna[]"]').forEach(cb => {
+            cb.addEventListener('change', editRenderVarian);
+        });
+        document.getElementById('edit-warna-custom-add')?.addEventListener('click', () => {
+            const nameInput = document.getElementById('edit-warna-custom-name');
+            const colorInput = document.getElementById('edit-warna-custom-color');
+            const nama = (nameInput.value || '').trim() || ('Warna ' + (document.querySelectorAll('#edit-warna-presets input[name="warna[]"], #edit-warna-custom-chips input[name="warna[]"]').length + 1));
+            window.__warnaCustomHex = window.__warnaCustomHex || {};
+            window.__warnaCustomHex[nama] = colorInput.value;
+            editEnsureWarnaChecked(nama);
+            nameInput.value = '';
+            editRenderVarian();
+        });
+
+        document.querySelectorAll('[data-produk-edit]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const editModal = document.getElementById('modal-edit-produk');
+                const form = document.getElementById('form-edit-produk');
+                if (!form || !editModal) return;
+                form.action = btn.getAttribute('data-action') || '';
+                document.getElementById('edit-nama-produk').value = btn.getAttribute('data-nama') || '';
+                document.getElementById('edit-category-id').value = btn.getAttribute('data-kategori') || '';
+                document.getElementById('edit-harga-dasar').value = btn.getAttribute('data-harga') || '0';
+                document.getElementById('edit-tipe-produk').value = btn.getAttribute('data-tipe') || 'regular';
+                document.getElementById('edit-deskripsi').value = btn.getAttribute('data-deskripsi') || '';
+
+                let fotos = [];
+                let varian = [];
+                try { fotos = JSON.parse(btn.getAttribute('data-fotos') || '[]'); } catch (e) { fotos = []; }
+                try { varian = JSON.parse(btn.getAttribute('data-varian') || '[]'); } catch (e) { varian = []; }
+                editVarianExisting = varian;
+
+                const fotoBox = document.getElementById('edit-foto-lama');
+                const fotoEmpty = document.getElementById('edit-foto-kosong');
+                fotoBox.innerHTML = '';
+                if (!fotos.length) { fotoEmpty.classList.remove('hidden'); }
+                else {
+                    fotoEmpty.classList.add('hidden');
+                    fotos.forEach(f => {
+                        const lab = document.createElement('label');
+                        lab.className = 'relative aspect-[3/4] rounded-lg overflow-hidden border border-muted-border cursor-pointer group has-[:checked]:border-error has-[:checked]:ring-2 has-[:checked]:ring-error/40';
+                        lab.title = 'Centang untuk hapus';
+                        lab.innerHTML = `<img src="${f.url}" alt="" class="w-full h-full object-cover" loading="lazy" />
+                            <input type="checkbox" name="hapus_foto_ids[]" value="${f.id}" class="sr-only" />
+                            <span class="absolute inset-x-0 bottom-0 text-center text-[10px] font-bold uppercase py-1 bg-black/55 text-white opacity-0 group-has-[:checked]:opacity-100 transition-opacity">Hapus</span>`;
+                        fotoBox.appendChild(lab);
+                    });
+                }
+
+                editUkuranSelected.clear();
+                document.querySelectorAll('#edit-ukuran-chips .edit-ukuran-chip').forEach(ch => {
+                    ch.classList.remove('bg-gold-accent', 'text-white', 'border-gold-accent');
+                });
+                document.querySelectorAll('#edit-warna-presets input[name="warna[]"]').forEach(cb => { cb.checked = false; });
+                document.getElementById('edit-warna-custom-chips').innerHTML = '';
+                const ukSet = [...new Set(varian.map(v => v.ukuran).filter(Boolean))];
+                const wrSet = [...new Set(varian.map(v => v.warna).filter(Boolean))];
+                ukSet.forEach(s => { editEnsureUkuranChip(s); editUkuranSelected.add(s); editSetUkuranChip(s, true); });
+                wrSet.forEach(w => editEnsureWarnaChecked(w));
+                editSyncUkuranHidden();
+                editRenderVarian();
+                openModal(editModal);
+            });
+        });
+
+        document.getElementById('form-edit-produk')?.addEventListener('submit', function () {
+            this.querySelectorAll('input[name="warna_hex[]"]').forEach(h => h.remove());
+            const hexOf = (name) => {
+                if (window.__warnaCustomHex && window.__warnaCustomHex[name]) return window.__warnaCustomHex[name];
+                window.__warnaPresetHex = window.__warnaPresetHex || {};
+                return (window.__warnaPresetHex && window.__warnaPresetHex[name]) || '';
+            };
+            this.querySelectorAll('#edit-warna-presets input[name="warna[]"]:checked, #edit-warna-custom-chips input[name="warna[]"]:checked').forEach(cb => {
+                const h = document.createElement('input');
+                h.type = 'hidden';
+                h.name = 'warna_hex[]';
+                h.value = cb.closest('label')?.getAttribute('data-hex') || hexOf(cb.value);
+                this.appendChild(h);
+            });
+        });
 
         const fillGallery = (urls) => {
             const gallery = document.getElementById('detail-gallery');
@@ -324,6 +549,9 @@
             const t = cardTimers.get(card);
             if (t) { clearInterval(t); cardTimers.delete(card); }
         };
+        window.__ralivaPauseCardGalleries = () => {
+            cardTimers.forEach((t, card) => stopCardCycle(card));
+        };
         const paintCardPhoto = (card, index) => {
             const mainImg = card.querySelector('[data-produk-main-img]');
             const urls = card._galleryUrls || [];
@@ -380,15 +608,13 @@
                 cardTimers.forEach((t, card) => stopCardCycle(card));
             });
         });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') { closeModal(detailModal); }
-        });
+        // Escape ditangani global (ui-scripts) — tutup modal paling atas, anti double-handler.
     })();
 </script>
 @endpush
 
 {{-- Modal Form Produk — tengah, pola data-modal --}}
-<div id="modal-form-produk" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+<div id="modal-form-produk" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
     <form id="form-produk" method="POST" action="{{ route('admin.produk.store') }}" enctype="multipart/form-data" class="relative mx-auto w-full max-w-xl bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto" style="overscroll-behavior: contain; scrollbar-gutter: stable;">
         @csrf
@@ -853,36 +1079,7 @@ function addCustomSize() {
     });
 })();
 
-// --- Anti scroll-page saat modal terbuka (padanan halaman pesanan) ---
-(function () {
-    const lockScroll = () => {
-        const w = window.innerWidth - document.documentElement.clientWidth;
-        if (w > 0) { document.body.style.paddingRight = w + 'px'; document.documentElement.style.paddingRight = w + 'px'; }
-        document.body.style.overflow = 'hidden';
-        document.documentElement.style.overflow = 'hidden';
-    };
-    const unlockScroll = () => {
-        document.body.style.overflow = '';
-        document.body.style.paddingRight = '';
-        document.documentElement.style.overflow = '';
-        document.documentElement.style.paddingRight = '';
-    };
-    document.querySelectorAll('[data-modal-open]').forEach((btn) => {
-        btn.addEventListener('click', () => setTimeout(lockScroll, 0));
-    });
-    document.querySelectorAll('[data-modal-close]').forEach((el) => {
-        el.addEventListener('click', () => {
-            setTimeout(() => {
-                if (!document.querySelector('[data-modal]:not(.hidden)')) unlockScroll();
-            }, 50);
-        });
-    });
-    document.addEventListener('click', (e) => {
-        if (e.target.matches('[data-modal]')) setTimeout(() => {
-            if (!document.querySelector('[data-modal]:not(.hidden)')) unlockScroll();
-        }, 50);
-    });
-})();
+// Modal open/close + scroll-lock ditangani terpusat di partials/ui-scripts (ralivaOpenModal).
 </script>
 @endpush
 @endsection
