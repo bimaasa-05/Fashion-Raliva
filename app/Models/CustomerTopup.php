@@ -19,6 +19,8 @@ class CustomerTopup extends Model
 
     public const STATUS_KADALUARSA = 'kadaluarsa';
 
+    public const STATUS_DIBATALKAN = 'dibatalkan';
+
     protected $fillable = [
         'user_id',
         'payment_id',
