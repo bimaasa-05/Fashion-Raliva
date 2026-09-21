@@ -72,12 +72,33 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label for="jenis_permintaan" class="raliva-label block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1.5">Jenis Permintaan *</label>
-                        <select id="jenis_permintaan" name="jenis_permintaan" required class="raliva-select w-full">
-                            <option value="" disabled selected>Pilih jenis permintaan</option>
-                            @foreach ($jenisOptions as $value => $label)
-                                <option value="{{ $value }}" @selected(old('jenis_permintaan') === $value)>{{ $label }}</option>
-                            @endforeach
-                        </select>
+                        @php
+                            $oldJp = old('jenis_permintaan');
+                            $jpHasValue = !empty($oldJp) && isset($jenisOptions[$oldJp]);
+                            $jpLabel = $jpHasValue ? $jenisOptions[$oldJp] : 'Pilih jenis permintaan';
+                        @endphp
+                        <div class="relative w-full" data-cs>
+                            <button type="button" data-cs-trigger id="jenis_permintaan-trigger" aria-haspopup="listbox" aria-expanded="false" aria-required="true"
+                                class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-3 py-2.5 min-h-11 font-body-md text-sm focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left {{ $jpHasValue ? 'text-on-surface' : 'text-on-surface-variant' }}">
+                                <span data-cs-label class="truncate">{{ $jpLabel }}</span>
+                                <span data-cs-chevron class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200">expand_more</span>
+                            </button>
+                            <div data-cs-menu role="listbox" style="transform-origin: top left"
+                                class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-y-auto max-h-64 py-1">
+                                <button type="button" role="option" data-cs-option="" data-cs-option-label="Pilih jenis permintaan" data-cs-placeholder
+                                    class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer">
+                                    Pilih jenis permintaan<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ $jpHasValue ? 'hidden' : '' }}">check</span>
+                                </button>
+                                @foreach ($jenisOptions as $value => $label)
+                                    <button type="button" role="option" data-cs-option="{{ $value }}" data-cs-option-label="{{ $label }}"
+                                        class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                        {{ $label }}<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ $oldJp === $value ? '' : 'hidden' }}">check</span>
+                                    </button>
+                                @endforeach
+                            </div>
+                            <input type="hidden" name="jenis_permintaan" value="{{ $oldJp }}" data-cs-input />
+                        </div>
+                        <p id="jp-error" class="hidden mt-1 text-[11px] text-error">Pilih jenis permintaan terlebih dahulu.</p>
                         @error('jenis_permintaan')<p class="mt-1 text-[11px] text-error">{{ $message }}</p>@enderror
                     </div>
                     <div>
@@ -263,6 +284,49 @@
     @if (count($errors->all()))
         document.getElementById('form-ajukan')?.classList.remove('hidden');
     @endif
+
+    // Jenis Permintaan custom dropdown: validasi required + reset
+    const jpForm = document.getElementById('form-ajukan');
+    const jpCs = jpForm?.querySelector('[data-cs]');
+    const jpInput = jpCs?.querySelector('[data-cs-input]');
+    const jpTrigger = jpCs?.querySelector('[data-cs-trigger]');
+    const jpLabel = jpCs?.querySelector('[data-cs-label]');
+    const jpError = document.getElementById('jp-error');
+
+    if (jpForm && jpCs && jpInput) {
+        const setJpError = (on) => {
+            jpError?.classList.toggle('hidden', !on);
+            jpTrigger?.classList.toggle('border-error', on);
+        };
+        const syncJpState = () => {
+            const has = !!jpInput.value;
+            jpTrigger.classList.toggle('text-on-surface', has);
+            jpTrigger.classList.toggle('text-on-surface-variant', !has);
+        };
+        jpCs.querySelectorAll('[data-cs-option]').forEach((opt) => {
+            opt.addEventListener('click', () => {
+                setJpError(false);
+                syncJpState();
+            });
+        });
+        jpForm.addEventListener('submit', (e) => {
+            if (!jpInput.value) {
+                e.preventDefault();
+                setJpError(true);
+                jpTrigger?.focus();
+            }
+        });
+        jpForm.addEventListener('reset', () => {
+            jpInput.value = '';
+            jpCs.querySelectorAll('[data-cs-option]').forEach((o) =>
+                o.querySelector('[data-cs-check]')?.classList.add('hidden'));
+            const ph = jpCs.querySelector('[data-cs-placeholder]');
+            ph?.querySelector('[data-cs-check]')?.classList.remove('hidden');
+            if (jpLabel) jpLabel.textContent = 'Pilih jenis permintaan';
+            syncJpState();
+            setJpError(false);
+        });
+    }
 </script>
 @endpush
 @endsection
