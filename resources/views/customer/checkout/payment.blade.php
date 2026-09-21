@@ -871,6 +871,67 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             color: var(--on-surface);
         }
 
+        .pay-grid-split {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: .5rem .75rem;
+        }
+
+        .split-method.selected {
+            border-color: #8B1E3F;
+            background: rgba(139, 30, 63, .08);
+            color: #8B1E3F;
+            font-weight: 600;
+            box-shadow: inset 0 0 0 1px rgba(139, 30, 63, .15);
+        }
+
+        html.theme-dark .split-method.selected {
+            background: rgba(139, 30, 63, .18);
+            color: #FFC2C9;
+        }
+
+        .btn-split-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            padding: .7rem 1.25rem;
+            border-radius: 999px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            border: 1px solid #8B1E3F;
+            color: #8B1E3F;
+            background: transparent;
+            cursor: pointer;
+            transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+        }
+
+        .btn-split-toggle:hover {
+            background: #8B1E3F;
+            color: #fff;
+        }
+
+        html.theme-dark .btn-split-toggle {
+            border-color: #C0506B;
+            color: #F4B4BE;
+        }
+
+        html.theme-dark .btn-split-toggle:hover {
+            background: #6D1428;
+            color: #fff;
+        }
+
+        .btn-split-toggle .bt-chev {
+            transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .btn-split-toggle.open .bt-chev {
+            transform: rotate(180deg);
+        }
+
         .banner-akun {
             background: #ecfdf5;
             border: 1px solid #a7f3d0;
@@ -1004,8 +1065,8 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                 <input type="hidden" name="payment_method_id" id="input-payment-method"
                                     value="{{ old('payment_method_id', $payment->payment_method_id) }}" />
                                 <input type="hidden" name="payment_account_id" id="input-account-id"
-
                                     value="{{ old('payment_account_id', $payment->payment_account_id) }}" />
+                                <input type="hidden" name="pakai_saldo" id="input-pakai-saldo" value="0" />
                                 @if ($paymentMethods->isEmpty())
                                     <p class="font-body-sm text-body-sm text-on-surface-variant">
                                         {{ __('Belum ada metode pembayaran aktif. Hubungi admin.') }}</p>
@@ -1242,6 +1303,46 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                         class="font-label-sm text-label-sm text-on-surface-variant mt-sm">
                                                         {{ __('Saldo akan dipotong sebesar total dan pesanan langsung diproses.') }}
                                                     </p>
+                                                @elseif ($saldoCust > 0)
+                                                    @php $sisaBayar = max(0, (float) $payment->jumlah - $saldoCust); @endphp
+                                                    <div
+                                                        class="relative overflow-hidden rounded-xl border border-[var(--border-soft)] bg-surface-warm p-md md:p-lg">
+                                                        <div class="flex items-start gap-3">
+                                                            <span
+                                                                class="shrink-0 w-11 h-11 rounded-full bg-secondary/10 inline-flex items-center justify-center">
+                                                                <span
+                                                                    class="material-symbols-outlined text-[22px] text-secondary">account_balance_wallet</span>
+                                                            </span>
+                                                            <div class="min-w-0 flex-1">
+                                                                <p
+                                                                    class="font-body-md text-body-md font-bold text-on-surface">{{ __('Bayar sebagian dengan Saldo Akun') }}</p>
+                                                                <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                                                                    {{ __('Saldo') }}
+                                                                    <strong class="font-semibold text-[var(--chrome-accent)]">Rp
+                                                                        {{ number_format($saldoCust, 0, ',', '.') }}</strong>
+                                                                    {{ __('dipakai, sisa') }}
+                                                                    <strong class="font-semibold text-[var(--chrome-accent)]">Rp
+                                                                        {{ number_format($sisaBayar, 0, ',', '.') }}</strong>
+                                                                    {{ __('dibayar dengan metode kedua.') }}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+
+                                                        <div
+                                                            class="mt-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-sm rounded-xl border border-[var(--border-soft)] bg-surface-container-low/50 px-md py-2">
+                                                            <p
+                                                                class="font-body-md text-body-md font-semibold text-on-surface">
+                                                                {{ __('Gunakan metode kedua?') }}</p>
+                                                            <a href="{{ route('customer.checkout.payment.metode-kedua', $checkout->checkout_id) }}"
+                                                                class="btn-split-toggle self-start sm:self-auto">
+                                                                <span class="material-symbols-outlined text-[18px]">swap_horiz</span>
+                                                                <span>{{ __('Gunakan') }}</span>
+                                                                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                                            </a>
+                                                        </div>
+                                                        <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">
+                                                            {{ __('Anda akan diarahkan ke halaman khusus untuk memilih metode kedua.') }}</p>
+                                                    </div>
                                                 @else
                                                     <div
                                                         class="relative overflow-hidden rounded-xl border border-[var(--border-soft)] bg-surface-warm p-md md:p-lg">
@@ -1257,15 +1358,6 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                                 <p
                                                                     class="font-body-md text-body-md font-bold text-on-surface">{{ __('Saldo belum mencukupi') }}</p>
                                                                 <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
-                                                                    {{ __('Saldo tersedia') }}
-                                                                    <strong class="font-semibold text-[var(--chrome-accent)]">Rp
-                                                                        {{ number_format($saldoCust, 0, ',', '.') }}</strong>
-                                                                    &middot;
-                                                                    {{ __('Kurang') }}
-                                                                    <strong class="font-semibold text-[var(--chrome-accent)]">Rp
-                                                                        {{ number_format(max(0, (float) $payment->jumlah - $saldoCust), 0, ',', '.') }}</strong>
-                                                                </p>
-                                                                <p class="font-body-sm text-body-sm text-on-surface-variant/70 mt-0.5">
                                                                     {{ __('Isi saldo dulu untuk melanjutkan, atau pilih metode pembayaran lain.') }}
                                                                 </p>
                                                             </div>
@@ -1546,6 +1638,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             var hint = document.getElementById('pay-selected-hint');
             var panelBukti = document.getElementById('panel-bukti');
 
+
             var showPanel = function(kode) {
                 document.querySelectorAll('.method-detail').forEach(function(p) {
                     p.classList.add('hidden');
@@ -1613,7 +1706,10 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                 if (!sel) { hideBukti(); return; }
                 var kode = sel.getAttribute('data-kode');
                 currentKode = kode;
-                if (kode === 'saldo_akun') { hideBukti(); return; }
+                if (kode === 'saldo_akun') {
+                    hideBukti();
+                    return;
+                }
                 if (kode === 'qris') { applyProofUi(kode); showBukti(); return; }
                 if (kode === 'ewallet' || kode === 'bank_transfer') {
                     var gridEl = document.getElementById('grid-' + kode);
@@ -1855,6 +1951,7 @@ var btnActions = document.getElementById('btn-actions');
                         if ((kodeM === 'ewallet' || kodeM === 'bank_transfer') && accountInput && !accountInput.value) {
                             e.preventDefault();
                             alert('Pilih akun/tujuan pembayaran terlebih dahulu.');
+                            return;
                         }
                     }
                 });
