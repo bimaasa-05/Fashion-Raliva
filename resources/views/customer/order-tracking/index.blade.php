@@ -369,7 +369,11 @@
     $itemsCount = $selected->items->count();
     $progressWidth = $isCancelled ? 0 : (($step - 1) / 3 * 100);
     $details = [
-        'pending_payment' => [__('Menunggu verifikasi'), __('Bukti pembayaran Anda sedang diverifikasi admin. Pesanan akan diproses setelah terverifikasi.')],
+        'pending_payment' => match ($selected->checkout?->payment?->status) {
+            \App\Models\Payment::STATUS_PENDING => [__('Menunggu pembayaran'), __('Selesaikan pembayaran sebelum batas waktu. Klik Lanjutkan Pembayaran untuk memilih metode dan mengunggah bukti.')],
+            \App\Models\Payment::STATUS_DITOLAK => [__('Bukti ditolak'), __('Bukti pembayaran Anda ditolak. Klik Unggah Ulang Bukti untuk mengunggah bukti yang benar.')],
+            default => [__('Menunggu verifikasi'), __('Bukti pembayaran Anda sedang diverifikasi admin. Pesanan akan diproses setelah terverifikasi.')],
+        },
         'dibayar' => [__('Pembayaran diterima'), __('Pembayaran Anda telah kami terima. Pesanan sedang menunggu diproses.')],
         'diproses' => [__('Sedang disiapkan'), __('Pesanan sedang diproses di gudang dan akan segera dikirim.')],
         'dikirim' => [__('Sedang dalam perjalanan'), __('Pesanan sudah dikirim dan sedang dalam perjalanan menuju alamat Anda.')],
@@ -471,6 +475,17 @@
             @endif
         </div>
     </div>
+    @php
+        $canResumePay = $selected->checkout
+            && $selected->checkout->status === \App\Models\Checkout::STATUS_PENDING
+            && in_array($payInfo->status, [\App\Models\Payment::STATUS_PENDING, \App\Models\Payment::STATUS_DITOLAK], true);
+    @endphp
+    @if ($canResumePay)
+        <a href="{{ route('customer.checkout.payment', $selected->checkout->checkout_id) }}" class="btn-gold mt-md w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+            <span class="material-symbols-outlined text-[20px]">{{ $payInfo->status === \App\Models\Payment::STATUS_DITOLAK ? 'upload_file' : 'payments' }}</span>
+            <span>{{ $payInfo->status === \App\Models\Payment::STATUS_DITOLAK ? __('Unggah Ulang Bukti') : __('Lanjutkan Pembayaran') }}</span>
+        </a>
+    @endif
 </div>
 </div>
 </section>
