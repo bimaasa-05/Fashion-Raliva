@@ -365,11 +365,11 @@ document.addEventListener('DOMContentLoaded', function(){
                             backgroundColor: tooltipBg, titleColor: tooltipText, bodyColor: tooltipText,
                             titleFont: { family: 'Manrope', size: 12, weight: '700' }, bodyFont: { family: 'Manrope', size: 14 },
                             padding: 12, cornerRadius: 0,
-                            callbacks: { label: (ctx) => ' Saldo: Rp ' + new Intl.NumberFormat('id-ID').format(ctx.raw) }
+                            callbacks: { label: (ctx) => ' Saldo: Rp ' + new Intl.NumberFormat('id-ID').format(Number(ctx.raw)) }
                         }
                     },
                     scales: {
-                        y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: tickColor, font: { family: 'Manrope', size: 11 }, callback: (v) => (v / 1000000) + ' jt' } },
+                        y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: tickColor, font: { family: 'Manrope', size: 11 }, callback: (v) => window.ralivaShortRp ? window.ralivaShortRp(v) : ((v / 1000000).toLocaleString('id-ID', { maximumFractionDigits: 1 }) + ' jt') } },
                         x: { grid: { display: false }, ticks: { color: tickColor, font: { family: 'Manrope', size: 11 } } }
                     }
                 }
