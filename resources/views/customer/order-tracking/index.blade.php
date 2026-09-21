@@ -593,6 +593,12 @@ $buktiTokoNama = $latestRefund->file_bukti ? \Illuminate\Support\Str::afterLast(
 <span class="material-symbols-outlined text-[40px] text-error mb-xs block">cancel</span>
 <h3 class="font-title-md text-title-md text-on-surface mb-xs">{{ $detail[0] }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant max-w-md mx-auto">{{ $detail[1] }}</p>
+@if (! empty($alasanPembatalan ?? null))
+<div class="mt-md max-w-md mx-auto text-left bg-error/5 border border-error/15 rounded-xl p-md">
+<p class="font-label-sm text-label-sm text-error uppercase tracking-wider font-semibold mb-1">{{ __('Alasan pembatalan') }}</p>
+<p class="font-body-sm text-body-sm text-on-surface">{{ $alasanPembatalan }}</p>
+</div>
+@endif
 </div>
 @else
 <div class="relative max-w-[480px] mx-auto">
