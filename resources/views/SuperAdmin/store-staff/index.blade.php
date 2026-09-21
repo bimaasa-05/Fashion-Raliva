@@ -20,6 +20,16 @@
 @include('partials.flash-toast')
 
 <div class="space-y-section-gap">
+    <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+        </span>
+        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Data staff diperbarui real-time
+        </span>
+    </div>
     <!-- Hero Section -->
     <section class="relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl card-premium hero-glow">
         <span class="material-symbols-outlined fill absolute -right-6 -bottom-10 text-[220px] text-gold-accent/[0.06] pointer-events-none select-none" aria-hidden="true">groups</span>
@@ -147,13 +157,13 @@
                 <table class="w-full min-w-[860px] font-body-md text-sm">
                     <thead>
                         <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                            <th class="p-4 text-center w-12">No</th>
-                            <th class="p-4 text-center w-12">Staff</th>
-                            <th class="p-4 text-center w-12 text-center">Role</th>
-                            <th class="p-4 text-center w-12">Toko</th>
-                            <th class="p-4 text-center w-12">Ditugaskan</th>
-                            <th class="p-4 text-center w-12 text-center">Status</th>
-                            <th class="p-4 text-center w-12 text-center">Aksi</th>
+                            <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
+                            <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">Staff</th>
+                            <th class="px-4 py-4 text-center w-12 text-center text-[10px] font-semibold tracking-widest">Role</th>
+                            <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">Toko</th>
+                            <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">Ditugaskan</th>
+                            <th class="px-4 py-4 text-center w-12 text-center text-[10px] font-semibold tracking-widest">Status</th>
+                            <th class="px-4 py-4 text-center w-12 text-center text-[10px] font-semibold tracking-widest">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -247,12 +257,13 @@
                             default => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
                         };
                     @endphp
-                    <article class="staff-row bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium"
+                    <article class="staff-row bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden"
                         data-id="{{ $s->store_staff_id }}"
                         data-status="{{ $s->status }}"
                         data-role="{{ $s->user?->role_id }}"
                         data-store="{{ $s->store_id }}"
                         data-search="{{ strtolower($nm . ' ' . ($u?->email ?? '') . ' ' . ($s->store->nama_toko ?? '')) }}">
+                        <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">badge</span>
                         <div class="flex items-start justify-between gap-3 mb-3">
                             <div class="flex items-center gap-3 min-w-0">
                                 <div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0 font-title-md text-xs text-on-surface">{{ $initial }}</div>

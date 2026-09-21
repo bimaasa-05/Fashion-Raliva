@@ -15,7 +15,17 @@
 @endphp
 
 @section('content')
-<section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+<div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+        <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+        {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+    </span>
+    <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+        Data supplier diperbarui real-time
+    </span>
+</div>
+<section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Data Supplier Platform</h2>
         <div class="flex items-center gap-3 flex-wrap">
@@ -61,9 +71,10 @@
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </a>
             </form>
-            <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                <span class="material-symbols-outlined text-[14px]">inventory_2</span>
                 <span id="result-count">{{ $suppliers->total() }}</span> supplier
-            </p>
+            </span>
         </div>
     </div>
 
@@ -72,13 +83,13 @@
         <table class="w-full min-w-[1080px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                    <th class="p-4 text-center w-12">No.</th>
-                    <th class="p-4 text-left">Supplier</th>
-                    <th class="p-4 text-left">Kontak</th>
-                    <th class="p-4 text-left">Kota</th>
-                    <th class="p-4 text-left">Bahan</th>
-                    <th class="p-4 text-center">Status</th>
-                    <th class="p-4 text-center">Aksi</th>
+                    <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No.</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Supplier</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Kontak</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Kota</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Bahan</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Aksi</th>
                 </tr>
             </thead>
             <tbody class="font-body-md text-sm">
@@ -155,7 +166,8 @@
                 $badge = $statusBadgeMap[$supplier->status] ?? ['label' => $supplier->status, 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'];
                 $bahanJson = json_encode($supplier->bahans->map(fn ($b) => ['nama' => $b->nama_bahan, 'satuan' => $b->satuan ?? null])->values()->all());
             @endphp
-            <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+            <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">partner_exchange</span>
                 <div class="flex items-start justify-between gap-3 mb-3">
                     <div class="min-w-0">
                         <p class="font-title-md text-title-md text-on-surface leading-tight">{{ $supplier->nama_supplier }}</p>

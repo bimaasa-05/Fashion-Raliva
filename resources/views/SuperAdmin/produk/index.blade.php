@@ -7,7 +7,17 @@
 @section('header-subtitle', 'Lihat katalog produk dari seluruh toko di platform.')
 
 @section('content')
-<section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+<div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+        <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+        {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+    </span>
+    <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+        Katalog produk diperbarui real-time
+    </span>
+</div>
+<section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Katalog Produk Platform</h2>
         <div class="flex items-center gap-3 flex-wrap">
@@ -51,9 +61,10 @@
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </button>
             </div>
-            <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                <span class="material-symbols-outlined text-[14px]">inventory_2</span>
                 <span id="result-count">{{ $products->count() }}</span> produk
-            </p>
+            </span>
         </div>
     </div>
 
@@ -62,14 +73,14 @@
         <table class="w-full min-w-[950px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                    <th class="p-4 text-center w-12">No.</th>
-                    <th class="p-4 text-left">Foto</th>
-                    <th class="p-4 text-left">Produk</th>
-                    <th class="p-4 text-left">Toko</th>
-                    <th class="p-4 text-left">Kategori</th>
-                    <th class="p-4 text-left">Tipe</th>
-                    <th class="p-4 text-right">Harga</th>
-                    <th class="p-4 text-center">Status Moderasi</th>
+                    <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No.</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Foto</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Produk</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Toko</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Kategori</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Tipe</th>
+                    <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">Harga</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Status Moderasi</th>
                 </tr>
             </thead>
             <tbody class="font-body-md text-sm">
@@ -166,7 +177,8 @@
                     default => [ucfirst($produk->status), 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
                 };
             @endphp
-            <article data-table-row data-status="{{ $produk->status }}" data-iklan="{{ $produk->adSlot ? 1 : 0 }}" data-search="{{ strtolower($produk->nama_produk.' '.($produk->store->nama_toko ?? '').' '.($produk->category->nama_kategori ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+            <article data-table-row data-status="{{ $produk->status }}" data-iklan="{{ $produk->adSlot ? 1 : 0 }}" data-search="{{ strtolower($produk->nama_produk.' '.($produk->store->nama_toko ?? '').' '.($produk->category->nama_kategori ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">checkroom</span>
                 @php $normFotoM = function ($raw) { if (filter_var($raw, FILTER_VALIDATE_URL)) return $raw; $raw = ltrim($raw, '/'); return str_starts_with($raw, 'assets/') ? asset($raw) : asset('storage/' . $raw); }; $firstImgM = $produk->images->first(); $imgSrcM = $firstImgM ? $normFotoM($firstImgM->file_gambar) : null; $imgCountM = $produk->images->count(); $galImgsM = $produk->images->map(fn ($gi) => $normFotoM($gi->file_gambar))->values()->all(); @endphp
                 <div class="flex items-start gap-4 mb-3">
                     <div class="relative w-16 h-16 rounded-lg overflow-hidden bg-surface-container-low border border-muted-border shrink-0 cursor-pointer hover:ring-2 hover:ring-gold-accent/50 transition-all"

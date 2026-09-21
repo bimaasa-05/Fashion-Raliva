@@ -16,6 +16,16 @@
 @include('partials.flash-toast')
 
 <div class="space-y-section-gap">
+    <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+        </span>
+        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Pengiriman diperbarui real-time
+        </span>
+    </div>
     <!-- Hero Section -->
     <section class="relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl card-premium hero-glow">
         <span class="material-symbols-outlined fill absolute -right-6 -bottom-10 text-[220px] text-gold-accent/[0.06] pointer-events-none select-none" aria-hidden="true">local_shipping</span>
@@ -49,7 +59,7 @@
         </div>
     </section>
 
-    <section data-table-scope class="rise rise-d1 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section data-table-scope data-reveal class="rise rise-d1 bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Pengiriman</h2>
             <button type="button" data-filter-toggle data-filter-target="#pengiriman-filter" class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
@@ -86,25 +96,26 @@
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[14px]">inventory_2</span>
                     <span id="pengiriman-result-count">{{ $shipments->total() }}</span> pengiriman
-                </p>
+                </span>
             </div>
         </div>
 
         <!-- Table -->
         <div class="overflow-x-auto hidden md:block">
-                <table class="w-full min-w-full bg-surface-container-lowest rounded-lg overflow-hidden premium-table">
+                <table class="w-full min-w-full bg-surface-container-lowest rounded-xl overflow-hidden premium-table">
                     <thead>
                         <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
-                            <th class="p-6 w-12 text-center">No.</th>
-                            <th class="p-6">ID Pesanan</th>
-                            <th class="p-6">Toko</th>
-                            <th class="p-6">Kurir</th>
-                            <th class="p-6">No. Resi</th>
-                            <th class="p-6">Ongkir</th>
-                            <th class="p-6">Status</th>
-                            <th class="p-6 text-right">Aksi</th>
+                            <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">No.</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">ID Pesanan</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Toko</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Kurir</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">No. Resi</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Ongkir</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Status</th>
+                            <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -202,7 +213,8 @@ $pelanggan = $s->order?->checkout?->user;
                         $pelNama = $pelanggan?->nama_lengkap ?? $s->order?->checkout?->nama_penerima ?? '-';
                         $statusClass = match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant' };
                     @endphp
-                    <article data-table-row data-status="{{ $s->status }}" data-search="{{ strtolower(($s->order->nomor_order ?? '').' '.($s->order->store->nama_toko ?? '').' '.($s->courier->nama_kurir ?? '').' '.($s->nomor_resi ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    <article data-table-row data-status="{{ $s->status }}" data-search="{{ strtolower(($s->order->nomor_order ?? '').' '.($s->order->store->nama_toko ?? '').' '.($s->courier->nama_kurir ?? '').' '.($s->nomor_resi ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">local_shipping</span>
                         <div class="flex items-start justify-between gap-3 mb-3">
                             <div class="min-w-0">
                                 <p class="font-mono font-bold text-on-surface leading-tight">{{ $s->order->nomor_order ?? '-' }}</p>

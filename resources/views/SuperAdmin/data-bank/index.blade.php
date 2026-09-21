@@ -102,11 +102,11 @@
                 <table class="premium-table w-full text-sm">
                     <thead>
                         <tr class="text-left text-on-surface-variant border-b border-muted-border">
-                            <th class="py-3 px-5 font-label-sm text-[10px] uppercase tracking-wider">Bank</th>
-                            <th class="py-3 px-4 font-label-sm text-[10px] uppercase tracking-wider">No. Rekening</th>
-                            <th class="py-3 px-4 font-label-sm text-[10px] uppercase tracking-wider">Pemilik</th>
-                            <th class="py-3 px-4 font-label-sm text-[10px] uppercase tracking-wider">Status</th>
-                            <th class="py-3 px-5 font-label-sm text-[10px] uppercase tracking-wider text-right">Aksi</th>
+                            <th class="py-3 px-5 font-label-sm text-[10px] font-semibold uppercase tracking-widest">Bank</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">No. Rekening</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">Pemilik</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">Status</th>
+                            <th class="py-3 px-5 font-label-sm text-[10px] font-semibold uppercase tracking-widest text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -189,11 +189,11 @@
                         </div>
                         <div class="grid grid-cols-2 gap-3 mt-4">
                             <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
-                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">No. Rekening</p>
+                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">No. Rekening</p>
                                 <p class="text-sm font-semibold text-on-surface mt-0.5 tabular-nums break-all">{{ $rek?->nomor_rekening ?? '-' }}</p>
                             </div>
                             <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
-                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Pemilik</p>
+                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">Pemilik</p>
                                 <p class="text-sm font-semibold text-on-surface mt-0.5 truncate">{{ $rek?->nama_pemilik ?? '-' }}</p>
                             </div>
                         </div>
@@ -241,11 +241,11 @@
                 <table class="premium-table w-full text-sm">
                     <thead>
                         <tr class="text-left text-on-surface-variant border-b border-muted-border">
-                            <th class="py-3 px-5 font-label-sm text-[10px] uppercase tracking-wider">Nama</th>
-                            <th class="py-3 px-4 font-label-sm text-[10px] uppercase tracking-wider">No. Telepon</th>
-                            <th class="py-3 px-4 font-label-sm text-[10px] uppercase tracking-wider">Pemilik</th>
-                            <th class="py-3 px-4 font-label-sm text-[10px] uppercase tracking-wider">Status</th>
-                            <th class="py-3 px-5 font-label-sm text-[10px] uppercase tracking-wider text-right">Aksi</th>
+                            <th class="py-3 px-5 font-label-sm text-[10px] font-semibold uppercase tracking-widest">Nama</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">No. Telepon</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">Pemilik</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">Status</th>
+                            <th class="py-3 px-5 font-label-sm text-[10px] font-semibold uppercase tracking-widest text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -326,11 +326,11 @@
                         </div>
                         <div class="grid grid-cols-2 gap-3 mt-4">
                             <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
-                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">No. Telepon</p>
+                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">No. Telepon</p>
                                 <p class="text-sm font-semibold text-on-surface mt-0.5 tabular-nums break-all">{{ $ew->nomor_rekening ?? '-' }}</p>
                             </div>
                             <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
-                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Pemilik</p>
+                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">Pemilik</p>
                                 <p class="text-sm font-semibold text-on-surface mt-0.5 truncate">{{ $ew->nama_pemilik ?? '-' }}</p>
                             </div>
                         </div>
@@ -405,11 +405,11 @@
                         @endif
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                             <div class="rounded-xl border border-muted-border bg-surface-container-low px-4 py-3">
-                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Nama Pemilik</p>
+                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">Nama Pemilik</p>
                                 <p class="text-sm font-semibold text-on-surface mt-0.5">{{ $qris->nama_pemilik ?? '-' }}</p>
                             </div>
                             <div class="rounded-xl border border-muted-border bg-surface-container-low px-4 py-3">
-                                <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Kode</p>
+                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">Kode</p>
                                 <p class="text-sm font-semibold text-on-surface mt-0.5 uppercase">{{ $qris->kode }}</p>
                             </div>
                         </div>

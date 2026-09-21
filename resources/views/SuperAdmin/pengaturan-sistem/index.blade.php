@@ -218,11 +218,11 @@
             <table class="w-full min-w-[640px] premium-table">
                 <thead>
                     <tr class="border-b bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-3 text-center w-12">No</th>
-                        <th class="p-3 text-left">Min (Rp)</th>
-                        <th class="p-3 text-left">Max (Rp)</th>
-                        <th class="p-3 text-center">Hari</th>
-                        <th class="p-3 text-right">Aksi</th>
+                        <th class="px-3 py-3 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
+                        <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">Min (Rp)</th>
+                        <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">Max (Rp)</th>
+                        <th class="px-3 py-3 text-center text-[10px] font-semibold tracking-widest">Hari</th>
+                        <th class="px-3 py-3 text-right text-[10px] font-semibold tracking-widest">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -340,13 +340,13 @@
                 <table class="w-full min-w-[640px] premium-table">
                     <thead>
                         <tr class="border-b bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                            <th class="p-3 text-center w-12">No</th>
-                            <th class="p-3 text-center w-16">Ikon</th>
-                            <th class="p-3 text-left">Judul</th>
-                            <th class="p-3 text-left">Subjudul</th>
-                            <th class="p-3 text-center w-16">Urutan</th>
-                            <th class="p-3 text-center">Status</th>
-                            <th class="p-3 text-right">Aksi</th>
+                            <th class="px-3 py-3 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
+                            <th class="px-3 py-3 text-center w-16 text-[10px] font-semibold tracking-widest">Ikon</th>
+                            <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">Judul</th>
+                            <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">Subjudul</th>
+                            <th class="px-3 py-3 text-center w-16 text-[10px] font-semibold tracking-widest">Urutan</th>
+                            <th class="px-3 py-3 text-center text-[10px] font-semibold tracking-widest">Status</th>
+                            <th class="px-3 py-3 text-right text-[10px] font-semibold tracking-widest">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -415,13 +415,13 @@
                 <table class="w-full min-w-[820px] premium-table">
                     <thead>
                         <tr class="border-b bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                            <th class="p-3 text-center w-12">No</th>
-                            <th class="p-3 text-left">Kategori</th>
-                            <th class="p-3 text-left">Pertanyaan</th>
-                            <th class="p-3 text-left">Jawaban</th>
-                            <th class="p-3 text-center w-16">Urutan</th>
-                            <th class="p-3 text-center">Status</th>
-                            <th class="p-3 text-right">Aksi</th>
+                            <th class="px-3 py-3 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
+                            <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">Kategori</th>
+                            <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">Pertanyaan</th>
+                            <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">Jawaban</th>
+                            <th class="px-3 py-3 text-center w-16 text-[10px] font-semibold tracking-widest">Urutan</th>
+                            <th class="px-3 py-3 text-center text-[10px] font-semibold tracking-widest">Status</th>
+                            <th class="px-3 py-3 text-right text-[10px] font-semibold tracking-widest">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>

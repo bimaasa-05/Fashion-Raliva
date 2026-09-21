@@ -31,7 +31,7 @@
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:66%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:58%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:74%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:68%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:88%"></i>
             </div>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
         </div>
 
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
@@ -41,7 +41,7 @@
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:50%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:70%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:64%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:80%"></i>
             </div>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
         </div>
 
         <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hero-glow">
@@ -51,7 +51,7 @@
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:72%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:84%"></i>
             </div>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">percent</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">percent</span>
         </div>
 
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
@@ -61,7 +61,7 @@
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:30%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:35%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:32%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:42%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:52%"></i>
             </div>
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">storefront</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">storefront</span>
         </div>
     </div>
 </section>
@@ -129,7 +129,7 @@
 </div>
 
 <!-- Recent Transactions Table -->
-<section class="mb-section-gap">
+<section data-reveal class="mb-section-gap">
     <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
         <h3 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Transaksi Terbaru</h3>
         <div class="flex items-center gap-3">
@@ -142,7 +142,7 @@
             </a>
         </div>
     </div>
-    <div class="border border-muted-border bg-surface-container-lowest rounded-lg overflow-x-auto hidden md:block card-premium">
+    <div class="border border-muted-border bg-surface-container-lowest rounded-xl overflow-x-auto hidden md:block card-premium">
         <table class="w-full text-left border-collapse premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low/50">
@@ -195,7 +195,8 @@
                 ];
                 $st = $statusMap[$tx->status] ?? [$tx->status, 'bg-surface-container-high text-on-surface-variant'];
             @endphp
-            <article class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+            <article class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">receipt_long</span>
                 <div class="flex items-start justify-between gap-3 mb-3">
                     <p class="font-mono text-sm text-on-surface leading-tight">{{ $tx->nomor_order }}</p>
                     <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $st[1] }} text-[10px] font-bold uppercase border shrink-0">{{ $st[0] }}</span>
