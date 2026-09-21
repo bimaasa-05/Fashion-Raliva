@@ -82,6 +82,36 @@ class LaporanController extends Controller
                 ->values();
         }
 
-        return view('Admin.laporan.index', compact('pendapatan', 'pesananDiproses', 'totalPengeluaran', 'totalBersih', 'perToko', 'perMetode', 'pesananBaru', 'menungguVerifikasi', 'saya'));
+        // 30-day omzet trend bars for charts
+        $omzetBars = [];
+        if ($storeIds) {
+            $validStatuses = [Order::STATUS_DIBAYAR, Order::STATUS_MENUNGGU_PRODUKSI, Order::STATUS_DIPROSES, Order::STATUS_MENUNGGU_QC, Order::STATUS_SIAP_KIRIM, Order::STATUS_DIKIRIM, Order::STATUS_SELESAI, Order::STATUS_REFUND];
+            $dailyRows = Order::query()
+                ->whereIn('store_id', $storeIds)
+                ->whereIn('status', $validStatuses)
+                ->whereBetween('created_at', [now()->subDays(29)->startOfDay(), now()->endOfDay()])
+                ->groupBy('tanggal')
+                ->selectRaw('DATE(created_at) as tanggal, SUM(grand_total) as total')
+                ->pluck('total', 'tanggal');
+
+            foreach (range(29, 0) as $i) {
+                $hari = now()->subDays($i);
+                $kunci = $hari->toDateString();
+                $nilai = (float) ($dailyRows[$kunci] ?? 0);
+                $omzetBars[] = ['label' => $hari->format('d/m'), 'value' => round($nilai / 1000000, 2)];
+            }
+        }
+
+        // Donut chart per metode pembayaran
+        $palette = ['#C9A24D', '#E9CE8A', '#795905', '#4ade80', '#3b82f6', '#a855f7'];
+        $distribusiMetode = $perMetode->map(function ($m, $idx) use ($palette) {
+            return [
+                'value' => (int) $m->jumlah_transaksi,
+                'color' => $palette[$idx % count($palette)],
+                'label' => $m->nama_metode,
+            ];
+        })->values()->all();
+
+        return view('Admin.laporan.index', compact('pendapatan', 'pesananDiproses', 'totalPengeluaran', 'totalBersih', 'perToko', 'perMetode', 'pesananBaru', 'menungguVerifikasi', 'saya', 'omzetBars', 'distribusiMetode'));
     }
 }
