@@ -322,6 +322,7 @@
 @endsection
 
 @push('scripts')
+@include('partials.form-submit-guard')
 <script>
 document.addEventListener('DOMContentLoaded', function(){
   if (!document.querySelector('[data-real]')) return;
