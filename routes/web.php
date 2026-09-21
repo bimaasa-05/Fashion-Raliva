@@ -164,6 +164,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::post('/saldo/topup', [\App\Http\Controllers\Customer\SaldoController::class, 'topup'])->name('saldo.topup');
         Route::get('/saldo/topup/{topup}/payment', [\App\Http\Controllers\Customer\SaldoController::class, 'payment'])->name('saldo.topup.payment');
         Route::post('/saldo/topup/{topup}/payment', [\App\Http\Controllers\Customer\SaldoController::class, 'uploadTopupProof'])->name('saldo.topup.payment.upload');
+        Route::post('/saldo/topup/{topup}/batal', [\App\Http\Controllers\Customer\SaldoController::class, 'batalkan'])->name('saldo.topup.batal');
         Route::get('/saldo/topup/{topup}/payment/status', [\App\Http\Controllers\Customer\SaldoController::class, 'paymentStatus'])->name('saldo.topup.payment.status');
         Route::get('/saldo/topup/{topup}/selesai', [\App\Http\Controllers\Customer\SaldoController::class, 'selesai'])->name('saldo.topup.selesai');
 
