@@ -13,7 +13,8 @@ class SupplierController extends Controller
     public function index(Request $request)
     {
         $q = $request->input('q');
-        $suppliers = Supplier::when($q, fn ($qb) => $qb->where('nama_supplier', 'like', "%{$q}%"))
+        $suppliers = Supplier::with('bahans')
+            ->when($q, fn ($qb) => $qb->where('nama_supplier', 'like', "%{$q}%"))
             ->orderBy('nama_supplier')
             ->paginate(12);
 
@@ -39,11 +40,22 @@ class SupplierController extends Controller
             'catatan' => 'nullable|string|max:1000',
             'stok' => 'nullable|integer|min:0',
             'status' => 'required|in:aktif,nonaktif',
+            'bahan' => 'nullable|array',
+            'bahan.*.nama_bahan' => 'required|string|max:150',
+            'bahan.*.satuan' => 'required|string|in:meter,cm,yard,roll,kg,gram,pcs',
         ]);
 
         $data['stok'] = $data['stok'] ?? 0;
 
-        Supplier::create($data);
+        \Illuminate\Support\Facades\DB::transaction(function () use ($data) {
+            $supplier = Supplier::create(collect($data)->except('bahan')->all());
+            foreach ($data['bahan'] ?? [] as $bahan) {
+                $supplier->bahans()->create([
+                    'nama_bahan' => $bahan['nama_bahan'],
+                    'satuan' => $bahan['satuan'],
+                ]);
+            }
+        });
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Supplier Ditambahkan', sprintf('Supplier "%s" berhasil ditambahkan.', $data['nama_supplier']), route('admin.supplier'));
 
@@ -62,11 +74,36 @@ class SupplierController extends Controller
             'catatan' => 'nullable|string|max:1000',
             'stok' => 'nullable|integer|min:0',
             'status' => 'required|in:aktif,nonaktif',
+            'bahan' => 'nullable|array',
+            'bahan.*.supplier_bahan_id' => 'nullable|integer|exists:supplier_bahan,supplier_bahan_id',
+            'bahan.*.nama_bahan' => 'required|string|max:150',
+            'bahan.*.satuan' => 'required|string|in:meter,cm,yard,roll,kg,gram,pcs',
         ]);
 
         $data['stok'] = $data['stok'] ?? 0;
 
-        $supplier->update($data);
+        \Illuminate\Support\Facades\DB::transaction(function () use ($supplier, $data) {
+            $supplier->update(collect($data)->except('bahan')->all());
+
+            $dikirim = collect($data['bahan'] ?? []);
+            $idsLama = $supplier->bahans()->pluck('supplier_bahan_id')->all();
+            $idsKirim = $dikirim->pluck('supplier_bahan_id')->filter()->map(fn ($v) => (int) $v)->all();
+
+            // Hapus baris yang dibuang di form; sisanya dipertahankan (tambah-bukan-hilang)
+            $hapus = array_diff($idsLama, $idsKirim);
+            if ($hapus) {
+                $supplier->bahans()->whereIn('supplier_bahan_id', $hapus)->delete();
+            }
+
+            foreach ($dikirim as $bahan) {
+                if (! empty($bahan['supplier_bahan_id'])) {
+                    $row = $supplier->bahans()->where('supplier_bahan_id', $bahan['supplier_bahan_id'])->first();
+                    if ($row) $row->update(['nama_bahan' => $bahan['nama_bahan'], 'satuan' => $bahan['satuan']]);
+                } else {
+                    $supplier->bahans()->create(['nama_bahan' => $bahan['nama_bahan'], 'satuan' => $bahan['satuan']]);
+                }
+            }
+        });
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Supplier Diperbarui', sprintf('Data supplier "%s" berhasil diperbarui.', $supplier->nama_supplier), route('admin.supplier'));
 
