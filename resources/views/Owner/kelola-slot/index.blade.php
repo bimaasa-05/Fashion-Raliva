@@ -62,11 +62,12 @@
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Beli Slot Fleksibel</h2>
             <p class="text-on-surface-variant font-body-md text-xs mt-1">Pilih jumlah slot bebas, bayar sesuai harga per slot, upload bukti transfer. Verifikasi oleh SuperAdmin maksimal 1×24 jam.</p>
 
+            @php $slotNoStore = ! \App\Support\OwnerContext::currentStore(); @endphp
             <form method="POST" action="{{ route('owner.kelola-slot.request') }}" enctype="multipart/form-data" class="mt-6 space-y-5">
                 @csrf
                 <div>
                     <label for="slot-jumlah" class="block raliva-label mb-2">Jumlah Slot</label>
-                    <input id="slot-jumlah" name="jumlah_slot" type="number" value="50" min="1" max="1000" step="1" required class="raliva-input" data-slot-qty />
+                    <input id="slot-jumlah" name="jumlah_slot" type="number" value="50" min="1" max="1000" step="1" required class="raliva-input" data-slot-qty {{ $slotNoStore ? 'disabled title="Ajukan toko dulu"' : '' }} />
                     <p class="text-xs text-on-surface-variant mt-1.5">Bebas mulai 1 slot, maksimal 1000 per pembelian.</p>
                     @error('jumlah_slot') <p class="text-xs text-error mt-1">{{ $message }}</p> @enderror
                 </div>
@@ -80,7 +81,7 @@
                 </div>
                 <div>
                     <label for="slot-metode" class="block raliva-label mb-2">Metode Pembayaran</label>
-                    <select id="slot-metode" name="metode_pembayaran" required class="raliva-select">
+                    <select id="slot-metode" name="metode_pembayaran" required class="raliva-select" {{ $slotNoStore ? 'disabled title="Ajukan toko dulu"' : '' }}>
                         <option value="" disabled selected>Pilih metode...</option>
                         @forelse ($metode ?? [] as $m)
                             @php /** @var \App\Models\PaymentMethod $m */ @endphp
@@ -93,20 +94,20 @@
                 </div>
                 <div>
                     <label for="slot-bukti" class="block raliva-label mb-2">Bukti Pembayaran</label>
-                    <input id="slot-bukti" name="file_bukti" type="file" accept=".jpg,.jpeg,.png,.pdf" required class="raliva-input" />
+                    <input id="slot-bukti" name="file_bukti" type="file" accept=".jpg,.jpeg,.png,.pdf" required class="raliva-input" {{ $slotNoStore ? 'disabled title="Ajukan toko dulu"' : '' }} />
                     <p class="text-xs text-on-surface-variant mt-1.5">JPG, PNG, atau PDF. Maksimal 4 MB.</p>
                     @error('file_bukti') <p class="text-xs text-error mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label for="slot-alasan" class="block raliva-label mb-2">Alasan / Keterangan <span class="text-on-surface-variant">(opsional)</span></label>
-                    <textarea id="slot-alasan" name="alasan" rows="2" placeholder="cth. Menambah koleksi musim baru 40 SKU..." class="raliva-textarea"></textarea>
+                    <textarea id="slot-alasan" name="alasan" rows="2" placeholder="cth. Menambah koleksi musim baru 40 SKU..." class="raliva-textarea" {{ $slotNoStore ? 'disabled title="Ajukan toko dulu"' : '' }}></textarea>
                     @error('alasan') <p class="text-xs text-error mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div class="border border-gold-accent/20 bg-gold-accent/5 rounded-lg px-4 py-3 flex items-start gap-3">
                     <span class="material-symbols-outlined text-[20px] text-gold-accent mt-0.5">info</span>
                     <p class="text-on-surface-variant font-body-md text-xs leading-relaxed">Slots hanya ditambahkan setelah bukti pembayaran diverifikasi dan disetujui oleh SuperAdmin.</p>
                 </div>
-                <button type="submit" class="w-full py-3 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
+                <button type="submit" {{ $slotNoStore ? 'disabled title="Ajukan toko dulu"' : '' }} class="w-full py-3 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2 {{ $slotNoStore ? 'opacity-60 cursor-not-allowed' : '' }}">
                     <span class="material-symbols-outlined text-[16px]">send</span>Bayar & Ajukan
                 </button>
             </form>
@@ -178,22 +179,24 @@ document.addEventListener('DOMContentLoaded', function(){
   // Check if no store banner exists (means no store)
   const noStore = document.querySelector('[data-no-store-banner]');
   if (!noStore) return;
-  // Disable all primary action buttons except Ajukan Toko
-  document.querySelectorAll('[data-modal-open], button[type="submit"], a[href*="pengajuan-toko"]:not([href*="ajukan"])').forEach(el=>{
-    // Keep Ajukan Toko enabled
-    if (el.textContent.includes('Ajukan Toko') || el.getAttribute('data-modal-open')?.includes('modal-tambah')) {
-      // For tambah buttons, disable if no store
-      el.setAttribute('disabled','');
-      el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
-      el.title = 'Ajukan toko dulu';
-    }
-  });
-  // More generic: disable all buttons in data-real except those inside pengajuan
+  const isPengajuanLink = (el) => {
+    const a = el.closest('a');
+    if (a && (a.getAttribute('href') || '').includes('pengajuan-toko')) return true;
+    return el.textContent.trim() === 'Ajukan Toko';
+  };
+  // Disable semua tombol aksi kecuali link pengajuan toko
   document.querySelectorAll('[data-real] button, [data-real] a.btn-premium').forEach(el=>{
     if (el.closest('[data-modal]')) return;
-    if (el.textContent.trim().includes('Ajukan')) return;
+    if (isPengajuanLink(el)) return;
     el.setAttribute('disabled','');
     el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
+    el.title = 'Ajukan toko dulu';
+  });
+  // Disable semua field form agar tidak bisa submit via Enter
+  document.querySelectorAll('[data-real] input, [data-real] select, [data-real] textarea').forEach(el=>{
+    if (isPengajuanLink(el)) return;
+    el.setAttribute('disabled','');
+    el.title = 'Ajukan toko dulu';
   });
 });
 </script>
