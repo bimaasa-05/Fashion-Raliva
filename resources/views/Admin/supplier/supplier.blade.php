@@ -88,7 +88,11 @@
                     @forelse ($suppliers as $s)
                     <tr data-table-row data-sup-id="{{ $s->supplier_id }}" data-jenis="{{ $s->jenis ?? 'lainnya' }}" data-status="{{ $s->status }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-4 font-mono text-on-surface">SUP-{{ $s->supplier_id }}</td>
-                        <td class="p-4"><span class="block font-medium text-on-surface">{{ $s->nama_supplier }}</span><span class="text-xs text-on-surface-variant">Sejak {{ $s->created_at?->format('Y') }}</span></td>
+                        <td class="p-4"><span class="block font-medium text-on-surface">{{ $s->nama_supplier }}</span><span class="text-xs text-on-surface-variant">Sejak {{ $s->created_at?->format('Y') }}</span>
+                            @if ($s->bahans->isNotEmpty())
+                                <span class="block text-xs text-gold-accent mt-1">{{ $s->bahans->pluck('nama_bahan')->implode(', ') }}</span>
+                            @endif
+                        </td>
                         <td class="p-4 text-on-surface-variant">{{ $s->kontak ?? '-' }}<br /><span class="text-xs">{{ $s->email ?? '' }}</span></td>
                         <td class="p-4 text-on-surface">{{ $s->kota ?? '-' }}</td>
                         <td class="p-4 text-center"><span class="px-2 py-1 rounded bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase tracking-wide">{{ $s->jenis ?? '-' }}</span></td>
@@ -116,8 +120,8 @@
 </div>
 
 <!-- Modal Form Supplier -->
-<div id="modal-form-supplier" data-modal class="fixed inset-0 z-[70] hidden">
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]" data-modal-close></div>
+<div id="modal-form-supplier" data-modal data-modal-plain class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
     <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-lg border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
         <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div>
@@ -156,6 +160,14 @@
                         </label>
                     @endforeach
                 </div>
+            </div>
+            <div>
+                <label class="raliva-label">Daftar Bahan Supplier</label>
+                <p class="text-xs text-on-surface-variant mb-2">Contoh: kain katun, kancing, resleting, kemasan. Klik jenis di atas untuk memfilter, lalu tambah bahan satu per satu — data yang sudah diinput tidak hilang.</p>
+                <div id="supplier-bahan-container" class="space-y-2.5"></div>
+                <button type="button" onclick="addSupplierBahanRow('supplier-bahan-container')" class="mt-2 w-full py-2.5 border border-dashed border-outline-variant rounded-lg text-xs font-semibold text-on-surface-variant hover:border-gold-accent hover:text-gold-accent transition-colors flex items-center justify-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px]">add</span> Tambah Bahan
+                </button>
             </div>
             <div>
                 <label class="raliva-label" for="supplierStok">Stok</label>
@@ -204,7 +216,7 @@
 
 {{-- Modal Edit Supplier per-baris (tanpa JS) --}}
 @foreach ($suppliers as $s)
-<div id="modal-edit-{{ $s->supplier_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+<div id="modal-edit-{{ $s->supplier_id }}" data-modal data-modal-plain class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
     <div class="relative mx-auto w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl max-h-[85vh] overflow-y-auto">
         <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
@@ -247,6 +259,35 @@
                 </div>
             </div>
             <div>
+                <label class="raliva-label">Daftar Bahan Supplier</label>
+                <p class="text-xs text-on-surface-variant mb-2">Baris lama tetap tersimpan — tambah baru atau hapus yang tidak dipakai.</p>
+                <div id="supplier-bahan-edit-{{ $s->supplier_id }}" class="space-y-2.5">
+                    @foreach ($s->bahans as $i => $b)
+                        <div data-bahan-row class="border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low space-y-2">
+                            <input type="hidden" name="bahan[{{ $i }}][supplier_bahan_id]" value="{{ $b->supplier_bahan_id }}" />
+                            <div class="grid grid-cols-[1fr_110px] gap-3">
+                                <div>
+                                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Nama Bahan</label>
+                                    <input type="text" name="bahan[{{ $i }}][nama_bahan]" value="{{ $b->nama_bahan }}" required class="raliva-input w-full" placeholder="cth. Kain katun" />
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Satuan</label>
+                                    <select name="bahan[{{ $i }}][satuan]" required class="raliva-select w-full">
+                                        @foreach (['meter', 'cm', 'yard', 'roll', 'kg', 'gram', 'pcs'] as $st)
+                                            <option value="{{ $st }}" {{ $b->satuan === $st ? 'selected' : '' }}>{{ $st }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="button" onclick="removeSupplierBahanRow(this)" class="text-xs text-error hover:underline">Hapus bahan ini</button>
+                        </div>
+                    @endforeach
+                </div>
+                <button type="button" onclick="addSupplierBahanRow('supplier-bahan-edit-{{ $s->supplier_id }}')" class="mt-2 w-full py-2.5 border border-dashed border-outline-variant rounded-lg text-xs font-semibold text-on-surface-variant hover:border-gold-accent hover:text-gold-accent transition-colors flex items-center justify-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px]">add</span> Tambah Bahan
+                </button>
+            </div>
+            <div>
                 <label class="raliva-label" for="edit-stok-{{ $s->supplier_id }}">Stok</label>
                 <input type="number" id="edit-stok-{{ $s->supplier_id }}" name="stok" min="0" value="{{ $s->stok ?? 0 }}" placeholder="0" class="raliva-input" />
             </div>
@@ -272,4 +313,43 @@
     </div>
 </div>
 @endforeach
+@push('styles')
+<style>
+    [data-modal-plain] > div { animation: none !important; }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+    const supplierSatuanOptions = ['meter', 'cm', 'yard', 'roll', 'kg', 'gram', 'pcs']
+        .map(s => `<option value="${s}">${s}</option>`).join('');
+
+    function addSupplierBahanRow(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const idx = container.querySelectorAll('[data-bahan-row]').length + Date.now() % 1000;
+        const row = document.createElement('div');
+        row.setAttribute('data-bahan-row', '');
+        row.className = 'border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low space-y-2';
+        row.innerHTML = `
+            <div class="grid grid-cols-[1fr_110px] gap-3">
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Nama Bahan</label>
+                    <input type="text" name="bahan[${idx}][nama_bahan]" required class="raliva-input w-full" placeholder="cth. Kain katun" />
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Satuan</label>
+                    <select name="bahan[${idx}][satuan]" required class="raliva-select w-full">${supplierSatuanOptions}</select>
+                </div>
+            </div>
+            <button type="button" onclick="removeSupplierBahanRow(this)" class="text-xs text-error hover:underline">Hapus bahan ini</button>
+        `;
+        container.appendChild(row);
+    }
+
+    function removeSupplierBahanRow(btn) {
+        btn.closest('[data-bahan-row]')?.remove();
+    }
+</script>
+@endpush
 @endsection
