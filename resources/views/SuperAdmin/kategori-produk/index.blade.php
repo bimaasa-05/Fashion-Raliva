@@ -1,5 +1,13 @@
 @extends('layouts.superadmin')
 
+<?php
+/** @var \Illuminate\Support\Collection<int,\App\Models\Category> $categories */
+/** @var \Illuminate\Support\Collection<int, object> $kategoriKomplain */
+/** @var \Illuminate\Support\Collection<int, object> $kategoriPengeluaran */
+/** @var \Illuminate\Support\Collection<int,\App\Models\StoreCategory> $kategoriToko */
+/** @var array{total:int,aktif:int,induk:int} $stats */
+?>
+
 @section('title', 'Kategori')
 
 @section('header-title', 'Kategori')
