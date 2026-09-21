@@ -141,12 +141,28 @@
                     <input class="raliva-input" id="telepon" name="nomor_telepon" type="tel" maxlength="30" value="{{ $user->nomor_telepon ?? '' }}" />
                 </div>
                 <div>
-                    <label class="raliva-label" for="gender">Jenis Kelamin</label>
-                    <select class="raliva-input" id="gender" name="gender">
-                        <option value="" {{ old('gender', $user->gender) === null ? 'selected' : '' }}>—</option>
-                        <option value="male" {{ old('gender', $user->gender) === 'male' ? 'selected' : '' }}>Laki-laki</option>
-                        <option value="female" {{ old('gender', $user->gender) === 'female' ? 'selected' : '' }}>Perempuan</option>
-                    </select>
+                    <label class="raliva-label" for="gender-trigger">Jenis Kelamin</label>
+                    @php
+                        $genderVal = old('gender', $user->gender);
+                        $genderLabel = $genderVal === 'male' ? 'Laki-laki' : ($genderVal === 'female' ? 'Perempuan' : '—');
+                    @endphp
+                    <div class="relative" data-cs>
+                        <button type="button" data-cs-trigger id="gender-trigger" aria-haspopup="listbox" aria-expanded="false"
+                            class="raliva-input flex items-center justify-between gap-2 text-left cursor-pointer">
+                            <span data-cs-label class="truncate">{{ $genderLabel }}</span>
+                            <span data-cs-chevron class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200">expand_more</span>
+                        </button>
+                        <div data-cs-menu
+                            class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden py-1">
+                            @foreach (['' => '—', 'male' => 'Laki-laki', 'female' => 'Perempuan'] as $gKey => $gLabel)
+                                <button type="button" role="option" data-cs-option="{{ $gKey }}" data-cs-option-label="{{ $gLabel }}"
+                                    class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                    {{ $gLabel }}<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($genderVal ?? '') === $gKey ? '' : 'hidden' }}">check</span>
+                                </button>
+                            @endforeach
+                        </div>
+                        <input type="hidden" name="gender" value="{{ $genderVal }}" data-cs-input />
+                    </div>
                 </div>
                 <div>
                     <label class="raliva-label" for="tanggal-lahir">Tanggal Lahir</label>

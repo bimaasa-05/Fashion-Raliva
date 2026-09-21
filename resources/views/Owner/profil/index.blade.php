@@ -182,12 +182,28 @@
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
                     <div>
-                        <label for="ep-gender" class="block raliva-label mb-2">Jenis Kelamin <span class="text-on-surface-variant font-normal">(opsional)</span></label>
-                        <select id="ep-gender" name="gender" class="raliva-input">
-                            <option value="" {{ old('gender', $user->gender) === null ? 'selected' : '' }}>—</option>
-                            <option value="male" {{ old('gender', $user->gender) === 'male' ? 'selected' : '' }}>Laki-laki</option>
-                            <option value="female" {{ old('gender', $user->gender) === 'female' ? 'selected' : '' }}>Perempuan</option>
-                        </select>
+                        <label for="ep-gender-trigger" class="block raliva-label mb-2">Jenis Kelamin <span class="text-on-surface-variant font-normal">(opsional)</span></label>
+                        @php
+                            $genderVal = old('gender', $user->gender);
+                            $genderLabel = $genderVal === 'male' ? 'Laki-laki' : ($genderVal === 'female' ? 'Perempuan' : '—');
+                        @endphp
+                        <div class="relative" data-cs>
+                            <button type="button" data-cs-trigger id="ep-gender-trigger" aria-haspopup="listbox" aria-expanded="false"
+                                class="raliva-input flex items-center justify-between gap-2 text-left cursor-pointer">
+                                <span data-cs-label class="truncate">{{ $genderLabel }}</span>
+                                <span data-cs-chevron class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200">expand_more</span>
+                            </button>
+                            <div data-cs-menu
+                                class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden py-1">
+                                @foreach (['' => '—', 'male' => 'Laki-laki', 'female' => 'Perempuan'] as $gKey => $gLabel)
+                                    <button type="button" role="option" data-cs-option="{{ $gKey }}" data-cs-option-label="{{ $gLabel }}"
+                                        class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                        {{ $gLabel }}<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($genderVal ?? '') === $gKey ? '' : 'hidden' }}">check</span>
+                                    </button>
+                                @endforeach
+                            </div>
+                            <input type="hidden" name="gender" value="{{ $genderVal }}" data-cs-input />
+                        </div>
                     </div>
                     <div>
                         <label for="ep-tgl-lahir" class="block raliva-label mb-2">Tanggal Lahir <span class="text-on-surface-variant font-normal">(opsional)</span></label>
@@ -266,6 +282,54 @@ document.addEventListener('DOMContentLoaded', function(){
     if (el.textContent.trim().includes('Ajukan')) return;
     el.setAttribute('disabled','');
     el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
+  });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('[data-cs]').forEach(function (cs) {
+    var trigger = cs.querySelector('[data-cs-trigger]');
+    var menu = cs.querySelector('[data-cs-menu]');
+    if (trigger) trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      document.querySelectorAll('[data-cs]').forEach(function (o) {
+        if (o !== cs) {
+          var m = o.querySelector('[data-cs-menu]'); if (m) m.classList.add('hidden');
+          var c = o.querySelector('[data-cs-chevron]'); if (c) c.classList.remove('rotate-180');
+        }
+      });
+      if (menu) menu.classList.toggle('hidden');
+      var ch = cs.querySelector('[data-cs-chevron]');
+      if (ch) ch.classList.toggle('rotate-180');
+    });
+    cs.querySelectorAll('[data-cs-option]').forEach(function (opt) {
+      opt.addEventListener('click', function () {
+        cs.querySelectorAll('[data-cs-option]').forEach(function (o) {
+          var chk = o.querySelector('[data-cs-check]'); if (chk) chk.classList.add('hidden');
+        });
+        var chk = opt.querySelector('[data-cs-check]'); if (chk) chk.classList.remove('hidden');
+        var input = cs.querySelector('[data-cs-input]');
+        if (input) input.value = opt.getAttribute('data-cs-option') || '';
+        var label = cs.querySelector('[data-cs-label]');
+        if (label) label.textContent = opt.getAttribute('data-cs-option-label') || '';
+        if (menu) menu.classList.add('hidden');
+        var c = cs.querySelector('[data-cs-chevron]'); if (c) c.classList.remove('rotate-180');
+      });
+    });
+  });
+  document.addEventListener('click', function (e) {
+    document.querySelectorAll('[data-cs]').forEach(function (cs) {
+      if (!cs.contains(e.target)) {
+        var m = cs.querySelector('[data-cs-menu]'); if (m) m.classList.add('hidden');
+        var c = cs.querySelector('[data-cs-chevron]'); if (c) c.classList.remove('rotate-180');
+      }
+    });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('[data-cs-menu]').forEach(function (m) { m.classList.add('hidden'); });
+      document.querySelectorAll('[data-cs-chevron]').forEach(function (c) { c.classList.remove('rotate-180'); });
+    }
   });
 });
 </script>
