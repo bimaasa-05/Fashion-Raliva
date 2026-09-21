@@ -20,8 +20,46 @@
         }, 2800);
     };
 
+    const ralivaLockScroll = () => {
+        const w = window.innerWidth - document.documentElement.clientWidth;
+        if (w > 0) {
+            document.body.style.paddingRight = w + 'px';
+            document.documentElement.style.paddingRight = w + 'px';
+        }
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+    };
+
+    const ralivaUnlockScroll = () => {
+        if (document.querySelector('[data-modal]:not(.hidden)')) return;
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+        document.documentElement.style.overflow = '';
+        document.documentElement.style.paddingRight = '';
+    };
+
+    window.ralivaOpenModal = (modal) => {
+        if (!modal) return;
+        if (typeof window.__ralivaPauseCardGalleries === 'function') {
+            try { window.__ralivaPauseCardGalleries(); } catch (e) {}
+        }
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        ralivaLockScroll();
+    };
+
+    window.ralivaCloseModal = (modal) => {
+        if (!modal) return;
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        ralivaUnlockScroll();
+    };
+
     const closeAllOverlays = () => {
-        document.querySelectorAll('[data-modal]').forEach((m) => m.classList.add('hidden'));
+        document.querySelectorAll('[data-modal]').forEach((m) => {
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        });
         document.querySelectorAll('[data-drawer-panel]').forEach((d) => d.classList.add('translate-x-full'));
         const overlay = document.getElementById('drawer-overlay');
         if (overlay && !overlay.classList.contains('hidden')) {
@@ -29,21 +67,30 @@
             setTimeout(() => overlay.classList.add('hidden'), 300);
         }
         document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+        document.documentElement.style.overflow = '';
+        document.documentElement.style.paddingRight = '';
         document.querySelectorAll('[data-cs-menu]').forEach((m) => m.classList.add('hidden'));
     };
 
     document.querySelectorAll('[data-modal-open]').forEach((btn) => {
         btn.addEventListener('click', () => {
+            if (btn.hasAttribute('data-modal-handled')) return;
             const modal = document.getElementById(btn.getAttribute('data-modal-open'));
-            modal?.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            window.ralivaOpenModal(modal);
         });
     });
 
     document.querySelectorAll('[data-modal-close]').forEach((el) => {
         el.addEventListener('click', () => {
-            el.closest('[data-modal]')?.classList.add('hidden');
-            document.body.style.overflow = '';
+            if (el.hasAttribute('data-modal-handled')) return;
+            window.ralivaCloseModal(el.closest('[data-modal]'));
+        });
+    });
+
+    document.querySelectorAll('[data-modal]').forEach((modal) => {
+        modal.addEventListener('mousedown', (e) => {
+            if (e.target === modal) window.ralivaCloseModal(modal);
         });
     });
 
@@ -274,6 +321,13 @@
         });
     });
 
+    window.ralivaShortRp = (v) => {
+        const n = Number(v) || 0;
+        if (n >= 1000000) return (n / 1000000).toLocaleString('id-ID', { maximumFractionDigits: 1 }) + ' jt';
+        if (n >= 1000) return Math.round(n / 1000) + ' rb';
+        return String(Math.round(n));
+    };
+
     window.ralivaCountUp = (el, target, suffix = '', duration = 900) => {
         if (!el) return;
         const start = performance.now();
@@ -300,7 +354,7 @@
         const strokeW = parseInt(el.getAttribute('data-donut-stroke') || '18', 10);
         const r = (size - strokeW) / 2;
         const c = 2 * Math.PI * r;
-        const total = segs.reduce((s, x) => s + (x.value || 0), 0) || 1;
+        const total = segs.reduce((s, x) => s + (Number(x.value) || 0), 0) || 1;
         const NS = 'http://www.w3.org/2000/svg';
 
         el.classList.add('flex', 'flex-col', 'items-center');
@@ -320,7 +374,7 @@
 
         let acc = 0;
         segs.forEach((s) => {
-            const frac = (s.value || 0) / total;
+            const frac = (Number(s.value) || 0) / total;
             const len = c * frac;
             const cir = document.createElementNS(NS, 'circle');
             cir.setAttribute('cx', size / 2); cir.setAttribute('cy', size / 2); cir.setAttribute('r', r);
@@ -330,7 +384,7 @@
             cir.style.strokeDashoffset = (-acc).toFixed(2);
             cir.classList.add('raliva-donut-seg');
             const t = document.createElementNS(NS, 'title');
-            t.textContent = (s.label || '') + ': ' + (s.value || 0).toLocaleString('id-ID');
+            t.textContent = (s.label || '') + ': ' + (Number(s.value) || 0).toLocaleString('id-ID');
             cir.appendChild(t);
             svg.appendChild(cir);
             setTimeout(() => {
@@ -354,12 +408,13 @@
         const leg = document.createElement('ul');
         leg.className = 'mt-6 w-full space-y-2';
         segs.forEach((s) => {
-            const pct = Math.round(((s.value || 0) / total) * 100);
+            const val = Number(s.value) || 0;
+            const pct = Math.round((val / total) * 100);
             const li = document.createElement('li');
             li.className = 'flex items-center justify-between gap-3 font-body-md text-sm';
             li.innerHTML =
                 '<span class="flex items-center gap-2 text-on-surface min-w-0"><i class="w-2.5 h-2.5 rounded-full shrink-0" style="background:' + (s.color || '#C9A24D') + '"></i><span class="truncate">' + (s.label || '-') + '</span></span>' +
-                '<span class="shrink-0 text-on-surface"><b>' + (s.value || 0).toLocaleString('id-ID') + '</b> <span class="text-on-surface-variant text-xs">• ' + pct + '%</span></span>';
+                '<span class="shrink-0 text-on-surface"><b>' + val.toLocaleString('id-ID') + '</b> <span class="text-on-surface-variant text-xs">• ' + pct + '%</span></span>';
             leg.appendChild(li);
         });
         el.appendChild(leg);
@@ -378,24 +433,25 @@
         }
         el.dataset.barsDone = '1';
         const suffix = el.getAttribute('data-bars-suffix') || '';
-        const max = Math.max.apply(null, segs.map((s) => s.value || 0)) || 1;
+        const max = Math.max.apply(null, segs.map((s) => Number(s.value) || 0)) || 1;
 
         el.classList.add('flex', 'items-end', 'gap-2', 'md:gap-3');
         segs.forEach((s, i) => {
-            const pct = Math.round(((s.value || 0) / max) * 100);
+            const numVal = Number(s.value) || 0;
+            const pct = Math.round((numVal / max) * 100);
             const col = document.createElement('div');
             col.className = 'flex-1 min-w-0 flex flex-col items-center justify-end gap-2 h-full';
 
             const val = document.createElement('span');
             val.className = 'text-[10px] font-bold text-on-surface leading-none';
-            val.textContent = (s.value || 0).toLocaleString('id-ID') + suffix;
+            val.textContent = numVal.toLocaleString('id-ID') + suffix;
 
             const barZone = document.createElement('div');
             barZone.className = 'w-full h-full flex items-end justify-center';
             const bar = document.createElement('div');
             bar.className = 'w-full max-w-[36px] rounded-t-md raliva-bar bg-gradient-to-t from-gold-accent/45 to-gold-accent hover:from-gold-accent/70 hover:shadow-[0_0_12px_rgba(201,162,77,0.35)] transition-shadow';
             bar.style.height = '0%';
-            bar.title = (s.label || '') + ': ' + (s.value || 0).toLocaleString('id-ID') + suffix;
+            bar.title = (s.label || '') + ': ' + numVal.toLocaleString('id-ID') + suffix;
             barZone.appendChild(bar);
 
             const lab = document.createElement('span');
