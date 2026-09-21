@@ -17,6 +17,16 @@
 @include('partials.flash-toast')
 
 <div class="space-y-section-gap">
+    <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+        </span>
+        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Data kategori diperbarui real-time
+        </span>
+    </div>
     <!-- Toolbar -->
     <section class="relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl p-6 md:p-8 hero-glow">
         <div class="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-gold-accent/10 blur-3xl pointer-events-none"></div>
@@ -73,9 +83,10 @@
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[14px]">category</span>
                     <span id="kategori-result-count">{{ $categories->count() }}</span> kategori
-                </p>
+                </span>
             </div>
         </div>
 
@@ -180,9 +191,9 @@
             <table class="w-full premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-4 text-center w-12">No</th>
-                        <th class="p-4 text-left">Kategori Komplain</th>
-                        <th class="p-4 text-center">Total Komplain</th>
+                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Kategori Komplain</th>
+                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Total Komplain</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -240,10 +251,10 @@
             <table class="w-full premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-4 text-center w-12">No</th>
-                        <th class="p-4 text-left">Kategori Pengeluaran</th>
-                        <th class="p-4 text-center">Total Transaksi</th>
-                        <th class="p-4 text-right">Total Nominal</th>
+                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Kategori Pengeluaran</th>
+                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Total Transaksi</th>
+                        <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">Total Nominal</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -294,9 +305,10 @@
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[14px]">storefront</span>
                     <span id="toko-result-count">{{ $kategoriToko->count() }}</span> kategori toko
-                </p>
+                </span>
             </div>
         </div>
 
@@ -305,12 +317,12 @@
             <table class="w-full min-w-[720px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-4 text-center w-12">No</th>
-                        <th class="p-4 text-left">Kategori Toko</th>
-                        <th class="p-4 text-left">Deskripsi</th>
-                        <th class="p-4 text-center">Status</th>
-                        <th class="p-4 text-center">Total Toko</th>
-                        <th class="p-4 text-center w-24">Aksi</th>
+                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Kategori Toko</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Deskripsi</th>
+                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
+                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Total Toko</th>
+                        <th class="px-4 py-4 text-center w-24 text-[10px] font-semibold tracking-widest">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">

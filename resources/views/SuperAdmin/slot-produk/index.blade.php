@@ -17,6 +17,16 @@
 @include('partials.flash-toast')
 
 <div class="space-y-section-gap">
+    <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+        </span>
+        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Kuota slot diperbarui real-time
+        </span>
+    </div>
     <!-- Hero Section -->
     <section class="relative overflow-hidden bg-surface-container-lowest border border-muted-border rounded-xl card-premium hero-glow">
         <span class="material-symbols-outlined fill absolute -right-6 -bottom-10 text-[220px] text-gold-accent/[0.06] pointer-events-none select-none" aria-hidden="true">grid_view</span>
@@ -125,13 +135,13 @@
                     <table class="w-full min-w-[820px] font-body-md text-sm">
                         <thead>
                             <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                                <th class="p-4 text-center w-12">No</th>
-                                <th class="p-4 text-left">Toko</th>
-                                <th class="p-4 text-center">Kuota</th>
-                                <th class="p-4 text-center">Terpakai</th>
-                                <th class="p-4 text-center">Sisa</th>
-                                <th class="p-4 text-center">Progres</th>
-                                <th class="p-4 text-center">Aksi</th>
+                                <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
+                                <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Toko</th>
+                                <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Kuota</th>
+                                <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Terpakai</th>
+                                <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Sisa</th>
+                                <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Progres</th>
+                                <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -181,7 +191,8 @@
                 <div id="mobile-grid" class="md:hidden grid grid-cols-1 gap-gutter mb-6">
                     @forelse ($stores as $store)
                         @php $s = $summary['by_store'][$store->store_id]; @endphp
-                        <article class="slot-row bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium" data-name="{{ strtolower($store->nama_toko) }}">
+                        <article class="slot-row bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden" data-name="{{ strtolower($store->nama_toko) }}">
+                            <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">grid_view</span>
                             <div class="flex items-start justify-between gap-3 mb-3">
                                 <div class="flex items-center gap-3 min-w-0">
                                     <div class="w-10 h-10 rounded-lg bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0">

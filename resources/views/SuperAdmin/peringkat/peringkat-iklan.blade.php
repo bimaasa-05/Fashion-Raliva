@@ -8,6 +8,16 @@
 
 @section('content')
 <div class="space-y-6">
+    <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+        </span>
+        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Data iklan diperbarui real-time
+        </span>
+    </div>
     <!-- Penjelasan Cara Kerja -->
     <div data-reveal class="flex items-start gap-3 p-4 border border-gold-accent/30 bg-gradient-to-r from-gold-accent/10 via-gold-accent/5 to-transparent rounded-lg">
         <span class="material-symbols-outlined text-gold-accent mt-0.5">campaign</span>
@@ -18,21 +28,21 @@
     </div>
 
     <!-- Statistik -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
+    <div data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">Total Pendapatan Iklan</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold leading-tight">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</span>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold leading-tight break-words">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">payments</span>
         </div>
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">ads_click</span>
+        <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">Slot Aktif</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">{{ $slotAktif }} slot</span>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight break-words">{{ $slotAktif }} slot</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">ads_click</span>
         </div>
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">trending_up</span>
+        <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">Rata-rata Bid</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">Rp {{ number_format($rataRataBid, 0, ',', '.') }}</span>
+            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight break-words">Rp {{ number_format($rataRataBid, 0, ',', '.') }}</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">trending_up</span>
         </div>
     </div>
 
@@ -40,7 +50,7 @@
     @php // $top3 sudah difilter di controller: hanya aktif + periode berlaku
          $top3 = $top3 ?? collect(); @endphp
     @if($top3->count() >= 1)
-    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Podium Peringkat Saat Ini</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter items-end">
             @if(isset($top3[1]))
@@ -93,7 +103,7 @@
     </div>
 
     <!-- Tabel Peringkat -->
-    <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium">
+    <section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden card-premium">
         <div class="flex items-center justify-between px-6 pt-6 pb-4 flex-wrap gap-3">
             <div class="flex items-center gap-3">
                 <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ ($tab ?? 'daftar') === 'pengajuan' ? 'Pengajuan Iklan' : (($tab ?? 'daftar') === 'daftar' ? 'Daftar Peringkat Lengkap' : 'Riwayat Iklan') }}</h2>
@@ -109,15 +119,15 @@
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-4 text-center w-12">No.</th>
-                        <th class="p-4 text-left">Posisi</th>
-                        <th class="p-4 text-left">Produk</th>
-                        <th class="p-4 text-left">Toko</th>
-                        <th class="p-4 text-right">Bayaran (Bid)</th>
-                        <th class="p-4 text-center">Periode Aktif</th>
-                        <th class="p-4 text-center">Status</th>
+                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No.</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Posisi</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Produk</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Toko</th>
+                        <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">Bayaran (Bid)</th>
+                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Periode Aktif</th>
+                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
                         @if(($tab ?? 'daftar') === 'pengajuan')
-                            <th class="p-4 text-right">Aksi</th>
+                            <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">Aksi</th>
                         @endif
                     </tr>
                 </thead>
@@ -195,7 +205,8 @@
                     $rank = 0;
                     foreach ($slots as $k => $item) { if ($item->slot_id === $slot->slot_id) { $rank = $k + 1; break; } }
                 @endphp
-                <article class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                <article class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">leaderboard</span>
                     <div class="flex items-center justify-between gap-3 mb-3">
                         <div class="flex items-center gap-3">
                             <span class="inline-flex w-9 h-9 rounded-full {{ $rank <= 3 ? ($rank === 1 ? 'bg-gold-accent text-white' : 'bg-surface-container-high border border-outline-variant text-on-surface') : 'bg-surface-container-high border border-outline-variant text-on-surface' }} items-center justify-center font-bold shrink-0">{{ $rank }}</span>

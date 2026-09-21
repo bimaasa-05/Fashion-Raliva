@@ -26,43 +26,41 @@
 @include('partials.flash-toast')
 
 <div class="space-y-section-gap">
+    <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+        </span>
+        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Data pencairan diperbarui real-time
+        </span>
+    </div>
     <section>
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Pengajuan</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-surface-container-high flex items-center justify-center rounded-full">
-                        <span class="material-symbols-outlined text-on-surface">pending_actions</span>
-                    </div>
-                    <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Pengajuan Menunggu</h3>
-                </div>
-                <p class="font-headline-lg-mobile text-headline-lg-mobile text-primary">{{ $stats['pending'] }}</p>
-                <p class="font-body-md text-body-md text-on-surface-variant mt-2">Menunggu verifikasi dan persetujuan</p>
+        <div data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pengajuan Menunggu</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-primary break-words">{{ $stats['pending'] }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">menunggu verifikasi &amp; persetujuan</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">pending_actions</span>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-secondary-container flex items-center justify-center rounded-full">
-                        <span class="material-symbols-outlined text-white">account_balance_wallet</span>
-                    </div>
-                    <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Total Nominal Menunggu</h3>
-                </div>
-                <p class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp {{ number_format($stats['nominal_menunggu'], 0, ',', '.') }}</p>
-                <p class="font-body-md text-body-md text-on-surface-variant mt-2">Total nominal diajukan Owner</p>
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-gold-accent/25 rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium hover:border-gold-accent transition-colors hero-glow">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Nominal Menunggu</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold break-words">Rp {{ number_format($stats['nominal_menunggu'], 0, ',', '.') }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">diajukan Owner</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-gold-accent/10 flex items-center justify-center rounded-full">
-                        <span class="material-symbols-outlined text-gold-accent">task_alt</span>
-                    </div>
-                    <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Total Disetujui</h3>
-                </div>
-                <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Rp {{ number_format($stats['total_semua'], 0, ',', '.') }}</p>
-                <p class="font-body-md text-body-md text-on-surface-variant mt-2">Akumulasi pencairan diproses / dibayar</p>
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Disetujui</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">Rp {{ number_format($stats['total_semua'], 0, ',', '.') }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">pencairan diproses / dibayar</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">task_alt</span>
             </div>
         </div>
     </section>
 
-    <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Pengajuan Pencairan</h2>
             <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
@@ -98,9 +96,10 @@
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[14px]">inventory_2</span>
                     <span id="result-count">{{ $withdrawals->count() }}</span> pengajuan
-                </p>
+                </span>
             </div>
         </div>
 
@@ -109,13 +108,13 @@
             <table class="w-full min-w-[850px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
-                        <th class="p-6 w-12 text-center">No.</th>
-                        <th class="p-6">Toko / Pemilik</th>
-                        <th class="p-6">Detail Pengajuan</th>
-                        <th class="p-6">Info Tujuan</th>
-                        <th class="p-6 text-center">Status</th>
-                        <th class="p-6 text-center">Dibayar</th>
-                        <th class="p-6 text-center">Aksi</th>
+                        <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">No.</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Toko / Pemilik</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Detail Pengajuan</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Info Tujuan</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Dibayar</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -210,7 +209,8 @@
                     $initialStore = $w->store?->nama_toko;
                     $initial = strtoupper(substr(collect(preg_split('/\s+/', trim($initialStore ?? '')))->map(fn ($k) => mb_substr($k, 0, 1))->implode(''), 0, 2)) ?: '?';
                 @endphp
-                <article data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store?->nama_toko ?? '').' '.($w->store?->owner?->nama_lengkap ?? '').' '.($w->tujuan_penyedia)) }}" data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store?->nama_toko ?? '-' }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                <article data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store?->nama_toko ?? '').' '.($w->store?->owner?->nama_lengkap ?? '').' '.($w->tujuan_penyedia)) }}" data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store?->nama_toko ?? '-' }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-10 h-10 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center font-label-sm shrink-0">{{ $initial }}</div>

@@ -8,8 +8,18 @@
 @section('header-subtitle', 'Monitor pesanan dari seluruh toko tanpa mengambil alih operasional')
 
 @section('content')
+<div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+        <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+        {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+    </span>
+    <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+        Data pesanan diperbarui real-time
+    </span>
+</div>
 <!-- Orders Management -->
-<section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+<section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
     <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
         <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Data Pesanan</h2>
         <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
@@ -48,25 +58,26 @@
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </button>
             </div>
-            <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                <span class="material-symbols-outlined text-[14px]">inventory_2</span>
                 <span id="result-count">{{ $orders->total() }}</span> pesanan
-            </p>
+            </span>
         </div>
     </div>
 
     <!-- Orders Table -->
     <div class="overflow-x-auto hidden md:block">
-        <table class="w-full min-w-full bg-surface-container-lowest rounded-lg overflow-hidden premium-table">
+        <table class="w-full min-w-full bg-surface-container-lowest rounded-xl overflow-hidden premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
-                    <th class="p-6 w-12 text-center">No.</th>
-                    <th class="p-6">ID Pesanan</th>
-                    <th class="p-6">Toko</th>
-                    <th class="p-6">Pelanggan</th>
-                    <th class="p-6">Total</th>
-                    <th class="p-6">Status</th>
-                    <th class="p-6">Waktu</th>
-                    <th class="p-6 text-right">Aksi</th>
+                    <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">No.</th>
+                    <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">ID Pesanan</th>
+                    <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Toko</th>
+                    <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Pelanggan</th>
+                    <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Total</th>
+                    <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Status</th>
+                    <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Waktu</th>
+                    <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -155,7 +166,8 @@
                 $pelNama = $pelanggan?->nama_lengkap ?? $order->checkout?->nama_penerima ?? '-';
                 $pelEmail = $pelanggan?->email ?? $order->checkout?->email_pelanggan ?? '';
             @endphp
-            <article data-table-row data-status="{{ $order->status }}" data-search="{{ strtolower($order->nomor_order.' '.$pelNama.' '.$pelEmail) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+            <article data-table-row data-status="{{ $order->status }}" data-search="{{ strtolower($order->nomor_order.' '.$pelNama.' '.$pelEmail) }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">local_mall</span>
                 <div class="flex items-start justify-between gap-3 mb-3">
                     <div class="min-w-0">
                         <p class="font-mono font-bold text-on-surface leading-tight">{{ $order->nomor_order }}</p>

@@ -23,43 +23,53 @@
 @include('partials.flash-toast')
 
 <div class="space-y-section-gap">
+    <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+        </span>
+        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Data komplain diperbarui real-time
+        </span>
+    </div>
     <section>
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Komplain</h2>
-        <div class="grid grid-cols-2 lg:grid-cols-5 gap-gutter">
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">radio_button_unchecked</span>
+        <div data-reveal-group class="grid grid-cols-2 lg:grid-cols-5 gap-gutter">
+            <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium flex flex-col gap-2 relative overflow-hidden min-w-0">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Terbuka</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">{{ $stats['open'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">perlu ditangani</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent relative break-words">{{ $stats['open'] }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">perlu ditangani</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">radio_button_unchecked</span>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-on-surface/15 fill pointer-events-none select-none" aria-hidden="true">pending</span>
+            <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium flex flex-col gap-2 relative overflow-hidden min-w-0">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Diproses</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['diproses'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">sedang di follow-up</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface relative break-words">{{ $stats['diproses'] }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">sedang di follow-up</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">pending</span>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">emergency</span>
+            <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium flex flex-col gap-2 relative overflow-hidden min-w-0">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Eskalasi</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">{{ $stats['escalated'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">ditonjolkan ke Owner</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent relative break-words">{{ $stats['escalated'] }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">ditonjolkan ke Owner</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">emergency</span>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-success/15 fill pointer-events-none select-none" aria-hidden="true">check_circle</span>
+            <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium flex flex-col gap-2 relative overflow-hidden min-w-0">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Selesai</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-success">{{ $stats['selesai'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">sudah ditangani</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-success relative break-words">{{ $stats['selesai'] }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">sudah ditangani</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">check_circle</span>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium flex flex-col gap-2 relative overflow-hidden">
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-on-surface/15 fill pointer-events-none select-none" aria-hidden="true">support_agent</span>
+            <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium flex flex-col gap-2 relative overflow-hidden min-w-0">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Ditutup</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['ditutup'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">ditutup manual</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface relative break-words">{{ $stats['ditutup'] }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">ditutup manual</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">support_agent</span>
             </div>
         </div>
     </section>
 
-    <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Komplain</h2>
             <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
@@ -96,9 +106,10 @@
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[14px]">inventory_2</span>
                     <span id="result-count">{{ $complaints->total() }}</span> komplain
-                </p>
+                </span>
             </div>
         </div>
 
@@ -107,13 +118,13 @@
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
-                        <th class="p-6 w-12 text-center">No.</th>
-                        <th class="p-6">Detail Komplain</th>
-                        <th class="p-6">Toko</th>
-                        <th class="p-6">Status</th>
-                        <th class="p-6">Kategori</th>
-                        <th class="p-6">Kirim</th>
-                        <th class="p-6">Aksi</th>
+                        <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">No.</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Detail Komplain</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Toko</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Status</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Kategori</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Kirim</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -174,7 +185,8 @@
                     $badge = $badgeMap[$c->status] ?? ['label' => '-', 'class' => ''];
                     $kode = 'KL-' . str_pad((string) $c->complaint_id, 10, '0', STR_PAD_LEFT);
                 @endphp
-                <article data-table-row data-status="{{ $c->status }}" data-search="{{ strtolower($kode.' '.($c->user->nama_lengkap ?? '').' '.($c->store->nama_toko ?? '').' '.($c->store->owner->nama_lengkap ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                <article data-table-row data-status="{{ $c->status }}" data-search="{{ strtolower($kode.' '.($c->user->nama_lengkap ?? '').' '.($c->store->nama_toko ?? '').' '.($c->store->owner->nama_lengkap ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">support_agent</span>
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="min-w-0">
                             <p class="font-title-md text-title-md text-on-surface leading-tight">{{ $c->subjek }}</p>
@@ -1390,15 +1402,6 @@
         });
 
         applyFilter();
-        const toggle = document.querySelector('[data-filter-toggle]');
-        const panel = document.querySelector('[data-filter-panel]');
-        if (toggle && panel) {
-            toggle.addEventListener('click', () => {
-                panel.classList.toggle('hidden');
-                const chev = toggle.querySelector('[data-filter-chevron]');
-                if (chev) chev.classList.toggle('rotate-180');
-            });
-        }
     });
 </script>
 @endpush

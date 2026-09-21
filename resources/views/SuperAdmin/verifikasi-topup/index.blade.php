@@ -27,43 +27,41 @@
 @include('partials.flash-toast')
 
 <div class="space-y-section-gap">
+    <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+        </span>
+        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Data top up diperbarui real-time
+        </span>
+    </div>
     <section>
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Top Up</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-surface-container-high flex items-center justify-center rounded-full">
-                        <span class="material-symbols-outlined text-on-surface">pending_actions</span>
-                    </div>
-                    <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Menunggu Verifikasi</h3>
-                </div>
-                <p class="font-headline-lg-mobile text-headline-lg-mobile text-primary">{{ $stats['menunggu'] }}</p>
-                <p class="font-body-md text-body-md text-on-surface-variant mt-2">Top up dengan bukti belum diverifikasi</p>
+        <div data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Verifikasi</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-primary break-words">{{ $stats['menunggu'] }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">top up bukti belum diverifikasi</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">pending_actions</span>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-secondary-container flex items-center justify-center rounded-full">
-                        <span class="material-symbols-outlined text-white">account_balance_wallet</span>
-                    </div>
-                    <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Nominal Menunggu</h3>
-                </div>
-                <p class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp {{ number_format($stats['nominal_menunggu'], 0, ',', '.') }}</p>
-                <p class="font-body-md text-body-md text-on-surface-variant mt-2">Total nominal belum diterbitkan</p>
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-gold-accent/25 rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium hover:border-gold-accent transition-colors hero-glow">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Nominal Menunggu</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold break-words">Rp {{ number_format($stats['nominal_menunggu'], 0, ',', '.') }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">belum diterbitkan</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-gold-accent/10 flex items-center justify-center rounded-full">
-                        <span class="material-symbols-outlined text-gold-accent">task_alt</span>
-                    </div>
-                    <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Total Terverifikasi</h3>
-                </div>
-                <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Rp {{ number_format($stats['total_terverifikasi'], 0, ',', '.') }}</p>
-                <p class="font-body-md text-body-md text-on-surface-variant mt-2">Akumulasi saldo yang diterbitkan</p>
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Terverifikasi</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">Rp {{ number_format($stats['total_terverifikasi'], 0, ',', '.') }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">akumulasi saldo diterbitkan</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">task_alt</span>
             </div>
         </div>
     </section>
 
-    <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Top Up Saldo</h2>
         </div>
@@ -92,9 +90,10 @@
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </button>
             </div>
-            <p class="text-on-surface-variant font-body-md text-xs shrink-0">
-                <span id="result-count">{{ $topups->count() }}</span> top up
-            </p>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[14px]">inventory_2</span>
+                    <span id="result-count">{{ $topups->count() }}</span> top up
+                </span>
         </div>
 
         <!-- Table -->
@@ -102,13 +101,13 @@
             <table class="w-full min-w-[850px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
-                        <th class="p-6 w-12 text-center">No.</th>
-                        <th class="p-6">Customer</th>
-                        <th class="p-6">Detail Top Up</th>
-                        <th class="p-6">Metode</th>
-                        <th class="p-6">Bukti</th>
-                        <th class="p-6 text-center">Status</th>
-                        <th class="p-6 text-center">Aksi</th>
+                        <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">No.</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Customer</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Detail Top Up</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Metode</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Bukti</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -199,7 +198,8 @@
                     $proof = $tp->payment?->proofs->last();
                 @endphp
                 <article data-table-row data-status="{{ $tp->status }}" data-search="{{ strtolower(($tp->user?->nama_lengkap ?? '').' '.($tp->user?->email ?? '').' '.$tp->customer_topup_id) }}"
-                    data-id="{{ $tp->customer_topup_id }}" data-customer="{{ $tp->user?->nama_lengkap ?? $tp->user?->email ?? '-' }}" data-nominal="{{ number_format((float) $tp->jumlah, 0, ',', '.') }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                    data-id="{{ $tp->customer_topup_id }}" data-customer="{{ $tp->user?->nama_lengkap ?? $tp->user?->email ?? '-' }}" data-nominal="{{ number_format((float) $tp->jumlah, 0, ',', '.') }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-10 h-10 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center font-label-sm shrink-0">{{ $initial }}</div>

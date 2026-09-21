@@ -8,23 +8,36 @@
 
 @section('content')
 <div class="space-y-section-gap">
+    <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+        </span>
+        <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Saldo diperbarui real-time
+        </span>
+    </div>
     <section>
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Saldo</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
+        <div data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+            <div data-reveal class="bg-surface-container-lowest border border-gold-accent/25 rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium hover:border-gold-accent transition-colors hero-glow">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Saldo Tersedia</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp {{ number_format($totalTersedia, 0, ',', '.') }}</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold break-words">Rp {{ number_format($totalTersedia, 0, ',', '.') }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">dapat digunakan toko</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
+            <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Saldo Tertahan</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">lock</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Rp {{ number_format($totalTertahan, 0, ',', '.') }}</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">Rp {{ number_format($totalTertahan, 0, ',', '.') }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">dalam proses</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">lock</span>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
+            <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Jumlah Toko</span>
-                <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">storefront</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $jumlahToko }}</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">{{ $jumlahToko }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">toko terdaftar</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">storefront</span>
             </div>
         </div>
     </section>
@@ -39,9 +52,10 @@
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </button>
             </div>
-            <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                <span class="material-symbols-outlined text-[14px]">storefront</span>
                 <span id="wallet-result-count">{{ $jumlahToko }}</span> toko
-            </p>
+            </span>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter">
             @forelse($wallets as $wallet)
@@ -68,7 +82,7 @@
         <p id="wallet-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-8">Tidak ada toko yang cocok.</p>
     </section>
 
-    <section data-mutasi-scope class="space-y-gutter">
+    <section data-mutasi-scope data-reveal class="space-y-gutter">
         <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Mutasi Terbaru</h2>
 
         <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 space-y-4">
@@ -92,23 +106,24 @@
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-xs shrink-0">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[14px]">swap_vert</span>
                     <span id="mutasi-result-count">{{ $transactions->count() }}</span> mutasi
-                </p>
+                </span>
             </div>
         </div>
-        <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg hidden md:block card-premium">
+        <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-xl hidden md:block card-premium">
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-4 text-center w-12">No.</th>
-                        <th class="p-4 text-left">Toko</th>
-                        <th class="p-4 text-left">Jenis Transaksi</th>
-                        <th class="p-4 text-left">Keterangan</th>
-                        <th class="p-4 text-right">Saldo Awal</th>
-                        <th class="p-4 text-right">Nominal</th>
-                        <th class="p-4 text-right">Saldo Akhir</th>
-                        <th class="p-4 text-left">Waktu</th>
+                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No.</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Toko</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Jenis Transaksi</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Keterangan</th>
+                        <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">Saldo Awal</th>
+                        <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">Nominal</th>
+                        <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">Saldo Akhir</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Waktu</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -147,7 +162,8 @@
                 @php
                     $isPositive = in_array($tx->jenis_transaksi, ['penjualan_masuk', 'komisi_masuk', 'penyesuaian']);
                 @endphp
-                <article data-table-row data-status="{{ $tx->jenis_transaksi }}" data-search="{{ strtolower(($tx->wallet->store->nama_toko ?? '').' '.$tx->jenis_transaksi.' '.($tx->keterangan ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+                <article data-table-row data-status="{{ $tx->jenis_transaksi }}" data-search="{{ strtolower(($tx->wallet->store->nama_toko ?? '').' '.$tx->jenis_transaksi.' '.($tx->keterangan ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">receipt_long</span>
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="min-w-0">
                             <p class="font-title-md text-title-md text-on-surface truncate">{{ $tx->wallet->store->nama_toko ?? '-' }}</p>
