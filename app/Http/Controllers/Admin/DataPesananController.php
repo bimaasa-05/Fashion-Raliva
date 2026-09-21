@@ -98,12 +98,19 @@ class DataPesananController extends Controller
             ]);
         }
 
+        if ($pesanan->bahanList()->exists()) {
+            return back()->with('toast', [
+                'message' => 'Bahan sudah diinput sebelumnya. Minta Produksi menambah kekurangan lewat menu + Bahan agar riwayat kedua pihak utuh.',
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
         $data = $request->validate([
             'bahan' => ['required', 'array', 'min:1'],
             'bahan.*.bahan_id' => ['nullable', 'exists:bahan_produksi,bahan_id'],
             'bahan.*.nama_bahan' => ['required', 'string', 'max:150'],
             'bahan.*.jumlah' => ['required', 'numeric', 'min:0.01'],
-            'bahan.*.satuan' => ['required', 'string', 'max:20'],
+            'bahan.*.satuan' => ['required', 'string', 'in:'.implode(',', ProductionOrderBahan::SATUAN)],
             'bahan.*.catatan' => ['nullable', 'string', 'max:500'],
             'tgl_mulai_produksi' => ['required', 'date'],
             'tgl_berakhir_produksi' => ['required', 'date', 'after_or_equal:tgl_mulai_produksi'],
@@ -113,14 +120,16 @@ class DataPesananController extends Controller
             'bahan.*.nama_bahan.required' => 'Nama bahan wajib diisi.',
             'bahan.*.jumlah.required' => 'Jumlah bahan wajib diisi.',
             'bahan.*.satuan.required' => 'Satuan bahan wajib diisi.',
+            'bahan.*.satuan.in' => 'Satuan harus salah satu: '.implode(', ', ProductionOrderBahan::SATUAN).'.',
             'tgl_mulai_produksi.required' => 'Tanggal mulai produksi wajib diisi.',
             'tgl_berakhir_produksi.required' => 'Tanggal berakhir produksi wajib diisi.',
             'tgl_berakhir_produksi.after_or_equal' => 'Tanggal berakhir harus sama atau setelah tanggal mulai.',
         ]);
 
         $lama = $pesanan->only(['status']);
+        $actorRole = $request->user()?->role?->nama_role ?? 'Admin';
 
-        DB::transaction(function () use ($pesanan, $data) {
+        DB::transaction(function () use ($pesanan, $data, $actorRole) {
             foreach ($data['bahan'] as $bahan) {
                 ProductionOrderBahan::create([
                     'order_id' => $pesanan->order_id,
@@ -129,6 +138,8 @@ class DataPesananController extends Controller
                     'jumlah' => $bahan['jumlah'],
                     'satuan' => $bahan['satuan'],
                     'catatan' => $bahan['catatan'] ?? null,
+                    'sumber' => ProductionOrderBahan::SUMBER_ADMIN,
+                    'dibuat_oleh_role' => $actorRole,
                     'created_by' => ActivityLogger::resolveActorId(),
                 ]);
             }
