@@ -141,10 +141,13 @@
                         @endforeach
                     </div>
                     <div class="flex flex-col sm:flex-row gap-sm">
-                        <input type="number" name="nominal" id="input-nominal" min="{{ $minNominal }}" max="{{ $maxNominal }}"
-                            placeholder="Nominal topup (min Rp {{ number_format($minNominal, 0, ',', '.') }})"
-                            class="flex-1 border border-outline-variant rounded-xl px-md py-3 bg-surface-container-low text-on-surface focus:border-secondary outline-none"
-                            value="{{ old('nominal') }}" />
+                        <div class="relative flex-1">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 font-body-sm text-body-sm font-semibold text-secondary pointer-events-none">Rp</span>
+                            <input type="text" inputmode="numeric" autocomplete="off" name="nominal" id="input-nominal" min="{{ $minNominal }}" max="{{ $maxNominal }}"
+                                placeholder="Nominal topup (min {{ number_format($minNominal, 0, ',', '.') }})"
+                                class="w-full border border-outline-variant rounded-xl pl-11 pr-md py-3 bg-surface-container-low text-on-surface outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/30 transition-colors"
+                                value="{{ old('nominal') ? number_format((int) preg_replace('/\D/', '', (string) old('nominal')), 0, ',', '.') : '' }}" />
+                        </div>
                         <button type="submit"
                             class="btn-gold inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
                             <span class="material-symbols-outlined text-[20px]">add_card</span>
@@ -169,28 +172,51 @@
         document.addEventListener('DOMContentLoaded', function() {
             var chips = document.querySelectorAll('.chip-quick');
             var input = document.getElementById('input-nominal');
+            var form = document.getElementById('form-isi-saldo');
             var btnBatal = document.getElementById('btn-batal-nominal');
+
+            var digitsOnly = function(v) { return (v || '').replace(/\D/g, ''); };
+            var formatRibuan = function(v) {
+                var d = digitsOnly(v).replace(/^0+(?=\d)/, '');
+                if (!d) return '';
+                return d.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            };
+            var syncChips = function() {
+                var raw = digitsOnly(input ? input.value : '');
+                chips.forEach(function(x) {
+                    x.classList.toggle('active', x.getAttribute('data-nominal') === raw);
+                });
+                if (btnBatal) btnBatal.classList.toggle('hidden', raw === '');
+            };
+
             chips.forEach(function(c) {
                 c.addEventListener('click', function() {
                     chips.forEach(function(x) { x.classList.remove('active'); });
                     c.classList.add('active');
                     if (input) {
-                        input.value = c.getAttribute('data-nominal');
+                        input.value = formatRibuan(c.getAttribute('data-nominal'));
                         if (btnBatal) btnBatal.classList.remove('hidden');
                     }
                 });
             });
-            if (input && btnBatal) {
+            if (input) {
+                if (input.value) input.value = formatRibuan(input.value);
                 input.addEventListener('input', function() {
-                    chips.forEach(function(x) {
-                        x.classList.toggle('active', x.getAttribute('data-nominal') === input.value);
-                    });
-                    btnBatal.classList.toggle('hidden', input.value === '');
+                    input.value = formatRibuan(input.value);
+                    syncChips();
                 });
-                btnBatal.addEventListener('click', function() {
-                    input.value = '';
-                    chips.forEach(function(x) { x.classList.remove('active'); });
-                    btnBatal.classList.add('hidden');
+                if (btnBatal) {
+                    btnBatal.addEventListener('click', function() {
+                        input.value = '';
+                        chips.forEach(function(x) { x.classList.remove('active'); });
+                        btnBatal.classList.add('hidden');
+                    });
+                }
+                syncChips();
+            }
+            if (form && input) {
+                form.addEventListener('submit', function() {
+                    input.value = digitsOnly(input.value);
                 });
             }
         });

@@ -254,6 +254,11 @@
     .ot-product-list::-webkit-scrollbar-thumb { background: var(--border-soft); border-radius: 9999px; }
     html.theme-dark .ot-product-list { background-color: #262524; border-color: var(--border-soft); }
     @media (max-width: 768px) { .ot-product-list { max-height: 55vh; padding: 0.5rem; } }
+    .co-alasan > summary { list-style: none; }
+    .co-alasan > summary::-webkit-details-marker { display: none; }
+    .co-alasan > summary::marker { content: ''; }
+    .co-alasan .co-alasan-chev { display: inline-flex; transition: transform .3s cubic-bezier(.4,0,.2,1); }
+    .co-alasan[open] .co-alasan-chev { transform: rotate(180deg); }
 </style>
 </head>
 <body class="bg-surface text-on-surface antialiased font-body-lg flex flex-col min-h-screen pb-[72px] md:pb-0 lg:pl-72 overflow-x-hidden">
@@ -309,6 +314,14 @@
 <span class="font-label-sm text-label-sm {{ $isBad ? 'text-error' : 'text-secondary' }} uppercase tracking-wider font-semibold">{{ $statusLabel }}</span>
 </span>
 </div>
+@if ($order->status === \App\Models\Order::STATUS_DIBATALKAN && ! empty($cancelReasons[$order->order_id] ?? null))
+<details class="co-alasan mt-xs">
+<summary class="inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary cursor-pointer">
+<span class="material-symbols-outlined text-[16px] co-alasan-chev">expand_more</span>{{ __('Lihat Alasan Pembatalan') }}
+</summary>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs border-l-2 border-error/40 pl-sm">{{ $cancelReasons[$order->order_id] }}</p>
+</details>
+@endif
 
 <div class="ot-product-list">
 @foreach ($order->items as $item)
@@ -362,6 +375,11 @@
 <p class="font-headline-md text-headline-md text-on-surface">Rp {{ number_format((float) $order->grand_total, 0, ',', '.') }}</p>
 </div>
 <div class="flex flex-wrap gap-sm">
+@if ($order->status === \App\Models\Order::STATUS_PENDING_PAYMENT && $order->checkout && $order->checkout->status === \App\Models\Checkout::STATUS_PENDING && in_array($order->checkout->payment?->status, [\App\Models\Payment::STATUS_PENDING, \App\Models\Payment::STATUS_DITOLAK], true))
+<a href="{{ route('customer.checkout.payment', $order->checkout->checkout_id) }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest">
+<span class="material-symbols-outlined text-[16px]">payments</span>{{ $order->checkout->payment->status === \App\Models\Payment::STATUS_DITOLAK ? __('Unggah Ulang') : __('Bayar') }}
+</a>
+@endif
 @if (in_array($order->status, [\App\Models\Order::STATUS_DIKIRIM, \App\Models\Order::STATUS_SELESAI], true))
 <a href="{{ route('customer.komplain.create', ['order' => $order->order_id]) }}" class="inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">
 <span class="material-symbols-outlined text-[16px]">report</span>{{ __('Komplain') }}

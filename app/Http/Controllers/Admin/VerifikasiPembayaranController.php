@@ -12,6 +12,7 @@ use App\Models\Role;
 use App\Services\NotificationService;
 use App\Support\ActivityLogger;
 use App\Support\AdminContext;
+use App\Support\CustomerWalletService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -63,25 +64,56 @@ class VerifikasiPembayaranController extends Controller
 
         $lama = $pembayaran->only(['status']);
 
-        DB::transaction(function () use ($pembayaran) {
-            PaymentVerification::create([
-                'payment_id' => $pembayaran->payment_id,
-                'verifier_id' => ActivityLogger::resolveActorId(),
-                'status' => PaymentVerification::STATUS_DITERIMA,
-                'diverifikasi_pada' => now(),
+        $jumlahSaldo = (float) $pembayaran->jumlah_saldo;
+        $sisaTransfer = (float) $pembayaran->sisa_transfer;
+
+        try {
+            DB::transaction(function () use ($pembayaran, $jumlahSaldo) {
+                // Pembayaran campuran: potong saldo untuk bagian yang sudah disanggupi.
+                if ($jumlahSaldo > 0) {
+                    $checkout = $pembayaran->checkout;
+                    $firstOrder = $checkout?->orders()->orderBy('order_id')->first();
+
+                    if (! $checkout?->user || ! $firstOrder) {
+                        throw new \RuntimeException('Data checkout tidak valid untuk pemotongan saldo.');
+                    }
+
+                    CustomerWalletService::debitForOrder($checkout->user, $firstOrder, $jumlahSaldo);
+                }
+
+                PaymentVerification::create([
+                    'payment_id' => $pembayaran->payment_id,
+                    'verifier_id' => ActivityLogger::resolveActorId(),
+                    'status' => PaymentVerification::STATUS_DITERIMA,
+                    'diverifikasi_pada' => now(),
+                ]);
+
+                $pembayaran->update([
+                    'status' => Payment::STATUS_TERVERIFIKASI,
+                    'dibayar_pada' => now(),
+                ]);
+
+                $pembayaran->checkout->update(['status' => Checkout::STATUS_DIBAYAR]);
+
+                Order::where('checkout_id', $pembayaran->checkout_id)
+                    ->where('status', Order::STATUS_PENDING_PAYMENT)
+                    ->update(['status' => Order::STATUS_MENUNGGU_PRODUKSI]);
+            });
+        } catch (\RuntimeException $e) {
+            return back()->with('toast', [
+                'message' => $e->getMessage().' Pembayaran tidak disetujui.',
+                'icon' => 'gpp_maybe',
             ]);
+        }
 
-            $pembayaran->update([
-                'status' => Payment::STATUS_TERVERIFIKASI,
-                'dibayar_pada' => now(),
-            ]);
-
-            $pembayaran->checkout->update(['status' => Checkout::STATUS_DIBAYAR]);
-
-            Order::where('checkout_id', $pembayaran->checkout_id)
-                ->where('status', Order::STATUS_PENDING_PAYMENT)
-                ->update(['status' => Order::STATUS_MENUNGGU_PRODUKSI]);
-        });
+        $logPesan = $jumlahSaldo > 0
+            ? sprintf(
+                'Memverifikasi pembayaran campuran checkout #%d — saldo Rp %s + transfer Rp %s.',
+                $pembayaran->checkout_id,
+                number_format($jumlahSaldo, 0, ',', '.'),
+                number_format($sisaTransfer, 0, ',', '.')
+            )
+            : sprintf('Memverifikasi pembayaran Rp %s untuk checkout #%d.', number_format((float) $pembayaran->jumlah, 0, ',', '.'), $pembayaran->checkout_id);
 
         ActivityLogger::log(
             'admin.payment.approve',
@@ -89,10 +121,18 @@ class VerifikasiPembayaranController extends Controller
             $pembayaran->payment_id,
             $lama,
             ['status' => Payment::STATUS_TERVERIFIKASI],
-            sprintf('Memverifikasi pembayaran Rp %s untuk checkout #%d.', number_format((float) $pembayaran->jumlah, 0, ',', '.'), $pembayaran->checkout_id)
+            $logPesan
         );
 
-        $this->notifyCustomer($pembayaran, 'Pembayaran Diverifikasi', sprintf('Pembayaran sebesar Rp %s telah diverifikasi dan pesanan sedang diproses.', number_format((float) $pembayaran->jumlah, 0, ',', '.')));
+        $pesanCustomer = $jumlahSaldo > 0
+            ? sprintf(
+                'Pembayaran campuran diverifikasi — saldo Rp %s + transfer Rp %s. Pesanan sedang diproses.',
+                number_format($jumlahSaldo, 0, ',', '.'),
+                number_format($sisaTransfer, 0, ',', '.'),
+            )
+            : sprintf('Pembayaran sebesar Rp %s telah diverifikasi dan pesanan sedang diproses.', number_format((float) $pembayaran->jumlah, 0, ',', '.'));
+
+        $this->notifyCustomer($pembayaran, 'Pembayaran Diverifikasi', $pesanCustomer);
 
         // Notifikasi ke Produksi
         NotificationService::sendToRole(

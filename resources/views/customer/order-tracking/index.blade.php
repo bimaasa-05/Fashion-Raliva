@@ -379,7 +379,11 @@
         default => $refundStatus ? __('Pengajuan refund sedang diproses') : null,
     };
     $details = [
-        'pending_payment' => [__('Menunggu verifikasi'), __('Bukti pembayaran Anda sedang diverifikasi admin. Pesanan akan diproses setelah terverifikasi.')],
+        'pending_payment' => match ($selected->checkout?->payment?->status) {
+            \App\Models\Payment::STATUS_PENDING => [__('Menunggu pembayaran'), __('Selesaikan pembayaran sebelum batas waktu. Klik Lanjutkan Pembayaran untuk memilih metode dan mengunggah bukti.')],
+            \App\Models\Payment::STATUS_DITOLAK => [__('Bukti ditolak'), __('Bukti pembayaran Anda ditolak. Klik Unggah Ulang Bukti untuk mengunggah bukti yang benar.')],
+            default => [__('Menunggu verifikasi'), __('Bukti pembayaran Anda sedang diverifikasi admin. Pesanan akan diproses setelah terverifikasi.')],
+        },
         'dibayar' => [__('Pembayaran diterima'), __('Pembayaran Anda telah kami terima. Pesanan sedang menunggu diproses.')],
         'diproses' => [__('Sedang disiapkan'), __('Pesanan sedang diproses di gudang dan akan segera dikirim.')],
         'dikirim' => [__('Sedang dalam perjalanan'), __('Pesanan sudah dikirim dan sedang dalam perjalanan menuju alamat Anda.')],
@@ -468,9 +472,25 @@
             <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2">{{ __('Metode') }}</p>
             <p class="font-body-md text-body-md text-on-surface font-semibold">{{ $payInfo->paymentMethod?->nama_metode ?? __('Belum dipilih') }}</p>
             @if ($payInfo->account)
+                @php
+                    $otBrandIcons = [
+                        'dana' => 'images/E-Wallet/dana.png',
+                        'gopay' => 'images/E-Wallet/gopay.jpg',
+                        'ovo' => 'images/E-Wallet/ovo.png',
+                        'shopeepay' => 'images/E-Wallet/shoopepay.jfif',
+                        'bca' => 'images/Bank/bca.png',
+                        'bri' => 'images/Bank/bri.png',
+                        'bni' => 'images/Bank/bni.png',
+                        'mandiri' => 'images/Bank/mandiri.png',
+                    ];
+                    $otFgPath = $payInfo->account->file_gambar ? ltrim($payInfo->account->file_gambar, '/') : null;
+                    $otAccountImg = ($otFgPath && \Illuminate\Support\Facades\Storage::disk('public')->exists($otFgPath))
+                        ? asset('storage/' . $otFgPath)
+                        : (isset($otBrandIcons[$payInfo->account->kode ?? '']) ? asset($otBrandIcons[$payInfo->account->kode]) : null);
+                @endphp
                 <div class="flex items-center gap-sm mt-sm">
-                    @if ($payInfo->account->file_gambar)
-                        <img src="{{ asset('storage/' . ltrim($payInfo->account->file_gambar, '/')) }}" alt="{{ $payInfo->account->nama }}" class="h-8 object-contain rounded border border-outline-variant bg-white" />
+                    @if ($otAccountImg)
+                        <img src="{{ $otAccountImg }}" alt="{{ $payInfo->account->nama }}" class="h-8 object-contain rounded border border-outline-variant bg-white" />
                     @endif
                     <div class="min-w-0">
                         <p class="font-body-sm text-body-sm text-on-surface">{{ $payInfo->account->nama }}</p>
@@ -489,6 +509,17 @@
             @endif
         </div>
     </div>
+    @php
+        $canResumePay = $selected->checkout
+            && $selected->checkout->status === \App\Models\Checkout::STATUS_PENDING
+            && in_array($payInfo->status, [\App\Models\Payment::STATUS_PENDING, \App\Models\Payment::STATUS_DITOLAK], true);
+    @endphp
+    @if ($canResumePay)
+        <a href="{{ route('customer.checkout.payment', $selected->checkout->checkout_id) }}" class="btn-gold mt-md w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+            <span class="material-symbols-outlined text-[20px]">{{ $payInfo->status === \App\Models\Payment::STATUS_DITOLAK ? 'upload_file' : 'payments' }}</span>
+            <span>{{ $payInfo->status === \App\Models\Payment::STATUS_DITOLAK ? __('Unggah Ulang Bukti') : __('Lanjutkan Pembayaran') }}</span>
+        </a>
+    @endif
 </div>
 </div>
 </section>
@@ -562,6 +593,12 @@ $buktiTokoNama = $latestRefund->file_bukti ? \Illuminate\Support\Str::afterLast(
 <span class="material-symbols-outlined text-[40px] text-error mb-xs block">cancel</span>
 <h3 class="font-title-md text-title-md text-on-surface mb-xs">{{ $detail[0] }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant max-w-md mx-auto">{{ $detail[1] }}</p>
+@if (! empty($alasanPembatalan ?? null))
+<div class="mt-md max-w-md mx-auto text-left bg-error/5 border border-error/15 rounded-xl p-md">
+<p class="font-label-sm text-label-sm text-error uppercase tracking-wider font-semibold mb-1">{{ __('Alasan pembatalan') }}</p>
+<p class="font-body-sm text-body-sm text-on-surface">{{ $alasanPembatalan }}</p>
+</div>
+@endif
 </div>
 @else
 <div class="relative max-w-[480px] mx-auto">

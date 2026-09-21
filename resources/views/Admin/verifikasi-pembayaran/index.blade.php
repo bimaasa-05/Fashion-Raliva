@@ -69,6 +69,9 @@
                             <p class="font-mono text-sm text-on-surface-variant">#CKT-{{ str_pad((string) $pembayaran->checkout_id, 4, '0', STR_PAD_LEFT) }} &#8226; {{ $pembayaran->checkout?->user?->nama_lengkap ?? '-' }}</p>
                             <p class="text-xs text-on-surface-variant mt-0.5">{{ $orderUtama?->store?->nama_toko ?? '-' }}</p>
                             <p class="font-title-md text-title-md text-gold-accent mt-1">Rp {{ number_format((float) $pembayaran->jumlah, 0, ',', '.') }}</p>
+                            @if ((float) $pembayaran->jumlah_saldo > 0)
+                                <p class="text-xs text-on-surface-variant mt-1">Saldo <strong class="text-on-surface">Rp {{ number_format((float) $pembayaran->jumlah_saldo, 0, ',', '.') }}</strong> + Transfer <strong class="text-on-surface">Rp {{ number_format((float) $pembayaran->sisa_transfer, 0, ',', '.') }}</strong></p>
+                            @endif
                         </div>
                         <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">@if($pembayaran->account?->file_gambar)<img src="{{ asset('storage/' . ltrim($pembayaran->account->file_gambar, '/')) }}" alt="{{ $pembayaran->account->nama }}" class="h-3.5 w-3.5 object-contain mr-1" />@endif{{ $pembayaran->paymentMethod?->nama_metode ?? '-' }}{{ $pembayaran->account?->nama ? ' &#8226; ' . $pembayaran->account->nama : '' }}</span>
                     </div>
@@ -129,7 +132,7 @@
                             <span class="material-symbols-outlined text-secondary text-[28px]">task_alt</span>
                         </div>
                         <h3 class="font-title-md text-title-md text-on-surface mb-2">Setujui Pembayaran</h3>
-                        <p class="text-on-surface-variant text-sm mb-6">Setujui pembayaran <span class="font-bold text-on-surface">Rp {{ number_format((float) $pembayaran->jumlah, 0, ',', '.') }}</span> dari <span class="font-bold text-on-surface">{{ $pembayaran->checkout?->user?->nama_lengkap }}</span>?</p>
+                        <p class="text-on-surface-variant text-sm mb-6">Setujui pembayaran <span class="font-bold text-on-surface">Rp {{ number_format((float) $pembayaran->jumlah, 0, ',', '.') }}</span> dari <span class="font-bold text-on-surface">{{ $pembayaran->checkout?->user?->nama_lengkap }}</span>?@if ((float) $pembayaran->jumlah_saldo > 0) <span class="block mt-1 text-xs">Saldo <strong class="text-on-surface">Rp {{ number_format((float) $pembayaran->jumlah_saldo, 0, ',', '.') }}</strong> + Transfer <strong class="text-on-surface">Rp {{ number_format((float) $pembayaran->sisa_transfer, 0, ',', '.') }}</strong></span>@endif</p>
                         <div class="flex space-x-3">
                             <button type="button" data-modal-close class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg">Batal</button>
                             <form method="POST" action="{{ route('admin.verifikasi-pembayaran.setujui', $pembayaran->payment_id) }}" class="flex-1">
@@ -194,10 +197,21 @@
                                     <p class="text-xs text-on-surface-variant">Total Tagihan</p>
                                     <p class="font-bold text-on-surface mt-1">Rp {{ number_format((float) $detailTotal, 0, ',', '.') }}</p>
                                 </div>
-                                <div class="border border-muted-border rounded-lg px-4 py-3">
-                                    <p class="text-xs text-on-surface-variant">Nominal Dibayar</p>
-                                    <p class="font-bold text-gold-accent mt-1">Rp {{ number_format((float) $pembayaran->jumlah, 0, ',', '.') }}</p>
-                                </div>
+                                @if ((float) $pembayaran->jumlah_saldo > 0)
+                                    <div class="border border-muted-border rounded-lg px-4 py-3">
+                                        <p class="text-xs text-on-surface-variant">Dibayar dari Saldo</p>
+                                        <p class="font-bold text-secondary mt-1">Rp {{ number_format((float) $pembayaran->jumlah_saldo, 0, ',', '.') }}</p>
+                                    </div>
+                                    <div class="border border-muted-border rounded-lg px-4 py-3">
+                                        <p class="text-xs text-on-surface-variant">Sisa Transfer</p>
+                                        <p class="font-bold text-gold-accent mt-1">Rp {{ number_format((float) $pembayaran->sisa_transfer, 0, ',', '.') }}</p>
+                                    </div>
+                                @else
+                                    <div class="border border-muted-border rounded-lg px-4 py-3">
+                                        <p class="text-xs text-on-surface-variant">Nominal Dibayar</p>
+                                        <p class="font-bold text-gold-accent mt-1">Rp {{ number_format((float) $pembayaran->jumlah, 0, ',', '.') }}</p>
+                                    </div>
+                                @endif
                             </div>
                             @if ((float) $pembayaran->jumlah !== (float) $detailTotal)
                                 <p class="text-xs text-error border border-error/20 bg-error/5 rounded-lg px-4 py-3">Nominal tidak sama dengan total tagihan (selisih Rp {{ number_format(abs((float) $pembayaran->jumlah - (float) $detailTotal), 0, ',', '.') }}).</p>

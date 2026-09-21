@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html class="light" lang="{{ app()->getLocale() }}">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>RALIVA - {{ __('Checkout') }} — {{ __('Bayar') }}</title>
+    <title>RALIVA - {{ __('Checkout') }} â€” {{ __('Bayar') }}</title>
     <script>
         if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');
     </script>
@@ -890,6 +890,48 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             color: #FFC2C9;
         }
 
+        .btn-split-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            padding: .7rem 1.25rem;
+            border-radius: 999px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            border: 1px solid #8B1E3F;
+            color: #8B1E3F;
+            background: transparent;
+            cursor: pointer;
+            transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+        }
+
+        .btn-split-toggle:hover {
+            background: #8B1E3F;
+            color: #fff;
+        }
+
+        html.theme-dark .btn-split-toggle {
+            border-color: #C0506B;
+            color: #F4B4BE;
+        }
+
+        html.theme-dark .btn-split-toggle:hover {
+            background: #6D1428;
+            color: #fff;
+        }
+
+        .btn-split-toggle .bt-chev {
+            transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .btn-split-toggle.open .bt-chev {
+            transform: rotate(180deg);
+        }
+
         .banner-akun {
             background: #ecfdf5;
             border: 1px solid #a7f3d0;
@@ -903,19 +945,16 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
         }
     </style>
 </head>
-
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] lg:pl-72">
 
     @php
-        $akunBaruEmail = session('akun_baru');
-        $saldoCust = Auth::check() && Auth::user()->role?->nama_role === \App\Models\Role::CUSTOMER
-            ? (float) \App\Support\CustomerWalletService::balance(Auth::user())
-            : 0.0;
+        $saldoCust = isset($saldoCust) ? (float) $saldoCust : 0.0;
+        $sisaBayar = isset($sisaBayar) ? (float) $sisaBayar : max(0, (float) $payment->jumlah - $saldoCust);
     @endphp
 
     <header
         class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-        <a href="{{ route('customer.checkout', request()->query('buy') ? ['buy' => request()->query('buy')] : []) }}"
+        <a href="{{ route('customer.checkout.payment', $checkout->checkout_id) }}"
             aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
             <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
         </a>
@@ -941,23 +980,6 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                     <span class="co-step"><span class="num loading"></span> {{ __('Selesai') }}</span>
                 </div>
             </div>
-
-            @if ($akunBaruEmail)
-                <div class="banner-akun rounded-xl p-md mb-lg flex items-start gap-sm reveal-up">
-                    <span class="material-symbols-outlined text-[22px] shrink-0 mt-0.5">celebration</span>
-                    <div class="min-w-0">
-                        <p class="font-body-sm text-body-sm font-semibold">{{ __('Akun berhasil dibuat!') }}</p>
-                        <p class="font-body-sm text-body-sm mt-xs">{{ __('Email') }}:
-                            <strong>{{ $akunBaruEmail }}</strong> &nbsp;•&nbsp; {{ __('Password') }}:
-                            <strong>Raliva123</strong></p>
-                        <p class="font-label-sm text-label-sm mt-xs opacity-80">
-                            {{ __('Simpan kredensial ini. Ubah password di') }} <a
-                                href="{{ route('customer.account.password') }}"
-                                class="underline underline-offset-2 font-semibold">{{ __('My Account → Ganti Password') }}</a>.
-                        </p>
-                    </div>
-                </div>
-            @endif
 
             @if ($payment->status === \App\Models\Payment::STATUS_MENUNGGU_VERIFIKASI)
                 <div
@@ -1012,9 +1034,38 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                             class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">
                             <p
                                 class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">
-                                {{ __('METODE PEMBAYARAN') }}</p>
+                                {{ __('PEMBAYARAN CAMPURAN') }}</p>
                             <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">
-                                {{ __('Pilih Metode Pembayaran') }}</h3>
+                                {{ __('Pilih Metode Kedua') }}</h3>
+
+                            <div class="rounded-xl border border-[var(--border-soft)] bg-surface-warm p-md md:p-lg mb-lg">
+                                <div class="flex items-start gap-3">
+                                    <span
+                                        class="shrink-0 w-11 h-11 rounded-full bg-secondary/10 inline-flex items-center justify-center">
+                                        <span
+                                            class="material-symbols-outlined text-[22px] text-secondary">account_balance_wallet</span>
+                                    </span>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="font-body-md text-body-md font-bold text-on-surface">
+                                            {{ __('Bayar sebagian dengan Saldo Akun') }}</p>
+                                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                                            {{ __('Saldo') }}
+                                            <strong class="font-semibold text-[var(--chrome-accent)]">Rp
+                                                {{ number_format($saldoCust, 0, ',', '.') }}</strong>
+                                            {{ __('dipakai, sisa') }}
+                                            <strong class="font-semibold text-[var(--chrome-accent)]">Rp
+                                                {{ number_format($sisaBayar, 0, ',', '.') }}</strong>
+                                            {{ __('dibayar dengan metode kedua.') }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="detail-row mt-sm">
+                                    <span>{{ __('Total Dibayar') }}</span>
+                                    <strong>Rp {{ number_format((float) $payment->jumlah, 0, ',', '.') }}</strong>
+                                </div>
+                                <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-xs">
+                                    {{ __('Saldo dipotong setelah admin memverifikasi bukti.') }}</p>
+                            </div>
 
                             <form id="form-bayar" method="POST"
                                 action="{{ route('customer.checkout.payment.upload', $checkout->checkout_id) }}"
@@ -1024,24 +1075,17 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                     value="{{ old('payment_method_id', $payment->payment_method_id) }}" />
                                 <input type="hidden" name="payment_account_id" id="input-account-id"
                                     value="{{ old('payment_account_id', $payment->payment_account_id) }}" />
-                                <input type="hidden" name="pakai_saldo" id="input-pakai-saldo" value="0" />
+                                <input type="hidden" name="pakai_saldo" id="input-pakai-saldo" value="1" />
                                 @if ($paymentMethods->isEmpty())
                                     <p class="font-body-sm text-body-sm text-on-surface-variant">
                                         {{ __('Belum ada metode pembayaran aktif. Hubungi admin.') }}</p>
                                 @else
-                                    @php
-                                        $leftMethods = $paymentMethods->where('kode_metode', 'qris');
-                                        $rightMethods = $paymentMethods->whereIn('kode_metode', ['ewallet', 'bank_transfer']);
-                                        $rightMethods = $rightMethods->merge(
-                                            $paymentMethods->reject(fn ($pm) => in_array($pm->kode_metode, ['qris', 'ewallet', 'bank_transfer'], true))
-                                        );
-                                    @endphp
-                                    <div id="pay-grid" class="pay-grid">
-                                        @foreach ($leftMethods as $pm)
+                                    <p
+                                        class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-sm">
+                                        {{ __('Pilih metode untuk sisa pembayaran') }}:</p>
+                                    <div id="split-pay-grid" class="pay-grid-split">
+                                        @foreach ($paymentMethods as $pm)
                                             @php
-                                                $isSelected =
-                                                    (string) old('payment_method_id', $payment->payment_method_id) ===
-                                                    (string) $pm->payment_method_id;
                                                 $icon = match ($pm->kode_metode) {
                                                     'qris' => 'qr_code_2',
                                                     'ewallet' => 'account_balance_wallet',
@@ -1049,46 +1093,14 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                     default => 'payments',
                                                 };
                                                 $qrAccount = $pm->kode_metode === 'qris' ? $pm->accounts->first() : null;
+                                                $isSel = (string) old('payment_method_id', $payment->payment_method_id) === (string) $pm->payment_method_id;
                                             @endphp
-                                            <div class="pay-method{{ $isSelected ? ' selected' : '' }}"
-                                                style="grid-area: qris"
+                                            <div class="pay-method split-method{{ $isSel ? ' selected' : '' }}"
                                                 data-id="{{ $pm->payment_method_id }}"
                                                 data-nama="{{ $pm->nama_metode }}"
                                                 data-kode="{{ $pm->kode_metode }}"
-                                                data-account-id="{{ $qrAccount?->platform_bank_account_id ?? '' }}">
-                                                <span
-                                                    class="material-symbols-outlined text-[28px]">{{ $icon }}</span>
-                                                <span
-                                                    class="text-center leading-tight text-sm">{{ $pm->nama_metode }}</span>
-                                            </div>
-                                        @endforeach
-                                        <div class="pay-method{{ $payment->paymentMethod?->kode_metode === \App\Models\PaymentMethod::KODE_SALDO_AKUN ? ' selected' : '' }}"
-                                            style="grid-area: saldo"
-                                            data-id="" data-nama="Saldo Akun" data-kode="saldo_akun"
-                                            data-account-id="">
-                                            <span
-                                                class="material-symbols-outlined text-[28px]">account_balance_wallet</span>
-                                            <span class="text-center leading-tight text-sm">Saldo
-                                                Akun</span>
-                                        </div>
-                                        @foreach ($rightMethods as $pm)
-                                            @php
-                                                $isSelected =
-                                                    (string) old('payment_method_id', $payment->payment_method_id) ===
-                                                    (string) $pm->payment_method_id;
-                                                $icon = match ($pm->kode_metode) {
-                                                    'qris' => 'qr_code_2',
-                                                    'ewallet' => 'account_balance_wallet',
-                                                    'bank_transfer' => 'account_balance',
-                                                    default => 'payments',
-                                                };
-                                            @endphp
-                                            <div class="pay-method{{ $isSelected ? ' selected' : '' }}"
-                                                style="grid-area: {{ $pm->kode_metode }}"
-                                                data-id="{{ $pm->payment_method_id }}"
-                                                data-nama="{{ $pm->nama_metode }}"
-                                                data-kode="{{ $pm->kode_metode }}"
-                                                data-account-id="">
+                                                data-account-id="{{ $qrAccount?->platform_bank_account_id ?? '' }}"
+                                                data-account-nama="{{ $qrAccount?->nama ?? '' }}">
                                                 <span
                                                     class="material-symbols-outlined text-[28px]">{{ $icon }}</span>
                                                 <span
@@ -1097,119 +1109,65 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                         @endforeach
                                     </div>
 
-                                    <div id="pay-detail" class="hidden mt-lg space-y-lg">
+                                    <div id="split-detail" class="hidden space-y-sm mt-md">
                                         @foreach ($paymentMethods as $pm)
-                                            @php
-                                                $kode = $pm->kode_metode;
-                                                $accts = $pm->accounts;
-                                            @endphp
-                                            <div id="detail-{{ $kode }}" class="method-detail hidden"
-                                                data-kode="{{ $kode }}">
+                                            @php $kode = $pm->kode_metode; @endphp
+                                            <div id="split-account-grid-{{ $kode }}"
+                                                class="split-account-grid hidden space-y-sm">
                                                 @if ($kode === 'qris')
-                                                    @php $qr = $accts->first(); @endphp
+                                                    @php $qr = $pm->accounts->first(); @endphp
                                                     @if ($qr)
                                                         <div
-                                                            class="border border-outline-variant rounded-xl p-md md:p-lg">
-                                                            <div
-                                                                class="flex flex-col sm:flex-row sm:items-center gap-md">
+                                                            class="border border-outline-variant rounded-xl p-sm bg-surface-container-lowest">
+                                                            <div class="flex items-center gap-3">
                                                                 @if ($qr->file_gambar)
                                                                     <img src="{{ asset('storage/' . ltrim($qr->file_gambar, '/')) }}"
                                                                         alt="{{ $qr->nama }}"
-                                                                        class="w-44 h-44 object-contain rounded-lg border border-outline-variant bg-white mx-auto sm:mx-0" />
+                                                                        class="w-24 h-24 object-contain rounded-lg border border-outline-variant bg-white shrink-0" />
                                                                 @endif
-                                                                <div class="min-w-0 text-center sm:text-left">
-                                                                    <p
-                                                                        class="font-title-md text-title-md text-on-surface">
+                                                                <div class="min-w-0 text-sm">
+                                                                    <p class="font-bold text-on-surface">
                                                                         {{ $qr->nama }}</p>
                                                                     <p
                                                                         class="font-body-sm text-body-sm text-on-surface-variant mt-xs">
                                                                         {{ $qr->deskripsi }}</p>
-                                                                    <p
-                                                                        class="font-body-sm text-body-sm text-on-surface mt-sm">
-                                                                        {{ __('Nama') }}:
-                                                                        <strong>{{ $qr->nama_pemilik }}</strong></p>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     @endif
-                                                @elseif ($kode === 'ewallet')
-                                                    @php
-                                                        $ewIcons = [
-                                                            'dana' => 'images/E-Wallet/dana.png',
-                                                            'gopay' => 'images/E-Wallet/gopay.jpg',
-                                                            'ovo' => 'images/E-Wallet/ovo.png',
-                                                            'shopeepay' => 'images/E-Wallet/shoopepay.jfif',
-                                                        ];
-                                                        $accts = $accts
-                                                            ->filter(fn ($a) => array_key_exists($a->kode, $ewIcons))
-                                                            ->values();
-                                                    @endphp
-                                                    <div class="space-y-sm">
-                                                        <p
-                                                            class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
-                                                            {{ __('Pilih salah satu') }}
-                                                            {{ $pm->nama_metode }}:</p>
-                                                        <div class="ew-accounts-grid" id="grid-ewallet">
-                                                            @foreach ($accts as $a)
-                                                                @php $sel = (string) ($payment->payment_account_id ?? '') === (string) $a->platform_bank_account_id; @endphp
-                                                                <div class="ew-card-wrap{{ $sel ? ' ew-active' : '' }}" data-kode="{{ $a->kode }}">
-                                                                    <div class="account-opt account-opt-ew acc-ew-brand {{ $a->kode }}{{ $sel ? ' selected' : '' }}"
-                                                                        data-panel="{{ $kode }}"
-                                                                        data-account-id="{{ $a->platform_bank_account_id }}"
-                                                                        data-nama="{{ $a->nama }}"
-                                                                        data-rekening="{{ $a->nomor_rekening ?? '-' }}"
-                                                                        data-pemilik="{{ $a->nama_pemilik ?? '-' }}">
-                                                                        <img src="{{ asset($ewIcons[$a->kode]) }}"
-                                                                            alt="{{ $a->nama }}" class="h-7 object-contain" />
-                                                                        <span
-                                                                            class="ew-brand-name text-xs leading-tight mt-1">{{ $a->nama }}</span>
-                                                                        <div class="ew-card-detail">
-                                                                            <div class="ew-card-detail-inner">
-                                                                                <p class="ew-detail-nama">{{ $a->nama }}</p>
-                                                                                <p class="ew-detail-line">
-                                                                                    <span>{{ __('Rekening/Nomor') }}:</span>
-                                                                                    <strong>{{ $a->nomor_rekening ?? '-' }}</strong>
-                                                                                </p>
-                                                                                <p class="ew-detail-line">
-                                                                                    <span>{{ __('Atas nama') }}:</span>
-                                                                                    <strong>{{ $a->nama_pemilik ?? '-' }}</strong>
-                                                                                </p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            @endforeach
-                                                        </div>
-                                                    </div>
                                                 @else
                                                     @php
-                                                        $brandIcons = [
-                                                            'bca' => 'images/Bank/bca.png',
-                                                            'bri' => 'images/Bank/bri.png',
-                                                            'bni' => 'images/Bank/bni.png',
-                                                            'mandiri' => 'images/Bank/mandiri.png',
-                                                        ];
-                                                        $accts = $accts
-                                                            ->filter(fn ($a) => array_key_exists($a->kode, $brandIcons))
+                                                        $icons = $kode === 'ewallet'
+                                                            ? [
+                                                                'dana' => 'images/E-Wallet/dana.png',
+                                                                'gopay' => 'images/E-Wallet/gopay.jpg',
+                                                                'ovo' => 'images/E-Wallet/ovo.png',
+                                                                'shopeepay' => 'images/E-Wallet/shoopepay.jfif',
+                                                            ]
+                                                            : [
+                                                                'bca' => 'images/Bank/bca.png',
+                                                                'bri' => 'images/Bank/bri.png',
+                                                                'bni' => 'images/Bank/bni.png',
+                                                                'mandiri' => 'images/Bank/mandiri.png',
+                                                            ];
+                                                        $accts = $pm->accounts
+                                                            ->filter(fn ($a) => array_key_exists($a->kode, $icons))
                                                             ->values();
                                                     @endphp
-                                                    <div class="space-y-sm">
+                                                    @if ($accts->isNotEmpty())
                                                         <p
                                                             class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
-                                                            {{ __('Pilih salah satu') }}
-                                                            {{ $pm->nama_metode }}:</p>
-                                                        <div class="ew-accounts-grid" id="grid-{{ $kode }}">
+                                                            {{ __('Pilih salah satu') }}:</p>
+                                                        <div class="ew-accounts-grid">
                                                             @foreach ($accts as $a)
-                                                                @php $sel = (string) ($payment->payment_account_id ?? '') === (string) $a->platform_bank_account_id; @endphp
-                                                                <div class="ew-card-wrap{{ $sel ? ' ew-active' : '' }}" data-kode="{{ $a->kode }}">
-                                                                    <div class="account-opt account-opt-ew acc-bank-brand {{ $a->kode }}{{ $sel ? ' selected' : '' }}"
-                                                                        data-panel="{{ $kode }}"
+                                                                @php $selAcc = (string) old('payment_account_id', $payment->payment_account_id ?? '') === (string) $a->platform_bank_account_id; @endphp
+                                                                <div class="ew-card-wrap{{ $selAcc ? ' ew-active' : '' }}" data-kode="{{ $a->kode }}">
+                                                                    <div class="account-opt-ew{{ $kode === 'bank_transfer' ? ' acc-bank-brand' : ' acc-ew-brand' }} {{ $a->kode }}{{ $selAcc ? ' selected' : '' }}"
                                                                         data-account-id="{{ $a->platform_bank_account_id }}"
-                                                                        data-nama="{{ $a->nama }}"
-                                                                        data-rekening="{{ $a->nomor_rekening ?? '-' }}"
-                                                                        data-pemilik="{{ $a->nama_pemilik ?? '-' }}">
-                                                                        <img src="{{ asset($brandIcons[$a->kode]) }}"
-                                                                            alt="{{ $a->nama }}" class="h-7 object-contain" />
+                                                                        data-nama="{{ $a->nama }}">
+                                                                        <img src="{{ asset($icons[$a->kode]) }}"
+                                                                            alt="{{ $a->nama }}"
+                                                                            class="h-7 object-contain" />
                                                                         <span
                                                                             class="ew-brand-name text-xs leading-tight mt-1">{{ $a->nama }}</span>
                                                                         <div class="ew-card-detail">
@@ -1229,119 +1187,13 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                                 </div>
                                                             @endforeach
                                                         </div>
-                                                    </div>
+                                                    @else
+                                                        <p class="font-label-sm text-label-sm text-on-surface-variant/70">
+                                                            {{ __('Belum ada akun aktif. Hubungi admin.') }}</p>
+                                                    @endif
                                                 @endif
                                             </div>
                                         @endforeach
-
-                                        <div id="detail-saldo_akun" class="method-detail hidden"
-                                            data-kode="saldo_akun">
-                                            <div
-                                                class="border border-outline-variant rounded-xl p-md md:p-lg space-y-md">
-                                                <div class="flex items-center justify-between gap-sm">
-                                                    <span
-                                                        class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Saldo tersedia') }}</span>
-                                                    <strong
-                                                        class="font-title-md text-title-md text-[var(--chrome-accent)]">Rp
-                                                        {{ number_format($saldoCust, 0, ',', '.') }}</strong>
-                                                </div>
-                                                <div class="detail-row">
-                                                    <span>{{ __('Total Dibayar') }}</span>
-                                                    <strong>Rp
-                                                        {{ number_format((float) $payment->jumlah, 0, ',', '.') }}</strong>
-                                                </div>
-@if ($saldoCust >= (float) $payment->jumlah)
-                                                    <button type="submit" form="form-pay-saldo"
-                                                        class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
-                                                        <span
-                                                            class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
-                                                        <span>{{ __('Bayar dengan Saldo Akun') }}</span>
-                                                    </button>
-                                                    <p
-                                                        class="font-label-sm text-label-sm text-on-surface-variant mt-sm">
-                                                        {{ __('Saldo akan dipotong sebesar total dan pesanan langsung diproses.') }}
-                                                    </p>
-                                                @elseif ($saldoCust > 0)
-                                                    @php $sisaBayar = max(0, (float) $payment->jumlah - $saldoCust); @endphp
-                                                    <div
-                                                        class="relative overflow-hidden rounded-xl border border-secondary/30 p-md md:p-lg"
-                                                        style="background:linear-gradient(135deg, rgba(139,30,63,.12), rgba(139,30,63,.03) 55%, transparent);">
-                                                        <span
-                                                            class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-secondary/15 blur-2xl pointer-events-none"></span>
-                                                        <div class="relative flex items-start gap-3">
-                                                            <span
-                                                                class="shrink-0 w-11 h-11 rounded-full bg-secondary text-white inline-flex items-center justify-center shadow-lg shadow-secondary/30">
-                                                                <span
-                                                                    class="material-symbols-outlined text-[22px]">account_balance_wallet</span>
-                                                            </span>
-                                                            <div class="min-w-0 flex-1">
-                                                                <p
-                                                                    class="font-body-md text-body-md font-bold text-on-surface">{{ __('Bayar sebagian dengan Saldo Akun') }}</p>
-                                                                <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
-                                                                    {{ __('Kombinasikan saldo dengan satu metode pembayaran lain.') }}</p>
-                                                            </div>
-                                                        </div>
-                                                        <div
-                                                            class="relative mt-md divide-y divide-[var(--border-soft)] border-y border-[var(--border-soft)]">
-                                                            <div class="flex items-center justify-between gap-sm py-sm">
-                                                                <p
-                                                                    class="flex items-center gap-1.5 font-body-sm text-body-sm text-on-surface-variant">
-                                                                    <span
-                                                                        class="material-symbols-outlined text-[18px]">account_balance_wallet</span>{{ __('Saldo dipakai') }}</p>
-                                                                <p
-                                                                    class="font-body-sm text-body-sm font-bold text-on-surface text-right">
-                                                                    Rp {{ number_format($saldoCust, 0, ',', '.') }}</p>
-                                                            </div>
-                                                            <div class="flex items-center justify-between gap-sm py-sm">
-                                                                <p
-                                                                    class="flex items-center gap-1.5 font-body-sm text-body-sm text-on-surface-variant">
-                                                                    <span
-                                                                        class="material-symbols-outlined text-[18px]">payments</span>{{ __('Sisa dibayar') }}</p>
-                                                                <p
-                                                                    class="font-body-sm text-body-sm font-bold text-on-surface text-right">
-                                                                    Rp {{ number_format($sisaBayar, 0, ',', '.') }}</p>
-                                                            </div>
-                                                        </div>
-                                                        <a href="{{ route('customer.checkout.payment.metode-kedua', $checkout->checkout_id) }}"
-                                                            class="btn-gold relative mt-md w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
-                                                            <span>{{ __('Pilih Metode Kedua') }}</span>
-                                                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                                                        </a>
-                                                        <p
-                                                            class="relative flex items-center gap-1.5 font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">
-                                                            <span class="material-symbols-outlined text-[16px]">info</span>
-                                                            <span>{{ __('Saldo dipotong setelah admin memverifikasi bukti.') }}</span>
-                                                        </p>
-                                                    </div>
-                                                @else
-                                                    <div
-                                                        class="relative overflow-hidden rounded-xl border border-[var(--border-soft)] bg-surface-warm p-md md:p-lg">
-                                                        <span
-                                                            class="absolute -top-9 -right-9 w-36 h-36 rounded-full bg-secondary/10 blur-2xl"></span>
-                                                        <div class="relative flex items-start gap-3">
-                                                            <span
-                                                                class="shrink-0 w-11 h-11 rounded-full bg-secondary/10 inline-flex items-center justify-center">
-                                                                <span
-                                                                    class="material-symbols-outlined text-[22px] text-secondary">account_balance_wallet</span>
-                                                            </span>
-                                                            <div class="min-w-0">
-                                                                <p
-                                                                    class="font-body-md text-body-md font-bold text-on-surface">{{ __('Saldo belum mencukupi') }}</p>
-                                                                <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
-                                                                    {{ __('Isi saldo dulu untuk melanjutkan, atau pilih metode pembayaran lain.') }}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <a href="{{ route('customer.saldo') }}"
-                                                            class="btn-gold mt-md w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
-                                                            <span class="material-symbols-outlined text-[20px]">add_card</span>
-                                                            <span>{{ __('Top Up Saldo') }}</span>
-                                                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                                                        </a>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
                                     </div>
                                 @endif
                                 @error('payment_method_id')
@@ -1356,64 +1208,64 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                     @endif
                                 </p>
 
-<div id="panel-bukti" class="hidden">
+                                <div id="panel-bukti" class="hidden">
                                     <div class="mt-lg">
                                         <p
                                             class="font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-sm flex items-center gap-2">
                                             <span class="w-7 h-px bg-[var(--chrome-accent)] opacity-60"></span>
                                             {{ __('UPLOAD BUKTI') }}</p>
-                                    @php $buktiTerakhir = $payment->proofs->last(); @endphp
-                                    @if ($buktiTerakhir)
-                                        <div class="flex items-center gap-md border border-outline-variant rounded-xl p-md mb-sm bg-surface-container-low/50">
-                                            <span class="material-symbols-outlined text-on-surface-variant shrink-0">receipt_long</span>
-                                            <span class="font-body-sm text-body-sm text-on-surface-variant min-w-0 flex-1 truncate">{{ \Illuminate\Support\Str::afterLast($buktiTerakhir->file_bukti, '/') }}</span>
-                                            <a href="{{ asset('storage/' . ltrim($buktiTerakhir->file_bukti, '/')) }}" target="_blank" rel="noopener"
-                                                class="font-label-sm text-label-sm text-secondary uppercase tracking-wider hover:underline shrink-0">{{ __('Lihat Bukti') }}</a>
+                                        @php $buktiTerakhir = $payment->proofs->last(); @endphp
+                                        @if ($buktiTerakhir)
+                                            <div class="flex items-center gap-md border border-outline-variant rounded-xl p-md mb-sm bg-surface-container-low/50">
+                                                <span class="material-symbols-outlined text-on-surface-variant shrink-0">receipt_long</span>
+                                                <span class="font-body-sm text-body-sm text-on-surface-variant min-w-0 flex-1 truncate">{{ \Illuminate\Support\Str::afterLast($buktiTerakhir->file_bukti, '/') }}</span>
+                                                <a href="{{ asset('storage/' . ltrim($buktiTerakhir->file_bukti, '/')) }}" target="_blank" rel="noopener"
+                                                    class="font-label-sm text-label-sm text-secondary uppercase tracking-wider hover:underline shrink-0">{{ __('Lihat Bukti') }}</a>
+                                            </div>
+                                        @endif
+                                        <label id="dropzone"
+                                            class="flex flex-col items-center justify-center gap-sm border-2 border-dashed border-outline rounded-xl py-xl bg-surface-container-low cursor-pointer hover:border-secondary transition-colors text-center px-md">
+                                            <span id="dropzone-icon"
+                                                class="material-symbols-outlined text-[40px] text-on-surface-variant">upload_file</span>
+                                            <span id="upload-hint"
+                                                class="font-body-sm text-body-sm text-on-surface-variant text-center">{{ __('Klik untuk memilih gambar bukti transfer (JPG/PNG, maks 4MB)') }}</span>
+                                            <img id="preview-bukti" alt="{{ __('Pratinjau bukti') }}"
+                                                class="hidden max-h-60 w-auto max-w-full object-contain rounded-lg border border-outline-variant bg-surface-container-lowest" />
+                                            <input type="file" name="bukti" id="input-bukti"
+                                                accept="image/jpeg,image/png,image/jpg" class="sr-only" required />
+                                        </label>
+                                        @error('bukti')
+                                            <p class="font-label-sm text-label-sm text-error mt-xs">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div id="btn-actions" class="mt-lg" data-prev-proof="@json((bool) $buktiTerakhir)">
+                                        <button type="submit" id="btn-unggah"{{ $buktiTerakhir ? ' class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest hidden"' : ' class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest"' }}>
+                                            <span class="material-symbols-outlined text-[20px]" id="btn-unggah-icon">task_alt</span>
+                                            <span id="btn-unggah-text">{{ __('Unggah Bukti Pembayaran') }}</span>
+                                        </button>
+
+                                        <div id="btn-pair" class="{{ $buktiTerakhir ? 'grid grid-cols-2 gap-sm' : 'grid grid-cols-2 gap-sm hidden' }}">
+                                            <button type="button" id="btn-ganti"
+                                                class="w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest border border-outline text-on-surface hover:bg-surface-container-high transition-colors">
+                                                <span class="material-symbols-outlined text-[20px]">photo_camera_back</span>
+                                                <span>{{ __('Ganti') }}</span>
+                                            </button>
+
+                                            <button type="submit" id="btn-selesai"
+                                                class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                                                <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                                                <span>{{ __('Selesai') }}</span>
+                                            </button>
                                         </div>
-                                    @endif
-                                    <label id="dropzone"
-                                        class="flex flex-col items-center justify-center gap-sm border-2 border-dashed border-outline rounded-xl py-xl bg-surface-container-low cursor-pointer hover:border-secondary transition-colors text-center px-md">
-                                        <span id="dropzone-icon"
-                                            class="material-symbols-outlined text-[40px] text-on-surface-variant">upload_file</span>
-                                        <span id="upload-hint"
-                                            class="font-body-sm text-body-sm text-on-surface-variant text-center">{{ __('Klik untuk memilih gambar bukti transfer (JPG/PNG, maks 4MB)') }}</span>
-                                        <img id="preview-bukti" alt="{{ __('Pratinjau bukti') }}"
-                                            class="hidden max-h-60 w-auto max-w-full object-contain rounded-lg border border-outline-variant bg-surface-container-lowest" />
-                                        <input type="file" name="bukti" id="input-bukti"
-                                            accept="image/jpeg,image/png,image/jpg" class="sr-only" required />
-                                    </label>
-                                    @error('bukti')
-                                        <p class="font-label-sm text-label-sm text-error mt-xs">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div id="btn-actions" class="mt-lg" data-prev-proof="@json((bool) $buktiTerakhir)">
-    <button type="submit" id="btn-unggah"{{ $buktiTerakhir ? ' class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest hidden"' : ' class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest"' }}>
-        <span class="material-symbols-outlined text-[20px]" id="btn-unggah-icon">task_alt</span>
-        <span id="btn-unggah-text">{{ __('Unggah Bukti Pembayaran') }}</span>
-    </button>
-
-    <div id="btn-pair" class="{{ $buktiTerakhir ? 'grid grid-cols-2 gap-sm' : 'grid grid-cols-2 gap-sm hidden' }}">
-        <button type="button" id="btn-ganti"
-            class="w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest border border-outline text-on-surface hover:bg-surface-container-high transition-colors">
-            <span class="material-symbols-outlined text-[20px]">photo_camera_back</span>
-            <span>{{ __('Ganti') }}</span>
-        </button>
-
-        <button type="submit" id="btn-selesai"
-            class="btn-gold w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
-            <span class="material-symbols-outlined text-[20px]">check_circle</span>
-            <span>{{ __('Selesai') }}</span>
-        </button>
-    </div>
-</div>
+                                    </div>
                                 </div>
                             </form>
-                            <form id="form-pay-saldo" method="POST"
-                                action="{{ route('customer.checkout.payment.saldo', $checkout->checkout_id) }}"
-                                class="hidden">
-                                @csrf
-                            </form>
+                            <a href="{{ route('customer.checkout.payment', $checkout->checkout_id) }}"
+                                class="mt-lg inline-flex items-center gap-2 font-label-sm text-label-sm uppercase tracking-wider text-secondary hover:underline">
+                                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                                <span>{{ __('Kembali ke pilihan metode') }}</span>
+                            </a>
                         </div>
                     </div>
 
@@ -1435,11 +1287,19 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                         <div class="detail-row">
                             <span>{{ __('Metode') }}</span>
                             <div class="text-right">
-                                <strong id="rincian-metode"
-                                    class="block">{{ $payment->paymentMethod?->nama_metode ?? '—' }}</strong>
+                                <strong id="rincian-metode" class="block">{{ __('Saldo Akun + â€”') }}</strong>
                                 <span id="rincian-akun"
                                     class="block text-xs text-on-surface-variant font-normal mt-0.5">{{ $payment->account?->nama ?? '' }}</span>
                             </div>
+                        </div>
+                        <div class="detail-row">
+                            <span>{{ __('Dibayar Saldo') }}</span>
+                            <strong>Rp {{ number_format($saldoCust, 0, ',', '.') }}</strong>
+                        </div>
+                        <div class="detail-row">
+                            <span>{{ __('Sisa Transfer') }}</span>
+                            <strong class="text-[var(--chrome-accent)]">Rp
+                                {{ number_format($sisaBayar, 0, ',', '.') }}</strong>
                         </div>
                         <div class="detail-row">
                             <span>{{ __('Total Dibayar') }}</span>
@@ -1448,7 +1308,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                         </div>
                         <div class="detail-row">
                             <span>{{ __('Batas Waktu') }}</span>
-                            <strong>{{ $payment->batas_waktu?->format('d M Y, H:i') ?? '—' }}</strong>
+                            <strong>{{ $payment->batas_waktu?->format('d M Y, H:i') ?? 'â€”' }}</strong>
                         </div>
                         <div class="detail-row">
                             <span>{{ __('Status') }}</span>
@@ -1462,7 +1322,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                     ">{{ $payment->status }}</span>
                         </div>
                         <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-md">
-                            {{ __('Transfer sesuai total di atas, lalu unggah bukti pembayaran untuk diverifikasi admin.') }}
+                            {{ __('Transfer sisa di atas, lalu unggah bukti pembayaran untuk diverifikasi admin.') }}
                         </p>
                         @if ($checkout->email_pelanggan)
                             <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">
@@ -1493,7 +1353,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                     class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
                                     {{ __('Metode Pembayaran') }}</p>
                                 <p class="font-body-lg text-body-lg font-semibold text-on-surface mt-xs">
-                                    {{ $payment->paymentMethod?->nama_metode ?? '—' }}</p>
+                                    {{ $payment->paymentMethod?->nama_metode ?? 'â€”' }}</p>
                             </div>
                             <div class="border border-outline-variant rounded-lg p-md">
                                 <p
@@ -1507,11 +1367,16 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                     class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
                                     {{ __('Batas Waktu') }}</p>
                                 <p class="font-body-lg text-body-lg font-semibold text-on-surface mt-xs">
-                                    {{ $payment->batas_waktu?->format('d M Y, H:i') ?? '—' }}</p>
+                                    {{ $payment->batas_waktu?->format('d M Y, H:i') ?? 'â€”' }}</p>
                             </div>
                         </div>
                         <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-lg">
                             {{ __('Menunggu verifikasi admin. Kamu akan mendapat notifikasi bila disetujui.') }}</p>
+                        <a href="{{ route('customer.checkout.payment', $checkout->checkout_id) }}"
+                            class="mt-md inline-flex items-center gap-2 font-label-sm text-label-sm uppercase tracking-wider text-secondary hover:underline">
+                            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                            <span>{{ __('Kembali') }}</span>
+                        </a>
                     </div>
                     <div
                         class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up lg:sticky lg:top-20">
@@ -1526,7 +1391,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                 @endforeach
                             </span></div>
                         <div class="detail-row"><span>{{ __('Metode') }}</span><strong
-                                class="text-right">{{ $payment->paymentMethod?->nama_metode ?? '—' }}</strong></div>
+                                class="text-right">{{ $payment->paymentMethod?->nama_metode ?? 'â€”' }}</strong></div>
                         <div class="detail-row"><span>{{ __('Total') }}</span><strong
                                 class="text-[var(--chrome-accent)]">Rp
                                 {{ number_format((float) $payment->jumlah, 0, ',', '.') }}</strong></div>
@@ -1539,44 +1404,6 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
 
         </div>
     </main>
-
-    <div id="modal-saldo-confirm" class="hidden fixed inset-0 z-[100] bg-black/50 backdrop-blur-[2px] flex items-center justify-center p-md">
-        <div
-            class="w-full max-w-sm bg-surface-container-lowest border border-[var(--border-soft)] rounded-2xl card-premium overflow-hidden">
-            <div class="p-md md:p-lg">
-                <div class="flex items-start gap-3 mb-md">
-                    <span
-                        class="shrink-0 w-11 h-11 rounded-full bg-secondary/10 inline-flex items-center justify-center">
-                        <span class="material-symbols-outlined text-[22px] text-secondary">account_balance_wallet</span>
-                    </span>
-                    <div class="min-w-0 pt-0.5">
-                        <p class="font-body-md text-body-md font-bold text-on-surface">{{ __('Bayar dengan Saldo Akun') }}</p>
-                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
-                            {{ __('Bayar') }}
-                            <strong class="font-semibold text-[var(--chrome-accent)]">Rp {{ number_format((float) $payment->jumlah, 0, ',', '.') }}</strong>
-                            {{ __('pakai saldo akun?') }}
-                        </p>
-                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
-                            {{ __('Sisa saldo') }}:
-                            <strong class="font-semibold text-[var(--chrome-accent)]">Rp {{ number_format(max(0, $saldoCust - (float) $payment->jumlah), 0, ',', '.') }}</strong>
-                        </p>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-sm">
-                    <button type="button" data-confirm-cancel
-                        class="h-12 w-full inline-flex items-center justify-center gap-2 px-sm rounded-full font-label-caps text-label-caps uppercase tracking-widest border border-outline text-on-surface hover:bg-surface-container-high transition-colors">
-                        <span class="material-symbols-outlined text-[18px]">close</span>
-                        <span>{{ __('Cancel') }}</span>
-                    </button>
-                    <button type="button" data-confirm-ok
-                        class="h-12 w-full inline-flex items-center justify-center gap-2 px-sm rounded-full font-label-caps text-label-caps uppercase tracking-widest bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
-                        <span class="material-symbols-outlined text-[18px]">check</span>
-                        <span>{{ __('Oke') }}</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     @include('customer._partials.drawer')
 
@@ -1600,28 +1427,16 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var grid = document.getElementById('pay-grid');
             var input = document.getElementById('input-payment-method');
             var accountInput = document.getElementById('input-account-id');
             var rincian = document.getElementById('rincian-metode');
             var rincianAkun = document.getElementById('rincian-akun');
             var hint = document.getElementById('pay-selected-hint');
             var panelBukti = document.getElementById('panel-bukti');
-
-
-            var showPanel = function(kode) {
-                document.querySelectorAll('.method-detail').forEach(function(p) {
-                    p.classList.add('hidden');
-                });
-                var panel = document.getElementById('detail-' + kode);
-                if (panel) panel.classList.remove('hidden');
-                var wrap = document.getElementById('pay-detail');
-                if (wrap) wrap.classList.remove('hidden');
-            };
-
-            var proofs = {};
-            var currentKode = null;
-            var toastShown = {};
+            var splitPayGrid = document.getElementById('split-pay-grid');
+            var splitDetail = document.getElementById('split-detail');
+            var splitKode = null;
+            var splitAccountId = null;
 
             var showBukti = function() {
                 if (!panelBukti) return;
@@ -1637,12 +1452,72 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                 panelBukti.classList.remove('carpet-down');
             };
 
-            var assignFile = function(file) {
-                if (!fileInput) return;
-                if (!file) {
-                    fileInput.value = '';
+            var selectSplitMethod = function(el) {
+                if (splitPayGrid) {
+                    splitPayGrid.querySelectorAll('.split-method').forEach(function(o) { o.classList.remove('selected'); });
+                }
+                el.classList.add('selected');
+                splitKode = el.getAttribute('data-kode');
+                var nama = el.getAttribute('data-nama') || '';
+                if (input) input.value = el.getAttribute('data-id');
+                if (accountInput) accountInput.value = '';
+                if (rincian) rincian.textContent = 'Saldo Akun + ' + nama;
+                if (rincianAkun) rincianAkun.textContent = '';
+                if (hint) hint.textContent = 'Metode terpilih: Saldo Akun + ' + nama;
+                splitAccountId = null;
+                if (splitDetail) {
+                    splitDetail.querySelectorAll('.split-account-grid').forEach(function(g) { g.classList.add('hidden'); });
+                    var pan = splitDetail.querySelector('#split-account-grid-' + splitKode);
+                    if (pan) pan.classList.remove('hidden');
+                    splitDetail.classList.remove('hidden');
+                }
+                if (splitKode === 'qris') {
+                    var autoAcc = el.getAttribute('data-account-id');
+                    if (autoAcc) {
+                        splitAccountId = autoAcc;
+                        if (accountInput) accountInput.value = autoAcc;
+                        if (rincianAkun) rincianAkun.textContent = el.getAttribute('data-account-nama') || '';
+                    }
+                }
+                syncBukti();
+            };
+
+            var selectSplitAccount = function(opt) {
+                var ewGrid = opt.closest('.ew-accounts-grid');
+                if (opt.classList.contains('selected')) {
+                    opt.classList.add('closing');
+                    setTimeout(function() {
+                        opt.classList.remove('selected', 'closing');
+                        var w = opt.closest('.ew-card-wrap');
+                        if (w) w.classList.remove('ew-active');
+                        if (ewGrid) ewGrid.classList.remove('ew-expanded');
+                        splitAccountId = null;
+                        if (accountInput) accountInput.value = '';
+                        if (rincianAkun) rincianAkun.textContent = '';
+                        syncBukti();
+                    }, 200);
                     return;
                 }
+                if (ewGrid) {
+                    ewGrid.querySelectorAll('.ew-card-wrap').forEach(function(w) { w.classList.remove('ew-active'); });
+                    ewGrid.querySelectorAll('.account-opt-ew').forEach(function(o) { o.classList.remove('selected', 'closing'); });
+                }
+                var wrap = opt.closest('.ew-card-wrap');
+                if (wrap) wrap.classList.add('ew-active');
+                opt.classList.add('selected');
+                if (ewGrid) ewGrid.classList.add('ew-expanded');
+                splitAccountId = opt.getAttribute('data-account-id');
+                if (accountInput) accountInput.value = splitAccountId;
+                if (rincianAkun) rincianAkun.textContent = opt.getAttribute('data-nama') || '';
+                syncBukti();
+            };
+
+            var proofs = {};
+            var currentKode = null;
+
+            var assignFile = function(file) {
+                if (!fileInput) return;
+                if (!file) { fileInput.value = ''; return; }
                 var dt = new DataTransfer();
                 dt.items.add(file);
                 fileInput.files = dt.files;
@@ -1672,161 +1547,40 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             };
 
             var syncBukti = function() {
-                var sel = grid ? grid.querySelector('.pay-method.selected') : null;
-                if (!sel) { hideBukti(); return; }
-                var kode = sel.getAttribute('data-kode');
-                currentKode = kode;
-                if (kode === 'saldo_akun') {
+                if (!splitKode) { hideBukti(); return; }
+                if (splitKode === 'qris') { applyProofUi('split'); showBukti(); return; }
+                if (splitKode === 'ewallet' || splitKode === 'bank_transfer') {
+                    if (splitAccountId) { applyProofUi('split'); showBukti(); return; }
                     hideBukti();
                     return;
                 }
-                if (kode === 'qris') { applyProofUi(kode); showBukti(); return; }
-                if (kode === 'ewallet' || kode === 'bank_transfer') {
-                    var gridEl = document.getElementById('grid-' + kode);
-                    var selAcc = gridEl ? gridEl.querySelector('.account-opt-ew.selected') : null;
-                    if (selAcc) { applyProofUi(kode); showBukti(); return; }
-                    hideBukti();
-                    return;
-                }
-                applyProofUi(kode);
+                applyProofUi('split');
                 showBukti();
             };
 
-            var showToast = function(msg, dur) {
-                var existing = document.getElementById('pay-toast');
-                if (existing) existing.remove();
-                var toast = document.createElement('div');
-                toast.id = 'pay-toast';
-                toast.textContent = msg;
-                toast.style.cssText = 'position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#1c1b1b;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-family:Manrope,sans-serif;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;transition:opacity .3s ease;';
-                document.body.appendChild(toast);
-                requestAnimationFrame(function() { toast.style.opacity = '1'; });
-                setTimeout(function() { toast.style.opacity = '0'; setTimeout(function() { toast.remove(); }, 350); }, dur || 1800);
-            };
-
-            var updateAccountDetail = function(opt) {
-                var panelKode = opt.getAttribute('data-panel');
-                var namaEl = document.getElementById('account-detail-nama-' + panelKode);
-                var rekEl = document.getElementById('account-detail-rekening-' + panelKode);
-                var pemEl = document.getElementById('account-detail-pemilik-' + panelKode);
-                var wrap = document.getElementById('account-detail-' + panelKode);
-                if (namaEl) namaEl.textContent = opt.getAttribute('data-nama') || '';
-                if (rekEl) rekEl.textContent = 'Rekening/Nomor: ' + (opt.getAttribute('data-rekening') || '-');
-                if (pemEl) pemEl.textContent = 'Atas nama: ' + (opt.getAttribute('data-pemilik') || '-');
-                if (wrap) wrap.classList.remove('hidden');
-            };
-
-            var selectAccount = function(opt) {
-    if (opt.classList.contains('account-opt-ew')) {
-        var wrap = opt.closest('.ew-card-wrap');
-        var ewGrid = opt.closest('.ew-accounts-grid');
-        var isAlreadySelected = opt.classList.contains('selected');
-
-        // Jika diklik kembali -> Jalankan animasi bubble tertutup
-        if (isAlreadySelected) {
-            opt.classList.add('closing');
-            
-            setTimeout(function() {
-                opt.classList.remove('selected', 'closing');
-                if (wrap) wrap.classList.remove('ew-active');
-                if (ewGrid) ewGrid.classList.remove('ew-expanded');
-                if (accountInput) accountInput.value = '';
-                if (rincianAkun) rincianAkun.textContent = '';
-                syncBukti();
-            }, 200); // Penundaan sejenak mengikuti durasi animasi closing
-            return;
-        }
-
-        // Reset semua kartu lain dalam grid yang sama
-        if (ewGrid) {
-            ewGrid.querySelectorAll('.ew-card-wrap').forEach(function(w) {
-                w.classList.remove('ew-active');
-            });
-            ewGrid.querySelectorAll('.account-opt-ew').forEach(function(o) {
-                o.classList.remove('selected', 'closing');
-            });
-        }
-
-        var kodeMet = opt.getAttribute('data-panel');
-
-        // Tampilkan kartu yang diklik dengan animasi mekar
-        if (wrap) wrap.classList.add('ew-active');
-        opt.classList.add('selected');
-        if (ewGrid) ewGrid.classList.add('ew-expanded');
-
-        if (accountInput) accountInput.value = opt.getAttribute('data-account-id');
-        if (rincianAkun) rincianAkun.textContent = opt.getAttribute('data-nama') || '';
-        syncBukti();
-        if (kodeMet && !toastShown[kodeMet]) {
-            toastShown[kodeMet] = true;
-            showToast('Klik lagi untuk mengganti metode pembayaran.', 5000);
-        }
-        return;
-                } else {
-                    document.querySelectorAll('.account-opt').forEach(function(o) {
-                        o.classList.remove('border-secondary', 'bg-secondary/5', 'ring-1', 'ring-secondary/20');
-                    });
-                    opt.classList.add('border-secondary', 'bg-secondary/5', 'ring-1', 'ring-secondary/20');
-                }
-                if (accountInput) accountInput.value = opt.getAttribute('data-account-id');
-                if (rincianAkun) rincianAkun.textContent = opt.getAttribute('data-nama') || '';
-                updateAccountDetail(opt);
-                syncBukti();
-            };
-
-            var selectMethod = function(el) {
-                if (grid) {
-                    grid.querySelectorAll('.pay-method').forEach(function(o) {
-                        o.classList.remove('selected');
-                    });
-                    el.classList.add('selected');
-                }
-                if (input) input.value = el.getAttribute('data-id');
-                if (rincian) rincian.textContent = el.getAttribute('data-nama') || '—';
-                if (hint) hint.textContent = 'Metode terpilih: ' + (el.getAttribute('data-nama') || '');
-                var kode = el.getAttribute('data-kode');
-                if (kode) {
-                    showPanel(kode);
-                    var autoAcc = el.getAttribute('data-account-id');
-                    if (autoAcc && accountInput) accountInput.value = autoAcc;
-                    syncBukti();
-                }
-            };
-
-            if (grid && input) {
-                grid.querySelectorAll('.pay-method').forEach(function(el) {
-                    el.addEventListener('click', function() { selectMethod(el); });
+            if (splitPayGrid) {
+                splitPayGrid.querySelectorAll('.split-method').forEach(function(el) {
+                    el.addEventListener('click', function() { selectSplitMethod(el); });
+                });
+            }
+            if (splitDetail) {
+                splitDetail.querySelectorAll('.account-opt-ew').forEach(function(opt) {
+                    opt.addEventListener('click', function() { selectSplitAccount(opt); });
                 });
             }
 
-            document.querySelectorAll('.account-opt').forEach(function(opt) {
-                opt.addEventListener('click', function() { selectAccount(opt); });
-            });
-
             (function() {
-                var sel = grid ? grid.querySelector('.pay-method.selected') : null;
-                if (!sel) return;
-                var kode = sel.getAttribute('data-kode');
-                if (kode) {
-                    showPanel(kode);
-                    if (kode === 'saldo_akun') { syncBukti(); return; }
-                    if (kode === 'qris') {
-                        var autoAcc = sel.getAttribute('data-account-id');
-                        if (autoAcc && accountInput && !accountInput.value) accountInput.value = autoAcc;
-                    } else if (kode === 'ewallet' || kode === 'bank_transfer') {
-                        var gridEl = document.getElementById('grid-' + kode);
-                        var selEw = gridEl ? gridEl.querySelector('.account-opt-ew.selected') : null;
-                        if (selEw) {
-                            var parentWrap = selEw.closest('.ew-card-wrap');
-                            if (parentWrap) parentWrap.classList.add('ew-active');
-                            if (gridEl) gridEl.classList.add('ew-expanded');
-                            if (accountInput && !accountInput.value) accountInput.value = selEw.getAttribute('data-account-id');
-                        }
-                    } else {
-                        var selOpt = document.querySelector('#grid-' + kode + ' .account-opt.ring-1');
-                        if (selOpt) updateAccountDetail(selOpt);
+                if (!splitPayGrid || !input || !input.value) return;
+                var pre = splitPayGrid.querySelector('.split-method[data-id="' + input.value + '"]');
+                if (pre) {
+                    selectSplitMethod(pre);
+                    if (accountInput && accountInput.value && splitDetail) {
+                        var acc = splitDetail.querySelector('.account-opt-ew[data-account-id="' + accountInput.value + '"]');
+                        if (acc) selectSplitAccount(acc);
                     }
-                    syncBukti();
+                } else if (splitPayGrid.querySelector('.split-method.selected')) {
+                    var sel = splitPayGrid.querySelector('.split-method.selected');
+                    selectSplitMethod(sel);
                 }
             })();
 
@@ -1838,7 +1592,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             var btnUnggah = document.getElementById('btn-unggah');
             var btnPair = document.getElementById('btn-pair');
             var btnGanti = document.getElementById('btn-ganti');
-var btnActions = document.getElementById('btn-actions');
+            var btnActions = document.getElementById('btn-actions');
             var hasPrevProof = btnActions ? btnActions.getAttribute('data-prev-proof') === 'true' : false;
 
             var showSingle = function() {
@@ -1861,7 +1615,7 @@ var btnActions = document.getElementById('btn-actions');
 
             if (fileInput) {
                 fileInput.addEventListener('change', function() {
-                    var kode = currentKode;
+                    var kode = currentKode || 'split';
                     if (fileInput.files && fileInput.files[0]) {
                         var f = fileInput.files[0];
                         if (proofs[kode] && proofs[kode].url) URL.revokeObjectURL(proofs[kode].url);
@@ -1911,60 +1665,17 @@ var btnActions = document.getElementById('btn-actions');
                     var v = input ? input.value : '';
                     if (!v) {
                         e.preventDefault();
-                        alert('Pilih metode pembayaran terlebih dahulu.');
-                        if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        alert('Pilih metode pembayaran kedua terlebih dahulu.');
+                        if (splitPayGrid) splitPayGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         return;
                     }
-                    var selM = grid ? grid.querySelector('.pay-method.selected') : null;
-                    if (selM) {
-                        var kodeM = selM.getAttribute('data-kode');
-                        if ((kodeM === 'ewallet' || kodeM === 'bank_transfer') && accountInput && !accountInput.value) {
-                            e.preventDefault();
-                            alert('Pilih akun/tujuan pembayaran terlebih dahulu.');
-                            return;
-                        }
+                    if ((splitKode === 'ewallet' || splitKode === 'bank_transfer') && accountInput && !accountInput.value) {
+                        e.preventDefault();
+                        alert('Pilih akun/tujuan pembayaran sisa terlebih dahulu.');
+                        return;
                     }
                 });
             }
-
-            var formSaldo = document.getElementById('form-pay-saldo');
-            var modalConfirm = document.getElementById('modal-saldo-confirm');
-            var btnConfirmOk = modalConfirm ? modalConfirm.querySelector('[data-confirm-ok]') : null;
-            var btnConfirmCancel = modalConfirm ? modalConfirm.querySelector('[data-confirm-cancel]') : null;
-
-            var openSaldoConfirm = function() {
-                if (modalConfirm) modalConfirm.classList.remove('hidden');
-            };
-            var closeSaldoConfirm = function() {
-                if (modalConfirm) modalConfirm.classList.add('hidden');
-            };
-
-            if (formSaldo) {
-                formSaldo.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    openSaldoConfirm();
-                });
-            }
-            if (btnConfirmOk) {
-                btnConfirmOk.addEventListener('click', function() {
-                    closeSaldoConfirm();
-                    if (formSaldo && !btnConfirmOk.disabled) {
-                        btnConfirmOk.disabled = true;
-                        formSaldo.submit();
-                    }
-                });
-            }
-            if (btnConfirmCancel) {
-                btnConfirmCancel.addEventListener('click', closeSaldoConfirm);
-            }
-            if (modalConfirm) {
-                modalConfirm.addEventListener('click', function(e) {
-                    if (e.target === modalConfirm) closeSaldoConfirm();
-                });
-            }
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && modalConfirm && !modalConfirm.classList.contains('hidden')) closeSaldoConfirm();
-            });
         });
     </script>
 
