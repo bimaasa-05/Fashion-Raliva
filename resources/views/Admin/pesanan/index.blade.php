@@ -458,7 +458,12 @@
             <div class="grid grid-cols-[110px_1fr] gap-3">
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Satuan</label>
-                    <input type="text" name="bahan[${idx}][satuan]" required class="raliva-input w-full" placeholder="m, kg, pcs" />
+                    <select name="bahan[${idx}][satuan]" required class="raliva-select w-full">
+                        <option value="">— Satuan —</option>
+                        @foreach (\App\Models\ProductionOrderBahan::SATUAN as $st)
+                            <option value="{{ $st }}">{{ $st }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Catatan</label>
@@ -485,8 +490,8 @@
             textInput.value = b.nama_bahan;
             const namaInput = row.querySelector('input[name$="[nama_bahan]"]');
             if (namaInput && !namaInput.value) namaInput.value = b.nama_bahan;
-            const satuanInput = row.querySelector('input[name$="[satuan]"]');
-            if (satuanInput && !satuanInput.value) satuanInput.value = b.satuan;
+            const satuanInput = row.querySelector('[name$="[satuan]"]');
+            if (satuanInput && !satuanInput.value && satuanInput.querySelector(`option[value="${b.satuan}"]`)) satuanInput.value = b.satuan;
         } else {
             hiddenInput.value = '';
         }
