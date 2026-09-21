@@ -454,9 +454,25 @@
             <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2">{{ __('Metode') }}</p>
             <p class="font-body-md text-body-md text-on-surface font-semibold">{{ $payInfo->paymentMethod?->nama_metode ?? __('Belum dipilih') }}</p>
             @if ($payInfo->account)
+                @php
+                    $otBrandIcons = [
+                        'dana' => 'images/E-Wallet/dana.png',
+                        'gopay' => 'images/E-Wallet/gopay.jpg',
+                        'ovo' => 'images/E-Wallet/ovo.png',
+                        'shopeepay' => 'images/E-Wallet/shoopepay.jfif',
+                        'bca' => 'images/Bank/bca.png',
+                        'bri' => 'images/Bank/bri.png',
+                        'bni' => 'images/Bank/bni.png',
+                        'mandiri' => 'images/Bank/mandiri.png',
+                    ];
+                    $otFgPath = $payInfo->account->file_gambar ? ltrim($payInfo->account->file_gambar, '/') : null;
+                    $otAccountImg = ($otFgPath && \Illuminate\Support\Facades\Storage::disk('public')->exists($otFgPath))
+                        ? asset('storage/' . $otFgPath)
+                        : (isset($otBrandIcons[$payInfo->account->kode ?? '']) ? asset($otBrandIcons[$payInfo->account->kode]) : null);
+                @endphp
                 <div class="flex items-center gap-sm mt-sm">
-                    @if ($payInfo->account->file_gambar)
-                        <img src="{{ asset('storage/' . ltrim($payInfo->account->file_gambar, '/')) }}" alt="{{ $payInfo->account->nama }}" class="h-8 object-contain rounded border border-outline-variant bg-white" />
+                    @if ($otAccountImg)
+                        <img src="{{ $otAccountImg }}" alt="{{ $payInfo->account->nama }}" class="h-8 object-contain rounded border border-outline-variant bg-white" />
                     @endif
                     <div class="min-w-0">
                         <p class="font-body-sm text-body-sm text-on-surface">{{ $payInfo->account->nama }}</p>
