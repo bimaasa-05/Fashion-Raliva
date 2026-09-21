@@ -104,7 +104,8 @@
 
         <!-- Penugasan & Akses -->
         <section class="rise rise-d3">
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium profil-card p-6 md:p-8">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium profil-card p-6 md:p-8 relative overflow-hidden">
+                <span class="card-watermark material-symbols-outlined fill absolute -right-5 -bottom-7 text-[120px] text-gold-accent/[0.05]" aria-hidden="true">warehouse</span>
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 rounded-lg icon-tile flex items-center justify-center shrink-0">
                         <span class="material-symbols-outlined text-[22px]">assignment_ind</span>
@@ -115,8 +116,8 @@
                     </div>
                 </div>
                 <dl class="space-y-5 font-body-md text-sm">
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Toko</dt><dd class="text-on-surface font-bold text-right">{{ $warehouse?->store?->nama_toko ?? '-' }}</dd></div>
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border items-start">
+                    <div class="profil-row flex justify-between gap-4 pb-4"><dt class="text-on-surface-variant shrink-0">Toko</dt><dd class="text-on-surface font-bold text-right">{{ $warehouse?->store?->nama_toko ?? '-' }}</dd></div>
+                    <div class="profil-row flex justify-between gap-4 pb-4 items-start">
                         <dt class="text-on-surface-variant shrink-0">Gudang Ditugaskan</dt>
                         <dd>
                             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface text-xs font-bold border border-outline-variant whitespace-nowrap">
@@ -130,13 +131,13 @@
                 </dl>
                 <div class="flex flex-wrap gap-2">
                     @foreach ([['inventory_2', 'Melihat Stok'], ['archive', 'Catat Barang Masuk'], ['unarchive', 'Catat Barang Keluar'], ['swap_horiz', 'Pindah Stok'], ['fact_check', 'Periksa Stok'], ['report', 'Lapor Rusak'], ['history', 'Lihat Riwayat']] as $perm)
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low border border-muted-border text-on-surface-variant font-label-sm text-[11px]">
-                            <span class="material-symbols-outlined text-[14px] text-secondary">{{ $perm[0] }}</span>
+                        <span class="chip-premium">
+                            <span class="material-symbols-outlined text-[14px]">{{ $perm[0] }}</span>
                             {{ $perm[1] }}
                         </span>
                     @endforeach
                 </div>
-                <p class="text-xs text-on-surface-variant mt-5 flex items-start gap-2">
+                <p class="profil-footnote text-xs text-on-surface-variant mt-5 flex items-start gap-2">
                     <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">lock</span>
                     Role, toko, dan penugasan gudang hanya dapat diubah oleh Super Admin atau Owner.
                 </p>

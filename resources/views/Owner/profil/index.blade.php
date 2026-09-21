@@ -114,7 +114,8 @@
 
         <!-- Toko yang Dimiliki & Hak Akses -->
         <section class="rise rise-d3">
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium profil-card p-6 md:p-8">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium profil-card p-6 md:p-8 relative overflow-hidden">
+                <span class="card-watermark material-symbols-outlined fill absolute -right-5 -bottom-7 text-[120px] text-gold-accent/[0.05]" aria-hidden="true">storefront</span>
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 rounded-lg icon-tile flex items-center justify-center shrink-0">
                         <span class="material-symbols-outlined text-[22px]">storefront</span>
@@ -125,16 +126,16 @@
                     </div>
                 </div>
                 @if($ownedStores->isEmpty())
-                    <div class="border border-dashed border-muted-border rounded-lg px-4 py-8 text-center">
-                        <span class="material-symbols-outlined text-[32px] text-on-surface-variant">store</span>
+                    <div class="state-empty">
+                        <span class="material-symbols-outlined text-[32px] ice">store</span>
                         <p class="text-on-surface-variant text-sm mt-2">Belum memiliki toko.</p>
-                        <a href="{{ route('owner.pengajuan-toko') }}" class="inline-flex mt-3 px-4 py-2 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium">Ajukan Toko Sekarang</a>
+                        <a href="{{ route('owner.pengajuan-toko') }}" class="inline-flex mt-3 px-4 py-2 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium btn-sheen">Ajukan Toko Sekarang</a>
                     </div>
                 @else
                     @foreach ($ownedStores as $toko)
-                        <div class="border border-muted-border rounded-lg px-4 py-4 flex items-center justify-between gap-3 {{ !$loop->last ? 'mb-gutter' : '' }} hover:border-gold-accent/40 transition-colors">
+                        <div class="store-row px-4 py-4 flex items-center justify-between gap-3 {{ !$loop->last ? 'mb-gutter' : '' }}">
                             <div class="flex items-center gap-3 min-w-0">
-                                <div class="w-10 h-10 rounded-xl bg-deep-onyx text-on-primary flex items-center justify-center shrink-0">
+                                <div class="store-avatar">
                                     <span class="material-symbols-outlined text-[20px]">storefront</span>
                                 </div>
                                 <div class="min-w-0">
@@ -150,13 +151,13 @@
                 <p class="raliva-label mt-7 mb-4">Hak Akses Owner</p>
                 <div class="flex flex-wrap gap-2">
                     @foreach ([['storefront', 'Kelola Data Toko'], ['fact_check', 'Pengajuan & Verifikasi'], ['storage', 'Kelola Slot'], ['shopping_bag', 'Pantau Pesanan'], ['groups', 'Data Pelanggan'], ['local_offer', 'Promo Toko'], ['account_balance_wallet', 'Saldo & Pencairan'], ['monitoring', 'Laporan Toko'], ['tune', 'Pengaturan Toko']] as $perm)
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low border border-muted-border text-on-surface-variant font-label-sm text-[11px]">
-                            <span class="material-symbols-outlined text-[14px] text-secondary">{{ $perm[0] }}</span>
+                        <span class="chip-premium">
+                            <span class="material-symbols-outlined text-[14px]">{{ $perm[0] }}</span>
                             {{ $perm[1] }}
                         </span>
                     @endforeach
                 </div>
-                <p class="text-xs text-on-surface-variant mt-6 flex items-start gap-2">
+                <p class="profil-footnote text-xs text-on-surface-variant mt-6 flex items-start gap-2">
                     <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">lock</span>
                     Konfigurasi global platform hanya dapat diubah oleh Super Admin.
                 </p>

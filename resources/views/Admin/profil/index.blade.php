@@ -96,17 +96,17 @@
     <!-- Ringkasan Akun -->
     <section class="rise rise-d3">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium p-5 flex flex-col gap-1 relative overflow-hidden">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium mini-stat p-5 flex flex-col gap-1 relative overflow-hidden">
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[56px] text-gold-accent/20 fill pointer-events-none select-none" aria-hidden="true">storefront</span>
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest relative">Toko Ditugaskan</span>
                 <span class="raliva-figure text-[26px] text-on-surface relative">{{ $assignedStores->count() }}</span>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium p-5 flex flex-col gap-1 relative overflow-hidden">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium mini-stat p-5 flex flex-col gap-1 relative overflow-hidden">
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[56px] text-gold-accent/20 fill pointer-events-none select-none" aria-hidden="true">badge</span>
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest relative">Role</span>
                 <span class="raliva-figure text-[26px] text-gold-accent relative break-words">{{ $roleName }}</span>
             </div>
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium p-5 flex flex-col gap-1 relative overflow-hidden">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium mini-stat p-5 flex flex-col gap-1 relative overflow-hidden">
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[56px] text-gold-accent/20 fill pointer-events-none select-none" aria-hidden="true">verified_user</span>
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest relative">Status Akun</span>
                 <span class="raliva-figure text-[26px] text-secondary relative uppercase">{{ $user->status ?? 'aktif' }}</span>
@@ -271,7 +271,8 @@
 
 <!-- Toko yang Ditugaskan -->
 <section class="rise rise-d3 w-full max-w-6xl mx-auto mt-8 lg:mt-10">
-    <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium profil-card p-6 md:p-8">
+    <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium profil-card p-6 md:p-8 relative overflow-hidden">
+        <span class="card-watermark material-symbols-outlined fill absolute -right-5 -bottom-7 text-[120px] text-gold-accent/[0.05]" aria-hidden="true">storefront</span>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg icon-tile flex items-center justify-center shrink-0">
@@ -284,8 +285,8 @@
             </div>
         </div>
         @if($assignedStores->isEmpty())
-            <div class="border border-dashed border-muted-border rounded-lg px-4 py-8 text-center">
-                <span class="material-symbols-outlined text-[32px] text-on-surface-variant">storefront</span>
+            <div class="state-empty">
+                <span class="material-symbols-outlined text-[32px] ice">storefront</span>
                 <p class="text-on-surface-variant text-sm mt-2">Belum ada toko yang ditugaskan untuk Anda.</p>
             </div>
         @else
@@ -303,9 +304,9 @@
                         $store = $assignment->store;
                         $badge = $storeBadgeMap[$store?->status] ?? ['label' => ucfirst($store?->status ?? '-'), 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'];
                     @endphp
-                    <div class="flex items-start justify-between gap-3 p-4 border border-muted-border rounded-lg bg-surface-container-low">
+                    <div class="store-row flex items-start justify-between gap-3 p-4">
                         <div class="flex items-center gap-3 min-w-0">
-                            <div class="w-10 h-10 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center font-label-sm text-label-sm shrink-0">{{ \Illuminate\Support\Str::upper($store?->nama_toko ? \Illuminate\Support\Str::substr($store->nama_toko, 0, 2) : '?') }}</div>
+                            <div class="store-avatar rounded-full">{{ \Illuminate\Support\Str::upper($store?->nama_toko ? \Illuminate\Support\Str::substr($store->nama_toko, 0, 2) : '?') }}</div>
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <p class="font-title-md text-title-md text-on-surface truncate">{{ $store?->nama_toko ?? '-' }}</p>

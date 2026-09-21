@@ -104,7 +104,8 @@
 
         <!-- Role & Workshop -->
         <section class="rise rise-d3">
-            <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium profil-card p-6 md:p-8">
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium profil-card p-6 md:p-8 relative overflow-hidden">
+                <span class="card-watermark material-symbols-outlined fill absolute -right-5 -bottom-7 text-[120px] text-gold-accent/[0.05]" aria-hidden="true">cut</span>
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 rounded-lg icon-tile flex items-center justify-center shrink-0">
                         <span class="material-symbols-outlined text-[22px]">assignment_ind</span>
@@ -115,8 +116,8 @@
                     </div>
                 </div>
                 <dl class="space-y-5 font-body-md text-sm">
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Role</dt><dd class="text-on-surface font-bold text-right">{{ $roleName }}</dd></div>
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border items-start">
+                    <div class="profil-row flex justify-between gap-4 pb-4"><dt class="text-on-surface-variant shrink-0">Role</dt><dd class="text-on-surface font-bold text-right">{{ $roleName }}</dd></div>
+                    <div class="profil-row flex justify-between gap-4 pb-4 items-start">
                         <dt class="text-on-surface-variant shrink-0">Workshop</dt>
                         <dd>
                             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface text-xs font-bold border border-outline-variant whitespace-nowrap">
@@ -126,7 +127,7 @@
                         </dd>
                     </div>
                 </dl>
-                <p class="text-xs text-on-surface-variant mt-5 flex items-start gap-2">
+                <p class="profil-footnote text-xs text-on-surface-variant mt-5 flex items-start gap-2">
                     <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">lock</span>
                     Perubahan role dan penugasan hanya dapat diubah oleh Super Admin.
                 </p>
