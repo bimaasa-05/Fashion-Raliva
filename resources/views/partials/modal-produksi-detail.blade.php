@@ -90,7 +90,13 @@
                         <ul class="space-y-1">
                             @foreach ($o->bahanList as $bahan)
                                 <li class="flex justify-between gap-3 text-on-surface">
-                                    <span>{{ $bahan->nama_bahan }}</span>
+                                    <span>{{ $bahan->nama_bahan }}
+                                        @if ($bahan->isDariProduksi())
+                                            <span class="text-[10px] uppercase text-secondary">(Produksi)</span>
+                                        @else
+                                            <span class="text-[10px] uppercase text-on-surface-variant">(Admin)</span>
+                                        @endif
+                                    </span>
                                     <span class="text-on-surface-variant shrink-0">{{ $bahan->jumlah }} {{ $bahan->satuan }}</span>
                                 </li>
                             @endforeach
