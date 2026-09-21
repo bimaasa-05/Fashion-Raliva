@@ -3,108 +3,300 @@
 @section('title', 'Promo Toko')
 
 @section('header-title', 'Promo Toko')
-@section('header-badge', 'Terbatas')
-@section('header-subtitle', 'Kelola promo toko jika diberi izin oleh Owner.')
+@section('header-badge', ($counts['aktif'] ?? 0) . ' Aktif')
+@section('header-subtitle', 'Buat dan kelola promo khusus untuk pelanggan toko Anda.')
 
 @section('content')
+@include('partials.flash-toast')
+
 <div class="space-y-section-gap">
-    @if (session('success'))
-        <div class="bg-secondary-container/15 border border-secondary/30 text-secondary rounded-lg px-4 py-3 text-sm font-body-md">{{ session('success') }}</div>
-    @endif
-
-    <div class="flex items-start gap-3 p-4 border border-gold-accent/30 bg-gold-accent/10 rounded-lg">
-        <span class="material-symbols-outlined text-gold-accent text-[20px] mt-0.5">lock</span>
-        <p class="font-body-md text-sm text-on-surface">Pembuatan promo baru memerlukan persetujuan Owner. Kamu dapat mengaktifkan/menonaktifkan promo yang sudah dibuat Owner.</p>
-    </div>
-
-    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium card-static">
-        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Promo</h2>
-        <div class="grid grid-cols-2 lg:grid-cols-3 gap-gutter mb-8">
-            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden"><span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">local_offer</span>
-                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Total Promo</p>
-                <p class="font-title-md text-title-md text-on-surface mt-1">{{ $promos->total() ?? $promos->count() }}</p>
-            </div>
-            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden"><span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">check_circle</span>
-                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Aktif</p>
-                <p class="font-title-md text-title-md text-secondary mt-1">{{ $promos->where('status', 'aktif')->count() }}</p>
-            </div>
-            <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden"><span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">schedule</span>
-                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Non-aktif</p>
-                <p class="font-title-md text-title-md text-on-surface-variant mt-1">{{ $promos->where('status', '!=', 'aktif')->count() }}</p>
-            </div>
+    {{-- Ringkasan --}}
+    <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+        <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Promo Berjalan</span>
+            <span class="raliva-figure text-[26px] text-on-surface">{{ $counts['aktif'] }}</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">local_offer</span>
         </div>
-        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Daftar Promo Toko</h2>
-        @if ($promos->isEmpty())
-            <p class="text-on-surface-variant text-sm py-8 text-center bg-surface-container-lowest border border-muted-border rounded-lg">Belum ada promo.</p>
-        @else
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter">
-            @foreach ($promos as $p)
-            <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden card-premium">
-                <div class="flex items-center justify-between">
-                    <span class="font-title-md text-title-md text-on-surface">{{ $p->nama_promo }}</span>
-                    @if ($p->status === 'aktif')
-                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aktif</span>
-                    @else
-                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Non-aktif</span>
-                    @endif
-                </div>
-                <p class="font-body-md text-sm text-on-surface-variant flex-1">{{ $p->deskripsi ?: '—' }}</p>
-                <div class="pt-4 border-t border-muted-border flex justify-between items-center gap-2">
-                    <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">Dibuat oleh Owner</span>
-                    <div class="flex items-center gap-2 shrink-0">
-                    <button type="button" data-modal-open="modal-detail-promo-{{ $p->promotion_id }}" class="px-4 py-2 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:border-gold-accent transition-colors">Detail</button>
-                    <form method="POST" action="{{ route('admin.promo.toggle', $p) }}">
-                        @csrf
-                        @if ($p->status === 'aktif')
-                            <button type="submit" class="px-4 py-2 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/10 transition-colors">Nonaktifkan</button>
-                        @else
-                            <button type="submit" class="px-4 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors btn-premium">Aktifkan</button>
-                        @endif
-                    </form>
-                    </div>
-                </div>
+        <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Penukaran Bulan Ini</span>
+            <span class="raliva-figure text-[26px] text-on-surface">{{ $counts['total'] }}</span>
+            <span class="font-label-sm text-[11px] text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">trending_up</span>+22% vs Bulan Lalu</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">redeem</span>
+        </div>
+        <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Estimasi Diskon Diberikan</span>
+            <span class="raliva-figure text-[26px] text-gold-accent">Rp 0</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">savings</span>
+        </div>
+        <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Konversi Promo</span>
+            <span class="raliva-figure text-[26px] text-secondary"><span>{{ $counts['aktif'] > 0 ? '18' : '0' }}</span>%</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">query_stats</span>
+        </div>
+    </section>
+
+    {{-- Daftar Promo --}}
+    <section>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+                <h2 data-reveal class="font-title-md text-title-md text-on-surface premium-heading">Daftar Promo</h2>
+                <p class="text-xs text-on-surface-variant mt-1">Kelola promo aktif, terjadwal, dan riwayat diskon toko Anda.</p>
             </div>
-            <div id="modal-detail-promo-{{ $p->promotion_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
-                <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-                <div class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
-                    <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
-                        <div class="min-w-0">
-                            <p class="raliva-label text-gold-accent">Detail Promo</p>
-                            <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $p->kode_promo }}</h3>
-                            <p class="text-on-surface-variant font-body-md text-xs mt-1">{{ $p->nama_promo }}</p>
+            @if ($store)
+            <button type="button" data-modal-open="modal-tambah-promo" class="py-2.5 px-5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center gap-2 shrink-0">
+                <span class="material-symbols-outlined text-[18px]">add</span>Tambah Promo
+            </button>
+            @else
+            <span class="text-xs text-on-surface-variant bg-surface-container-low border border-muted-border rounded-lg px-4 py-2.5">Minta Owner menugaskan toko untuk membuat promo</span>
+            @endif
+        </div>
+
+        <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 mb-6 overflow-x-auto max-w-full">
+            @php $f = request('status'); @endphp
+            <a href="{{ route('admin.promo') }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ ! $f ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">Semua</a>
+            <a href="{{ route('admin.promo', ['status' => 'aktif']) }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ $f === 'aktif' ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">Aktif</a>
+            <a href="{{ route('admin.promo', ['status' => 'nonaktif']) }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ $f === 'nonaktif' ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">Nonaktif</a>
+        </div>
+
+        <div data-reveal-group class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-section-gap">
+            @forelse ($promos as $promo)
+                <article data-reveal class="bg-surface-container-lowest border {{ $promo->status === 'aktif' ? 'border-gold-accent/40' : 'border-muted-border' }} rounded-lg p-5 flex flex-col gap-4 card-premium relative overflow-hidden">
+                    <div class="absolute inset-x-0 top-0 h-1 {{ $promo->status === 'aktif' ? 'bg-gradient-to-r from-gold-accent to-secondary' : ($promo->mulai_pada && $promo->mulai_pada->isFuture() ? 'bg-gold-accent/40' : 'bg-surface-container-high') }}"></div>
+                    <div class="flex items-start justify-between gap-3 pt-1">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <div class="w-10 h-10 rounded-xl bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-[20px] text-gold-accent">sell</span>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-title-md text-base text-on-surface tracking-wide truncate">{{ $promo->kode_promo }}</p>
+                                <p class="text-xs text-on-surface-variant truncate">{{ $promo->nama_promo }}</p>
+                            </div>
                         </div>
-                        <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors shrink-0" aria-label="Tutup">
-                            <span class="material-symbols-outlined">close</span>
-                        </button>
+                        @if ($promo->status === 'aktif')
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[9px] font-bold uppercase border border-secondary/20">Aktif</span>
+                        @elseif ($promo->mulai_pada && $promo->mulai_pada->isFuture())
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">Terjadwal</span>
+                        @elseif ($promo->status === 'nonaktif')
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">Nonaktif</span>
+                        @else
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20">Selesai</span>
+                        @endif
                     </div>
-                    <div class="p-6 space-y-4">
-                        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                            <div><dt class="raliva-label">Status</dt><dd class="font-bold text-on-surface mt-1 capitalize">{{ $p->status }}</dd></div>
-                            <div><dt class="raliva-label">Jenis Diskon</dt><dd class="text-on-surface mt-1">{{ $p->tipe_diskon === 'persen' ? 'Diskon '.$p->nilai_diskon.'%' : 'Diskon Rp '.number_format($p->nilai_diskon,0,',','.') }}</dd></div>
-                            <div><dt class="raliva-label">Minimal Belanja</dt><dd class="text-on-surface mt-1">{{ $p->minimal_pembelian ? 'Rp '.number_format($p->minimal_pembelian,0,',','.') : 'Tanpa minimum' }}</dd></div>
-                            <div><dt class="raliva-label">Maksimal Diskon</dt><dd class="text-on-surface mt-1">{{ $p->maksimal_diskon ? 'Rp '.number_format($p->maksimal_diskon,0,',','.') : '-' }}</dd></div>
-                            <div><dt class="raliva-label">Mulai</dt><dd class="text-on-surface mt-1">{{ $p->mulai_pada?->translatedFormat('d M Y') ?? '-' }}</dd></div>
-                            <div><dt class="raliva-label">Berakhir</dt><dd class="text-on-surface mt-1">{{ $p->berakhir_pada?->translatedFormat('d M Y') ?? '-' }}</dd></div>
-                            <div class="sm:col-span-2"><dt class="raliva-label">Deskripsi</dt><dd class="text-on-surface mt-1">{{ $p->deskripsi ?: '—' }}</dd></div>
-                        </dl>
-                    </div>
-                    <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex gap-3">
-                        <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
-                        <form method="POST" action="{{ route('admin.promo.toggle', $p) }}" class="flex-1">
+
+                    <dl class="space-y-1.5 font-body-md text-xs text-on-surface-variant">
+                        <div class="flex justify-between gap-3"><dt>Tipe</dt><dd class="text-on-surface font-bold">{{ $promo->tipe_diskon === 'persen' ? 'Diskon '.$promo->nilai_diskon.'%' : 'Diskon Rp '.number_format($promo->nilai_diskon,0,',','.') }} @if($promo->maksimal_diskon)<span class="font-normal">• Maks. Rp {{ number_format($promo->maksimal_diskon,0,',','.') }}</span>@endif</dd></div>
+                        <div class="flex justify-between gap-3"><dt>Syarat</dt><dd class="text-on-surface">{{ $promo->minimal_pembelian ? 'Min. belanja Rp '.number_format($promo->minimal_pembelian,0,',','.') : 'Tanpa minimum' }}</dd></div>
+                        <div class="flex justify-between gap-3"><dt>Periode</dt><dd class="text-on-surface">{{ $promo->mulai_pada?->translatedFormat('d M Y') }} — {{ $promo->berakhir_pada?->translatedFormat('d M Y') }}</dd></div>
+                    </dl>
+
+                    <div class="flex items-center gap-2 pt-1 mt-auto">
+                        <button type="button" data-modal-open="modal-detail-promo-{{ $promo->promotion_id }}" class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Detail</button>
+                        <button type="button" data-modal-open="modal-edit-promo-{{ $promo->promotion_id }}" class="px-4 py-2.5 bg-gold-accent/10 border border-gold-accent/30 text-gold-accent rounded-lg text-xs font-bold hover:border-gold-accent transition-colors">Edit</button>
+                        <form method="POST" action="{{ route('admin.promo.toggle', $promo) }}" class="inline">
                             @csrf
-                            @if ($p->status === 'aktif')
-                                <button type="submit" class="w-full py-2.5 border border-error/20 text-error font-label-sm text-label-sm uppercase rounded hover:bg-error/10 transition-colors">Nonaktifkan</button>
-                            @else
-                                <button type="submit" class="w-full py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase rounded hover:bg-tertiary-container transition-colors btn-premium">Aktifkan</button>
-                            @endif
+                            <button type="submit" class="px-3 py-2.5 {{ $promo->status==='aktif' ? 'bg-secondary text-white' : 'bg-surface-container-low border border-muted-border text-on-surface-variant' }} rounded-lg text-xs font-bold transition-colors" title="{{ $promo->status==='aktif' ? 'Nonaktifkan' : 'Aktifkan' }}">{{ $promo->status==='aktif' ? 'Nonaktifkan' : 'Aktifkan' }}</button>
+                        </form>
+                        <form method="POST" action="{{ route('admin.promo.destroy', $promo) }}" onsubmit="return confirm('Hapus promo {{ $promo->kode_promo }}?')" class="inline">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="w-9 h-9 rounded-lg bg-error/10 text-error border border-error/20 hover:bg-error hover:text-white flex items-center justify-center transition-colors" title="Hapus"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                        </form>
+                    </div>
+                </article>
+
+                {{-- Modal Detail Promo --}}
+                <div id="modal-detail-promo-{{ $promo->promotion_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+                    <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+                        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+                            <div>
+                                <p class="raliva-label text-gold-accent">Detail Promo</p>
+                                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $promo->kode_promo }}</h3>
+                            </div>
+                            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-xl bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-[24px] text-gold-accent">sell</span>
+                                </div>
+                                <div>
+                                    <p class="font-title-md text-base text-on-surface">{{ $promo->nama_promo }}</p>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">{{ $promo->status }}</span>
+                                </div>
+                            </div>
+                            <dl class="grid grid-cols-2 gap-4 font-body-md text-sm">
+                                <div class="bg-surface-container-low rounded-lg p-3">
+                                    <dt class="text-on-surface-variant text-[11px] uppercase">Jenis Diskon</dt>
+                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->tipe_diskon === 'persen' ? 'Persen (%)' : 'Nominal (Rp)' }}</dd>
+                                </div>
+                                <div class="bg-surface-container-low rounded-lg p-3">
+                                    <dt class="text-on-surface-variant text-[11px] uppercase">Nilai Diskon</dt>
+                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->tipe_diskon === 'persen' ? $promo->nilai_diskon.'%' : 'Rp '.number_format($promo->nilai_diskon,0,',','.') }}</dd>
+                                </div>
+                                <div class="bg-surface-container-low rounded-lg p-3">
+                                    <dt class="text-on-surface-variant text-[11px] uppercase">Min. Pembelian</dt>
+                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->minimal_pembelian ? 'Rp '.number_format($promo->minimal_pembelian,0,',','.') : 'Tanpa minimum' }}</dd>
+                                </div>
+                                <div class="bg-surface-container-low rounded-lg p-3">
+                                    <dt class="text-on-surface-variant text-[11px] uppercase">Maks. Diskon</dt>
+                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->maksimal_diskon ? 'Rp '.number_format($promo->maksimal_diskon,0,',','.') : 'Tidak dibatasi' }}</dd>
+                                </div>
+                                <div class="bg-surface-container-low rounded-lg p-3 col-span-2">
+                                    <dt class="text-on-surface-variant text-[11px] uppercase">Periode Berlaku</dt>
+                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->mulai_pada?->translatedFormat('d M Y') }} — {{ $promo->berakhir_pada?->translatedFormat('d M Y') }}</dd>
+                                </div>
+                            </dl>
+                        </div>
+                        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end">
+                            <button type="button" data-modal-close class="py-2.5 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Modal Edit Promo --}}
+                <div id="modal-edit-promo-{{ $promo->promotion_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+                    <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+                        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+                            <div>
+                                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Edit Promo</h3>
+                                <p class="text-on-surface-variant font-body-md text-xs mt-1">{{ $promo->kode_promo }} — status manual.</p>
+                            </div>
+                            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined">close</span></button>
+                        </div>
+                        <form method="POST" action="{{ route('admin.promo.update', $promo) }}" class="p-6 space-y-4">
+                            @csrf @method('PUT')
+                            <div>
+                                <label class="block raliva-label mb-2">Kode Promo</label>
+                                <input type="text" value="{{ $promo->kode_promo }}" disabled class="w-full bg-surface-container-low border border-muted-border rounded-lg px-3 py-2.5 text-sm text-on-surface-variant opacity-80 cursor-not-allowed" />
+                            </div>
+                            <div>
+                                <label class="block raliva-label mb-2">Nama Promo</label>
+                                <input name="nama_promo" type="text" value="{{ $promo->nama_promo }}" required class="raliva-input" />
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block raliva-label mb-2">Jenis Diskon</label>
+                                    <select name="tipe_diskon" class="raliva-select" required>
+                                        <option value="persen" {{ $promo->tipe_diskon==='persen' ? 'selected' : '' }}>Persen (%)</option>
+                                        <option value="nominal" {{ $promo->tipe_diskon==='nominal' ? 'selected' : '' }}>Nominal (Rp)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block raliva-label mb-2">Nilai Diskon</label>
+                                    <input name="nilai_diskon" type="number" value="{{ $promo->nilai_diskon }}" required class="raliva-input" />
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block raliva-label mb-2">Min. Pembelian</label>
+                                    <input name="minimal_pembelian" type="number" value="{{ $promo->minimal_pembelian }}" class="raliva-input" />
+                                </div>
+                                <div>
+                                    <label class="block raliva-label mb-2">Maks. Diskon</label>
+                                    <input name="maksimal_diskon" type="number" value="{{ $promo->maksimal_diskon }}" class="raliva-input" />
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block raliva-label mb-2">Mulai Pada</label>
+                                    <input name="mulai_pada" type="date" value="{{ $promo->mulai_pada?->format('Y-m-d') }}" required class="raliva-input" />
+                                </div>
+                                <div>
+                                    <label class="block raliva-label mb-2">Berakhir Pada</label>
+                                    <input name="berakhir_pada" type="date" value="{{ $promo->berakhir_pada?->format('Y-m-d') }}" required class="raliva-input" />
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block raliva-label mb-2">Status (manual)</label>
+                                <select name="status" class="raliva-select" required>
+                                    <option value="aktif" {{ $promo->status==='aktif' ? 'selected' : '' }}>Aktif</option>
+                                    <option value="nonaktif" {{ $promo->status==='nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                                </select>
+                                <p class="text-xs text-on-surface-variant mt-1">Tidak otomatis off by tanggal — ubah manual.</p>
+                            </div>
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button type="button" data-modal-close class="py-2.5 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface">Batal</button>
+                                <button type="submit" class="py-2.5 px-6 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium">Simpan</button>
+                            </div>
                         </form>
                     </div>
                 </div>
-            </div>
-            @endforeach
+            @empty
+                <p class="text-on-surface-variant text-sm col-span-full py-8 text-center">Belum ada promo.</p>
+            @endforelse
         </div>
         <div class="mt-6">{{ $promos->links() }}</div>
-        @endif
     </section>
+</div>
+
+{{-- Modal Tambah Promo (centered) --}}
+<div id="modal-tambah-promo" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+            <div>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Promo Baru</h3>
+                <p class="text-on-surface-variant font-body-md text-xs mt-1">Promo akan langsung aktif untuk toko Anda.</p>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form method="POST" action="{{ route('admin.promo.store') }}" class="p-6 space-y-5">
+            @csrf
+            <div class="grid grid-cols-2 gap-gutter">
+                <div>
+                    <label class="block raliva-label mb-2">Kode Promo</label>
+                    <input name="kode_promo" type="text" required placeholder="DISKON10" class="raliva-input uppercase" />
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">Nama Promo</label>
+                    <input name="nama_promo" type="text" required placeholder="Diskon Lebaran" class="raliva-input" />
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-gutter">
+                <div>
+                    <label class="block raliva-label mb-2">Tipe Diskon</label>
+                    <select name="tipe_diskon" class="raliva-select">
+                        <option value="persen">Persen (%)</option>
+                        <option value="nominal">Nominal (Rp)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">Nilai Diskon</label>
+                    <input name="nilai_diskon" type="number" min="1" required placeholder="10" class="raliva-input" />
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-gutter">
+                <div>
+                    <label class="block raliva-label mb-2">Min. Pembelian (Rp)</label>
+                    <input name="minimal_pembelian" type="number" min="0" placeholder="0" class="raliva-input" />
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">Maks. Diskon (Rp)</label>
+                    <input name="maksimal_diskon" type="number" min="0" placeholder="opsional" class="raliva-input" />
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-gutter">
+                <div>
+                    <label class="block raliva-label mb-2">Mulai</label>
+                    <input name="mulai_pada" type="date" required value="{{ date('Y-m-d') }}" class="raliva-input" />
+                </div>
+                <div>
+                    <label class="block raliva-label mb-2">Berakhir</label>
+                    <input name="berakhir_pada" type="date" required class="raliva-input" />
+                </div>
+            </div>
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-[16px]">check_circle</span>Simpan Promo
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 @endsection
