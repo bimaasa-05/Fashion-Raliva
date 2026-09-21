@@ -469,16 +469,19 @@
     .co-rincian-label { font-family:'Manrope',sans-serif; font-size:12px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; white-space:nowrap; }
     .co-rincian-toggle .material-symbols-outlined { font-size:20px; transition: transform .35s ease; }
     .co-rincian-toggle.open .material-symbols-outlined { transform: rotate(180deg); }
-    #co-rincian-grid .co-extra.hidden { display:none; }
-    #co-rincian-grid .co-extra.is-in { animation: co-extra-in .35s ease both; }
-    @keyframes co-extra-in { from { opacity:0; transform:translateY(8px) scale(.98); } to { opacity:1; transform:none; } }
-    @media (prefers-reduced-motion: reduce) { #co-rincian-grid .co-extra.is-in { animation:none; } }
-    /* Item ke-3: selalu tampil di desktop (lg = 3 kolom = 1 baris), disembunyikan di mobile sampai Show more */
-    #co-rincian-grid .co-extra-mobile.is-in { animation: co-extra-in .35s ease both; }
-    @media (max-width: 1023.98px) {
-        #co-rincian-grid .co-extra-mobile.collapsed { display:none; }
+    /* Animasi smooth atas -> bawah per item extra: tinggi diukur JS dalam px eksplisit
+       (scrollHeight) lalu ditransisikan via max-height — tidak mengandalkan interpolasi
+       unit fr sehingga berjalan di semua browser. Tertutup = max-height:0. */
+    #co-rincian-grid .co-item-wrap { min-height:0; min-width:0; overflow:hidden; max-height:0; opacity:0; visibility:hidden; transform:translateY(-12px); transition:max-height .45s cubic-bezier(.4,0,.2,1), opacity .35s ease, transform .45s cubic-bezier(.4,0,.2,1), visibility 0s linear .35s; }
+    #co-rincian-grid .co-item-wrap.open { opacity:1; visibility:visible; transform:none; transition:max-height .45s cubic-bezier(.4,0,.2,1), opacity .35s ease, transform .45s cubic-bezier(.4,0,.2,1), visibility 0s linear 0s; }
+    #co-rincian-grid .co-item-wrap > .co-item-inner { overflow:hidden; min-height:0; }
+    /* Item ke-3: selalu tampil di desktop (lg = 3 kolom = 1 baris), ikut collapse hanya di mobile */
+    @media (min-width: 1024px) {
+        #co-rincian-grid .co-item-wrap.co-third { max-height:none; opacity:1; visibility:visible; transform:none; }
     }
-    @media (prefers-reduced-motion: reduce) { #co-rincian-grid .co-extra-mobile.is-in { animation:none; } }
+    @media (prefers-reduced-motion: reduce) {
+        #co-rincian-grid .co-item-wrap { transition:max-height .15s ease, opacity .15s ease, transform .15s ease; }
+    }
 </style>
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-10 lg:pl-72">
@@ -654,10 +657,14 @@
                         $pr = $pv?->product;
                         $img = $pr?->images->first()?->file_gambar ?? '';
                         $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/checkout/600/800';
-                        $isExtra = $idx >= 3;
+                        $isWrapped = $idx >= 2;
                         $isThird = $idx === 2;
                     @endphp
-                        <div class="flex flex-col bg-surface-container border border-[var(--border-soft)] rounded-lg overflow-hidden{{ $isExtra ? ' co-extra hidden' : '' }}{{ $isThird ? ' co-extra-mobile collapsed' : '' }}"@if($isExtra || $isThird) aria-hidden="true"@endif>
+                    @if($isWrapped)
+                        <div class="co-item-wrap{{ $isThird ? ' co-third' : '' }}" data-pos="{{ $idx }}" aria-hidden="true">
+                        <div class="co-item-inner">
+                    @endif
+                        <div class="flex flex-col bg-surface-container border border-[var(--border-soft)] rounded-lg overflow-hidden h-full">
                             <div class="relative w-full aspect-[3/4] bg-surface-container-high overflow-hidden">
                                 <img class="w-full h-full object-cover" loading="lazy" alt="{{ $pr?->nama_produk ?? __('Produk') }}" src="{{ $imgUrl }}"/>
                             </div>
@@ -668,6 +675,10 @@
                                 <p class="font-label-sm text-label-sm text-on-surface-variant">×{{ $i->quantity }}</p>
                             </div>
                         </div>
+                    @if($idx >= 2)
+                        </div>
+                        </div>
+                    @endif
                     @empty
                         <div class="col-span-full flex items-center justify-center py-lg text-center">
                             <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $isGuest ? __('Pilih produk terlebih dahulu.') : __('Keranjang masih kosong.') }}</p>
@@ -845,54 +856,93 @@
 
 <script>
     var coRincianMQ = window.matchMedia('(max-width: 1023.98px)');
+    var coRincianOpen = false;
+    var coReduceMotionMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
     function coIsMobileView() { return coRincianMQ.matches; }
-    function coRevealExtra(el) {
-        el.classList.remove('hidden');
-        el.classList.remove('collapsed');
-        el.classList.remove('is-in');
-        void el.offsetWidth;
-        el.classList.add('is-in');
-        el.setAttribute('aria-hidden', 'false');
+    function coStaggerDelay() { return (coReduceMotionMQ && coReduceMotionMQ.matches) ? 0 : 40; }
+    function coAnimDuration() { return (coReduceMotionMQ && coReduceMotionMQ.matches) ? 150 : 450; }
+    function coExtraWraps() {
+        return Array.prototype.slice.call(document.querySelectorAll('#co-rincian-grid .co-item-wrap'));
     }
-    function coHideExtra(el, isThird) {
-        el.classList.remove('is-in');
-        if (isThird) {
-            el.classList.add('collapsed');
-            el.setAttribute('aria-hidden', coIsMobileView() ? 'true' : 'false');
-        } else {
-            el.classList.add('hidden');
-            el.setAttribute('aria-hidden', 'true');
+    function coOpenWrap(w, delay) {
+        w.style.transitionDelay = delay + 'ms';
+        w.classList.add('open');
+        w.style.maxHeight = w.scrollHeight + 'px';
+        w.setAttribute('aria-hidden', 'false');
+        setTimeout(function () {
+            if (w.classList.contains('open')) w.style.maxHeight = 'none';
+            w.style.transitionDelay = '';
+        }, coAnimDuration() + delay + 60);
+    }
+    function coCloseWrap(w, delay) {
+        w.style.transitionDelay = delay + 'ms';
+        if (!w.style.maxHeight || w.style.maxHeight === 'none' || w.style.maxHeight === '') {
+            w.style.maxHeight = w.scrollHeight + 'px';
         }
+        void w.offsetHeight;
+        w.classList.remove('open');
+        w.style.maxHeight = '0px';
+        var done = function () { w.setAttribute('aria-hidden', 'true'); };
+        var onEnd = function (e) {
+            if (e && e.target !== w) return;
+            w.removeEventListener('transitionend', onEnd);
+            done();
+        };
+        w.addEventListener('transitionend', onEnd);
+        setTimeout(done, coAnimDuration() + delay + 150);
+        setTimeout(function () { w.style.transitionDelay = ''; }, coAnimDuration() + delay + 60);
     }
-    function coSyncThirdAria() {
-        var btn = document.getElementById('co-rincian-toggle');
-        if (btn && btn.classList.contains('open')) return;
-        document.querySelectorAll('#co-rincian-grid .co-extra-mobile').forEach(function (el) {
-            el.setAttribute('aria-hidden', coIsMobileView() ? 'true' : 'false');
+    function coEnsureThirdDesktop(w) {
+        w.classList.add('open');
+        w.style.maxHeight = 'none';
+        w.style.transitionDelay = '';
+        w.setAttribute('aria-hidden', 'false');
+    }
+    function coSyncThirdView() {
+        if (coRincianOpen) return;
+        var mobile = coIsMobileView();
+        document.querySelectorAll('#co-rincian-grid .co-item-wrap.co-third').forEach(function (w) {
+            if (mobile) {
+                w.classList.remove('open');
+                w.style.maxHeight = '0px';
+                w.setAttribute('aria-hidden', 'true');
+            } else {
+                coEnsureThirdDesktop(w);
+            }
         });
     }
     if (typeof coToggleRincian !== 'function') {
         function coToggleRincian(btn) {
-            var grid = document.getElementById('co-rincian-grid');
-            if (!grid) return;
-            var extras = grid.querySelectorAll('.co-extra, .co-extra-mobile');
-            if (!extras.length) return;
+            var wraps = coExtraWraps();
+            if (!wraps.length) return;
             var open = btn.classList.toggle('open');
+            coRincianOpen = open;
             btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-            extras.forEach(function (el) {
-                if (open) coRevealExtra(el);
-                else coHideExtra(el, el.classList.contains('co-extra-mobile'));
+            var step = coStaggerDelay();
+            var animatables = [];
+            wraps.forEach(function (w) {
+                if (!open && w.classList.contains('co-third') && !coIsMobileView()) {
+                    coEnsureThirdDesktop(w);
+                    return;
+                }
+                animatables.push(w);
+            });
+            animatables.forEach(function (w, i) {
+                var order = open ? i : (animatables.length - 1 - i);
+                var delay = order * step;
+                if (open) coOpenWrap(w, delay);
+                else coCloseWrap(w, delay);
             });
             var label = btn.querySelector('.co-rincian-label');
             if (label) label.textContent = open ? btn.getAttribute('data-label-open') : btn.getAttribute('data-label-close');
         }
     }
     if (typeof coRincianMQ.addEventListener === 'function') {
-        coRincianMQ.addEventListener('change', coSyncThirdAria);
+        coRincianMQ.addEventListener('change', coSyncThirdView);
     } else if (typeof coRincianMQ.addListener === 'function') {
-        coRincianMQ.addListener(coSyncThirdAria);
+        coRincianMQ.addListener(coSyncThirdView);
     }
-    document.addEventListener('DOMContentLoaded', coSyncThirdAria);
+    document.addEventListener('DOMContentLoaded', coSyncThirdView);
 </script>
 
 <script>
