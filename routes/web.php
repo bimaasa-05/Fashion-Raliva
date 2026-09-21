@@ -398,7 +398,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::delete('/komplain/{komplain}/messages/{message}', [KomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy')->withTrashed();
     Route::post('/komplain/{komplain}/eskalasi', [KomplainController::class, 'eskalasi'])->name('komplain.eskalasi');
     Route::get('/promo', [PromoController::class, 'index'])->name('promo');
-    Route::post('/promo/{promotion}/toggle', [PromoController::class, 'toggle'])->name('promo.toggle');
+    Route::post('/promo', [PromoController::class, 'store'])->name('promo.store');
+    Route::put('/promo/{promo}', [PromoController::class, 'update'])->name('promo.update');
+    Route::delete('/promo/{promo}', [PromoController::class, 'destroy'])->name('promo.destroy');
+    Route::post('/promo/{promo}/toggle', [PromoController::class, 'toggle'])->name('promo.toggle');
     Route::get('/permintaan-produksi', [PermintaanProduksiController::class, 'index'])->name('permintaan-produksi');
     Route::post('/permintaan-produksi', [PermintaanProduksiController::class, 'store'])->name('permintaan-produksi.store');
     Route::get('/koordinasi-gudang', [KoordinasiGudangController::class, 'index'])->name('koordinasi-gudang');
