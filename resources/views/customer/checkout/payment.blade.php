@@ -890,48 +890,6 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             color: #FFC2C9;
         }
 
-        .btn-split-toggle {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: .5rem;
-            padding: .7rem 1.25rem;
-            border-radius: 999px;
-            font-family: 'Manrope', sans-serif;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-            border: 1px solid #8B1E3F;
-            color: #8B1E3F;
-            background: transparent;
-            cursor: pointer;
-            transition: background-color .25s ease, color .25s ease, border-color .25s ease;
-        }
-
-        .btn-split-toggle:hover {
-            background: #8B1E3F;
-            color: #fff;
-        }
-
-        html.theme-dark .btn-split-toggle {
-            border-color: #C0506B;
-            color: #F4B4BE;
-        }
-
-        html.theme-dark .btn-split-toggle:hover {
-            background: #6D1428;
-            color: #fff;
-        }
-
-        .btn-split-toggle .bt-chev {
-            transition: transform .3s cubic-bezier(.4, 0, .2, 1);
-        }
-
-        .btn-split-toggle.open .bt-chev {
-            transform: rotate(180deg);
-        }
-
         .banner-akun {
             background: #ecfdf5;
             border: 1px solid #a7f3d0;
@@ -1306,42 +1264,54 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                 @elseif ($saldoCust > 0)
                                                     @php $sisaBayar = max(0, (float) $payment->jumlah - $saldoCust); @endphp
                                                     <div
-                                                        class="relative overflow-hidden rounded-xl border border-[var(--border-soft)] bg-surface-warm p-md md:p-lg">
-                                                        <div class="flex items-start gap-3">
+                                                        class="relative overflow-hidden rounded-xl border border-secondary/30 p-md md:p-lg"
+                                                        style="background:linear-gradient(135deg, rgba(139,30,63,.12), rgba(139,30,63,.03) 55%, transparent);">
+                                                        <span
+                                                            class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-secondary/15 blur-2xl pointer-events-none"></span>
+                                                        <div class="relative flex items-start gap-3">
                                                             <span
-                                                                class="shrink-0 w-11 h-11 rounded-full bg-secondary/10 inline-flex items-center justify-center">
+                                                                class="shrink-0 w-11 h-11 rounded-full bg-secondary text-white inline-flex items-center justify-center shadow-lg shadow-secondary/30">
                                                                 <span
-                                                                    class="material-symbols-outlined text-[22px] text-secondary">account_balance_wallet</span>
+                                                                    class="material-symbols-outlined text-[22px]">account_balance_wallet</span>
                                                             </span>
                                                             <div class="min-w-0 flex-1">
                                                                 <p
                                                                     class="font-body-md text-body-md font-bold text-on-surface">{{ __('Bayar sebagian dengan Saldo Akun') }}</p>
                                                                 <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
-                                                                    {{ __('Saldo') }}
-                                                                    <strong class="font-semibold text-[var(--chrome-accent)]">Rp
-                                                                        {{ number_format($saldoCust, 0, ',', '.') }}</strong>
-                                                                    {{ __('dipakai, sisa') }}
-                                                                    <strong class="font-semibold text-[var(--chrome-accent)]">Rp
-                                                                        {{ number_format($sisaBayar, 0, ',', '.') }}</strong>
-                                                                    {{ __('dibayar dengan metode kedua.') }}
-                                                                </p>
+                                                                    {{ __('Kombinasikan saldo dengan satu metode pembayaran lain.') }}</p>
                                                             </div>
                                                         </div>
-
                                                         <div
-                                                            class="mt-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-sm rounded-xl border border-[var(--border-soft)] bg-surface-container-low/50 px-md py-2">
-                                                            <p
-                                                                class="font-body-md text-body-md font-semibold text-on-surface">
-                                                                {{ __('Gunakan metode kedua?') }}</p>
-                                                            <a href="{{ route('customer.checkout.payment.metode-kedua', $checkout->checkout_id) }}"
-                                                                class="btn-split-toggle self-start sm:self-auto">
-                                                                <span class="material-symbols-outlined text-[18px]">swap_horiz</span>
-                                                                <span>{{ __('Gunakan') }}</span>
-                                                                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                                                            </a>
+                                                            class="relative mt-md divide-y divide-[var(--border-soft)] border-y border-[var(--border-soft)]">
+                                                            <div class="flex items-center justify-between gap-sm py-sm">
+                                                                <p
+                                                                    class="flex items-center gap-1.5 font-body-sm text-body-sm text-on-surface-variant">
+                                                                    <span
+                                                                        class="material-symbols-outlined text-[18px]">account_balance_wallet</span>{{ __('Saldo dipakai') }}</p>
+                                                                <p
+                                                                    class="font-body-sm text-body-sm font-bold text-on-surface text-right">
+                                                                    Rp {{ number_format($saldoCust, 0, ',', '.') }}</p>
+                                                            </div>
+                                                            <div class="flex items-center justify-between gap-sm py-sm">
+                                                                <p
+                                                                    class="flex items-center gap-1.5 font-body-sm text-body-sm text-on-surface-variant">
+                                                                    <span
+                                                                        class="material-symbols-outlined text-[18px]">payments</span>{{ __('Sisa dibayar') }}</p>
+                                                                <p
+                                                                    class="font-body-sm text-body-sm font-bold text-on-surface text-right">
+                                                                    Rp {{ number_format($sisaBayar, 0, ',', '.') }}</p>
+                                                            </div>
                                                         </div>
-                                                        <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">
-                                                            {{ __('Anda akan diarahkan ke halaman khusus untuk memilih metode kedua.') }}</p>
+                                                        <a href="{{ route('customer.checkout.payment.metode-kedua', $checkout->checkout_id) }}"
+                                                            class="btn-gold relative mt-md w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                                                            <span>{{ __('Pilih Metode Kedua') }}</span>
+                                                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                                        </a>
+                                                        <p
+                                                            class="relative flex items-center gap-1.5 font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">
+                                                            <span class="material-symbols-outlined text-[16px]">info</span>
+                                                            <span>{{ __('Saldo dipotong setelah admin memverifikasi bukti.') }}</span>
+                                                        </p>
                                                     </div>
                                                 @else
                                                     <div
