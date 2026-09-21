@@ -54,7 +54,15 @@ class LaporanController extends Controller
                 ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as bln, SUM(grand_total) as pendapatan")
                 ->groupBy('bln')->orderBy('bln')->pluck('pendapatan', 'bln');
             $labels = $agg->keys()->map(fn($b) => \Carbon\Carbon::createFromFormat('Y-m', $b)->translatedFormat('M Y'))->values()->all();
-            return ['labels' => $labels, 'pendapatan' => $agg->values()->all(), 'refund' => []];
+            $pendapatan = $agg->values()->map(fn($v) => (float) $v)->all();
+            $refund = $agg->keys()->map(function ($b) use ($storeId) {
+                $awal = \Carbon\Carbon::createFromFormat('Y-m', $b)->startOfMonth();
+                $akhir = \Carbon\Carbon::createFromFormat('Y-m', $b)->endOfMonth();
+                return (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
+                    ->where('orders.store_id', $storeId)->where('refunds.status', 'selesai')
+                    ->whereBetween('refunds.diajukan_pada', [$awal, $akhir])->sum('refunds.jumlah');
+            })->values()->all();
+            return ['labels' => $labels, 'pendapatan' => $pendapatan, 'refund' => $refund];
         };
 
         $chartData = [
