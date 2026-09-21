@@ -15,7 +15,7 @@
 @section('content')
 @include('partials.flash-toast')
 
-<div class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
+<div class="flex flex-wrap items-center gap-3">
     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
         <span class="material-symbols-outlined text-[14px]">calendar_today</span>
         {{ now()->translatedFormat('l, d F Y') }}
@@ -28,8 +28,8 @@
 
 @include('partials.banner-suspended')
 
-{{-- Identitas Toko --}}
-<section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-5 card-premium mb-6 {{ ! $store ? 'opacity-60 pointer-events-none' : '' }}">
+{{-- Identitas Toko — sama persis dengan card dashboard Owner --}}
+<section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-5 card-premium {{ ! $store ? 'opacity-60 pointer-events-none' : '' }}">
     <div class="flex items-center gap-4">
         <div class="w-14 h-14 rounded-xl overflow-hidden border border-outline-variant shrink-0 bg-surface-container-high flex items-center justify-center {{ ! $store ? 'grayscale' : '' }}">
             <img src="{{ asset('images/logo.svg') }}" alt="Logo {{ $store?->nama_toko ?? 'Toko' }}" class="w-full h-full object-cover" />
@@ -118,8 +118,8 @@
     </div>
 </section>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
-    <section class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter items-stretch" data-equal-cards>
+    <section class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
         <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Omzet 7 Hari Terakhir</h2>
             <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">Total Rp {{ $omzetJuta }}JT</span>
@@ -131,7 +131,7 @@
         </p>
     </section>
 
-    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
         <div class="flex items-center justify-between mb-4">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Produk Terlaris</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">emoji_events</span>
@@ -145,7 +145,7 @@
     </section>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter items-stretch">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter items-stretch" data-equal-cards>
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
         <div class="flex items-center justify-between mb-4">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Status Pesanan</h2>
