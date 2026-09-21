@@ -53,12 +53,30 @@
                 <form method="GET" class="flex flex-col lg:flex-row lg:items-center gap-gutter">
                     <div class="flex flex-col gap-2 lg:max-w-[220px] lg:flex-1">
                         <label class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Status</label>
-                        <select name="status" aria-label="Filter status" class="raliva-select">
-                            <option value="">Semua Status</option>
-                            @foreach ($statusLabel as $key => $label)
-                                <option value="{{ $key }}" {{ ($filters['status'] ?? '') === $key ? 'selected' : '' }}>{{ $label }}</option>
-                            @endforeach
-                        </select>
+                        @php
+                            $csStatus = !empty($filters['status']) && isset($statusLabel[$filters['status']])
+                                ? $statusLabel[$filters['status']]
+                                : 'Semua Status';
+                        @endphp
+                        <div class="relative" data-cs>
+                            <button type="button" data-cs-trigger aria-haspopup="listbox" aria-expanded="false"
+                                class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-3 py-2.5 min-h-11 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
+                                <span data-cs-label class="truncate">{{ $csStatus }}</span>
+                                <span data-cs-chevron class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200">expand_more</span>
+                            </button>
+                            <div data-cs-menu role="listbox" style="transform-origin: top left"
+                                class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden py-1">
+                                <button type="button" role="option" data-cs-option="" data-cs-option-label="Semua Status" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                    Semua Status<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($filters['status'] ?? '') === '' ? '' : 'hidden' }}">check</span>
+                                </button>
+                                @foreach ($statusLabel as $key => $label)
+                                    <button type="button" role="option" data-cs-option="{{ $key }}" data-cs-option-label="{{ $label }}" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                        {{ $label }}<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($filters['status'] ?? '') === $key ? '' : 'hidden' }}">check</span>
+                                    </button>
+                                @endforeach
+                            </div>
+                            <input type="hidden" name="status" value="{{ $filters['status'] ?? '' }}" data-cs-input />
+                        </div>
                     </div>
                     <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Terapkan</button>
                 </form>
@@ -173,7 +191,7 @@
                     </dl>
 
                     @if (in_array($t->status, ['approved', 'in_transit']) && $t->to_warehouse_id === (int) $warehouse->warehouse_id)
-                        <form method="POST" action="{{ route('gudang.pemindahan.terima', $t->stock_transfer_id) }}" class="mb-3">
+                        <form method="POST" action="{{ route('gudang.pemindahan.receive', $t->stock_transfer_id) }}" class="mb-3">
                             @csrf
                             <button type="submit" class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg bg-secondary/15 text-secondary border border-secondary/30 text-xs font-bold uppercase tracking-widest hover:bg-secondary/25 transition-colors">
                                 <span class="material-symbols-outlined text-[18px]">inventory</span>Terima di Gudang Ini
@@ -258,7 +276,7 @@
                     @endif
                 </dl>
                 @if (in_array($t->status, ['approved', 'in_transit']) && $t->to_warehouse_id === (int) $warehouse->warehouse_id)
-                    <form method="POST" action="{{ route('gudang.pemindahan.terima', $t->stock_transfer_id) }}">
+                    <form method="POST" action="{{ route('gudang.pemindahan.receive', $t->stock_transfer_id) }}">
                         @csrf
                         <button type="submit" class="w-full mt-6 py-3 bg-secondary/15 text-secondary border border-secondary/30 font-label-sm text-[11px] uppercase tracking-widest rounded hover:bg-secondary/25 transition-colors">Terima Pemindahan</button>
                     </form>

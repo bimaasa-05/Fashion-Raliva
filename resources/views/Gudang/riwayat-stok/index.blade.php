@@ -45,14 +45,30 @@
             </div>
             <div data-filter-panel class="hidden md:block bg-surface-container-low border border-muted-border rounded-lg p-4">
                 <form method="GET" class="flex flex-wrap items-end gap-gutter">
-                    <div class="flex flex-col gap-2">
+                    <div class="flex flex-col gap-2 min-w-[200px]">
                         <label class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Aktivitas</label>
-                        <select name="tipe" class="raliva-select">
-                            <option value="">Semua Aktivitas</option>
-                            @foreach ($tipeList as $key => $label)
-                                <option value="{{ $key }}" {{ ($filters['tipe'] ?? '') === $key ? 'selected' : '' }}>{{ $label }}</option>
-                            @endforeach
-                        </select>
+                        @php
+                            $csTipe = !empty($filters['tipe']) && isset($tipeList[$filters['tipe']]) ? $tipeList[$filters['tipe']] : 'Semua Aktivitas';
+                        @endphp
+                        <div class="relative" data-cs>
+                            <button type="button" data-cs-trigger aria-haspopup="listbox" aria-expanded="false"
+                                class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-3 py-2.5 min-h-11 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
+                                <span data-cs-label class="truncate">{{ $csTipe }}</span>
+                                <span data-cs-chevron class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200">expand_more</span>
+                            </button>
+                            <div data-cs-menu role="listbox" style="transform-origin: top left"
+                                class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden py-1">
+                                <button type="button" role="option" data-cs-option="" data-cs-option-label="Semua Aktivitas" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                    Semua Aktivitas<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($filters['tipe'] ?? '') === '' ? '' : 'hidden' }}">check</span>
+                                </button>
+                                @foreach ($tipeList as $key => $label)
+                                    <button type="button" role="option" data-cs-option="{{ $key }}" data-cs-option-label="{{ $label }}" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                        {{ $label }}<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($filters['tipe'] ?? '') === $key ? '' : 'hidden' }}">check</span>
+                                    </button>
+                                @endforeach
+                            </div>
+                            <input type="hidden" name="tipe" value="{{ $filters['tipe'] ?? '' }}" data-cs-input />
+                        </div>
                     </div>
                     <div class="flex flex-col gap-2 min-w-[200px] flex-1">
                         <label class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Cari Produk</label>

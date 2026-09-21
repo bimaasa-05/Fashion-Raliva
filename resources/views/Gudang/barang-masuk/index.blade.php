@@ -61,12 +61,28 @@
                         <input type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Cari produk..." class="raliva-search" />
                     </div>
                     <div class="min-w-[180px]">
-                        <select name="supplier_id" class="raliva-select">
-                            <option value="">Semua Supplier</option>
-                            @foreach ($suppliers as $supplier)
-                                <option value="{{ $supplier->supplier_id }}" @selected((string) ($filters['supplier_id'] ?? '') === (string) $supplier->supplier_id)>{{ $supplier->nama_supplier }}</option>
-                            @endforeach
-                        </select>
+                        @php
+                            $csSupplier = $suppliers->first(fn ($s) => (string) ($filters['supplier_id'] ?? '') === (string) $s->supplier_id);
+                        @endphp
+                        <div class="relative" data-cs>
+                            <button type="button" data-cs-trigger aria-haspopup="listbox" aria-expanded="false"
+                                class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-3 py-2.5 min-h-11 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
+                                <span data-cs-label class="truncate">{{ $csSupplier?->nama_supplier ?? 'Semua Supplier' }}</span>
+                                <span data-cs-chevron class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200">expand_more</span>
+                            </button>
+                            <div data-cs-menu role="listbox" style="transform-origin: top left"
+                                class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-y-auto max-h-64 py-1">
+                                <button type="button" role="option" data-cs-option="" data-cs-option-label="Semua Supplier" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                    Semua Supplier<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ $csSupplier ? 'hidden' : '' }}">check</span>
+                                </button>
+                                @foreach ($suppliers as $supplier)
+                                    <button type="button" role="option" data-cs-option="{{ $supplier->supplier_id }}" data-cs-option-label="{{ $supplier->nama_supplier }}" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                        {{ $supplier->nama_supplier }}<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ $csSupplier && (string) $supplier->supplier_id === (string) $csSupplier->supplier_id ? '' : 'hidden' }}">check</span>
+                                    </button>
+                                @endforeach
+                            </div>
+                            <input type="hidden" name="supplier_id" value="{{ $filters['supplier_id'] ?? '' }}" data-cs-input />
+                        </div>
                     </div>
                     <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Cari</button>
                 </form>

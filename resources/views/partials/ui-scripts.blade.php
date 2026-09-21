@@ -29,6 +29,7 @@
             setTimeout(() => overlay.classList.add('hidden'), 300);
         }
         document.body.style.overflow = '';
+        document.querySelectorAll('[data-cs-menu]').forEach((m) => m.classList.add('hidden'));
     };
 
     document.querySelectorAll('[data-modal-open]').forEach((btn) => {
@@ -151,6 +152,40 @@
     document.addEventListener('click', (e) => {
         document.querySelectorAll('[data-dropdown-menu]').forEach((menu) => {
             if (!menu.parentElement.contains(e.target)) menu.classList.add('hidden');
+        });
+    });
+
+    document.querySelectorAll('[data-cs]').forEach((cs) => {
+        const trigger = cs.querySelector('[data-cs-trigger]');
+        const menu = cs.querySelector('[data-cs-menu]');
+        trigger?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.querySelectorAll('[data-cs]').forEach((other) => {
+                if (other !== cs) other.querySelector('[data-cs-menu]')?.classList.add('hidden');
+            });
+            menu?.classList.toggle('hidden');
+            cs.querySelector('[data-cs-chevron]')?.classList.toggle('rotate-180');
+        });
+        cs.querySelectorAll('[data-cs-option]').forEach((opt) => {
+            opt.addEventListener('click', () => {
+                cs.querySelectorAll('[data-cs-option]').forEach((o) =>
+                    o.querySelector('[data-cs-check]')?.classList.add('hidden'));
+                opt.querySelector('[data-cs-check]')?.classList.remove('hidden');
+                const input = cs.querySelector('[data-cs-input]');
+                if (input) input.value = opt.getAttribute('data-cs-option') || '';
+                cs.querySelector('[data-cs-label]').textContent = opt.getAttribute('data-cs-option-label') || '';
+                menu?.classList.add('hidden');
+                cs.querySelector('[data-cs-chevron]')?.classList.remove('rotate-180');
+            });
+        });
+    });
+
+    document.addEventListener('click', (e) => {
+        document.querySelectorAll('[data-cs]').forEach((cs) => {
+            if (!cs.contains(e.target)) {
+                cs.querySelector('[data-cs-menu]')?.classList.add('hidden');
+                cs.querySelector('[data-cs-chevron]')?.classList.remove('rotate-180');
+            }
         });
     });
 

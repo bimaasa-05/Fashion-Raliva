@@ -1402,15 +1402,6 @@
         });
 
         applyFilter();
-        const toggle = document.querySelector('[data-filter-toggle]');
-        const panel = document.querySelector('[data-filter-panel]');
-        if (toggle && panel) {
-            toggle.addEventListener('click', () => {
-                panel.classList.toggle('hidden');
-                const chev = toggle.querySelector('[data-filter-chevron]');
-                if (chev) chev.classList.toggle('rotate-180');
-            });
-        }
     });
 </script>
 @endpush
