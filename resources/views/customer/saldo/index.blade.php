@@ -89,17 +89,17 @@
         @keyframes authFlash { from { left: -80%; } to { left: 135%; } }
         :root { --btn-gold-bg: #8B1E3F; --btn-gold-text: #ffffff; }
         html.theme-dark { --btn-gold-bg: #6D1428; --btn-gold-text: #ffffff; }
-        .tp-pending { background: #FFFBEB; border-color: #FCD34D; }
+        .tp-pending { background: var(--surface-ivory); border-color: rgba(139,30,63,.35); }
         .tp-verif { background: #EFF6FF; border-color: #93C5FD; }
         .tp-ditolak { background: #FEF2F2; border-color: #FCA5A5; }
-        html.theme-dark .tp-pending { background: rgba(251,191,36,.12); border-color: rgba(251,191,36,.4); }
+        html.theme-dark .tp-pending { background: var(--surface-ivory); border-color: rgba(139,30,63,.55); }
         html.theme-dark .tp-verif { background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.4); }
         html.theme-dark .tp-ditolak { background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.4); }
         .tp-icon { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 9999px; }
-        .tp-icon.ic-pending { background: rgba(252,211,77,.28); color: #B45309; }
+        .tp-icon.ic-pending { background: rgba(139,30,63,.1); color: #8B1E3F; }
         .tp-icon.ic-verif { background: rgba(147,197,253,.32); color: #2563EB; }
         .tp-icon.ic-ditolak { background: rgba(252,165,165,.32); color: #DC2626; }
-        html.theme-dark .tp-icon.ic-pending { color: #FCD34D; }
+        html.theme-dark .tp-icon.ic-pending { color: #F4B4BE; }
         html.theme-dark .tp-icon.ic-verif { color: #93C5FD; }
         html.theme-dark .tp-icon.ic-ditolak { color: #FCA5A5; }
         .tp-pulse { animation: tp-pulse 2s ease-in-out infinite; }
@@ -212,7 +212,7 @@
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-sm rounded-xl p-md border-l-4
                                     @if($tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI) tp-verif border-blue-500
                                     @elseif($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK) tp-ditolak border-red-500
-                                    @else tp-pending border-amber-500 @endif">
+                                    @else tp-pending border-secondary @endif">
                                 <div class="flex items-center gap-md">
                                     <span class="tp-icon
                                         @if($tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI) ic-verif tp-pulse
@@ -227,18 +227,34 @@
                                         <p class="font-label-sm text-label-sm text-on-surface-variant">#{{ $tp->customer_topup_id }} • {{ $tp->payment?->paymentMethod?->nama_metode ?? '-' }}</p>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-sm">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+                                <div class="flex flex-col items-start md:items-end gap-sm">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold
                                         @if($tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI) bg-blue-100 text-blue-800
                                         @elseif($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK) bg-red-100 text-red-800
-                                        @else bg-amber-100 text-amber-800 @endif">
+                                        @else bg-secondary/10 text-secondary @endif">
                                         @if($tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI) {{ __('Menunggu Verifikasi') }}
                                         @elseif($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK) {{ __('Ditolak') }}
                                         @else {{ __('Menunggu Pembayaran') }} @endif
                                     </span>
                                     @if (in_array($tp->status, [\App\Models\CustomerTopup::STATUS_PENDING, \App\Models\CustomerTopup::STATUS_DITOLAK], true))
-                                        <a href="{{ route('customer.saldo.topup.payment', $tp->customer_topup_id) }}"
-                                            class="font-label-caps text-label-caps uppercase tracking-widest text-secondary hover:underline whitespace-nowrap">{{ __('Bayar / Upload') }}</a>
+                                        <div class="flex items-center gap-sm">
+                                            <a href="{{ route('customer.saldo.topup.payment', $tp->customer_topup_id) }}"
+                                                class="btn-gold inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full font-label-caps text-label-caps uppercase tracking-widest whitespace-nowrap">
+                                                <span class="material-symbols-outlined text-[16px]">payments</span>
+                                                <span>{{ $tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK ? __('Unggah Ulang') : __('Bayar') }}</span>
+                                            </a>
+                                            <form method="POST" action="{{ route('customer.saldo.topup.batal', $tp->customer_topup_id) }}"
+                                                id="form-batal-topup-{{ $tp->customer_topup_id }}" class="m-0">
+                                                @csrf
+                                                <button type="button" data-batal-topup
+                                                    data-form="form-batal-topup-{{ $tp->customer_topup_id }}"
+                                                    data-nominal="Rp {{ number_format((float) $tp->jumlah, 0, ',', '.') }}"
+                                                    class="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full font-label-caps text-label-caps uppercase tracking-widest whitespace-nowrap border border-error/40 text-error hover:bg-error hover:text-white transition-colors">
+                                                    <span class="material-symbols-outlined text-[16px]">close</span>
+                                                    <span>{{ __('Batalkan') }}</span>
+                                                </button>
+                                            </form>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
@@ -294,6 +310,91 @@
 
     @include('customer._partials.bottom-nav')
     @include('customer._partials.drawer')
+
+    <div id="modal-batal-topup" class="hidden fixed inset-0 z-[100] bg-black/50 backdrop-blur-[2px] flex items-center justify-center p-md">
+        <div id="modal-batal-topup-card"
+            class="w-full max-w-sm bg-surface-container-lowest border border-[var(--border-soft)] rounded-2xl card-premium overflow-hidden transition-all duration-200 scale-95 opacity-0">
+            <div class="p-md md:p-lg">
+                <div class="flex items-start gap-3 mb-md">
+                    <span class="shrink-0 w-11 h-11 rounded-full bg-error/10 inline-flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[22px] text-error">cancel</span>
+                    </span>
+                    <div class="min-w-0 pt-0.5">
+                        <p class="font-body-md text-body-md font-bold text-on-surface">{{ __('Batalkan Topup?') }}</p>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                            {{ __('Topup') }}
+                            <strong id="modal-batal-topup-nominal" class="font-semibold text-error">Rp 0</strong>
+                            {{ __('akan dibatalkan dan tidak bisa dilanjutkan.') }}
+                        </p>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-1">
+                            {{ __('Nominal tidak akan diproses.') }}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-sm">
+                    <button type="button" data-batal-close
+                        class="h-12 w-full inline-flex items-center justify-center gap-2 px-sm rounded-full font-label-caps text-label-caps uppercase tracking-widest border border-outline text-on-surface hover:bg-surface-container-high transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">close</span>
+                        <span>{{ __('Kembali') }}</span>
+                    </button>
+                    <button type="button" data-batal-confirm
+                        class="h-12 w-full inline-flex items-center justify-center gap-2 px-sm rounded-full font-label-caps text-label-caps uppercase tracking-widest bg-error text-white hover:brightness-110 transition">
+                        <span class="material-symbols-outlined text-[18px]">check</span>
+                        <span>{{ __('Ya, Batalkan') }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var modal = document.getElementById('modal-batal-topup');
+            var card = document.getElementById('modal-batal-topup-card');
+            var nominalEl = document.getElementById('modal-batal-topup-nominal');
+            var targetForm = null;
+
+            var openBatalModal = function(formId, nominal) {
+                targetForm = document.getElementById(formId);
+                if (!targetForm) return;
+                if (nominalEl) nominalEl.textContent = nominal || 'Rp 0';
+                if (modal) modal.classList.remove('hidden');
+                if (card) {
+                    void card.offsetWidth;
+                    card.classList.remove('scale-95', 'opacity-0');
+                }
+            };
+            var closeBatalModal = function() {
+                if (card) card.classList.add('scale-95', 'opacity-0');
+                setTimeout(function() {
+                    if (modal) modal.classList.add('hidden');
+                    targetForm = null;
+                }, 150);
+            };
+
+            document.querySelectorAll('[data-batal-topup]').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    openBatalModal(btn.getAttribute('data-form'), btn.getAttribute('data-nominal'));
+                });
+            });
+            if (modal) {
+                modal.querySelectorAll('[data-batal-close]').forEach(function(b) {
+                    b.addEventListener('click', closeBatalModal);
+                });
+                var confirmBtn = modal.querySelector('[data-batal-confirm]');
+                if (confirmBtn) {
+                    confirmBtn.addEventListener('click', function() {
+                        if (targetForm) targetForm.submit();
+                    });
+                }
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) closeBatalModal();
+                });
+            }
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeBatalModal();
+            });
+        });
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
