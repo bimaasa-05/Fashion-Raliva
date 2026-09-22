@@ -10,9 +10,9 @@
         \App\Models\Order::STATUS_PENDING_PAYMENT => ['label' => 'Menunggu Bayar', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
         \App\Models\Order::STATUS_MENUNGGU_PRODUKSI => ['label' => 'Menunggu Produksi', 'class' => 'bg-indigo-500/10 text-indigo-600 border-indigo-500/30'],
         \App\Models\Order::STATUS_DIBAYAR => ['label' => 'Baru', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
-        \App\Models\Order::STATUS_DIPROSES => ['label' => 'Diproses', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        \App\Models\Order::STATUS_DIKIRIM => ['label' => 'Dikirim', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        \App\Models\Order::STATUS_SELESAI => ['label' => 'Selesai', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
+        \App\Models\Order::STATUS_DIPROSES => ['label' => 'Diproses', 'class' => 'bg-amber-500/10 text-amber-600 border-amber-500/30'],
+        \App\Models\Order::STATUS_DIKIRIM => ['label' => 'Dikirim', 'class' => 'bg-sky-500/10 text-sky-600 border-sky-500/30'],
+        \App\Models\Order::STATUS_SELESAI => ['label' => 'Selesai', 'class' => 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30'],
         \App\Models\Order::STATUS_DIBATALKAN => ['label' => 'Dibatalkan', 'class' => 'bg-error/10 text-error border-error/20'],
         \App\Models\Order::STATUS_REFUND => ['label' => 'Refund', 'class' => 'bg-error/10 text-error border-error/20'],
     ];
@@ -86,6 +86,22 @@
                         $badge = $badgeMap[$pesanan->status] ?? ['label' => ucfirst($pesanan->status), 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'];
                         $custName = $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-';
                         $custId = $pesanan->checkout?->user_id;
+                        $waRaw = $pesanan->checkout?->nomor_telepon ?? $pesanan->checkout?->user?->nomor_telepon ?? '';
+                        $waNum = preg_replace('/\D+/', '', (string) $waRaw);
+                        if ($waNum !== '' && str_starts_with($waNum, '0')) $waNum = '62'.substr($waNum, 1);
+                        $waTexts = [
+                            \App\Models\Order::STATUS_PENDING_PAYMENT => 'Halo {nama}, pesanan {nomor} Anda menunggu pembayaran. Segera selesaikan ya!',
+                            \App\Models\Order::STATUS_DIBAYAR => 'Halo {nama}, pembayaran pesanan {nomor} sudah kami terima. Pesanan segera diproses!',
+                            \App\Models\Order::STATUS_MENUNGGU_PRODUKSI => 'Halo {nama}, pesanan {nomor} masuk antrean produksi.',
+                            \App\Models\Order::STATUS_DIPROSES => 'Halo {nama}, pesanan {nomor} sedang diproduksi.',
+                            \App\Models\Order::STATUS_SIAP_KIRIM => 'Halo {nama}, pesanan {nomor} siap kirim/diambil!',
+                            \App\Models\Order::STATUS_DIKIRIM => 'Halo {nama}, pesanan {nomor} sudah dikirim. Mohon konfirmasi saat barang diterima ya!',
+                            \App\Models\Order::STATUS_SELESAI => 'Halo {nama}, terima kasih! Pesanan {nomor} selesai. Jangan lupa beri ulasan ya!',
+                            \App\Models\Order::STATUS_DIBATALKAN => 'Halo {nama}, pesanan {nomor} dibatalkan. Hubungi kami untuk info lebih lanjut.',
+                            \App\Models\Order::STATUS_REFUND => 'Halo {nama}, pengembalian dana pesanan {nomor} sedang diproses.',
+                        ];
+                        $waMsg = str_replace(['{nama}', '{nomor}'], [$custName, $pesanan->nomor_order ?? ('#'.$pesanan->order_id)], $waTexts[$pesanan->status] ?? 'Halo {nama}, ada info mengenai pesanan {nomor} Anda.');
+                        $waLink = $waNum !== '' ? 'https://wa.me/'.$waNum.'?text='.rawurlencode($waMsg) : null;
                     @endphp
                     <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors"
                         data-id="{{ $pesanan->order_id }}"
@@ -115,9 +131,15 @@
                             @if (in_array($pesanan->status, [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIPROSES], true))
                                 <button type="button" data-modal-open="modal-batalkan-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Batalkan</button>
                             @endif
-                            @if ($pesanan->isOffline() && $pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+                            @if (in_array($pesanan->status, [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIPROSES, \App\Models\Order::STATUS_SIAP_KIRIM, \App\Models\Order::STATUS_DIKIRIM], true))
                                 <button type="button" data-modal-open="modal-selesai-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-[10px] uppercase rounded hover:bg-secondary-container/30 transition-colors">Selesai</button>
                             @endif
+                            @if ($waLink)
+                                <a href="{{ $waLink }}" target="_blank" title="Chat WhatsApp customer" class="inline-flex items-center justify-center w-8 h-8 ml-1 rounded-lg bg-[#25D366]/10 border border-[#25D366]/30 text-[#1da851] hover:bg-[#25D366]/20 transition-colors align-middle">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.5.1-.7l.4-.5c.1-.2.1-.4 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.2-.7.5-.9 1-.4 2.7 1.4 4.5 1.7 1.7 3.5 2.4 4.9 2.1.6-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2 0-.1-.2-.1-.4-.2z"/></svg>
+                                </a>
+                            @endif
+                            <a href="{{ route('admin.pesanan.invoice', $pesanan->order_id) }}" target="_blank" class="inline-block px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">Invoice</a>
                             <button type="button" data-modal-open="modal-detail-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
                             <button type="button" onclick="openDetailProduksi('{{ $pesanan->order_id }}')" class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">Produksi</button>
                         </td>
@@ -145,6 +167,13 @@
         <div class="p-6 space-y-4 font-body-md text-sm">
             <div class="flex justify-between gap-4 pb-3 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Pelanggan</dt><dd class="text-on-surface text-right">{{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }}@if($pesanan->checkout?->nomor_telepon)<br><span class="text-xs text-on-surface-variant">{{ $pesanan->checkout->nomor_telepon }}</span>@endif</dd></div>
             <div class="flex justify-between gap-4 pb-3 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Toko</dt><dd class="text-on-surface text-right">{{ $pesanan->store?->nama_toko ?? '-' }}</dd></div>
+            <div class="flex justify-between gap-4 pb-3 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Tanggal Pesanan</dt><dd class="text-on-surface text-right">{{ $pesanan->created_at?->translatedFormat('d M Y H:i') ?? '-' }}</dd></div>
+            @if($pesanan->tgl_mulai_produksi || $pesanan->tgl_berakhir_produksi)
+                <div class="flex justify-between gap-4 pb-3 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Jadwal Produksi</dt><dd class="text-on-surface text-right">{{ $pesanan->tgl_mulai_produksi?->translatedFormat('d M Y H:i') ?? '-' }} &rarr; {{ $pesanan->tgl_berakhir_produksi?->translatedFormat('d M Y H:i') ?? '-' }}</dd></div>
+            @endif
+            @if($pesanan->catatan)
+                <div class="pb-3 border-b border-muted-border"><dt class="text-on-surface-variant mb-1">Catatan Pelanggan</dt><dd class="text-on-surface">{{ $pesanan->catatan }}</dd></div>
+            @endif
             <div>
                 <p class="text-[10px] uppercase text-on-surface-variant mb-2">Item Pesanan</p>
                 <ul class="space-y-2">
@@ -186,7 +215,7 @@
         @csrf
         <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div>
-                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Input Bahan Produksi</h3>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Proses Pesanan</h3>
                 <p class="text-on-surface-variant font-mono text-xs uppercase tracking-wider mt-1">{{ $pesanan->nomor_order ?? ('#'.$pesanan->order_id) }}</p>
             </div>
             <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors shrink-0" aria-label="Tutup">
@@ -194,14 +223,10 @@
             </button>
         </div>
         <div class="p-6 space-y-4">
-            <p class="text-xs text-on-surface-variant">Pilih bahan dari katalog atau ketik manual beserta jumlah &amp; satuan. Tambah baris sesuai kebutuhan.</p>
-            <div id="bahan-container-{{ $pesanan->order_id }}" class="space-y-3"></div>
-            <button type="button" onclick="addBahanRow('{{ $pesanan->order_id }}')" class="w-full py-2.5 border border-dashed border-outline-variant rounded-lg text-xs font-semibold text-on-surface-variant hover:border-gold-accent hover:text-gold-accent transition-colors flex items-center justify-center gap-1.5">
-                <span class="material-symbols-outlined text-[16px]">add</span> Tambah Bahan
-            </button>
-            <div class="pt-3 border-t border-muted-border">
+            <p class="text-xs text-on-surface-variant">Atur jadwal produksi, lalu teruskan ke tim Produksi. Input kebutuhan bahan dilakukan oleh Produksi.</p>
+            <div>
                 <p class="text-xs font-medium text-gold-accent mb-2">Jadwal Produksi</p>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Tgl Mulai Produksi *</label>
                         <input type="datetime-local" name="tgl_mulai_produksi" required class="raliva-input w-full" />
@@ -238,7 +263,7 @@
     </form>
 </div>
 @endif
-@if ($pesanan->isOffline() && $pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+@if (in_array($pesanan->status, [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIPROSES, \App\Models\Order::STATUS_SIAP_KIRIM, \App\Models\Order::STATUS_DIKIRIM], true))
 <div id="modal-selesai-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
     <form method="POST" action="{{ route('admin.pesanan.selesai', $pesanan->order_id) }}" class="relative mx-auto w-[calc(100%-2rem)] max-w-md bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl p-8">
@@ -247,7 +272,7 @@
             <span class="material-symbols-outlined text-secondary text-[28px]">storefront</span>
         </div>
         <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Selesai — Sudah Diambil</h3>
-        <p class="text-on-surface-variant text-sm text-center mb-4">Pesanan offline <span class="font-mono font-bold text-on-surface">{{ $pesanan->nomor_order ?? ('#'.$pesanan->order_id) }}</span> akan ditandai <b>Selesai</b> dan dana penjualan masuk ke saldo toko. Konfirmasi bahwa customer sudah mengambil barangnya.</p>
+        <p class="text-on-surface-variant text-sm text-center mb-4">Pesanan {{ $pesanan->isOffline() ? 'offline' : 'online (diambil langsung)' }} <span class="font-mono font-bold text-on-surface">{{ $pesanan->nomor_order ?? ('#'.$pesanan->order_id) }}</span> akan ditandai <b>Selesai</b> dan dana penjualan masuk ke saldo toko. Konfirmasi bahwa customer sudah mengambil barangnya.</p>
         <input type="text" name="catatan" maxlength="500" class="raliva-input" placeholder="Catatan (opsional)" />
         <div class="flex space-x-3 mt-4">
             <button type="button" data-modal-close class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg">Batal</button>
@@ -357,6 +382,11 @@
                 </button>
             </div>
 
+            <div>
+                <label class="raliva-label" for="tp-catatan">Catatan untuk Pelanggan</label>
+                <textarea id="tp-catatan" name="catatan" rows="2" maxlength="1000" class="raliva-textarea" placeholder="Catatan pesanan, mis. request khusus customer (opsional)"></textarea>
+            </div>
+
             <div class="pt-3 border-t border-muted-border flex justify-between gap-4">
                 <dt class="text-on-surface-variant shrink-0">Total</dt>
                 <dd class="text-gold-accent font-bold text-right">Rp <span id="grand-total">0</span></dd>
@@ -411,105 +441,6 @@
 
 @push('scripts')
 <script>
-    /* ====================================================================
-       MODAL PROSES — Input Bahan Produksi (per pesanan)
-       ==================================================================== */
-    @php
-        $bahanMasterJson = $bahanList->map(function ($b) {
-            return [
-                'bahan_id' => $b->bahan_id,
-                'nama_bahan' => $b->nama_bahan,
-                'satuan' => $b->satuan,
-                'stok' => $b->stok,
-            ];
-        })->toJson();
-    @endphp
-    const bahanMaster = {!! $bahanMasterJson !!};
-
-    function addBahanRow(orderId) {
-        const container = document.getElementById('bahan-container-' + orderId);
-        if (!container) return;
-        const idx = container.querySelectorAll('[data-bahan-row]').length;
-        const row = document.createElement('div');
-        row.setAttribute('data-bahan-row', '');
-        row.className = 'border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low space-y-2.5';
-        const dlId = 'bahan-datalist-' + orderId + '-' + idx;
-        row.innerHTML = `
-            <div class="flex items-start justify-between gap-3">
-                <input type="text" list="${dlId}" autocomplete="off" placeholder="Ketik / pilih bahan..." oninput="onBahanInput(this)" class="raliva-input flex-1 min-w-0" />
-                <input type="hidden" name="bahan[${idx}][bahan_id]" value="" />
-                <datalist id="${dlId}">
-                    ${bahanMaster.map(b => `<option value="${b.nama_bahan}" data-id="${b.bahan_id}" label="${b.nama_bahan} (stok ${b.stok} ${b.satuan})">${b.nama_bahan} (stok ${b.stok} ${b.satuan})</option>`).join('')}
-                </datalist>
-                <button type="button" onclick="removeBahanRow(this)" class="shrink-0 px-2.5 py-2.5 rounded-lg border border-error/20 text-error hover:bg-error/10 transition-colors" title="Hapus baris">
-                    <span class="material-symbols-outlined text-[18px]">delete</span>
-                </button>
-            </div>
-            <div class="grid grid-cols-[1fr_110px] gap-3">
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Nama Bahan</label>
-                    <input type="text" name="bahan[${idx}][nama_bahan]" required class="raliva-input w-full" placeholder="Nama bahan produksi" />
-                </div>
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Jumlah</label>
-                    <input type="number" name="bahan[${idx}][jumlah]" required min="0.01" step="0.01" class="raliva-input w-full py-2 text-center" placeholder="0" />
-                </div>
-            </div>
-            <div class="grid grid-cols-[110px_1fr] gap-3">
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Satuan</label>
-                    <select name="bahan[${idx}][satuan]" required class="raliva-select w-full">
-                        <option value="">— Satuan —</option>
-                        @foreach (\App\Models\ProductionOrderBahan::SATUAN as $st)
-                            <option value="{{ $st }}">{{ $st }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Catatan</label>
-                    <input type="text" name="bahan[${idx}][catatan]" class="raliva-input w-full" placeholder="opsional" />
-                </div>
-            </div>
-        `;
-        container.appendChild(row);
-    }
-
-    function removeBahanRow(btn) {
-        const row = btn.closest('[data-bahan-row]');
-        if (row) row.remove();
-    }
-
-    function onBahanInput(textInput) {
-        const row = textInput.closest('[data-bahan-row]');
-        if (!row) return;
-        const hiddenInput = row.querySelector('input[name$="[bahan_id]"]');
-        if (!hiddenInput) return;
-        const b = bahanMaster.find(x => x.bahan_id == textInput.value || x.nama_bahan == textInput.value);
-        if (b) {
-            hiddenInput.value = b.bahan_id;
-            textInput.value = b.nama_bahan;
-            const namaInput = row.querySelector('input[name$="[nama_bahan]"]');
-            if (namaInput && !namaInput.value) namaInput.value = b.nama_bahan;
-            const satuanInput = row.querySelector('[name$="[satuan]"]');
-            if (satuanInput && !satuanInput.value && satuanInput.querySelector(`option[value="${b.satuan}"]`)) satuanInput.value = b.satuan;
-        } else {
-            hiddenInput.value = '';
-        }
-    }
-
-    // Auto-seed first bahan row when proses modal opens
-    document.querySelectorAll('[data-modal-open]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const id = btn.getAttribute('data-modal-open');
-            if (!id || !id.startsWith('modal-proses-')) return;
-            const orderId = id.replace('modal-proses-', '');
-            const container = document.getElementById('bahan-container-' + orderId);
-            if (container && container.querySelectorAll('[data-bahan-row]').length === 0) {
-                addBahanRow(orderId);
-            }
-        });
-    });
-
     /* ====================================================================
        MODAL TAMBAH PESANAN — Online/Offline + dynamic product rows
        ==================================================================== */
