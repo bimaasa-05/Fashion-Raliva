@@ -123,6 +123,19 @@
         .border-l-gold-accent { border-left-color: #8B1E3F !important; }
         .shadow-\[0_0_0_3px_rgba\(201\,162\,77\,0\.08\)\] { --tw-shadow: 0 0 0 3px rgba(139,30,63,0.08) !important; --tw-shadow-colored: 0 0 0 3px rgba(139,30,63,0.08) !important; box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important; }
         .from-gold-accent\/70 { --tw-gradient-from: rgba(139,30,63,0.7) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        /* Admin desktop scale-up — samakan rasa dengan halaman Owner */
+        @media (min-width: 1024px) {
+            main .raliva-figure.text-\[26px\] { font-size: 2rem !important; }
+            main .premium-heading { font-size: 1.2rem !important; }
+            main table.premium-table { font-size: .9375rem !important; }
+            main table.premium-table thead th { padding: 1.1rem 1.25rem !important; font-size: .78rem !important; }
+            main table.premium-table tbody td { padding: 1.1rem 1.25rem !important; }
+            main .raliva-input, main .raliva-select, main .raliva-textarea, main .raliva-search { padding: .8rem 1rem !important; font-size: .95rem !important; }
+            main .raliva-search { padding-left: 2.75rem !important; }
+            #sidebar [data-menu-label] { font-size: 14px !important; }
+            #sidebar nav a, #sidebar nav .group.cursor-not-allowed { padding-top: .8rem !important; padding-bottom: .8rem !important; }
+            #sidebar .material-symbols-outlined.text-\[20px\] { font-size: 22px !important; }
+        }
     </style>
 </head>
 <body class="text-on-background font-body-md antialiased min-h-screen flex flex-col">
