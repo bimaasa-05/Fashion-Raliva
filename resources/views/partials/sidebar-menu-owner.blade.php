@@ -1,5 +1,6 @@
 @php
     $storeLocked = \App\Support\StoreGate::isLocked();
+    $noStore = ! \App\Support\OwnerContext::currentStore();
     $menuGroups = [
         [
             'label' => 'Utama',
@@ -69,12 +70,17 @@
                     <div class="{{ $collapsible ? 'space-y-1' : '' }}">
                 @foreach ($group['items'] as $item)
                     @php
-                        $locked = $storeLocked && $item['route'] !== 'owner.dashboard';
+                        // Suspend: kunci semua kecuali dashboard. Belum punya toko: hanya Data Toko yang digembok, sisanya bebas dijelajahi.
+                        $lockedBySuspend = $storeLocked && $item['route'] !== 'owner.dashboard';
+                        $lockedByNoStore = $noStore && ! $storeLocked && $item['route'] === 'owner.data-toko';
+                        $locked = $lockedBySuspend || $lockedByNoStore;
+                        $lockTitle = $lockedByNoStore ? 'Menu terkunci — ajukan toko dulu' : 'Menu terkunci — toko sedang ditangguhkan';
                         $isActive = request()->routeIs($item['route'], ...($item['aliases'] ?? []));
                     @endphp
                     @if ($locked)
-                        <div class="group flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-on-sidebar/35 border-l-[3px] border-transparent cursor-not-allowed" title="Menu terkunci — toko sedang ditangguhkan">
+                        <div class="group flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-on-sidebar/35 border-l-[3px] border-transparent cursor-not-allowed" title="{{ $lockTitle }}">
                             <span class="material-symbols-outlined text-[20px] text-on-sidebar/30">{{ $item['icon'] }}</span>
+                            <span class="sidebar-tip">{{ $item['text'] }} (terkunci)</span>
                             <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate">{{ $item['text'] }}</span>
                             <span class="material-symbols-outlined text-[16px] text-gold-accent/60">lock</span>
                         </div>
