@@ -88,7 +88,8 @@
             <div class="bar-title">Laporan Toko</div>
         </div>
         <div class="bar-actions">
-            <a href="{{ route('owner.laporan.export-pdf', ['period' => $period]) }}" class="btn-print">
+            @php $cetakNoStore = ! \App\Support\OwnerContext::currentStore(); @endphp
+            <a href="{{ route('owner.laporan.export-pdf', ['period' => $period]) }}" @if($cetakNoStore) aria-disabled="true" tabindex="-1" title="Ajukan toko dulu" @endif class="btn-print" @if($cetakNoStore) style="opacity:.6;pointer-events:none;" @endif>
                 &#128424; Cetak PDF
             </a>
             <a href="{{ route('owner.laporan', ['period' => $period]) }}" class="btn-back" onclick="window.close();">&larr; Kembali</a>
