@@ -353,7 +353,7 @@
                                         @endif
                                         <div class="flex items-center gap-2 mt-2 flex-wrap">
                                             @if ($rmt->file_bukti)
-                                                <a href="{{ asset($rmt->file_bukti) }}" target="_blank" class="inline-flex items-center gap-1 text-xs font-semibold text-gold-accent hover:underline">
+                                                <a href="{{ asset('storage/' . ltrim($rmt->file_bukti, '/')) }}" target="_blank" class="inline-flex items-center gap-1 text-xs font-semibold text-gold-accent hover:underline">
                                                     <span class="material-symbols-outlined text-[15px]">receipt_long</span>Lihat Bukti Bayar
                                                 </a>
                                             @else
@@ -367,20 +367,12 @@
                                 </div>
                                 @if ($isPending)
                                     <div class="flex flex-col sm:flex-row gap-2 shrink-0">
-                                        @if (! $payVerified)
-                                            <form method="POST" action="{{ route('superadmin.slot-produk.permintaan.verifikasi', $rmt->slot_purchase_id) }}" onsubmit="return openConfirmSlot(event, 'Verifikasi pembayaran ini?')">
-                                                @csrf
-                                                <button type="submit" class="min-h-11 px-4 rounded-lg border border-gold-accent/40 text-gold-accent text-xs font-semibold hover:bg-gold-accent/10 transition-colors inline-flex items-center justify-center gap-1.5 w-full sm:w-auto">
-                                                    <span class="material-symbols-outlined text-[15px]">done_all</span>Verifikasi Bayar
-                                                </button>
-                                            </form>
-                                        @endif
                                         <button type="button" onclick="openTolakModal({{ $rmt->slot_purchase_id }}, '{{ addslashes($rmt->store->nama_toko ?? '-') }}')" class="min-h-11 px-4 rounded-lg border border-error/40 text-error text-xs font-semibold hover:bg-error/10 transition-colors inline-flex items-center justify-center gap-1.5 w-full sm:w-auto">
                                             <span class="material-symbols-outlined text-[15px]">block</span>Tolak
                                         </button>
                                         <form method="POST" action="{{ route('superadmin.slot-produk.permintaan.setujui', $rmt->slot_purchase_id) }}" onsubmit="return openConfirmSlot(event, 'Setujui dan tambahkan {{ $rmt->jumlah_slot }} slot (Rp {{ number_format((float) $rmt->total_harga, 0, ',', '.') }}) untuk toko ini?')">
                                             @csrf
-                                            <button type="submit" class="w-full min-h-11 px-4 rounded-lg bg-deep-onyx text-on-primary text-xs font-semibold hover:bg-black transition-colors btn-premium inline-flex items-center justify-center gap-1.5 {{ $payVerified ? '' : 'opacity-50 cursor-not-allowed' }}" {{ $payVerified ? '' : 'disabled' }}>
+                                            <button type="submit" class="w-full min-h-11 px-4 rounded-lg bg-deep-onyx text-on-primary text-xs font-semibold hover:bg-black transition-colors btn-premium inline-flex items-center justify-center gap-1.5">
                                                 <span class="material-symbols-outlined text-[15px]">check_circle</span>Setujui & Tambah Slot
                                             </button>
                                         </form>
