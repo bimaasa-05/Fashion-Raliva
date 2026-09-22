@@ -20,6 +20,18 @@ class DataProdukController extends Controller
 
         $categories = \App\Models\Category::where('status', 'aktif')->orderBy('nama_kategori')->get();
 
+        // Ukuran berdasarkan kategori toko Admin (fallback hardcode lama)
+        $fallbackUkuran = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'All Size'];
+        $ukuranOptions = $fallbackUkuran;
+        $tokoKategori = null;
+        $tokoPertama = \App\Models\Store::whereIn('store_id', AdminContext::assignedStoreIds())->first(['store_id', 'kategori']);
+        if ($tokoPertama?->kategori) {
+            $tokoKategori = $tokoPertama->kategori;
+            $sizes = \App\Models\StoreCategorySize::whereHas('storeCategory', fn ($q) => $q->where('nama_kategori', $tokoKategori))
+                ->orderBy('urutan')->pluck('ukuran_label')->all();
+            if ($sizes) $ukuranOptions = $sizes;
+        }
+
         $stats = [
             'total' => Product::count(),
             'aktif' => Product::where('status', 'aktif')->count(),
@@ -27,7 +39,7 @@ class DataProdukController extends Controller
             'ditolak' => Product::where('status', 'ditolak')->count(),
         ];
 
-        return view('Admin.produk.index', compact('products', 'categories', 'stats'));
+        return view('Admin.produk.index', compact('products', 'categories', 'stats', 'ukuranOptions', 'tokoKategori'));
     }
 
     public function store(Request $request): \Illuminate\Http\RedirectResponse
