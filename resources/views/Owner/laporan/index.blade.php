@@ -75,11 +75,12 @@
                     <option value="90" @selected($period === 90)>3 Bulan</option>
                     <option value="365" @selected($period === 365)>1 Tahun</option>
                 </select>
-                <a href="{{ route('owner.laporan.export-excel', ['period' => $period]) }}" class="flex items-center justify-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors shrink-0">
-                    <span class="material-symbols-outlined text-[16px]">download</span>Excell
+                @php $lapNoStore = ! \App\Support\OwnerContext::currentStore(); @endphp
+                <a href="{{ route('owner.laporan.export-excel', ['period' => $period]) }}" @if($lapNoStore) aria-disabled="true" tabindex="-1" title="Ajukan toko dulu" @endif class="flex items-center justify-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors shrink-0 {{ $lapNoStore ? 'opacity-60 pointer-events-none' : '' }}">
+                    <span class="material-symbols-outlined text-[16px]">{{ $lapNoStore ? 'lock' : 'download' }}</span>Excell
                 </a>
-                <a href="{{ route('owner.laporan.cetak', ['period' => $period]) }}" target="_blank" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium shrink-0">
-                    <span class="material-symbols-outlined text-[16px]">picture_as_pdf</span>PDF
+                <a href="{{ route('owner.laporan.cetak', ['period' => $period]) }}" target="_blank" @if($lapNoStore) aria-disabled="true" tabindex="-1" title="Ajukan toko dulu" @endif class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium shrink-0 {{ $lapNoStore ? 'opacity-60 pointer-events-none' : '' }}">
+                    <span class="material-symbols-outlined text-[16px]">{{ $lapNoStore ? 'lock' : 'picture_as_pdf' }}</span>PDF
                 </a>
             </div>
         </div>
