@@ -35,6 +35,10 @@
         'setting' => 'settings',
         'system' => 'settings',
         'payment' => 'payments',
+        'promo' => 'local_offer',
+        'slot' => 'grid_view',
+        'adslot' => 'campaign',
+        'complaint' => 'support_agent',
     ];
     $kategoriTagMap = [
         'user' => 'Pengguna',
@@ -48,6 +52,10 @@
         'setting' => 'Sistem',
         'system' => 'Sistem',
         'payment' => 'Keuangan',
+        'promo' => 'Promo',
+        'slot' => 'Produk',
+        'adslot' => 'Iklan',
+        'complaint' => 'Komplain',
     ];
     $kategoriTabMap = [
         'user' => 'pengguna',
@@ -61,6 +69,10 @@
         'setting' => 'sistem',
         'system' => 'sistem',
         'payment' => 'keuangan',
+        'promo' => 'sistem',
+        'slot' => 'produk',
+        'adslot' => 'produk',
+        'complaint' => 'sistem',
     ];
 @endphp
 
@@ -87,7 +99,7 @@
 </div>
 
 <!-- Timeline -->
-<div class="space-y-6">
+<div class="timeline space-y-6" data-since="{{ optional($logs->first())->activity_log_id ?? 0 }}">
     @forelse($logs as $log)
         @php
             $prefix = explode('.', $log->aksi)[0] ?? 'system';
@@ -142,3 +154,57 @@
     @endif
 </div>
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    const wrap = document.querySelector('.timeline');
+    if (!wrap) return;
+
+    const list = wrap;
+    let since = Number(wrap.dataset.since || 0);
+    const emptyBox = wrap.querySelector('div.text-center');
+
+    function itemHtml(item) {
+        const user = item.user ? '<span class="font-bold text-on-surface">' + item.user + '</span> ' : '';
+        const perubahan = item.ada_perubahan ? '<div class="mt-2 text-sm text-on-surface-variant bg-surface p-2 border border-muted-border rounded-sm">Perubahan data tercatat.</div>' : '';
+        return '<div class="timeline-item relative timeline-line">' +
+            '<div class="flex items-start">' +
+            '<div class="relative z-10 w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center shrink-0 border border-gold-accent/40 shadow-[0_0_0_3px_rgba(139,30,63,0.08)] mt-1">' +
+            '<span class="material-symbols-outlined text-gold-accent text-sm">' + item.icon + '</span></div>' +
+            '<div class="ml-element-gap flex-grow">' +
+            '<div class="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-1">' +
+            '<span class="font-title-md text-title-md text-on-surface">' + item.aksi + '</span>' +
+            '<span class="text-xs text-on-surface-variant mt-1 sm:mt-0 font-label-sm uppercase tracking-wider">' + item.waktu + '</span></div>' +
+            '<div class="p-4 bg-surface-container-low border border-muted-border rounded-DEFAULT mt-2 card-premium">' +
+            '<div class="text-sm">' + user + item.deskripsi + '</div>' + perubahan +
+            '<div class="mt-3 flex gap-2">' +
+            '<span class="inline-block px-2 py-1 bg-surface-container-high text-on-surface-variant text-[10px] uppercase font-bold tracking-wider rounded-DEFAULT">' + item.tag + '</span>' +
+            '</div></div></div></div></div>';
+    }
+
+    async function refresh() {
+        try {
+            const res = await fetch('{{ route('superadmin.riwayat-aktivitas.baru') }}?since=' + since, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            });
+            const items = await res.json();
+            if (!items || !items.length) return;
+
+            since = Math.max(since, ...items.map(i => Number(i.id)));
+
+            if (emptyBox) emptyBox.remove();
+
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item-fresh';
+                div.innerHTML = itemHtml(item);
+                list.insertBefore(div.firstChild, list.firstChild);
+            });
+        } catch (e) { /* abaikan */ }
+    }
+
+    setInterval(refresh, 30000);
+})();
+</script>
+@endpush
