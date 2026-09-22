@@ -92,7 +92,7 @@ class KomplainController extends Controller
     }
 
     /**
-     * Ubah isi pesan milik sendiri (maksimal 15 menit setelah dikirim).
+     * Ubah isi pesan milik sendiri (maksimal 10 menit setelah dikirim).
      */
     public function updateMessage(Request $request, Complaint $komplain, ComplaintMessage $message)
     {
@@ -114,8 +114,8 @@ class KomplainController extends Controller
             return response()->json(['message' => 'Hanya pemilik pesan yang dapat mengedit.'], 403);
         }
 
-        if ($message->created_at->lt(now()->subMinutes(15))) {
-            return response()->json(['message' => 'Pesan hanya dapat diedit dalam 15 menit pertama setelah dikirim.'], 422);
+        if ($message->created_at->lt(now()->subMinutes(10))) {
+            return response()->json(['message' => 'Pesan hanya dapat diedit dalam 10 menit pertama setelah dikirim.'], 422);
         }
 
         $data = $request->validate([
@@ -173,8 +173,8 @@ class KomplainController extends Controller
             return response()->json(['message' => 'Hanya pemilik pesan yang dapat menghapus untuk semua orang.'], 403);
         }
 
-        if ($message->created_at->lt(now()->subDays(2))) {
-            return response()->json(['message' => 'Pesan hanya dapat dihapus untuk semua orang dalam 2 hari setelah dikirim.'], 422);
+        if ($message->created_at->lt(now()->subDays(1))) {
+            return response()->json(['message' => 'Pesan hanya dapat dihapus untuk semua orang dalam 1 hari setelah dikirim.'], 422);
         }
 
         $message->delete();
