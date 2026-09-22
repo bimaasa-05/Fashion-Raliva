@@ -62,6 +62,13 @@
                     $orderUtama = $pembayaran->checkout->orders->first();
                     $bukti = $pembayaran->proofs->first();
                     $verifTerakhir = $pembayaran->verifications->sortByDesc('payment_verification_id')->first();
+                    $metodeNama = strtolower($pembayaran->paymentMethod?->nama_metode ?? '');
+                    $metodeIcon = str_contains($metodeNama, 'qris') ? 'qr_code_2' : (str_contains($metodeNama, 'saldo') || str_contains($metodeNama, 'wallet') || str_contains($metodeNama, 'e-wallet') || str_contains($metodeNama, 'dompet') ? 'account_balance_wallet' : (str_contains($metodeNama, 'tunai') || str_contains($metodeNama, 'cash') || str_contains($metodeNama, 'cod') ? 'payments' : (str_contains($metodeNama, 'bank') || str_contains($metodeNama, 'transfer') ? 'account_balance' : 'receipt_long')));
+                    $statusBadge = [
+                        'menunggu' => ['label' => 'Menunggu', 'icon' => 'hourglass_top', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
+                        'diterima' => ['label' => 'Diterima', 'icon' => 'check_circle', 'class' => 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30'],
+                        'ditolak' => ['label' => 'Ditolak', 'icon' => 'cancel', 'class' => 'bg-error/10 text-error border-error/20'],
+                    ][$activeTab] ?? ['label' => ucfirst($activeTab), 'icon' => 'info', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'];
                 @endphp
                 <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-id="{{ $pembayaran->payment_id }}">
                     <div class="flex items-start justify-between mb-4">
@@ -73,7 +80,10 @@
                                 <p class="text-xs text-on-surface-variant mt-1">Saldo <strong class="text-on-surface">Rp {{ number_format((float) $pembayaran->jumlah_saldo, 0, ',', '.') }}</strong> + Transfer <strong class="text-on-surface">Rp {{ number_format((float) $pembayaran->sisa_transfer, 0, ',', '.') }}</strong></p>
                             @endif
                         </div>
-                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">@if($pembayaran->account?->file_gambar)<img src="{{ asset('storage/' . ltrim($pembayaran->account->file_gambar, '/')) }}" alt="{{ $pembayaran->account->nama }}" class="h-3.5 w-3.5 object-contain mr-1" />@endif{{ $pembayaran->paymentMethod?->nama_metode ?? '-' }}{{ $pembayaran->account?->nama ? ' &#8226; ' . $pembayaran->account->nama : '' }}</span>
+                        <div class="flex flex-col items-end gap-1.5 shrink-0">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant"><span class="material-symbols-outlined text-[14px] mr-1">{{ $metodeIcon }}</span>@if($pembayaran->account?->file_gambar)<img src="{{ asset('storage/' . ltrim($pembayaran->account->file_gambar, '/')) }}" alt="{{ $pembayaran->account->nama }}" class="h-3.5 w-3.5 object-contain mr-1" />@endif{{ $pembayaran->paymentMethod?->nama_metode ?? '-' }}{{ $pembayaran->account?->nama ? ' &#8226; ' . $pembayaran->account->nama : '' }}</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $statusBadge['class'] }}"><span class="material-symbols-outlined text-[14px] mr-1">{{ $statusBadge['icon'] }}</span>{{ $statusBadge['label'] }}</span>
+                        </div>
                     </div>
 
                     @if ($bukti)
@@ -147,7 +157,7 @@
                     <form method="POST" action="{{ route('admin.verifikasi-pembayaran.tolak', $pembayaran->payment_id) }}" class="relative mx-auto w-[calc(100%-2rem)] max-w-md bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl p-8">
                         @csrf
                         <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                            <span class="material-symbols-outlined text-error text-[28px]">gpp_bad</span>
+                            <span class="material-symbols-outlined text-error text-[28px]">block</span>
                         </div>
                         <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Tolak Pembayaran</h3>
                         <p class="text-on-surface-variant text-sm text-center mb-4">Checkout <span class="font-mono font-bold text-on-surface">#CKT-{{ str_pad((string) $pembayaran->checkout_id, 4, '0', STR_PAD_LEFT) }}</span> akan ditolak. Customer diminta mengunggah ulang bukti.</p>
@@ -214,8 +224,26 @@
                                 @endif
                             </div>
                             @if ((float) $pembayaran->jumlah !== (float) $detailTotal)
-                                <p class="text-xs text-error border border-error/20 bg-error/5 rounded-lg px-4 py-3">Nominal tidak sama dengan total tagihan (selisih Rp {{ number_format(abs((float) $pembayaran->jumlah - (float) $detailTotal), 0, ',', '.') }}).</p>
+                                <p class="text-xs text-error border border-error/20 bg-error/5 rounded-lg px-4 py-3 flex items-start gap-2"><span class="material-symbols-outlined text-[16px] shrink-0">warning</span><span>Nominal tidak sama dengan total tagihan (selisih Rp {{ number_format(abs((float) $pembayaran->jumlah - (float) $detailTotal), 0, ',', '.') }}).</span></p>
                             @endif
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="border border-muted-border rounded-lg px-4 py-3">
+                                    <p class="text-xs text-on-surface-variant">Status</p>
+                                    <p class="font-bold text-on-surface mt-1">{{ ucfirst($pembayaran->status) }}</p>
+                                </div>
+                                <div class="border border-muted-border rounded-lg px-4 py-3">
+                                    <p class="text-xs text-on-surface-variant">Batas Waktu</p>
+                                    <p class="font-bold text-on-surface mt-1">{{ $pembayaran->batas_waktu?->translatedFormat('d M Y H:i') ?? '-' }}</p>
+                                </div>
+                                <div class="border border-muted-border rounded-lg px-4 py-3">
+                                    <p class="text-xs text-on-surface-variant">Dibayar Pada</p>
+                                    <p class="font-bold text-on-surface mt-1">{{ $pembayaran->dibayar_pada?->translatedFormat('d M Y H:i') ?? '-' }}</p>
+                                </div>
+                                <div class="border border-muted-border rounded-lg px-4 py-3">
+                                    <p class="text-xs text-on-surface-variant">Diverifikasi Oleh</p>
+                                    <p class="font-bold text-on-surface mt-1">{{ $verifTerakhir?->verifier?->nama_lengkap ?? '-' }}</p>
+                                </div>
+                            </div>
                             @if ($pembayaran->account && ($pembayaran->account->nomor_rekening || $pembayaran->account->nama_pemilik))
                                 <div class="border border-muted-border rounded-lg p-4 bg-surface-container-low/50">
                                     <p class="raliva-label mb-2">Tujuan Pembayaran</p>
