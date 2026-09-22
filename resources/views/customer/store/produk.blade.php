@@ -311,7 +311,7 @@
 <div class="flex flex-col gap-1">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $store->nama_toko }}</span>
 <h3 class="font-body-sm text-body-sm font-semibold truncate">{{ $p->nama_produk }}</h3>
-<span class="font-body-sm text-body-sm text-secondary mt-1">Rp {{ number_format($pMin, 0, ',', '.') }}</span>
+<span class="font-body-sm text-body-sm text-on-surface mt-1">Rp {{ number_format($pMin, 0, ',', '.') }}</span>
 </div>
 </a>
 @php $isWl = in_array($p->product_id, $wishlistedIds, true); @endphp
