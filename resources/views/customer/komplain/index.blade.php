@@ -493,9 +493,6 @@
                             <button type="button" onclick="selectMessagesMode()" id="chat-more-item-select" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
                                 <span class="material-symbols-outlined text-[19px]">check_box</span>{{ __('Select Messages') }}
                             </button>
-                            <button type="button" onclick="openExportChat()" id="chat-more-item-export" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[19px]">ios_share</span>{{ __('Ekspor Chat') }}
-                            </button>
                             <button type="button" onclick="openRefundFromChat()" id="chat-more-item-refund" class="hidden border-t border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] w-full text-left px-4 py-2.5 font-body-md text-sm text-secondary hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2 mt-1">
                                 <span class="material-symbols-outlined text-[19px]">assignment_return</span>{{ __('Ajukan Refund') }}
                             </button>
@@ -544,9 +541,6 @@
                     </button>
                     <button type="button" onclick="confirmDeleteSelected()" id="chat-sel-delete" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Hapus') }}" aria-label="{{ __('Hapus') }}">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
-                    </button>
-                    <button type="button" onclick="downloadSelectedMessages()" id="chat-sel-download" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Unduh') }}" aria-label="{{ __('Unduh') }}">
-                        <span class="material-symbols-outlined text-[20px]">download</span>
                     </button>
                 </div>
                 <p id="chat-closed-note" class="hidden text-center font-body-sm text-body-sm text-on-surface-variant pt-4">{{ __('Komplain telah selesai dan tidak dapat dibalas lagi.') }}</p>
@@ -927,13 +921,13 @@
     function chatEditAllowed(createdAt) {
         const t = new Date(createdAt).getTime();
         if (isNaN(t)) return false;
-        return (Date.now() - t) <= 15 * 60 * 1000;
+        return (Date.now() - t) <= 10 * 60 * 1000;
     }
 
     function chatDeleteForAllAllowed(createdAt) {
         const t = new Date(createdAt).getTime();
         if (isNaN(t)) return false;
-        return (Date.now() - t) <= 2 * 24 * 60 * 60 * 1000;
+        return (Date.now() - t) <= 1 * 24 * 60 * 60 * 1000;
     }
 
     function toggleChatMenu(id) {
@@ -1336,15 +1330,6 @@
         loadMessages();
         if (failed === 0) showChatToast(ids.length + ' pesan dihapus untuk diri sendiri.');
         else showChatToast(failed + ' pesan gagal dihapus.');
-    }
-
-    function downloadSelectedMessages() {
-        showChatToast('Fitur akan segera hadir.');
-    }
-
-    function openExportChat() {
-        closeChatMoreMenu();
-        showChatToast('Fitur akan segera hadir.');
     }
 
     function openEditDialog(id) {
