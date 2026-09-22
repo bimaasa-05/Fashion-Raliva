@@ -26,9 +26,9 @@ class LaporanController extends Controller
         $pendapatan = $storeId ? (float) Order::whereIn('store_id', $storeIds)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->sum('grand_total') : 0;
         $pesananDiproses = $storeId ? Order::whereIn('store_id', $storeIds)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->count() : 0;
 
-        // pengeluaran = refund selesai + store expense
+        // pengeluaran = refund disetujui/selesai + store expense
         $refund = $storeId ? (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
-            ->whereIn('orders.store_id', $storeIds)->where('refunds.status', 'selesai')->sum('refunds.jumlah') : 0;
+            ->whereIn('orders.store_id', $storeIds)->whereIn('refunds.status', ['disetujui', 'selesai'])->sum('refunds.jumlah') : 0;
         $expense = $storeId ? (float) StoreExpense::whereIn('store_id', $storeIds)->sum('nominal') : 0;
         $totalPengeluaran = $refund + $expense;
         $totalBersih = $pendapatan - $totalPengeluaran;
@@ -41,24 +41,6 @@ class LaporanController extends Controller
         // status counts for admin
         $pesananBaru = $storeId ? Order::whereIn('store_id', $storeIds)->whereIn('status', ['pending_payment','dibayar'])->count() : 0;
         $menungguVerifikasi = $storeId ? \App\Models\Payment::whereHas('checkout.orders', fn($q)=>$q->whereIn('store_id',$storeIds))->where('status','menunggu_verifikasi')->count() : 0;
-
-        // per toko breakdown for admin with multiple stores
-        $perToko = collect();
-        if ($storeIds) {
-            $stores = \App\Models\Store::whereIn('store_id', $storeIds)->get();
-            foreach ($stores as $s) {
-                $p = (float) Order::where('store_id', $s->store_id)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->sum('grand_total');
-                $exp = (float) StoreExpense::where('store_id', $s->store_id)->sum('nominal');
-                $ref = (float) Refund::join('orders','orders.order_id','=','refunds.order_id')->where('orders.store_id',$s->store_id)->where('refunds.status','selesai')->sum('refunds.jumlah');
-                $perToko->push((object)[
-                    'nama_toko'=>$s->nama_toko,
-                    'pesanan'=> Order::where('store_id',$s->store_id)->whereIn('status',[Order::STATUS_SELESAI, Order::STATUS_REFUND])->count(),
-                    'pendapatan'=>$p,
-                    'pengeluaran'=>$exp+$ref,
-                    'bersih'=>$p - ($exp+$ref),
-                ]);
-            }
-        }
 
         // per metode pembayaran breakdown (hanya payment terverifikasi di store scope)
         $perMetode = collect();
@@ -82,20 +64,26 @@ class LaporanController extends Controller
                 ->values();
         }
 
-        // 30-day omzet trend bars for charts
+        // Omzet trend bars — filter dari/sampai (default 30 hari)
+        $dari = $request->date('dari')?->startOfDay() ?? now()->subDays(29)->startOfDay();
+        $sampai = $request->date('sampai')?->endOfDay() ?? now()->endOfDay();
+        if ($sampai->lt($dari)) [$dari, $sampai] = [$sampai->copy()->startOfDay(), $dari->copy()->endOfDay()];
+        if ($dari->diffInDays($sampai) > 93) $dari = $sampai->copy()->subDays(92)->startOfDay();
+
         $omzetBars = [];
         if ($storeIds) {
             $validStatuses = [Order::STATUS_DIBAYAR, Order::STATUS_MENUNGGU_PRODUKSI, Order::STATUS_DIPROSES, Order::STATUS_MENUNGGU_QC, Order::STATUS_SIAP_KIRIM, Order::STATUS_DIKIRIM, Order::STATUS_SELESAI, Order::STATUS_REFUND];
             $dailyRows = Order::query()
                 ->whereIn('store_id', $storeIds)
                 ->whereIn('status', $validStatuses)
-                ->whereBetween('created_at', [now()->subDays(29)->startOfDay(), now()->endOfDay()])
+                ->whereBetween('created_at', [$dari, $sampai])
                 ->groupBy('tanggal')
                 ->selectRaw('DATE(created_at) as tanggal, SUM(grand_total) as total')
                 ->pluck('total', 'tanggal');
 
-            foreach (range(29, 0) as $i) {
-                $hari = now()->subDays($i);
+            $jumlahHari = $dari->diffInDays($sampai);
+            foreach (range($jumlahHari, 0) as $i) {
+                $hari = $sampai->copy()->subDays($i);
                 $kunci = $hari->toDateString();
                 $nilai = (float) ($dailyRows[$kunci] ?? 0);
                 $omzetBars[] = ['label' => $hari->format('d/m'), 'value' => round($nilai / 1000000, 2)];
@@ -112,6 +100,6 @@ class LaporanController extends Controller
             ];
         })->values()->all();
 
-        return view('Admin.laporan.index', compact('pendapatan', 'pesananDiproses', 'totalPengeluaran', 'totalBersih', 'perToko', 'perMetode', 'pesananBaru', 'menungguVerifikasi', 'saya', 'omzetBars', 'distribusiMetode'));
+        return view('Admin.laporan.index', compact('pendapatan', 'pesananDiproses', 'totalPengeluaran', 'totalBersih', 'perMetode', 'pesananBaru', 'menungguVerifikasi', 'saya', 'omzetBars', 'distribusiMetode', 'dari', 'sampai'));
     }
 }
