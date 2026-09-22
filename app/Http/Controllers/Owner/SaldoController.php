@@ -180,6 +180,7 @@ class SaldoController extends Controller
             'sumber' => ['required', 'string', 'max:150'],
             'nominal' => ['required', 'numeric', 'min:1'],
             'tanggal' => ['required', 'date', 'before_or_equal:today'],
+            'kategori' => ['required', 'string', 'in:Penjualan,Investor,Modal,Komisi,Lainnya'],
         ]);
         $wallet = $store->wallet;
         if (! $wallet) {
@@ -189,6 +190,7 @@ class SaldoController extends Controller
         \App\Models\WalletTransaction::create([
             'wallet_id' => $wallet->wallet_id,
             'jenis_transaksi' => \App\Models\WalletTransaction::JENIS_PEMASUKAN,
+            'kategori' => $validated['kategori'],
             'jumlah' => $validated['nominal'],
             'saldo_sebelum' => (float) $wallet->saldo_tersedia - (float) $validated['nominal'],
             'saldo_sesudah' => (float) $wallet->saldo_tersedia,
