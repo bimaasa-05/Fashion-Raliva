@@ -222,9 +222,9 @@
             <div class="space-y-4">
                 <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">Variasi &amp; Stok</p>
                 <div>
-                    <p class="raliva-label mb-2">Ukuran</p>
+                    <p class="raliva-label mb-2">Ukuran @if(!empty($tokoKategori))<span class="text-xs font-normal text-on-surface-variant">(kategori toko: {{ $tokoKategori }})</span>@endif</p>
                     <div class="flex flex-wrap gap-2" id="edit-ukuran-chips">
-                        @foreach (['XS', 'S', 'M', 'L', 'XL', 'XXL', 'All Size'] as $size)
+                        @foreach (($ukuranOptions ?? ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'All Size']) as $size)
                             <button type="button" class="edit-ukuran-chip px-4 py-2 rounded-lg border border-muted-border text-xs font-medium text-on-surface hover:border-gold-accent transition-colors" data-size="{{ $size }}">{{ $size }}</button>
                         @endforeach
                     </div>
@@ -701,9 +701,9 @@
         <div class="space-y-4">
             <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">Variasi &amp; Stok</p>
             <div>
-                <p class="raliva-label mb-2">Ukuran</p>
+                <p class="raliva-label mb-2">Ukuran @if(!empty($tokoKategori))<span class="text-xs font-normal text-on-surface-variant">(kategori toko: {{ $tokoKategori }})</span>@endif</p>
                 <div class="flex flex-wrap gap-2" id="ukuran-chips">
-                    @foreach (['XS', 'S', 'M', 'L', 'XL', 'XXL', 'All Size'] as $size)
+                    @foreach (($ukuranOptions ?? ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'All Size']) as $size)
                         <button type="button" class="ukuran-chip px-4 py-2 rounded-lg border border-muted-border text-xs font-medium text-on-surface hover:border-gold-accent transition-colors" data-size="{{ $size }}">{{ $size }}</button>
                     @endforeach
                     <button type="button" onclick="document.getElementById('custom-size-fields').classList.toggle('hidden')" class="px-4 py-2 rounded-lg border border-dashed border-gold-accent/40 text-gold-accent text-xs font-medium hover:bg-gold-accent/5 transition-colors">+ Custom</button>
