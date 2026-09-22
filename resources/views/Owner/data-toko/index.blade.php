@@ -42,6 +42,11 @@
                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full {{ $store?->status === 'aktif' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }} text-[10px] font-bold uppercase border w-fit mx-auto sm:mx-0">
                         <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : 'schedule' }}</span>{{ $store?->status === 'aktif' ? 'Terverifikasi' : ucfirst($store?->status ?? 'Menunggu') }}
                     </span>
+                    @if(! $store)
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[10px] font-bold uppercase w-fit mx-auto sm:mx-0" title="Terkunci — ajukan toko untuk membuka">
+                            <span class="material-symbols-outlined text-[12px]">lock</span>Terkunci
+                        </span>
+                    @endif
                 </div>
                 <p class="text-on-surface-variant font-body-md text-sm mt-1">{{ $store?->kategori ?? 'Fashion & Lifestyle' }} &mdash; ID Toko: RLV-TOKO-{{ str_pad($store?->store_id ?? 0, 4, '0', STR_PAD_LEFT) }} &bull; Bergabung {{ $store?->created_at?->translatedFormat('M Y') ?? '-' }}</p>
                 <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Rating toko <span class="font-bold text-gold-accent">{{ number_format($rating, 1, ',', '.') }}/5,0</span> &bull; {{ $reviewCount }} ulasan</p>
