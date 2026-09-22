@@ -336,7 +336,7 @@
 @if ($u && $u->foto_profil_url)
 <img src="{{ $u->foto_profil_url }}" alt="{{ $u->nama_lengkap }}" class="w-9 h-9 rounded-full object-cover shrink-0"/>
 @else
-<div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-caps text-label-caps shrink-0">{{ $initials }}</div>
+<div class="w-9 h-9 rounded-full bg-secondary-container text-on-primary flex items-center justify-center font-label-caps text-label-caps shrink-0">{{ $initials }}</div>
 @endif
 <div class="min-w-0">
 <p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $u->nama_lengkap ?? __('Anonymous') }}</p>

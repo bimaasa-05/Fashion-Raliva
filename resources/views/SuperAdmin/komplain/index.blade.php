@@ -257,9 +257,6 @@
                             <button type="button" onclick="resetWallpaper()" id="chat-more-item-wp-reset" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer flex items-center gap-2">
                                 <span class="material-symbols-outlined text-[19px]">restart_alt</span>Reset Wallpaper
                             </button>
-                            <button type="button" onclick="openExportChat()" id="chat-more-item-export" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[19px]">ios_share</span>Ekspor Chat
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -305,9 +302,6 @@
                     </button>
                     <button type="button" onclick="confirmDeleteSelected()" id="chat-sel-delete" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Hapus" aria-label="Hapus">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
-                    </button>
-                    <button type="button" onclick="downloadSelectedMessages()" id="chat-sel-download" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Unduh" aria-label="Unduh">
-                        <span class="material-symbols-outlined text-[20px]">download</span>
                     </button>
                 </div>
                 <p id="chat-closed-note" class="hidden text-center font-body-sm text-body-sm text-on-surface-variant pt-4">Komplain telah selesai dan tidak dapat dibalas lagi.</p>
@@ -771,13 +765,13 @@
     function chatEditAllowed(createdAt) {
         const t = new Date(createdAt).getTime();
         if (isNaN(t)) return false;
-        return (Date.now() - t) <= 15 * 60 * 1000;
+        return (Date.now() - t) <= 10 * 60 * 1000;
     }
 
     function chatDeleteForAllAllowed(createdAt) {
         const t = new Date(createdAt).getTime();
         if (isNaN(t)) return false;
-        return (Date.now() - t) <= 2 * 24 * 60 * 60 * 1000;
+        return (Date.now() - t) <= 1 * 24 * 60 * 60 * 1000;
     }
 
     function toggleChatMenu(id) {
@@ -1095,15 +1089,6 @@
 
     function closeSelDeleteDialog() {
         document.getElementById('chat-sel-delete-dialog').classList.add('hidden');
-    }
-
-    function downloadSelectedMessages() {
-        showChatToast('Fitur akan segera hadir.');
-    }
-
-    function openExportChat() {
-        closeChatMoreMenu();
-        showChatToast('Fitur akan segera hadir.');
     }
 
     function openEditDialog(id) {
