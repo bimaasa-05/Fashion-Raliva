@@ -243,12 +243,24 @@
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[120px] lg:pl-72">
 <!-- TopAppBar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-<a href="{{ route('customer.shop') }}" data-go-back aria-label="{{ __('Go back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+<a href="{{ route('customer.shop') }}" data-go-back aria-label="{{ __('Go back') }}" class="st-header-item p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('STORE') }}</h1>
-<div class="w-10"></div> <!-- Spacer for centering -->
+<h1 class="st-header-item font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('STORE') }}</h1>
+<button id="st-search-toggle" aria-label="{{ __('Search products in this store') }}" class="st-header-item hover:opacity-80 transition-opacity flex items-center justify-center w-10 h-10" onclick="toggleStoreSearch()" type="button">
+<span class="material-symbols-outlined text-[22px]">search</span>
+</button>
 </header>
+<div id="st-search-panel" class="fixed top-0 inset-x-0 lg:left-72 z-[55] h-16 bg-[var(--chrome-bg)] text-[var(--chrome-text)] border-b border-[var(--chrome-border)] flex items-center gap-sm px-container-margin">
+<button id="st-search-close" aria-label="{{ __('Close search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center shrink-0 w-10 h-10" onclick="toggleStoreSearch()" type="button">
+<span class="material-symbols-outlined text-[22px]">search</span>
+</button>
+<input id="st-search-input" type="text" inputmode="search" autocomplete="off" placeholder="{{ __('Cari produk di toko ini...') }}" class="flex-1 min-w-0 bg-transparent font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/70 border-b border-[var(--chrome-border)] focus:border-secondary py-2"/>
+<button id="st-search-clear" aria-label="{{ __('Clear search') }}" class="hidden hover:opacity-80 transition-opacity flex items-center justify-center shrink-0 w-10 h-10" onclick="clearStoreSearch()" type="button">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">close</span>
+</button>
+<span id="st-search-count" class="font-label-sm text-label-sm text-on-surface-variant shrink-0 hidden"></span>
+</div>
 <!-- Main Content -->
 <main class="pt-16 pb-[120px] w-full">
 <section class="py-xl reveal-up">
@@ -298,12 +310,40 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     #load-more-btn:disabled { cursor: not-allowed; opacity: .7; }
 </style>
+<style>
+    /* ===== Store header search (parity wishlist) ===== */
+    .st-header-item { transition: opacity .3s ease, transform .3s ease; }
+    .st-header-hidden { opacity: 0; transform: translateY(-6px); pointer-events: none; }
+    #st-search-panel { opacity: 0; transform: translateX(28px); pointer-events: none; transition: opacity .3s cubic-bezier(.22,1,.36,1), transform .3s cubic-bezier(.22,1,.36,1); }
+    #st-search-panel.st-search-open { opacity: 1; transform: translateX(0); pointer-events: auto; }
+    #st-search-input,
+    #st-search-input:focus,
+    #st-search-input:focus-visible,
+    #st-search-input:active {
+        outline: none !important;
+        box-shadow: none !important;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    #st-search-input { caret-color: #8B1E3F; }
+    #st-search-input::selection { background: rgba(139,30,63,.55); color: #ffffff; }
+    #st-search-toggle:focus,
+    #st-search-close:focus,
+    #st-search-clear:focus,
+    #st-search-input:focus { outline: none !important; }
+    #st-search-toggle:active,
+    #st-search-close:active,
+    #st-search-clear:active { outline: none !important; box-shadow: none !important; }
+    #st-search-toggle:focus-visible,
+    #st-search-close:focus-visible,
+    #st-search-clear:focus-visible { outline: none !important; box-shadow: 0 0 0 2px rgba(139,30,63,.5); border-radius: 9999px; }
+</style>
 <!-- Product Grid -->
 <section class="pt-lg mt-lg reveal-up">
 <div id="product-grid" class="grid grid-cols-2 md:grid-cols-4 gap-gutter" data-total="{{ $totalProducts ?? $products->count() }}">
 @forelse ($products as $p)
 @php $pImg = $p->images->first()?->file_gambar; $pMin = $p->variants->min('harga') ?? $p->harga_dasar; @endphp
-<div class="group relative flex flex-col cursor-pointer">
+<div class="group relative flex flex-col cursor-pointer" data-store-product data-product-id="{{ $p->product_id }}">
 <a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col w-full">
 <div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
 <img alt="{{ $p->nama_produk }}" class="w-full h-full object-cover " src="{{ $pImg ? (photo_url($pImg)) : 'https://picsum.photos/seed/store'.$p->product_id.'/900/1200' }}"/>
@@ -324,7 +364,9 @@
 <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No products in this store yet.') }}</p>
 </div>
 @endforelse
-</div><!-- Load More -->
+</div>
+<p id="st-no-results" class="hidden mt-md text-center font-body-sm text-body-sm text-on-surface-variant">{{ __('Tidak ada produk yang cocok di toko ini.') }}</p>
+<!-- Load More -->
 <div class="mt-xl flex justify-center">
 <button id="load-more-btn" class="border border-[var(--chrome-accent)] text-[var(--chrome-accent)] bg-transparent font-label-caps text-label-caps px-xl py-sm hover:bg-surface-container-low transition-colors w-full md:w-auto rounded-lg flex items-center justify-center gap-2 uppercase tracking-widest" type="button" onclick="loadMoreProducts()" style="display:none;">
 <span class="spinner" style="display:none;"></span>
@@ -353,14 +395,44 @@
             if (!grid || !btn) return;
             var total = parseInt(grid.getAttribute('data-total') || '0', 10);
             var cards = Array.prototype.slice.call(grid.children);
+            window.storeSearchQuery = '';
+            function productCards() {
+                return cards.filter(function (c) { return c.hasAttribute && c.hasAttribute('data-store-product'); });
+            }
             function refresh() {
+                if (window.storeSearchQuery) return;
                 cards.forEach(function (c, idx) {
                     c.style.display = idx < revealedCount ? '' : 'none';
                 });
                 btn.style.display = (total > PAGE && revealedCount < cards.length) ? 'inline-flex' : 'none';
             }
+            window.refreshStoreGrid = function () {
+                revealedCount = PAGE;
+                total = parseInt(grid.getAttribute('data-total') || '0', 10);
+                cards = Array.prototype.slice.call(grid.children);
+                refresh();
+            };
+            window.applyStoreSearchFilter = function (q) {
+                window.storeSearchQuery = (q || '').trim().toLowerCase();
+                var items = productCards();
+                if (!window.storeSearchQuery) {
+                    refresh();
+                    return { shown: items.length, total: items.length };
+                }
+                var shown = 0;
+                items.forEach(function (c) {
+                    var nameEl = c.querySelector('h3');
+                    var name = (nameEl ? nameEl.textContent : '').toLowerCase();
+                    var ok = name.indexOf(window.storeSearchQuery) >= 0;
+                    c.style.display = ok ? '' : 'none';
+                    if (ok) shown++;
+                });
+                btn.style.display = 'none';
+                return { shown: shown, total: items.length };
+            };
             refresh();
             window.loadMoreProducts = function () {
+                if (window.storeSearchQuery) return;
                 if (btn.hasAttribute('disabled')) return;
                 btn.setAttribute('disabled', 'disabled');
                 var spinner = btn.querySelector('.spinner');
@@ -375,6 +447,52 @@
                     refresh();
                 }, 650);
             };
+        })();
+    </script>
+    <script>
+        /* Store header search: slide-to-left overlay + live filter (parity wishlist, scoped to this store) */
+        (function () {
+            var panel = document.getElementById('st-search-panel');
+            var input = document.getElementById('st-search-input');
+            var countEl = document.getElementById('st-search-count');
+            var clearBtn = document.getElementById('st-search-clear');
+            var noResults = document.getElementById('st-no-results');
+            var headers = document.querySelectorAll('.st-header-item');
+            if (!panel || !input) return;
+
+            var open = false;
+            function setOpen(v) {
+                open = v;
+                panel.classList.toggle('st-search-open', v);
+                headers.forEach(function (h) { h.classList.toggle('st-header-hidden', v); });
+                if (v) {
+                    input.focus();
+                } else {
+                    input.value = '';
+                    filter('');
+                }
+            }
+            window.toggleStoreSearch = function () { setOpen(!open); };
+            window.clearStoreSearch = function () {
+                input.value = '';
+                filter('');
+                input.focus();
+            };
+
+            function filter(q) {
+                q = (q || '').trim().toLowerCase();
+                if (typeof window.applyStoreSearchFilter !== 'function') return;
+                var res = window.applyStoreSearchFilter(q);
+                if (clearBtn) clearBtn.classList.toggle('hidden', !q);
+                if (countEl) {
+                    countEl.textContent = res.shown + ' / ' + res.total;
+                    countEl.classList.toggle('hidden', !q);
+                }
+                if (noResults) noResults.classList.toggle('hidden', res.shown > 0 || res.total === 0);
+            }
+
+            input.addEventListener('input', function () { filter(input.value); });
+            input.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
         })();
     </script>
 @include('customer._partials.drawer')
