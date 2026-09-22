@@ -306,9 +306,9 @@ class SlotProdukController extends Controller
             ]);
         }
 
-        if ($rmt->payment_status !== SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI) {
+        if ($rmt->payment_status === SlotPurchaseRequest::PEMBAYARAN_DITOLAK) {
             return back()->with('toast', [
-                'message' => 'Verifikasi pembayaran terlebih dahulu sebelum menyetujui.',
+                'message' => 'Pembayaran permintaan ini ditolak; tidak dapat disetujui.',
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -317,7 +317,7 @@ class SlotProdukController extends Controller
             DB::transaction(function () use ($rmt) {
                 $locked = SlotPurchaseRequest::whereKey($rmt->slot_purchase_id)->lockForUpdate()->first();
 
-                if (! $locked || $locked->status !== SlotPurchaseRequest::STATUS_PENDING || $locked->payment_status !== SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI) {
+                if (! $locked || $locked->status !== SlotPurchaseRequest::STATUS_PENDING) {
                     throw new \RuntimeException('Permintaan sudah diproses oleh pihak lain.');
                 }
 
@@ -325,6 +325,23 @@ class SlotProdukController extends Controller
                     ->where('ref_type', SlotPurchaseRequest::class)
                     ->exists()) {
                     throw new \RuntimeException('Slot untuk permintaan ini sudah pernah diberikan.');
+                }
+
+                if ($locked->payment_status !== SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI) {
+                    $lamaBayar = $locked->only(['payment_status']);
+                    $locked->update([
+                        'payment_status' => SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI,
+                        'paid_at' => now(),
+                    ]);
+
+                    ActivityLogger::log(
+                        'slot.purchase.verify',
+                        SlotPurchaseRequest::class,
+                        $locked->slot_purchase_id,
+                        $lamaBayar,
+                        $locked->only(['payment_status', 'paid_at']),
+                        sprintf('Pembayaran %d slot (Rp %s) untuk toko %s otomatis terverifikasi saat persetujuan.', $locked->jumlah_slot, number_format((float) $locked->total_harga, 0, ',', '.'), $locked->store->nama_toko ?? '-')
+                    );
                 }
 
                 SlotService::grant(
