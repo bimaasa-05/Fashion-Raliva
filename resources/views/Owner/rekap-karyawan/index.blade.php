@@ -59,11 +59,12 @@
                     <option value="produksi" @selected($roleFilter === 'produksi')>Produksi</option>
                     <option value="gudang" @selected($roleFilter === 'gudang')>Gudang</option>
                 </select>
-                <a href="{{ route('owner.rekap-karyawan.export-excel', ['role' => $roleFilter]) }}" class="flex items-center justify-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors shrink-0">
-                    <span class="material-symbols-outlined text-[16px]">download</span>Excell
+                @php $rkNoStore = ! \App\Support\OwnerContext::currentStore(); @endphp
+                <a href="{{ route('owner.rekap-karyawan.export-excel', ['role' => $roleFilter]) }}" @if($rkNoStore) aria-disabled="true" tabindex="-1" title="Ajukan toko dulu" @endif class="flex items-center justify-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors shrink-0 {{ $rkNoStore ? 'opacity-60 pointer-events-none' : '' }}">
+                    <span class="material-symbols-outlined text-[16px]">{{ $rkNoStore ? 'lock' : 'download' }}</span>Excell
                 </a>
-                <a href="{{ route('owner.rekap-karyawan.export-pdf', ['role' => $roleFilter]) }}" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium shrink-0">
-                    <span class="material-symbols-outlined text-[16px]">picture_as_pdf</span>PDF
+                <a href="{{ route('owner.rekap-karyawan.export-pdf', ['role' => $roleFilter]) }}" @if($rkNoStore) aria-disabled="true" tabindex="-1" title="Ajukan toko dulu" @endif class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium shrink-0 {{ $rkNoStore ? 'opacity-60 pointer-events-none' : '' }}">
+                    <span class="material-symbols-outlined text-[16px]">{{ $rkNoStore ? 'lock' : 'picture_as_pdf' }}</span>PDF
                 </a>
             </div>
         </div>
