@@ -140,7 +140,7 @@
                                 <td class="py-3.5 px-4 text-on-surface-variant max-w-[200px]">{{ $row['catatan'] ?? '-' }}</td>
                                 <td class="py-3.5 px-4 text-center">
                                     @if ($row['payment_status'] !== null)
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full {{ $row['payment_status'] === \App\Models\SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI ? 'bg-success/10 text-success border-success/20' : ($row['status'] === 'ditolak' ? 'bg-error/10 text-error border-error/30' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }} text-[10px] font-bold uppercase border">{{ str_replace('_', ' ', $row['payment_status']) }}</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full {{ $row['status'] === 'disetujui' ? 'bg-success/10 text-success border-success/20' : ($row['status'] === 'ditolak' ? 'bg-error/10 text-error border-error/30' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }} text-[10px] font-bold uppercase border">{{ $row['status'] }}</span>
                                     @else
                                         <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success border-success/20 text-[10px] font-bold uppercase border">Disetujui</span>
                                     @endif
