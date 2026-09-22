@@ -166,6 +166,28 @@ class SaldoController extends Controller
             ->with('toast', ['message' => 'Topup dibuat. Silakan bayar sesuai nominal.', 'icon' => 'task_alt']);
     }
 
+    /**
+     * Batalkan topup milik sendiri (hanya pending/ditolak).
+     */
+    public function batalkan(CustomerTopup $topup)
+    {
+        if ($topup->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if (! in_array($topup->status, [CustomerTopup::STATUS_PENDING, CustomerTopup::STATUS_DITOLAK], true)) {
+            return back()->with('toast', ['message' => 'Topup ini sudah tidak bisa dibatalkan.', 'icon' => 'gpp_maybe']);
+        }
+
+        DB::transaction(function () use ($topup) {
+            $topup->update(['status' => CustomerTopup::STATUS_DIBATALKAN]);
+            $topup->payment()->update(['status' => Payment::STATUS_KADALUARSA]);
+        });
+
+        return redirect()->route('customer.saldo')
+            ->with('toast', ['message' => 'Topup Rp '.number_format((float) $topup->jumlah, 0, ',', '.').' dibatalkan.', 'icon' => 'task_alt']);
+    }
+
     public function payment(Request $request, CustomerTopup $topup)
     {
         if ($topup->user_id !== Auth::id()) {

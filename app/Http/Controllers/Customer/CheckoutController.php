@@ -27,6 +27,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
 {
@@ -128,6 +129,10 @@ class CheckoutController extends Controller
             ->orderBy('payment_method_id')
             ->get();
 
+        // Token idempotensi: cegah double-checkout akibat klik ganda.
+        $submitToken = (string) Str::uuid();
+        session()->put('checkout_submit_token', $submitToken);
+
         return view('customer.checkout.index', compact(
             'address',
             'items',
@@ -140,7 +145,8 @@ class CheckoutController extends Controller
             'total',
             'paymentMethods',
             'buyId',
-            'backProductId'
+            'backProductId',
+            'submitToken'
         ));
     }
 
@@ -170,6 +176,22 @@ class CheckoutController extends Controller
             'kode_pos.required' => 'Kode pos wajib diisi.',
             'shipping.required' => 'Pilih metode pengiriman terlebih dahulu.',
         ]);
+
+        // Tolak submit ganda: token sudah dipakai -> arahkan ke checkout yang sudah dibuat.
+        $submitToken = (string) $request->input('submit_token', '');
+        $expectedToken = (string) session()->pull('checkout_submit_token', '');
+        if ($submitToken !== '' && $expectedToken !== '' && $submitToken !== $expectedToken) {
+            $mappedId = (int) session('checkout_token_'.$submitToken, 0);
+            if ($mappedId > 0) {
+                $existing = Checkout::where('checkout_id', $mappedId)
+                    ->when(Auth::check(), fn ($q) => $q->where('user_id', Auth::id()))
+                    ->first();
+                if ($existing) {
+                    return redirect()->route('customer.checkout.payment', $existing->checkout_id)
+                        ->with('toast', ['message' => 'Pesanan sudah dibuat sebelumnya. Silakan selesaikan pembayaran.', 'icon' => 'task_alt']);
+                }
+            }
+        }
 
         $isGuest = ! Auth::check();
         $isNewAccount = false;
@@ -371,6 +393,10 @@ class CheckoutController extends Controller
             }
         }
 
+        if ($submitToken !== '') {
+            session()->put('checkout_token_'.$submitToken, $checkout->checkout_id);
+        }
+
         $redirect = redirect()->route('customer.checkout.payment', $checkout->checkout_id)
             ->with('toast', ['message' => 'Pesanan berhasil dibuat. Silakan selesaikan pembayaran.', 'icon' => 'task_alt']);
 
@@ -412,6 +438,53 @@ class CheckoutController extends Controller
             'checkout' => $checkoutModel,
             'payment' => $payment,
             'paymentMethods' => $paymentMethods,
+        ]);
+    }
+
+    /**
+     * Halaman khusus pembayaran metode kedua (split: Saldo Akun + metode eksternal).
+     * Hanya untuk saldo 0 < saldo < total dan status masih pending/ditolak.
+     */
+    public function paymentMetodeKedua(int $checkout)
+    {
+        \App\Support\PaymentExpiry::expireOverdue();
+
+        if (! Auth::check()) {
+            return redirect()->route('login', ['redirect' => route('customer.checkout.payment.metode-kedua', $checkout)]);
+        }
+        if (Auth::user()->role?->nama_role !== Role::CUSTOMER) {
+            abort(403);
+        }
+
+        $checkoutModel = Checkout::where('checkout_id', $checkout)
+            ->where('user_id', Auth::id())
+            ->with(['orders.store:store_id,nama_toko', 'payment.paymentMethod', 'payment.account', 'payment.proofs'])
+            ->firstOrFail();
+
+        $payment = $checkoutModel->payment;
+
+        if (! in_array($payment->status, [Payment::STATUS_PENDING, Payment::STATUS_DITOLAK], true)) {
+            return redirect()->route('customer.checkout.payment', $checkoutModel->checkout_id);
+        }
+
+        $saldoCust = (float) CustomerWalletService::balance(Auth::user());
+        $totalBayar = (float) $payment->jumlah;
+        if ($saldoCust <= 0 || $saldoCust >= $totalBayar) {
+            return redirect()->route('customer.checkout.payment', $checkoutModel->checkout_id);
+        }
+
+        $paymentMethods = PaymentMethod::with('accounts')
+            ->where('status', PaymentMethod::STATUS_AKTIF)
+            ->where('kode_metode', '!=', PaymentMethod::KODE_SALDO_AKUN)
+            ->orderBy('payment_method_id')
+            ->get();
+
+        return view('customer.checkout.payment-metode-kedua', [
+            'checkout' => $checkoutModel,
+            'payment' => $payment,
+            'paymentMethods' => $paymentMethods,
+            'saldoCust' => $saldoCust,
+            'sisaBayar' => max(0, $totalBayar - $saldoCust),
         ]);
     }
 
@@ -502,6 +575,23 @@ return view('customer.checkout.selesai', [
             return back()->with('toast', ['message' => 'Pilih akun/tujuan pembayaran terlebih dahulu.', 'icon' => 'gpp_maybe']);
         }
 
+        // Pembayaran campuran: Saldo Akun (sebagian) + metode eksternal (sisa).
+        $jumlahSaldo = 0.0;
+        if ($request->boolean('pakai_saldo')) {
+            if ($paymentMethod->kode_metode === PaymentMethod::KODE_SALDO_AKUN) {
+                return back()->with('toast', ['message' => 'Metode kedua tidak boleh Saldo Akun.', 'icon' => 'gpp_maybe']);
+            }
+            $saldoCust = (float) CustomerWalletService::balance(Auth::user());
+            $totalBayar = (float) $payment->jumlah;
+            if ($saldoCust <= 0) {
+                return back()->with('toast', ['message' => 'Saldo akun Anda kosong, tidak bisa memakai pembayaran campuran.', 'icon' => 'gpp_maybe']);
+            }
+            if ($saldoCust >= $totalBayar) {
+                return back()->with('toast', ['message' => 'Saldo Anda sudah mencukupi. Gunakan Bayar dengan Saldo Akun.', 'icon' => 'gpp_maybe']);
+            }
+            $jumlahSaldo = min($saldoCust, $totalBayar);
+        }
+
         $account = null;
         if (! empty($validated['payment_account_id'])) {
             $account = PlatformBankAccount::where('platform_bank_account_id', $validated['payment_account_id'])
@@ -516,7 +606,7 @@ return view('customer.checkout.selesai', [
         $fileName = 'bukti-'.$checkoutModel->checkout_id.'-'.time().'.'.$validated['bukti']->extension();
         $path = $validated['bukti']->storeAs('payment_proofs', $fileName, 'public');
 
-        DB::transaction(function () use ($payment, $paymentMethod, $account, $path, $validated) {
+        DB::transaction(function () use ($payment, $paymentMethod, $account, $path, $validated, $jumlahSaldo) {
             $updatePayload = [];
             if (is_null($payment->payment_method_id)) {
                 $batas = $paymentMethod->batas_waktu_menit > 0 ? $paymentMethod->batas_waktu_menit : 1440;
@@ -525,6 +615,9 @@ return view('customer.checkout.selesai', [
             }
             if ($account) {
                 $updatePayload['payment_account_id'] = $account->platform_bank_account_id;
+            }
+            if ($jumlahSaldo > 0) {
+                $updatePayload['jumlah_saldo'] = $jumlahSaldo;
             }
             if ($updatePayload) {
                 $payment->update($updatePayload);
@@ -537,18 +630,36 @@ return view('customer.checkout.selesai', [
             $payment->update(['status' => Payment::STATUS_MENUNGGU_VERIFIKASI]);
         });
 
+        $pesanBukti = $jumlahSaldo > 0
+            ? sprintf(
+                'Bukti pembayaran campuran Anda sedang diverifikasi oleh admin. Saldo Rp %s akan dipotong, sisa Rp %s lewat %s.',
+                number_format($jumlahSaldo, 0, ',', '.'),
+                number_format((float) $payment->jumlah - $jumlahSaldo, 0, ',', '.'),
+                $paymentMethod->nama_metode
+            )
+            : 'Bukti pembayaran Anda sedang diverifikasi oleh admin.';
+
         Notification::create([
             'user_id' => Auth::id(),
             'tipe' => Notification::TIPE_PEMBAYARAN,
             'judul' => 'Bukti Pembayaran Diunggah',
-            'pesan' => 'Bukti pembayaran Anda sedang diverifikasi oleh admin.',
+            'pesan' => $pesanBukti,
         ]);
+
+        $pesanAdmin = $jumlahSaldo > 0
+            ? sprintf(
+                'Customer mengunggah bukti pembayaran campuran untuk checkout #%d — saldo Rp %s + transfer Rp %s. Segera verifikasi.',
+                $checkoutModel->checkout_id,
+                number_format($jumlahSaldo, 0, ',', '.'),
+                number_format((float) $payment->jumlah - $jumlahSaldo, 0, ',', '.')
+            )
+            : sprintf('Customer mengunggah bukti pembayaran Rp %s untuk checkout #%d. Segera verifikasi.', number_format((float) $payment->jumlah, 0, ',', '.'), $checkoutModel->checkout_id);
 
         NotificationService::sendToRole(
             Role::ADMIN,
             Notification::TIPE_PEMBAYARAN,
             'Bukti Pembayaran Baru',
-            sprintf('Customer mengunggah bukti pembayaran Rp %s untuk checkout #%d. Segera verifikasi.', number_format((float) $payment->jumlah, 0, ',', '.'), $checkoutModel->checkout_id),
+            $pesanAdmin,
             Auth::id(),
             route('admin.verifikasi-pembayaran')
         );

@@ -165,7 +165,7 @@
                             <span class="material-symbols-outlined text-gold-accent">receipt_long</span>
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm text-on-surface truncate">{{ \Illuminate\Support\Str::afterLast($proof->file_bukti, '/') }}</p>
-                                <p class="text-xs text-on-surface-variant">{{ $proof->uploaded_at?->translatedFormat('d M Y H:i') ?? '-' }} • {{ $pesanan->checkout->payment->paymentMethod->nama_metode ?? 'Transfer' }} • Rp {{ number_format((float) ($pesanan->checkout->payment->jumlah ?? 0),0,',','.') }}</p>
+                                <p class="text-xs text-on-surface-variant">{{ $proof->uploaded_at?->translatedFormat('d M Y H:i') ?? '-' }} • {{ $pesanan->checkout->payment->paymentMethod->nama_metode ?? 'Transfer' }} • Rp {{ number_format((float) ($pesanan->checkout->payment->jumlah ?? 0),0,',','.') }}@if ((float) ($pesanan->checkout->payment->jumlah_saldo ?? 0) > 0) <span class="text-emerald-600">(saldo Rp {{ number_format((float) $pesanan->checkout->payment->jumlah_saldo,0,',','.') }} + transfer Rp {{ number_format((float) $pesanan->checkout->payment->sisa_transfer,0,',','.') }})</span>@endif</p>
                             </div>
                             <span class="material-symbols-outlined text-on-surface-variant">open_in_new</span>
                         </a>

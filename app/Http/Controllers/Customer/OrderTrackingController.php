@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Notification;
 use App\Models\Order;
 use App\Support\WalletService;
@@ -67,10 +68,22 @@ class OrderTrackingController extends Controller
         $selectedOrderId = (int) $request->query('order');
         $selected = $orders->firstWhere('order_id', $selectedOrderId) ?? $orders->first();
 
+        // Alasan pembatalan (ditulis admin) diambil dari log aktivitas — tanpa migration.
+        $alasanPembatalan = null;
+        if ($selected->status === Order::STATUS_DIBATALKAN) {
+            $cancelLog = ActivityLog::where('aksi', 'admin.order.cancel')
+                ->where('target_tipe', Order::class)
+                ->where('target_id', $selected->order_id)
+                ->orderByDesc('activity_log_id')
+                ->first(['nilai_baru']);
+            $alasanPembatalan = $cancelLog?->nilai_baru['alasan'] ?? null;
+        }
+
         return view('customer.order-tracking.index', [
             'orders' => $orders,
             'selected' => $selected,
             'selectedStep' => self::STATUS_STEPS[$selected->status] ?? 1,
+            'alasanPembatalan' => $alasanPembatalan,
         ]);
     }
 

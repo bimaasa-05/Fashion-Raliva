@@ -469,9 +469,19 @@
     .co-rincian-label { font-family:'Manrope',sans-serif; font-size:12px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; white-space:nowrap; }
     .co-rincian-toggle .material-symbols-outlined { font-size:20px; transition: transform .35s ease; }
     .co-rincian-toggle.open .material-symbols-outlined { transform: rotate(180deg); }
-    .co-more-wrap { display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s ease; }
-    .co-more-wrap > div { overflow:hidden; min-height:0; }
-    .co-more-wrap.open { grid-template-rows:1fr; }
+    /* Animasi smooth atas -> bawah per item extra: tinggi diukur JS dalam px eksplisit
+       (scrollHeight) lalu ditransisikan via max-height — tidak mengandalkan interpolasi
+       unit fr sehingga berjalan di semua browser. Tertutup = max-height:0. */
+    #co-rincian-grid .co-item-wrap { min-height:0; min-width:0; overflow:hidden; max-height:0; opacity:0; visibility:hidden; transform:translateY(-12px); transition:max-height .45s cubic-bezier(.4,0,.2,1), opacity .35s ease, transform .45s cubic-bezier(.4,0,.2,1), visibility 0s linear .35s; }
+    #co-rincian-grid .co-item-wrap.open { opacity:1; visibility:visible; transform:none; transition:max-height .45s cubic-bezier(.4,0,.2,1), opacity .35s ease, transform .45s cubic-bezier(.4,0,.2,1), visibility 0s linear 0s; }
+    #co-rincian-grid .co-item-wrap > .co-item-inner { overflow:hidden; min-height:0; }
+    /* Item ke-3: selalu tampil di desktop (lg = 3 kolom = 1 baris), ikut collapse hanya di mobile */
+    @media (min-width: 1024px) {
+        #co-rincian-grid .co-item-wrap.co-third { max-height:none; opacity:1; visibility:visible; transform:none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        #co-rincian-grid .co-item-wrap { transition:max-height .15s ease, opacity .15s ease, transform .15s ease; }
+    }
 </style>
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-10 lg:pl-72">
@@ -508,6 +518,7 @@
 <input type="hidden" name="buy" value="{{ $buyId }}"/>
 @endif
 <input type="hidden" name="shipping" id="co-shipping-input" value="{{ $shipping }}"/>
+<input type="hidden" name="submit_token" value="{{ $submitToken ?? '' }}"/>
 
 <!-- Main Content -->
 <main class="pt-6 pb-[72px] w-full overflow-x-clip">
@@ -626,8 +637,6 @@
                 {{-- ========== RINCIAN PESANAN ========== --}}
                 @php
                     $coShowCount = $items->count();
-                    $coTop = $items->slice(0, 3);
-                    $coMore = $coShowCount > 3 ? $items->slice(3) : collect();
                 @endphp
                 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up min-w-0">
                     <div class="flex items-start justify-between gap-sm mb-md">
@@ -635,22 +644,28 @@
                             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN PESANAN') }}</p>
                             <h3 class="premium-heading font-title-md text-title-md text-on-surface">{{ __('Rincian Pesanan') }}</h3>
                         </div>
-                        @if($coShowCount > 3)
-                        <button id="co-rincian-toggle" type="button" aria-expanded="false" aria-controls="co-rincian-more" aria-label="{{ __('Tampilkan semua produk') }}" data-label-open="{{ __('Show less') }}" data-label-close="{{ __('Show more') }}" class="co-rincian-toggle shrink-0" onclick="coToggleRincian(this)">
+                        @if($coShowCount > 2)
+                        <button id="co-rincian-toggle" type="button" aria-expanded="false" aria-controls="co-rincian-grid" aria-label="{{ __('Tampilkan semua produk') }}" data-label-open="{{ __('Show less') }}" data-label-close="{{ __('Show more') }}" class="co-rincian-toggle shrink-0{{ $coShowCount <= 3 ? ' lg:hidden' : '' }}" onclick="coToggleRincian(this)">
                             <span class="co-rincian-label">{{ __('Show more') }}</span>
                             <span class="material-symbols-outlined">expand_more</span>
                         </button>
                         @endif
                     </div>
-                    <div class="grid grid-cols-2 lg:grid-cols-3 gap-md">
-                    @forelse ($coTop as $i)
+                    <div id="co-rincian-grid" class="grid grid-cols-2 lg:grid-cols-3 gap-md">
+                    @forelse ($items as $idx => $i)
                     @php
                         $pv = $i->productVariant;
                         $pr = $pv?->product;
                         $img = $pr?->images->first()?->file_gambar ?? '';
-                        $imgUrl = $img ? (photo_url($img)) : 'https://picsum.photos/seed/checkout/600/800';
+                        $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/checkout/600/800';
+                        $isWrapped = $idx >= 2;
+                        $isThird = $idx === 2;
                     @endphp
-                        <div class="flex flex-col bg-surface-container border border-[var(--border-soft)] rounded-lg overflow-hidden">
+                    @if($isWrapped)
+                        <div class="co-item-wrap{{ $isThird ? ' co-third' : '' }}" data-pos="{{ $idx }}" aria-hidden="true">
+                        <div class="co-item-inner">
+                    @endif
+                        <div class="flex flex-col bg-surface-container border border-[var(--border-soft)] rounded-lg overflow-hidden h-full">
                             <div class="relative w-full aspect-[3/4] bg-surface-container-high overflow-hidden">
                                 <img class="w-full h-full object-cover" loading="lazy" alt="{{ $pr?->nama_produk ?? __('Produk') }}" src="{{ $imgUrl }}"/>
                             </div>
@@ -661,39 +676,16 @@
                                 <p class="font-label-sm text-label-sm text-on-surface-variant">×{{ $i->quantity }}</p>
                             </div>
                         </div>
+                    @if($idx >= 2)
+                        </div>
+                        </div>
+                    @endif
                     @empty
                         <div class="col-span-full flex items-center justify-center py-lg text-center">
                             <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $isGuest ? __('Pilih produk terlebih dahulu.') : __('Keranjang masih kosong.') }}</p>
                         </div>
                     @endforelse
                     </div>
-                    @if($coShowCount > 3)
-                    <div id="co-rincian-more" class="co-more-wrap" aria-hidden="true">
-                        <div>
-                            <div class="grid grid-cols-2 lg:grid-cols-3 gap-md mt-md">
-                            @foreach ($coMore as $i)
-                            @php
-                                $pv = $i->productVariant;
-                                $pr = $pv?->product;
-                                $img = $pr?->images->first()?->file_gambar ?? '';
-                                $imgUrl = $img ? (photo_url($img)) : 'https://picsum.photos/seed/checkout/600/800';
-                            @endphp
-                                <div class="flex flex-col bg-surface-container border border-[var(--border-soft)] rounded-lg overflow-hidden">
-                                    <div class="relative w-full aspect-[3/4] bg-surface-container-high overflow-hidden">
-                                        <img class="w-full h-full object-cover" loading="lazy" alt="{{ $pr?->nama_produk ?? __('Produk') }}" src="{{ $imgUrl }}"/>
-                                    </div>
-                                    <div class="flex flex-col flex-1 min-w-0 gap-1 p-sm">
-                                        <p class="font-body-sm text-body-sm text-on-surface font-semibold truncate">{{ $pr?->nama_produk ?? __('Produk') }}</p>
-                                        <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ trim(($pv?->warna ?? '') . ' · ' . ($pv?->ukuran ?? ''), ' ·') }}</p>
-                                        <p class="font-body-sm text-body-sm text-on-surface font-semibold mt-auto">Rp {{ number_format((float)$i->harga_snapshot, 0, ',', '.') }}</p>
-                                        <p class="font-label-sm text-label-sm text-on-surface-variant">×{{ $i->quantity }}</p>
-                                    </div>
-                                </div>
-                            @endforeach
-                            </div>
-                        </div>
-                    </div>
-                    @endif
                 </div>
 
                 {{-- ========== CATATAN OPSIONAL — terpisah ========== --}}
@@ -864,18 +856,94 @@
 @include('customer._partials.drawer')
 
 <script>
+    var coRincianMQ = window.matchMedia('(max-width: 1023.98px)');
+    var coRincianOpen = false;
+    var coReduceMotionMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+    function coIsMobileView() { return coRincianMQ.matches; }
+    function coStaggerDelay() { return (coReduceMotionMQ && coReduceMotionMQ.matches) ? 0 : 40; }
+    function coAnimDuration() { return (coReduceMotionMQ && coReduceMotionMQ.matches) ? 150 : 450; }
+    function coExtraWraps() {
+        return Array.prototype.slice.call(document.querySelectorAll('#co-rincian-grid .co-item-wrap'));
+    }
+    function coOpenWrap(w, delay) {
+        w.style.transitionDelay = delay + 'ms';
+        w.classList.add('open');
+        w.style.maxHeight = w.scrollHeight + 'px';
+        w.setAttribute('aria-hidden', 'false');
+        setTimeout(function () {
+            if (w.classList.contains('open')) w.style.maxHeight = 'none';
+            w.style.transitionDelay = '';
+        }, coAnimDuration() + delay + 60);
+    }
+    function coCloseWrap(w, delay) {
+        w.style.transitionDelay = delay + 'ms';
+        if (!w.style.maxHeight || w.style.maxHeight === 'none' || w.style.maxHeight === '') {
+            w.style.maxHeight = w.scrollHeight + 'px';
+        }
+        void w.offsetHeight;
+        w.classList.remove('open');
+        w.style.maxHeight = '0px';
+        var done = function () { w.setAttribute('aria-hidden', 'true'); };
+        var onEnd = function (e) {
+            if (e && e.target !== w) return;
+            w.removeEventListener('transitionend', onEnd);
+            done();
+        };
+        w.addEventListener('transitionend', onEnd);
+        setTimeout(done, coAnimDuration() + delay + 150);
+        setTimeout(function () { w.style.transitionDelay = ''; }, coAnimDuration() + delay + 60);
+    }
+    function coEnsureThirdDesktop(w) {
+        w.classList.add('open');
+        w.style.maxHeight = 'none';
+        w.style.transitionDelay = '';
+        w.setAttribute('aria-hidden', 'false');
+    }
+    function coSyncThirdView() {
+        if (coRincianOpen) return;
+        var mobile = coIsMobileView();
+        document.querySelectorAll('#co-rincian-grid .co-item-wrap.co-third').forEach(function (w) {
+            if (mobile) {
+                w.classList.remove('open');
+                w.style.maxHeight = '0px';
+                w.setAttribute('aria-hidden', 'true');
+            } else {
+                coEnsureThirdDesktop(w);
+            }
+        });
+    }
     if (typeof coToggleRincian !== 'function') {
         function coToggleRincian(btn) {
-            var wrap = document.getElementById('co-rincian-more');
-            if (!wrap) return;
-            var open = wrap.classList.toggle('open');
-            btn.classList.toggle('open', open);
+            var wraps = coExtraWraps();
+            if (!wraps.length) return;
+            var open = btn.classList.toggle('open');
+            coRincianOpen = open;
             btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-            wrap.setAttribute('aria-hidden', open ? 'false' : 'true');
+            var step = coStaggerDelay();
+            var animatables = [];
+            wraps.forEach(function (w) {
+                if (!open && w.classList.contains('co-third') && !coIsMobileView()) {
+                    coEnsureThirdDesktop(w);
+                    return;
+                }
+                animatables.push(w);
+            });
+            animatables.forEach(function (w, i) {
+                var order = open ? i : (animatables.length - 1 - i);
+                var delay = order * step;
+                if (open) coOpenWrap(w, delay);
+                else coCloseWrap(w, delay);
+            });
             var label = btn.querySelector('.co-rincian-label');
             if (label) label.textContent = open ? btn.getAttribute('data-label-open') : btn.getAttribute('data-label-close');
         }
     }
+    if (typeof coRincianMQ.addEventListener === 'function') {
+        coRincianMQ.addEventListener('change', coSyncThirdView);
+    } else if (typeof coRincianMQ.addListener === 'function') {
+        coRincianMQ.addListener(coSyncThirdView);
+    }
+    document.addEventListener('DOMContentLoaded', coSyncThirdView);
 </script>
 
 <script>
@@ -945,6 +1013,16 @@
             });
         }
         // rincian pesanan dropdown (tampil >3 produk) - lihat coToggleRincian() di script bawah
+        // Kunci tombol submit agar tidak double-checkout saat klik ganda
+        var reviewForm = document.getElementById('checkout-review-form');
+        if (reviewForm) {
+            reviewForm.addEventListener('submit', function () {
+                reviewForm.querySelectorAll('button[type="submit"]').forEach(function (b) {
+                    b.disabled = true;
+                    b.classList.add('opacity-70', 'pointer-events-none');
+                });
+            });
+        }
     });
 </script>
 

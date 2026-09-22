@@ -390,7 +390,7 @@
 </button>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
 <div class="flex items-center gap-sm">
-<a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart', ['from' => 'shop']) }}" class="hover:opacity-80 transition-opacity relative flex items-center justify-center">
+<a aria-label="{{ __('Cart') }}" href="{{ auth()->check() ? route('customer.chart', ['from' => 'shop']) : route('customer.account', ['notice' => 'login']) }}" class="hover:opacity-80 transition-opacity relative flex items-center justify-center">
 <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
 <span class="cart-badge absolute -top-0.5 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
 </a>
@@ -591,7 +591,7 @@
 {{-- FILTER BOTTOM SHEET --}}
 <div id="filter-overlay" class="fixed inset-0 lg:left-72 bg-black/50 z-[60] hidden" onclick="closeFilter()"></div>
 <div id="filter-sheet" class="fixed bottom-0 inset-x-0 lg:left-72 z-[70] bg-surface rounded-t-2xl translate-y-full transition-transform duration-300 max-h-[85vh] flex flex-col">
-<div class="flex justify-center pt-sm shrink-0">
+<div id="filter-drag-handle" class="flex justify-center pt-sm pb-xs shrink-0 cursor-grab touch-none select-none">
 <span class="w-10 h-1 rounded-full bg-outline-variant"></span>
 </div>
 <div class="flex justify-between items-center px-container-margin py-sm border-b border-outline-variant shrink-0">
@@ -661,6 +661,45 @@
             document.getElementById('filter-sheet').classList.add('translate-y-full');
             document.getElementById('filter-overlay').classList.add('hidden');
         }
+        (function () {
+            var sheet = document.getElementById('filter-sheet');
+            var handle = document.getElementById('filter-drag-handle');
+            if (!sheet || !handle) return;
+            var startY = 0, currentY = 0, dragging = false;
+
+            handle.addEventListener('pointerdown', function (e) {
+                dragging = true;
+                startY = e.clientY;
+                currentY = 0;
+                handle.setPointerCapture(e.pointerId);
+                sheet.style.transition = 'none';
+            });
+            handle.addEventListener('pointermove', function (e) {
+                if (!dragging) return;
+                currentY = Math.max(0, e.clientY - startY);
+                sheet.style.transform = 'translateY(' + currentY + 'px)';
+            });
+            function endDrag(e) {
+                if (!dragging) return;
+                dragging = false;
+                sheet.style.transition = '';
+                sheet.style.transform = '';
+                var dy = Math.max(0, e.clientY - startY);
+                var threshold = Math.max(sheet.offsetHeight * 0.25, 80);
+                if (currentY > threshold || dy > 200) {
+                    closeFilter();
+                } else {
+                    sheet.classList.remove('translate-y-full');
+                }
+            }
+            handle.addEventListener('pointerup', endDrag);
+            handle.addEventListener('pointercancel', function () {
+                dragging = false;
+                sheet.style.transition = '';
+                sheet.style.transform = '';
+                sheet.classList.remove('translate-y-full');
+            });
+        })();
         function gatherFilters() {
             activeFilters.category = [];
             document.querySelectorAll('#filter-sheet input[type="checkbox"]').forEach(function (cb) {

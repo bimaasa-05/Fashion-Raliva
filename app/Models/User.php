@@ -12,6 +12,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Order;
 
+/**
+ * @property-read \Carbon\Carbon|null $tanggal_lahir
+ */
 class User extends Authenticatable
 {
     use Notifiable;

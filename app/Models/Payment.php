@@ -26,10 +26,20 @@ class Payment extends Model
         'payment_method_id',
         'payment_account_id',
         'jumlah',
+        'jumlah_saldo',
         'status',
         'batas_waktu',
         'dibayar_pada',
     ];
+
+    /**
+     * Sisa nominal yang dibayar lewat metode eksternal
+     * (QRIS / E-Wallet / Bank Transfer) pada pembayaran campuran.
+     */
+    public function getSisaTransferAttribute(): float
+    {
+        return max(0, (float) $this->jumlah - (float) $this->jumlah_saldo);
+    }
 
     public function topup(): BelongsTo
     {

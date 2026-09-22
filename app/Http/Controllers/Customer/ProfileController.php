@@ -31,8 +31,6 @@ class ProfileController extends Controller
 
         $user->update($data);
 
-        Auth::login($user);
-
         return redirect()->route('customer.account')->with('toast', [
             'message' => 'Profil berhasil diperbarui.',
             'icon' => 'task_alt',
@@ -53,8 +51,6 @@ class ProfileController extends Controller
 
         $user->password = $data['password_baru'];
         $user->save();
-
-        Auth::login($user);
 
         return redirect()->route('customer.account')->with('toast', [
             'message' => 'Kata sandi berhasil diperbarui.',
