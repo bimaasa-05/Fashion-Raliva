@@ -677,7 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ])
         <div class="p-6">
             <h3 class="font-display-lg text-headline-lg-mobile text-center mb-2" id="doc-reject-title">Tolak Dokumen</h3>
-            <p class="text-on-surface-variant text-sm text-center mb-6">Berikan alasan penolakan untuk <span id="doc-reject-name" class="font-bold text-on-surface">-</span>. Pesan ini akan dikirim ke pemilik toko.</p>
+            <p class="text-on-surface-variant text-sm text-center mb-6">Berikan alasan penolakan untuk <span id="doc-reject-name" class="font-bold text-on-surface">-</span>. Penolakan dokumen akan mengubah status pengajuan toko menjadi <span class="font-bold text-error">Ditolak</span>. Pesan ini akan dikirim ke pemilik toko.</p>
             <textarea required minlength="3" maxlength="1000" name="alasan" id="doc-reject-alasan-input" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-6 min-h-[120px] resize-none" placeholder="Alasan penolakan dokumen... (minimal 3 karakter)"></textarea>
         </div>
         @slot('footer')

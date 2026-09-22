@@ -83,16 +83,31 @@
                         : ($slot <= 200
                             ? [['check',$slot.' slot produk aktif'],['check','Moderasi prioritas standar'],['check','Banner promo toko'],['check','Dukungan chat 12 jam']]
                             : [['check',$slot.' slot produk aktif'],['check','Moderasi prioritas tinggi'],['check','Banner promo + highlight produk'],['check','Analitik penjualan lanjutan'],['check','Dukungan chat prioritas 24 jam']]);
+                    $promo = $pkg->promo_aktif ?? null;
+                    $diskon = $promo?->potonganUntuk((float) $pkg->harga) ?? 0;
+                    $hargaAkhir = $diskon > 0 ? $pkg->harga - $diskon : null;
                 @endphp
                 <article data-reveal class="bg-surface-container-lowest border {{ $isActive ? 'border-2 border-gold-accent shadow-xl relative' : 'border-muted-border' }} rounded-lg p-6 flex flex-col card-premium {{ $isActive ? '' : 'relative overflow-hidden' }}">
                     @if ($isActive)
                         <span class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gold-accent text-white dark:text-[#111] text-xs font-semibold">Paket Anda</span>
                     @endif
                     <p class="font-title-md text-title-md text-on-surface">{{ $pkg->nama_paket }}</p>
-                    <div class="mt-3 flex items-baseline gap-1">
-                        <span class="raliva-figure text-[26px] text-{{ $isActive ? 'gold-accent' : 'on-surface' }}">Rp {{ number_format($pkg->harga,0,',','.') }}</span>
-                        <span class="text-on-surface-variant font-body-md text-sm">/bulan</span>
+                    <div class="mt-3 flex items-baseline gap-2 flex-wrap">
+                        @if ($hargaAkhir !== null)
+                            <span class="raliva-figure text-[26px] text-gold-accent">Rp {{ number_format($hargaAkhir,0,',','.') }}</span>
+                            <span class="raliva-figure text-[16px] text-on-surface-variant line-through">Rp {{ number_format($pkg->harga,0,',','.') }}</span>
+                            <span class="text-on-surface-variant font-body-md text-sm">/bulan</span>
+                        @else
+                            <span class="raliva-figure text-[26px] text-{{ $isActive ? 'gold-accent' : 'on-surface' }}">Rp {{ number_format($pkg->harga,0,',','.') }}</span>
+                            <span class="text-on-surface-variant font-body-md text-sm">/bulan</span>
+                        @endif
                     </div>
+                    @if ($promo)
+                        <span class="mt-2 w-fit inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gold-accent/15 border border-gold-accent/30 text-gold-accent text-[10px] font-bold uppercase tracking-wider">
+                            <span class="material-symbols-outlined text-[12px]">local_offer</span> Promo: {{ $promo->nama_promo }}
+                            ({{ $promo->tipe_diskon === 'persen' ? ($promo->nilai_diskon % 1 == 0 ? number_format((float) $promo->nilai_diskon, 0) : $promo->nilai_diskon).'%' : 'Rp '.number_format((float) $promo->nilai_diskon, 0, ',', '.') }})
+                        </span>
+                    @endif
                     <p class="raliva-label mt-2">{{ $slot }} slot produk</p>
                     <ul class="mt-6 space-y-3 flex-1 font-body-md text-sm text-on-surface">
                         @foreach ($fitur as $f)
@@ -104,7 +119,7 @@
                     @if ($isActive)
                         <button type="button" disabled class="mt-8 w-full py-3 bg-surface-container-high text-on-surface-variant rounded-lg text-sm font-semibold cursor-default">Sedang Digunakan</button>
                     @else
-                        <button type="button" data-beli-paket data-paket-id="{{ $pkg->slot_package_id }}" data-paket-nama="{{ $pkg->nama_paket }}" data-slot-count="{{ $slot }}" data-harga="{{ number_format($pkg->harga,0,',','.') }}" class="mt-8 w-full py-3 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium flex items-center justify-center gap-2">
+                        <button type="button" data-beli-paket data-paket-id="{{ $pkg->slot_package_id }}" data-paket-nama="{{ $pkg->nama_paket }}" data-slot-count="{{ $slot }}" data-harga="{{ number_format($hargaAkhir ?? $pkg->harga,0,',','.') }}" data-promo-nama="{{ $promo?->nama_promo ?? '' }}" class="mt-8 w-full py-3 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium flex items-center justify-center gap-2">
                             <span class="material-symbols-outlined text-[16px]">shopping_cart</span>Beli Paket
                         </button>
                     @endif
@@ -176,6 +191,10 @@
         </div>
         <form id="beli-paket-form" method="POST" action="" enctype="multipart/form-data" class="p-6 space-y-5">
             @csrf
+            <p id="beli-paket-promo" class="hidden w-fit inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/15 border border-gold-accent/30 text-gold-accent text-xs font-bold uppercase tracking-wider">
+                <span class="material-symbols-outlined text-[14px]">local_offer</span>
+                <span id="beli-paket-promo-nama">-</span>
+            </p>
             <div class="grid grid-cols-2 gap-4">
                 <div class="border border-muted-border rounded-lg px-4 py-3">
                     <p class="text-xs text-on-surface-variant">Jumlah Slot</p>
@@ -218,6 +237,14 @@ document.addEventListener('DOMContentLoaded', function(){
     document.getElementById('beli-paket-nama').textContent = el.dataset.paketNama;
     document.getElementById('beli-paket-slot').textContent = el.dataset.slotCount + ' slot';
     document.getElementById('beli-paket-harga').textContent = 'Rp ' + el.dataset.harga;
+    const promoEl = document.getElementById('beli-paket-promo');
+    const promoNama = el.dataset.promoNama || '';
+    if (promoEl && promoNama) {
+      promoEl.classList.remove('hidden');
+      document.getElementById('beli-paket-promo-nama').textContent = 'Promo: ' + promoNama;
+    } else if (promoEl) {
+      promoEl.classList.add('hidden');
+    }
     document.getElementById('beli-paket-form').action = '{{ route('owner.paket-slot.beli', ':id:') }}'.replace(':id:', el.dataset.paketId);
     document.getElementById('modal-beli-paket').classList.remove('hidden');
     document.body.style.overflow = 'hidden';

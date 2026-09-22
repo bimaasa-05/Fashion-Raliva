@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\PaymentMethod;
 use App\Models\SlotGrant;
 use App\Models\SlotPurchaseRequest;
+use App\Models\User;
 use App\Support\OwnerContext;
 use App\Support\SlotService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class KelolaSlotController extends Controller
@@ -37,6 +40,9 @@ class KelolaSlotController extends Controller
             ]);
 
         $grants = SlotGrant::where('store_id', $storeId)
+            ->where(function (Builder $q) {
+                $q->whereNull('ref_type')->orWhere('ref_type', '!=', SlotPurchaseRequest::class);
+            })
             ->select('created_at', 'jumlah_slot', 'tipe', 'keterangan', 'slot_grant_id')
             ->get()
             ->map(fn ($g) => [
@@ -61,7 +67,9 @@ class KelolaSlotController extends Controller
     public function store(Request $request)
     {
         $storeId = OwnerContext::firstStoreId();
-        if (! $storeId) return back()->with('error', 'Anda belum memiliki toko.');
+        if (! $storeId) {
+            return back()->with('error', 'Anda belum memiliki toko.');
+        }
 
         $data = $request->validate([
             'jumlah_slot' => ['required', 'integer', 'min:1', 'max:1000'],
@@ -86,7 +94,8 @@ class KelolaSlotController extends Controller
             'jumlah_slot' => (int) $data['jumlah_slot'],
             'harga_per_slot' => $hargaPerSlot,
             'total_harga' => $totalHarga,
-            'payment_status' => SlotPurchaseRequest::PEMBAYARAN_MENUNGGU_VERIFIKASI,
+            'payment_status' => SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI,
+            'paid_at' => now(),
             'metode_pembayaran' => $metode?->nama_metode,
             'alasan' => $data['alasan'] ?? null,
             'file_bukti' => $path,
@@ -94,20 +103,20 @@ class KelolaSlotController extends Controller
             'diajukan_pada' => now(),
         ]);
 
-        $sa = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
-            ->where('status', \App\Models\User::STATUS_AKTIF)
+        $sa = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
+            ->where('status', User::STATUS_AKTIF)
             ->first();
         if ($sa) {
-            \App\Models\Notification::create([
+            Notification::create([
                 'user_id' => $sa->user_id,
                 'aktor_id' => $request->user()->user_id,
-                'tipe' => \App\Models\Notification::TIPE_SISTEM,
+                'tipe' => Notification::TIPE_SISTEM,
                 'judul' => 'Pengajuan Pembelian Slot',
-                'pesan' => sprintf('Pengajuan pembelian %d slot (Rp %s) menunggu verifikasi.', (int) $data['jumlah_slot'], number_format($totalHarga, 0, ',', '.')),
+                'pesan' => sprintf('Pengajuan pembelian %d slot (Rp %s) menunggu persetujuan. Bukti pembayaran sudah dilampirkan.', (int) $data['jumlah_slot'], number_format($totalHarga, 0, ',', '.')),
                 'url' => route('superadmin.slot-produk'),
             ]);
         }
 
-        return back()->with('success', 'Pengajuan pembelian '.$data['jumlah_slot'].' slot (Rp '.number_format($totalHarga, 0, ',', '.').') diajukan. Bukti pembayaran akan diverifikasi SuperAdmin.');
+        return back()->with('success', 'Pengajuan pembelian '.$data['jumlah_slot'].' slot (Rp '.number_format($totalHarga, 0, ',', '.').') diajukan. Super Admin dapat langsung menyetujui atau menolak.');
     }
 }

@@ -8,6 +8,7 @@ use App\Models\PaymentMethod;
 use App\Models\ProductSlotPackage;
 use App\Models\Role;
 use App\Models\SlotGrant;
+use App\Models\SlotPackagePromotion;
 use App\Models\StoreSlotSubscription;
 use App\Services\NotificationService;
 use App\Support\OwnerContext;
@@ -46,6 +47,15 @@ class PaketSlotController extends Controller
             ->orderBy('jumlah_slot')
             ->get();
 
+        $activePromos = SlotPackagePromotion::query()
+            ->aktif()
+            ->get()
+            ->keyBy('slot_package_id');
+
+        $packages->each(function ($p) use ($activePromos) {
+            $p->setAttribute('promo_aktif', $activePromos->get($p->slot_package_id));
+        });
+
         $metode = PaymentMethod::where('status', PaymentMethod::STATUS_AKTIF)->orderBy('nama_metode')->get();
         $hargaPerSlot = SlotService::hargaPerSlot();
 
@@ -65,7 +75,9 @@ class PaketSlotController extends Controller
         }
 
         $storeId = OwnerContext::firstStoreId();
-        if (! $storeId) return back()->with('error', 'Anda belum memiliki toko.');
+        if (! $storeId) {
+            return back()->with('error', 'Anda belum memiliki toko.');
+        }
 
         $data = $request->validate([
             'metode_pembayaran' => ['required', 'integer', 'exists:payment_methods,payment_method_id'],
@@ -79,6 +91,10 @@ class PaketSlotController extends Controller
 
         $metode = PaymentMethod::find($data['metode_pembayaran']);
         $path = $request->file('file_bukti')->store('slot-bukti/'.$storeId, 'public');
+
+        $promo = SlotPackagePromotion::aktifUntuk($paket->slot_package_id);
+        $diskon = $promo?->potonganUntuk((float) $paket->harga) ?? 0;
+        $hargaAkhir = $paket->harga !== null ? max(0, (float) $paket->harga - $diskon) : null;
 
         $sub = StoreSlotSubscription::create([
             'store_id' => $storeId,
@@ -103,11 +119,11 @@ class PaketSlotController extends Controller
             Role::SUPER_ADMIN,
             Notification::TIPE_SISTEM,
             'Pembelian Paket Slot',
-            sprintf('Toko membeli paket slot "%s" (%d slot).', $paket->nama_paket, $paket->jumlah_slot),
+            sprintf('Toko membeli paket slot "%s" (%d slot)%s.', $paket->nama_paket, $paket->jumlah_slot, $diskon > 0 ? ' dengan promo "'.$promo->nama_promo.'" (diskon Rp '.number_format($diskon, 0, ',', '.').')' : ''),
             auth()->id(),
             route('superadmin.slot-produk')
         );
-        Notification::fireSelf(Notification::TIPE_SISTEM, 'Paket Slot Aktif', sprintf('Paket "%s" (%d slot) berhasil aktif.', $paket->nama_paket, $paket->jumlah_slot), route('owner.paket-slot'));
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Paket Slot Aktif', sprintf('Paket "%s" (%d slot) berhasil aktif%s.', $paket->nama_paket, $paket->jumlah_slot, $diskon > 0 ? ' dengan diskon Rp '.number_format($diskon, 0, ',', '.').' ("'.$promo->nama_promo.'")' : ''), route('owner.paket-slot'));
 
         return back()->with('success', 'Paket "'.$paket->nama_paket.'" ('.$paket->jumlah_slot.' slot) berhasil aktif. Kuota toko bertambah.');
     }

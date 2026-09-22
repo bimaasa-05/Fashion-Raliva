@@ -3,6 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Bank;
+use App\Models\Checkout;
+use App\Models\Order;
+use App\Models\Payment;
+use App\Models\PaymentMethod;
 use App\Models\Refund;
 use App\Models\Store;
 use App\Models\StoreBankAccount;
@@ -11,7 +15,6 @@ use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Models\Withdrawal;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class WalletSeeder extends Seeder
 {
@@ -179,7 +182,18 @@ class WalletSeeder extends Seeder
         // ---- Order + Payment contoh (supaya FK refund valid & tampil di Pengembalian) ----
         $customerJane = User::where('email', 'customer@raliva.test')->first();
         $requesterId = $customerJane?->user_id ?? $owner->user_id;
-        $paymentMethod = \App\Models\PaymentMethod::first();
+        $paymentMethod = PaymentMethod::first();
+
+        $refundCases = [
+            'RLV-2085', 'RLV-2079', 'RLV-2076', 'RLV-2071', 'RLV-2068',
+        ];
+
+        // Idempoten: jangan duplikasi order/payment/refund bila seeder dijalankan ulang.
+        if (Order::whereIn('nomor_order', $refundCases)->exists()) {
+            $this->command?->info('WalletSeeder: data order/refund contoh sudah ada, dilewati.');
+
+            return;
+        }
 
         $refundCases = [
             ['no' => 'RLV-2085', 'tgl' => '2026-08-22 09:00:00', 'grand' => 459000, 'jml' => 459000, 'tipe' => Refund::TIPE_PARTIAL, 'alasan' => 'Barang tidak sesuai deskripsi — warna berbeda', 'status' => Refund::STATUS_REQUESTED, 'selesai' => null],
@@ -190,7 +204,7 @@ class WalletSeeder extends Seeder
         ];
 
         foreach ($refundCases as $case) {
-            $checkout = \App\Models\Checkout::create([
+            $checkout = Checkout::create([
                 'user_id' => $requesterId,
                 'subtotal' => $case['grand'],
                 'total_diskon' => 0,
@@ -201,7 +215,7 @@ class WalletSeeder extends Seeder
                 'status' => 'selesai',
             ]);
 
-            $order = \App\Models\Order::create([
+            $order = Order::create([
                 'checkout_id' => $checkout->checkout_id,
                 'store_id' => $store->store_id,
                 'nomor_order' => $case['no'],
@@ -211,10 +225,10 @@ class WalletSeeder extends Seeder
                 'biaya_layanan' => 0,
                 'total_ongkir' => 0,
                 'grand_total' => $case['grand'],
-                'status' => \App\Models\Order::STATUS_SELESAI,
+                'status' => Order::STATUS_SELESAI,
             ]);
 
-            $payment = \App\Models\Payment::create([
+            $payment = Payment::create([
                 'checkout_id' => $checkout->checkout_id,
                 'payment_method_id' => $paymentMethod?->payment_method_id,
                 'jumlah' => $case['grand'],
