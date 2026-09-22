@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Courier;
 use App\Models\Notification;
+use App\Models\StoreCourierSetting;
 use App\Models\Order;
 use App\Models\Shipment;
 use App\Models\ShippingService;
@@ -27,11 +28,24 @@ class PengirimanController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
+        $statusAmbil = [
+            Order::STATUS_DIBAYAR,
+            Order::STATUS_MENUNGGU_PRODUKSI,
+            Order::STATUS_DIPROSES,
+            Order::STATUS_SIAP_KIRIM,
+            Order::STATUS_DIKIRIM,
+        ];
+
         $siapDiambil = Order::query()
             ->whereIn('store_id', $storeIds)
-            ->where('status', Order::STATUS_SIAP_KIRIM)
-            ->where('tipe_pesanan', Order::TIPE_PESANAN_OFFLINE)
-            ->whereDoesntHave('shipments')
+            ->whereIn('status', $statusAmbil)
+            ->where(function ($q) {
+                $q->where('tipe_pesanan', Order::TIPE_PESANAN_OFFLINE)
+                    ->orWhere(function ($qq) {
+                        $qq->where('tipe_pesanan', Order::TIPE_PESANAN_ONLINE)
+                            ->whereDoesntHave('shipments');
+                    });
+            })
             ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap', 'checkout.payment', 'items'])
             ->orderByDesc('created_at')
             ->get();
@@ -43,11 +57,25 @@ class PengirimanController extends Controller
             ->orderByDesc('shipment_id')
             ->get();
 
+        $couriers = Courier::where('status', Courier::STATUS_AKTIF)->with(['services' => fn ($q) => $q->where('status', 'aktif')->orderBy('nama_layanan')])->orderBy('nama_kurir')->get();
+
+        // Kurir aktif per toko: bila toko punya pengaturan, hanya yang is_aktif; bila belum ada, semua global.
+        $kurirPerToko = [];
+        foreach ($storeIds as $sid) {
+            $set = StoreCourierSetting::where('store_id', $sid)->get();
+            if ($set->isEmpty()) {
+                $kurirPerToko[$sid] = $couriers->pluck('courier_id')->all();
+            } else {
+                $kurirPerToko[$sid] = $set->where('is_aktif', true)->whereNull('shipping_service_id')->pluck('courier_id')->all();
+            }
+        }
+
         return view('Admin.pengiriman.index', [
             'siapDikirim' => $siapDikirim,
             'siapDiambil' => $siapDiambil,
             'shipments' => $shipments,
-            'couriers' => Courier::where('status', Courier::STATUS_AKTIF)->with('services')->orderBy('nama_kurir')->get(),
+            'couriers' => $couriers,
+            'kurirPerToko' => $kurirPerToko,
         ]);
     }
 
@@ -90,6 +118,13 @@ class PengirimanController extends Controller
             }
         }
 
+        if (! $this->kurirAllowed($pesanan->store_id, (int) $data['courier_id'], $data['shipping_service_id'] ? (int) $data['shipping_service_id'] : null)) {
+            return back()->with('toast', [
+                'message' => 'Kurir/layanan ini nonaktif untuk toko pesanan. Ubah di menu Metode Pengiriman.',
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
         $shipment = $pesanan->shipments()->first();
 
         $lama = $shipment?->only(['nomor_resi', 'courier_id', 'status']);
@@ -125,10 +160,43 @@ class PengirimanController extends Controller
 
         Notification::fireSelf(Notification::TIPE_PENGIRIMAN, 'Resi Tersimpan', sprintf('Resi %s untuk pesanan %s tersimpan.', $data['nomor_resi'], $pesanan->nomor_order), route('admin.pengiriman'));
 
+        if ($pesanan->checkout?->user_id) {
+            Notification::create([
+                'user_id' => $pesanan->checkout->user_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_PENGIRIMAN,
+                'judul' => 'Resi Pesanan Tersedia',
+                'pesan' => sprintf('Pesanan %s akan dikirim via %s dengan resi %s.', $pesanan->nomor_order, $shipment->courier?->nama_kurir ?? 'kurir', $data['nomor_resi']),
+                'url' => route('customer.order-tracking'),
+            ]);
+        }
+
         return back()->with('toast', [
             'message' => "Resi untuk pesanan {$pesanan->nomor_order} tersimpan. Siap ditandai dikirim.",
             'icon' => 'task_alt',
         ]);
+    }
+
+    private function kurirAllowed(int $storeId, int $courierId, ?int $serviceId): bool
+    {
+        $set = StoreCourierSetting::where('store_id', $storeId)->get();
+        if ($set->isEmpty()) {
+            return true;
+        }
+
+        $kurirOk = $set->where('courier_id', $courierId)->whereNull('shipping_service_id');
+        if ($kurirOk->isNotEmpty() && ! $kurirOk->contains(fn ($s) => (bool) $s->is_aktif)) {
+            return false;
+        }
+
+        if ($serviceId) {
+            $layanan = $set->where('courier_id', $courierId)->where('shipping_service_id', $serviceId)->first();
+            if ($layanan && ! $layanan->is_aktif) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function kirim(Request $request, Shipment $pengiriman)
