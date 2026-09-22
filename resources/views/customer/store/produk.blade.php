@@ -253,7 +253,7 @@
 </header>
 <div id="st-search-panel" class="fixed top-0 inset-x-0 lg:left-72 z-[55] h-16 bg-[var(--chrome-bg)] text-[var(--chrome-text)] border-b border-[var(--chrome-border)] flex items-center gap-sm px-container-margin">
 <button id="st-search-close" aria-label="{{ __('Close search') }}" class="hover:opacity-80 transition-opacity flex items-center justify-center shrink-0 w-10 h-10" onclick="toggleStoreSearch()" type="button">
-<span class="material-symbols-outlined text-[22px]">search</span>
+<span class="material-symbols-outlined text-[22px]">close</span>
 </button>
 <input id="st-search-input" type="text" inputmode="search" autocomplete="off" placeholder="{{ __('Cari produk di toko ini...') }}" class="flex-1 min-w-0 bg-transparent font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/70 border-b border-[var(--chrome-border)] focus:border-secondary py-2"/>
 <button id="st-search-clear" aria-label="{{ __('Clear search') }}" class="hidden hover:opacity-80 transition-opacity flex items-center justify-center shrink-0 w-10 h-10" onclick="clearStoreSearch()" type="button">
