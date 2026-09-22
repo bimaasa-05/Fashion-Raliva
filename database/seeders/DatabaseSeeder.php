@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             CourierSeeder::class,
             CategorySeeder::class,
             StoreCategorySeeder::class,
+            StoreCategorySizeSeeder::class,
             SuperAdminSeeder::class,
             GudangDemoSeeder::class,
             UserSeeder::class,
