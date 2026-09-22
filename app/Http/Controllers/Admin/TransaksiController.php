@@ -43,7 +43,14 @@ class TransaksiController extends Controller
         ];
         $stats['total_bersih'] = $stats['total_pemasukan'] - $stats['total_pengeluaran'];
 
-        return view('Admin.transaksi.index', compact('pemasukan', 'pengeluaran', 'stats'));
+        $kategoriPemasukan = ['Penjualan', 'Investor', 'Modal', 'Komisi', 'Lainnya'];
+        $kategoriPengeluaran = StoreExpense::whereIn('store_id', $storeIds)
+            ->select('kategori')->distinct()->pluck('kategori')->filter()->values()->all();
+        foreach (['Operasional', 'Bahan', 'Bonus', 'Gaji', 'Sewa', 'Lainnya'] as $wajib) {
+            if (! in_array($wajib, $kategoriPengeluaran, true)) $kategoriPengeluaran[] = $wajib;
+        }
+
+        return view('Admin.transaksi.index', compact('pemasukan', 'pengeluaran', 'stats', 'kategoriPemasukan', 'kategoriPengeluaran'));
     }
 
     public function storePemasukan(Request $request)
@@ -57,6 +64,7 @@ class TransaksiController extends Controller
         $data = $request->validate([
             'jumlah' => 'required|numeric|min:0',
             'keterangan' => 'required|string|max:500',
+            'kategori' => 'required|string|in:Penjualan,Investor,Modal,Komisi,Lainnya',
         ]);
 
         $wallet = \App\Models\Wallet::firstOrCreate(
@@ -70,6 +78,7 @@ class TransaksiController extends Controller
         WalletTransaction::create([
             'wallet_id' => $wallet->wallet_id,
             'jenis_transaksi' => WalletTransaction::JENIS_PEMASUKAN,
+            'kategori' => $data['kategori'],
             'jumlah' => $data['jumlah'],
             'saldo_sebelum' => $saldoSebelum,
             'saldo_sesudah' => $saldoSebelum + $data['jumlah'],
