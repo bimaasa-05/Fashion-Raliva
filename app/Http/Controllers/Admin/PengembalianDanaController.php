@@ -17,13 +17,13 @@ class PengembalianDanaController extends Controller
     {
         $storeIds = AdminContext::assignedStoreIds();
 
-        $pengajuan = Refund::with(['order.store', 'requester', 'items.orderItem.productVariant.product', 'payment'])
+        $pengajuan = Refund::with(['order.store', 'requester', 'items.orderItem.productVariant.product', 'payment.paymentMethod'])
             ->whereHas('order', fn ($q) => $q->whereIn('store_id', $storeIds))
             ->whereIn('status', [Refund::STATUS_REQUESTED, Refund::STATUS_ESKALASI])
             ->orderByDesc('diajukan_pada')
             ->get();
 
-        $riwayat = Refund::with(['order.store', 'requester', 'reviewer', 'items.orderItem.productVariant.product', 'payment'])
+        $riwayat = Refund::with(['order.store', 'requester', 'reviewer', 'items.orderItem.productVariant.product', 'payment.paymentMethod'])
             ->whereHas('order', fn ($q) => $q->whereIn('store_id', $storeIds))
             ->whereNotIn('status', [Refund::STATUS_REQUESTED, Refund::STATUS_ESKALASI])
             ->orderByDesc('diajukan_pada')
@@ -43,7 +43,7 @@ class PengembalianDanaController extends Controller
         $refund->update([
             'status' => Refund::STATUS_DISETUJUI,
             'reviewed_by' => Auth::id(),
-            'selesai_pada' => now(),
+            'disetujui_pada' => now(),
         ]);
 
         if ($refund->requested_by) {
