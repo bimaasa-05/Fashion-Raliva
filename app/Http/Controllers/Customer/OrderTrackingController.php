@@ -153,6 +153,7 @@ class OrderTrackingController extends Controller
 
                 $locked->update(['status' => Order::STATUS_SELESAI]);
                 WalletService::creditOrder($locked);
+                \App\Support\StockDeductionService::deductForOrder($locked);
 
                 $locked->shipments()->where('status', \App\Models\Shipment::STATUS_DIKIRIM)->lockForUpdate()->get()->each(function ($shipment) {
                     if ($shipment->canTransitionTo(\App\Models\Shipment::STATUS_DITERIMA)) {
