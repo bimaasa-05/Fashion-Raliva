@@ -380,7 +380,7 @@
 <span class="material-symbols-outlined text-[16px]">payments</span>{{ $order->checkout->payment->status === \App\Models\Payment::STATUS_DITOLAK ? __('Unggah Ulang') : __('Bayar') }}
 </a>
 @endif
-@if (in_array($order->status, [\App\Models\Order::STATUS_DIKIRIM, \App\Models\Order::STATUS_SELESAI], true))
+@if ($order->status === \App\Models\Order::STATUS_SELESAI)
 <a href="{{ route('customer.komplain.create', ['order' => $order->order_id]) }}" class="inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">
 <span class="material-symbols-outlined text-[16px]">report</span>{{ __('Komplain') }}
 </a>
