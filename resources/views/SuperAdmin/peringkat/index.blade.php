@@ -43,17 +43,6 @@
                 <span class="material-symbols-outlined text-gold-accent text-[20px] align-middle mr-2">{{ $pd['ikon'] }}</span>{{ $pd['judul'] }}
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter items-end">
-                @if(isset($pd['items'][1]))
-                <div class="md:order-1 bg-surface-container-low bg-gradient-to-b from-slate-400/30 via-slate-400/10 to-transparent border border-slate-400/60 rounded-xl p-6 flex flex-col items-center text-center gap-3">
-                    <span class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-400 via-slate-500 to-slate-700 text-white flex items-center justify-center font-title-md font-bold shadow-lg">2</span>
-                    <div>
-                        <p class="font-title-md text-sm text-on-surface leading-snug">{{ $pd['items'][1]['nama'] }}</p>
-                        <p class="text-on-surface-variant text-xs mt-0.5">{{ $pd['items'][1]['sub_meta'] ?? $pd['items'][1]['meta'] }}</p>
-                    </div>
-                    <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-none">{{ $pd['items'][1]['display'] }}</span>
-                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-400/25 text-on-surface-variant text-[10px] font-bold uppercase border border-slate-400/60">Posisi 2</span>
-                </div>
-                @endif
                 @if(isset($pd['items'][0]))
                 <div class="md:order-2 border-2 border-amber-400 rounded-xl p-6 flex flex-col items-center text-center gap-3 relative overflow-hidden bg-gradient-to-b from-amber-400/20 via-amber-400/5 to-transparent">
                     <span class="absolute top-3 right-3 material-symbols-outlined text-amber-400 fill text-[28px]">workspace_premium</span>
@@ -64,6 +53,17 @@
                     </div>
                     <span class="font-headline-lg-mobile text-headline-lg-mobile text-black leading-none">{{ $pd['items'][0]['display'] }}</span>
                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/15 text-amber-500 text-[10px] font-bold uppercase border border-amber-400/40"><span class="material-symbols-outlined text-[12px]">check_circle</span>Posisi Teratas</span>
+                </div>
+                @endif
+                @if(isset($pd['items'][1]))
+                <div class="md:order-1 bg-surface-container-low bg-gradient-to-b from-slate-400/30 via-slate-400/10 to-transparent border border-slate-400/60 rounded-xl p-6 flex flex-col items-center text-center gap-3">
+                    <span class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-400 via-slate-500 to-slate-700 text-white flex items-center justify-center font-title-md font-bold shadow-lg">2</span>
+                    <div>
+                        <p class="font-title-md text-sm text-on-surface leading-snug">{{ $pd['items'][1]['nama'] }}</p>
+                        <p class="text-on-surface-variant text-xs mt-0.5">{{ $pd['items'][1]['sub_meta'] ?? $pd['items'][1]['meta'] }}</p>
+                    </div>
+                    <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-none">{{ $pd['items'][1]['display'] }}</span>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-400/25 text-on-surface-variant text-[10px] font-bold uppercase border border-slate-400/60">Posisi 2</span>
                 </div>
                 @endif
                 @if(isset($pd['items'][2]))
