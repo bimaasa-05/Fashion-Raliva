@@ -33,10 +33,10 @@ class PengajuanTokoController extends Controller
         $user = $request->user();
         $store = OwnerContext::currentStore();
 
-        // Jalur yang diizinkan: belum punya toko, atau toko berstatus pending/ditolak
-        // (pending masih boleh melengkapi dokumen; ditolak boleh mengajukan ulang).
-        if ($store && ! in_array($store->status, [Store::STATUS_PENDING, Store::STATUS_DITOLAK], true)) {
-            return back()->with('error', 'Pengajuan toko tidak dapat diubah pada status saat ini.');
+        // Jalur yang diizinkan: belum punya toko atau ditolak.
+        // Status pending terkunci (menunggu verifikasi Super Admin).
+        if ($store && $store->status !== Store::STATUS_DITOLAK) {
+            return back()->with('error', 'Pengajuan sedang menunggu verifikasi dan tidak dapat diubah.');
         }
 
         $isNew = ! $store;
@@ -44,11 +44,28 @@ class PengajuanTokoController extends Controller
 
         // Validasi dokumen SEBELUM menulis store ke database, agar tidak ada store
         // pending yang tercipta tanpa dokumen yang layak diverifikasi.
+        // Wajib: KTP + NPWP + SIU. Foto depan toko opsional.
+        // Dokumen yang sudah terverifikasi terkunci (tidak bisa diunggah ulang);
+        // yang ditolak / belum ada wajib dilengkapi.
+        $jenisWajib = ['ktp', 'npwp', 'siu'];
         $jenisList = ['ktp', 'npwp', 'foto_depan', 'siu'];
         $presentFiles = collect($jenisList)->filter(fn ($jenis) => $request->hasFile($jenis))->values()->all();
 
-        if (! $presentFiles) {
-            return back()->with('error', 'Pilih minimal satu dokumen untuk diunggah.')->withInput();
+        $statusDok = $store
+            ? StoreDocument::where('store_id', $store->store_id)->pluck('status', 'jenis')->all()
+            : [];
+
+        // Tolak upload ulang dokumen yang sudah terverifikasi.
+        $uploadTerlarang = collect($presentFiles)->filter(fn ($jenis) => ($statusDok[$jenis] ?? null) === 'terverifikasi')->values()->all();
+        if ($uploadTerlarang) {
+            return back()->with('error', 'Dokumen '.implode(', ', $uploadTerlarang).' sudah terverifikasi dan tidak dapat diunggah ulang.')->withInput();
+        }
+
+        // Setiap jenis wajib harus terpenuhi = ada file baru ATAU status
+        // existing pending/terverifikasi.
+        $kurang = collect($jenisWajib)->filter(fn ($jenis) => ! in_array($jenis, $presentFiles, true) && ! in_array($statusDok[$jenis] ?? null, ['pending', 'terverifikasi'], true))->values()->all();
+        if ($kurang) {
+            return back()->with('error', 'Dokumen wajib belum lengkap: '.implode(', ', $kurang).' (foto depan toko opsional).')->withInput();
         }
 
         $request->validate(collect($presentFiles)->mapWithKeys(fn ($jenis) => [
@@ -72,15 +89,6 @@ class PengajuanTokoController extends Controller
                 'nomor_telepon' => ['sometimes', 'string', 'max:20'],
                 'deskripsi' => ['nullable', 'string', 'max:1000'],
             ]);
-        } elseif ($store->status === Store::STATUS_DITOLAK) {
-            // Izinkan perbaikan data toko saat ditolak -> reset ke pending
-            $validatedStore = $request->validate([
-                'nama_toko' => ['sometimes', 'string', 'max:150'],
-                'kategori' => ['nullable', 'string', 'max:100', Rule::exists('store_categories', 'nama_kategori')->where('status', StoreCategory::STATUS_AKTIF)],
-                'alamat' => ['sometimes', 'string', 'max:500'],
-                'nomor_telepon' => ['sometimes', 'string', 'max:20'],
-                'deskripsi' => ['nullable', 'string', 'max:1000'],
-            ]);
         }
 
         DB::transaction(function () use ($user, &$store, $isNew, $isRevising, $storeFields, $presentFiles, $request) {
@@ -88,6 +96,7 @@ class PengajuanTokoController extends Controller
                 $store = Store::create([
                     'owner_id' => $user->user_id,
                     'nama_toko' => $storeFields['nama_toko'],
+                    'kategori' => $storeFields['kategori'] ?? null,
                     'alamat' => $storeFields['alamat'],
                     'nomor_telepon' => $storeFields['nomor_telepon'],
                     'deskripsi' => $storeFields['deskripsi'] ?? null,
@@ -101,6 +110,11 @@ class PengajuanTokoController extends Controller
             }
 
             foreach ($presentFiles as $jenis) {
+                $lama = StoreDocument::where('store_id', $store->store_id)->where('jenis', $jenis)->first();
+                if ($lama?->path) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($lama->path);
+                }
+
                 $path = $request->file($jenis)->store('store-documents/'.$store->store_id, 'public');
 
                 StoreDocument::updateOrCreate(
@@ -127,5 +141,63 @@ class PengajuanTokoController extends Controller
 
         return redirect()->route('owner.pengajuan-toko')
             ->with('success', count($presentFiles).' dokumen berhasil diunggah dan menunggu verifikasi.');
+    }
+
+    public function reupload(Request $request)
+    {
+        $user = $request->user();
+        $store = OwnerContext::currentStore();
+        if (! $store || $store->status !== Store::STATUS_AKTIF) {
+            return back()->with('error', 'Unggah ulang hanya untuk toko aktif.');
+        }
+
+        $jenisList = ['ktp', 'npwp', 'foto_depan', 'siu'];
+        $presentFiles = collect($jenisList)->filter(fn ($jenis) => $request->hasFile($jenis))->values()->all();
+
+        if (count($presentFiles) !== 1) {
+            return back()->with('error', 'Pilih satu dokumen untuk diunggah ulang.')->withInput();
+        }
+
+        $jenis = $presentFiles[0];
+        $existing = StoreDocument::where('store_id', $store->store_id)->where('jenis', $jenis)->first();
+        if ($existing && in_array($existing->status, ['pending', 'terverifikasi'], true)) {
+            return back()->with('error', 'Dokumen '.$jenis.' berstatus '.$existing->status.' dan tidak dapat diunggah ulang. Hanya dokumen ditolak yang bisa diunggah ulang.')->withInput();
+        }
+
+        $request->validate(collect($presentFiles)->mapWithKeys(fn ($jenis) => [
+            $jenis => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+        ])->all());
+
+        DB::transaction(function () use ($store, $jenis, $request) {
+            $lama = StoreDocument::where('store_id', $store->store_id)->where('jenis', $jenis)->first();
+            if ($lama?->path) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($lama->path);
+            }
+
+            $path = $request->file($jenis)->store('store-documents/'.$store->store_id, 'public');
+
+            StoreDocument::updateOrCreate(
+                ['store_id' => $store->store_id, 'jenis' => $jenis],
+                ['path' => $path, 'status' => 'pending', 'catatan' => null]
+            );
+        });
+
+        $sa = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
+            ->where('status', User::STATUS_AKTIF)
+            ->first();
+        if ($sa) {
+            Notification::create([
+                'user_id' => $sa->user_id,
+                'aktor_id' => $user->user_id,
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Dokumen Toko Diunggah Ulang',
+                'pesan' => sprintf('Owner mengunggah ulang dokumen %s toko "%s" dan menunggu verifikasi.', $jenis, $store->nama_toko),
+                'url' => route('superadmin.manajemen-toko'),
+            ]);
+        }
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Dokumen Diunggah Ulang', sprintf('Dokumen %s toko "%s" terunggah dan menunggu verifikasi Super Admin.', $jenis, $store->nama_toko), route('owner.pengajuan-toko'));
+
+        return redirect()->route('owner.pengajuan-toko')
+            ->with('success', 'Dokumen berhasil diunggah ulang dan menunggu verifikasi.');
     }
 }
