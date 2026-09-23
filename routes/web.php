@@ -297,7 +297,6 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::delete('/promo-slot/{promo}', [SlotPromoController::class, 'destroy'])->name('promo-slot.destroy');
     Route::get('/peringkat-iklan', [PeringkatIklanController::class, 'index'])->name('peringkat-iklan');
     Route::post('/peringkat-iklan', [PeringkatIklanController::class, 'store'])->name('peringkat-iklan.store');
-    Route::post('/peringkat-iklan/{slot}/verifikasi', [PeringkatIklanController::class, 'verifikasiPembayaran'])->name('peringkat-iklan.verifikasi');
     Route::post('/peringkat-iklan/{slot}/setujui', [PeringkatIklanController::class, 'setujui'])->name('peringkat-iklan.setujui');
     Route::post('/peringkat-iklan/{slot}/tolak', [PeringkatIklanController::class, 'tolak'])->name('peringkat-iklan.tolak');
     Route::delete('/peringkat-iklan/{slot}', [PeringkatIklanController::class, 'destroy'])->name('peringkat-iklan.hapus');
@@ -335,10 +334,6 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/pengaturan-sistem/help/faq', [PengaturanSistemController::class, 'storeHelpFaq'])->name('pengaturan-sistem.help.faq.store');
     Route::put('/pengaturan-sistem/help/faq/{helpFaq}', [PengaturanSistemController::class, 'updateHelpFaq'])->name('pengaturan-sistem.help.faq.update');
     Route::delete('/pengaturan-sistem/help/faq/{helpFaq}', [PengaturanSistemController::class, 'destroyHelpFaq'])->name('pengaturan-sistem.help.faq.destroy');
-    Route::put('/pengaturan-sistem/tier', [PengaturanSistemController::class, 'updateTier'])->name('pengaturan-sistem.tier.update');
-    Route::post('/pengaturan-sistem/tier', [PengaturanSistemController::class, 'storeTier'])->name('pengaturan-sistem.tier.store');
-    Route::put('/pengaturan-sistem/tier/{index}', [PengaturanSistemController::class, 'updateSingleTier'])->whereNumber('index')->name('pengaturan-sistem.tier.singleUpdate');
-    Route::delete('/pengaturan-sistem/tier/{index}', [PengaturanSistemController::class, 'destroyTier'])->whereNumber('index')->name('pengaturan-sistem.tier.destroy');
     Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
     Route::match(['put', 'post'], '/profil', [ProfilController::class, 'updateProfile'])->name('profil.update');
     Route::match(['put', 'post'], '/profil/password', [ProfilController::class, 'updatePassword'])->name('profil.password');
