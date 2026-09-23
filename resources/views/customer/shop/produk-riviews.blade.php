@@ -362,6 +362,9 @@
 <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm" data-state="original" data-original="{{ $review->ulasan }}" data-translated="{{ $review->ulasan }}" id="rv-text-{{ $ri }}">
 {{ $review->ulasan }}
 </p>
+@if ($review->foto)
+<img src="{{ asset('storage/' . ltrim($review->foto, '/')) }}" alt="{{ __('Foto ulasan') }}" class="mt-sm w-24 h-24 object-cover rounded-xl border border-outline-variant" loading="lazy" />
+@endif
 </article>
 @empty
 <div class="text-center py-xl">
