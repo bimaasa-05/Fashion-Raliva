@@ -44,30 +44,46 @@ class DataProdukController extends Controller
 
     public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
+        $request->merge(['harga_dasar' => str_replace('.', '', (string) $request->input('harga_dasar', ''))]);
         $data = $request->validate([
             'nama_produk' => 'required|string|max:255',
-            'harga_dasar' => 'required|numeric|min:0',
-            'category_id' => 'nullable|exists:categories,category_id',
-            'tipe_produk' => 'sometimes|string|in:regular,preorder,made_to_order',
-            'deskripsi' => 'nullable|string|max:2000',
-            'foto_produk' => 'nullable|array|max:8',
+            'harga_dasar' => 'required|numeric|min:1',
+            'category_id' => 'required|exists:categories,category_id',
+            'tipe_produk' => 'required|string|in:regular,preorder,made_to_order',
+            'deskripsi' => 'required|string|min:10|max:2000',
+            'foto_produk' => 'required|array|min:1|max:5',
             'foto_produk.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'stok_awal' => 'nullable|integer|min:0',
             'stok_minimum' => 'nullable|integer|min:0',
-            'ukuran_terpilih' => 'nullable|string|max:255',
-            'warna' => 'nullable|array',
+            'ukuran_terpilih' => 'required|string|max:1000',
+            'warna' => 'required|array|min:1',
             'warna.*' => 'string|max:30',
             'warna_hex' => 'nullable|array',
             'warna_hex.*' => 'nullable|string|regex:/^#([0-9a-fA-F]{6})$/i',
-            'varian_stok' => 'nullable|array',
+            'varian_stok' => 'required|array|min:1',
             'varian_stok.*.ukuran' => 'required|string|max:255',
             'varian_stok.*.warna' => 'required|string|max:100',
-            'varian_stok.*.stok' => 'nullable|integer|min:0',
-            'varian_stok.*.stok_minimum' => 'nullable|integer|min:0',
+            'varian_stok.*.stok' => 'required|integer|min:1',
+            'varian_stok.*.stok_minimum' => 'required|integer|min:0',
         ], [
             'nama_produk.required' => 'Nama produk wajib diisi.',
             'harga_dasar.required' => 'Harga dasar wajib diisi.',
             'harga_dasar.numeric' => 'Harga harus berupa angka.',
+            'harga_dasar.min' => 'Harga minimal Rp 1.',
+            'category_id.required' => 'Kategori wajib dipilih.',
+            'tipe_produk.required' => 'Tipe produk wajib dipilih.',
+            'deskripsi.required' => 'Deskripsi wajib diisi.',
+            'deskripsi.min' => 'Deskripsi minimal 10 karakter.',
+            'foto_produk.required' => 'Minimal 1 foto produk wajib diunggah.',
+            'foto_produk.min' => 'Minimal 1 foto produk wajib diunggah.',
+            'ukuran_terpilih.required' => 'Pilih minimal 1 ukuran.',
+            'warna.required' => 'Pilih minimal 1 warna.',
+            'warna.min' => 'Pilih minimal 1 warna.',
+            'varian_stok.required' => 'Isi stok untuk setiap varian.',
+            'varian_stok.min' => 'Isi stok untuk setiap varian.',
+            'varian_stok.*.stok.required' => 'Stok tiap varian wajib diisi.',
+            'varian_stok.*.stok.min' => 'Stok tiap varian minimal 1.',
+            'varian_stok.*.stok_minimum.required' => 'Ambang menipis tiap varian wajib diisi.',
         ]);
 
         $storeId = AdminContext::assignedStoreIds()[0] ?? null;
@@ -184,13 +200,15 @@ class DataProdukController extends Controller
             return back()->with('error', 'Anda tidak memiliki akses untuk mengubah produk toko ini.');
         }
 
+        $request->merge(['harga_dasar' => str_replace('.', '', (string) $request->input('harga_dasar', ''))]);
+
         $data = $request->validate([
             'nama_produk' => 'required|string|max:255',
             'harga_dasar' => 'required|numeric|min:0',
             'category_id' => 'nullable|exists:categories,category_id',
             'tipe_produk' => 'sometimes|string|in:regular,preorder,made_to_order',
             'deskripsi' => 'nullable|string|max:2000',
-            'foto_produk' => 'nullable|array|max:8',
+            'foto_produk' => 'nullable|array|max:5',
             'foto_produk.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'hapus_foto_ids' => 'nullable|array',
             'hapus_foto_ids.*' => 'integer|exists:product_images,product_image_id',
@@ -235,8 +253,8 @@ class DataProdukController extends Controller
                 }
             }
 
-            // Tambah foto baru (total maksimal 8)
-            $sisaSlot = 8 - \App\Models\ProductImage::where('product_id', $product->product_id)->count();
+            // Tambah foto baru (total maksimal 5)
+            $sisaSlot = 5 - \App\Models\ProductImage::where('product_id', $product->product_id)->count();
             if ($request->hasFile('foto_produk') && $sisaSlot > 0) {
                 $urutan = (int) (\App\Models\ProductImage::where('product_id', $product->product_id)->max('urutan') ?? -1) + 1;
                 foreach ($request->file('foto_produk') as $file) {
@@ -304,6 +322,8 @@ class DataProdukController extends Controller
         });
 
         ActivityLogger::log('produk.update', Product::class, $product->product_id, [], $data, 'Admin memperbarui data produk (teks, foto, varian, stok)');
+
+        \App\Models\Notification::fireSelf(\App\Models\Notification::TIPE_SISTEM, 'Produk Diperbarui', sprintf('Produk "%s" berhasil diperbarui.', $product->nama_produk), route('admin.produk'));
 
         return back()->with('success', 'Data produk berhasil diperbarui (teks, foto, varian, stok).');
     }
