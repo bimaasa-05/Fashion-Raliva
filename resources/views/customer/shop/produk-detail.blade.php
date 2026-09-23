@@ -423,7 +423,7 @@
             <div class="lg:flex lg:items-start lg:gap-xl">
                 <!-- Product Gallery (left) -->
                 <section id="pd-gallery" class="relative w-full aspect-[3/4] md:aspect-[4/5] lg:w-[42%] lg:shrink-0 lg:aspect-auto lg:h-[calc(100vh-8rem)] lg:sticky lg:top-24 lg:self-start bg-surface-variant overflow-hidden snap-x snap-mandatory flex overflow-x-auto hide-scrollbar">
-@foreach ($product->images as $img)
+@forelse ($product->images as $img)
                     <div class="min-w-full snap-start relative">
                         <img class="w-full h-full object-cover" alt="{{ $product->nama_produk }}" src="{{ photo_url($img->file_gambar) }}"/>
                         </div>
