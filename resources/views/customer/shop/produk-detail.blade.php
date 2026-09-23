@@ -422,7 +422,8 @@
         <div class="mx-auto max-w-[1400px] px-container-margin">
             <div class="lg:flex lg:items-start lg:gap-xl">
                 <!-- Product Gallery (left) -->
-                <section id="pd-gallery" class="relative w-full aspect-[3/4] md:aspect-[4/5] lg:w-[42%] lg:shrink-0 lg:aspect-auto lg:h-[calc(100vh-8rem)] lg:sticky lg:top-24 lg:self-start bg-surface-variant overflow-hidden snap-x snap-mandatory flex overflow-x-auto hide-scrollbar">
+                <section class="relative w-full aspect-[3/4] md:aspect-[4/5] lg:w-[42%] lg:shrink-0 lg:aspect-auto lg:h-[calc(100vh-8rem)] lg:sticky lg:top-24 lg:self-start bg-surface-variant overflow-hidden">
+                    <div id="pd-gallery" class="flex h-full overflow-x-auto snap-x snap-mandatory hide-scrollbar">
 @forelse ($product->images as $img)
                     <div class="min-w-full snap-start relative">
                         <img class="w-full h-full object-cover" alt="{{ $product->nama_produk }}" src="{{ photo_url($img->file_gambar) }}"/>
@@ -432,6 +433,7 @@
                         <img class="w-full h-full object-cover" alt="{{ $product->nama_produk }}" src="https://picsum.photos/seed/product/900/1200"/>
                         </div>
 @endforelse
+                    </div>
                     @if ($product->images->count() > 1)
                     <button type="button" id="pd-prev" aria-label="{{ __('Foto sebelumnya') }}" class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/40 text-white backdrop-blur-sm flex items-center justify-center hover:bg-black/60 transition disabled:opacity-30 disabled:pointer-events-none">
                         <span class="material-symbols-outlined text-[20px]">chevron_left</span>
@@ -616,14 +618,12 @@
                                     <h2 class="font-title-md text-title-md text-on-surface">{{ __('Buyer Reviews') }}</h2>
                                     <span class="font-label-sm text-label-sm text-on-surface-variant inline-flex items-center gap-xs">{{ number_format($averageRating ?: 0, 1) }} <span class="material-symbols-outlined text-[14px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span> ({{ $reviewCount }})</span>
                                     </div>
-                                    @if ($reviewCount > 0)
                                     <div class="px-container-margin md:px-[64px] pb-sm">
                                         <a href="{{ route('customer.shop.produk-riviews', $product->product_id) }}" class="inline-flex items-center gap-sm font-label-caps text-label-caps uppercase tracking-widest text-secondary hover:text-primary transition-colors">
                                             <span>{{ __('Lihat semua ulasan') }}</span>
                                             <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
                                         </a>
                                     </div>
-                                    @endif
                                     @if (! empty($reviewableItem ?? null))
                                     <div class="px-container-margin md:px-[64px] pb-sm">
                                         <a href="{{ route('customer.reviews.create', ['order_item' => $reviewableItem->order_item_id]) }}" class="btn-gold w-full md:w-auto inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
