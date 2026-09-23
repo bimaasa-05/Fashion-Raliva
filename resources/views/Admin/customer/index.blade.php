@@ -6,6 +6,13 @@
 @section('header-subtitle', 'Data customer yang berhubungan dengan toko dan riwayat pesanannya.')
 
 @section('content')
+@include('partials.flash-toast')
+@if (session('success'))
+    <div class="bg-secondary-container/15 border border-secondary/30 text-secondary rounded-lg px-4 py-3 text-sm font-body-md mb-6">{{ session('success') }}</div>
+@endif
+@if (session('error'))
+    <div class="bg-error/10 border border-error/30 text-error rounded-lg px-4 py-3 text-sm font-body-md mb-6">{{ session('error') }}</div>
+@endif
 
     <section data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter mb-6">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
