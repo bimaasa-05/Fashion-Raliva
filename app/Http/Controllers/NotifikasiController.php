@@ -15,6 +15,7 @@ class NotifikasiController extends Controller
         Notification::TIPE_PEMBAYARAN => 'payments',
         Notification::TIPE_PENGIRIMAN => 'local_shipping',
         Notification::TIPE_KOMPLAIN => 'support_agent',
+        Notification::TIPE_ULASAN => 'star',
         Notification::TIPE_WALLET => 'account_balance_wallet',
         Notification::TIPE_PROMO => 'local_offer',
         Notification::TIPE_SISTEM => 'notifications',
@@ -107,7 +108,10 @@ class NotifikasiController extends Controller
 
     public function markRead(Request $request, Notification $notification): JsonResponse
     {
-        abort_if($notification->user_id !== Auth::id(), 403);
+        $user = Auth::user();
+        $isSuperAdmin = $user->role?->nama_role === \App\Models\Role::SUPER_ADMIN;
+
+        abort_if($notification->user_id !== Auth::id() && ! $isSuperAdmin, 403);
 
         if ($notification->dibaca_pada === null) {
             $notification->update(['dibaca_pada' => now()]);
@@ -115,7 +119,7 @@ class NotifikasiController extends Controller
 
         return response()->json([
             'success' => true,
-            'target' => $notification->url ?? $this->notifTarget(Auth::user()->role?->nama_role, $notification->tipe),
+            'target' => $notification->url ?? $this->notifTarget($user->role?->nama_role, $notification->tipe),
         ]);
     }
 

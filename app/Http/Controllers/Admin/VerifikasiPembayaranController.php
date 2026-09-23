@@ -34,7 +34,7 @@ class VerifikasiPembayaranController extends Controller
         ];
 
         $payments = match ($tab) {
-            'diterima' => (clone $base)->where('status', Payment::STATUS_TERVERIFIKASI)->orderByDesc('dibayar_pada')->get(),
+            'diterima' => (clone $base)->where('status', Payment::STATUS_TERVERIFIKASI)->orderByDesc('updated_at')->get(),
             'ditolak' => (clone $base)->where('status', Payment::STATUS_DITOLAK)->orderByDesc('updated_at')->get(),
             default => (clone $base)->where('status', Payment::STATUS_MENUNGGU_VERIFIKASI)->orderByDesc('updated_at')->get(),
         };

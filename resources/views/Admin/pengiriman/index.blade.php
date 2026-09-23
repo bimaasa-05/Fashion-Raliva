@@ -132,7 +132,7 @@
 
     <section data-ship-type="online" class="space-y-gutter">
         <h2 class="font-title-md text-title-md text-on-surface premium-heading">Dalam Pengiriman &amp; Riwayat</h2>
-        <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
+        <div class="overflow-x-auto hidden md:block bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
             <table class="w-full min-w-[850px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -199,6 +199,56 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse ($shipments as $shipment)
+                @php
+                    $badgeMap = [
+                        \App\Models\Shipment::STATUS_PENDING => ['label' => 'Menunggu Resi', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                        \App\Models\Shipment::STATUS_DIPROSES => ['label' => 'Siap Kirim', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
+                        \App\Models\Shipment::STATUS_DIKIRIM => ['label' => 'Dikirim', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
+                        \App\Models\Shipment::STATUS_DITERIMA => ['label' => 'Diterima', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
+                        \App\Models\Shipment::STATUS_GAGAL => ['label' => 'Gagal', 'class' => 'bg-error/10 text-error border-error/20'],
+                    ];
+                    $badge = $badgeMap[$shipment->status] ?? ['label' => ucfirst($shipment->status), 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'];
+                @endphp
+                <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-mono font-bold text-on-surface">{{ $shipment->order?->nomor_order }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $shipment->order?->checkout?->nama_penerima ?? $shipment->order?->checkout?->user?->nama_lengkap ?? '-' }}@if($shipment->order?->checkout?->nomor_telepon) • {{ $shipment->order->checkout->nomor_telepon }}@endif</p>
+                        </div>
+                        <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $badge['class'] }}">{{ $badge['label'] }}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-muted-border">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Kurir / Layanan</p>
+                            <p class="text-sm text-on-surface mt-0.5">{{ $shipment->courier?->nama_kurir ?? '-' }} <span class="block text-xs text-on-surface-variant">{{ $shipment->shippingService?->nama_layanan ?? '-' }}</span></p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Resi</p>
+                            <p class="font-mono text-sm text-on-surface mt-0.5">{{ $shipment->nomor_resi ?? '-' }}</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-muted-border flex justify-end gap-1.5 flex-wrap">
+                        @if (in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true) && $shipment->order?->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+                            <button type="button" data-modal-open="modal-edit-resi-{{ $shipment->shipment_id }}" class="px-3 py-1.5 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">Edit Resi</button>
+                        @endif
+                        @if (in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true) && $shipment->nomor_resi)
+                            <form method="POST" action="{{ route('admin.pengiriman.kirim', $shipment->shipment_id) }}" onsubmit="return confirm('Tandai pesanan {{ $shipment->order?->nomor_order }} sudah dikirim dengan resi {{ $shipment->nomor_resi }}?');">
+                                @csrf
+                                <button type="submit" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Tandai Dikirim</button>
+                            </form>
+                        @elseif ($shipment->status === \App\Models\Shipment::STATUS_DIKIRIM && ! $shipment->nomor_resi)
+                            <span class="text-error text-[10px] uppercase">Resi belum diisi</span>
+                        @elseif (! in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true))
+                            <span class="text-on-surface-variant text-xs uppercase">&mdash;</span>
+                        @endif
+                    </div>
+                </article>
+            @empty
+                <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada data pengiriman.</p>
+            @endforelse
         </div>
     </section>
 </div>

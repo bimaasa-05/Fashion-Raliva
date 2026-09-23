@@ -19,7 +19,6 @@ class KomplainController extends Controller
 
         $complaints = Complaint::with(['user', 'order.store', 'orderItem.productVariant.product', 'store', 'messages.sender'])
             ->whereHas('order', fn($q) => $q->whereIn('store_id', $storeIds))
-            ->orderByRaw("CASE status WHEN 'open' THEN 0 WHEN 'diproses' THEN 1 WHEN 'escalated' THEN 2 ELSE 3 END")
             ->orderByDesc('dibuat_pada')
             ->get();
 

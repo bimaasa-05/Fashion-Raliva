@@ -33,6 +33,8 @@
                     "on-secondary-fixed": "#261a00",
                     "error": "rgb(var(--c-error) / <alpha-value>)",
                     "success": "rgb(var(--c-success) / <alpha-value>)",
+                    "info": "rgb(var(--c-info) / <alpha-value>)",
+                    "warning": "rgb(var(--c-warning) / <alpha-value>)",
                     "on-primary-container": "rgb(var(--c-on-muted) / <alpha-value>)",
                     "tertiary": "rgb(var(--c-primary) / <alpha-value>)",
                     "surface-container-lowest": "rgb(var(--c-sc-lowest) / <alpha-value>)",
@@ -131,6 +133,8 @@
         --c-on-primary: 255 255 255;
         --c-secondary: 121 89 5;
         --c-success: 46 125 50;
+        --c-info: 13 71 161;
+        --c-warning: 143 86 0;
         --c-error: 186 26 26;
         --c-on-error: 255 255 255;
         --c-error-container: 255 218 214;
@@ -168,6 +172,8 @@
         --c-on-primary: 17 17 17;
         --c-secondary: 235 193 104;
         --c-success: 76 175 80;
+        --c-info: 150 204 255;
+        --c-warning: 255 213 145;
         --c-error: 255 179 171;
         --c-on-error: 60 14 12;
         --c-error-container: 93 26 22;
@@ -358,6 +364,45 @@
     * {
       -ms-overflow-style: none !important;
       scrollbar-width: none !important;
+    }
+
+    /* Indikator scroll halus untuk container yang bisa digeser (mobile) */
+    .overflow-x-auto,
+    .overflow-x-scroll,
+    .overflow-y-auto,
+    .overflow-y-scroll {
+      scroll-snap-type: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    @media (max-width: 767px) and (hover: none), (max-width: 767px) and (pointer: coarse) {
+      .overflow-x-auto,
+      .overflow-x-scroll,
+      .overflow-y-auto,
+      .overflow-y-scroll {
+        scrollbar-width: thin !important;
+        -ms-overflow-style: auto !important;
+      }
+      .overflow-x-auto::-webkit-scrollbar,
+      .overflow-x-scroll::-webkit-scrollbar,
+      .overflow-y-auto::-webkit-scrollbar,
+      .overflow-y-scroll::-webkit-scrollbar {
+        display: block !important;
+        width: 4px !important;
+        height: 4px !important;
+      }
+      .overflow-x-auto::-webkit-scrollbar-thumb,
+      .overflow-x-scroll::-webkit-scrollbar-thumb,
+      .overflow-y-auto::-webkit-scrollbar-thumb,
+      .overflow-y-scroll::-webkit-scrollbar-thumb {
+        background: rgba(127, 127, 127, 0.45);
+        border-radius: 9999px;
+      }
+      .overflow-x-auto::-webkit-scrollbar-track,
+      .overflow-x-scroll::-webkit-scrollbar-track,
+      .overflow-y-auto::-webkit-scrollbar-track,
+      .overflow-y-scroll::-webkit-scrollbar-track {
+        background: transparent;
+      }
     }
 </style>
 @stack('styles')

@@ -41,7 +41,6 @@ class SaldoController extends Controller
                 'expenses' => collect(),
                 'margin' => ['revenue' => 0, 'gross' => 0, 'ebitda' => 0, 'ebit' => 0, 'ebt' => 0, 'net' => 0],
                 'totalDicairkan' => 0,
-                'fmt' => fn ($v) => 'Rp '.number_format($v, 0, ',', '.'),
                 'period' => $period,
             ]);
         }
@@ -75,10 +74,6 @@ class SaldoController extends Controller
             ->get();
 
         // Ringkasan per periode (7/30/90/365 hari)
-        $period = (int) $request->input('period', 30);
-        if (! in_array($period, [7, 30, 90, 365])) {
-            $period = 30;
-        }
         $start = Carbon::now()->subDays($period - 1)->startOfDay();
         $end = Carbon::now()->endOfDay();
         $monthTx = $wallet->transactions()
@@ -88,6 +83,7 @@ class SaldoController extends Controller
         $pemasukan = $monthTx->whereIn('jenis_transaksi', [
             WalletTransaction::JENIS_PENJUALAN_MASUK,
             WalletTransaction::JENIS_KOMISI_MASUK,
+            WalletTransaction::JENIS_PEMASUKAN,
         ])->sum('jumlah');
 
         $pengeluaran = $monthTx->whereNotIn('jenis_transaksi', [
@@ -141,12 +137,10 @@ class SaldoController extends Controller
             'net' => $netProfit,
         ];
 
-        $fmt = fn ($v) => 'Rp '.number_format($v, 0, ',', '.');
-
         return view('Owner.keuangan.index', compact(
             'wallet', 'bankAccounts', 'totalDicairkan',
             'mutations', 'withdrawals', 'refunds', 'summary', 'chart',
-            'expenses', 'margin', 'store', 'fmt', 'period'
+            'expenses', 'margin', 'store', 'period'
         ));
     }
 
@@ -165,13 +159,33 @@ class SaldoController extends Controller
             'tanggal' => ['required', 'date', 'before_or_equal:today'],
         ]);
 
-        StoreExpense::create([
-            'store_id' => $store->store_id,
-            'nama' => $validated['nama'],
-            'kategori' => $validated['kategori'],
-            'nominal' => $validated['nominal'],
-            'tanggal' => $validated['tanggal'],
-        ]);
+        $wallet = $store->wallet;
+        if (! $wallet) {
+            $wallet = \App\Models\Wallet::create(['store_id' => $store->store_id, 'saldo_tersedia' => 0, 'saldo_tertahan' => 0]);
+        }
+
+        DB::transaction(function () use ($store, $wallet, $validated) {
+            StoreExpense::create([
+                'store_id' => $store->store_id,
+                'nama' => $validated['nama'],
+                'kategori' => $validated['kategori'],
+                'nominal' => $validated['nominal'],
+                'tanggal' => $validated['tanggal'],
+            ]);
+
+            $saldoSebelum = (float) $wallet->saldo_tersedia;
+            $wallet->decrement('saldo_tersedia', $validated['nominal']);
+
+            WalletTransaction::create([
+                'wallet_id' => $wallet->wallet_id,
+                'jenis_transaksi' => WalletTransaction::JENIS_PENGELUARAN,
+                'kategori' => $validated['kategori'],
+                'jumlah' => $validated['nominal'],
+                'saldo_sebelum' => $saldoSebelum,
+                'saldo_sesudah' => $saldoSebelum - (float) $validated['nominal'],
+                'keterangan' => 'Pengeluaran: '.$validated['nama'],
+            ]);
+        });
 
         Notification::fireSelf(Notification::TIPE_WALLET, 'Pengeluaran Dicatat', sprintf('Pengeluaran "%s" senilai Rp %s dicatat.', $validated['nama'], number_format((float) $validated['nominal'], 0, ',', '.')), route('owner.keuangan'));
 

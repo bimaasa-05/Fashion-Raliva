@@ -127,7 +127,7 @@
                     <div class="flex items-center gap-1.5 flex-wrap mt-2 pt-2 border-t border-muted-border">
                         <span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ ucfirst($product->tipe_produk) }}</span>
                         @if ($product->status === \App\Models\Product::STATUS_PENDING)
-                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ $product->slot_full ? 'bg-error/10 text-error border-error/30' : 'bg-success/10 text-success border-success/20' }}">{{ $product->slot_full ? 'Kuota Penuh' : 'Slot ' . $product->slot_available . '/' . $product->slot_total }}</span>
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ $product->slot_full ? 'bg-error/10 text-error border-error/30' : 'bg-success/10 text-success border-success/20' }}">{{ $product->slot_full ? 'Kuota Penuh' : 'Slot ' . $product->slot_used . '/' . $product->slot_total }}</span>
                         @endif
                     </div>
                 </div>
@@ -226,7 +226,7 @@
             const el = document.getElementById('mod-slot');
             el.textContent = slotFull
                 ? 'Kuota penuh (' + d.slotUsed + '/' + d.slotTotal + ') — pemilik toko harus menambah slot.'
-                : d.slotAvailable + '/' + d.slotTotal + ' slot tersisa.';
+                : d.slotUsed + '/' + d.slotTotal + ' slot terpakai — sisa ' + d.slotAvailable + ' slot.';
             el.className = 'font-body-md text-body-md ' + (slotFull ? 'text-error' : 'text-success');
         } else {
             slotBox.classList.add('hidden');

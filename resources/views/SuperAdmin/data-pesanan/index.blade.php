@@ -378,12 +378,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchSearch = !term || (el.getAttribute('data-search') || '').includes(term);
             const show = matchStatus && matchSearch;
             el.classList.toggle('hidden', !show);
-            if (show) visible++;
             return show;
         };
 
         rows.forEach((row) => {
             if (each(row)) {
+                visible++;
                 const num = row.querySelector('.row-num');
                 if (num) num.textContent = visible;
             }

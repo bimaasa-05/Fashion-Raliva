@@ -18,7 +18,7 @@ class VerifikasiTopupController extends Controller
     {
         $topups = CustomerTopup::query()
             ->with(['user', 'payment.paymentMethod', 'payment.account', 'payment.proofs'])
-            ->orderByRaw("CASE status WHEN 'menunggu_verifikasi' THEN 0 WHEN 'pending' THEN 1 WHEN 'terverifikasi' THEN 2 ELSE 3 END, customer_topup_id DESC")
+            ->orderByDesc('created_at')
             ->get();
 
         $stats = [
