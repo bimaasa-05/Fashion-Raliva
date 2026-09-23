@@ -37,6 +37,7 @@ class GudangController extends Controller
             ? StockTransfer::with(['fromWarehouse', 'toWarehouse', 'requester', 'items.productVariant.product'])
                 ->where('status', StockTransfer::STATUS_REQUESTED)
                 ->whereHas('fromWarehouse', fn ($query) => $query->where('store_id', $storeId))
+                ->orderByDesc('created_at')
                 ->orderByDesc('stock_transfer_id')
                 ->limit(10)
                 ->get()
