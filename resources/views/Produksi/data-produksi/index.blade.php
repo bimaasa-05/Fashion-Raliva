@@ -156,15 +156,15 @@
                             </td>
                             <td class="py-3.5 px-4 text-center">
                                 @if ($isMenunggu)
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Menunggu</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Menunggu</span>
                                 @elseif ($isDiproses)
                                     @if ($accepted)
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Diproses</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Diproses</span>
                                     @else
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Menunggu Accept</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Menunggu Accept</span>
                                     @endif
                                 @elseif ($o->status === \App\Models\Order::STATUS_MENUNGGU_QC)
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-orange-500/10 text-orange-600 text-[10px] font-bold uppercase border border-orange-500/30">Menunggu QC</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Menunggu QC</span>
                                 @endif
                             </td>
                             <td class="py-3.5 px-4 text-right">

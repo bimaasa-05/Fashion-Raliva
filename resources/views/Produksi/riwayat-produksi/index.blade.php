@@ -91,9 +91,9 @@
                             $berhasil = $qc?->jumlah_lulus ?? $o->jumlah_berhasil ?? 0;
                             $gagal = $qc?->jumlah_gagal ?? $o->jumlah_gagal ?? 0;
                             $statusBadge = match ($o->status) {
-                                'siap_kirim' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/20',
-                                'dikirim' => 'bg-sky-500/10 text-sky-600 border-sky-500/20',
-                                'selesai' => 'bg-secondary-container/20 text-secondary border-secondary/20',
+                                'siap_kirim' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
+                                'dikirim' => 'bg-sky-500/10 text-sky-600 border-sky-500/30',
+                                'selesai' => 'bg-success/10 text-success border-success/20',
                                 default => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
                             };
                             $statusLabel = match ($o->status) {
