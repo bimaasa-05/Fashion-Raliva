@@ -154,7 +154,7 @@ class KomplainController extends Controller
 
         if ($per === 'me') {
             $deletedBy = $message->deleted_by ?? [];
-            if (!in_array(Auth::id(), $deletedBy, true)) {
+            if (! in_array(Auth::id(), $deletedBy, true)) {
                 $deletedBy[] = Auth::id();
                 $message->update(['deleted_by' => $deletedBy]);
             }

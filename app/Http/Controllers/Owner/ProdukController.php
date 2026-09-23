@@ -9,13 +9,17 @@ use App\Models\Notification;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductVariant;
 use App\Models\Review;
-use App\Support\ActivityLogger;
+use App\Models\StoreSlotSubscription;
+use App\Models\User;
 use App\Support\OwnerContext;
 use App\Support\SlotService;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProdukController extends Controller
 {
@@ -29,12 +33,12 @@ class ProdukController extends Controller
         if ($q = trim((string) $request->input('q'))) {
             $query->where(function ($qq) use ($q) {
                 $qq->where('nama_produk', 'like', "%{$q}%")
-                   ->orWhereHas('variants', fn($v) => $v->where('sku', 'like', "%{$q}%"));
+                    ->orWhereHas('variants', fn ($v) => $v->where('sku', 'like', "%{$q}%"));
             });
         }
         if ($kat = $request->input('kategori')) {
-            $katLabel = \Illuminate\Support\Str::title($kat);
-            $query->whereHas('category', fn($q) => $q->where('nama_kategori', $katLabel));
+            $katLabel = Str::title($kat);
+            $query->whereHas('category', fn ($q) => $q->where('nama_kategori', $katLabel));
         }
         if ($status = $request->input('status-produk')) {
             if (in_array($status, ['aktif', 'nonaktif', 'pending', 'ditolak', 'draft', 'arsip'])) {
@@ -57,10 +61,11 @@ class ProdukController extends Controller
             ->pluck('total', 'product_variants.product_id');
         $products->getCollection()->transform(function ($p) use ($sold) {
             $p->terjual = (int) ($sold->get($p->product_id) ?? 0);
+
             return $p;
         });
 
-        $slotAgg = \App\Models\StoreSlotSubscription::where('store_id', $storeId)
+        $slotAgg = StoreSlotSubscription::where('store_id', $storeId)
             ->where('status', 'aktif')
             ->selectRaw('COALESCE(SUM(jumlah_slot),0) as total, COALESCE(SUM(slot_terpakai),0) as used')
             ->first();
@@ -72,7 +77,7 @@ class ProdukController extends Controller
             'aktif' => Product::where('store_id', $storeId)->where('status', 'aktif')->count(),
             'nonaktif' => Product::where('store_id', $storeId)->where('status', 'nonaktif')->count(),
             'pending' => Product::where('store_id', $storeId)->where('status', 'pending')->count(),
-            'varian' => \App\Models\ProductVariant::whereHas('product', fn($q) => $q->where('store_id', $storeId))->count(),
+            'varian' => ProductVariant::whereHas('product', fn ($q) => $q->where('store_id', $storeId))->count(),
         ];
 
         return view('Owner.produk.index', compact('products', 'counts', 'totalSlot', 'usedSlot', 'categories', 'categoryOptions'));
@@ -80,7 +85,9 @@ class ProdukController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        if ((int) $product->store_id !== (int) OwnerContext::firstStoreId()) abort(403);
+        if ((int) $product->store_id !== (int) OwnerContext::firstStoreId()) {
+            abort(403);
+        }
         if (! in_array($product->status, [Product::STATUS_PENDING, Product::STATUS_DITOLAK, Product::STATUS_DRAFT], true)) {
             return back()->with('error', 'Hanya produk pending, ditolak, atau draft yang bisa diubah.');
         }
@@ -100,7 +107,6 @@ class ProdukController extends Controller
         ]);
 
         $wasRejected = $product->status === Product::STATUS_DITOLAK;
-        $lama = $product->only(['nama_produk', 'harga_dasar', 'category_id', 'tipe_produk', 'deskripsi', 'status']);
 
         $product->update([
             'nama_produk' => $data['nama_produk'] ?? $product->nama_produk,
@@ -126,11 +132,11 @@ class ProdukController extends Controller
 
         if ($wasRejected) {
             $product->update(['status' => Product::STATUS_PENDING, 'alasan_penolakan' => null]);
-            $sa = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))->first();
+            $sa = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))->first();
             if ($sa) {
                 Notification::create([
                     'user_id' => $sa->user_id,
-                    'aktor_id' => ActivityLogger::resolveActorId(),
+                    'aktor_id' => auth()->id(),
                     'tipe' => Notification::TIPE_SISTEM,
                     'judul' => 'Produk Diperbaiki Owner',
                     'pesan' => sprintf('Produk "%s" diperbaiki Owner dan menunggu review.', $product->nama_produk),
@@ -139,7 +145,6 @@ class ProdukController extends Controller
             }
         }
 
-        ActivityLogger::log('owner.product.update', Product::class, $product->product_id, $lama, $product->only(['nama_produk', 'harga_dasar', 'category_id', 'tipe_produk', 'deskripsi', 'status']), 'Owner memperbarui produk '.$product->nama_produk);
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Produk Diperbarui', sprintf('Produk "%s" berhasil diperbarui.', $product->nama_produk), route('owner.produk'));
 
         return back()->with('success', 'Produk berhasil diperbarui.');
@@ -147,7 +152,9 @@ class ProdukController extends Controller
 
     public function destroy(Product $product)
     {
-        if ((int) $product->store_id !== (int) OwnerContext::firstStoreId()) abort(403);
+        if ((int) $product->store_id !== (int) OwnerContext::firstStoreId()) {
+            abort(403);
+        }
 
         $variantIds = $product->variants()->pluck('product_variant_id')->all();
         $hasOrders = ! empty($variantIds) && OrderItem::whereIn('product_variant_id', $variantIds)->exists();
@@ -167,15 +174,16 @@ class ProdukController extends Controller
                 $product->variants()->delete();
                 $product->delete();
             });
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             return back()->with('error', 'Produk tidak dapat dihapus karena terkait data lain. Nonaktifkan saja bila perlu.');
         }
 
         foreach ($paths as $p) {
-            if ($p) Storage::disk('public')->delete($p);
+            if ($p) {
+                Storage::disk('public')->delete($p);
+            }
         }
 
-        ActivityLogger::log('owner.product.delete', Product::class, $product->product_id, $lama, [], 'Owner menghapus produk '.($lama['nama_produk'] ?? ''));
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Produk Dihapus', sprintf('Produk "%s" telah dihapus.', $lama['nama_produk'] ?? ''), route('owner.produk'));
 
         return back()->with('success', 'Produk berhasil dihapus.');
@@ -183,7 +191,9 @@ class ProdukController extends Controller
 
     public function status(Request $request, Product $product)
     {
-        if ((int) $product->store_id !== (int) OwnerContext::firstStoreId()) abort(403);
+        if ((int) $product->store_id !== (int) OwnerContext::firstStoreId()) {
+            abort(403);
+        }
 
         $allowed = [
             Product::STATUS_AKTIF => [Product::STATUS_AKTIF, Product::STATUS_NONAKTIF],
@@ -216,17 +226,14 @@ class ProdukController extends Controller
             }
         }
 
-        $lama = $product->only(['status']);
         $product->update(['status' => $to]);
 
-        ActivityLogger::log('owner.product.status', Product::class, $product->product_id, $lama, ['status' => $to], sprintf('Owner mengubah status produk %s menjadi %s.', $product->nama_produk, $to));
-
         if ($from === Product::STATUS_DRAFT && $to === Product::STATUS_PENDING) {
-            $sa = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))->first();
+            $sa = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))->first();
             if ($sa) {
                 Notification::create([
                     'user_id' => $sa->user_id,
-                    'aktor_id' => ActivityLogger::resolveActorId(),
+                    'aktor_id' => auth()->id(),
                     'tipe' => Notification::TIPE_SISTEM,
                     'judul' => 'Produk Diajukan Review',
                     'pesan' => sprintf('Produk "%s" diajukan Owner dan menunggu moderasi.', $product->nama_produk),
@@ -236,7 +243,7 @@ class ProdukController extends Controller
             Notification::fireSelf(Notification::TIPE_SISTEM, 'Produk Diajukan', sprintf('Produk "%s" diajukan, menunggu moderasi.', $product->nama_produk), route('owner.produk'));
         } else {
             $label = $to === Product::STATUS_AKTIF ? 'Diaktifkan' : 'Dinonaktifkan';
-            Notification::fireSelf(Notification::TIPE_SISTEM, 'Produk ' . $label, sprintf('Produk "%s" %s.', $product->nama_produk, strtolower($label)), route('owner.produk'));
+            Notification::fireSelf(Notification::TIPE_SISTEM, 'Produk '.$label, sprintf('Produk "%s" %s.', $product->nama_produk, strtolower($label)), route('owner.produk'));
         }
 
         return back()->with('success', sprintf('Status produk diubah menjadi %s.', $to));

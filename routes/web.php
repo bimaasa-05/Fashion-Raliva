@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardOperasionalController;
 use App\Http\Controllers\Admin\DataCustomerController;
 use App\Http\Controllers\Admin\DataPesananController as AdminDataPesananController;
 use App\Http\Controllers\Admin\DataProdukController;
+use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\KomplainController;
 use App\Http\Controllers\Admin\LaporanController as AdminLaporanController;
 use App\Http\Controllers\Admin\PengembalianDanaController as AdminPengembalianDanaController;
@@ -15,11 +16,25 @@ use App\Http\Controllers\Admin\StokController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\VerifikasiPembayaranController;
-use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Customer\AccountController;
+use App\Http\Controllers\Customer\AddressController;
+use App\Http\Controllers\Customer\CartController;
+use App\Http\Controllers\Customer\CheckoutController;
+use App\Http\Controllers\Customer\HelpController;
+use App\Http\Controllers\Customer\HomeController;
+use App\Http\Controllers\Customer\NotificationController;
+use App\Http\Controllers\Customer\OrderController;
+use App\Http\Controllers\Customer\OrderTrackingController;
+use App\Http\Controllers\Customer\ProfileController;
+use App\Http\Controllers\Customer\ReviewController;
+use App\Http\Controllers\Customer\SearchController;
+use App\Http\Controllers\Customer\SettingsController;
+use App\Http\Controllers\Customer\ShopController;
+use App\Http\Controllers\Customer\WishlistController;
 use App\Http\Controllers\Gudang\BarangKeluarController as GudangBarangKeluarController;
 use App\Http\Controllers\Gudang\BarangMasukController as GudangBarangMasukController;
 use App\Http\Controllers\Gudang\DashboardController as GudangDashboardController;
@@ -51,16 +66,17 @@ use App\Http\Controllers\Owner\ProdukController as OwnerProdukController;
 use App\Http\Controllers\Owner\ProduksiController as OwnerProduksiController;
 use App\Http\Controllers\Owner\ProfilController as OwnerProfilController;
 use App\Http\Controllers\Owner\PromoController as OwnerPromoController;
-use App\Http\Controllers\Owner\SaldoController;
 use App\Http\Controllers\Owner\RekapKaryawanController;
+use App\Http\Controllers\Owner\SaldoController;
 use App\Http\Controllers\Owner\UlasanController;
+use App\Http\Controllers\PermintaanOperasionalController;
 use App\Http\Controllers\Produksi\BahanProduksiController as ProduksiBahanController;
 use App\Http\Controllers\Produksi\DashboardController as ProduksiDashboardController;
 use App\Http\Controllers\Produksi\DataProduksiController as ProduksiDataController;
 use App\Http\Controllers\Produksi\NotifikasiController as ProduksiNotifikasiController;
+use App\Http\Controllers\Produksi\PelaporanProduksiController as ProduksiPelaporanController;
 use App\Http\Controllers\Produksi\PemeriksaanKualitasController as ProduksiPemeriksaanController;
 use App\Http\Controllers\Produksi\ProdukSelesaiController as ProduksiProdukSelesaiController;
-use App\Http\Controllers\Produksi\PelaporanProduksiController as ProduksiPelaporanController;
 use App\Http\Controllers\Produksi\ProfilController as ProduksiProfilController;
 use App\Http\Controllers\Produksi\RiwayatProduksiController as ProduksiRiwayatController;
 use App\Http\Controllers\SuperAdmin\DashboardController;
@@ -69,9 +85,7 @@ use App\Http\Controllers\SuperAdmin\DataPembayaranController;
 use App\Http\Controllers\SuperAdmin\DataPesananController;
 use App\Http\Controllers\SuperAdmin\GudangController;
 use App\Http\Controllers\SuperAdmin\KategoriProdukController;
-use App\Http\Controllers\SuperAdmin\StoreCategoryController;
 use App\Http\Controllers\SuperAdmin\KomisiGlobalController;
-use App\Http\Controllers\SuperAdmin\SupplierController as SaSupplierController;
 use App\Http\Controllers\SuperAdmin\KomplainController as SaKomplainController;
 use App\Http\Controllers\SuperAdmin\KurirController;
 use App\Http\Controllers\SuperAdmin\LaporanController;
@@ -89,16 +103,18 @@ use App\Http\Controllers\SuperAdmin\PermintaanPenarikanController;
 use App\Http\Controllers\SuperAdmin\ProdukController;
 use App\Http\Controllers\SuperAdmin\ProduksiController;
 use App\Http\Controllers\SuperAdmin\ProfilController;
-use App\Http\Controllers\SuperAdmin\PromoPlatformController;
 use App\Http\Controllers\SuperAdmin\RiwayatAktivitasController;
 use App\Http\Controllers\SuperAdmin\SaldoTokoController;
+use App\Http\Controllers\SuperAdmin\SidebarBadgeController;
 use App\Http\Controllers\SuperAdmin\SlotProdukController;
+use App\Http\Controllers\SuperAdmin\SlotPromoController;
 use App\Http\Controllers\SuperAdmin\StokController as SaStokController;
+use App\Http\Controllers\SuperAdmin\StoreCategoryController;
 use App\Http\Controllers\SuperAdmin\StoreStaffController;
+use App\Http\Controllers\SuperAdmin\SupplierController as SaSupplierController;
 use App\Http\Controllers\SuperAdmin\UlasanProdukTokoController;
 use App\Http\Controllers\SuperAdmin\VerifikasiTopupController;
-use App\Http\Controllers\Admin\PermintaanOperasionalController as AdminPermintaanOperasionalController;
-use App\Http\Controllers\PermintaanOperasionalController;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -119,105 +135,105 @@ Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->middl
 
 // customer
 Route::prefix('customer')->name('customer.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Customer\HomeController::class, 'index'])->name('home');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
 
-    Route::get('/shop', [\App\Http\Controllers\Customer\ShopController::class, 'index'])->name('shop');
+    Route::get('/shop', [ShopController::class, 'index'])->name('shop');
 
-    Route::get('/shop/produk/{id}', [\App\Http\Controllers\Customer\ShopController::class, 'produkDetail'])->name('shop.produk-detail');
+    Route::get('/shop/produk/{id}', [ShopController::class, 'produkDetail'])->name('shop.produk-detail');
 
-    Route::get('/shop/produk/{id}/riviews', [\App\Http\Controllers\Customer\ShopController::class, 'produkRiviews'])->name('shop.produk-riviews');
+    Route::get('/shop/produk/{id}/riviews', [ShopController::class, 'produkRiviews'])->name('shop.produk-riviews');
 
-    Route::get('/shop/store/{id}', [\App\Http\Controllers\Customer\ShopController::class, 'store'])->name('shop.store');
+    Route::get('/shop/store/{id}', [ShopController::class, 'store'])->name('shop.store');
 
-    Route::get('/shop/store/{id}/riviews', [\App\Http\Controllers\Customer\ShopController::class, 'storeRiviews'])->name('shop.store.riviews');
+    Route::get('/shop/store/{id}/riviews', [ShopController::class, 'storeRiviews'])->name('shop.store.riviews');
 
-    Route::get('/shop/store/{id}/about', [\App\Http\Controllers\Customer\ShopController::class, 'storeAbout'])->name('shop.store.about');
+    Route::get('/shop/store/{id}/about', [ShopController::class, 'storeAbout'])->name('shop.store.about');
 
-    Route::get('/search', [\App\Http\Controllers\Customer\SearchController::class, 'index'])->name('search');
+    Route::get('/search', [SearchController::class, 'index'])->name('search');
 
     // Guest-friendly checkout (Review -> Bayar -> Selesai) — publik, branch di controller
-    Route::get('/checkout', [\App\Http\Controllers\Customer\CheckoutController::class, 'index'])->name('checkout');
-    Route::post('/checkout', [\App\Http\Controllers\Customer\CheckoutController::class, 'store'])->name('checkout.store');
-    Route::get('/checkout/{checkout}/payment', [\App\Http\Controllers\Customer\CheckoutController::class, 'payment'])->name('checkout.payment');
-    Route::get('/checkout/{checkout}/payment/metode-kedua', [\App\Http\Controllers\Customer\CheckoutController::class, 'paymentMetodeKedua'])->name('checkout.payment.metode-kedua');
-    Route::post('/checkout/{checkout}/payment', [\App\Http\Controllers\Customer\CheckoutController::class, 'uploadProof'])->name('checkout.payment.upload');
-    Route::get('/checkout/{checkout}/selesai', [\App\Http\Controllers\Customer\CheckoutController::class, 'selesai'])->name('checkout.selesai');
-    Route::get('/checkout/{checkout}/payment/status', [\App\Http\Controllers\Customer\CheckoutController::class, 'paymentStatus'])->name('checkout.payment.status');
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/checkout/{checkout}/payment', [CheckoutController::class, 'payment'])->name('checkout.payment');
+    Route::get('/checkout/{checkout}/payment/metode-kedua', [CheckoutController::class, 'paymentMetodeKedua'])->name('checkout.payment.metode-kedua');
+    Route::post('/checkout/{checkout}/payment', [CheckoutController::class, 'uploadProof'])->name('checkout.payment.upload');
+    Route::get('/checkout/{checkout}/selesai', [CheckoutController::class, 'selesai'])->name('checkout.selesai');
+    Route::get('/checkout/{checkout}/payment/status', [CheckoutController::class, 'paymentStatus'])->name('checkout.payment.status');
 
     // My Account — publik branching (guest => teaser, member => index)
-    Route::get('/account', [\App\Http\Controllers\Customer\AccountController::class, 'index'])->name('account');
+    Route::get('/account', [AccountController::class, 'index'])->name('account');
 
     // Cart add — guest-friendly: JSON toast "Masuk untuk memakai keranjang, atau klik Beli Sekarang."
-    Route::post('/cart/add', [\App\Http\Controllers\Customer\CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 
     Route::middleware('role:Customer')->group(function () {
-        Route::resource('address', \App\Http\Controllers\Customer\AddressController::class)->except(['show']);
-        Route::post('/address/{address}/set-default', [\App\Http\Controllers\Customer\AddressController::class, 'setDefault'])->name('customer.address.set-default');
-        Route::get('/chart', [\App\Http\Controllers\Customer\CartController::class, 'index'])->name('chart');
+        Route::resource('address', AddressController::class)->except(['show']);
+        Route::post('/address/{address}/set-default', [AddressController::class, 'setDefault'])->name('customer.address.set-default');
+        Route::get('/chart', [CartController::class, 'index'])->name('chart');
 
-        Route::patch('/cart/{cartItem}', [\App\Http\Controllers\Customer\CartController::class, 'update'])->name('cart.update');
-        Route::delete('/cart/{cartItem}', [\App\Http\Controllers\Customer\CartController::class, 'destroy'])->name('cart.destroy');
+        Route::patch('/cart/{cartItem}', [CartController::class, 'update'])->name('cart.update');
+        Route::delete('/cart/{cartItem}', [CartController::class, 'destroy'])->name('cart.destroy');
 
-        Route::get('/order-tracking', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'index'])->name('order-tracking');
+        Route::get('/order-tracking', [OrderTrackingController::class, 'index'])->name('order-tracking');
 
-        Route::get('/pesanan', [\App\Http\Controllers\Customer\OrderController::class, 'index'])->name('orders');
+        Route::get('/pesanan', [OrderController::class, 'index'])->name('orders');
 
-        Route::get('/saldo', [\App\Http\Controllers\Customer\SaldoController::class, 'index'])->name('saldo');
-        Route::get('/saldo/isi', [\App\Http\Controllers\Customer\SaldoController::class, 'isiSaldo'])->name('saldo.isi');
-        Route::post('/saldo/topup', [\App\Http\Controllers\Customer\SaldoController::class, 'topup'])->name('saldo.topup');
-        Route::get('/saldo/topup/{topup}/payment', [\App\Http\Controllers\Customer\SaldoController::class, 'payment'])->name('saldo.topup.payment');
-        Route::post('/saldo/topup/{topup}/payment', [\App\Http\Controllers\Customer\SaldoController::class, 'uploadTopupProof'])->name('saldo.topup.payment.upload');
-        Route::post('/saldo/topup/{topup}/batal', [\App\Http\Controllers\Customer\SaldoController::class, 'batalkan'])->name('saldo.topup.batal');
-        Route::get('/saldo/topup/{topup}/payment/status', [\App\Http\Controllers\Customer\SaldoController::class, 'paymentStatus'])->name('saldo.topup.payment.status');
-        Route::get('/saldo/topup/{topup}/selesai', [\App\Http\Controllers\Customer\SaldoController::class, 'selesai'])->name('saldo.topup.selesai');
+        Route::get('/saldo', [App\Http\Controllers\Customer\SaldoController::class, 'index'])->name('saldo');
+        Route::get('/saldo/isi', [App\Http\Controllers\Customer\SaldoController::class, 'isiSaldo'])->name('saldo.isi');
+        Route::post('/saldo/topup', [App\Http\Controllers\Customer\SaldoController::class, 'topup'])->name('saldo.topup');
+        Route::get('/saldo/topup/{topup}/payment', [App\Http\Controllers\Customer\SaldoController::class, 'payment'])->name('saldo.topup.payment');
+        Route::post('/saldo/topup/{topup}/payment', [App\Http\Controllers\Customer\SaldoController::class, 'uploadTopupProof'])->name('saldo.topup.payment.upload');
+        Route::post('/saldo/topup/{topup}/batal', [App\Http\Controllers\Customer\SaldoController::class, 'batalkan'])->name('saldo.topup.batal');
+        Route::get('/saldo/topup/{topup}/payment/status', [App\Http\Controllers\Customer\SaldoController::class, 'paymentStatus'])->name('saldo.topup.payment.status');
+        Route::get('/saldo/topup/{topup}/selesai', [App\Http\Controllers\Customer\SaldoController::class, 'selesai'])->name('saldo.topup.selesai');
 
-        Route::post('/checkout/{checkout}/payment/saldo', [\App\Http\Controllers\Customer\CheckoutController::class, 'payWithSaldo'])->name('checkout.payment.saldo');
+        Route::post('/checkout/{checkout}/payment/saldo', [CheckoutController::class, 'payWithSaldo'])->name('checkout.payment.saldo');
 
-        Route::post('/order-tracking/{order}/confirm', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'confirm'])->name('order-tracking.confirm');
-        Route::post('/refund', [\App\Http\Controllers\Customer\OrderTrackingController::class, 'storeRefund'])->name('refund.store');
+        Route::post('/order-tracking/{order}/confirm', [OrderTrackingController::class, 'confirm'])->name('order-tracking.confirm');
+        Route::post('/refund', [OrderTrackingController::class, 'storeRefund'])->name('refund.store');
 
-        Route::get('/komplain', [\App\Http\Controllers\Customer\KomplainController::class, 'index'])->name('komplain');
-        Route::get('/komplain/create', [\App\Http\Controllers\Customer\KomplainController::class, 'create'])->name('komplain.create');
-        Route::post('/komplain', [\App\Http\Controllers\Customer\KomplainController::class, 'store'])->name('komplain.store');
-        Route::get('/komplain/{komplain}/messages', [\App\Http\Controllers\Customer\KomplainController::class, 'messages'])->name('komplain.messages');
-        Route::post('/komplain/{komplain}/messages', [\App\Http\Controllers\Customer\KomplainController::class, 'storeMessage'])->name('komplain.messages.store');
-        Route::patch('/komplain/{komplain}/messages/{message}', [\App\Http\Controllers\Customer\KomplainController::class, 'updateMessage'])->name('komplain.messages.update');
-        Route::delete('/komplain/{komplain}/messages/{message}', [\App\Http\Controllers\Customer\KomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy')->withTrashed();
+        Route::get('/komplain', [App\Http\Controllers\Customer\KomplainController::class, 'index'])->name('komplain');
+        Route::get('/komplain/create', [App\Http\Controllers\Customer\KomplainController::class, 'create'])->name('komplain.create');
+        Route::post('/komplain', [App\Http\Controllers\Customer\KomplainController::class, 'store'])->name('komplain.store');
+        Route::get('/komplain/{komplain}/messages', [App\Http\Controllers\Customer\KomplainController::class, 'messages'])->name('komplain.messages');
+        Route::post('/komplain/{komplain}/messages', [App\Http\Controllers\Customer\KomplainController::class, 'storeMessage'])->name('komplain.messages.store');
+        Route::patch('/komplain/{komplain}/messages/{message}', [App\Http\Controllers\Customer\KomplainController::class, 'updateMessage'])->name('komplain.messages.update');
+        Route::delete('/komplain/{komplain}/messages/{message}', [App\Http\Controllers\Customer\KomplainController::class, 'destroyMessage'])->name('komplain.messages.destroy')->withTrashed();
 
         Route::get('/account/edit', function () {
             return view('customer.account.edit');
         })->name('account.edit');
 
-        Route::post('/account', [\App\Http\Controllers\Customer\ProfileController::class, 'update'])->name('account.update');
+        Route::post('/account', [ProfileController::class, 'update'])->name('account.update');
 
         Route::get('/account/password', function () {
             return view('customer.account.password');
         })->name('account.password');
 
-        Route::post('/account/password', [\App\Http\Controllers\Customer\ProfileController::class, 'updatePassword'])->name('account.password.update');
+        Route::post('/account/password', [ProfileController::class, 'updatePassword'])->name('account.password.update');
 
-        Route::get('/reviews', [\App\Http\Controllers\Customer\ReviewController::class, 'index'])->name('reviews');
-        Route::get('/reviews/create', [\App\Http\Controllers\Customer\ReviewController::class, 'create'])->name('reviews.create');
-        Route::post('/reviews', [\App\Http\Controllers\Customer\ReviewController::class, 'store'])->name('reviews.store');
-        Route::get('/reviews/{review}/edit', [\App\Http\Controllers\Customer\ReviewController::class, 'edit'])->name('reviews.edit');
-        Route::put('/reviews/{review}', [\App\Http\Controllers\Customer\ReviewController::class, 'update'])->name('reviews.update');
-        Route::delete('/reviews/{review}', [\App\Http\Controllers\Customer\ReviewController::class, 'destroy'])->name('reviews.destroy');
+        Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews');
+        Route::get('/reviews/create', [ReviewController::class, 'create'])->name('reviews.create');
+        Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+        Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
+        Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+        Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
-        Route::get('/notifications', [\App\Http\Controllers\Customer\NotificationController::class, 'index'])->name('notifications');
-        Route::post('/notifications/mark-all-read', [\App\Http\Controllers\Customer\NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
-        Route::post('/notifications/{notification}/read', [\App\Http\Controllers\Customer\NotificationController::class, 'markRead'])->name('notifications.read');
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+        Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
+        Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
 
         Route::get('/settings', function () {
             return view('customer.settings.index');
         })->name('settings');
-        Route::post('/settings/delete-account', [\App\Http\Controllers\Customer\SettingsController::class, 'deleteAccount'])->name('settings.delete-account');
+        Route::post('/settings/delete-account', [SettingsController::class, 'deleteAccount'])->name('settings.delete-account');
 
-        Route::get('/wishlist', [\App\Http\Controllers\Customer\WishlistController::class, 'index'])->name('wishlist');
-        Route::post('/wishlist/toggle', [\App\Http\Controllers\Customer\WishlistController::class, 'toggle'])->name('wishlist.toggle');
-        Route::delete('/wishlist/{productId}', [\App\Http\Controllers\Customer\WishlistController::class, 'destroy'])->name('wishlist.destroy');
+        Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
+        Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+        Route::delete('/wishlist/{productId}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
     });
 
-    Route::get('/help', [\App\Http\Controllers\Customer\HelpController::class, 'index'])->name('help');
+    Route::get('/help', [HelpController::class, 'index'])->name('help');
 
     Route::post('/locale', function (Request $request) {
         $validated = $request->validate([
@@ -230,6 +246,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
 });
 Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Super Admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/sidebar-badges', [SidebarBadgeController::class, 'index'])->name('sidebar-badges');
     Route::get('/manajemen-pengguna', [ManajemenPenggunaController::class, 'index'])->name('manajemen-pengguna');
     Route::post('/manajemen-pengguna', [ManajemenPenggunaController::class, 'store'])->name('manajemen-pengguna.store');
     Route::get('/manajemen-pengguna/{user}/detail', [ManajemenPenggunaController::class, 'getDetail'])->name('manajemen-pengguna.detail');
@@ -272,11 +289,11 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::put('/komisi-global', [KomisiGlobalController::class, 'update'])->name('komisi-global.update');
     Route::get('/pajak-biaya', [PajakBiayaController::class, 'index'])->name('pajak-biaya');
     Route::put('/pajak-biaya', [PajakBiayaController::class, 'updatePajak'])->name('pajak-biaya.update-pajak');
-    Route::get('/promo-platform', [PromoPlatformController::class, 'index'])->name('promo-platform');
-    Route::post('/promo-platform', [PromoPlatformController::class, 'store'])->name('promo-platform.store');
-    Route::get('/promo-platform/{promo}/detail', [PromoPlatformController::class, 'getDetail'])->name('promo-platform.detail');
-    Route::put('/promo-platform/{promo}', [PromoPlatformController::class, 'update'])->name('promo-platform.update');
-    Route::delete('/promo-platform/{promo}', [PromoPlatformController::class, 'destroy'])->name('promo-platform.destroy');
+    Route::get('/promo-slot', [SlotPromoController::class, 'index'])->name('promo-slot');
+    Route::post('/promo-slot', [SlotPromoController::class, 'store'])->name('promo-slot.store');
+    Route::get('/promo-slot/{promo}/detail', [SlotPromoController::class, 'getDetail'])->name('promo-slot.detail');
+    Route::put('/promo-slot/{promo}', [SlotPromoController::class, 'update'])->name('promo-slot.update');
+    Route::delete('/promo-slot/{promo}', [SlotPromoController::class, 'destroy'])->name('promo-slot.destroy');
     Route::get('/peringkat-iklan', [PeringkatIklanController::class, 'index'])->name('peringkat-iklan');
     Route::post('/peringkat-iklan', [PeringkatIklanController::class, 'store'])->name('peringkat-iklan.store');
     Route::post('/peringkat-iklan/{slot}/verifikasi', [PeringkatIklanController::class, 'verifikasiPembayaran'])->name('peringkat-iklan.verifikasi');
@@ -304,6 +321,7 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/peringkat', [PeringkatController::class, 'index'])->name('peringkat');
     Route::get('/riwayat-aktivitas', [RiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
     Route::get('/riwayat-aktivitas/export', [RiwayatAktivitasController::class, 'export'])->name('riwayat-aktivitas.export');
+    Route::get('/riwayat-aktivitas/baru', [RiwayatAktivitasController::class, 'baru'])->name('riwayat-aktivitas.baru');
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
     Route::post('/notifikasi/tandai-dibaca', [NotifikasiController::class, 'markRead'])->name('notifikasi.tandai-dibaca');
     Route::get('/pengaturan-sistem', [PengaturanSistemController::class, 'index'])->name('pengaturan-sistem');
@@ -354,7 +372,7 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/slot-produk/permintaan/{rmt}/tolak', [SlotProdukController::class, 'rejectPurchase'])->name('slot-produk.permintaan.tolak');
 });
 
-//Route Role Admin Lengkap
+// Route Role Admin Lengkap
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store-active'])->group(function () {
     Route::get('/dashboard', [DashboardOperasionalController::class, 'index'])->name('dashboard');
     Route::get('/pesanan', [AdminDataPesananController::class, 'index'])->name('pesanan');
@@ -372,7 +390,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::get('/produk', [DataProdukController::class, 'index'])->name('produk');
     Route::post('/produk', [DataProdukController::class, 'store'])->name('produk.store');
     Route::put('/produk/{product}', [DataProdukController::class, 'update'])->name('produk.update');
-    Route::post('/kategori', [\App\Http\Controllers\Admin\KategoriController::class, 'store'])->name('kategori.store');
+    Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
     Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier');
     Route::post('/supplier', [SupplierController::class, 'store'])->name('supplier.store');
     Route::put('/supplier/{supplier}', [SupplierController::class, 'update'])->name('supplier.update');
@@ -405,7 +423,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::put('/profil', [AdminProfilController::class, 'update'])->name('profil.update');
     Route::post('/profil/foto', [AdminProfilController::class, 'updatePhoto'])->name('profil.foto');
     Route::put('/profil/password', [AdminProfilController::class, 'updatePassword'])->name('profil.password');
-    Route::get('/notifikasi', [\App\Http\Controllers\Admin\NotifikasiController::class, 'index'])->name('notifikasi');
+    Route::get('/notifikasi', [App\Http\Controllers\Admin\NotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/laporan', [AdminLaporanController::class, 'index'])->name('laporan');
     Route::get('/riwayat-aktivitas', [AdminRiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
     // Permintaan Operasional
@@ -443,7 +461,7 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang', 'st
     Route::post('/permintaan', [PermintaanOperasionalController::class, 'store'])->name('permintaan.store')->middleware('permission:warehouse.permintaan');
 });
 
-//Role Route Owner Lengkap
+// Role Route Owner Lengkap
 Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store-active'])->group(function () {
     Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/data-toko', [DataTokoController::class, 'index'])->name('data-toko');
@@ -457,8 +475,8 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::post('/produk/{product}/status', [OwnerProdukController::class, 'status'])->name('produk.status');
     Route::get('/kelola-slot', [KelolaSlotController::class, 'index'])->name('kelola-slot');
     Route::post('/kelola-slot', [KelolaSlotController::class, 'store'])->name('kelola-slot.request');
-    Route::get('/peringkat-iklan', [\App\Http\Controllers\Owner\PeringkatIklanController::class, 'index'])->name('peringkat-iklan');
-    Route::post('/peringkat-iklan', [\App\Http\Controllers\Owner\PeringkatIklanController::class, 'store'])->name('peringkat-iklan.request');
+    Route::get('/peringkat-iklan', [App\Http\Controllers\Owner\PeringkatIklanController::class, 'index'])->name('peringkat-iklan');
+    Route::post('/peringkat-iklan', [App\Http\Controllers\Owner\PeringkatIklanController::class, 'store'])->name('peringkat-iklan.request');
     Route::post('/paket-slot/{paket}/beli', [OwnerPaketSlotController::class, 'purchase'])->name('paket-slot.beli');
     Route::get('/pesanan', [OwnerPesananController::class, 'index'])->name('pesanan');
     Route::post('/pesanan/{order}/forward', [OwnerPesananController::class, 'forward'])->name('pesanan.forward');
@@ -469,7 +487,7 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::post('/promo/{promo}/toggle', [OwnerPromoController::class, 'toggle'])->name('promo.toggle');
     Route::get('/ulasan', [UlasanController::class, 'index'])->name('ulasan');
     Route::get('/data-pelanggan', [DataPelangganController::class, 'index'])->name('data-pelanggan');
-    Route::get('/saldo', fn() => redirect()->route('owner.keuangan'))->name('saldo');
+    Route::get('/saldo', fn () => redirect()->route('owner.keuangan'))->name('saldo');
     Route::get('/keuangan', [SaldoController::class, 'index'])->name('keuangan');
     Route::post('/keuangan/pengeluaran', [SaldoController::class, 'storePengeluaran'])->name('keuangan.pengeluaran.store');
     Route::post('/keuangan/pemasukan', [SaldoController::class, 'storePemasukan'])->name('keuangan.pemasukan.store');
@@ -504,8 +522,9 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::get('/pengiriman', [OwnerPengirimanController::class, 'index'])->name('pengiriman');
     Route::get('/produksi', [OwnerProduksiController::class, 'index'])->name('produksi');
     Route::get('/notifikasi', [OwnerNotifikasiController::class, 'index'])->name('notifikasi');
-    Route::post('/notifikasi/tandai-dibaca', function (Illuminate\Http\Request $request) {
-        \App\Models\Notification::where('user_id', auth()->id())->whereNull('dibaca_pada')->update(['dibaca_pada' => now()]);
+    Route::post('/notifikasi/tandai-dibaca', function (Request $request) {
+        Notification::where('user_id', auth()->id())->whereNull('dibaca_pada')->update(['dibaca_pada' => now()]);
+
         return back()->with('success', 'Notifikasi ditandai dibaca.');
     })->name('notifikasi.tandai-dibaca');
     Route::get('/profil', [OwnerProfilController::class, 'index'])->name('profil');
@@ -542,8 +561,8 @@ Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi
 
 /* ===== Notifikasi Global (semua role) ===== */
 Route::prefix('notifikasi')->middleware('auth')->group(function () {
-    Route::get('/get', [\App\Http\Controllers\NotifikasiController::class, 'getNotif'])->name('notifikasi.get');
-    Route::get('/aktivitas-baru', [\App\Http\Controllers\NotifikasiController::class, 'popupAktivitas'])->name('notifikasi.aktivitas-baru');
-    Route::post('/mark-all-read', [\App\Http\Controllers\NotifikasiController::class, 'markAllRead'])->name('notifikasi.mark-all-read');
-    Route::post('/{notification}/read', [\App\Http\Controllers\NotifikasiController::class, 'markRead'])->name('notifikasi.read');
+    Route::get('/get', [App\Http\Controllers\NotifikasiController::class, 'getNotif'])->name('notifikasi.get');
+    Route::get('/aktivitas-baru', [App\Http\Controllers\NotifikasiController::class, 'popupAktivitas'])->name('notifikasi.aktivitas-baru');
+    Route::post('/mark-all-read', [App\Http\Controllers\NotifikasiController::class, 'markAllRead'])->name('notifikasi.mark-all-read');
+    Route::post('/{notification}/read', [App\Http\Controllers\NotifikasiController::class, 'markRead'])->name('notifikasi.read');
 });

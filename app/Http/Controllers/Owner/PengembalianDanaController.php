@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\Refund;
-use App\Models\User;
 use App\Services\RefundCompletionService;
+use App\Support\OwnerContext;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -15,7 +16,7 @@ class PengembalianDanaController extends Controller
 {
     public function index(Request $request)
     {
-        $storeId = \App\Support\OwnerContext::firstStoreId();
+        $storeId = OwnerContext::firstStoreId();
 
         $refunds = Refund::query()
             ->with(['order', 'requester', 'reviewer', 'items'])
@@ -45,7 +46,7 @@ class PengembalianDanaController extends Controller
         ]);
     }
 
-    public function setujui(Request $request, Refund $refund): \Illuminate\Http\RedirectResponse
+    public function setujui(Request $request, Refund $refund): RedirectResponse
     {
         $this->assertStoreOwnerScope($refund);
 
@@ -76,10 +77,10 @@ class PengembalianDanaController extends Controller
         }
         Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Refund Disetujui', sprintf('Refund %s disetujui.', $refund->kode), route('owner.pengembalian-dana'));
 
-        return back()->with('success', 'Refund ' . $refund->kode . ' disetujui.');
+        return back()->with('success', 'Refund '.$refund->kode.' disetujui.');
     }
 
-    public function tolak(Request $request, Refund $refund): \Illuminate\Http\RedirectResponse
+    public function tolak(Request $request, Refund $refund): RedirectResponse
     {
         $this->assertStoreOwnerScope($refund);
 
@@ -115,10 +116,10 @@ class PengembalianDanaController extends Controller
         }
         Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Refund Ditolak', sprintf('Refund %s ditolak.', $refund->kode), route('owner.pengembalian-dana'));
 
-        return back()->with('success', 'Refund ' . $refund->kode . ' ditolak.');
+        return back()->with('success', 'Refund '.$refund->kode.' ditolak.');
     }
 
-    public function selesaikan(Request $request, Refund $refund): \Illuminate\Http\RedirectResponse
+    public function selesaikan(Request $request, Refund $refund): RedirectResponse
     {
         $this->assertStoreOwnerScope($refund);
 
@@ -136,7 +137,7 @@ class PengembalianDanaController extends Controller
         ]);
 
         $path = $request->hasFile('file_bukti')
-            ? $request->file('file_bukti')->store('bukti-refund/' . $refund->refund_id, 'public')
+            ? $request->file('file_bukti')->store('bukti-refund/'.$refund->refund_id, 'public')
             : null;
 
         if ($refund->file_bukti && $refund->file_bukti !== $path) {
@@ -155,7 +156,7 @@ class PengembalianDanaController extends Controller
                 || str_contains($e->getMessage(), 'Wallet toko tidak ditemukan')
                 || str_contains($e->getMessage(), 'sudah berubah')
             ) {
-                return back()->with('error', 'Refund tidak dapat diselesaikan: ' . $e->getMessage());
+                return back()->with('error', 'Refund tidak dapat diselesaikan: '.$e->getMessage());
             }
 
             throw $e;
@@ -173,12 +174,12 @@ class PengembalianDanaController extends Controller
         }
         Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Refund Selesai', sprintf('Refund %s ditandai selesai.', $refund->kode), route('owner.pengembalian-dana'));
 
-        return back()->with('success', 'Refund ' . $refund->kode . ' ditandai selesai.');
+        return back()->with('success', 'Refund '.$refund->kode.' ditandai selesai.');
     }
 
     private function assertStoreOwnerScope(Refund $refund): void
     {
-        $storeId = \App\Support\OwnerContext::firstStoreId();
+        $storeId = OwnerContext::firstStoreId();
 
         if (! $storeId) {
             abort(403, 'Toko tidak ditemukan.');

@@ -4,13 +4,17 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 class RiwayatAktivitasController extends Controller
 {
     public function index()
     {
+        session(['sa_activity_seen' => (int) ActivityLog::max('activity_log_id')]);
+
         $query = ActivityLog::with('user:user_id,nama_lengkap')
+            ->whereHas('user', fn ($q) => $q->whereHas('role', fn ($r) => $r->where('nama_role', Role::SUPER_ADMIN)))
             ->orderByDesc('activity_log_id');
 
         if ($kategori = request('kategori')) {
@@ -24,9 +28,56 @@ class RiwayatAktivitasController extends Controller
         ]);
     }
 
+    public function baru(Request $request)
+    {
+        $since = (int) $request->query('since', 0);
+
+        $logs = ActivityLog::with('user:user_id,nama_lengkap')
+            ->whereHas('user', fn ($q) => $q->whereHas('role', fn ($r) => $r->where('nama_role', Role::SUPER_ADMIN)))
+            ->where('activity_log_id', '>', $since)
+            ->orderBy('activity_log_id')
+            ->limit(20)
+            ->get()
+            ->map(fn (ActivityLog $log) => $this->payload($log));
+
+        return response()->json($logs);
+    }
+
+    private function payload(ActivityLog $log): array
+    {
+        $prefix = explode('.', $log->aksi)[0] ?? 'system';
+
+        $iconMap = [
+            'user' => 'person', 'store' => 'storefront', 'product' => 'inventory_2',
+            'order' => 'shopping_cart', 'withdrawal' => 'account_balance', 'refund' => 'currency_exchange',
+            'commission' => 'percent', 'wallet' => 'account_balance_wallet', 'setting' => 'settings',
+            'system' => 'settings', 'payment' => 'payments', 'promo' => 'local_offer',
+            'slot' => 'grid_view', 'adslot' => 'campaign', 'complaint' => 'support_agent',
+        ];
+        $tagMap = [
+            'user' => 'Pengguna', 'store' => 'Toko', 'product' => 'Produk', 'order' => 'Pesanan',
+            'withdrawal' => 'Keuangan', 'refund' => 'Keuangan', 'commission' => 'Keuangan',
+            'wallet' => 'Keuangan', 'setting' => 'Sistem', 'system' => 'Sistem', 'payment' => 'Keuangan',
+            'promo' => 'Promo', 'slot' => 'Produk', 'adslot' => 'Iklan', 'complaint' => 'Komplain',
+        ];
+
+        return [
+            'id' => $log->activity_log_id,
+            'aksi' => $log->aksi,
+            'icon' => $iconMap[$prefix] ?? 'info',
+            'tag' => $tagMap[$prefix] ?? ucfirst($prefix),
+            'waktu' => $log->created_at ? $log->created_at->locale('id')->diffForHumans() : '-',
+            'waktu_iso' => $log->created_at?->toIso8601String(),
+            'user' => $log->user?->nama_lengkap,
+            'deskripsi' => (string) ($log->deskripsi ?? $log->aksi),
+            'ada_perubahan' => (bool) ($log->nilai_lama || $log->nilai_baru),
+        ];
+    }
+
     public function export(Request $request)
     {
         $query = ActivityLog::with('user:user_id,nama_lengkap')
+            ->whereHas('user', fn ($q) => $q->whereHas('role', fn ($r) => $r->where('nama_role', Role::SUPER_ADMIN)))
             ->orderByDesc('activity_log_id');
 
         $kategori = $request->query('kategori');
@@ -90,9 +141,9 @@ class RiwayatAktivitasController extends Controller
         $prefixMap = [
             'pengguna' => 'user.',
             'toko' => 'store.',
-            'produk' => 'product.',
+            'produk' => ['product.', 'slot.', 'adslot.'],
             'keuangan' => ['order.', 'withdrawal.', 'refund.', 'commission.', 'wallet.'],
-            'sistem' => ['setting.', 'system.', 'commission.update'],
+            'sistem' => ['setting.', 'system.', 'commission.update', 'promo.', 'complaint.'],
         ];
         $prefix = $prefixMap[$kategori] ?? null;
         if (! $prefix) {

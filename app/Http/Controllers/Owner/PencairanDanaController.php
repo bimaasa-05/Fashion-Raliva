@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bank;
+use App\Models\Notification;
+use App\Models\User;
+use App\Models\Wallet;
 use App\Models\Withdrawal;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
@@ -14,11 +18,12 @@ class PencairanDanaController extends Controller
     {
         $store = OwnerContext::currentStore();
         if (! $store) {
-            $wallet = new \App\Models\Wallet(['saldo_tersedia'=>0,'saldo_tertahan'=>0]);
+            $wallet = new Wallet(['saldo_tersedia' => 0, 'saldo_tertahan' => 0]);
+
             return view('Owner.pencairan-dana.index', [
                 'wallet' => $wallet,
                 'withdrawals' => collect(),
-                'banks' => \App\Models\Bank::where('status', 'aktif')->orderBy('nama_bank')->get(),
+                'banks' => Bank::where('status', 'aktif')->orderBy('nama_bank')->get(),
                 'store' => null,
                 'available' => 0,
                 'locked' => 0,
@@ -27,10 +32,10 @@ class PencairanDanaController extends Controller
         }
         $wallet = $store->wallet;
         if (! $wallet) {
-            $wallet = \App\Models\Wallet::create(['store_id'=>$store->store_id,'saldo_tersedia'=>0,'saldo_tertahan'=>0]);
+            $wallet = Wallet::create(['store_id' => $store->store_id, 'saldo_tersedia' => 0, 'saldo_tertahan' => 0]);
             $store->setRelation('wallet', $wallet);
         }
-        $banks = \App\Models\Bank::where('status', 'aktif')->orderBy('nama_bank')->get();
+        $banks = Bank::where('status', 'aktif')->orderBy('nama_bank')->get();
         $withdrawals = $wallet->withdrawals()->with(['bankAccount.bank', 'bank'])->orderByDesc('diajukan_pada')->paginate(10);
         $locked = (float) $wallet->withdrawals()
             ->where('status', Withdrawal::STATUS_PENDING)
@@ -84,22 +89,21 @@ class PencairanDanaController extends Controller
             ]);
         });
 
-        $sa = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
-            ->where('status', \App\Models\User::STATUS_AKTIF)
+        $sa = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
+            ->where('status', User::STATUS_AKTIF)
             ->first();
         if ($sa) {
-            \App\Models\Notification::create([
+            Notification::create([
                 'user_id' => $sa->user_id,
                 'aktor_id' => $request->user()->user_id,
-                'tipe' => \App\Models\Notification::TIPE_WALLET,
+                'tipe' => Notification::TIPE_WALLET,
                 'judul' => 'Pengajuan Pencairan Baru',
                 'pesan' => sprintf('Toko "%s" mengajukan pencairan Rp %s.', $store->nama_toko, number_format((float) $data['jumlah'], 0, ',', '.')),
                 'url' => route('superadmin.permintaan-penarikan'),
             ]);
         }
-        \App\Models\Notification::fireSelf(\App\Models\Notification::TIPE_WALLET, 'Pencairan Diajukan', sprintf('Pengajuan pencairan Rp %s berhasil diajukan.', number_format((float) $data['jumlah'], 0, ',', '.')), route('owner.pencairan-dana'));
+        Notification::fireSelf(Notification::TIPE_WALLET, 'Pencairan Diajukan', sprintf('Pengajuan pencairan Rp %s berhasil diajukan.', number_format((float) $data['jumlah'], 0, ',', '.')), route('owner.pencairan-dana'));
 
         return back()->with('success', 'Pengajuan pencairan berhasil.');
     }
 }
-

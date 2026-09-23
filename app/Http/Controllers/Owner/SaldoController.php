@@ -7,6 +7,7 @@ use App\Models\Notification;
 use App\Models\Refund;
 use App\Models\Role;
 use App\Models\StoreExpense;
+use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Models\Withdrawal;
 use App\Services\NotificationService;
@@ -22,9 +23,12 @@ class SaldoController extends Controller
         $store = $user->ownedStores()->first();
 
         $period = (int) $request->input('period', 30);
-        if (! in_array($period, [7, 30, 90, 365])) $period = 30;
+        if (! in_array($period, [7, 30, 90, 365])) {
+            $period = 30;
+        }
         if (! $store) {
-            $wallet = new \App\Models\Wallet(['saldo_tersedia'=>0,'saldo_tertahan'=>0]);
+            $wallet = new Wallet(['saldo_tersedia' => 0, 'saldo_tertahan' => 0]);
+
             return view('Owner.keuangan.index', [
                 'wallet' => $wallet,
                 'mutations' => collect(),
@@ -35,9 +39,9 @@ class SaldoController extends Controller
                 'store' => null,
                 'bankAccounts' => collect(),
                 'expenses' => collect(),
-                'margin' => ['revenue'=>0,'gross'=>0,'ebitda'=>0,'ebit'=>0,'ebt'=>0,'net'=>0],
+                'margin' => ['revenue' => 0, 'gross' => 0, 'ebitda' => 0, 'ebit' => 0, 'ebt' => 0, 'net' => 0],
                 'totalDicairkan' => 0,
-                'fmt' => fn($v)=>'Rp '.number_format($v,0,',','.'),
+                'fmt' => fn ($v) => 'Rp '.number_format($v, 0, ',', '.'),
                 'period' => $period,
             ]);
         }
@@ -45,7 +49,7 @@ class SaldoController extends Controller
         // Auto-create wallet jika belum ada (agar keuangan selalu tampil, tidak nunggu transaksi)
         $wallet = $store->wallet;
         if (! $wallet) {
-            $wallet = \App\Models\Wallet::create(['store_id'=>$store->store_id,'saldo_tersedia'=>0,'saldo_tertahan'=>0]);
+            $wallet = Wallet::create(['store_id' => $store->store_id, 'saldo_tersedia' => 0, 'saldo_tertahan' => 0]);
             $store->setRelation('wallet', $wallet);
         }
 
@@ -65,14 +69,16 @@ class SaldoController extends Controller
             ->get();
 
         $refunds = Refund::whereIn('order_id', function ($q) use ($store) {
-                $q->select('order_id')->from('orders')->where('store_id', $store->store_id);
-            })
+            $q->select('order_id')->from('orders')->where('store_id', $store->store_id);
+        })
             ->orderByDesc('diajukan_pada')
             ->get();
 
         // Ringkasan per periode (7/30/90/365 hari)
         $period = (int) $request->input('period', 30);
-        if (! in_array($period, [7, 30, 90, 365])) $period = 30;
+        if (! in_array($period, [7, 30, 90, 365])) {
+            $period = 30;
+        }
         $start = Carbon::now()->subDays($period - 1)->startOfDay();
         $end = Carbon::now()->endOfDay();
         $monthTx = $wallet->transactions()
@@ -135,7 +141,8 @@ class SaldoController extends Controller
             'net' => $netProfit,
         ];
 
-        $fmt = fn($v) => 'Rp '.number_format($v,0,',','.');
+        $fmt = fn ($v) => 'Rp '.number_format($v, 0, ',', '.');
+
         return view('Owner.keuangan.index', compact(
             'wallet', 'bankAccounts', 'totalDicairkan',
             'mutations', 'withdrawals', 'refunds', 'summary', 'chart',
@@ -175,7 +182,9 @@ class SaldoController extends Controller
     {
         $user = $request->user();
         $store = $user->ownedStores()->first();
-        if (! $store) return back()->with('error', 'Toko tidak ditemukan.');
+        if (! $store) {
+            return back()->with('error', 'Toko tidak ditemukan.');
+        }
         $validated = $request->validate([
             'sumber' => ['required', 'string', 'max:150'],
             'nominal' => ['required', 'numeric', 'min:1'],
@@ -184,10 +193,10 @@ class SaldoController extends Controller
         ]);
         $wallet = $store->wallet;
         if (! $wallet) {
-            $wallet = \App\Models\Wallet::create(['store_id'=>$store->store_id,'saldo_tersedia'=>0,'saldo_tertahan'=>0]);
+            $wallet = Wallet::create(['store_id' => $store->store_id, 'saldo_tersedia' => 0, 'saldo_tertahan' => 0]);
         }
         $wallet->increment('saldo_tersedia', $validated['nominal']);
-        \App\Models\WalletTransaction::create([
+        WalletTransaction::create([
             'wallet_id' => $wallet->wallet_id,
             'jenis_transaksi' => \App\Models\WalletTransaction::JENIS_PEMASUKAN,
             'kategori' => $validated['kategori'],
