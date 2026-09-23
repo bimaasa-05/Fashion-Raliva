@@ -577,6 +577,14 @@
                                     <h2 class="font-title-md text-title-md text-on-surface">{{ __('Buyer Reviews') }}</h2>
                                     <span class="font-label-sm text-label-sm text-on-surface-variant inline-flex items-center gap-xs">{{ number_format($averageRating ?: 0, 1) }} <span class="material-symbols-outlined text-[14px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span> ({{ $reviewCount }})</span>
                                     </div>
+                                    @if (! empty($reviewableItem ?? null))
+                                    <div class="px-container-margin md:px-[64px] pb-sm">
+                                        <a href="{{ route('customer.reviews.create', ['order_item' => $reviewableItem->order_item_id]) }}" class="btn-gold w-full md:w-auto inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                                            <span class="material-symbols-outlined text-[20px]">rate_review</span>
+                                            <span>{{ __('Beri Nilai') }}</span>
+                                        </a>
+                                    </div>
+                                    @endif
 @forelse ($reviews as $ri => $review)
                                 <!-- Review -->
                                 <article class="px-container-margin md:px-[64px] py-md border-b border-outline-variant">
