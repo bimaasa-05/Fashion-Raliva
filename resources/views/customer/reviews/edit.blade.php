@@ -293,21 +293,22 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 <section class="pt-lg mt-lg border-t border-outline-variant">
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Add Photos') }} <span class="normal-case tracking-normal text-on-surface-variant/70">{{ __('(optional)') }}</span></h3>
 <div class="flex gap-gutter items-start">
-@if ($review->foto)
-<img src="{{ asset('storage/' . ltrim($review->foto, '/')) }}" alt="{{ __('Foto ulasan') }}" class="w-20 h-20 object-cover rounded-xl border border-outline-variant shrink-0" />
-@endif
-<label for="review-foto" class="w-20 h-20 border border-dashed border-outline rounded-xl flex flex-col items-center justify-center gap-xs cursor-pointer hover:border-secondary hover:text-secondary transition-colors text-on-surface-variant shrink-0">
+<label for="review-foto" id="review-foto-label" class="w-20 h-20 border border-dashed border-outline rounded-xl flex-col items-center justify-center gap-xs cursor-pointer hover:border-secondary hover:text-secondary transition-colors text-on-surface-variant shrink-0 {{ $review->foto ? 'hidden' : 'flex' }}">
 <span class="material-symbols-outlined text-[24px]">add_a_photo</span>
 <span class="font-label-sm text-[10px]">{{ __('Add Photo') }}</span>
 </label>
 <input id="review-foto" name="foto" type="file" accept="image/jpeg,image/png,image/jpg" class="sr-only" onchange="previewReviewFoto(this)" />
-<img id="preview-review-foto" alt="{{ __('Pratinjau foto') }}" class="hidden w-20 h-20 object-cover rounded-xl border border-outline-variant" />
+<div id="review-foto-wrap" class="{{ $review->foto ? '' : 'hidden' }} relative w-20 h-20 shrink-0">
+<img id="preview-review-foto" src="{{ $review->foto ? asset('storage/' . ltrim($review->foto, '/')) : '' }}" alt="{{ __('Pratinjau foto') }}" class="w-20 h-20 object-cover rounded-xl border border-outline-variant" />
+<button type="button" onclick="document.getElementById('review-foto').click()" aria-label="{{ __('Ganti foto') }}" title="{{ __('Ganti foto') }}" class="absolute -bottom-2 -left-2 w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center shadow-lg hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-[16px]">swap_horiz</span>
+</button>
+<button type="button" onclick="clearReviewFoto()" aria-label="{{ __('Batalkan foto') }}" title="{{ __('Batalkan foto') }}" class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-error text-white flex items-center justify-center shadow-lg hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
 </div>
-@if ($review->foto)
-<label class="mt-sm inline-flex items-center gap-xs font-body-sm text-body-sm text-on-surface-variant cursor-pointer">
-<input type="checkbox" name="hapus_foto" value="1" class="w-4 h-4" />{{ __('Hapus foto saat ini') }}
-</label>
-@endif
+</div>
+<input type="checkbox" name="hapus_foto" id="hapus-foto-flag" value="1" class="sr-only" />
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('JPG/PNG, maks 2 MB.') }}</p>
 @error('foto')
 <p class="text-error text-label-sm mt-xs">{{ $message }}</p>
@@ -315,16 +316,32 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 </section>
 <script>
 function previewReviewFoto(input) {
+    var wrap = document.getElementById('review-foto-wrap');
+    var label = document.getElementById('review-foto-label');
     var preview = document.getElementById('preview-review-foto');
-    if (!preview) return;
+    var flag = document.getElementById('hapus-foto-flag');
+    if (!wrap || !preview) return;
     var file = input && input.files ? input.files[0] : null;
     if (file) {
         preview.src = URL.createObjectURL(file);
-        preview.classList.remove('hidden');
+        wrap.classList.remove('hidden');
+        if (label) { label.classList.add('hidden'); label.classList.remove('flex'); }
+        if (flag) flag.checked = false;
     } else {
-        preview.removeAttribute('src');
-        preview.classList.add('hidden');
+        clearReviewFoto();
     }
+}
+function clearReviewFoto() {
+    var input = document.getElementById('review-foto');
+    var wrap = document.getElementById('review-foto-wrap');
+    var label = document.getElementById('review-foto-label');
+    var preview = document.getElementById('preview-review-foto');
+    var flag = document.getElementById('hapus-foto-flag');
+    if (input) input.value = '';
+    if (preview) preview.removeAttribute('src');
+    if (wrap) wrap.classList.add('hidden');
+    if (label) { label.classList.remove('hidden'); label.classList.add('flex'); }
+    if (flag) flag.checked = true;
 }
 </script>
 </form>
