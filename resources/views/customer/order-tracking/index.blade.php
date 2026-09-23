@@ -668,9 +668,11 @@ if (is_array($tl) && array_key_exists('done', $tl)) {
 </button>
 </form>
 @endif
+@if ($selected->status === \App\Models\Order::STATUS_SELESAI)
 <a href="{{ route('customer.komplain.create', ['order' => $selected->order_id]) }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">
 <span class="material-symbols-outlined text-[18px]">report</span>{{ __('Ajukan Komplain') }}
 </a>
+@endif
 @if ($refundPernahAda)
 <div class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-body-sm text-body-sm text-on-surface-variant bg-surface-container-low border border-outline-variant rounded-full px-lg py-3 text-center">
 <span class="material-symbols-outlined text-[18px] text-secondary">hourglass_top</span>
@@ -684,53 +686,13 @@ if (is_array($tl) && array_key_exists('done', $tl)) {
 {{ __('Pengajuan refund telah dilakukan.') }}
 @endif
 </div>
-@else
-<button type="button" onclick="openRefundModal()" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">
-<span class="material-symbols-outlined text-[18px]">assignment_return</span>{{ __('Ajukan Refund') }}
-</button>
 @endif
 </div>
 @if ($refundStatus === \App\Models\Refund::STATUS_DITOLAK)
 <div class="mt-lg text-center bg-error/10 border border-error/15 rounded-xl p-md">
-<p class="font-body-sm text-body-sm text-error">{{ __('Refund Anda ditolak') }}: {{ $latestRefund->alasan_penolakan ?: __('Tidak ada keterangan tambahan.') }} @if(! $refundAktif){{ __('Anda dapat mengajukan refund ulang.') }}@endif</p>
+<p class="font-body-sm text-body-sm text-error">{{ __('Refund Anda ditolak') }}: {{ $latestRefund->alasan_penolakan ?: __('Tidak ada keterangan tambahan.') }}</p>
 </div>
 @endif
-<div id="modal-refund" class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
-<div class="absolute inset-0 bg-black/50" onclick="closeRefundModal()"></div>
-<form method="POST" action="{{ route('customer.refund.store') }}" enctype="multipart/form-data" class="relative mx-auto w-full max-w-md bg-surface border border-outline-variant rounded-xl shadow-xl max-h-[85vh] overflow-y-auto p-6 space-y-4">
-@csrf
-<input type="hidden" name="order_id" value="{{ $selected->order_id }}" />
-<h3 class="font-title-md text-title-md text-on-surface">Ajukan Refund</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Pesanan {{ $selected->nomor_order }} • Total Rp {{ number_format((float) $selected->grand_total, 0, ',', '.') }}</p>
-<div>
-<label class="block font-label-sm text-label-sm mb-2">Jenis Refund</label>
-<select name="tipe_refund" required class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3">
-<option value="full">Penuh (full)</option>
-<option value="partial">Sebagian (partial)</option>
-</select>
-</div>
-<div>
-<label class="block font-label-sm text-label-sm mb-2">Nominal Diajukan (Rp)</label>
-<input name="jumlah" type="number" min="1" max="{{ (float) $selected->grand_total }}" value="{{ (float) $selected->grand_total }}" required class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3" />
-</div>
-<div>
-<label class="block font-label-sm text-label-sm mb-2">Alasan (min. 20 karakter)</label>
-<textarea name="alasan" rows="4" required minlength="20" maxlength="2000" class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3" placeholder="Jelaskan kondisi barang..."></textarea>
-</div>
-<div>
-<label class="block font-label-sm text-label-sm mb-2">Foto Bukti Barang (JPG/PNG, maks. 4 MB)</label>
-<input name="file_bukti_request" type="file" accept="image/jpeg,image/png,image/jpg" required class="w-full font-body-sm text-body-sm" />
-</div>
-<div>
-<label class="block font-label-sm text-label-sm mb-2">Keterangan Foto (opsional)</label>
-<input name="deskripsi_bukti_request" type="text" maxlength="1000" class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3" placeholder="cth. Foto bagian sobek" />
-</div>
-<div class="flex gap-3">
-<button type="button" onclick="closeRefundModal()" class="flex-1 py-3 rounded-lg border border-outline-variant text-sm font-semibold">Batal</button>
-<button type="submit" class="btn-gold flex-1 py-3 rounded-lg text-sm font-semibold">Kirim Pengajuan</button>
-</div>
-</form>
-</div>
 @if($shipment)
 <div class="mt-lg grid grid-cols-1 md:grid-cols-3 gap-md text-left">
 <div class="border border-outline-variant rounded-lg p-md bg-surface-container-low">
@@ -891,16 +853,6 @@ $ukuran = $v?->ukuran;
         }, { threshold: 0.12 });
         els.forEach(function (e) { io.observe(e); });
     })();
-    function openRefundModal() {
-        var m = document.getElementById('modal-refund');
-        if (m) { m.classList.remove('hidden'); m.classList.add('flex'); document.body.style.overflow = 'hidden'; }
-    }
-    function closeRefundModal() {
-        var m = document.getElementById('modal-refund');
-        if (m) { m.classList.add('hidden'); m.classList.remove('flex'); document.body.style.overflow = ''; }
-    }
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeRefundModal(); });
-
     // === LIVE PRODUCTION TIMERS ===
     function customerDurFmt(totalSec) {
         if (totalSec === null || isNaN(totalSec) || totalSec < 0) totalSec = 0;
