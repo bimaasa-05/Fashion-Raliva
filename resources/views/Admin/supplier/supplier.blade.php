@@ -96,7 +96,7 @@
                         <td class="p-4 text-on-surface-variant">{{ $s->kontak ?? '-' }}<br /><span class="text-xs">{{ $s->email ?? '' }}</span></td>
                         <td class="p-4 text-on-surface">{{ $s->kota ?? '-' }}</td>
                         <td class="p-4 text-center"><span class="px-2 py-1 rounded bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase tracking-wide">{{ $s->jenis ?? '-' }}</span></td>
-                        <td class="p-4 text-center text-on-surface font-mono">{{ $s->stok ?? 0 }}</td>
+                        <td class="p-4 text-center text-on-surface font-mono">{{ $s->bahans->sum('jumlah') }}</td>
                         <td class="p-4 text-center">
                             @if($s->status === 'aktif')
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aktif</span>
@@ -151,27 +151,12 @@
                 </div>
             </div>
             <div>
-                <label class="raliva-label">Jenis Barang</label>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    @foreach(['kain' => 'Kain', 'aksesoris' => 'Aksesoris', 'kemasan' => 'Kemasan', 'jadi' => 'Produk Jadi'] as $val => $label)
-                        <label class="flex items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
-                            <input type="radio" class="sr-only" name="jenis" value="{{ $val }}" {{ $val === 'kain' ? 'checked' : '' }} />
-                            {{ $label }}
-                        </label>
-                    @endforeach
-                </div>
-            </div>
-            <div>
                 <label class="raliva-label">Daftar Bahan Supplier</label>
-                <p class="text-xs text-on-surface-variant mb-2">Contoh: kain katun, kancing, resleting, kemasan. Klik jenis di atas untuk memfilter, lalu tambah bahan satu per satu — data yang sudah diinput tidak hilang.</p>
+                <p class="text-xs text-on-surface-variant mb-2">Contoh: kain katun, kancing, resleting, kemasan. Tambah bahan satu per satu beserta jumlahnya — data yang sudah diinput tidak hilang.</p>
                 <div id="supplier-bahan-container" class="space-y-2.5"></div>
                 <button type="button" onclick="addSupplierBahanRow('supplier-bahan-container')" class="mt-2 w-full py-2.5 border border-dashed border-outline-variant rounded-lg text-xs font-semibold text-on-surface-variant hover:border-gold-accent hover:text-gold-accent transition-colors flex items-center justify-center gap-1.5">
                     <span class="material-symbols-outlined text-[16px]">add</span> Tambah Bahan
                 </button>
-            </div>
-            <div>
-                <label class="raliva-label" for="supplierStok">Stok</label>
-                <input type="number" id="supplierStok" name="stok" min="0" value="0" placeholder="0" class="raliva-input" />
             </div>
             <div>
                 <label class="raliva-label">Status Kerja Sama</label>
@@ -188,7 +173,7 @@
                 <label class="raliva-label" for="supplierCatatan">Catatan</label>
                 <textarea class="raliva-textarea" id="supplierCatatan" name="catatan" rows="3" placeholder="Syarat pembayaran, minimal order, dsb."></textarea>
             </div>
-            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+            <div class="sticky bottom-0 -mx-6 px-6 py-4 bg-surface-container-lowest border-t border-muted-border flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
                 <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
                 <button type="submit" id="supplier-submit-btn" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Simpan Supplier</button>
             </div>
@@ -248,27 +233,20 @@
                 </div>
             </div>
             <div>
-                <label class="raliva-label">Jenis Barang</label>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    @foreach(['kain' => 'Kain', 'aksesoris' => 'Aksesoris', 'kemasan' => 'Kemasan', 'jadi' => 'Produk Jadi'] as $val => $label)
-                        <label class="flex items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
-                            <input type="radio" class="sr-only" name="jenis" value="{{ $val }}" {{ ($s->jenis ?? 'kain') === $val ? 'checked' : '' }} />
-                            {{ $label }}
-                        </label>
-                    @endforeach
-                </div>
-            </div>
-            <div>
                 <label class="raliva-label">Daftar Bahan Supplier</label>
                 <p class="text-xs text-on-surface-variant mb-2">Baris lama tetap tersimpan — tambah baru atau hapus yang tidak dipakai.</p>
                 <div id="supplier-bahan-edit-{{ $s->supplier_id }}" class="space-y-2.5">
                     @foreach ($s->bahans as $i => $b)
                         <div data-bahan-row class="border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low space-y-2">
                             <input type="hidden" name="bahan[{{ $i }}][supplier_bahan_id]" value="{{ $b->supplier_bahan_id }}" />
-                            <div class="grid grid-cols-[1fr_110px] gap-3">
+                            <div class="grid grid-cols-[1fr_90px_90px] gap-3">
                                 <div>
                                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Nama Bahan</label>
                                     <input type="text" name="bahan[{{ $i }}][nama_bahan]" value="{{ $b->nama_bahan }}" required class="raliva-input w-full" placeholder="cth. Kain katun" />
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Jumlah</label>
+                                    <input type="number" name="bahan[{{ $i }}][jumlah]" value="{{ $b->jumlah ?? 0 }}" min="0" class="raliva-input w-full" />
                                 </div>
                                 <div>
                                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Satuan</label>
@@ -286,10 +264,6 @@
                 <button type="button" onclick="addSupplierBahanRow('supplier-bahan-edit-{{ $s->supplier_id }}')" class="mt-2 w-full py-2.5 border border-dashed border-outline-variant rounded-lg text-xs font-semibold text-on-surface-variant hover:border-gold-accent hover:text-gold-accent transition-colors flex items-center justify-center gap-1.5">
                     <span class="material-symbols-outlined text-[16px]">add</span> Tambah Bahan
                 </button>
-            </div>
-            <div>
-                <label class="raliva-label" for="edit-stok-{{ $s->supplier_id }}">Stok</label>
-                <input type="number" id="edit-stok-{{ $s->supplier_id }}" name="stok" min="0" value="{{ $s->stok ?? 0 }}" placeholder="0" class="raliva-input" />
             </div>
             <div>
                 <label class="raliva-label">Status Kerja Sama</label>
@@ -332,10 +306,14 @@
         row.setAttribute('data-bahan-row', '');
         row.className = 'border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low space-y-2';
         row.innerHTML = `
-            <div class="grid grid-cols-[1fr_110px] gap-3">
+            <div class="grid grid-cols-[1fr_90px_90px] gap-3">
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Nama Bahan</label>
                     <input type="text" name="bahan[${idx}][nama_bahan]" required class="raliva-input w-full" placeholder="cth. Kain katun" />
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Jumlah</label>
+                    <input type="number" name="bahan[${idx}][jumlah]" value="0" min="0" class="raliva-input w-full" />
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Satuan</label>

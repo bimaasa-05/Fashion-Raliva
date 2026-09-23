@@ -342,6 +342,39 @@ class ManajemenTokoController extends Controller
             'url' => route('owner.data-toko'),
         ]);
 
+        if ($toko->status === Store::STATUS_DITOLAK) {
+            $sisaDitolak = StoreDocument::where('store_id', $toko->store_id)
+                ->where('status', 'ditolak')
+                ->count();
+
+            if ($sisaDitolak === 0) {
+                $storeLama = $toko->only(['status', 'alasan_penolakan']);
+
+                $toko->update([
+                    'status' => Store::STATUS_PENDING,
+                    'alasan_penolakan' => null,
+                ]);
+
+                ActivityLogger::log(
+                    'store.review',
+                    Store::class,
+                    $toko->store_id,
+                    $storeLama,
+                    ['status' => Store::STATUS_PENDING, 'alasan_penolakan' => null],
+                    sprintf('Semua dokumen toko "%s" valid; pengajuan kembali menunggu verifikasi.', $toko->nama_toko)
+                );
+
+                Notification::create([
+                    'user_id' => $toko->owner_id,
+                    'aktor_id' => ActivityLogger::resolveActorId(),
+                    'tipe' => Notification::TIPE_SISTEM,
+                    'judul' => 'Pengajuan Toko Menunggu Verifikasi',
+                    'pesan' => sprintf('Dokumen toko "%s" telah valid. Pengajuan kembali menunggu persetujuan Super Admin.', $toko->nama_toko),
+                    'url' => route('owner.data-toko'),
+                ]);
+            }
+        }
+
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Dokumen Disetujui', sprintf('Dokumen %s toko "%s" disetujui.', $this->jenisLabel($dokumen->jenis), $toko->nama_toko), route('superadmin.manajemen-toko'));
 
         return back()->with('toast', [
@@ -395,7 +428,34 @@ class ManajemenTokoController extends Controller
             'url' => route('owner.data-toko'),
         ]);
 
-        Notification::fireSelf(Notification::TIPE_SISTEM, 'Dokumen Ditolak', sprintf('Dokumen %s toko "%s" ditolak.', $this->jenisLabel($dokumen->jenis), $toko->nama_toko), route('superadmin.manajemen-toko'));
+        if (in_array($toko->status, [Store::STATUS_PENDING, Store::STATUS_DITOLAK], true)) {
+            $storeLama = $toko->only(['status', 'alasan_penolakan']);
+
+            $toko->update([
+                'status' => Store::STATUS_DITOLAK,
+                'alasan_penolakan' => $data['alasan'],
+            ]);
+
+            ActivityLogger::log(
+                'store.reject',
+                Store::class,
+                $toko->store_id,
+                $storeLama,
+                ['status' => Store::STATUS_DITOLAK, 'alasan_penolakan' => $data['alasan']],
+                sprintf('Toko "%s" ditolak karena dokumen %s: %s', $toko->nama_toko, $this->jenisLabel($dokumen->jenis), $data['alasan'])
+            );
+
+            Notification::create([
+                'user_id' => $toko->owner_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Pengajuan Toko Ditolak',
+                'pesan' => sprintf('Pengajuan toko "%s" ditolak. Alasan: %s', $toko->nama_toko, $data['alasan']),
+                'url' => route('owner.pengajuan-toko'),
+            ]);
+        }
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Dokumen Ditolak', sprintf('Dokumen %s dan pengajuan toko "%s" ditolak.', $this->jenisLabel($dokumen->jenis), $toko->nama_toko), route('superadmin.manajemen-toko'));
 
         return back()->with('toast', [
             'message' => sprintf('Dokumen %s ditolak.', $this->jenisLabel($dokumen->jenis)),

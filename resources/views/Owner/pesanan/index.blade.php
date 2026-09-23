@@ -86,9 +86,9 @@
                     @php
                         $statusPill = [
                             'baru' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
-                            'diproses' => 'bg-secondary-container/20 text-secondary border-secondary/20',
-                            'dikirim' => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
-                            'selesai' => 'bg-deep-onyx text-on-primary border-transparent',
+                            'diproses' => 'bg-amber-500/10 text-amber-600 border-amber-500/30',
+                            'dikirim' => 'bg-sky-500/10 text-sky-600 border-sky-500/30',
+                            'selesai' => 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30',
                             'refund' => 'bg-error/10 text-error border-error/20',
                             'dibatalkan' => 'bg-error/10 text-error border-error/20',
                         ];

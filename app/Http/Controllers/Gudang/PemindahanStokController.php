@@ -130,7 +130,7 @@ class PemindahanStokController extends Controller
             'Permintaan Pemindahan Stok',
             sprintf('Pemindahan %d unit diajukan dari gudang "%s", menunggu persetujuan.', $data['jumlah'], $warehouse->nama_gudang),
             auth()->id(),
-            route('admin.koordinasi-gudang')
+            route('admin.pesanan')
         );
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemindahan Stok Diajukan', sprintf('Permintaan pemindahan %d unit berhasil dibuat, menunggu persetujuan gudang tujuan.', $data['jumlah']), route('gudang.dashboard'));
 
@@ -203,7 +203,7 @@ class PemindahanStokController extends Controller
         }
 
         ActivityLogger::log('stock.transfer.approve', StockTransfer::class, $transfer->stock_transfer_id, ['status' => StockTransfer::STATUS_REQUESTED], ['status' => StockTransfer::STATUS_APPROVED], sprintf('Menyetujui pemindahan ke "%s".', $warehouse->nama_gudang));
-        NotificationService::sendToRole(Role::ADMIN, Notification::TIPE_SISTEM, 'Pemindahan Disetujui', sprintf('Pemindahan ke gudang "%s" disetujui.', $warehouse->nama_gudang), auth()->id(), route('admin.koordinasi-gudang'));
+        NotificationService::sendToRole(Role::ADMIN, Notification::TIPE_SISTEM, 'Pemindahan Disetujui', sprintf('Pemindahan ke gudang "%s" disetujui.', $warehouse->nama_gudang), auth()->id(), route('admin.pesanan'));
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemindahan Disetujui', 'Pemindahan stok disetujui, menunggu penerimaan barang.', route('gudang.dashboard'));
 
         return back()->with('toast', ['message' => 'Pemindahan disetujui, stok keluar dicatat.', 'icon' => 'task_alt']);
@@ -265,7 +265,7 @@ class PemindahanStokController extends Controller
         }
 
         ActivityLogger::log('stock.transfer.receive', StockTransfer::class, $transfer->stock_transfer_id, ['status' => StockTransfer::STATUS_APPROVED], ['status' => StockTransfer::STATUS_RECEIVED], sprintf('Menerima pemindahan di "%s".', $warehouse->nama_gudang));
-        NotificationService::sendToRole(Role::ADMIN, Notification::TIPE_SISTEM, 'Pemindahan Diterima', sprintf('Pemindahan ke gudang "%s" telah diterima.', $warehouse->nama_gudang), auth()->id(), route('admin.koordinasi-gudang'));
+        NotificationService::sendToRole(Role::ADMIN, Notification::TIPE_SISTEM, 'Pemindahan Diterima', sprintf('Pemindahan ke gudang "%s" telah diterima.', $warehouse->nama_gudang), auth()->id(), route('admin.pesanan'));
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemindahan Diterima', 'Barang pemindahan stok telah diterima.', route('gudang.dashboard'));
 
         return back()->with('toast', ['message' => 'Pemindahan diterima, stok masuk dicatat.', 'icon' => 'task_alt']);
@@ -425,7 +425,7 @@ class PemindahanStokController extends Controller
             'Pemindahan Stok Diterima',
             sprintf('Pemindahan #TRF-%d diterima di gudang "%s".', $stockTransfer->stock_transfer_id, $warehouse->nama_gudang),
             auth()->id(),
-            route('admin.koordinasi-gudang')
+            route('admin.pesanan')
         );
 
         if ($stockTransfer->requested_by) {

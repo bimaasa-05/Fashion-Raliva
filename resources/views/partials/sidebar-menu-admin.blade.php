@@ -35,9 +35,7 @@
             'label' => 'Logistik',
             'items' => [
                 ['route' => 'admin.pengiriman', 'icon' => 'local_shipping', 'text' => 'Pengiriman'],
-                ['route' => 'admin.koordinasi-gudang', 'icon' => 'warehouse', 'text' => 'Koordinasi Gudang'],
-                ['route' => 'admin.permintaan-produksi', 'icon' => 'precision_manufacturing', 'text' => 'Permintaan Produksi'],
-                ['route' => 'admin.bahan-produksi', 'icon' => 'science', 'text' => 'Bahan Produksi'],
+                ['route' => 'admin.kurir', 'icon' => 'forklift', 'text' => 'Metode Pengiriman'],
                 ['route' => 'admin.supplier', 'icon' => 'fact_check', 'text' => 'Data Supplier'],
                 ['route' => 'admin.permintaan-operasional', 'icon' => 'pending_actions', 'text' => 'Permintaan Operasional'],
             ],

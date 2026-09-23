@@ -45,6 +45,14 @@
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Jumlah (Rp) <span class="text-error">*</span></label>
                     <input type="number" name="jumlah" required min="0" step="0.01" class="raliva-input w-full" placeholder="0" />
                 </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Kategori <span class="text-error">*</span></label>
+                    <select name="kategori" required class="raliva-select w-full">
+                        @foreach (($kategoriPemasukan ?? ['Penjualan', 'Investor', 'Modal', 'Komisi', 'Lainnya']) as $kat)
+                            <option value="{{ $kat }}">{{ $kat }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="sm:col-span-2">
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Keterangan <span class="text-error">*</span></label>
                     <input type="text" name="keterangan" required placeholder="cth. Penjualan tunai" class="raliva-input w-full" />
@@ -62,6 +70,7 @@
                         <tr class="text-left text-on-surface-variant border-b border-muted-border font-label-sm text-[10px] uppercase tracking-wider">
                             <th class="py-3 px-4">Tanggal</th>
                             <th class="py-3 px-4">Jenis</th>
+                            <th class="py-3 px-4">Kategori</th>
                             <th class="py-3 px-4">Keterangan</th>
                             <th class="py-3 px-4 text-right">Jumlah</th>
                         </tr>
@@ -71,11 +80,12 @@
                             <tr class="border-b border-muted-border hover:bg-surface-container-low/50 transition-colors">
                                 <td class="py-3 px-4 text-on-surface-variant">{{ $t->created_at?->translatedFormat('d M Y H:i') ?? '-' }}</td>
                                 <td class="py-3 px-4"><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-green-600/10 text-green-600 text-[10px] font-bold uppercase border border-green-600/20">{{ $t->jenis_transaksi }}</span></td>
+                                <td class="py-3 px-4 text-on-surface">{{ $t->kategori ?? 'Lainnya' }}</td>
                                 <td class="py-3 px-4 text-on-surface">{{ $t->keterangan ?? '-' }}</td>
                                 <td class="py-3 px-4 text-right font-bold text-green-600">Rp {{ number_format((float) $t->jumlah, 0, ',', '.') }}</td>
                             </tr>
                         @empty
-                            <tr><td colspan="4" class="py-8 text-center text-on-surface-variant">Belum ada pemasukan.</td></tr>
+                            <tr><td colspan="5" class="py-8 text-center text-on-surface-variant">Belum ada pemasukan.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -96,7 +106,14 @@
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Kategori</label>
-                    <input type="text" name="kategori" placeholder="Lainnya" class="raliva-input w-full" />
+                    <select name="kategori" class="raliva-select w-full">
+                        <option value="Lainnya">Lainnya</option>
+                        @foreach (($kategoriPengeluaran ?? []) as $kat)
+                            @if ($kat !== 'Lainnya')
+                                <option value="{{ $kat }}">{{ $kat }}</option>
+                            @endif
+                        @endforeach
+                    </select>
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Nominal (Rp) <span class="text-error">*</span></label>

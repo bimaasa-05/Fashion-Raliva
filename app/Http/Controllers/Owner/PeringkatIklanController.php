@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdSlot;
+use App\Models\Notification;
 use App\Models\PaymentMethod;
 use App\Models\PlatformBankAccount;
 use App\Models\Product;
 use App\Models\Setting;
+use App\Models\User;
 use App\Support\OwnerContext;
 use App\Support\PeringkatService;
 use Illuminate\Http\Request;
@@ -42,7 +44,9 @@ class PeringkatIklanController extends Controller
         $raw = Setting::get(Setting::PERINGKAT_TIER, null);
         if ($raw) {
             $decoded = json_decode($raw, true);
-            if (is_array($decoded) && $decoded !== []) $tiers = $decoded;
+            if (is_array($decoded) && $decoded !== []) {
+                $tiers = $decoded;
+            }
         }
 
         return view('Owner.peringkat-iklan.index', compact('store', 'products', 'rekenings', 'metode', 'slots', 'tiers'));
@@ -81,7 +85,7 @@ class PeringkatIklanController extends Controller
 
         $hari = PeringkatService::resolveHari((int) $data['nominal_bid']);
 
-        $slot = AdSlot::create([
+        AdSlot::create([
             'product_id' => $data['product_id'],
             'store_id' => $storeId,
             'nominal_bid' => $data['nominal_bid'],
@@ -94,13 +98,13 @@ class PeringkatIklanController extends Controller
             'status' => AdSlot::STATUS_DITUNDA,
         ]);
 
-        $sa = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
-            ->where('status', \App\Models\User::STATUS_AKTIF)->first();
+        $sa = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
+            ->where('status', User::STATUS_AKTIF)->first();
         if ($sa) {
-            \App\Models\Notification::create([
+            Notification::create([
                 'user_id' => $sa->user_id,
                 'aktor_id' => $request->user()->user_id,
-                'tipe' => \App\Models\Notification::TIPE_PROMO,
+                'tipe' => Notification::TIPE_PROMO,
                 'judul' => 'Pengajuan Iklan Peringkat',
                 'pesan' => sprintf('Pengajuan iklan "%s" (Rp %s, %d hari) menunggu verifikasi.', $product->nama_produk, number_format((float) $data['nominal_bid'], 0, ',', '.'), $hari),
                 'url' => route('superadmin.peringkat-iklan'),

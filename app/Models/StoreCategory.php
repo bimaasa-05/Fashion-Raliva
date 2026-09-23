@@ -23,4 +23,9 @@ class StoreCategory extends Model
     {
         return $this->hasMany(Store::class, 'kategori', 'nama_kategori');
     }
+
+    public function sizes(): HasMany
+    {
+        return $this->hasMany(StoreCategorySize::class, 'store_category_id', 'store_category_id')->orderBy('urutan');
+    }
 }

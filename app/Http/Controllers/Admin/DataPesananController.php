@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\BahanProduksi;
 use App\Models\Notification;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -12,7 +11,6 @@ use App\Models\PaymentVerification;
 use App\Models\PaymentProof;
 use App\Models\PaymentMethod;
 use App\Models\PlatformBankAccount;
-use App\Models\ProductionOrderBahan;
 use App\Models\ProductVariant;
 use App\Models\Role;
 use App\Services\NotificationService;
@@ -44,7 +42,7 @@ class DataPesananController extends Controller
         $storeIds = AdminContext::assignedStoreIds();
         $orders = Order::query()
             ->whereIn('store_id', $storeIds)
-            ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap,email', 'checkout.payment:payment_id,checkout_id,status', 'checkout.payment.proofs', 'checkout.payment.paymentMethod', 'items.productVariant.product', 'shipments', 'bahanList', 'qualityChecks'])
+            ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap,email,nomor_telepon', 'checkout.payment:payment_id,checkout_id,status', 'checkout.payment.proofs', 'checkout.payment.paymentMethod', 'items.productVariant.product', 'shipments', 'bahanList', 'qualityChecks'])
             ->when(
                 array_key_exists($status, $statuses),
                 fn ($query) => $query->where('status', $status)
@@ -61,14 +59,10 @@ class DataPesananController extends Controller
             ->orderByDesc('order_id')->limit(20)->get();
 
         $customers = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', Role::CUSTOMER))
-            ->orderByDesc('created_at')->limit(50)->get(['user_id', 'nama_lengkap', 'email']);
+            ->orderByDesc('created_at')->limit(50)->get(['user_id', 'nama_lengkap', 'email', 'nomor_telepon']);
 
         $paymentAccounts = PlatformBankAccount::where('status', PlatformBankAccount::STATUS_AKTIF)
             ->orderBy('urutan')->get(['platform_bank_account_id', 'jenis', 'nama', 'kode', 'nomor_rekening', 'nama_pemilik']);
-
-        $bahanList = BahanProduksi::whereIn('store_id', $storeIds)
-            ->where('status', BahanProduksi::STATUS_AKTIF)
-            ->orderBy('nama_bahan')->get();
 
         return view('Admin.pesanan.index', [
             'orders' => $orders,
@@ -78,7 +72,6 @@ class DataPesananController extends Controller
             'recentOrders' => $recentOrders,
             'customers' => $customers,
             'paymentAccounts' => $paymentAccounts,
-            'bahanList' => $bahanList,
         ]);
     }
 
@@ -98,58 +91,22 @@ class DataPesananController extends Controller
             ]);
         }
 
-        if ($pesanan->bahanList()->exists()) {
-            return back()->with('toast', [
-                'message' => 'Bahan sudah diinput sebelumnya. Minta Produksi menambah kekurangan lewat menu + Bahan agar riwayat kedua pihak utuh.',
-                'icon' => 'gpp_maybe',
-            ]);
-        }
-
         $data = $request->validate([
-            'bahan' => ['required', 'array', 'min:1'],
-            'bahan.*.bahan_id' => ['nullable', 'exists:bahan_produksi,bahan_id'],
-            'bahan.*.nama_bahan' => ['required', 'string', 'max:150'],
-            'bahan.*.jumlah' => ['required', 'numeric', 'min:0.01'],
-            'bahan.*.satuan' => ['required', 'string', 'in:'.implode(',', ProductionOrderBahan::SATUAN)],
-            'bahan.*.catatan' => ['nullable', 'string', 'max:500'],
             'tgl_mulai_produksi' => ['required', 'date'],
             'tgl_berakhir_produksi' => ['required', 'date', 'after_or_equal:tgl_mulai_produksi'],
         ], [
-            'bahan.required' => 'Input minimal 1 bahan produksi.',
-            'bahan.min' => 'Input minimal 1 bahan produksi.',
-            'bahan.*.nama_bahan.required' => 'Nama bahan wajib diisi.',
-            'bahan.*.jumlah.required' => 'Jumlah bahan wajib diisi.',
-            'bahan.*.satuan.required' => 'Satuan bahan wajib diisi.',
-            'bahan.*.satuan.in' => 'Satuan harus salah satu: '.implode(', ', ProductionOrderBahan::SATUAN).'.',
             'tgl_mulai_produksi.required' => 'Tanggal mulai produksi wajib diisi.',
             'tgl_berakhir_produksi.required' => 'Tanggal berakhir produksi wajib diisi.',
             'tgl_berakhir_produksi.after_or_equal' => 'Tanggal berakhir harus sama atau setelah tanggal mulai.',
         ]);
 
         $lama = $pesanan->only(['status']);
-        $actorRole = $request->user()?->role?->nama_role ?? 'Admin';
 
-        DB::transaction(function () use ($pesanan, $data, $actorRole) {
-            foreach ($data['bahan'] as $bahan) {
-                ProductionOrderBahan::create([
-                    'order_id' => $pesanan->order_id,
-                    'bahan_id' => $bahan['bahan_id'] ?? null,
-                    'nama_bahan' => $bahan['nama_bahan'],
-                    'jumlah' => $bahan['jumlah'],
-                    'satuan' => $bahan['satuan'],
-                    'catatan' => $bahan['catatan'] ?? null,
-                    'sumber' => ProductionOrderBahan::SUMBER_ADMIN,
-                    'dibuat_oleh_role' => $actorRole,
-                    'created_by' => ActivityLogger::resolveActorId(),
-                ]);
-            }
-
-            $pesanan->update([
-                'status' => Order::STATUS_DIPROSES,
-                'tgl_mulai_produksi' => $data['tgl_mulai_produksi'],
-                'tgl_berakhir_produksi' => $data['tgl_berakhir_produksi'],
-            ]);
-        });
+        $pesanan->update([
+            'status' => Order::STATUS_DIPROSES,
+            'tgl_mulai_produksi' => $data['tgl_mulai_produksi'],
+            'tgl_berakhir_produksi' => $data['tgl_berakhir_produksi'],
+        ]);
 
         ActivityLogger::log(
             'admin.order.process',
@@ -157,7 +114,7 @@ class DataPesananController extends Controller
             $pesanan->order_id,
             $lama,
             ['status' => Order::STATUS_DIPROSES],
-            sprintf('Memproses pesanan %s dengan input bahan produksi.', $pesanan->nomor_order)
+            sprintf('Memproses pesanan %s. Input bahan dilakukan oleh Produksi.', $pesanan->nomor_order)
         );
 
         $this->notifyCustomer($pesanan, 'Pesanan Diproses', sprintf('Pesanan %s sedang diproses oleh toko.', $pesanan->nomor_order));
@@ -166,7 +123,7 @@ class DataPesananController extends Controller
             Role::PRODUKSI,
             Notification::TIPE_SISTEM,
             'Pesanan Diproses',
-            sprintf('Pesanan %s sedang diproses. Bahan telah diinput oleh Admin.', $pesanan->nomor_order),
+            sprintf('Pesanan %s sedang diproses. Silakan input kebutuhan bahan.', $pesanan->nomor_order),
             ActivityLogger::resolveActorId(),
             route('produksi.data-produksi')
         );
@@ -200,6 +157,7 @@ class DataPesananController extends Controller
             'metode_bayar' => ['required_if:tipe_pesanan,offline', 'nullable', 'in:tunai,transfer'],
             'payment_account_id' => ['required_if:metode_bayar,transfer', 'nullable', 'exists:platform_bank_accounts,platform_bank_account_id'],
             'bukti' => ['required_if:metode_bayar,transfer', 'nullable', 'image', 'mimes:jpeg,png,jpg', 'max:4096'],
+            'catatan' => ['nullable', 'string', 'max:1000'],
         ], [
             'items.required' => 'Pilih minimal 1 produk.',
             'items.min' => 'Pilih minimal 1 produk.',
@@ -316,6 +274,7 @@ class DataPesananController extends Controller
                 'grand_total' => $grand,
                 'status' => Order::STATUS_PENDING_PAYMENT,
                 'tipe_pesanan' => $isOffline ? Order::TIPE_PESANAN_OFFLINE : Order::TIPE_PESANAN_ONLINE,
+                'catatan' => $data['catatan'] ?? null,
             ]);
 
             foreach ($prepared as $p) {
@@ -495,16 +454,9 @@ class DataPesananController extends Controller
             ]);
         }
 
-        if (! $pesanan->isOffline()) {
-            return back()->with('toast', [
-                'message' => 'Hanya pesanan offline yang dapat diselesaikan langsung oleh Admin.',
-                'icon' => 'gpp_maybe',
-            ]);
-        }
-
         if ($pesanan->status !== Order::STATUS_SIAP_KIRIM) {
             return back()->with('toast', [
-                'message' => 'Hanya pesanan offline berstatus Siap Kirim/Diambil yang dapat ditandai selesai.',
+                'message' => 'Pesanan dapat ditandai selesai setelah QC + packing (status Siap Kirim).',
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -518,7 +470,7 @@ class DataPesananController extends Controller
         DB::transaction(function () use ($pesanan, $data) {
             $locked = Order::whereKey($pesanan->order_id)->lockForUpdate()->firstOrFail();
 
-            if (! $locked->isOffline() || $locked->status !== Order::STATUS_SIAP_KIRIM) {
+            if ($locked->status !== Order::STATUS_SIAP_KIRIM) {
                 throw new \RuntimeException('Status pesanan berubah, tidak dapat diselesaikan.');
             }
 
@@ -728,6 +680,24 @@ class DataPesananController extends Controller
             'message' => "Pesanan {$pesanan->nomor_order} diperbarui.",
             'icon' => 'task_alt',
         ]);
+    }
+
+    public function invoice(Order $pesanan)
+    {
+        if (! AdminContext::canAccessStore($pesanan->store_id)) {
+            abort(403, 'Pesanan ini di luar scope toko yang Anda tugaskan.');
+        }
+
+        $pesanan->load([
+            'store',
+            'checkout.user',
+            'checkout.payment.paymentMethod',
+            'items.productVariant.product',
+            'shipments.courier',
+            'shipments.shippingService',
+        ]);
+
+        return view('Admin.pesanan.invoice', compact('pesanan'));
     }
 
     private function notifyCustomer(Order $pesanan, string $judul, string $pesan): void

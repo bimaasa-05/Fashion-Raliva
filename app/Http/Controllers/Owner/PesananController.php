@@ -81,6 +81,6 @@ class PesananController extends Controller
         }
         Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Diteruskan', sprintf('Pesanan %s diteruskan ke Admin Produksi.', $order->nomor_order), route('owner.pesanan'));
 
-        return back()->with('success', 'Pesanan ' . $order->nomor_order . ' diteruskan ke Admin Produksi.');
+        return back()->with('success', 'Pesanan '.$order->nomor_order.' diteruskan ke Admin Produksi.');
     }
 }

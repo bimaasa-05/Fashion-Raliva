@@ -52,7 +52,12 @@
                 <h2 class="font-title-md text-title-md text-on-surface premium-heading">Grafik Tren Omzet 30 Hari Terakhir</h2>
                 <p class="text-xs text-on-surface-variant mt-1">Penjualan harian dalam jutaan rupiah untuk toko scope Anda.</p>
             </div>
-            <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">30 Hari Harian</span>
+            <form method="GET" class="flex items-center gap-2 flex-wrap">
+                <input type="date" name="dari" value="{{ $dari->toDateString() }}" max="{{ date('Y-m-d') }}" class="raliva-input text-xs py-2 w-auto" title="Dari tanggal" />
+                <span class="text-on-surface-variant text-xs">s/d</span>
+                <input type="date" name="sampai" value="{{ $sampai->toDateString() }}" max="{{ date('Y-m-d') }}" class="raliva-input text-xs py-2 w-auto" title="Sampai tanggal" />
+                <button type="submit" class="px-4 py-2 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium">Terapkan</button>
+            </form>
         </div>
         <div class="h-48" data-bars='@json($omzetBars ?? [])' data-bars-suffix=" JT"></div>
     </section>
@@ -86,37 +91,6 @@
     </div>
 
     <div data-lap-type="operasional" class="space-y-section-gap">
-    <section class="space-y-gutter">
-        <h2 class="font-title-md text-title-md text-on-surface premium-heading">Rincian per Toko (Scope Admin)</h2>
-        <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
-            <table class="w-full min-w-[750px] premium-table">
-                <thead>
-                    <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-4 text-left">Toko</th>
-                        <th class="p-4 text-center">Pesanan</th>
-                        <th class="p-4 text-center">Pendapatan</th>
-                        <th class="p-4 text-center">Pengeluaran</th>
-                        <th class="p-4 text-center">Bersih</th>
-                    </tr>
-                </thead>
-                <tbody class="font-body-md text-sm">
-                    @forelse($perToko ?? collect() as $t)
-                        <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
-                            <td class="p-4 text-on-surface">{{ $t->nama_toko }}</td>
-                            <td class="p-4 text-center text-on-surface">{{ $t->pesanan }}</td>
-                            <td class="p-4 text-center text-secondary">Rp {{ number_format($t->pendapatan,0,',','.') }}</td>
-                            <td class="p-4 text-center text-error">Rp {{ number_format($t->pengeluaran,0,',','.') }}</td>
-                            <td class="p-4 text-center font-bold {{ $t->bersih>=0 ? 'text-secondary' : 'text-error' }}">Rp {{ number_format($t->bersih,0,',','.') }}</td>
-                        </tr>
-                    @empty
-                        <tr><td colspan="5" class="p-8 text-center text-on-surface-variant">Tidak ada data toko yang ditugaskan.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-        <p class="text-xs text-on-surface-variant mt-2">Data hanya untuk toko yang ditugaskan kepada Anda (AdminContext).</p>
-    </section>
-
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter items-start">
         <section class="lg:col-span-2 space-y-gutter">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Pendapatan per Metode Pembayaran</h2>

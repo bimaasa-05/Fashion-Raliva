@@ -4,22 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ShippingService extends Model
+class StoreCourierSetting extends Model
 {
-    protected $primaryKey = 'shipping_service_id';
-
-    public const STATUS_AKTIF = 'aktif';
-
-    public const STATUS_NONAKTIF = 'nonaktif';
+    protected $primaryKey = 'store_courier_setting_id';
 
     protected $fillable = [
         'store_id',
         'courier_id',
-        'nama_layanan',
-        'estimasi_hari',
-        'status',
+        'shipping_service_id',
+        'is_aktif',
+        'ongkir_override',
+        'estimasi_override',
+    ];
+
+    protected $casts = [
+        'is_aktif' => 'boolean',
     ];
 
     public function store(): BelongsTo
@@ -32,8 +32,8 @@ class ShippingService extends Model
         return $this->belongsTo(Courier::class, 'courier_id', 'courier_id');
     }
 
-    public function shipments(): HasMany
+    public function shippingService(): BelongsTo
     {
-        return $this->hasMany(Shipment::class, 'shipping_service_id', 'shipping_service_id');
+        return $this->belongsTo(ShippingService::class, 'shipping_service_id', 'shipping_service_id');
     }
 }

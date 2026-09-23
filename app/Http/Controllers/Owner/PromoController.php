@@ -16,7 +16,7 @@ class PromoController extends Controller
         $store = OwnerContext::currentStore();
 
         $promos = Promotion::where('store_id', $storeId)
-            ->when($request->input('status'), fn($q, $s) => $q->where('status', $s))
+            ->when($request->input('status'), fn ($q, $s) => $q->where('status', $s))
             ->orderByDesc('created_at')
             ->paginate(9)
             ->withQueryString();
@@ -71,7 +71,9 @@ class PromoController extends Controller
     public function update(Request $request, Promotion $promo)
     {
         $storeId = OwnerContext::firstStoreId();
-        if ((int) $promo->store_id !== (int) $storeId) abort(403);
+        if ((int) $promo->store_id !== (int) $storeId) {
+            abort(403);
+        }
 
         $validated = $request->validate([
             'nama_promo' => ['required', 'string', 'max:100'],
@@ -103,7 +105,9 @@ class PromoController extends Controller
     public function destroy(Promotion $promo)
     {
         $storeId = OwnerContext::firstStoreId();
-        if ((int) $promo->store_id !== (int) $storeId) abort(403);
+        if ((int) $promo->store_id !== (int) $storeId) {
+            abort(403);
+        }
         $promo->delete();
 
         Notification::fireSelf(Notification::TIPE_PROMO, 'Promo Dihapus', sprintf('Promo "%s" telah dihapus.', $promo->nama_promo), route('owner.promo'));
@@ -114,7 +118,9 @@ class PromoController extends Controller
     public function toggle(Promotion $promo)
     {
         $storeId = OwnerContext::firstStoreId();
-        if ((int) $promo->store_id !== (int) $storeId) abort(403);
+        if ((int) $promo->store_id !== (int) $storeId) {
+            abort(403);
+        }
         $promo->update(['status' => $promo->status === 'aktif' ? 'nonaktif' : 'aktif']);
 
         Notification::fireSelf(Notification::TIPE_PROMO, 'Status Promo Diubah', sprintf('Promo "%s" kini %s.', $promo->nama_promo, $promo->status), route('owner.promo'));

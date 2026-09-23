@@ -47,8 +47,9 @@
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
                 <div class="flex items-start justify-between mb-4">
                     <div>
-                        <p class="font-mono text-sm text-on-surface-variant">{{ $r->kode }} &#8226; Pesanan #{{ $r->order_id }}</p>
+                        <p class="font-mono text-sm text-on-surface-variant">{{ $r->kode }} &#8226; Pesanan #{{ $r->order?->nomor_order ?? $r->order_id }}</p>
                         <p class="font-title-md text-title-md text-gold-accent mt-1">Rp {{ number_format($r->jumlah, 0, ',', '.') }}</p>
+                        <p class="text-xs text-on-surface-variant mt-1">Status pesanan: <span class="font-bold text-on-surface">{{ ucfirst(str_replace('_', ' ', $r->order?->status ?? '-')) }}</span> &#8226; Total: Rp {{ number_format((float) ($r->order?->grand_total ?? 0), 0, ',', '.') }} &#8226; {{ $r->payment?->paymentMethod?->nama_metode ?? 'Tunai' }} &#8226; Diajukan {{ $r->diajukan_pada?->diffForHumans() ?? '-' }}</p>
                     </div>
                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ $r->status === 'escalated' ? 'Eskalasi' : 'Menunggu' }}</span>
                 </div>
@@ -96,7 +97,7 @@
                                 {{ $st }}
                             </span>
                         </td>
-                        <td class="p-4 text-on-surface-variant">{{ optional($r->selesai_pada)->translatedFormat('d M Y, H.i') ?? '-' }}</td>
+                        <td class="p-4 text-on-surface-variant">{{ ($r->status === 'disetujui' ? $r->disetujui_pada : $r->selesai_pada)?->translatedFormat('d M Y, H.i') ?? '-' }}</td>
                         <td class="p-4 text-center"><button type="button" data-modal-open="modal-detail-{{ $r->kode }}" class="inline-flex items-center gap-1 px-3 py-1.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Detail</button></td>
                     </tr>
                     @empty
@@ -148,7 +149,7 @@
         @csrf
         <p class="raliva-label text-gold-accent">Eskalasi Refund</p>
         <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $r->kode }}</h3>
-        <p class="text-sm text-on-surface-variant mt-3">Eskalasi refund ini ke Super Admin untuk keputusan akhir?</p>
+        <p class="text-sm text-on-surface-variant mt-3">Eskalasi refund ini ke Owner Toko untuk keputusan akhir?</p>
         <div class="flex gap-3 mt-6">
             <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
             <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium">Ya, Eskalasi</button>
@@ -186,6 +187,20 @@
                     <p class="text-xs text-on-surface-variant">Diajukan</p>
                     <p class="font-bold text-on-surface mt-1">{{ $r->diajukan_pada?->translatedFormat('d M Y, H:i') ?? '-' }}</p>
                 </div>
+                <div class="border border-muted-border rounded-lg px-4 py-3">
+                    <p class="text-xs text-on-surface-variant">Status Pesanan</p>
+                    <p class="font-bold text-on-surface mt-1 capitalize">{{ str_replace('_', ' ', $r->order?->status ?? '-') }}</p>
+                </div>
+                <div class="border border-muted-border rounded-lg px-4 py-3">
+                    <p class="text-xs text-on-surface-variant">Total Pesanan</p>
+                    <p class="font-bold text-on-surface mt-1">Rp {{ number_format((float) ($r->order?->grand_total ?? 0), 0, ',', '.') }}</p>
+                </div>
+                @if ($r->disetujui_pada)
+                    <div class="border border-muted-border rounded-lg px-4 py-3">
+                        <p class="text-xs text-on-surface-variant">Disetujui</p>
+                        <p class="font-bold text-on-surface mt-1">{{ $r->disetujui_pada->translatedFormat('d M Y, H:i') }}</p>
+                    </div>
+                @endif
             </div>
             <div class="border border-muted-border rounded-lg px-4 py-3 bg-surface-container-low">
                 <p class="text-xs text-on-surface-variant mb-1">Alasan Customer</p>

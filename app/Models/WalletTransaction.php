@@ -31,6 +31,7 @@ class WalletTransaction extends Model
         'withdrawal_id',
         'ad_slot_id',
         'jenis_transaksi',
+        'kategori',
         'jumlah',
         'saldo_sebelum',
         'saldo_sesudah',

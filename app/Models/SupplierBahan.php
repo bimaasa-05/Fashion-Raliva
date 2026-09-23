@@ -15,6 +15,7 @@ class SupplierBahan extends Model
         'supplier_id',
         'nama_bahan',
         'satuan',
+        'jumlah',
     ];
 
     public function supplier(): BelongsTo

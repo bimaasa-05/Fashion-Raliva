@@ -175,6 +175,14 @@
                     <input name="sumber" type="text" required placeholder="cth. Investor A / Modal Pribadi" class="raliva-input" />
                 </div>
                 <div>
+                    <label class="block raliva-label mb-2">Kategori</label>
+                    <select name="kategori" required class="raliva-select">
+                        @foreach (['Penjualan', 'Investor', 'Modal', 'Komisi', 'Lainnya'] as $kat)
+                            <option value="{{ $kat }}">{{ $kat }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
                     <label class="block raliva-label mb-2">Nominal (Rp)</label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-on-surface-variant pointer-events-none">Rp</span>

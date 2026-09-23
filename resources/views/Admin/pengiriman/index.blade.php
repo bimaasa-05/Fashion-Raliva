@@ -78,9 +78,10 @@
                                 <p class="font-body-md text-sm text-on-surface-variant mt-1">Penerima: {{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }} {{ $pesanan->checkout?->nomor_telepon ? '• '.$pesanan->checkout->nomor_telepon : '' }} &#8226; Ongkir: Rp {{ number_format((float) $pesanan->total_ongkir, 0, ',', '.') }}</p>
                             </div>
                             <div class="flex flex-col sm:flex-row gap-2.5 shrink-0">
+                                @php $kurirAktif = $kurirPerToko[$pesanan->store_id] ?? $couriers->pluck('courier_id')->all(); @endphp
                                 <select name="courier_id" required data-kurir-select class="raliva-select text-xs">
                                     <option value="">Pilih Kurir</option>
-                                    @foreach ($couriers as $courier)
+                                    @foreach ($couriers->whereIn('courier_id', $kurirAktif) as $courier)
                                         <option value="{{ $courier->courier_id }}">{{ $courier->nama_kurir }}</option>
                                     @endforeach
                                 </select>
@@ -93,6 +94,7 @@
                                     @endforeach
                                 </select>
                                 <input required name="nomor_resi" minlength="4" maxlength="50" class="raliva-input w-full sm:w-44 text-xs" type="text" placeholder="Masukkan No. Resi" />
+                                <input name="estimasi_tiba" type="date" min="{{ date('Y-m-d') }}" class="raliva-input w-full sm:w-40 text-xs" title="Estimasi tiba (opsional)" />
                                 <button type="submit" class="px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-xs uppercase tracking-widest rounded hover:bg-black transition-colors btn-premium whitespace-nowrap">Simpan Resi</button>
                             </div>
                         </div>
@@ -143,16 +145,21 @@
                             <td class="p-4 font-mono text-on-surface">{{ $shipment->nomor_resi ?? '-' }}</td>
                             <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $badge['class'] }}">{{ $badge['label'] }}</span></td>
                             <td class="p-4 text-right">
-                                @if (in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true) && $shipment->nomor_resi)
-                                    <form method="POST" action="{{ route('admin.pengiriman.kirim', $shipment->shipment_id) }}" onsubmit="return confirm('Tandai pesanan {{ $shipment->order?->nomor_order }} sudah dikirim dengan resi {{ $shipment->nomor_resi }}?');">
-                                        @csrf
-                                        <button type="submit" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Tandai Dikirim</button>
-                                    </form>
-                                @elseif ($shipment->status === \App\Models\Shipment::STATUS_DIKIRIM && ! $shipment->nomor_resi)
-                                    <span class="text-error text-[10px] uppercase">Resi belum diisi</span>
-                                @else
-                                    <span class="text-on-surface-variant text-xs uppercase">&mdash;</span>
-                                @endif
+                                <div class="flex justify-end gap-1.5 flex-wrap">
+                                    @if (in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true) && $shipment->order?->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+                                        <button type="button" data-modal-open="modal-edit-resi-{{ $shipment->shipment_id }}" class="px-3 py-1.5 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">Edit Resi</button>
+                                    @endif
+                                    @if (in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true) && $shipment->nomor_resi)
+                                        <form method="POST" action="{{ route('admin.pengiriman.kirim', $shipment->shipment_id) }}" onsubmit="return confirm('Tandai pesanan {{ $shipment->order?->nomor_order }} sudah dikirim dengan resi {{ $shipment->nomor_resi }}?');">
+                                            @csrf
+                                            <button type="submit" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Tandai Dikirim</button>
+                                        </form>
+                                    @elseif ($shipment->status === \App\Models\Shipment::STATUS_DIKIRIM && ! $shipment->nomor_resi)
+                                        <span class="text-error text-[10px] uppercase">Resi belum diisi</span>
+                                    @elseif (! in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true))
+                                        <span class="text-on-surface-variant text-xs uppercase">&mdash;</span>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -163,6 +170,54 @@
         </div>
     </section>
 </div>
+
+{{-- Modal Edit Resi per shipment --}}
+@foreach ($shipments as $shipment)
+    @if (in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true) && $shipment->order?->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+        <div id="modal-edit-resi-{{ $shipment->shipment_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+            <form method="POST" action="{{ route('admin.pengiriman.resi', $shipment->order_id) }}" class="relative mx-auto w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl p-6 max-h-[85vh] overflow-y-auto">
+                @csrf
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Edit Resi</h3>
+                <p class="text-on-surface-variant font-mono text-xs mt-1">{{ $shipment->order?->nomor_order }}</p>
+                <div class="space-y-4 mt-5">
+                    <div>
+                        <label class="block raliva-label mb-2">Kurir *</label>
+                        @php $kurirAktifEdit = $kurirPerToko[$shipment->order?->store_id] ?? $couriers->pluck('courier_id')->all(); @endphp
+                        <select name="courier_id" required class="raliva-select">
+                            @foreach ($couriers->whereIn('courier_id', $kurirAktifEdit) as $courier)
+                                <option value="{{ $courier->courier_id }}" @selected((int) $shipment->courier_id === (int) $courier->courier_id)>{{ $courier->nama_kurir }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block raliva-label mb-2">Layanan (opsional)</label>
+                        <select name="shipping_service_id" class="raliva-select">
+                            <option value="">— Tanpa layanan khusus —</option>
+                            @foreach ($couriers as $courier)
+                                @foreach ($courier->services as $service)
+                                    <option value="{{ $service->shipping_service_id }}" @selected((int) $shipment->shipping_service_id === (int) $service->shipping_service_id)>{{ $courier->nama_kurir }} {{ $service->nama_layanan }}</option>
+                                @endforeach
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block raliva-label mb-2">Nomor Resi *</label>
+                        <input name="nomor_resi" required minlength="4" maxlength="50" value="{{ $shipment->nomor_resi }}" class="raliva-input" type="text" />
+                    </div>
+                    <div>
+                        <label class="block raliva-label mb-2">Estimasi Tiba (opsional)</label>
+                        <input name="estimasi_tiba" type="date" min="{{ date('Y-m-d') }}" value="{{ $shipment->estimasi_tiba?->format('Y-m-d') }}" class="raliva-input" />
+                    </div>
+                </div>
+                <div class="flex gap-3 mt-6">
+                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded-lg btn-premium">Simpan Resi</button>
+                </div>
+            </form>
+        </div>
+    @endif
+@endforeach
 @endsection
 
 @push('scripts')

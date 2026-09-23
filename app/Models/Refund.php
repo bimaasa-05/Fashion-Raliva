@@ -42,6 +42,7 @@ class Refund extends Model
         'deskripsi_bukti_request',
         'bukti_request_diupload_pada',
         'diajukan_pada',
+        'disetujui_pada',
         'selesai_pada',
     ];
 
@@ -49,6 +50,7 @@ class Refund extends Model
     {
         return [
             'diajukan_pada' => 'datetime',
+            'disetujui_pada' => 'datetime',
             'selesai_pada' => 'datetime',
             'bukti_diupload_pada' => 'datetime',
             'bukti_request_diupload_pada' => 'datetime',

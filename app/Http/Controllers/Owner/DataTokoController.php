@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
-use App\Support\OwnerContext;
 use App\Models\Review;
 use App\Models\StoreCategory;
+use App\Support\OwnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -43,7 +43,7 @@ class DataTokoController extends Controller
             'deskripsi' => ['nullable', 'string', 'max:1000'],
             'alamat' => ['required', 'string', 'max:500'],
             'nomor_telepon' => ['required', 'string', 'max:20'],
-            'email' => ['required', 'email', 'max:150', \Illuminate\Validation\Rule::unique('users', 'email')->ignore($request->user()->user_id ?? 0, 'user_id')],
+            'email' => ['required', 'email', 'max:150', Rule::unique('users', 'email')->ignore($request->user()->user_id ?? 0, 'user_id')],
         ]);
 
         $store->update([

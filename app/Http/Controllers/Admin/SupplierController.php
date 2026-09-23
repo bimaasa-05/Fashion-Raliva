@@ -43,6 +43,7 @@ class SupplierController extends Controller
             'bahan' => 'nullable|array',
             'bahan.*.nama_bahan' => 'required|string|max:150',
             'bahan.*.satuan' => 'required|string|in:meter,cm,yard,roll,kg,gram,pcs',
+            'bahan.*.jumlah' => 'nullable|integer|min:0',
         ]);
 
         $data['stok'] = $data['stok'] ?? 0;
@@ -53,6 +54,7 @@ class SupplierController extends Controller
                 $supplier->bahans()->create([
                     'nama_bahan' => $bahan['nama_bahan'],
                     'satuan' => $bahan['satuan'],
+                    'jumlah' => $bahan['jumlah'] ?? 0,
                 ]);
             }
         });
@@ -78,6 +80,7 @@ class SupplierController extends Controller
             'bahan.*.supplier_bahan_id' => 'nullable|integer|exists:supplier_bahan,supplier_bahan_id',
             'bahan.*.nama_bahan' => 'required|string|max:150',
             'bahan.*.satuan' => 'required|string|in:meter,cm,yard,roll,kg,gram,pcs',
+            'bahan.*.jumlah' => 'nullable|integer|min:0',
         ]);
 
         $data['stok'] = $data['stok'] ?? 0;
@@ -96,11 +99,12 @@ class SupplierController extends Controller
             }
 
             foreach ($dikirim as $bahan) {
+                $payload = ['nama_bahan' => $bahan['nama_bahan'], 'satuan' => $bahan['satuan'], 'jumlah' => $bahan['jumlah'] ?? 0];
                 if (! empty($bahan['supplier_bahan_id'])) {
                     $row = $supplier->bahans()->where('supplier_bahan_id', $bahan['supplier_bahan_id'])->first();
-                    if ($row) $row->update(['nama_bahan' => $bahan['nama_bahan'], 'satuan' => $bahan['satuan']]);
+                    if ($row) $row->update($payload);
                 } else {
-                    $supplier->bahans()->create(['nama_bahan' => $bahan['nama_bahan'], 'satuan' => $bahan['satuan']]);
+                    $supplier->bahans()->create($payload);
                 }
             }
         });
