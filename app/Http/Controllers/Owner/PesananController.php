@@ -26,7 +26,7 @@ class PesananController extends Controller
         $status = $request->input('status');
         $period = $request->input('period');
 
-        $query = Order::with(['checkout.user', 'checkout.payment', 'items.productVariant.product'])
+        $query = Order::with(['checkout.user', 'checkout.payment.paymentMethod', 'checkout.payment.proofs', 'checkout.payment.verifications', 'items.productVariant.product', 'shipments.courier', 'shipments.shippingService'])
             ->where('store_id', $storeId);
 
         if ($status && isset(self::STATUS_MAP[$status])) {
