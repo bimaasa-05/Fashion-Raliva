@@ -16,10 +16,10 @@
         'cancelled' => 'Dibatalkan',
     ];
     $badgeClass = [
-        'requested' => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
-        'approved' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
-        'in_transit' => 'bg-secondary-container/20 text-secondary border-secondary/20',
-        'received' => 'bg-secondary text-on-secondary border-secondary',
+        'requested' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
+        'approved' => 'bg-amber-500/10 text-amber-600 border-amber-500/30',
+        'in_transit' => 'bg-sky-500/10 text-sky-600 border-sky-500/30',
+        'received' => 'bg-success/10 text-success border-success/20',
         'cancelled' => 'bg-error/10 text-error border-error/20',
     ];
 @endphp

@@ -123,12 +123,12 @@
                     @forelse ($products as $row)
                         @php
                             $statusKey = $row->status;
-                            $stockClass = in_array($statusKey, ['kritis', 'habis']) ? 'text-error' : ($statusKey === 'menipis' ? 'text-gold-accent' : 'text-on-surface');
+                            $stockClass = in_array($statusKey, ['kritis', 'habis']) ? 'text-error' : ($statusKey === 'menipis' ? 'text-amber-600' : 'text-on-surface');
                             $badgeClass = [
-                                'aman' => 'bg-secondary-container/20 text-secondary border-secondary/20',
-                                'menipis' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
+                                'aman' => 'bg-success/10 text-success border-success/20',
+                                'menipis' => 'bg-amber-500/10 text-amber-600 border-amber-500/30',
                                 'kritis' => 'bg-error/10 text-error border-error/20',
-                                'habis' => 'bg-error text-on-error border-error',
+                                'habis' => 'bg-error/10 text-error border-error/20',
                             ][$statusKey];
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors" data-row data-status="{{ $statusKey }}">
@@ -165,12 +165,12 @@
             @forelse ($products as $row)
                 @php
                     $statusKey = $row->status;
-                    $stockClassM = in_array($statusKey, ['kritis', 'habis']) ? 'text-error' : ($statusKey === 'menipis' ? 'text-gold-accent' : 'text-on-surface');
+                    $stockClassM = in_array($statusKey, ['kritis', 'habis']) ? 'text-error' : ($statusKey === 'menipis' ? 'text-amber-600' : 'text-on-surface');
                     $badgeClassM = [
-                        'aman' => 'bg-secondary-container/20 text-secondary border-secondary/20',
-                        'menipis' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
+                        'aman' => 'bg-success/10 text-success border-success/20',
+                        'menipis' => 'bg-amber-500/10 text-amber-600 border-amber-500/30',
                         'kritis' => 'bg-error/10 text-error border-error/20',
-                        'habis' => 'bg-error text-on-error border-error',
+                        'habis' => 'bg-error/10 text-error border-error/20',
                     ][$statusKey];
                 @endphp
                 <article class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
@@ -280,10 +280,10 @@
                                             $vMin = $v->warehouseStocks->min('stok_minimum') ?? 0;
                                             $vStatusLabel = $vStok <= 0 ? 'habis' : ($vStok <= $vMin ? ($vStok <= (int) round($vMin / 2) ? 'kritis' : 'menipis') : 'aman');
                                             $vBadge = [
-                                                'aman' => 'bg-secondary-container/20 text-secondary border-secondary/20',
-                                                'menipis' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
+                                                'aman' => 'bg-success/10 text-success border-success/20',
+                                                'menipis' => 'bg-amber-500/10 text-amber-600 border-amber-500/30',
                                                 'kritis' => 'bg-error/10 text-error border-error/20',
-                                                'habis' => 'bg-error text-on-error border-error',
+                                                'habis' => 'bg-error/10 text-error border-error/20',
                                             ][$vStatusLabel];
                                             $vLabel = trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')) ?: '-';
                                         @endphp
@@ -291,7 +291,7 @@
                                             <td class="p-3 text-on-surface font-medium">{{ $vLabel }}</td>
                                             <td class="p-3 text-on-surface-variant font-mono text-xs">{{ $v->sku ?? '-' }}</td>
                                             <td class="p-3 text-right text-on-surface whitespace-nowrap">Rp {{ number_format($v->harga ?? 0, 0, ',', '.') }}</td>
-                                            <td class="p-3 text-center font-bold {{ $vStok <= 0 ? 'text-error' : ($vStok <= $vMin ? 'text-gold-accent' : 'text-on-surface') }}">{{ $vStok }}</td>
+                                            <td class="p-3 text-center font-bold {{ $vStok <= 0 ? 'text-error' : ($vStok <= $vMin ? 'text-amber-600' : 'text-on-surface') }}">{{ $vStok }}</td>
                                             <td class="p-3 text-center text-on-surface-variant">{{ $vMin }}</td>
                                             <td class="p-3 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full {{ $vBadge }} text-[9px] font-bold uppercase border">{{ ucfirst($vStatusLabel) }}</span></td>
                                         </tr>
@@ -313,7 +313,7 @@
                     <dl class="space-y-4 font-body-md text-sm">
                         <div class="flex justify-between gap-4 pb-4 border-b border-muted-border">
                             <dt class="text-on-surface-variant">Status</dt>
-                            <dd><span class="inline-flex items-center px-2 py-1 rounded-full {{ ['aman' => 'bg-secondary-container/20 text-secondary border-secondary/20', 'menipis' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30', 'kritis' => 'bg-error/10 text-error border-error/20', 'habis' => 'bg-error text-on-error border-error'][$row->status] }} text-[10px] font-bold uppercase border">{{ ucfirst($row->status) }}</span></dd>
+                            <dd><span class="inline-flex items-center px-2 py-1 rounded-full {{ ['aman' => 'bg-success/10 text-success border-success/20', 'menipis' => 'bg-amber-500/10 text-amber-600 border-amber-500/30', 'kritis' => 'bg-error/10 text-error border-error/20', 'habis' => 'bg-error text-on-error border-error'][$row->status] }} text-[10px] font-bold uppercase border">{{ ucfirst($row->status) }}</span></dd>
                         </div>
                         <div class="flex justify-between gap-4">
                             <dt class="text-on-surface-variant">Terakhir Diperbarui</dt>
