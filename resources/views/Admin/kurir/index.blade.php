@@ -7,6 +7,12 @@
 
 @section('content')
 @include('partials.flash-toast')
+@if (session('success'))
+    <div class="bg-secondary-container/15 border border-secondary/30 text-secondary rounded-lg px-4 py-3 text-sm font-body-md">{{ session('success') }}</div>
+@endif
+@if (session('error'))
+    <div class="bg-error/10 border border-error/30 text-error rounded-lg px-4 py-3 text-sm font-body-md">{{ session('error') }}</div>
+@endif
 
 <div class="space-y-section-gap">
     <div class="flex items-start gap-3 p-4 border border-gold-accent/30 bg-gold-accent/10 rounded-lg">
@@ -86,10 +92,7 @@
                             </label>
                             @if ($courier->store_id)
                                 <button type="button" data-modal-open="modal-edit-kurir-{{ $courier->courier_id }}" class="px-3 py-1.5 border border-gold-accent/40 text-gold-accent text-[10px] font-bold uppercase rounded hover:bg-gold-accent/10 transition-colors">Edit</button>
-                                <form method="POST" action="{{ route('admin.kurir.courier.destroy', $courier->courier_id) }}" onsubmit="return confirm('Hapus kurir {{ $courier->nama_kurir }}?');" class="inline">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="px-3 py-1.5 bg-error/10 border border-error/20 text-error text-[10px] font-bold uppercase rounded hover:bg-error/20 transition-colors">Hapus</button>
-                                </form>
+                                <button type="button" data-modal-open="modal-del-kurir-{{ $courier->courier_id }}" class="px-3 py-1.5 bg-error/10 border border-error/20 text-error text-[10px] font-bold uppercase rounded hover:bg-error/20 transition-colors">Hapus</button>
                             @else
                                 <span class="text-[10px] uppercase text-on-surface-variant border border-muted-border rounded px-2 py-1">Global</span>
                             @endif
@@ -114,10 +117,7 @@
                                         @if ($service->store_id)
                                             <div class="sm:col-span-3 flex gap-2">
                                                 <button type="button" data-modal-open="modal-edit-layanan-{{ $service->shipping_service_id }}" class="px-3 py-1.5 border border-gold-accent/40 text-gold-accent text-[10px] font-bold uppercase rounded hover:bg-gold-accent/10 transition-colors">Edit Layanan</button>
-                                                <form method="POST" action="{{ route('admin.kurir.layanan.destroy', $service->shipping_service_id) }}" onsubmit="return confirm('Hapus layanan {{ $service->nama_layanan }}?');" class="inline">
-                                                    @csrf @method('DELETE')
-                                                    <button type="submit" class="px-3 py-1.5 bg-error/10 border border-error/20 text-error text-[10px] font-bold uppercase rounded hover:bg-error/20 transition-colors">Hapus</button>
-                                                </form>
+                                                <button type="button" data-modal-open="modal-del-layanan-{{ $service->shipping_service_id }}" class="px-3 py-1.5 bg-error/10 border border-error/20 text-error text-[10px] font-bold uppercase rounded hover:bg-error/20 transition-colors">Hapus</button>
                                             </div>
                                         @endif
                                     </div>
@@ -136,8 +136,43 @@
     </section>
 </div>
 
+{{-- Modal hapus kurir (loop SEMUA kurir karena layanan toko bisa nempel di kurir global) --}}
+@foreach ($couriers->whereNotNull('store_id') as $courierDel)
+    <div id="modal-del-kurir-{{ $courierDel->courier_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+        <form method="POST" action="{{ route('admin.kurir.courier.destroy', $courierDel->courier_id) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+            @csrf @method('DELETE')
+            <p class="raliva-label text-error">Hapus Kurir</p>
+            <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $courierDel->nama_kurir }}</h3>
+            <p class="text-sm text-on-surface-variant mt-3">Yakin ingin menghapus kurir ini? Tindakan tidak dapat dibatalkan.</p>
+            <div class="flex gap-3 mt-6">
+                <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
+                <button type="submit" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error hover:text-white transition-colors">Ya, Hapus</button>
+            </div>
+        </form>
+    </div>
+@endforeach
+@foreach ($couriers as $courierDel)
+    @foreach ($courierDel->services->whereNotNull('store_id') as $serviceDel)
+        <div id="modal-del-layanan-{{ $serviceDel->shipping_service_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+            <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+            <form method="POST" action="{{ route('admin.kurir.layanan.destroy', $serviceDel->shipping_service_id) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+                @csrf @method('DELETE')
+                <p class="raliva-label text-error">Hapus Layanan</p>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $serviceDel->nama_layanan }}</h3>
+                <p class="text-sm text-on-surface-variant mt-3">Yakin ingin menghapus layanan ini dari {{ $courierDel->nama_kurir }}? Tindakan tidak dapat dibatalkan.</p>
+                <div class="flex gap-3 mt-6">
+                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error hover:text-white transition-colors">Ya, Hapus</button>
+                </div>
+            </form>
+        </div>
+    @endforeach
+@endforeach
+
 @foreach ($couriers->whereNotNull('store_id') as $courier)
     <div id="modal-edit-kurir-{{ $courier->courier_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+        {{-- Modal kurir: hanya kurir milik toko (global read-only) --}}
         <div class="absolute inset-0 bg-black/50" data-modal-close></div>
         <form method="POST" action="{{ route('admin.kurir.courier.update', $courier->courier_id) }}" class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
             @csrf @method('PUT')
@@ -165,13 +200,17 @@
             </div>
         </form>
     </div>
-    @foreach ($courier->services->whereNotNull('store_id') as $service)
+@endforeach
+
+{{-- Modal edit layanan: loop SEMUA kurir karena layanan milik toko bisa nempel di kurir global --}}
+@foreach ($couriers as $courierSvc)
+    @foreach ($courierSvc->services->whereNotNull('store_id') as $service)
         <div id="modal-edit-layanan-{{ $service->shipping_service_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/50" data-modal-close></div>
             <form method="POST" action="{{ route('admin.kurir.layanan.update', $service->shipping_service_id) }}" class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
                 @csrf @method('PUT')
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading">Edit Layanan</h3>
-                <p class="text-xs text-on-surface-variant mt-1">{{ $courier->nama_kurir }}</p>
+                <p class="text-xs text-on-surface-variant mt-1">{{ $courierSvc->nama_kurir }}</p>
                 <div class="space-y-4 mt-5">
                     <div>
                         <label class="block raliva-label mb-2">Nama Layanan *</label>
