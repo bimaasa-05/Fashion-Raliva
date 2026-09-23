@@ -12,9 +12,7 @@ class ProdukController extends Controller
     {
         $products = Product::query()
             ->with(['store:store_id,nama_toko', 'category:category_id,nama_kategori', 'images' => fn ($q) => $q->orderBy('urutan'), 'variants', 'adSlot'])
-            ->orderByRaw("(SELECT COUNT(*) FROM ad_slots AS s WHERE s.product_id = products.product_id AND s.status = 'aktif' AND s.tanggal_mulai IS NOT NULL AND s.tanggal_selesai IS NOT NULL AND s.tanggal_mulai <= '" . now()->toDateString() . "' AND s.tanggal_selesai >= '" . now()->toDateString() . "') DESC")
-            ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'ditolak' THEN 1 WHEN 'nonaktif' THEN 2 ELSE 3 END")
-            ->orderByDesc('updated_at')
+            ->orderByDesc('created_at')
             ->get();
 
         $stats = [

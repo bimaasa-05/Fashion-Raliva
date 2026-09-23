@@ -243,7 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const scope = document.querySelector('[data-table-scope]');
     if (!scope) return;
 
-    const rows = Array.from(scope.querySelectorAll('tr[data-table-row], article[data-table-row]'));
+    const rows = Array.from(scope.querySelectorAll('tr[data-table-row]'));
+    const cards = Array.from(scope.querySelectorAll('article[data-table-row]'));
     const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
     const searchInput = document.getElementById('produk-search');
     const clearBtn = document.getElementById('clear-search');
@@ -260,19 +261,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const term = searchInput.value.trim().toLowerCase();
         let visible = 0;
 
-        rows.forEach((row) => {
+        const each = (el) => {
             const matchStatus = activeStatus === 'semua' || activeStatus === 'iklan'
-                ? (activeStatus === 'iklan' ? row.getAttribute('data-iklan') === '1' : true)
-                : row.getAttribute('data-status') === activeStatus;
-            const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
+                ? (activeStatus === 'iklan' ? el.getAttribute('data-iklan') === '1' : true)
+                : el.getAttribute('data-status') === activeStatus;
+            const matchSearch = !term || (el.getAttribute('data-search') || '').includes(term);
             const show = matchStatus && matchSearch;
-            row.classList.toggle('hidden', !show);
-            if (show) {
+            el.classList.toggle('hidden', !show);
+            return show;
+        };
+
+        rows.forEach((row) => {
+            if (each(row)) {
                 visible++;
                 const num = row.querySelector('.row-num');
                 if (num) num.textContent = visible;
             }
         });
+        cards.forEach(each);
 
         countEl.textContent = visible;
         emptySearch.classList.toggle('hidden', visible > 0);

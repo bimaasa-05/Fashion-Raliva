@@ -39,7 +39,6 @@ class SlotProdukController extends Controller
 
         $packagesQuery = ProductSlotPackage::withCount('subscriptions')->orderByDesc('slot_package_id');
         $purchaseRequestsQuery = SlotPurchaseRequest::with(['store:store_id,nama_toko', 'handler:user_id,nama_lengkap'])
-            ->orderByRaw('CASE status WHEN "pending" THEN 0 ELSE 1 END')
             ->orderByDesc('diajukan_pada');
         if ($q !== '') {
             $packagesQuery->where('nama_paket', 'like', "%{$q}%");

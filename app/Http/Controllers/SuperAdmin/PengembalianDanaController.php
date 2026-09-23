@@ -17,7 +17,6 @@ class PengembalianDanaController extends Controller
     {
         $query = Refund::query()
             ->with(['order.store', 'payment', 'requester'])
-            ->orderByRaw("CASE status WHEN 'requested' THEN 0 WHEN 'disetujui' THEN 1 WHEN 'escalated' THEN 2 ELSE 3 END")
             ->orderByDesc('diajukan_pada');
 
         $stats = [

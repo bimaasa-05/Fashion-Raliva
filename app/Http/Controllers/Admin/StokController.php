@@ -15,7 +15,7 @@ class StokController extends Controller
         $stocks = WarehouseStock::with(['productVariant.product', 'warehouse'])
             ->whereHas('warehouse', fn($q) => $q->whereIn('store_id', $storeIds))
             ->orderByRaw("CASE WHEN jumlah_stok <= stok_minimum THEN 0 ELSE 1 END")
-            ->orderByRaw('jumlah_stok ASC')
+            ->orderByDesc('updated_at')
             ->paginate(15);
 
         return view('Admin.stok.index', compact('stocks'));

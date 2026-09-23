@@ -28,7 +28,6 @@ class ModerasiProdukController extends Controller
                 in_array($status, [Product::STATUS_PENDING, Product::STATUS_DITOLAK], true),
                 fn ($query) => $query->where('status', $status)
             )
-            ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'ditolak' THEN 1 ELSE 2 END")
             ->orderByDesc('updated_at')
             ->get();
 

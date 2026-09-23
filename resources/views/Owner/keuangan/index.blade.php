@@ -70,25 +70,25 @@
                 </div>
             </div>
             <div data-reveal-group class="grid grid-cols-2 md:grid-cols-5 gap-gutter">
-                <div data-reveal class="bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
+                <div data-reveal class="min-w-0 bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
                     <span class="text-on-surface-variant font-label-sm text-[12px] uppercase">Total Omzet <span class="normal-case text-[10px] italic text-gold-accent/70">Revenue</span></span>
-                    <span class="raliva-figure text-[24px] text-on-surface">{{ $fmt($margin['revenue']) }}</span>
+                    <span class="raliva-figure text-[24px] text-on-surface break-words">{{ $fmt($margin['revenue']) }}</span>
                 </div>
-                <div data-reveal class="bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
+                <div data-reveal class="min-w-0 bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
                     <span class="text-on-surface-variant font-label-sm text-[12px] uppercase">Laba Kotor <span class="normal-case text-[10px] italic text-gold-accent/70">Gross Profit</span></span>
-                    <span class="raliva-figure text-[24px] text-secondary">{{ $fmt($margin['gross']) }}</span>
+                    <span class="raliva-figure text-[24px] text-secondary break-words">{{ $fmt($margin['gross']) }}</span>
                 </div>
-                <div data-reveal class="bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
+                <div data-reveal class="min-w-0 bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
                     <span class="text-on-surface-variant font-label-sm text-[12px] uppercase">Laba Operasional <span class="normal-case text-[10px] italic text-gold-accent/70">EBITDA</span></span>
-                    <span class="raliva-figure text-[24px] text-on-surface">{{ $fmt($margin['ebitda']) }}</span>
+                    <span class="raliva-figure text-[24px] text-on-surface break-words">{{ $fmt($margin['ebitda']) }}</span>
                 </div>
-                <div data-reveal class="bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
+                <div data-reveal class="min-w-0 bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
                     <span class="text-on-surface-variant font-label-sm text-[12px] uppercase">Laba Sebelum Pajak <span class="normal-case text-[10px] italic text-gold-accent/70">EBT</span></span>
-                    <span class="raliva-figure text-[24px] text-on-surface">{{ $fmt($margin['ebt']) }}</span>
+                    <span class="raliva-figure text-[24px] text-on-surface break-words">{{ $fmt($margin['ebt']) }}</span>
                 </div>
-                <div data-reveal class="bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
+                <div data-reveal class="min-w-0 bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
                     <span class="text-on-surface-variant font-label-sm text-[12px] uppercase">Laba Bersih <span class="normal-case text-[10px] italic text-gold-accent/70">Net Profit</span></span>
-                    <span class="raliva-figure text-[24px] text-gold-accent">{{ $fmt($margin['net']) }}</span>
+                    <span class="raliva-figure text-[24px] text-gold-accent break-words">{{ $fmt($margin['net']) }}</span>
                 </div>
             </div>
         </section>

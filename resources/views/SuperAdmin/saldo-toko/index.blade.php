@@ -243,7 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ---- Scope: Mutasi Terbaru ---- */
     const mutasiScope = document.querySelector('[data-mutasi-scope]');
     if (mutasiScope) {
-        const rows = Array.from(mutasiScope.querySelectorAll('tr[data-table-row], article[data-table-row]'));
+        const rows = Array.from(mutasiScope.querySelectorAll('tr[data-table-row]'));
+        const cards = Array.from(mutasiScope.querySelectorAll('article[data-table-row]'));
         const chipBtns = document.querySelectorAll('#mutasi-chip-group .chip-btn');
         const searchInput = document.getElementById('mutasi-search');
         const clearBtn = document.getElementById('mutasi-clear-search');
@@ -257,17 +258,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const term = searchInput.value.trim().toLowerCase();
             let visible = 0;
 
-            rows.forEach((row) => {
-                const matchChip = activeChip === 'semua' || row.getAttribute('data-status') === activeChip;
-                const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
+            const each = (el) => {
+                const matchChip = activeChip === 'semua' || el.getAttribute('data-status') === activeChip;
+                const matchSearch = !term || (el.getAttribute('data-search') || '').includes(term);
                 const show = matchChip && matchSearch;
-                row.classList.toggle('hidden', !show);
-                if (show) {
+                el.classList.toggle('hidden', !show);
+                return show;
+            };
+
+            rows.forEach((row) => {
+                if (each(row)) {
                     visible++;
                     const num = row.querySelector('.row-num');
                     if (num) num.textContent = visible;
                 }
             });
+            cards.forEach(each);
 
             countEl.textContent = visible;
             emptySearch.classList.toggle('hidden', visible > 0 || rows.length === 0);

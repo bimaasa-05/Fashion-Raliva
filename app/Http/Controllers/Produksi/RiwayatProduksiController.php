@@ -47,7 +47,6 @@ class RiwayatProduksiController extends Controller
         }
 
         $orders = $query
-            ->orderByRaw("CASE status WHEN 'siap_kirim' THEN 0 WHEN 'dikirim' THEN 1 ELSE 2 END")
             ->orderByDesc('created_at')
             ->paginate(15)
             ->withQueryString();

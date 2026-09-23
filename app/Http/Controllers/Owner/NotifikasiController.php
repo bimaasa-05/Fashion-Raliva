@@ -2,30 +2,23 @@
 
 namespace App\Http\Controllers\Owner;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\NotifikasiController as RootNotifikasiController;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class NotifikasiController extends Controller
+class NotifikasiController extends RootNotifikasiController
 {
     public function index(Request $request)
     {
-        $userId = Auth::id();
+        $notifications = Notification::with('aktor:user_id,nama_lengkap,foto_profil')
+            ->forUser(Auth::id())
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
 
-        $today = Notification::where('user_id', $userId)
-            ->whereDate('created_at', now()->toDateString())
-            ->orderByDesc('created_at')
-            ->get();
-
-        $earlier = Notification::where('user_id', $userId)
-            ->whereDate('created_at', '<', now()->toDateString())
-            ->orderByDesc('created_at')
-            ->limit(20)
-            ->get();
-
-        $unread = Notification::where('user_id', $userId)->whereNull('dibaca_pada')->count();
-
-        return view('Owner.notifikasi.index', compact('today', 'earlier', 'unread'));
+        return view('Owner.notifikasi.index', [
+            'notifications' => $notifications,
+        ]);
     }
 }

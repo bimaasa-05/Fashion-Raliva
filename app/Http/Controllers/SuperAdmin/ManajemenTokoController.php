@@ -38,7 +38,6 @@ class ManajemenTokoController extends Controller
             ->withCount(['products', 'orders'])
             ->with('documents')
             ->when($status !== 'semua', fn ($query) => $query->where('status', $status))
-            ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'aktif' THEN 1 WHEN 'nonaktif' THEN 2 ELSE 3 END")
             ->orderByDesc('created_at');
 
         $paginated = $storesQuery->paginate(20)->withQueryString();
