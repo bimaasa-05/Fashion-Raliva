@@ -454,17 +454,9 @@ class DataPesananController extends Controller
             ]);
         }
 
-        $bolehAmbil = [
-            Order::STATUS_DIBAYAR,
-            Order::STATUS_MENUNGGU_PRODUKSI,
-            Order::STATUS_DIPROSES,
-            Order::STATUS_SIAP_KIRIM,
-            Order::STATUS_DIKIRIM,
-        ];
-
-        if (! in_array($pesanan->status, $bolehAmbil, true)) {
+        if ($pesanan->status !== Order::STATUS_SIAP_KIRIM) {
             return back()->with('toast', [
-                'message' => 'Pesanan dengan status ini tidak dapat ditandai selesai/diambil.',
+                'message' => 'Pesanan dapat ditandai selesai setelah QC + packing (status Siap Kirim).',
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -475,10 +467,10 @@ class DataPesananController extends Controller
 
         $lama = $pesanan->only(['status']);
 
-        DB::transaction(function () use ($pesanan, $data, $bolehAmbil) {
+        DB::transaction(function () use ($pesanan, $data) {
             $locked = Order::whereKey($pesanan->order_id)->lockForUpdate()->firstOrFail();
 
-            if (! in_array($locked->status, $bolehAmbil, true)) {
+            if ($locked->status !== Order::STATUS_SIAP_KIRIM) {
                 throw new \RuntimeException('Status pesanan berubah, tidak dapat diselesaikan.');
             }
 
