@@ -231,6 +231,7 @@
     :root           { --btn-gold-bg:#8B1E3F; --btn-gold-text:#ffffff; }
     html.theme-dark { --btn-gold-bg:#6D1428; --btn-gold-text:#ffffff; }
     #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(139,30,63,.10); }
+    @media (min-width:1024px){ #drawer-panel{ transform:none !important; } }
     html.theme-dark #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(163,38,63,.16); }
   </style>
   </head>
@@ -639,6 +640,7 @@
     </form>
 </div>
 </div>
+</div><!-- /#chat-container -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var els = document.querySelectorAll('.reveal-up');
@@ -711,11 +713,8 @@
         container.classList.add('raliva-chat-in');
         panel.classList.add('raliva-chat-in-sheet');
         document.body.style.overflow = 'hidden';
-        // Blur & disable sidebar like Super Admin
         const drawer = document.getElementById('drawer-panel');
         if (drawer) { drawer.style.filter = 'blur(2px)'; drawer.style.pointerEvents = 'none'; drawer.style.opacity = '0.7'; }
-        const drawerOverlay = document.getElementById('drawer-overlay');
-        if (drawerOverlay) drawerOverlay.classList.add('hidden');
 
         if (window.autoGrowChatInput) {
             requestAnimationFrame(function () {
@@ -1687,11 +1686,19 @@
     });
 
     document.addEventListener('DOMContentLoaded', function () {
+        var _drawer = document.getElementById('drawer-panel');
+        if (_drawer) { _drawer.style.filter = ''; _drawer.style.pointerEvents = ''; _drawer.style.opacity = ''; }
         var params = new URLSearchParams(window.location.search);
         var openId = params.get('open');
         if (openId) {
             var card = document.querySelector('[data-open-id="' + openId + '"]');
             if (card) openChatFromCard(card);
+            // Bersihkan ?open= agar refresh tidak membuka ulang modal.
+            try {
+                var cleanUrl = new URL(window.location.href);
+                cleanUrl.searchParams.delete('open');
+                window.history.replaceState(null, '', cleanUrl.toString());
+            } catch (_) {}
         }
     });
 </script>
