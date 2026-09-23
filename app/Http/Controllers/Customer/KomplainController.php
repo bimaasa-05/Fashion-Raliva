@@ -28,7 +28,7 @@ class KomplainController extends Controller
     }
 
     /**
-     * Form komplain baru, opsional terikat pada satu pesanan.
+     * Form komplain baru — pesanan terkunci bila dibuka dari order-tracking (?order=).
      */
     public function create(Request $request)
     {
@@ -37,13 +37,24 @@ class KomplainController extends Controller
             ? Auth::user()->orders()->with('store')->find($orderId)
             : null;
 
+        // Satu pesanan = satu komplain: langsung arahkan ke thread yang sudah ada.
+        if ($order && $order->complaints()->exists()) {
+            $existing = $order->complaints()->orderByDesc('complaint_id')->first();
+
+            return redirect()->route('customer.komplain', ['open' => $existing->complaint_id])
+                ->with('toast', ['message' => 'Pesanan ini sudah memiliki komplain. Silakan lanjutkan di thread yang ada.', 'icon' => 'info']);
+        }
+
+        // Komplain hanya untuk pesanan yang sudah diterima (selesai).
+        $locked = $order && $order->status === Order::STATUS_SELESAI;
+
         $eligibleOrders = Auth::user()->orders()
             ->with('store')
-            ->whereIn('orders.status', [Order::STATUS_DIKIRIM, Order::STATUS_SELESAI])
+            ->where('orders.status', Order::STATUS_SELESAI)
             ->orderByDesc('orders.created_at')
             ->get();
 
-        return view('customer.komplain.create', compact('order', 'eligibleOrders'));
+        return view('customer.komplain.create', compact('order', 'eligibleOrders', 'locked'));
     }
 
     /**
@@ -72,6 +83,19 @@ class KomplainController extends Controller
         ]);
 
         $order = Auth::user()->orders()->with('store')->findOrFail($data['order_id']);
+
+        if ($order->status !== Order::STATUS_SELESAI) {
+            return back()
+                ->withErrors(['order_id' => 'Komplain hanya dapat diajukan untuk pesanan yang sudah diterima.'])
+                ->withInput();
+        }
+
+        // Satu pesanan = satu komplain: tolak duplikat, arahkan ke thread yang sudah ada.
+        $existing = $order->complaints()->orderByDesc('complaint_id')->first();
+        if ($existing) {
+            return redirect()->route('customer.komplain', ['open' => $existing->complaint_id])
+                ->with('toast', ['message' => 'Pesanan ini sudah memiliki komplain. Silakan lanjutkan di thread yang ada.', 'icon' => 'info']);
+        }
 
         $complaint = DB::transaction(function () use ($order, $data) {
             $complaint = Complaint::create([
