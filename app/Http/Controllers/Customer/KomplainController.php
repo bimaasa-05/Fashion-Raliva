@@ -253,6 +253,21 @@ class KomplainController extends Controller
             return response()->json(['message' => 'Komplain ini sudah selesai.'], 422);
         }
 
+        // Anti-spam: maksimal 3 balasan beruntun per customer.
+        // Dihitung sejak balasan staff terakhir (atau pesan pertama bila belum ada balasan);
+        // reset otomatis setiap Admin/Owner membalas.
+        $firstId = (int) ComplaintMessage::where('complaint_id', $komplain->complaint_id)->min('complaint_message_id');
+        $lastStaffId = (int) ComplaintMessage::where('complaint_id', $komplain->complaint_id)
+            ->where('sender_id', '!=', $komplain->user_id)
+            ->max('complaint_message_id');
+        $consecutive = ComplaintMessage::where('complaint_id', $komplain->complaint_id)
+            ->where('complaint_message_id', '>', max($lastStaffId, $firstId))
+            ->where('sender_id', $komplain->user_id)
+            ->count();
+        if ($consecutive >= 3) {
+            return response()->json(['message' => 'Batas 3 balasan tercapai. Tunggu balasan toko untuk melanjutkan.'], 422);
+        }
+
         $data = $request->validate([
             'pesan' => 'required|string|min:3|max:2000',
         ], [
