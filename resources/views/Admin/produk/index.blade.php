@@ -513,8 +513,9 @@
                 lab.innerHTML = `
                     <input type="file" name="foto_produk[]" accept="image/*" class="hidden" data-foto-input onchange="previewFotoSlot(this)" />
                     <img alt="" class="hidden absolute inset-0 w-full h-full object-cover" data-foto-preview />
-                    <span class="material-symbols-outlined text-[22px] text-on-surface-variant group-hover:text-gold-accent transition-colors" data-foto-icon>add_photo_alternate</span>
+                    <span class="material-symbols-outlined text-[22px] text-on-surface-variant/60 group-hover:text-gold-accent transition-colors animate-[spin_2.5s_linear_infinite] motion-reduce:animate-none" data-foto-icon>progress_activity</span>
                     <span class="text-[10px] text-on-surface-variant" data-foto-label>Foto Baru</span>
+                    <span class="hidden absolute top-1 left-1 w-6 h-6 rounded-full bg-secondary text-white items-center justify-center" data-foto-check><span class="material-symbols-outlined text-[14px]">check_circle</span></span>
                     <button type="button" class="hidden absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white items-center justify-center hover:bg-error transition-colors" data-foto-hapus title="Hapus foto" onclick="hapusFotoSlot(event, this)"><span class="material-symbols-outlined text-[14px]">close</span></button>
                 `;
                 grid.appendChild(lab);
@@ -722,8 +723,9 @@
                     <label class="foto-slot aspect-[3/4] rounded-lg border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-gold-accent hover:bg-surface-container-low transition-colors group relative overflow-hidden" data-foto-slot>
                         <input type="file" name="foto_produk[]" accept="image/*" class="hidden" data-foto-input onchange="previewFotoSlot(this)" />
                         <img alt="" class="hidden absolute inset-0 w-full h-full object-cover" data-foto-preview />
-                        <span class="material-symbols-outlined text-[22px] text-on-surface-variant group-hover:text-gold-accent transition-colors" data-foto-icon>add_photo_alternate</span>
+                        <span class="material-symbols-outlined text-[22px] text-on-surface-variant/60 group-hover:text-gold-accent transition-colors animate-[spin_2.5s_linear_infinite] motion-reduce:animate-none" data-foto-icon>progress_activity</span>
                         <span class="text-[10px] text-on-surface-variant" data-foto-label>Foto {{ $i + 1 }}</span>
+                        <span class="hidden absolute top-1 left-1 w-6 h-6 rounded-full bg-secondary text-white items-center justify-center" data-foto-check><span class="material-symbols-outlined text-[14px]">check_circle</span></span>
                         <button type="button" class="hidden absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white items-center justify-center hover:bg-error transition-colors" data-foto-hapus title="Hapus foto" onclick="hapusFotoSlot(event, this)"><span class="material-symbols-outlined text-[14px]">close</span></button>
                     </label>
                 @endfor
@@ -1200,6 +1202,9 @@ function previewFotoSlot(input) {
         label.classList.add('hidden');
         hapus.classList.remove('hidden');
         hapus.classList.add('flex');
+        const check = slot.querySelector('[data-foto-check]');
+        check?.classList.remove('hidden');
+        check?.classList.add('flex');
         slot.classList.add('border-gold-accent');
     }
     updateFotoCount();
@@ -1221,6 +1226,9 @@ function hapusFotoSlot(e, btn) {
     slot.querySelector('[data-foto-label]').classList.remove('hidden');
     btn.classList.add('hidden');
     btn.classList.remove('flex');
+    const check = slot.querySelector('[data-foto-check]');
+    check?.classList.add('hidden');
+    check?.classList.remove('flex');
     slot.classList.remove('border-gold-accent');
     updateFotoCount();
     if (slot.closest('#edit-foto-slot-grid') && typeof window.__editFotoRefresh === 'function') window.__editFotoRefresh();
