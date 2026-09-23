@@ -49,6 +49,7 @@ class PeringkatIklanController extends Controller
             return back()->with('error', 'Anda belum memiliki toko.');
         }
 
+        $request->merge(['nominal_bid' => str_replace('.', '', (string) $request->input('nominal_bid', ''))]);
         $data = $request->validate([
             'product_id' => ['required', 'exists:products,product_id'],
             'nominal_bid' => ['required', 'numeric', 'min:100000'],
