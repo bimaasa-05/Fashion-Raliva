@@ -118,7 +118,7 @@
                         <span class="font-title-md text-title-md text-on-surface">{{ $log->aksi }}</span>
                         <span class="text-xs text-on-surface-variant mt-1 sm:mt-0 font-label-sm uppercase tracking-wider">{{ $waktu }}</span>
                     </div>
-                    <div class="p-4 bg-surface-container-low border border-muted-border rounded-DEFAULT mt-2 card-premium">
+<div class="p-4 bg-surface-container-low border border-muted-border rounded-lg mt-2 card-premium">
                         <div class="text-sm">
                             @if($log->user)
                                 <span class="font-bold text-on-surface">{{ $log->user->nama_lengkap }}</span>
@@ -135,7 +135,7 @@
                             </div>
                         @endif
                         <div class="mt-3 flex gap-2">
-                            <span class="inline-block px-2 py-1 bg-surface-container-high text-on-surface-variant text-[10px] uppercase font-bold tracking-wider rounded-DEFAULT">{{ $tag }}</span>
+                            <span class="inline-block px-2 py-1 bg-surface-container-high text-on-surface-variant text-[10px] uppercase font-bold tracking-wider rounded-full">{{ $tag }}</span>
                         </div>
                     </div>
                 </div>
@@ -176,10 +176,10 @@
             '<div class="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-1">' +
             '<span class="font-title-md text-title-md text-on-surface">' + item.aksi + '</span>' +
             '<span class="text-xs text-on-surface-variant mt-1 sm:mt-0 font-label-sm uppercase tracking-wider">' + item.waktu + '</span></div>' +
-            '<div class="p-4 bg-surface-container-low border border-muted-border rounded-DEFAULT mt-2 card-premium">' +
+            '<div class="p-4 bg-surface-container-low border border-muted-border rounded-lg mt-2 card-premium">' +
             '<div class="text-sm">' + user + item.deskripsi + '</div>' + perubahan +
             '<div class="mt-3 flex gap-2">' +
-            '<span class="inline-block px-2 py-1 bg-surface-container-high text-on-surface-variant text-[10px] uppercase font-bold tracking-wider rounded-DEFAULT">' + item.tag + '</span>' +
+            '<span class="inline-block px-2 py-1 bg-surface-container-high text-on-surface-variant text-[10px] uppercase font-bold tracking-wider rounded-full">' + item.tag + '</span>' +
             '</div></div></div></div></div>';
     }
 

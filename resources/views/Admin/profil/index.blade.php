@@ -292,9 +292,9 @@
         @else
             @php
                 $storeBadgeMap = [
-                    \App\Models\Store::STATUS_AKTIF => ['label' => 'Aktif', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-                    \App\Models\Store::STATUS_PENDING => ['label' => 'Pending', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
-                    \App\Models\Store::STATUS_NONAKTIF => ['label' => 'Nonaktif', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                    \App\Models\Store::STATUS_AKTIF => ['label' => 'Aktif', 'class' => \App\Support\StatusStyle::CLASS_SUCCESS],
+                    \App\Models\Store::STATUS_PENDING => ['label' => 'Pending', 'class' => \App\Support\StatusStyle::CLASS_ACCENT],
+                    \App\Models\Store::STATUS_NONAKTIF => ['label' => 'Nonaktif', 'class' => \App\Support\StatusStyle::CLASS_ERROR],
                     \App\Models\Store::STATUS_DITOLAK => ['label' => 'Ditolak', 'class' => 'bg-error/10 text-error border-error/20'],
                 ];
             @endphp

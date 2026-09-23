@@ -66,7 +66,7 @@
                     $metodeIcon = str_contains($metodeNama, 'qris') ? 'qr_code_2' : (str_contains($metodeNama, 'saldo') || str_contains($metodeNama, 'wallet') || str_contains($metodeNama, 'e-wallet') || str_contains($metodeNama, 'dompet') ? 'account_balance_wallet' : (str_contains($metodeNama, 'tunai') || str_contains($metodeNama, 'cash') || str_contains($metodeNama, 'cod') ? 'payments' : (str_contains($metodeNama, 'bank') || str_contains($metodeNama, 'transfer') ? 'account_balance' : 'receipt_long')));
                     $statusBadge = [
                         'menunggu' => ['label' => 'Menunggu', 'icon' => 'hourglass_top', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
-                        'diterima' => ['label' => 'Diterima', 'icon' => 'check_circle', 'class' => 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30'],
+                        'diterima' => ['label' => 'Diterima', 'icon' => 'check_circle', 'class' => 'bg-success/10 text-success border-success/20'],
                         'ditolak' => ['label' => 'Ditolak', 'icon' => 'cancel', 'class' => 'bg-error/10 text-error border-error/20'],
                     ][$activeTab] ?? ['label' => ucfirst($activeTab), 'icon' => 'info', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'];
                 @endphp

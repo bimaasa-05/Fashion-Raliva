@@ -6,6 +6,7 @@
     <meta name="user-id" content="{{ Auth::id() }}" />
     <title>RALIVA - @yield('title', 'Staf Produksi')</title>
     @include('partials.theme-head')
+    @include('partials.brand-status')
     <style>
         [data-reveal] { opacity: 0; transform: translateY(12px); transition: opacity 0.45s ease-out, transform 0.45s ease-out; transition-delay: var(--reveal-delay, 0ms); }
         [data-reveal].revealed { opacity: 1; transform: translateY(0); }

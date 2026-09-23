@@ -51,7 +51,7 @@
                         <p class="font-title-md text-title-md text-gold-accent mt-1">Rp {{ number_format($r->jumlah, 0, ',', '.') }}</p>
                         <p class="text-xs text-on-surface-variant mt-1">Status pesanan: <span class="font-bold text-on-surface">{{ ucfirst(str_replace('_', ' ', $r->order?->status ?? '-')) }}</span> &#8226; Total: Rp {{ number_format((float) ($r->order?->grand_total ?? 0), 0, ',', '.') }} &#8226; {{ $r->payment?->paymentMethod?->nama_metode ?? 'Tunai' }} &#8226; Diajukan {{ $r->diajukan_pada?->diffForHumans() ?? '-' }}</p>
                     </div>
-                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ $r->status === 'escalated' ? 'Eskalasi' : 'Menunggu' }}</span>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">{{ $r->status === 'escalated' ? 'Eskalasi' : 'Menunggu' }}</span>
                 </div>
                 <p class="font-body-md text-sm text-on-surface-variant mb-4 flex-1"><span class="text-on-surface font-bold">{{ $r->requester?->nama_lengkap ?? 'Customer' }}:</span> "{{ $r->alasan }}"</p>
                 <div class="flex gap-3">
@@ -91,9 +91,9 @@
                         <td class="p-4 text-center">
                             @php $st = $r->status; @endphp
                             <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border
-                                @if($st==='disetujui') bg-secondary-container/20 text-secondary border-secondary/20
+                                @if($st==='disetujui') bg-success/10 text-success border-success/20
                                 @elseif($st==='ditolak') bg-error/10 text-error border-error/20
-                                @else bg-surface-container-high text-on-surface-variant border-outline-variant @endif">
+                                @else bg-gold-accent/10 text-gold-accent border-gold-accent/30 @endif">
                                 {{ $st }}
                             </span>
                         </td>
@@ -119,7 +119,7 @@
                             <p class="text-xs text-on-surface-variant mt-0.5">{{ $r->requester?->nama_lengkap ?? '-' }}</p>
                         </div>
                         <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border
-                            @if($st==='disetujui') bg-secondary-container/20 text-secondary border-secondary/20
+                            @if($st==='disetujui') bg-success/10 text-success border-success/20
                             @elseif($st==='ditolak') bg-error/10 text-error border-error/20
                             @else bg-surface-container-high text-on-surface-variant border-outline-variant @endif">
                             {{ $st }}

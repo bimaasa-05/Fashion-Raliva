@@ -9,10 +9,10 @@
 
 @php
     $badgeMap = [
-        \App\Models\Store::STATUS_AKTIF => ['label' => 'Aktif', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        \App\Models\Store::STATUS_PENDING => ['label' => 'Menunggu', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
-        \App\Models\Store::STATUS_NONAKTIF => ['label' => 'Ditangguhkan', 'class' => 'bg-error/10 text-error border-error/20'],
-        \App\Models\Store::STATUS_DITOLAK => ['label' => 'Ditolak', 'class' => 'bg-error/10 text-error border-error/20'],
+        \App\Models\Store::STATUS_AKTIF => ['label' => 'Aktif', 'class' => \App\Support\StatusStyle::badgeClass('aktif')],
+        \App\Models\Store::STATUS_PENDING => ['label' => 'Menunggu', 'class' => \App\Support\StatusStyle::badgeClass('pending')],
+        \App\Models\Store::STATUS_NONAKTIF => ['label' => 'Ditangguhkan', 'class' => \App\Support\StatusStyle::badgeClass('nonaktif')],
+        \App\Models\Store::STATUS_DITOLAK => ['label' => 'Ditolak', 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
     ];
 
     $tabs = [
@@ -156,7 +156,7 @@
     const statusMeta = {
         aktif: {
             chipLabel: 'Aktif',
-            chipClass: 'inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-secondary-container/20 text-secondary border-secondary/20',
+            chipClass: 'inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-success/10 text-success border-success/20',
             verification: 'Terverifikasi'
         },
         pending: {
@@ -333,7 +333,7 @@
             const meta = docMeta[d.jenis] || { label: d.jenis, icon: 'description' };
             const verified = d.status === 'terverifikasi';
             const rejected = d.status === 'ditolak';
-            const badgeClass = verified ? 'bg-secondary-container/20 text-secondary border-secondary/20'
+            const badgeClass = verified ? 'bg-success/10 text-success border-success/20'
                 : (rejected ? 'bg-error/10 text-error border-error/20'
                    : 'bg-surface-container-high text-on-surface-variant border-outline-variant');
             const badgeIcon = verified ? 'check_circle' : (rejected ? 'cancel' : 'schedule');
@@ -376,7 +376,7 @@
             const meta = docMeta[d.jenis] || { label: d.jenis, icon: 'description' };
             const verified = d.status === 'terverifikasi';
             const rejected = d.status === 'ditolak';
-            const badgeClass = verified ? 'bg-secondary-container/20 text-secondary border-secondary/20'
+            const badgeClass = verified ? 'bg-success/10 text-success border-success/20'
                 : (rejected ? 'bg-error/10 text-error border-error/20'
                    : 'bg-surface-container-high text-on-surface-variant border-outline-variant');
             const badgeIcon = verified ? 'check_circle' : (rejected ? 'cancel' : 'schedule');

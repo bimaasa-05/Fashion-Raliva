@@ -87,13 +87,13 @@
                 @forelse ($products as $produk)
                     @php
                         $statusLabel = match ($produk->status) {
-                            'aktif' => ['Disetujui', 'bg-secondary-container/20 text-secondary border-secondary/20'],
-                            'pending' => ['Menunggu', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                            'ditolak' => ['Ditolak', 'bg-error/10 text-error border-error/20'],
-                            'nonaktif' => ['Nonaktif', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                            'draft' => ['Draft', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                            'arsip' => ['Arsip', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                            default => [ucfirst($produk->status), 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                            'aktif' => ['Disetujui', \App\Support\StatusStyle::badgeClass('aktif')],
+                            'pending' => ['Menunggu', \App\Support\StatusStyle::badgeClass('pending')],
+                            'ditolak' => ['Ditolak', \App\Support\StatusStyle::badgeClass('ditolak')],
+                            'nonaktif' => ['Nonaktif', \App\Support\StatusStyle::badgeClass('nonaktif')],
+                            'draft' => ['Draft', \App\Support\StatusStyle::badgeClass('draft')],
+                            'arsip' => ['Arsip', \App\Support\StatusStyle::badgeClass('arsip')],
+                            default => [ucfirst($produk->status), \App\Support\StatusStyle::CLASS_NEUTRAL],
                         };
                         $normFoto = function ($raw) {
                             if (filter_var($raw, FILTER_VALIDATE_URL)) return $raw;
@@ -168,13 +168,13 @@
         @forelse ($products as $produk)
             @php
                 $statusLabel = match ($produk->status) {
-                    'aktif' => ['Disetujui', 'bg-secondary-container/20 text-secondary border-secondary/20'],
-                    'pending' => ['Menunggu', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                    'ditolak' => ['Ditolak', 'bg-error/10 text-error border-error/20'],
-                    'nonaktif' => ['Nonaktif', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                    'draft' => ['Draft', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                    'arsip' => ['Arsip', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                    default => [ucfirst($produk->status), 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                    'aktif' => ['Disetujui', \App\Support\StatusStyle::badgeClass('aktif')],
+                    'pending' => ['Menunggu', \App\Support\StatusStyle::badgeClass('pending')],
+                    'ditolak' => ['Ditolak', \App\Support\StatusStyle::badgeClass('ditolak')],
+                    'nonaktif' => ['Nonaktif', \App\Support\StatusStyle::badgeClass('nonaktif')],
+                    'draft' => ['Draft', \App\Support\StatusStyle::badgeClass('draft')],
+                    'arsip' => ['Arsip', \App\Support\StatusStyle::badgeClass('arsip')],
+                    default => [ucfirst($produk->status), \App\Support\StatusStyle::CLASS_NEUTRAL],
                 };
             @endphp
             <article data-table-row data-status="{{ $produk->status }}" data-iklan="{{ $produk->adSlot ? 1 : 0 }}" data-search="{{ strtolower($produk->nama_produk.' '.($produk->store->nama_toko ?? '').' '.($produk->category->nama_kategori ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">

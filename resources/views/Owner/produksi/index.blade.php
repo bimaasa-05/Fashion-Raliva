@@ -85,9 +85,9 @@
                             </div>
                         </div>
                         @if ($key === 'diproses')
-                            <span class="shrink-0 inline-flex items-center px-2.5 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">{{ $st }}</span>
+                            <span class="shrink-0 inline-flex items-center px-2.5 py-1 rounded-full border {{ \App\Support\StatusStyle::badgeClass($st) }} text-[10px] font-bold uppercase">{{ $st }}</span>
                         @elseif ($key === 'selesai')
-                            <span class="shrink-0 inline-flex items-center px-2.5 py-1 rounded-full bg-deep-onyx text-on-primary text-[10px] font-bold uppercase">{{ $st }}</span>
+                            <span class="shrink-0 inline-flex items-center px-2.5 py-1 rounded-full bg-success/10 text-success border border-success/20 text-[10px] font-bold uppercase">{{ $st }}</span>
                         @else
                             <span class="shrink-0 inline-flex items-center px-2.5 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">{{ $st }}</span>
                         @endif

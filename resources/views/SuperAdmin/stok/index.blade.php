@@ -8,9 +8,9 @@
 
 @php
     $statusBadgeMap = [
-        'aman' => ['label' => 'Aman', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'menipis' => ['label' => 'Menipis', 'class' => 'bg-error/10 text-error border-error/20'],
-        'habis' => ['label' => 'Habis', 'class' => 'bg-error/10 text-error border-error/20'],
+        'aman' => ['label' => 'Aman', 'class' => \App\Support\StatusStyle::badgeClass('aman')],
+        'menipis' => ['label' => 'Menipis', 'class' => \App\Support\StatusStyle::badgeClass('menipis')],
+        'habis' => ['label' => 'Habis', 'class' => \App\Support\StatusStyle::badgeClass('habis')],
     ];
 @endphp
 
@@ -91,7 +91,7 @@
             </thead>
             <tbody class="font-body-md text-sm">
                 @forelse($stocks as $stock)
-                    @php $badge = $statusBadgeMap[$stock->status_stok] ?? ['label' => $stock->status_stok, 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant']; @endphp
+                    @php $badge = $statusBadgeMap[$stock->status_stok] ?? ['label' => $stock->status_stok, 'class' => \App\Support\StatusStyle::CLASS_NEUTRAL]; @endphp
                     <tr data-table-row data-status="{{ $stock->status_stok }}" data-search="{{ strtolower($stock->nama_produk.' '.($stock->sku ?? '').' '.($stock->warna ?? '').' '.($stock->ukuran ?? '').' '.$stock->nama_toko.' '.($stock->nama_gudang ?? '').' '.($stock->nama_supplier ?? '')) }}" class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                         <td class="p-4 text-center text-on-surface-variant font-mono">{{ ($stocks->firstItem() ?? 0) + $loop->index }}</td>
                         <td class="p-4">
@@ -109,7 +109,7 @@
                             <span class="text-on-surface-variant text-xs">-</span>
                             @endif
                         </td>
-                        <td class="p-4 text-center font-bold {{ $stock->status_stok === 'habis' || $stock->status_stok === 'menipis' ? 'text-error' : 'text-on-surface' }}">{{ $stock->jumlah_stok }}</td>
+                        <td class="p-4 text-center font-bold {{ $stock->status_stok === 'habis' ? 'text-error' : ($stock->status_stok === 'menipis' ? 'text-amber-600' : 'text-on-surface') }}">{{ $stock->jumlah_stok }}</td>
                         <td class="p-4 text-center text-on-surface-variant">{{ $stock->jumlah_direservasi }}</td>
                         <td class="p-4 text-center text-on-surface-variant">{{ $stock->stok_minimum }}</td>
                         <td class="p-4 text-center">
@@ -142,7 +142,7 @@
     <!-- Mobile: kartu per item stok -->
     <div class="md:hidden grid grid-cols-1 gap-gutter">
         @forelse($stocks as $stock)
-            @php $badge = $statusBadgeMap[$stock->status_stok] ?? ['label' => $stock->status_stok, 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant']; @endphp
+            @php $badge = $statusBadgeMap[$stock->status_stok] ?? ['label' => $stock->status_stok, 'class' => \App\Support\StatusStyle::CLASS_NEUTRAL]; @endphp
             <article data-table-row data-status="{{ $stock->status_stok }}" data-search="{{ strtolower($stock->nama_produk.' '.($stock->sku ?? '').' '.($stock->warna ?? '').' '.($stock->ukuran ?? '').' '.$stock->nama_toko.' '.($stock->nama_gudang ?? '').' '.($stock->nama_supplier ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
                 <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">inventory_2</span>
                 <div class="flex items-start justify-between gap-3 mb-3">
@@ -172,7 +172,7 @@
                     </div>
                     <div class="flex justify-between gap-3">
                         <dt class="text-on-surface-variant">Stok</dt>
-                        <dd class="font-bold {{ $stock->status_stok === 'habis' || $stock->status_stok === 'menipis' ? 'text-error' : 'text-on-surface' }} text-right">{{ $stock->jumlah_stok }}</dd>
+                        <dd class="font-bold {{ $stock->status_stok === 'habis' ? 'text-error' : ($stock->status_stok === 'menipis' ? 'text-amber-600' : 'text-on-surface') }} text-right">{{ $stock->jumlah_stok }}</dd>
                     </div>
                     <div class="flex justify-between gap-3">
                         <dt class="text-on-surface-variant">Direservasi</dt>
@@ -279,13 +279,13 @@
         if (!scope) return;
 
         const saStatusBadge = (status) => ({
-            'aman': ['Aman', 'bg-secondary-container/20 text-secondary border-secondary/20'],
-            'menipis': ['Menipis', 'bg-error/10 text-error border-error/20'],
+            'aman': ['Aman', 'bg-success/10 text-success border-success/20'],
+            'menipis': ['Menipis', 'bg-amber-500/10 text-amber-600 border-amber-500/30'],
             'habis': ['Habis', 'bg-error/10 text-error border-error/20'],
         }[status] ?? [status, 'bg-surface-container-high text-on-surface-variant border-outline-variant']);
 
         const saSupplierStatusBadge = (status) => ({
-            'aktif': ['Aktif', 'bg-secondary-container/20 text-secondary border-secondary/20'],
+            'aktif': ['Aktif', 'bg-success/10 text-success border-success/20'],
             'verifikasi': ['Verifikasi', 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
         }[status] ?? ['Non-aktif', 'bg-error/10 text-error border-error/25']);
 

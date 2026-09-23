@@ -99,7 +99,7 @@
                         <td class="p-4 text-center text-on-surface font-mono">{{ $s->bahans->sum('jumlah') }}</td>
                         <td class="p-4 text-center">
                             @if($s->status === 'aktif')
-                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aktif</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20">Aktif</span>
                             @else
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/25">Non-aktif</span>
                             @endif

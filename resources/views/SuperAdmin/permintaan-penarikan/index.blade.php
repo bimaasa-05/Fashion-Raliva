@@ -9,10 +9,10 @@
 
 @php
     $badgeMap = [
-        'pending' => ['label' => 'Menunggu', 'class' => 'bg-surface-container-high text-on-surface border-outline-variant'],
-        'disetujui' => ['label' => 'Disetujui', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'dibayar' => ['label' => 'Dibayar', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'ditolak' => ['label' => 'Ditolak', 'class' => 'bg-error/10 text-error border-error/20'],
+        'pending' => ['label' => 'Menunggu', 'class' => \App\Support\StatusStyle::badgeClass('pending')],
+        'disetujui' => ['label' => 'Disetujui', 'class' => \App\Support\StatusStyle::badgeClass('disetujui')],
+        'dibayar' => ['label' => 'Dibayar', 'class' => \App\Support\StatusStyle::badgeClass('dibayar')],
+        'ditolak' => ['label' => 'Ditolak', 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
     ];
 @endphp
 

@@ -7,12 +7,12 @@
 
 @php
     $badgeMap = [
-        \App\Models\Order::STATUS_PENDING_PAYMENT => ['label' => 'Menunggu Bayar', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-        \App\Models\Order::STATUS_MENUNGGU_PRODUKSI => ['label' => 'Menunggu Produksi', 'class' => 'bg-indigo-500/10 text-indigo-600 border-indigo-500/30'],
-        \App\Models\Order::STATUS_DIBAYAR => ['label' => 'Baru', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
-        \App\Models\Order::STATUS_DIPROSES => ['label' => 'Diproses', 'class' => 'bg-amber-500/10 text-amber-600 border-amber-500/30'],
-        \App\Models\Order::STATUS_DIKIRIM => ['label' => 'Dikirim', 'class' => 'bg-sky-500/10 text-sky-600 border-sky-500/30'],
-        \App\Models\Order::STATUS_SELESAI => ['label' => 'Selesai', 'class' => 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30'],
+        \App\Models\Order::STATUS_PENDING_PAYMENT => ['label' => 'Menunggu Bayar', 'class' => \App\Support\StatusStyle::CLASS_ACCENT],
+        \App\Models\Order::STATUS_MENUNGGU_PRODUKSI => ['label' => 'Menunggu Produksi', 'class' => \App\Support\StatusStyle::CLASS_AMBER],
+        \App\Models\Order::STATUS_DIBAYAR => ['label' => 'Baru', 'class' => \App\Support\StatusStyle::CLASS_AMBER],
+        \App\Models\Order::STATUS_DIPROSES => ['label' => 'Diproses', 'class' => \App\Support\StatusStyle::CLASS_AMBER],
+        \App\Models\Order::STATUS_DIKIRIM => ['label' => 'Dikirim', 'class' => \App\Support\StatusStyle::CLASS_SKY],
+        \App\Models\Order::STATUS_SELESAI => ['label' => 'Selesai', 'class' => \App\Support\StatusStyle::CLASS_SUCCESS],
         \App\Models\Order::STATUS_DIBATALKAN => ['label' => 'Dibatalkan', 'class' => 'bg-error/10 text-error border-error/20'],
         \App\Models\Order::STATUS_REFUND => ['label' => 'Refund', 'class' => 'bg-error/10 text-error border-error/20'],
     ];

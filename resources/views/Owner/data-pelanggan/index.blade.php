@@ -226,7 +226,7 @@
             <div class="border border-muted-border rounded-lg p-4 bg-surface-container-low">
                 <div class="flex items-center justify-between gap-3">
                     <span class="font-mono text-sm text-on-surface">{{ $ord->nomor_order }}</span>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase">{{ $ord->status }}</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full border {{ \App\Support\StatusStyle::badgeClass($ord->status) }} text-[10px] font-bold uppercase">{{ $ord->status }}</span>
                 </div>
                 <p class="text-xs text-on-surface-variant mt-1">{{ \Carbon\Carbon::parse($ord->created_at)->translatedFormat('d M Y') }}</p>
                 <ul class="mt-2 space-y-0.5 text-sm text-on-surface">

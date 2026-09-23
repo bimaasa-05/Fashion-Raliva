@@ -129,7 +129,7 @@
                                 @if (in_array($p->status, ['aktif', 'nonaktif', 'draft'], true))
                                     <form method="POST" action="{{ route('owner.produk.status', $p) }}" class="inline">
                                         @csrf
-                                        <select name="status" data-status-select data-current="{{ $p->status }}" title="Ubah status" class="cursor-pointer text-[10px] font-bold uppercase border rounded-full pl-2 pr-6 py-1 {{ $p->status === 'aktif' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : ($p->status === 'nonaktif' ? 'bg-surface-container-high text-on-surface-variant border-outline-variant' : 'bg-gold-accent/15 text-gold-accent border-gold-accent/30') }}">
+                                        <select name="status" data-status-select data-current="{{ $p->status }}" title="Ubah status" class="cursor-pointer text-[10px] font-bold uppercase border rounded-full pl-2 pr-6 py-1 {{ $p->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($p->status === 'nonaktif' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }}">
                                             @foreach (($statusOptions[$p->status] ?? [$p->status]) as $opt)
                                                 <option value="{{ $opt }}" @selected($opt === $p->status)>{{ ucfirst($opt) }}</option>
                                             @endforeach
