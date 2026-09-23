@@ -8,6 +8,12 @@
 
 @section('content')
 @include('partials.flash-toast')
+@if (session('success'))
+    <div class="bg-secondary-container/15 border border-secondary/30 text-secondary rounded-lg px-4 py-3 text-sm font-body-md">{{ session('success') }}</div>
+@endif
+@if (session('error'))
+    <div class="bg-error/10 border border-error/30 text-error rounded-lg px-4 py-3 text-sm font-body-md">{{ session('error') }}</div>
+@endif
 
 <div class="space-y-section-gap">
     {{-- Ringkasan --}}
@@ -92,14 +98,8 @@
                     <div class="flex items-center gap-2 pt-1 mt-auto">
                         <button type="button" data-modal-open="modal-detail-promo-{{ $promo->promotion_id }}" class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Detail</button>
                         <button type="button" data-modal-open="modal-edit-promo-{{ $promo->promotion_id }}" class="px-4 py-2.5 bg-gold-accent/10 border border-gold-accent/30 text-gold-accent rounded-lg text-xs font-bold hover:border-gold-accent transition-colors">Edit</button>
-                        <form method="POST" action="{{ route('admin.promo.toggle', $promo) }}" class="inline">
-                            @csrf
-                            <button type="submit" class="px-3 py-2.5 {{ $promo->status==='aktif' ? 'bg-secondary text-white' : 'bg-surface-container-low border border-muted-border text-on-surface-variant' }} rounded-lg text-xs font-bold transition-colors" title="{{ $promo->status==='aktif' ? 'Nonaktifkan' : 'Aktifkan' }}">{{ $promo->status==='aktif' ? 'Nonaktifkan' : 'Aktifkan' }}</button>
-                        </form>
-                        <form method="POST" action="{{ route('admin.promo.destroy', $promo) }}" onsubmit="return confirm('Hapus promo {{ $promo->kode_promo }}?')" class="inline">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="w-9 h-9 rounded-lg bg-error/10 text-error border border-error/20 hover:bg-error hover:text-white flex items-center justify-center transition-colors" title="Hapus"><span class="material-symbols-outlined text-[16px]">delete</span></button>
-                        </form>
+                        <button type="button" data-modal-open="modal-toggle-promo-{{ $promo->promotion_id }}" class="px-3 py-2.5 {{ $promo->status==='aktif' ? 'bg-secondary text-white' : 'bg-surface-container-low border border-muted-border text-on-surface-variant' }} rounded-lg text-xs font-bold transition-colors" title="{{ $promo->status==='aktif' ? 'Nonaktifkan' : 'Aktifkan' }}">{{ $promo->status==='aktif' ? 'Nonaktifkan' : 'Aktifkan' }}</button>
+                        <button type="button" data-modal-open="modal-del-promo-{{ $promo->promotion_id }}" class="w-9 h-9 rounded-lg bg-error/10 text-error border border-error/20 hover:bg-error hover:text-white flex items-center justify-center transition-colors" title="Hapus"><span class="material-symbols-outlined text-[16px]">delete</span></button>
                     </div>
                 </article>
 
@@ -223,6 +223,35 @@
                             </div>
                         </form>
                     </div>
+                </div>
+                {{-- Modal Toggle Status Promo --}}
+                <div id="modal-toggle-promo-{{ $promo->promotion_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+                    <form method="POST" action="{{ route('admin.promo.toggle', $promo) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+                        @csrf
+                        <p class="raliva-label text-gold-accent">{{ $promo->status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan' }} Promo</p>
+                        <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $promo->kode_promo }}</h3>
+                        <p class="text-sm text-on-surface-variant mt-3">Ubah status promo menjadi <span class="font-bold text-on-surface">{{ $promo->status === 'aktif' ? 'Nonaktif' : 'Aktif' }}</span>?</p>
+                        <div class="flex gap-3 mt-6">
+                            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
+                            <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded btn-premium">Ya, Lanjutkan</button>
+                        </div>
+                    </form>
+                </div>
+
+                {{-- Modal Hapus Promo --}}
+                <div id="modal-del-promo-{{ $promo->promotion_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+                    <form method="POST" action="{{ route('admin.promo.destroy', $promo) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+                        @csrf @method('DELETE')
+                        <p class="raliva-label text-error">Hapus Promo</p>
+                        <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $promo->kode_promo }}</h3>
+                        <p class="text-sm text-on-surface-variant mt-3">Yakin ingin menghapus promo ini? Tindakan tidak dapat dibatalkan.</p>
+                        <div class="flex gap-3 mt-6">
+                            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
+                            <button type="submit" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error hover:text-white transition-colors">Ya, Hapus</button>
+                        </div>
+                    </form>
                 </div>
             @empty
                 <p class="text-on-surface-variant text-sm col-span-full py-8 text-center">Belum ada promo.</p>
