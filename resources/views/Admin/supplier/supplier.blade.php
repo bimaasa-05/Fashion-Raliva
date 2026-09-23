@@ -173,7 +173,7 @@
                 <label class="raliva-label" for="supplierCatatan">Catatan</label>
                 <textarea class="raliva-textarea" id="supplierCatatan" name="catatan" rows="3" placeholder="Syarat pembayaran, minimal order, dsb."></textarea>
             </div>
-            <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
+            <div class="sticky bottom-0 -mx-6 px-6 py-4 bg-surface-container-lowest border-t border-muted-border flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
                 <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
                 <button type="submit" id="supplier-submit-btn" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Simpan Supplier</button>
             </div>
