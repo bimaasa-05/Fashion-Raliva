@@ -118,7 +118,7 @@
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Riwayat Slot</h2>
             <p class="text-on-surface-variant font-body-md text-xs mt-1">Audit trail penambahan kuota — transparan untuk Owner & SuperAdmin.</p>
 
-            <div data-table-wrap class="overflow-x-auto mt-6">
+            <div data-table-wrap class="overflow-x-auto hidden md:block mt-6">
                 <table class="premium-table w-full min-w-[720px] font-body-md text-sm">
                     <thead>
                         <tr class="border-b border-muted-border text-left">
@@ -132,7 +132,7 @@
                     </thead>
                     <tbody>
                         @forelse ($riwayat as $row)
-                            <tr class="border-b border-muted-border last:border-0">
+                            <tr data-table-row class="border-b border-muted-border last:border-0">
                                 <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $row['tanggal']?->translatedFormat('d M Y') ?? '-' }}</td>
                                 <td class="py-3.5 px-4 text-on-surface whitespace-nowrap">{{ $row['tipe'] === 'permintaan' ? 'Beli Fleksibel' : 'Grant ('.$row['tipe'].')' }}</td>
                                 <td class="py-3.5 px-4 text-right font-bold text-gold-accent whitespace-nowrap">+{{ $row['jumlah_slot'] }}</td>
@@ -151,6 +151,39 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <div class="md:hidden grid grid-cols-1 gap-gutter mt-6" data-mobile-list>
+                @forelse ($riwayat as $row)
+                    <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <p class="font-bold text-on-surface text-sm">{{ $row['tipe'] === 'permintaan' ? 'Beli Fleksibel' : 'Grant ('.$row['tipe'].')' }}</p>
+                                <p class="text-xs text-on-surface-variant mt-0.5">{{ $row['tanggal']?->translatedFormat('d M Y') ?? '-' }}</p>
+                            </div>
+                            @if ($row['payment_status'] !== null)
+                                <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full {{ $row['status'] === 'disetujui' ? 'bg-success/10 text-success border-success/20' : ($row['status'] === 'ditolak' ? 'bg-error/10 text-error border-error/30' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }} text-[10px] font-bold uppercase border">{{ $row['status'] }}</span>
+                            @else
+                                <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success border-success/20 text-[10px] font-bold uppercase border">Disetujui</span>
+                            @endif
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-muted-border">
+                            <div>
+                                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Tambahan</p>
+                                <p class="font-bold text-gold-accent mt-0.5">+{{ $row['jumlah_slot'] }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Total Bayar</p>
+                                <p class="font-bold text-on-surface mt-0.5">{{ $row['total_harga'] !== null ? 'Rp '.number_format($row['total_harga'], 0, ',', '.') : '—' }}</p>
+                            </div>
+                        </div>
+                        @if (($row['catatan'] ?? null) !== null)
+                            <p class="text-xs text-on-surface-variant mt-3 pt-3 border-t border-muted-border leading-relaxed">{{ $row['catatan'] }}</p>
+                        @endif
+                    </article>
+                @empty
+                    <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada riwayat slot.</p>
+                @endforelse
             </div>
 
             <div class="mt-6 border border-muted-border rounded-lg p-4 bg-surface-container-low flex items-start gap-3">

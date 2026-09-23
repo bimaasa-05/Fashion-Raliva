@@ -52,7 +52,7 @@
                         <h2 class="font-headline-md text-headline-md text-white tracking-wide">Kelola Platform Raliva</h2>
                         <span class="banner-badge {{ $maintenanceOn ? 'is-on' : 'is-off' }}"><span class="dot"></span>{{ $maintenanceOn ? 'Mode Pemeliharaan Aktif' : 'Semua Sistem Aktif' }}</span>
                     </div>
-                    <p class="banner-desc mt-2 max-w-2xl">Konfigurasi aturan global platform — tarif, ambang pencairan, moderasi, tier peringkat iklan, hingga dokumen legal. Terpisah dari pengaturan tiap toko.</p>
+                    <p class="banner-desc mt-2 max-w-2xl">Konfigurasi aturan global platform — tarif, ambang pencairan, moderasi, batas transaksi, hingga dokumen legal. Terpisah dari pengaturan tiap toko.</p>
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-3 lg:ml-auto shrink-0">
@@ -63,10 +63,6 @@
                 <div class="stat-chip">
                     <span class="stat-chip-label">Biaya Layanan</span>
                     <span class="stat-chip-value">Rp {{ number_format((int) $settings['biaya_layanan']) }}</span>
-                </div>
-                <div class="stat-chip">
-                    <span class="stat-chip-label">Tier Peringkat</span>
-                    <span class="stat-chip-value">{{ count($tiers) }}</span>
                 </div>
             </div>
         </div>
@@ -79,7 +75,6 @@
             <a href="#kartu-keuangan" data-scroll-link="keuangan" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">payments</span> Keuangan</a>
             <a href="#kartu-moderasi" data-scroll-link="moderasi" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">fact_check</span> Moderasi</a>
             <a href="#kartu-batas" data-scroll-link="batas" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">speed</span> Batas</a>
-            <a href="#kartu-tier" data-scroll-link="tier" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">military_tech</span> Tier Peringkat</a>
             <a href="#kartu-legal" data-scroll-link="legal" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">verified_user</span> Dokumen Legal</a>
             <a href="#kartu-help" data-scroll-link="help" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">help_center</span> Pusat Bantuan</a>
         </div>
@@ -204,52 +199,6 @@
             </div>
         </form>
     </div>
-
-    {{--=== Tier Peringkat Iklan ===--}}
-    <section id="kartu-tier" data-scroll-section="tier" class="snap-anchor bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 space-y-gutter card-premium">
-        <div class="flex items-center justify-between gap-4 flex-wrap">
-            <div>
-                <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">military_tech</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Tier Peringkat Iklan</h2></div>
-                <p class="font-body-md text-sm text-on-surface-variant mt-2">Struktur nominal ↔ durasi peringkat produk iklan.</p>
-            </div>
-            <button type="button" onclick="document.getElementById('modal-tier-tambah').classList.remove('hidden'); document.getElementById('modal-tier-tambah').classList.add('flex')" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">+ Tambah Tier</button>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full min-w-[640px] premium-table">
-                <thead>
-                    <tr class="border-b bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="px-3 py-3 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
-                        <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">Min (Rp)</th>
-                        <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">Max (Rp)</th>
-                        <th class="px-3 py-3 text-center text-[10px] font-semibold tracking-widest">Hari</th>
-                        <th class="px-3 py-3 text-right text-[10px] font-semibold tracking-widest">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($tiers as $i => $t)
-                        <tr class="border-b border-muted-border hover:bg-surface-container-low">
-                            <td class="p-3 text-center font-mono text-sm">{{ $i + 1 }}</td>
-                            <td class="p-3 font-mono text-sm">Rp {{ number_format($t['min'], 0, ',', '.') }}</td>
-                            <td class="p-3 font-mono text-sm">{{ $t['max'] ? 'Rp '.number_format($t['max'], 0, ',', '.') : '∞' }}</td>
-                            <td class="p-3 text-center"><span class="inline-flex px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/20 text-xs font-bold">{{ $t['hari'] }} hari</span></td>
-                            <td class="p-3 text-right">
-                                <div class="flex items-center justify-end gap-1">
-                                    <button type="button" onclick="openTierEdit({{ $i }}, {{ $t['min'] }}, '{{ $t['max'] ?? '' }}', {{ $t['hari'] }})" class="px-2.5 py-1.5 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">Edit</button>
-                                    <form method="POST" action="{{ route('superadmin.pengaturan-sistem.tier.destroy', $i) }}" onsubmit="return confirm('Hapus tier ini?')" class="inline-block">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="px-2.5 py-1.5 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">Hapus</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr><td colspan="5" class="p-8 text-center text-on-surface-variant">Belum ada tier.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-        <p class="font-body-md text-xs text-on-surface-variant">Periode dihitung <span class="font-bold text-on-surface">sejak disetujui</span>. Kosongkan Max = ∞. Hanya tier terakhir yang boleh Max kosong.</p>
-    </section>
 
     {{--=== Syarat & Ketentuan & Kebijakan Privasi ===--}}
     <form id="kartu-legal" data-scroll-section="legal" method="POST" action="{{ route('superadmin.pengaturan-sistem.legal') }}" class="snap-anchor bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 space-y-gutter card-premium" data-save-form>
@@ -726,66 +675,6 @@
     </form>
 @endcomponent
 
-<!-- Modal Tambah Tier -->
-@component('SuperAdmin.partials.premium-modal', [
-    'id' => 'modal-tier-tambah',
-    'dataModal' => true,
-    'icon' => 'workspace_premium',
-    'title' => 'Tambah Tier',
-])
-    <form method="POST" action="{{ route('superadmin.pengaturan-sistem.tier.store') }}" id="form-tier-tambah" class="space-y-4">
-        @csrf
-        <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Min (Rp)</label>
-            <input type="number" name="min" min="100000" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent" placeholder="100000" />
-        </div>
-        <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Max (Rp, kosong=∞)</label>
-            <input type="number" name="max" min="100000" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent" placeholder="∞" />
-        </div>
-        <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Hari</label>
-            <input type="number" name="hari" min="1" max="365" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent" placeholder="7" />
-        </div>
-        @slot('footer')
-            <div class="flex justify-end gap-2">
-                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-                <button type="submit" form="form-tier-tambah" class="btn-modal btn-modal-primary">Tambah</button>
-            </div>
-        @endslot
-    </form>
-@endcomponent
-
-<!-- Modal Edit Tier -->
-@component('SuperAdmin.partials.premium-modal', [
-    'id' => 'modal-tier-edit',
-    'dataModal' => true,
-    'icon' => 'edit',
-    'title' => 'Edit Tier',
-])
-    <form id="form-tier-edit" method="POST" action="" class="space-y-4">
-        @csrf @method('PUT')
-        <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Min (Rp)</label>
-            <input type="number" name="min" id="edit-tier-min" min="100000" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent" />
-        </div>
-        <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Max (Rp, kosong=∞)</label>
-            <input type="number" name="max" id="edit-tier-max" min="100000" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent" placeholder="∞" />
-        </div>
-        <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Hari</label>
-            <input type="number" name="hari" id="edit-tier-hari" min="1" max="365" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent" />
-        </div>
-        @slot('footer')
-            <div class="flex justify-end gap-2">
-                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-                <button type="submit" form="form-tier-edit" class="btn-modal btn-modal-primary">Simpan</button>
-            </div>
-        @endslot
-    </form>
-@endcomponent
-
 @push('scripts')
 @include('SuperAdmin.partials.dd-helpers')
 <script>
@@ -812,15 +701,6 @@
             window.showRalivaToast?.('Pilih kategori bantuan terlebih dahulu.', 'error');
         }
     });
-
-    function openTierEdit(index, min, max, hari) {
-        document.getElementById('edit-tier-min').value = min;
-        document.getElementById('edit-tier-max').value = max || '';
-        document.getElementById('edit-tier-hari').value = hari;
-        document.getElementById('form-tier-edit').action = '{{ url('superadmin/pengaturan-sistem/tier') }}/' + index;
-        document.getElementById('modal-tier-edit').classList.remove('hidden');
-        document.getElementById('modal-tier-edit').classList.add('flex');
-    }
 
     function openHelpModal(id) {
         var el = document.getElementById(id);

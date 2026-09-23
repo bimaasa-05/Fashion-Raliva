@@ -84,7 +84,7 @@
                 </a>
             </div>
         </div>
-        <div data-table-wrap class="overflow-x-auto">
+        <div data-table-wrap class="overflow-x-auto hidden md:block">
             <table class="premium-table w-full min-w-[820px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
@@ -121,6 +121,37 @@
                     </tr>
                 </tfoot>
             </table>
+        </div>
+        <div class="md:hidden grid grid-cols-1 gap-gutter mt-6">
+            @forelse ($report as $row)
+                <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <p class="font-bold text-on-surface">{{ $row['periode'] }}</p>
+                    <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-muted-border text-sm">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Pesanan</p>
+                            <p class="font-bold text-on-surface mt-0.5">{{ $row['pesanan'] }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Pendapatan</p>
+                            <p class="font-bold text-gold-accent mt-0.5">Rp {{ number_format($row['pendapatan'],0,',','.') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Refund</p>
+                            <p class="font-bold text-error mt-0.5">Rp {{ number_format($row['refund'],0,',','.') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Pencairan</p>
+                            <p class="font-bold text-on-surface-variant mt-0.5">Rp {{ number_format($row['pencairan'],0,',','.') }}</p>
+                        </div>
+                        <div class="col-span-2">
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Saldo Akhir</p>
+                            <p class="font-bold text-on-surface mt-0.5">Rp {{ number_format($row['pendapatan'] - $row['refund'] - $row['pencairan'],0,',','.') }}</p>
+                        </div>
+                    </div>
+                </article>
+            @empty
+                <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada data pada periode ini.</p>
+            @endforelse
         </div>
     </section>
 </div>

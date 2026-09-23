@@ -64,7 +64,7 @@
         </div>
 
         <div class="bg-surface-container-lowest rounded-lg border border-muted-border card-premium overflow-hidden">
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto hidden md:block">
                 <table class="w-full text-sm premium-table">
                     <thead>
                         <tr class="text-left text-on-surface-variant border-b border-muted-border font-label-sm text-[10px] uppercase tracking-wider">
@@ -91,6 +91,25 @@
                 </table>
             </div>
             {{ $pemasukan->withQueryString()->links() }}
+            <div class="md:hidden grid grid-cols-1 gap-gutter">
+                @forelse ($pemasukan as $t)
+                    <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <p class="text-sm font-bold text-on-surface">{{ $t->kategori ?? 'Lainnya' }}</p>
+                                <p class="text-xs text-on-surface-variant mt-0.5">{{ $t->keterangan ?? '-' }}</p>
+                                <p class="text-xs text-on-surface-variant mt-1">{{ $t->created_at?->translatedFormat('d M Y H:i') ?? '-' }}</p>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-green-600/10 text-green-600 text-[10px] font-bold uppercase border border-green-600/20">{{ $t->jenis_transaksi }}</span>
+                                <p class="font-bold text-green-600 mt-1.5">Rp {{ number_format((float) $t->jumlah, 0, ',', '.') }}</p>
+                            </div>
+                        </div>
+                    </article>
+                @empty
+                    <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada pemasukan.</p>
+                @endforelse
+            </div>
         </div>
     </div>
 
@@ -130,7 +149,7 @@
         </div>
 
         <div class="bg-surface-container-lowest rounded-lg border border-muted-border card-premium overflow-hidden">
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto hidden md:block">
                 <table class="w-full text-sm premium-table">
                     <thead>
                         <tr class="text-left text-on-surface-variant border-b border-muted-border font-label-sm text-[10px] uppercase tracking-wider">
@@ -155,6 +174,24 @@
                 </table>
             </div>
             {{ $pengeluaran->withQueryString()->links() }}
+            <div class="md:hidden grid grid-cols-1 gap-gutter">
+                @forelse ($pengeluaran as $e)
+                    <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <p class="text-sm font-bold text-on-surface">{{ $e->nama }}</p>
+                                <p class="text-xs text-on-surface-variant mt-0.5">{{ \Illuminate\Support\Str::limit($e->tanggal?->translatedFormat('d M Y') ?? '-', 20) }}</p>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">{{ $e->kategori ?? '-' }}</span>
+                                <p class="font-bold text-error mt-1.5">Rp {{ number_format((float) $e->nominal, 0, ',', '.') }}</p>
+                            </div>
+                        </div>
+                    </article>
+                @empty
+                    <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada pengeluaran.</p>
+                @endforelse
+            </div>
         </div>
     </div>
 </div>
