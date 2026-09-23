@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Courier extends Model
@@ -14,10 +15,16 @@ class Courier extends Model
     public const STATUS_NONAKTIF = 'nonaktif';
 
     protected $fillable = [
+        'store_id',
         'nama_kurir',
         'kode_kurir',
         'status',
     ];
+
+    public function store(): BelongsTo
+    {
+        return $this->belongsTo(Store::class, 'store_id', 'store_id');
+    }
 
     public function services(): HasMany
     {

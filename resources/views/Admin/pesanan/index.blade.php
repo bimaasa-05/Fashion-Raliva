@@ -131,7 +131,7 @@
                             @if (in_array($pesanan->status, [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIPROSES], true))
                                 <button type="button" data-modal-open="modal-batalkan-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Batalkan</button>
                             @endif
-                            @if (in_array($pesanan->status, [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIPROSES, \App\Models\Order::STATUS_SIAP_KIRIM, \App\Models\Order::STATUS_DIKIRIM], true))
+                            @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM)
                                 <button type="button" data-modal-open="modal-selesai-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-[10px] uppercase rounded hover:bg-secondary-container/30 transition-colors">Selesai</button>
                             @endif
                             @if ($waLink)
@@ -139,7 +139,6 @@
                                     <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.5.1-.7l.4-.5c.1-.2.1-.4 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.2-.7.5-.9 1-.4 2.7 1.4 4.5 1.7 1.7 3.5 2.4 4.9 2.1.6-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2 0-.1-.2-.1-.4-.2z"/></svg>
                                 </a>
                             @endif
-                            <a href="{{ route('admin.pesanan.invoice', $pesanan->order_id) }}" target="_blank" class="inline-block px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">Invoice</a>
                             <button type="button" data-modal-open="modal-detail-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
                             <button type="button" onclick="openDetailProduksi('{{ $pesanan->order_id }}')" class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">Produksi</button>
                         </td>
@@ -204,6 +203,7 @@
             <div class="flex justify-between gap-4"><dt class="text-on-surface-variant shrink-0">Status</dt><dd class="text-on-surface text-right">{{ $badgeMap[$pesanan->status]['label'] ?? ucfirst($pesanan->status) }}</dd></div>
         </div>
         <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end gap-3">
+            <a href="{{ route('admin.pesanan.invoice', $pesanan->order_id) }}" target="_blank" class="px-5 py-2.5 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium">Lihat Invoice</a>
             <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
         </div>
     </div>
@@ -263,7 +263,7 @@
     </form>
 </div>
 @endif
-@if (in_array($pesanan->status, [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIPROSES, \App\Models\Order::STATUS_SIAP_KIRIM, \App\Models\Order::STATUS_DIKIRIM], true))
+@if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM)
 <div id="modal-selesai-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
     <form method="POST" action="{{ route('admin.pesanan.selesai', $pesanan->order_id) }}" class="relative mx-auto w-[calc(100%-2rem)] max-w-md bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl p-8">

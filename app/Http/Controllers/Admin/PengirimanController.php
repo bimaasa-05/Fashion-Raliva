@@ -28,17 +28,9 @@ class PengirimanController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        $statusAmbil = [
-            Order::STATUS_DIBAYAR,
-            Order::STATUS_MENUNGGU_PRODUKSI,
-            Order::STATUS_DIPROSES,
-            Order::STATUS_SIAP_KIRIM,
-            Order::STATUS_DIKIRIM,
-        ];
-
         $siapDiambil = Order::query()
             ->whereIn('store_id', $storeIds)
-            ->whereIn('status', $statusAmbil)
+            ->where('status', Order::STATUS_SIAP_KIRIM)
             ->where(function ($q) {
                 $q->where('tipe_pesanan', Order::TIPE_PESANAN_OFFLINE)
                     ->orWhere(function ($qq) {
@@ -56,7 +48,12 @@ class PengirimanController extends Controller
             ->orderByDesc('shipment_id')
             ->get();
 
-        $couriers = Courier::where('status', Courier::STATUS_AKTIF)->with(['services' => fn ($q) => $q->where('status', 'aktif')->orderBy('nama_layanan')])->orderBy('nama_kurir')->get();
+        $couriers = Courier::where('status', Courier::STATUS_AKTIF)
+            ->where(fn ($q) => $q->whereNull('store_id')->orWhereIn('store_id', $storeIds))
+            ->with(['services' => fn ($q) => $q->where('status', 'aktif')
+                ->where(fn ($qq) => $qq->whereNull('store_id')->orWhereIn('store_id', $storeIds))
+                ->orderBy('nama_layanan')])
+            ->orderBy('nama_kurir')->get();
 
         // Kurir aktif per toko: bila toko punya pengaturan, hanya yang is_aktif; bila belum ada, semua global.
         $kurirPerToko = [];
@@ -178,6 +175,25 @@ class PengirimanController extends Controller
 
     private function kurirAllowed(int $storeId, int $courierId, ?int $serviceId): bool
     {
+        $courier = Courier::where('courier_id', $courierId)
+            ->where('status', Courier::STATUS_AKTIF)
+            ->where(fn ($q) => $q->whereNull('store_id')->orWhere('store_id', $storeId))
+            ->first();
+        if (! $courier) {
+            return false;
+        }
+
+        if ($serviceId) {
+            $serviceOk = ShippingService::where('shipping_service_id', $serviceId)
+                ->where('courier_id', $courierId)
+                ->where('status', 'aktif')
+                ->where(fn ($q) => $q->whereNull('store_id')->orWhere('store_id', $storeId))
+                ->exists();
+            if (! $serviceOk) {
+                return false;
+            }
+        }
+
         $set = StoreCourierSetting::where('store_id', $storeId)->get();
         if ($set->isEmpty()) {
             return true;
