@@ -13,10 +13,15 @@ class SupplierController extends Controller
     public function index(Request $request)
     {
         $q = $request->input('q');
+        $sort = $request->input('sort', 'nama');
+        if (! in_array($sort, ['nama', 'terbaru'], true)) {
+            $sort = 'nama';
+        }
         $suppliers = Supplier::with('bahans')
             ->when($q, fn ($qb) => $qb->where('nama_supplier', 'like', "%{$q}%"))
-            ->orderBy('nama_supplier')
-            ->paginate(12);
+            ->when($sort === 'terbaru', fn ($qb) => $qb->orderByDesc('created_at')->orderByDesc('supplier_id'), fn ($qb) => $qb->orderBy('nama_supplier'))
+            ->paginate(12)
+            ->withQueryString();
 
         $stats = [
             'total' => $suppliers->total(),
@@ -25,7 +30,7 @@ class SupplierController extends Controller
             'kota' => Supplier::distinct('kota')->count('kota'),
         ];
 
-        return view('Admin.supplier.supplier', compact('suppliers', 'stats'));
+        return view('Admin.supplier.supplier', compact('suppliers', 'stats', 'sort'));
     }
 
     public function store(Request $request): RedirectResponse
