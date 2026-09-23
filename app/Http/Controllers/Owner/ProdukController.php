@@ -11,7 +11,6 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use App\Models\Review;
-use App\Models\StoreSlotSubscription;
 use App\Models\User;
 use App\Support\OwnerContext;
 use App\Support\SlotService;
@@ -65,12 +64,10 @@ class ProdukController extends Controller
             return $p;
         });
 
-        $slotAgg = StoreSlotSubscription::where('store_id', $storeId)
-            ->where('status', 'aktif')
-            ->selectRaw('COALESCE(SUM(jumlah_slot),0) as total, COALESCE(SUM(slot_terpakai),0) as used')
-            ->first();
-        $totalSlot = (int) ($slotAgg->total ?? 0);
-        $usedSlot = (int) ($slotAgg->used ?? 0);
+        $totalSlot = SlotService::totalQuota((int) $storeId);
+        $usedSlot = SlotService::usedSlots((int) $storeId);
+        $sisaSlot = SlotService::availableSlots((int) $storeId);
+        $pctSlot = SlotService::progress((int) $storeId);
 
         $counts = [
             'total' => Product::where('store_id', $storeId)->count(),
@@ -80,7 +77,13 @@ class ProdukController extends Controller
             'varian' => ProductVariant::whereHas('product', fn ($q) => $q->where('store_id', $storeId))->count(),
         ];
 
-        return view('Owner.produk.index', compact('products', 'counts', 'totalSlot', 'usedSlot', 'categories', 'categoryOptions'));
+        $statusOptions = [
+            Product::STATUS_AKTIF => [Product::STATUS_AKTIF, Product::STATUS_NONAKTIF],
+            Product::STATUS_NONAKTIF => [Product::STATUS_NONAKTIF, Product::STATUS_AKTIF],
+            Product::STATUS_DRAFT => [Product::STATUS_DRAFT, Product::STATUS_PENDING],
+        ];
+
+        return view('Owner.produk.index', compact('products', 'counts', 'totalSlot', 'usedSlot', 'sisaSlot', 'pctSlot', 'categories', 'categoryOptions', 'statusOptions'));
     }
 
     public function update(Request $request, Product $product)
@@ -222,7 +225,7 @@ class ProdukController extends Controller
                 $total = SlotService::totalQuota($storeId);
                 $used = SlotService::usedSlots($storeId);
 
-                return back()->with('error', sprintf('Kuota slot produk penuh (%d/%d). Tambah slot terlebih dahulu.', $used, $total));
+                return redirect()->route('owner.kelola-slot')->with('error', sprintf('Kuota slot produk penuh (%d/%d). Tambah slot terlebih dahulu.', $used, $total));
             }
         }
 
