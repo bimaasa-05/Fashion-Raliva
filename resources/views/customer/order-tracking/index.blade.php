@@ -368,7 +368,12 @@
     $shipment = $selected->shipments->first();
     $estDeliv = $shipment?->estimasi_tiba;
     $itemsCount = $selected->items->count();
-    $progressWidth = $isCancelled ? 0 : (($step - 1) / 3 * 100);
+    $progressWidth = 0;
+    $tlList = $timeline ?? [];
+    $doneCount = collect($tlList)->where('done', true)->count();
+    // Langkah aktif = langkah belum-done pertama (khusus aksi role, bukan status mentah).
+    $activeIndex = ($step > 0 && $doneCount < count($tlList)) ? $doneCount : null;
+    $progressWidth = $isCancelled ? 0 : ($doneCount / max(1, count($tlList)) * 100);
     $latestRefund = optional($selected->refunds)->sortByDesc('diajukan_pada')->first();
     $refundStatus = $latestRefund?->status;
     $refundPernahAda = $selected->refunds->isNotEmpty();
@@ -384,10 +389,15 @@
             \App\Models\Payment::STATUS_DITOLAK => [__('Bukti ditolak'), __('Bukti pembayaran Anda ditolak. Klik Unggah Ulang Bukti untuk mengunggah bukti yang benar.')],
             default => [__('Menunggu verifikasi'), __('Bukti pembayaran Anda sedang diverifikasi admin. Pesanan akan diproses setelah terverifikasi.')],
         },
-        'dibayar' => [__('Pembayaran diterima'), __('Pembayaran Anda telah kami terima. Pesanan sedang menunggu diproses.')],
-        'diproses' => [__('Sedang disiapkan'), __('Pesanan sedang diproses di gudang dan akan segera dikirim.')],
-        'dikirim' => [__('Sedang dalam perjalanan'), __('Pesanan sudah dikirim dan sedang dalam perjalanan menuju alamat Anda.')],
-        'selesai' => [__('Pesanan selesai'), __('Pesanan telah sampai dan selesai. Terima kasih sudah berbelanja di RALIVA.')],
+        'dibayar' => [__('Pembayaran diterima'), __('Pembayaran Anda telah kami terima. Pesanan menunggu disiapkan oleh tim produksi.')],
+        'menunggu_produksi' => [__('Sedang disiapkan'), __('Pesanan menunggu diproses oleh tim produksi.')],
+        'diproses' => [__('Sedang disiapkan'), __('Pesanan sedang disiapkan oleh tim produksi.')],
+        'menunggu_qc' => [__('Pemeriksaan kualitas'), __('Pesanan sedang dalam pemeriksaan kualitas oleh tim produksi.')],
+        'siap_kirim' => ! empty($hasResi ?? false)
+            ? [__('Resi diterbitkan'), __('Nomor resi sudah diterbitkan admin. Menunggu kurir mengambil paket Anda.')]
+            : [__('Sudah dikemas'), __('Pesanan sudah dikemas dan siap dikirim.')],
+        'dikirim' => [__('Sedang dalam perjalanan'), __('Pesanan sudah dikirim dan sedang dalam perjalanan menuju alamat Anda. Klik Konfirmasi Pesanan Diterima setelah paket sampai.')],
+        'selesai' => [__('Pesanan diterima'), __('Pesanan telah sampai dan dikonfirmasi. Terima kasih sudah berbelanja di RALIVA.')],
         'dibatalkan' => [__('Pesanan dibatalkan'), __('Pesanan ini telah dibatalkan. Hubungi layanan pelanggan jika ada pertanyaan.')],
         'refund' => match ($refundStatus) {
             \App\Models\Refund::STATUS_SELESAI => [__('Refund selesai'), __('Pengembalian dana untuk pesanan ini telah diselesaikan oleh toko.')],
@@ -605,10 +615,20 @@ $buktiTokoNama = $latestRefund->file_bukti ? \Illuminate\Support\Str::afterLast(
 <div class="timeline-line"></div>
 <div class="timeline-progress" style="width: {{ $progressWidth }}%;"></div>
 <div class="flex justify-between gap-2 relative z-10">
-@foreach ([1 => __('Preparing'), 2 => __('Packed'), 3 => __('Shipped'), 4 => __('Delivered')] as $stepIndex => $stepLabel)
+@foreach (($timeline ?? [1 => [__('Disiapkan'), 'Produksi'], 2 => [__('Dikemas'), 'Produksi'], 3 => [__('Dikirim'), 'Admin'], 4 => [__('Diterima'), 'Customer']]) as $idx => $tl)
 @php
-$passed = ! $isCancelled && $step && $stepIndex < $step;
-$active = ! $isCancelled && $step && $stepIndex === $step;
+if (is_array($tl) && array_key_exists('done', $tl)) {
+    $stepLabel = $tl['label'];
+    $stepRole = $tl['role'];
+    $passed = ! $isCancelled && ! empty($tl['done']);
+    $active = ! $isCancelled && $idx === ($activeIndex ?? -1);
+} else {
+    $stepIndex = is_int($idx) ? $idx : 0;
+    $stepLabel = is_array($tl) ? $tl[0] : $tl;
+    $stepRole = is_array($tl) ? ($tl[1] ?? '') : '';
+    $passed = ! $isCancelled && $step && ($stepIndex < $step || ($stepIndex === $step && $step === 3));
+    $active = ! $isCancelled && $step && (($stepIndex === $step && $step !== 3) || ($stepIndex === 4 && $step === 3));
+}
 @endphp
 <div class="flex flex-col items-center gap-1 group cursor-pointer flex-1">
 @if ($passed)
@@ -616,15 +636,18 @@ $active = ! $isCancelled && $step && $stepIndex === $step;
 <span class="material-symbols-outlined text-[14px] text-white">check</span>
 </div>
 <span class="font-label-sm text-[10px] md:text-label-sm uppercase tracking-wider text-on-surface-variant text-center leading-tight">{{ $stepLabel }}</span>
+<span class="text-[9px] md:text-[10px] uppercase tracking-wider text-on-surface-variant/70 text-center leading-tight">{{ $stepRole }}</span>
 @elseif ($active)
 <div class="w-7 h-7 md:w-6 md:h-6 rounded-full flex items-center justify-center bg-surface transition-colors timeline-active-circle shrink-0" style="border: 2px solid var(--chrome-accent);">
 <div class="w-2.5 h-2.5 md:w-2 md:h-2 rounded-full timeline-active-dot" style="background-color: var(--chrome-accent);"></div>
 </div>
 <span class="font-label-sm text-[10px] md:text-label-sm uppercase tracking-wider text-on-surface text-center leading-tight timeline-active-label" style="color: var(--chrome-accent);">{{ $stepLabel }}</span>
+<span class="text-[9px] md:text-[10px] uppercase tracking-wider text-center leading-tight timeline-active-label" style="color: var(--chrome-accent);">{{ $stepRole }}</span>
 @else
 <div class="w-7 h-7 md:w-6 md:h-6 rounded-full bg-surface border border-outline-variant flex items-center justify-center shrink-0 transition-colors group-hover:border-outline">
 </div>
 <span class="font-label-sm text-[10px] md:text-label-sm uppercase tracking-wider text-on-surface-variant text-center leading-tight">{{ $stepLabel }}</span>
+<span class="text-[9px] md:text-[10px] uppercase tracking-wider text-on-surface-variant/70 text-center leading-tight">{{ $stepRole }}</span>
 @endif
 </div>
 @endforeach
