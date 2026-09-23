@@ -15,6 +15,7 @@ class DataProdukController extends Controller
         $q = $request->input('q');
         $products = Product::with(['category', 'store', 'variants.warehouseStocks', 'images' => fn ($qq) => $qq->orderBy('urutan')])
             ->when($q, fn ($query) => $query->where('nama_produk', 'like', "%{$q}%"))
+            ->orderByDesc('created_at')
             ->orderByDesc('product_id')
             ->paginate(12);
 
@@ -47,7 +48,7 @@ class DataProdukController extends Controller
         $request->merge(['harga_dasar' => str_replace('.', '', (string) $request->input('harga_dasar', ''))]);
         $data = $request->validate([
             'nama_produk' => 'required|string|max:255',
-            'harga_dasar' => 'required|numeric|min:1',
+            'harga_dasar' => 'required|numeric|min:1|max:999999999999',
             'category_id' => 'required|exists:categories,category_id',
             'tipe_produk' => 'required|string|in:regular,preorder,made_to_order',
             'deskripsi' => 'required|string|min:10|max:2000',
@@ -70,6 +71,7 @@ class DataProdukController extends Controller
             'harga_dasar.required' => 'Harga dasar wajib diisi.',
             'harga_dasar.numeric' => 'Harga harus berupa angka.',
             'harga_dasar.min' => 'Harga minimal Rp 1.',
+            'harga_dasar.max' => 'Harga maksimal Rp 999.999.999.999.',
             'category_id.required' => 'Kategori wajib dipilih.',
             'tipe_produk.required' => 'Tipe produk wajib dipilih.',
             'deskripsi.required' => 'Deskripsi wajib diisi.',
@@ -210,7 +212,7 @@ class DataProdukController extends Controller
 
         $data = $request->validate([
             'nama_produk' => 'required|string|max:255',
-            'harga_dasar' => 'required|numeric|min:0',
+            'harga_dasar' => 'required|numeric|min:0|max:999999999999',
             'category_id' => 'nullable|exists:categories,category_id',
             'tipe_produk' => 'sometimes|string|in:regular,preorder,made_to_order',
             'deskripsi' => 'nullable|string|max:2000',
@@ -233,6 +235,7 @@ class DataProdukController extends Controller
             'nama_produk.required' => 'Nama produk wajib diisi.',
             'harga_dasar.required' => 'Harga dasar wajib diisi.',
             'harga_dasar.numeric' => 'Harga harus berupa angka.',
+            'harga_dasar.max' => 'Harga maksimal Rp 999.999.999.999.',
         ]);
 
         $resetStatus = ($product->status === Product::STATUS_DITOLAK);
