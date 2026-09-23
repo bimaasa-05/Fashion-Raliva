@@ -41,7 +41,7 @@
             <div>
                 <div class="flex items-center gap-2 flex-wrap">
                     <p class="raliva-figure text-xl {{ ! $store ? 'text-on-surface-variant' : 'text-on-surface' }}">{{ $store?->nama_toko ?? 'Belum punya toko' }}</p>
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full {{ $store?->status === 'aktif' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }} text-[10px] font-bold uppercase border">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full {{ $store?->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' }} text-[10px] font-bold uppercase border">
                         <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : 'schedule' }}</span>{{ $store ? ucfirst($store->status) : 'Menunggu' }}
                     </span>
                     @if(! $store)
@@ -198,13 +198,7 @@
                             <td class="py-3.5 px-4 text-on-surface-variant">{{ $order->created_at?->translatedFormat('d M Y') }}</td>
                             <td class="py-3.5 px-4 font-bold text-gold-accent">{{ 'Rp ' . number_format($order->grand_total, 0, ',', '.') }}</td>
                             <td class="py-3.5 px-4 text-center">
-                                @if ($tipe === 'selesai')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">{{ $order->status }}</span>
-                                @elseif ($tipe === 'batal')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">{{ $order->status }}</span>
-                                @else
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ $order->status }}</span>
-                                @endif
+                                <span class="inline-flex items-center px-2 py-1 rounded-full border {{ \App\Support\StatusStyle::badgeClass($order->status) }} text-[10px] font-bold uppercase">{{ $order->status }}</span>
                             </td>
                         </tr>
                     @empty

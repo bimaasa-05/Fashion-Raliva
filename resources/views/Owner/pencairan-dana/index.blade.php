@@ -64,7 +64,7 @@
                             <td class="py-3.5 px-4">
                                 <p>{{ $w->tujuan_jenis_label }} • {{ $w->tujuan_penyedia }} • {{ $w->tujuan_nomor }}</p>
                             </td>
-                            <td class="py-3.5 px-4"><span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $w->status==='dibayar' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : ($w->status==='pending' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-error/10 text-error border-error/20') }}">{{ $w->status }}</span></td>
+                            <td class="py-3.5 px-4"><span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $w->status==='dibayar' ? 'bg-amber-500/10 text-amber-600 border-amber-500/30' : ($w->status==='pending' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-error/10 text-error border-error/20') }}">{{ $w->status }}</span></td>
                         </tr>
                     @empty
                         <tr><td colspan="4" class="py-8 text-center text-on-surface-variant">Belum ada pencairan.</td></tr>
@@ -81,7 +81,7 @@
                             <p class="text-xs text-on-surface-variant">{{ $w->diajukan_pada?->translatedFormat('d M Y') ?? '-' }}</p>
                             <p class="font-bold text-on-surface mt-0.5">Rp {{ number_format($w->jumlah,0,',','.') }}</p>
                         </div>
-                        <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $w->status==='dibayar' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : ($w->status==='pending' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-error/10 text-error border-error/20') }}">{{ $w->status }}</span>
+                        <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $w->status==='dibayar' ? 'bg-amber-500/10 text-amber-600 border-amber-500/30' : ($w->status==='pending' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-error/10 text-error border-error/20') }}">{{ $w->status }}</span>
                     </div>
                     <div class="mt-3 pt-3 border-t border-muted-border">
                         <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Tujuan</p>

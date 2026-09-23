@@ -123,7 +123,7 @@
                             <td class="p-3 text-xs">{{ $s->bankAccount?->bank->nama_bank ?? '-' }} {{ $s->bankAccount?->nomor_rekening ?? '' }}</td>
                             <td class="p-3"><span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($s->status === 'terjadwal' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : ($s->status === 'ditunda' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : 'bg-error/10 text-error border-error/20')) }}">{{ $s->status === 'terjadwal' ? 'Menunggu Aktif' : $s->status }}</span></td>
                             <td class="p-3 text-xs">
-                                <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->payment_status === 'terverifikasi' ? 'bg-success/10 text-success' : ($s->payment_status === 'ditolak' ? 'bg-error/10 text-error' : 'bg-surface-container-high text-on-surface-variant') }}">{{ $s->payment_status }}</span>
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->payment_status === 'terverifikasi' ? 'bg-success/10 text-success border-success/20' : ($s->payment_status === 'ditolak' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }}">{{ $s->payment_status }}</span>
                                 @if($s->file_bukti)
                                     <a href="{{ asset('storage/' . $s->file_bukti) }}" target="_blank" class="ml-2 text-gold-accent hover:underline">Bukti</a>
                                 @endif
@@ -156,7 +156,7 @@
                         <div>
                             <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Pembayaran</p>
                             <p class="mt-0.5">
-                                <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->payment_status === 'terverifikasi' ? 'bg-success/10 text-success' : ($s->payment_status === 'ditolak' ? 'bg-error/10 text-error' : 'bg-surface-container-high text-on-surface-variant') }}">{{ $s->payment_status }}</span>
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->payment_status === 'terverifikasi' ? 'bg-success/10 text-success border-success/20' : ($s->payment_status === 'ditolak' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }}">{{ $s->payment_status }}</span>
                                 @if($s->file_bukti)
                                     <a href="{{ asset('storage/' . $s->file_bukti) }}" target="_blank" class="ml-2 text-gold-accent hover:underline">Bukti</a>
                                 @endif
