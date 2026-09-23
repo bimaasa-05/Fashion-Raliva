@@ -57,6 +57,7 @@ class OrderTrackingController extends Controller
                 'items.productVariant.product.images',
                 'shipments.courier',
                 'refunds',
+                'complaints',
                 'checkout.payment.paymentMethod',
                 'checkout.payment.account',
             ])
@@ -88,7 +89,7 @@ class OrderTrackingController extends Controller
         // Timeline ceklis berbasis aksi role:
         // Disiapkan ✓ saat Produksi klik Selesai (menunggu_qc),
         // Dikemas ✓ saat Produksi klik Selesai QC+PACKING (siap_kirim),
-        // Dikirim ✓ saat Admin Simpan Resi (shipment.nomor_resi terisi — status masih siap_kirim),
+        // Dikirim ✓ saat Admin klik Tandai Dikirim (dikirim),
         // Diterima ✓ saat Customer klik Konfirmasi (selesai).
         $hasResi = $selected->shipments->contains(fn ($s) => ! empty($s->nomor_resi));
         $timelineStatus = $selected->status;
@@ -115,6 +116,9 @@ class OrderTrackingController extends Controller
             ],
         ];
 
+        // Komplain existing pesanan terpilih (satu pesanan = satu komplain).
+        $existingComplaint = $selected->complaints->sortByDesc('complaint_id')->first();
+
         return view('customer.order-tracking.index', [
             'orders' => $orders,
             'selected' => $selected,
@@ -122,6 +126,7 @@ class OrderTrackingController extends Controller
             'alasanPembatalan' => $alasanPembatalan,
             'timeline' => $timeline,
             'hasResi' => $hasResi,
+            'existingComplaint' => $existingComplaint,
         ]);
     }
 
