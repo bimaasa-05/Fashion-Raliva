@@ -251,9 +251,6 @@
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('COMPLAINTS') }}</p>
 <div class="flex flex-wrap items-center justify-between gap-sm mb-md">
 <h2 class="font-title-md text-title-md text-on-surface">{{ __('Komplain Saya') }}</h2>
-<a href="{{ route('customer.komplain.create') }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest">
-<span class="material-symbols-outlined text-[18px]">add</span>{{ __('Ajukan Komplain') }}
-</a>
 </div>
 <div class="space-y-4 md:space-y-6">
 @forelse ($complaints as $c)
