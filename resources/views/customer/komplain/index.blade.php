@@ -1688,18 +1688,14 @@
     document.addEventListener('DOMContentLoaded', function () {
         var _drawer = document.getElementById('drawer-panel');
         if (_drawer) { _drawer.style.filter = ''; _drawer.style.pointerEvents = ''; _drawer.style.opacity = ''; }
-        var params = new URLSearchParams(window.location.search);
-        var openId = params.get('open');
-        if (openId) {
-            var card = document.querySelector('[data-open-id="' + openId + '"]');
-            if (card) openChatFromCard(card);
-            // Bersihkan ?open= agar refresh tidak membuka ulang modal.
-            try {
-                var cleanUrl = new URL(window.location.href);
+        // Bersihkan ?open= lama agar tidak membuka modal otomatis.
+        try {
+            var cleanUrl = new URL(window.location.href);
+            if (cleanUrl.searchParams.has('open')) {
                 cleanUrl.searchParams.delete('open');
                 window.history.replaceState(null, '', cleanUrl.toString());
-            } catch (_) {}
-        }
+            }
+        } catch (_) {}
     });
 </script>
 @include('customer._partials.drawer')
