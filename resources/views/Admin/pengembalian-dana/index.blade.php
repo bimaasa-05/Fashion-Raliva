@@ -70,7 +70,7 @@
 
     <section class="space-y-gutter">
         <h2 class="font-title-md text-title-md text-on-surface premium-heading">Riwayat Refund</h2>
-        <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
+        <div class="overflow-x-auto hidden md:block bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
             <table class="w-full min-w-[750px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -108,6 +108,35 @@
             <div class="p-4">
                 {{ $riwayat->links() }}
             </div>
+        </div>
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse ($riwayat as $r)
+                @php $st = $r->status; @endphp
+                <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-mono font-bold text-on-surface">{{ $r->kode }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $r->requester?->nama_lengkap ?? '-' }}</p>
+                        </div>
+                        <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border
+                            @if($st==='disetujui') bg-secondary-container/20 text-secondary border-secondary/20
+                            @elseif($st==='ditolak') bg-error/10 text-error border-error/20
+                            @else bg-surface-container-high text-on-surface-variant border-outline-variant @endif">
+                            {{ $st }}
+                        </span>
+                    </div>
+                    <p class="font-bold text-gold-accent mt-3">Rp {{ number_format($r->jumlah, 0, ',', '.') }}</p>
+                    <div class="flex items-center justify-between gap-3 mt-3 pt-3 border-t border-muted-border">
+                        <p class="text-xs text-on-surface-variant">{{ ($r->status === 'disetujui' ? $r->disetujui_pada : $r->selesai_pada)?->translatedFormat('d M Y, H.i') ?? '-' }}</p>
+                        <button type="button" data-modal-open="modal-detail-{{ $r->kode }}" class="inline-flex items-center gap-1 px-3 py-1.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Detail</button>
+                    </div>
+                </article>
+            @empty
+                <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada riwayat refund.</p>
+            @endforelse
+        </div>
+        <div class="md:hidden mt-4">
+            {{ $riwayat->links() }}
         </div>
     </section>
 </div>

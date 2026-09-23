@@ -138,7 +138,7 @@
     {{-- Riwayat Pembelian --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Riwayat Pembelian Paket</h2>
-        <div data-table-wrap class="overflow-x-auto">
+        <div data-table-wrap class="overflow-x-auto hidden md:block">
             <table class="premium-table w-full min-w-[720px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
@@ -161,6 +161,26 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <div class="md:hidden grid grid-cols-1 gap-gutter mt-6">
+            @forelse ($riwayat as $r)
+                <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-bold text-on-surface">{{ $r->package?->nama_paket ?? 'Paket #'.$r->slot_package_id }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $r->tanggal_mulai?->translatedFormat('d M Y') }} — {{ $r->tanggal_berakhir?->translatedFormat('d M Y') }}</p>
+                        </div>
+                        <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">{{ ucfirst($r->status) }}</span>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-muted-border">
+                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Nominal</p>
+                        <p class="font-bold text-gold-accent mt-0.5">Rp {{ number_format($r->package?->harga ?? 0, 0, ',', '.') }}</p>
+                    </div>
+                </article>
+            @empty
+                <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada pembelian paket. Kuota aktif saat ini dari slot fleksibel/gratis.</p>
+            @endforelse
         </div>
 
         <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border border-muted-border rounded-lg p-4 bg-surface-container-low">

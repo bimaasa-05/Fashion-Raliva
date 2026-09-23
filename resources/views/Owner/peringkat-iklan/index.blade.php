@@ -91,7 +91,7 @@
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <h2 class="font-title-md text-title-md text-on-surface premium-heading mb-4">Riwayat Pengajuan Iklan</h2>
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto hidden md:block">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low/50 text-on-surface-variant text-xs uppercase">
@@ -126,6 +126,43 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        <div class="md:hidden grid grid-cols-1 gap-gutter mt-4">
+            @forelse($slots as $s)
+                <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-bold text-on-surface">{{ $s->product->nama_produk ?? '-' }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $s->tanggal_mulai?->format('d M Y') }} - {{ $s->tanggal_selesai?->format('d M Y') }}</p>
+                        </div>
+                        <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($s->status === 'ditunda' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : 'bg-error/10 text-error border-error/20') }}">{{ $s->status }}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-muted-border">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Nominal</p>
+                            <p class="text-sm font-mono font-bold text-on-surface mt-0.5">Rp {{ number_format((float) $s->nominal_bid, 0, ',', '.') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Pembayaran</p>
+                            <p class="mt-0.5">
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->payment_status === 'terverifikasi' ? 'bg-success/10 text-success' : ($s->payment_status === 'ditolak' ? 'bg-error/10 text-error' : 'bg-surface-container-high text-on-surface-variant') }}">{{ $s->payment_status }}</span>
+                                @if($s->file_bukti)
+                                    <a href="{{ asset('storage/' . $s->file_bukti) }}" target="_blank" class="ml-2 text-gold-accent hover:underline">Bukti</a>
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-muted-border">
+                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Rekening</p>
+                        <p class="text-sm text-on-surface-variant mt-0.5">{{ $s->bankAccount?->bank->nama_bank ?? '-' }} {{ $s->bankAccount?->nomor_rekening ?? '' }}</p>
+                        @if($s->alasan_penolakan)
+                            <div class="text-error text-[11px] mt-1">Tolak: {{ $s->alasan_penolakan }}</div>
+                        @endif
+                    </div>
+                </article>
+            @empty
+                <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada riwayat pengajuan iklan.</p>
+            @endforelse
         </div>
         @if($slots instanceof \Illuminate\Pagination\AbstractPaginator && $slots->hasPages())
             <div class="mt-6 flex justify-center">{{ $slots->links() }}</div>
