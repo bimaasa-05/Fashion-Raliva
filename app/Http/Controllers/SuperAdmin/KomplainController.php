@@ -13,7 +13,6 @@ class KomplainController extends Controller
     {
         $query = Complaint::query()
             ->with(['user:user_id,nama_lengkap', 'store:store_id,nama_toko,owner_id'])
-            ->orderByRaw("CASE status WHEN 'open' THEN 0 WHEN 'diproses' THEN 1 WHEN 'escalated' THEN 2 ELSE 3 END")
             ->orderByDesc('dibuat_pada');
 
         $stats = [

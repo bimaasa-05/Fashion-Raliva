@@ -46,30 +46,7 @@
 
         <ul id="notif-list" class="divide-y divide-muted-border">
             @forelse ($notifications as $item)
-                @php
-                    /** @var \App\Models\Notification $item */
-                    $m = $meta[$item->tipe] ?? ['icon' => 'info', 'tone' => 'neutral', 'label' => 'Sistem'];
-                    $unread = is_null($item->dibaca_pada);
-                    $relTime = $item->created_at?->diffForHumans() ?? '-';
-                @endphp
-                <li class="notif-item {{ $unread ? '' : 'opacity-80' }} flex items-start gap-4 px-4 py-4 hover:bg-surface-container-low transition-colors cursor-pointer rounded-lg" data-tipe-item="{{ $item->tipe }}">
-                    <div class="relative shrink-0 mt-0.5">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center {{ $toneClass[$m['tone']] ?? 'bg-surface-container-high text-on-surface' }}">
-                            <span class="material-symbols-outlined text-[20px]">{{ $m['icon'] }}</span>
-                        </div>
-                        @if ($unread)
-                            <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-error rounded-full border-2 border-surface-container-lowest notif-dot"></span>
-                        @endif
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="font-body-md text-sm text-on-surface {{ $unread ? 'font-semibold' : '' }} notif-text">{!! $item->pesan !!}</p>
-                        <div class="flex items-center gap-3 mt-1.5 flex-wrap">
-                            <span class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">{{ $relTime }}</span>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ $m['label'] }}</span>
-                        </div>
-                    </div>
-                    <span class="material-symbols-outlined text-outline-variant text-[20px] self-center shrink-0">chevron_right</span>
-                </li>
+                @include('partials.notifikasi-item', ['item' => $item, 'showActor' => true])
             @empty
                 <li class="py-10 text-center text-on-surface-variant">Belum ada notifikasi.</li>
             @endforelse
@@ -109,14 +86,28 @@
 
     notifList?.querySelectorAll('.notif-item').forEach((item) => {
         item.addEventListener('click', () => {
-            const dot = item.querySelector('.notif-dot');
-            if (dot) {
-                dot.remove();
-                item.classList.add('opacity-80');
-                const text = item.querySelector('.notif-text');
-                text?.classList.remove('font-semibold');
-                updateUnreadCount();
-            }
+            const id = item.getAttribute('data-notif-id');
+            const target = item.getAttribute('data-notif-target') || '#';
+            if (!id) return;
+            fetch('{{ route("notifikasi.read", ":id") }}'.replace(':id', id), {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+            }).then((res) => {
+                if (!res.ok) throw new Error('Gagal menandai dibaca.');
+                return res.json();
+            }).then((data) => {
+                if (window.updateNotifBadge) window.updateNotifBadge();
+                const dest = (data && data.target) || target;
+                if (dest && dest !== '#') window.location.href = dest;
+            }).catch(() => {
+                if (target && target !== '#') window.location.href = target;
+            });
+            updateUnreadCount();
         });
     });
 

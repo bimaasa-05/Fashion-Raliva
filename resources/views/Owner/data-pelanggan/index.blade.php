@@ -51,8 +51,8 @@
                     $frontBg = $isTop ? 'bg-gold-accent' : ($isSecond ? 'bg-[#9CA3AF]' : 'bg-[#B45309]');
                 @endphp
                 <div class="flex-1 max-w-[150px] flex flex-col items-center {{ $isTop ? 'order-2' : ($isSecond ? 'order-1' : 'order-3') }}">
-                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-full {{ $isTop ? 'bg-gold-accent text-white ring-4 ring-gold-accent/20' : 'bg-surface-container-high border border-outline-variant text-on-surface' }} flex items-center justify-center font-bold text-sm shadow-md">{{ $c->initials }}</div>
-                    <p class="font-bold text-xs md:text-sm mt-2 truncate max-w-[110px] text-center">{{ $c->name }}</p>
+                    <div class="w-10 h-10 md:w-14 md:h-14 rounded-full {{ $isTop ? 'bg-gold-accent text-white ring-4 ring-gold-accent/20' : 'bg-surface-container-high border border-outline-variant text-on-surface' }} flex items-center justify-center font-bold text-xs md:text-sm shadow-md">{{ $c->initials }}</div>
+                    <p class="font-bold text-[11px] md:text-sm mt-2 truncate max-w-[90px] md:max-w-[110px] text-center">{{ $c->name }}</p>
                     <p class="text-[10px] text-on-surface-variant">{{ $c->jumlah_order }} pesanan</p>
                     <p class="font-bold text-[11px] text-gold-accent mt-1">Rp {{ number_format($c->total_belanja,0,',','.') }}</p>
                     <div class="podium w-full {{ $h }} mt-3 {{ $frontBg }} text-white rounded-xl flex flex-col items-center justify-center ring-2 {{ $isTop ? 'ring-gold-accent/30' : 'ring-black/5' }} shadow-lg">

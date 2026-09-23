@@ -26,6 +26,7 @@
                             'pembayaran' => 'payments',
                             'pengiriman' => 'local_shipping',
                             'komplain' => 'support_agent',
+                            'ulasan' => 'star',
                             'wallet' => 'account_balance_wallet',
                             'promo' => 'local_offer',
                             default => 'notifications',

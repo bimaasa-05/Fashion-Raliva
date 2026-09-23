@@ -16,7 +16,6 @@ class PermintaanPenarikanController extends Controller
     {
         $withdrawals = Withdrawal::query()
             ->with(['store.owner:user_id,nama_lengkap', 'wallet', 'bankAccount.bank', 'bank'])
-            ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'disetujui' THEN 1 WHEN 'dibayar' THEN 2 ELSE 3 END")
             ->orderByDesc('diajukan_pada')
             ->get();
 

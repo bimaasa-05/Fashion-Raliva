@@ -80,7 +80,7 @@
             requestAnimationFrame(() => {
                 el.classList.remove('translate-y-[-16px]', 'opacity-0');
             });
-            if (!_mMinimal) setTimeout(() => sound(), 300);
+            setTimeout(() => sound(), 300);
             setTimeout(() => hide(el), _mMinimal ? 2200 : 5000);
         }
 

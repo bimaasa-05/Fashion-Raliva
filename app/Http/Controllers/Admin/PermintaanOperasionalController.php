@@ -22,7 +22,6 @@ class PermintaanOperasionalController extends Controller
 
         $query = PermintaanOperasional::with(['store:store_id,nama_toko', 'pemohon:user_id,nama_lengkap,role_id', 'pemohon.role:role_id,nama_role', 'admin:user_id,nama_lengkap'])
             ->whereIn('store_id', $storeIds)
-            ->orderByRaw("CASE WHEN status = 'pending' THEN 0 ELSE 1 END")
             ->orderByDesc('created_at');
 
         if ($status !== 'semua' && in_array($status, ['pending', 'disetujui', 'ditolak'])) {
