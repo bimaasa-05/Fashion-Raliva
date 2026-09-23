@@ -87,15 +87,21 @@ class ShopController extends Controller
         $cartCount = \App\Http\Controllers\Customer\CartController::countForUser(Auth::id());
 
         // Item yang bisa dinilai: pernah dibeli (order selesai milik user) & belum direview.
+        // Cukup satu ulasan per produk: tombol hilang total setelah customer menilai.
         $reviewableItem = null;
         if (Auth::check() && Auth::user()->role?->nama_role === Role::CUSTOMER) {
-            $reviewableItem = OrderItem::whereHas('order', fn ($q) => $q
-                    ->where('status', Order::STATUS_SELESAI)
-                    ->whereHas('checkout', fn ($c) => $c->where('user_id', Auth::id())))
-                ->whereHas('productVariant', fn ($q) => $q->where('product_id', $product->product_id))
-                ->whereDoesntHave('review')
-                ->orderByDesc('order_item_id')
-                ->first();
+            $sudahDinilai = Review::where('user_id', Auth::id())
+                ->where('product_id', $product->product_id)
+                ->exists();
+            if (! $sudahDinilai) {
+                $reviewableItem = OrderItem::whereHas('order', fn ($q) => $q
+                        ->where('status', Order::STATUS_SELESAI)
+                        ->whereHas('checkout', fn ($c) => $c->where('user_id', Auth::id())))
+                    ->whereHas('productVariant', fn ($q) => $q->where('product_id', $product->product_id))
+                    ->whereDoesntHave('review')
+                    ->orderByDesc('order_item_id')
+                    ->first();
+            }
         }
 
         return view('customer.shop.produk-detail', compact('product', 'reviews', 'averageRating', 'reviewCount', 'relatedProducts', 'wishlistedIds', 'cartCount', 'reviewableItem'));
