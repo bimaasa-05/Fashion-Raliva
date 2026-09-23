@@ -45,6 +45,7 @@ class PengirimanController extends Controller
         $shipments = Shipment::query()
             ->whereHas('order', fn ($query) => $query->whereIn('store_id', $storeIds))
             ->with(['order.store:store_id,nama_toko', 'order.checkout.user:user_id,nama_lengkap', 'courier', 'shippingService'])
+            ->orderByDesc('created_at')
             ->orderByDesc('shipment_id')
             ->get();
 
