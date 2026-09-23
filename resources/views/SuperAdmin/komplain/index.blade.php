@@ -9,13 +9,13 @@
 
 @php
     $badgeMap = [
-        'open' => ['label' => 'Terbuka', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/20'],
-        'menunggu' => ['label' => 'Terbuka', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/20'],
-        'baru' => ['label' => 'Baru', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/20'],
-        'diproses' => ['label' => 'Diproses', 'class' => 'bg-surface-container-high text-on-surface border-outline-variant'],
-        'selesai' => ['label' => 'Selesai', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'ditutup' => ['label' => 'Ditutup', 'class' => 'bg-error/10 text-error border-error/20'],
-        'escalated' => ['label' => 'Eskalasi', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
+        'open' => ['label' => 'Terbuka', 'class' => \App\Support\StatusStyle::badgeClass('open')],
+        'menunggu' => ['label' => 'Terbuka', 'class' => \App\Support\StatusStyle::badgeClass('open')],
+        'baru' => ['label' => 'Baru', 'class' => \App\Support\StatusStyle::badgeClass('baru')],
+        'diproses' => ['label' => 'Diproses', 'class' => \App\Support\StatusStyle::badgeClass('diproses')],
+        'selesai' => ['label' => 'Selesai', 'class' => \App\Support\StatusStyle::badgeClass('selesai')],
+        'ditutup' => ['label' => 'Ditutup', 'class' => \App\Support\StatusStyle::badgeClass('ditutup')],
+        'escalated' => ['label' => 'Eskalasi', 'class' => \App\Support\StatusStyle::badgeClass('eskalasi')],
     ];
 @endphp
 
@@ -550,7 +550,7 @@
         document.getElementById('chat-kode').textContent = kode;
         const statusEl = document.getElementById('chat-status');
         statusEl.textContent = statusLabel || '';
-        statusEl.className = 'shrink-0 inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border ' + (done ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant');
+        statusEl.className = 'shrink-0 inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border ' + (done ? 'bg-success/10 text-success border-success/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30');
         document.getElementById('chat-composer').classList.toggle('hidden', done);
         document.getElementById('chat-closed-note').classList.toggle('hidden', !done);
         document.getElementById('chat-messages').innerHTML = '<div class="flex justify-center items-center py-8"><div class="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div></div>';

@@ -247,12 +247,12 @@
                                         <span class="w-1.5 h-1.5 rounded-full bg-success status-dot-pulse"></span>Aktif
                                     </span>
                                 @elseif ($u->status === \App\Models\User::STATUS_SUSPEND)
-                                    <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-tertiary-container/30 text-on-tertiary-container border border-tertiary-container/50 text-[9px] font-bold uppercase">Suspend</span>
+                                    <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Suspend</span>
                                 @else
                                     <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Non-aktif</span>
                                 @endif
                                 @if ($u->email_verified_at)
-                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-secondary-container/20 text-secondary text-[9px] font-bold uppercase border border-secondary/20">
+                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20">
                                         <span class="material-symbols-outlined text-[12px]">verified</span>Verified
                                     </span>
                                 @else
@@ -373,14 +373,14 @@
                                             <span class="w-1.5 h-1.5 rounded-full bg-success status-dot-pulse"></span>Aktif
                                         </span>
                                     @elseif ($u->status === \App\Models\User::STATUS_SUSPEND)
-                                        <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-tertiary-container/30 text-on-tertiary-container border border-tertiary-container/50 text-[9px] font-bold uppercase">Suspend</span>
+                                        <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Suspend</span>
                                     @else
                                         <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Non-aktif</span>
                                     @endif
                                 </td>
                                 <td class="p-4">
                                     @if ($u->email_verified_at)
-                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-secondary-container/20 text-secondary text-[9px] font-bold uppercase border border-secondary/20">
+                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20">
                                             <span class="material-symbols-outlined text-[12px]">verified</span>Verified
                                         </span>
                                     @else
@@ -787,12 +787,12 @@
         document.getElementById('drawer-phone').textContent = data.nomor_telepon || '';
         document.getElementById('drawer-role').textContent = data.role;
         document.getElementById('drawer-status').textContent = data.status;
-        document.getElementById('drawer-status').className = 'inline-flex px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (data.status === 'aktif' ? 'bg-success/10 text-success border border-success/20' : data.status === 'suspend' ? 'bg-tertiary-container/30 text-on-tertiary-container border border-tertiary-container/50' : 'bg-error/10 text-error border border-error/20');
+        document.getElementById('drawer-status').className = 'inline-flex px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (data.status === 'aktif' ? 'bg-success/10 text-success border border-success/20' : data.status === 'suspend' ? 'bg-error/10 text-error border border-error/20' : 'bg-error/10 text-error border border-error/20');
         const verified = data.is_verified ?? (data.email_verified_at != null);
         document.getElementById('drawer-verified').innerHTML = verified
             ? '<span class="material-symbols-outlined text-[10px]">verified</span>Verified'
             : '<span class="material-symbols-outlined text-[10px]">email</span>Belum Verified';
-        document.getElementById('drawer-verified').className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (verified ? 'bg-secondary-container/20 text-secondary border border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant');
+        document.getElementById('drawer-verified').className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (verified ? 'bg-success/10 text-success border border-success/20' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant');
 
         renderDrawerAvatar(data);
 
@@ -873,7 +873,7 @@
                                     </p>
                                     <p class="text-xs text-on-surface-variant mt-0.5">${t.produk} produk • Rating ${t.rating}</p>
                                 </div>
-                                ${t.status ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border ${t.status === 'aktif' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-error/10 text-error border-error/20'}">${t.status}</span>` : ''}
+                                ${t.status ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border ${t.status === 'aktif' ? 'bg-success/10 text-success border-success/20' : 'bg-error/10 text-error border-error/20'}">${t.status}</span>` : ''}
                             </div>
                             <div class="p-3">
                                 <p class="text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest mb-2">Karyawan</p>
@@ -899,7 +899,7 @@
             if (data.penugasan && data.penugasan.length > 0) {
                 data.penugasan.forEach(t => {
                     const statusBadge = t.status_penugasan === 'aktif'
-                        ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border bg-secondary-container/20 text-secondary border-secondary/20"><span class="w-1.5 h-1.5 rounded-full bg-secondary status-dot-pulse"></span>Aktif</span>'
+                        ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border bg-success/10 text-success border-success/20"><span class="w-1.5 h-1.5 rounded-full bg-success status-dot-pulse"></span>Aktif</span>'
                         : '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border bg-error/10 text-error border-error/20">Nonaktif</span>';
                     const ownerClick = t.owner_user_id
                         ? `<button type="button" onclick="openKaryawanDetail(${t.owner_user_id})" class="font-semibold hover:underline hover:text-gold-accent transition-colors cursor-pointer">${t.owner_nama}</button>`
@@ -994,11 +994,11 @@
         document.getElementById('drawer-phone').textContent = d.phone || '';
         document.getElementById('drawer-role').textContent = d.roleLabel;
         document.getElementById('drawer-status').textContent = d.status;
-        document.getElementById('drawer-status').className = 'inline-flex px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (d.status === 'aktif' ? 'bg-success/10 text-success border border-success/20' : d.status === 'suspend' ? 'bg-tertiary-container/30 text-on-tertiary-container border border-tertiary-container/50' : 'bg-error/10 text-error border border-error/20');
+        document.getElementById('drawer-status').className = 'inline-flex px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (d.status === 'aktif' ? 'bg-success/10 text-success border border-success/20' : d.status === 'suspend' ? 'bg-error/10 text-error border border-error/20' : 'bg-error/10 text-error border border-error/20');
         document.getElementById('drawer-verified').innerHTML = d.verified === 'true'
             ? '<span class="material-symbols-outlined text-[10px]">verified</span>Verified'
             : '<span class="material-symbols-outlined text-[10px]">email</span>Belum Verified';
-        document.getElementById('drawer-verified').className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (d.verified === 'true' ? 'bg-secondary-container/20 text-secondary border border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant');
+        document.getElementById('drawer-verified').className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (d.verified === 'true' ? 'bg-success/10 text-success border border-success/20' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant');
 
         document.getElementById('role-form').action = urls.role(d.id);
         document.getElementById('nonaktifkan-form').action = urls.nonaktifkan(d.id);

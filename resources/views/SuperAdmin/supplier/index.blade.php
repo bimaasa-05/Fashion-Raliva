@@ -8,9 +8,9 @@
 
 @php
     $statusBadgeMap = [
-        'aktif' => ['label' => 'Aktif', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'verifikasi' => ['label' => 'Verifikasi', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
-        'nonaktif' => ['label' => 'Nonaktif', 'class' => 'bg-error/10 text-error border-error/25'],
+        'aktif' => ['label' => 'Aktif', 'class' => \App\Support\StatusStyle::badgeClass('aktif')],
+        'verifikasi' => ['label' => 'Verifikasi', 'class' => \App\Support\StatusStyle::badgeClass('verifikasi')],
+        'nonaktif' => ['label' => 'Nonaktif', 'class' => \App\Support\StatusStyle::badgeClass('nonaktif')],
     ];
 @endphp
 
@@ -303,9 +303,9 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const saStatusBadge = (status) => ({
-            'aktif': ['Aktif', 'bg-secondary-container/20 text-secondary border-secondary/20'],
+            'aktif': ['Aktif', 'bg-success/10 text-success border-success/20'],
             'verifikasi': ['Verifikasi', 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
-            'nonaktif': ['Nonaktif', 'bg-error/10 text-error border-error/25'],
+            'nonaktif': ['Nonaktif', 'bg-error/10 text-error border-error/20'],
         }[status] ?? [status, 'bg-surface-container-high text-on-surface-variant border-outline-variant']);
 
         const saSetBadge = (el, label, cls) => {

@@ -209,7 +209,7 @@
                                         @method('PUT')
                                         <div class="relative" id="rowStatus-{{ $s->store_staff_id }}-dd">
                                             <button type="button" data-dd-trigger id="rowStatus-{{ $s->store_staff_id }}-trigger" onclick="toggleDropdown('rowStatus-{{ $s->store_staff_id }}')" aria-haspopup="listbox" aria-expanded="false"
-                                                class="flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer text-left min-w-[110px] {{ $s->status === 'aktif' ? 'text-secondary border-secondary/30' : 'text-error border-error/30' }}">
+                                                class="flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-2 py-1 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer text-left min-w-[110px] {{ $s->status === 'aktif' ? 'text-success border-success/30' : 'text-error border-error/30' }}">
                                                 <span id="rowStatus-{{ $s->store_staff_id }}-label" class="truncate">{{ $s->status === 'aktif' ? 'Aktif' : 'Nonaktif' }}</span>
                                                 <span class="material-symbols-outlined text-[14px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="rowStatus-{{ $s->store_staff_id }}-chevron">expand_more</span>
                                             </button>
@@ -290,7 +290,7 @@
                                 @method('PUT')
                                 <div class="relative" id="rowStatus-m-{{ $s->store_staff_id }}-dd">
                                         <button type="button" data-dd-trigger id="rowStatus-m-{{ $s->store_staff_id }}-trigger" onclick="toggleDropdown('rowStatus-m-{{ $s->store_staff_id }}')" aria-haspopup="listbox" aria-expanded="false"
-                                            class="flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-2 py-2 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer text-left min-w-[110px] {{ $s->status === 'aktif' ? 'text-secondary border-secondary/30' : 'text-error border-error/30' }}">
+                                            class="flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg px-2 py-2 text-[10px] font-bold uppercase focus:outline-none focus:border-gold-accent cursor-pointer text-left min-w-[110px] {{ $s->status === 'aktif' ? 'text-success border-success/30' : 'text-error border-error/30' }}">
                                             <span id="rowStatus-m-{{ $s->store_staff_id }}-label" class="truncate">{{ $s->status === 'aktif' ? 'Aktif' : 'Nonaktif' }}</span>
                                             <span class="material-symbols-outlined text-[14px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="rowStatus-m-{{ $s->store_staff_id }}-chevron">expand_more</span>
                                         </button>
@@ -489,7 +489,7 @@
             const trigger = document.getElementById(suffix + '-trigger');
             if (!trigger) return;
             trigger.classList.remove('text-secondary', 'text-error', 'border-secondary/30', 'border-error/30');
-            trigger.classList.add.apply(trigger.classList, status === 'aktif' ? ['text-secondary', 'border-secondary/30'] : ['text-error', 'border-error/30']);
+            trigger.classList.add.apply(trigger.classList, status === 'aktif' ? ['text-success', 'border-success/30'] : ['text-error', 'border-error/30']);
         });
     }
     function selectRowStatus(id, status) {

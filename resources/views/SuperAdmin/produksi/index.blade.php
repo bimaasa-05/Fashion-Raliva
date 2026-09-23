@@ -8,18 +8,18 @@
 
 @php
     $statusBadgeMap = [
-        'requested' => ['label' => 'Menunggu', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-        'menunggu' => ['label' => 'Menunggu', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-        'diproses' => ['label' => 'Diproduksi', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'menunggu_qc' => ['label' => 'Menunggu QC', 'class' => 'bg-info/10 text-info border-info/20'],
-        'selesai' => ['label' => 'Selesai', 'class' => 'bg-success/10 text-success border-success/20'],
-        'dibatalkan' => ['label' => 'Dibatalkan', 'class' => 'bg-error/10 text-error border-error/20'],
+        'requested' => ['label' => 'Menunggu', 'class' => \App\Support\StatusStyle::badgeClass('requested')],
+        'menunggu' => ['label' => 'Menunggu', 'class' => \App\Support\StatusStyle::badgeClass('menunggu')],
+        'diproses' => ['label' => 'Diproduksi', 'class' => \App\Support\StatusStyle::badgeClass('diproses')],
+        'menunggu_qc' => ['label' => 'Menunggu QC', 'class' => \App\Support\StatusStyle::badgeClass('menunggu_qc')],
+        'selesai' => ['label' => 'Selesai', 'class' => \App\Support\StatusStyle::badgeClass('selesai')],
+        'dibatalkan' => ['label' => 'Dibatalkan', 'class' => \App\Support\StatusStyle::badgeClass('dibatalkan')],
     ];
     $prioMap = [
-        'rendah' => ['label' => 'Rendah', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-        'normal' => ['label' => 'Normal', 'class' => 'bg-info/10 text-info border-info/20'],
-        'tinggi' => ['label' => 'Tinggi', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'urgent' => ['label' => 'Urgent', 'class' => 'bg-error/10 text-error border-error/20'],
+        'rendah' => ['label' => 'Rendah', 'class' => \App\Support\StatusStyle::badgeClass('rendah')],
+        'normal' => ['label' => 'Normal', 'class' => \App\Support\StatusStyle::badgeClass('normal')],
+        'tinggi' => ['label' => 'Tinggi', 'class' => \App\Support\StatusStyle::badgeClass('tinggi')],
+        'urgent' => ['label' => 'Urgent', 'class' => \App\Support\StatusStyle::badgeClass('urgent')],
     ];
 @endphp
 
@@ -357,14 +357,14 @@
 
     const SA_PRIO_BADGES = {
         'rendah': ['Rendah', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-        'normal': ['Normal', 'bg-info/10 text-info border-info/20'],
-        'tinggi': ['Tinggi', 'bg-secondary-container/20 text-secondary border-secondary/20'],
+        'normal': ['Normal', 'bg-success/10 text-success border-success/20'],
+        'tinggi': ['Tinggi', 'bg-amber-500/10 text-amber-600 border-amber-500/30'],
         'urgent': ['Urgent', 'bg-error/10 text-error border-error/20'],
     };
     const SA_STATUS_BADGES = {
-        'requested': ['Requested', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-        'diproses': ['Diproduksi', 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'menunggu_qc': ['Menunggu QC', 'bg-info/10 text-info border-info/20'],
+        'requested': ['Requested', 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
+        'diproses': ['Diproduksi', 'bg-amber-500/10 text-amber-600 border-amber-500/30'],
+        'menunggu_qc': ['Menunggu QC', 'bg-amber-500/10 text-amber-600 border-amber-500/30'],
         'selesai': ['Selesai', 'bg-success/10 text-success border-success/20'],
         'dibatalkan': ['Dibatalkan', 'bg-error/10 text-error border-error/20'],
     };

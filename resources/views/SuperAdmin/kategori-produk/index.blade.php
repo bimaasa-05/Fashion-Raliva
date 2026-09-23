@@ -340,7 +340,7 @@
                             <td class="p-4 text-on-surface capitalize font-semibold">{{ $k->nama_kategori }}</td>
                             <td class="p-4 text-on-surface-variant">{{ \Illuminate\Support\Str::limit($k->deskripsi ?? '-', 60) }}</td>
                             <td class="p-4 text-center">
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $k->status === \App\Models\StoreCategory::STATUS_AKTIF ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-error/10 text-error border-error/20' }}">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $k->status === \App\Models\StoreCategory::STATUS_AKTIF ? \App\Support\StatusStyle::badgeClass('aktif') : \App\Support\StatusStyle::badgeClass('nonaktif') }}">
                                     <span class="material-symbols-outlined fill text-[12px]">{{ $k->status === \App\Models\StoreCategory::STATUS_AKTIF ? 'check_circle' : 'block' }}</span>{{ $k->status === \App\Models\StoreCategory::STATUS_AKTIF ? 'Aktif' : 'Nonaktif' }}
                                 </span>
                             </td>

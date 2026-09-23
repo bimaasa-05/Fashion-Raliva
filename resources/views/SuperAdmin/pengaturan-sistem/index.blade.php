@@ -306,7 +306,7 @@
                                 <td class="p-3 text-sm font-semibold">{{ $c->judul }}</td>
                                 <td class="p-3 text-sm text-on-surface-variant">{{ $c->subjudul ?: '—' }}</td>
                                 <td class="p-3 text-center font-mono text-sm">{{ $c->urutan }}</td>
-                                <td class="p-3 text-center"><span class="inline-flex px-2 py-1 rounded-full text-[11px] font-bold border {{ $c->is_active ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container text-on-surface-variant border-muted-border' }}">{{ $c->is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
+                                <td class="p-3 text-center"><span class="inline-flex px-2 py-1 rounded-full text-[11px] font-bold border {{ $c->is_active ? \App\Support\StatusStyle::badgeClass('aktif') : \App\Support\StatusStyle::badgeClass('nonaktif') }}">{{ $c->is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
                                 <td class="p-3 text-right">
                                     <div class="flex items-center justify-end gap-1">
                                         <button type="button" onclick="openHelpCategoryEdit({{ $c->help_category_id }}, @js($c->icon), @js($c->judul), @js($c->subjudul), {{ $c->is_active ? 'true' : 'false' }})" class="px-2.5 py-1.5 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">Edit</button>
@@ -335,7 +335,7 @@
                                     @endif
                                 </div>
                             </div>
-                            <span class="inline-flex px-2 py-1 rounded-full text-[10px] font-bold border shrink-0 {{ $c->is_active ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container text-on-surface-variant border-muted-border' }}">{{ $c->is_active ? 'Aktif' : 'Nonaktif' }}</span>
+                            <span class="inline-flex px-2 py-1 rounded-full text-[10px] font-bold border shrink-0 {{ $c->is_active ? \App\Support\StatusStyle::badgeClass('aktif') : \App\Support\StatusStyle::badgeClass('nonaktif') }}">{{ $c->is_active ? 'Aktif' : 'Nonaktif' }}</span>
                         </div>
                         <div class="flex items-center justify-between gap-3 mt-3">
                             <span class="font-label-sm text-xs text-on-surface-variant">Urutan <span class="font-mono text-on-surface font-bold">{{ $c->urutan }}</span></span>
@@ -381,7 +381,7 @@
                                 <td class="p-3 text-sm font-semibold max-w-[280px]">{{ $f->pertanyaan }}</td>
                                 <td class="p-3 text-sm text-on-surface-variant max-w-[360px]">{{ \Illuminate\Support\Str::limit($f->jawaban, 90) }}</td>
                                 <td class="p-3 text-center font-mono text-sm">{{ $f->urutan }}</td>
-                                <td class="p-3 text-center"><span class="inline-flex px-2 py-1 rounded-full text-[11px] font-bold border {{ $f->is_active ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container text-on-surface-variant border-muted-border' }}">{{ $f->is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
+                                <td class="p-3 text-center"><span class="inline-flex px-2 py-1 rounded-full text-[11px] font-bold border {{ $f->is_active ? \App\Support\StatusStyle::badgeClass('aktif') : \App\Support\StatusStyle::badgeClass('nonaktif') }}">{{ $f->is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
                                 <td class="p-3 text-right">
                                     <div class="flex items-center justify-end gap-1">
                                         <button type="button" onclick="openHelpFaqEdit({{ $f->help_faq_id }}, {{ (int) $f->help_category_id }}, @js($f->pertanyaan), @js($f->jawaban), {{ $f->is_active ? 'true' : 'false' }})" class="px-2.5 py-1.5 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">Edit</button>
@@ -400,7 +400,7 @@
                     <div class="bg-surface-container-low border border-muted-border rounded-lg p-4">
                         <div class="flex items-start justify-between gap-3">
                             <p class="font-title-md text-sm text-on-surface min-w-0">{{ $f->pertanyaan }}</p>
-                            <span class="inline-flex px-2 py-1 rounded-full text-[10px] font-bold border shrink-0 {{ $f->is_active ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container text-on-surface-variant border-muted-border' }}">{{ $f->is_active ? 'Aktif' : 'Nonaktif' }}</span>
+                            <span class="inline-flex px-2 py-1 rounded-full text-[10px] font-bold border shrink-0 {{ $f->is_active ? \App\Support\StatusStyle::badgeClass('aktif') : \App\Support\StatusStyle::badgeClass('nonaktif') }}">{{ $f->is_active ? 'Aktif' : 'Nonaktif' }}</span>
                         </div>
                         <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-on-surface-variant mt-1.5"><span class="material-symbols-outlined text-[14px]">{{ $f->category?->icon ?: 'help' }}</span>{{ $f->category?->judul ?: 'Tanpa Kategori' }}</span>
                         <p class="font-body-md text-xs text-on-surface-variant leading-relaxed mt-1.5 line-clamp-2">{{ $f->jawaban }}</p>
