@@ -53,8 +53,6 @@
                     class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pemasukan</button>
                 <button type="button" data-saldo-tab="pengeluaran"
                     class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pengeluaran</button>
-                <button type="button" data-saldo-tab="pencairan"
-                    class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pencairan</button>
             </div>
         </div>
 
@@ -351,72 +349,11 @@
                                         pengeluaran tercatat.</td>
                                 </tr>
                             @endforelse
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </section>
         </div>
-
-        {{-- ============ PANEL: PENCAIRAN ============ --}}
-        <div data-saldo-panel="pencairan" class="hidden space-y-section-gap">
-            <section data-reveal
-                class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-                <h2 class="font-title-md text-title-md mb-2 text-on-surface premium-heading">Ajukan Pencairan Dana</h2>
-                <p class="text-xs text-on-surface-variant mb-6">Minimal Rp 100.000. Dana cair setelah disetujui. Total sudah dicairkan: <span class="font-bold text-on-surface">{{ $fmt($totalDicairkan ?? 0) }}</span></p>
-                <form method="POST" action="{{ route('owner.keuangan.pencairan.store') }}"
-                    class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    @csrf
-                    <div>
-                        <label class="block raliva-label mb-2">Nominal (Rp)</label>
-                        <div class="flex items-stretch">
-                            <span
-                                class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
-                            <input name="jumlah" type="text" inputmode="numeric" data-rupiah required
-                                placeholder="100.000" class="raliva-input"
-                                style="border-top-left-radius:0;border-bottom-left-radius:0;" />
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block raliva-label mb-2">Rekening Tujuan</label>
-                        <select name="bank_account_id" required class="raliva-select">
-                            <option value="">— Pilih rekening —</option>
-                            @foreach ($bankAccounts as $acc)
-                                <option value="{{ $acc->bank_account_id }}">{{ $acc->bank?->nama_bank ?? 'Bank' }} • {{ $acc->nomor_rekening }} ({{ $acc->nama_pemilik }})</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block raliva-label mb-2">Catatan (opsional)</label>
-                        <input name="catatan" type="text" maxlength="500" placeholder="cth. Modal restock"
-                            class="raliva-input" />
-                    </div>
-                    <div class="md:col-span-2 flex justify-end">
-                        <button type="submit"
-                            class="py-3 px-8 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-[16px]">payments</span>Ajukan Pencairan
-                        </button>
-                    </div>
-                </form>
-            </section>
-
-            <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-                <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Riwayat Penarikan</h2>
-                <div class="space-y-2">
-                    @forelse ($withdrawals as $wd)
-                        <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg border border-muted-border">
-                            <div>
-                                <p class="text-sm text-on-surface font-bold">Rp {{ number_format($wd->jumlah, 0, ',', '.') }} <span class="font-normal text-on-surface-variant">• {{ $wd->status }}</span></p>
-                                <p class="text-xs text-on-surface-variant">{{ $wd->diajukan_pada?->translatedFormat('d M Y H:i') }} • {{ $wd->bankAccount?->bank?->nama_bank ?? '' }} {{ $wd->bankAccount?->nomor_rekening ?? '' }}</p>
-                            </div>
-                            <span class="text-sm font-bold {{ $wd->status === 'dibayar' ? 'text-secondary' : 'text-gold-accent' }}">{{ $wd->status }}</span>
-                        </div>
-                    @empty
-                        <p class="text-sm text-on-surface-variant text-center py-4">Belum ada pengajuan pencairan.</p>
-                    @endforelse
-                </div>
-            </section>
-        </div>
-
     </div>
 @endsection
 
@@ -463,10 +400,10 @@
             });
         });
 
-    const initSaldoFromHash = () => {
-        const h = location.hash.replace('#', '');
-        if (['ringkasan', 'pemasukan', 'pengeluaran', 'pencairan'].includes(h)) setSaldoTab(h);
-    };
+        const initSaldoFromHash = () => {
+            const h = location.hash.replace('#', '');
+            if (['ringkasan', 'pemasukan', 'pengeluaran', 'pencairan'].includes(h)) setSaldoTab(h);
+        };
         window.addEventListener('hashchange', initSaldoFromHash);
 
         window.ralivaOnReady(() => {
