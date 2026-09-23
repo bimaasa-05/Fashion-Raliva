@@ -669,9 +669,15 @@ if (is_array($tl) && array_key_exists('done', $tl)) {
 </form>
 @endif
 @if ($selected->status === \App\Models\Order::STATUS_SELESAI)
+@if (! empty($existingComplaint ?? null))
+<a href="{{ route('customer.komplain', ['open' => $existingComplaint->complaint_id]) }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest border border-secondary/40 text-secondary hover:bg-secondary/5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">forum</span>{{ __('Lihat Komplain') }}
+</a>
+@else
 <a href="{{ route('customer.komplain.create', ['order' => $selected->order_id]) }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">
 <span class="material-symbols-outlined text-[18px]">report</span>{{ __('Ajukan Komplain') }}
 </a>
+@endif
 @endif
 @if ($refundPernahAda)
 <div class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-body-sm text-body-sm text-on-surface-variant bg-surface-container-low border border-outline-variant rounded-full px-lg py-3 text-center">
