@@ -154,7 +154,7 @@
                             <td class="py-3.5 px-4 font-bold text-on-surface">{{ $r->package?->nama_paket ?? 'Paket #'.$r->slot_package_id }}</td>
                             <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $r->tanggal_mulai?->translatedFormat('d M Y') }} — {{ $r->tanggal_berakhir?->translatedFormat('d M Y') }}</td>
                             <td class="py-3.5 px-4 font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format($r->package?->harga ?? 0, 0, ',', '.') }}</td>
-                            <td class="py-3.5 px-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">{{ ucfirst($r->status) }}</span></td>
+                            <td class="py-3.5 px-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full border {{ \App\Support\StatusStyle::badgeClass($r->status) }} text-[10px] font-bold uppercase">{{ ucfirst($r->status) }}</span></td>
                         </tr>
                     @empty
                         <tr><td colspan="4" class="py-8 text-center text-on-surface-variant text-sm">Belum ada pembelian paket. Kuota aktif saat ini dari slot fleksibel/gratis.</td></tr>
@@ -171,7 +171,7 @@
                             <p class="font-bold text-on-surface">{{ $r->package?->nama_paket ?? 'Paket #'.$r->slot_package_id }}</p>
                             <p class="text-xs text-on-surface-variant mt-0.5">{{ $r->tanggal_mulai?->translatedFormat('d M Y') }} — {{ $r->tanggal_berakhir?->translatedFormat('d M Y') }}</p>
                         </div>
-                        <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">{{ ucfirst($r->status) }}</span>
+                        <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full border {{ \App\Support\StatusStyle::badgeClass($r->status) }} text-[10px] font-bold uppercase">{{ ucfirst($r->status) }}</span>
                     </div>
                     <div class="mt-3 pt-3 border-t border-muted-border">
                         <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Nominal</p>

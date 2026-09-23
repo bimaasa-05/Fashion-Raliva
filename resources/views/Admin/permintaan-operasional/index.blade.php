@@ -74,7 +74,7 @@
                         @php
                             $statusClass = match($p->status) {
                                 'pending' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
-                                'disetujui' => 'bg-secondary-container/20 text-secondary border-secondary/20',
+                                'disetujui' => 'bg-success/10 text-success border-success/20',
                                 'ditolak' => 'bg-error/10 text-error border-error/20',
                                 default => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
                             };
@@ -156,7 +156,7 @@
                 @php
                     $statusClass = match($p->status) {
                         'pending' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
-                        'disetujui' => 'bg-secondary-container/20 text-secondary border-secondary/20',
+                        'disetujui' => 'bg-success/10 text-success border-success/20',
                         'ditolak' => 'bg-error/10 text-error border-error/20',
                         default => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
                     };
@@ -234,7 +234,7 @@
         };
         $statusClass = match($p->status) {
             'pending' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
-            'disetujui' => 'bg-secondary-container/20 text-secondary border-secondary/20',
+            'disetujui' => 'bg-success/10 text-success border-success/20',
             'ditolak' => 'bg-error/10 text-error border-error/20',
             default => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
         };

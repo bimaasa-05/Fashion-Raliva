@@ -9,11 +9,11 @@
 
 @php
     $badgeMap = [
-        'pending' => ['label' => 'Menunggu Bayar', 'class' => 'bg-surface-container-high text-on-surface border-outline-variant'],
-        'menunggu_verifikasi' => ['label' => 'Menunggu Verifikasi', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'terverifikasi' => ['label' => 'Terverifikasi', 'class' => 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'],
-        'ditolak' => ['label' => 'Ditolak', 'class' => 'bg-error/10 text-error border-error/20'],
-        'kadaluarsa' => ['label' => 'Kadaluarsa', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+        'pending' => ['label' => 'Menunggu Bayar', 'class' => \App\Support\StatusStyle::badgeClass('pending')],
+        'menunggu_verifikasi' => ['label' => 'Menunggu Verifikasi', 'class' => \App\Support\StatusStyle::badgeClass('menunggu_verifikasi')],
+        'terverifikasi' => ['label' => 'Terverifikasi', 'class' => \App\Support\StatusStyle::badgeClass('terverifikasi')],
+        'ditolak' => ['label' => 'Ditolak', 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
+        'kadaluarsa' => ['label' => 'Kadaluarsa', 'class' => \App\Support\StatusStyle::badgeClass('kadaluarsa')],
     ];
 @endphp
 

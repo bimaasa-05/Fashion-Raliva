@@ -131,9 +131,9 @@
                                 <td class="py-3.5 px-4 text-on-surface-variant">{{ $b->supplier?->nama_supplier ?? '-' }}</td>
                                 <td class="py-3.5 px-4 text-center">
                                     @if ($low)
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Menipis</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Menipis</span>
                                     @else
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aman</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20">Aman</span>
                                     @endif
                                 </td>
                             </tr>

@@ -146,7 +146,7 @@
                             </div>
                             <p class="font-title-md text-sm text-on-surface leading-snug">{{ $doc[2] }}</p>
                             @if ($existing)
-                                <span class="mt-auto inline-flex w-fit items-center gap-1.5 px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">
+                                <span class="mt-auto inline-flex w-fit items-center gap-1.5 px-2 py-1 rounded-full border {{ \App\Support\StatusStyle::badgeClass($existing->status) }} text-[10px] font-bold uppercase">
                                     <span class="material-symbols-outlined fill text-[12px]">check_circle</span>{{ ucfirst($existing->status) }}
                                 </span>
                             @else
@@ -210,7 +210,7 @@
                         </div>
                         <p class="font-title-md text-sm text-on-surface leading-snug">{{ $doc[2] }}</p>
                         @if ($existing)
-                            <span class="inline-flex w-fit items-center gap-1.5 px-2 py-1 rounded-full {{ $existing->status === 'terverifikasi' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : ($existing->status === 'ditolak' ? 'bg-error/10 text-error border-error/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant') }} text-[10px] font-bold uppercase border">
+                            <span class="inline-flex w-fit items-center gap-1.5 px-2 py-1 rounded-full {{ \App\Support\StatusStyle::badgeClass($existing->status) }} text-[10px] font-bold uppercase border">
                                 <span class="material-symbols-outlined fill text-[12px]">{{ $existing->status === 'terverifikasi' ? 'check_circle' : ($existing->status === 'ditolak' ? 'cancel' : 'schedule') }}</span>{{ ucfirst($existing->status) }}
                             </span>
                             @if($existing->catatan)
@@ -256,11 +256,11 @@
                         <p class="font-title-md text-sm text-on-surface leading-snug">{{ $doc[2] }}</p>
                     </div>
                     @if($existing)
-                        <span class="inline-flex w-fit items-center gap-1.5 px-2 py-1 rounded-full {{ $existing->status === 'terverifikasi' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant' }} text-[10px] font-bold uppercase border">
+                        <span class="inline-flex w-fit items-center gap-1.5 px-2 py-1 rounded-full {{ \App\Support\StatusStyle::badgeClass($existing->status) }} text-[10px] font-bold uppercase border">
                             <span class="material-symbols-outlined fill text-[12px]">{{ $existing->status === 'terverifikasi' ? 'check_circle' : 'schedule' }}</span>{{ ucfirst($existing->status) }}
                         </span>
                     @else
-                        <span class="inline-flex w-fit items-center gap-1.5 px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant border border-outline-variant text-[10px] font-bold uppercase">
+                        <span class="inline-flex w-fit items-center gap-1.5 px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[10px] font-bold uppercase">
                             <span class="material-symbols-outlined text-[12px]">hourglass_empty</span>Menunggu
                         </span>
                     @endif

@@ -8,8 +8,8 @@
 
 @php
     $statusBadgeMap = [
-        'aktif' => ['label' => 'Aktif', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'nonaktif' => ['label' => 'Nonaktif', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+        'aktif' => ['label' => 'Aktif', 'class' => \App\Support\StatusStyle::badgeClass('aktif')],
+        'nonaktif' => ['label' => 'Nonaktif', 'class' => \App\Support\StatusStyle::badgeClass('nonaktif')],
     ];
 @endphp
 
@@ -261,8 +261,8 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const saStatusBadge = (status) => ({
-        'aktif': ['Aktif', 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'nonaktif': ['Nonaktif', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+        'aktif': ['Aktif', 'bg-success/10 text-success border-success/20'],
+        'nonaktif': ['Nonaktif', 'bg-error/10 text-error border-error/20'],
     }[status] ?? [status, 'bg-surface-container-high text-on-surface-variant border-outline-variant']);
 
     const saSetBadge = (el, label, cls) => {

@@ -144,9 +144,9 @@
                             </td>
                             <td class="py-3.5 px-4 text-center">
                                 @if ($key === 'sampai')
-                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20"><span class="material-symbols-outlined fill text-[12px]">check_circle</span>Terkirim</span>
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20"><span class="material-symbols-outlined fill text-[12px]">check_circle</span>Terkirim</span>
                                 @else
-                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30"><span class="material-symbols-outlined fill text-[12px]">local_shipping</span>Dalam Perjalanan</span>
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-sky-500/10 text-sky-600 text-[10px] font-bold uppercase border border-sky-500/30"><span class="material-symbols-outlined fill text-[12px]">local_shipping</span>Dalam Perjalanan</span>
                                 @endif
                             </td>
                             <td class="py-3.5 px-4 text-right">
@@ -184,7 +184,7 @@
         <div class="p-6 space-y-3">
             <div class="flex items-center justify-between bg-surface-container-low rounded-lg px-4 py-3">
                 <span class="text-[10px] uppercase text-on-surface-variant">Status</span>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase">{{ $ship->status }}</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full border {{ \App\Support\StatusStyle::badgeClass($ship->status) }} text-[10px] font-bold uppercase">{{ $ship->status }}</span>
             </div>
             <div class="bg-surface-container-low rounded-lg p-4 space-y-1.5 text-sm">
                 <div class="flex justify-between"><span class="text-on-surface-variant">Customer</span><span class="text-on-surface">{{ $ship->checkout?->user?->nama_lengkap ?? '-' }}</span></div>

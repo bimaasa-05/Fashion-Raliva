@@ -79,13 +79,13 @@
                             </div>
                         </div>
                         @if ($promo->status === 'aktif')
-                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[9px] font-bold uppercase border border-secondary/20">Aktif</span>
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20">Aktif</span>
                         @elseif ($promo->mulai_pada && $promo->mulai_pada->isFuture())
                             <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">Terjadwal</span>
                         @elseif ($promo->status === 'nonaktif')
-                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">Nonaktif</span>
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20">Nonaktif</span>
                         @else
-                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20">Selesai</span>
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20">Selesai</span>
                         @endif
                     </div>
 
@@ -123,7 +123,7 @@
                                 </div>
                                 <div>
                                     <p class="font-title-md text-base text-on-surface">{{ $promo->nama_promo }}</p>
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">{{ $promo->status }}</span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full {{ $promo->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($promo->status === 'nonaktif' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }} text-[10px] font-bold uppercase border">{{ $promo->status }}</span>
                                 </div>
                             </div>
                             <dl class="grid grid-cols-2 gap-4 font-body-md text-sm">

@@ -59,7 +59,7 @@
                         @endif
                         <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2 mt-4">
                             <span class="inline-flex px-2 py-0.5 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">{{ $user->role->nama_role ?? 'Gudang' }}</span>
-                            <span class="inline-flex px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 text-[9px] font-bold uppercase">{{ ucfirst($user->status ?? 'aktif') }}</span>
+                            <span class="inline-flex px-1.5 py-0.5 rounded {{ strtolower($user->status ?? 'aktif') === 'aktif' ? 'bg-success/10 text-success border border-success/20' : 'bg-error/10 text-error border border-error/20' }} text-[9px] font-bold uppercase">{{ ucfirst($user->status ?? 'aktif') }}</span>
                         </div>
                         <div class="grid grid-cols-3 gap-3 mt-6">
                             <div class="profil-stat">

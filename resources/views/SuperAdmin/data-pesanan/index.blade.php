@@ -84,15 +84,15 @@
                 @forelse ($orders as $order)
                     @php
                         $statusMap = [
-                            'pending_payment' => ['Menunggu', 'bg-surface-container-high text-on-surface'],
-                            'dibayar' => ['Dibayar', 'bg-info/10 text-info'],
-                            'diproses' => ['Diproses', 'bg-surface-container-high text-on-surface'],
-                            'dikirim' => ['Dikirim', 'bg-surface-container-high text-on-surface'],
-                            'selesai' => ['Selesai', 'bg-success/10 text-success'],
-                            'dibatalkan' => ['Dibatalkan', 'bg-error/10 text-error'],
-                            'refund' => ['Refund', 'bg-error/10 text-error'],
+                            'pending_payment' => ['Menunggu', \App\Support\StatusStyle::badgeClass('pending_payment')],
+                            'dibayar' => ['Dibayar', \App\Support\StatusStyle::badgeClass('dibayar')],
+                            'diproses' => ['Diproses', \App\Support\StatusStyle::badgeClass('diproses')],
+                            'dikirim' => ['Dikirim', \App\Support\StatusStyle::badgeClass('dikirim')],
+                            'selesai' => ['Selesai', \App\Support\StatusStyle::badgeClass('selesai')],
+                            'dibatalkan' => ['Dibatalkan', \App\Support\StatusStyle::badgeClass('dibatalkan')],
+                            'refund' => ['Refund', \App\Support\StatusStyle::badgeClass('refund')],
                         ];
-                        $st = $statusMap[$order->status] ?? [ucfirst($order->status), 'bg-surface-container-high text-on-surface'];
+                        $st = $statusMap[$order->status] ?? [ucfirst($order->status), \App\Support\StatusStyle::CLASS_NEUTRAL];
                         $pelanggan = $order->checkout?->user;
                         $pelNama = $pelanggan?->nama_lengkap ?? $order->checkout?->nama_penerima ?? '-';
                         $pelEmail = $pelanggan?->email ?? $order->checkout?->email_pelanggan ?? '';
@@ -153,15 +153,15 @@
         @forelse ($orders as $order)
             @php
                 $statusMap = [
-                    'pending_payment' => ['Menunggu', 'bg-surface-container-high text-on-surface'],
-                    'dibayar' => ['Dibayar', 'bg-info/10 text-info'],
-                    'diproses' => ['Diproses', 'bg-surface-container-high text-on-surface'],
-                    'dikirim' => ['Dikirim', 'bg-surface-container-high text-on-surface'],
-                    'selesai' => ['Selesai', 'bg-success/10 text-success'],
-                    'dibatalkan' => ['Dibatalkan', 'bg-error/10 text-error'],
-                    'refund' => ['Refund', 'bg-error/10 text-error'],
+                    'pending_payment' => ['Menunggu', \App\Support\StatusStyle::badgeClass('pending_payment')],
+                    'dibayar' => ['Dibayar', \App\Support\StatusStyle::badgeClass('dibayar')],
+                    'diproses' => ['Diproses', \App\Support\StatusStyle::badgeClass('diproses')],
+                    'dikirim' => ['Dikirim', \App\Support\StatusStyle::badgeClass('dikirim')],
+                    'selesai' => ['Selesai', \App\Support\StatusStyle::badgeClass('selesai')],
+                    'dibatalkan' => ['Dibatalkan', \App\Support\StatusStyle::badgeClass('dibatalkan')],
+                    'refund' => ['Refund', \App\Support\StatusStyle::badgeClass('refund')],
                 ];
-                $st = $statusMap[$order->status] ?? [ucfirst($order->status), 'bg-surface-container-high text-on-surface'];
+                $st = $statusMap[$order->status] ?? [ucfirst($order->status), \App\Support\StatusStyle::CLASS_NEUTRAL];
                 $pelanggan = $order->checkout?->user;
                 $pelNama = $pelanggan?->nama_lengkap ?? $order->checkout?->nama_penerima ?? '-';
                 $pelEmail = $pelanggan?->email ?? $order->checkout?->email_pelanggan ?? '';
@@ -212,13 +212,13 @@
 @foreach ($orders as $order)
     @php
         $oStatusMap = [
-            'pending_payment' => ['Menunggu', 'bg-surface-container-high text-on-surface'],
-            'dibayar' => ['Dibayar', 'bg-info/10 text-info'],
-            'diproses' => ['Diproses', 'bg-surface-container-high text-on-surface'],
-            'dikirim' => ['Dikirim', 'bg-surface-container-high text-on-surface'],
-            'selesai' => ['Selesai', 'bg-success/10 text-success'],
-            'dibatalkan' => ['Dibatalkan', 'bg-error/10 text-error'],
-            'refund' => ['Refund', 'bg-error/10 text-error'],
+            'pending_payment' => ['Menunggu', \App\Support\StatusStyle::badgeClass('pending_payment')],
+            'dibayar' => ['Dibayar', \App\Support\StatusStyle::badgeClass('dibayar')],
+            'diproses' => ['Diproses', \App\Support\StatusStyle::badgeClass('diproses')],
+            'dikirim' => ['Dikirim', \App\Support\StatusStyle::badgeClass('dikirim')],
+            'selesai' => ['Selesai', \App\Support\StatusStyle::badgeClass('selesai')],
+            'dibatalkan' => ['Dibatalkan', \App\Support\StatusStyle::badgeClass('dibatalkan')],
+            'refund' => ['Refund', \App\Support\StatusStyle::badgeClass('refund')],
         ];
         $oSt = $oStatusMap[$order->status] ?? [ucfirst($order->status), 'bg-surface-container-high text-on-surface'];
         $oPelanggan = $order->checkout?->user;

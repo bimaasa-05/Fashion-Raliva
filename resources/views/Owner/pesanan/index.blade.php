@@ -85,10 +85,10 @@
                 <tbody>
                     @php
                         $statusPill = [
-                            'baru' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
+                            'baru' => 'bg-amber-500/10 text-amber-600 border-amber-500/30',
                             'diproses' => 'bg-amber-500/10 text-amber-600 border-amber-500/30',
                             'dikirim' => 'bg-sky-500/10 text-sky-600 border-sky-500/30',
-                            'selesai' => 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30',
+                            'selesai' => 'bg-success/10 text-success border-success/20',
                             'refund' => 'bg-error/10 text-error border-error/20',
                             'dibatalkan' => 'bg-error/10 text-error border-error/20',
                         ];

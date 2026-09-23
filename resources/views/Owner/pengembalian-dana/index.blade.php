@@ -124,7 +124,7 @@
                                 <p class="font-mono text-sm text-on-surface-variant">{{ $r->kode }} • Pesanan #{{ $r->order_id }}</p>
                                 <p class="font-title-md text-title-md text-gold-accent mt-1">Rp {{ number_format((float) $r->jumlah, 0, ',', '.') }}</p>
                             </div>
-                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Disetujui</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20">Disetujui</span>
                         </div>
                         <p class="font-body-md text-sm text-on-surface-variant mb-4 flex-1">
                             <span class="text-on-surface font-bold">{{ $r->requester?->nama_lengkap ?? 'Customer' }}:</span> "{{ $r->alasan }}"

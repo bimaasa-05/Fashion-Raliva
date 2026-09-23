@@ -159,12 +159,12 @@
                     @php $rowNumber = $loop->iteration; @endphp
                     @php
                         $statusMap = [
-                            'dibayar' => ['Dibayar', 'bg-info/10 text-info'],
-                            'diproses' => ['Diproses', 'bg-secondary-container/20 text-secondary'],
-                            'dikirim' => ['Dikirim', 'bg-secondary-container/20 text-secondary'],
-                            'selesai' => ['Selesai', 'bg-success/10 text-success'],
+                            'dibayar' => ['Dibayar', \App\Support\StatusStyle::badgeClass('dibayar')],
+                            'diproses' => ['Diproses', \App\Support\StatusStyle::badgeClass('diproses')],
+                            'dikirim' => ['Dikirim', \App\Support\StatusStyle::badgeClass('dikirim')],
+                            'selesai' => ['Selesai', \App\Support\StatusStyle::badgeClass('selesai')],
                         ];
-                        $st = $statusMap[$tx->status] ?? [$tx->status, 'bg-surface-container-high text-on-surface-variant'];
+                        $st = $statusMap[$tx->status] ?? [$tx->status, \App\Support\StatusStyle::CLASS_NEUTRAL];
                     @endphp
                     <tr class="border-b border-muted-border last:border-0 hover:bg-surface-container-low/30 transition-colors">
                         <td class="p-4 text-center text-on-surface-variant font-mono">{{ $rowNumber }}</td>
@@ -188,12 +188,12 @@
         @forelse($recentTransactions as $tx)
             @php
                 $statusMap = [
-                    'dibayar' => ['Dibayar', 'bg-info/10 text-info'],
-                    'diproses' => ['Diproses', 'bg-secondary-container/20 text-secondary'],
-                    'dikirim' => ['Dikirim', 'bg-secondary-container/20 text-secondary'],
-                    'selesai' => ['Selesai', 'bg-success/10 text-success'],
+                    'dibayar' => ['Dibayar', \App\Support\StatusStyle::badgeClass('dibayar')],
+                    'diproses' => ['Diproses', \App\Support\StatusStyle::badgeClass('diproses')],
+                    'dikirim' => ['Dikirim', \App\Support\StatusStyle::badgeClass('dikirim')],
+                    'selesai' => ['Selesai', \App\Support\StatusStyle::badgeClass('selesai')],
                 ];
-                $st = $statusMap[$tx->status] ?? [$tx->status, 'bg-surface-container-high text-on-surface-variant'];
+                $st = $statusMap[$tx->status] ?? [$tx->status, \App\Support\StatusStyle::CLASS_NEUTRAL];
             @endphp
             <article class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
                 <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">receipt_long</span>

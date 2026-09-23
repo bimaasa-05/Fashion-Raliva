@@ -129,12 +129,12 @@
                     @forelse($slots as $i => $slot)
                         @php
                             $statusMap = [
-                                'aktif' => ['Aktif', 'bg-secondary-container/20 text-secondary border-secondary/20'],
-                                'terjadwal' => ['Menunggu Aktif', 'bg-gold-accent/10 text-gold-accent border-gold-accent/20'],
-                                'nonaktif' => ['Nonaktif', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                                'ditunda' => ['Ditunda', 'bg-error/10 text-error border-error/20'],
+                                'aktif' => ['Aktif', \App\Support\StatusStyle::badgeClass('aktif')],
+                                'terjadwal' => ['Menunggu Aktif', \App\Support\StatusStyle::badgeClass('terjadwal')],
+                                'nonaktif' => ['Nonaktif', \App\Support\StatusStyle::badgeClass('nonaktif')],
+                                'ditunda' => ['Ditunda', \App\Support\StatusStyle::badgeClass('ditunda')],
                             ];
-                            $st = $statusMap[$slot->status] ?? [$slot->status, 'bg-surface-container-high text-on-surface-variant'];
+                            $st = $statusMap[$slot->status] ?? [$slot->status, \App\Support\StatusStyle::CLASS_NEUTRAL];
                             $rank = $i + 1;
                         @endphp
                         <tr data-table-row class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
@@ -184,12 +184,12 @@
             @forelse($slots as $slot)
                 @php
 $statusMap = [
-                        'aktif' => ['Aktif', 'bg-secondary-container/20 text-secondary border-secondary/20'],
-                        'terjadwal' => ['Menunggu Aktif', 'bg-gold-accent/10 text-gold-accent border-gold-accent/20'],
-                        'nonaktif' => ['Nonaktif', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                        'ditunda' => ['Ditunda', 'bg-error/10 text-error border-error/20'],
+                        'aktif' => ['Aktif', \App\Support\StatusStyle::badgeClass('aktif')],
+                        'terjadwal' => ['Menunggu Aktif', \App\Support\StatusStyle::badgeClass('terjadwal')],
+                        'nonaktif' => ['Nonaktif', \App\Support\StatusStyle::badgeClass('nonaktif')],
+                        'ditunda' => ['Ditunda', \App\Support\StatusStyle::badgeClass('ditunda')],
                     ];
-                    $st = $statusMap[$slot->status] ?? [$slot->status, 'bg-surface-container-high text-on-surface-variant'];
+                    $st = $statusMap[$slot->status] ?? [$slot->status, \App\Support\StatusStyle::CLASS_NEUTRAL];
                     $rank = 0;
                     foreach ($slots as $k => $item) { if ($item->slot_id === $slot->slot_id) { $rank = $k + 1; break; } }
                 @endphp

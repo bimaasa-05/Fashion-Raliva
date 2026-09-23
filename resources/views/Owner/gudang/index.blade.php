@@ -77,7 +77,7 @@
                                 <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">{{ $g->alamat }}</p>
                             </div>
                         </div>
-                        <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[9px] font-bold uppercase border border-secondary/20">{{ ucfirst($g->status) }}</span>
+                        <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full border {{ \App\Support\StatusStyle::badgeClass($g->status) }} text-[9px] font-bold uppercase">{{ ucfirst($g->status) }}</span>
                     </div>
 
                     <div>

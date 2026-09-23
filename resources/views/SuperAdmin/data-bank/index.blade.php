@@ -128,7 +128,7 @@
                                 <td class="py-4 px-4 text-on-surface">{{ $rek?->nama_pemilik ?? '-' }}</td>
                                 <td class="py-4 px-4">
                                     @if ($bank->status === 'aktif')
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-secondary-container/20 text-secondary border-secondary/20">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-success/10 text-success border-success/20">
                                             <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
                                         </span>
                                     @else
@@ -178,7 +178,7 @@
                                 </div>
                             </div>
                             @if ($bank->status === 'aktif')
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-secondary-container/20 text-secondary border-secondary/20 shrink-0">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-success/10 text-success border-success/20 shrink-0">
                                     <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
                                 </span>
                             @else
@@ -266,7 +266,7 @@
                                 <td class="py-4 px-4 text-on-surface">{{ $ew->nama_pemilik ?? '-' }}</td>
                                 <td class="py-4 px-4">
                                     @if ($ew->status === 'aktif')
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-secondary-container/20 text-secondary border-secondary/20">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-success/10 text-success border-success/20">
                                             <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
                                         </span>
                                     @else
@@ -315,7 +315,7 @@
                                 </div>
                             </div>
                             @if ($ew->status === 'aktif')
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-secondary-container/20 text-secondary border-secondary/20 shrink-0">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-success/10 text-success border-success/20 shrink-0">
                                     <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
                                 </span>
                             @else
@@ -391,7 +391,7 @@
                         <div class="flex items-center gap-3 flex-wrap">
                             <h4 class="font-title-md text-title-md text-on-surface">{{ $qris->nama }}</h4>
                             @if ($qris->status === 'aktif')
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-secondary-container/20 text-secondary border-secondary/20">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-success/10 text-success border-success/20">
                                     <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
                                 </span>
                             @else
