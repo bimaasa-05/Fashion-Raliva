@@ -101,6 +101,7 @@ class OrderAutoComplete
                 'diambil_pada' => now(),
             ]);
             WalletService::creditOrder($locked);
+            StockDeductionService::deductForOrder($locked);
 
             $batasHari = self::OFFLINE_BATAS_HARI;
 
@@ -148,6 +149,7 @@ class OrderAutoComplete
 
             $locked->update(['status' => Order::STATUS_SELESAI]);
             WalletService::creditOrder($locked);
+            StockDeductionService::deductForOrder($locked);
 
             $locked->shipments()
                 ->where('status', Shipment::STATUS_DIKIRIM)
