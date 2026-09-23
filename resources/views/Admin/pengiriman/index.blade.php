@@ -125,10 +125,10 @@
                     @forelse ($shipments as $shipment)
                         @php
                             $badgeMap = [
-                                \App\Models\Shipment::STATUS_PENDING => ['label' => 'Menunggu Resi', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                                \App\Models\Shipment::STATUS_DIPROSES => ['label' => 'Siap Kirim', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
-                                \App\Models\Shipment::STATUS_DIKIRIM => ['label' => 'Dikirim', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-                                \App\Models\Shipment::STATUS_DITERIMA => ['label' => 'Diterima', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
+                                \App\Models\Shipment::STATUS_PENDING => ['label' => 'Menunggu Resi', 'class' => \App\Support\StatusStyle::CLASS_ACCENT],
+                                \App\Models\Shipment::STATUS_DIPROSES => ['label' => 'Siap Kirim', 'class' => \App\Support\StatusStyle::CLASS_AMBER],
+                                \App\Models\Shipment::STATUS_DIKIRIM => ['label' => 'Dikirim', 'class' => \App\Support\StatusStyle::CLASS_SKY],
+                                \App\Models\Shipment::STATUS_DITERIMA => ['label' => 'Diterima', 'class' => \App\Support\StatusStyle::CLASS_SUCCESS],
                                 \App\Models\Shipment::STATUS_GAGAL => ['label' => 'Gagal', 'class' => 'bg-error/10 text-error border-error/20'],
                             ];
                             $badge = $badgeMap[$shipment->status] ?? ['label' => ucfirst($shipment->status), 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'];
@@ -172,10 +172,10 @@
             @forelse ($shipments as $shipment)
                 @php
                     $badgeMap = [
-                        \App\Models\Shipment::STATUS_PENDING => ['label' => 'Menunggu Resi', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                        \App\Models\Shipment::STATUS_DIPROSES => ['label' => 'Siap Kirim', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
-                        \App\Models\Shipment::STATUS_DIKIRIM => ['label' => 'Dikirim', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-                        \App\Models\Shipment::STATUS_DITERIMA => ['label' => 'Diterima', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
+                        \App\Models\Shipment::STATUS_PENDING => ['label' => 'Menunggu Resi', 'class' => \App\Support\StatusStyle::CLASS_ACCENT],
+                    \App\Models\Shipment::STATUS_DIPROSES => ['label' => 'Siap Kirim', 'class' => \App\Support\StatusStyle::CLASS_AMBER],
+                    \App\Models\Shipment::STATUS_DIKIRIM => ['label' => 'Dikirim', 'class' => \App\Support\StatusStyle::CLASS_SKY],
+                    \App\Models\Shipment::STATUS_DITERIMA => ['label' => 'Diterima', 'class' => \App\Support\StatusStyle::CLASS_SUCCESS],
                         \App\Models\Shipment::STATUS_GAGAL => ['label' => 'Gagal', 'class' => 'bg-error/10 text-error border-error/20'],
                     ];
                     $badge = $badgeMap[$shipment->status] ?? ['label' => ucfirst($shipment->status), 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'];

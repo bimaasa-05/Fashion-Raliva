@@ -85,11 +85,11 @@
                         @endif
                         <div class="absolute top-2 right-2">
                             @if ($statusA === 'aktif')
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[9px] font-bold uppercase border border-secondary/20">Disetujui</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20">Disetujui</span>
                             @elseif ($statusA === 'ditolak')
                                 <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20">Ditolak</span>
                             @else
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface/80 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">Menunggu</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">Menunggu</span>
                             @endif
                         </div>
                     </div>

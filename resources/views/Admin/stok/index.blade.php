@@ -65,9 +65,9 @@
                             <td class="p-4 text-center font-bold {{ $low ? 'text-error' : 'text-on-surface' }}">{{ $ws->jumlah_stok }}</td>
                             <td class="p-4 text-center">
                                 @if ($low)
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Menipis</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Menipis</span>
                                 @else
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-green-100 text-green-700 text-[10px] font-bold uppercase border border-green-200">Aman</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20">Aman</span>
                                 @endif
                             </td>
                         </tr>
@@ -89,9 +89,9 @@
                             <p class="text-on-surface-variant text-xs mt-0.5">{{ $ws->productVariant?->sku ?? '' }}</p>
                         </div>
                         @if ($low)
-                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Menipis</span>
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Menipis</span>
                         @else
-                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-green-100 text-green-700 text-[10px] font-bold uppercase border border-green-200">Aman</span>
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20">Aman</span>
                         @endif
                     </div>
                     <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-muted-border">

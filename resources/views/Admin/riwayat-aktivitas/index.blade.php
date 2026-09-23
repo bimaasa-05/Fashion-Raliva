@@ -39,14 +39,14 @@
                         <span class="font-title-md text-title-md text-on-surface">{{ ucwords(str_replace('_', ' ', $log->aksi)) }}</span>
                         <span class="text-xs text-on-surface-variant mt-1 sm:mt-0 font-label-sm uppercase tracking-wider">{{ optional($log->created_at)->translatedFormat('d M Y, H.i') ?? '-' }}</span>
                     </div>
-                    <div class="p-4 bg-surface-container-low border border-muted-border rounded-DEFAULT mt-2 card-premium">
+                    <div class="p-4 bg-surface-container-low border border-muted-border rounded-lg mt-2 card-premium">
                         <div class="text-sm">{!! $log->deskripsi !!}</div>
                         <div class="mt-3 flex gap-2">
                             @if ($log->target_tipe)
-                            <span class="inline-block px-2 py-1 bg-surface-container-high text-on-surface-variant text-[10px] uppercase font-bold tracking-wider rounded-DEFAULT">{{ $log->target_tipe }}</span>
+                            <span class="inline-block px-2 py-1 bg-surface-container-high text-on-surface-variant text-[10px] uppercase font-bold tracking-wider rounded-full">{{ $log->target_tipe }}</span>
                             @endif
                             @if ($log->user)
-                            <span class="inline-block px-2 py-1 bg-surface-container-high text-on-surface-variant text-[10px] uppercase font-bold tracking-wider rounded-DEFAULT">{{ $log->user->nama_lengkap }}</span>
+                            <span class="inline-block px-2 py-1 bg-surface-container-high text-on-surface-variant text-[10px] uppercase font-bold tracking-wider rounded-full">{{ $log->user->nama_lengkap }}</span>
                             @endif
                         </div>
                     </div>
