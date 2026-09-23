@@ -90,6 +90,12 @@ class DataProdukController extends Controller
         if (! $storeId) {
             return back()->with('error', 'Admin belum ditugaskan ke toko mana pun.');
         }
+        if (! \App\Support\SlotService::canAdd((int) $storeId)) {
+            $total = \App\Support\SlotService::totalQuota((int) $storeId);
+            $used = \App\Support\SlotService::usedSlots((int) $storeId);
+
+            return back()->with('error', sprintf('Kuota slot produk penuh (%d/%d). Ajukan pembelian slot di menu Beli Slot terlebih dahulu.', $used, $total));
+        }
 
         $product = Product::create([
             'store_id' => $storeId,
