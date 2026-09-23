@@ -95,6 +95,8 @@ class PermintaanOperasionalController extends Controller
             'url' => route('admin.permintaan-operasional.show', $permintaan->permintaan_id),
         ]);
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Permintaan Disetujui', sprintf('Permintaan "%s" disetujui.', $permintaan->judul), route('admin.permintaan-operasional'));
+
         return back()->with('toast', ['message' => 'Permintaan disetujui.', 'icon' => 'task_alt']);
     }
 
@@ -141,6 +143,8 @@ class PermintaanOperasionalController extends Controller
             'pesan' => sprintf('Permintaan "%s" ditolak. Alasan: %s', $permintaan->judul, $data['alasan']),
             'url' => route('admin.permintaan-operasional.show', $permintaan->permintaan_id),
         ]);
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Permintaan Ditolak', sprintf('Permintaan "%s" ditolak.', $permintaan->judul), route('admin.permintaan-operasional'));
 
         return back()->with('toast', ['message' => 'Permintaan ditolak.', 'icon' => 'block']);
     }
