@@ -79,7 +79,7 @@ class PeringkatIklanController extends Controller
         $metode = PaymentMethod::find($data['metode_pembayaran']);
         $path = $request->file('file_bukti')->store('bukti-iklan/'.$storeId, 'public');
 
-        AdSlot::create([
+        $slot = AdSlot::create([
             'product_id' => $data['product_id'],
             'store_id' => $storeId,
             'nominal_bid' => $data['nominal_bid'],
@@ -95,6 +95,15 @@ class PeringkatIklanController extends Controller
         $mulai = \Illuminate\Support\Carbon::parse($data['tanggal_mulai'])->translatedFormat('d M Y');
         $selesai = \Illuminate\Support\Carbon::parse($data['tanggal_selesai'])->translatedFormat('d M Y');
 
+        \App\Support\ActivityLogger::log(
+            'iklan.request',
+            \App\Models\AdSlot::class,
+            $slot->ad_slot_id ?? $slot->getKey(),
+            [],
+            ['product_id' => $product->product_id, 'nominal_bid' => $data['nominal_bid'], 'tanggal_mulai' => $data['tanggal_mulai'], 'tanggal_selesai' => $data['tanggal_selesai']],
+            sprintf('Mengajukan iklan peringkat untuk produk "%s" (%s s/d %s).', $product->nama_produk, $mulai, $selesai)
+        );
+
         $sa = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
             ->where('status', User::STATUS_AKTIF)->first();
         if ($sa) {
@@ -107,6 +116,7 @@ class PeringkatIklanController extends Controller
                 'url' => route('superadmin.peringkat-iklan'),
             ]);
         }
+        Notification::fireSelf(Notification::TIPE_PROMO, 'Pengajuan Iklan Terkirim', sprintf('Pengajuan iklan "%s" (%s s/d %s) menunggu persetujuan Super Admin.', $product->nama_produk, $mulai, $selesai), route('owner.peringkat-iklan'));
 
         return back()->with('success', 'Pengajuan iklan berhasil diajukan ('.$mulai.' s/d '.$selesai.'). Menunggu persetujuan Super Admin.');
     }
