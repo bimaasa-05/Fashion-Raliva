@@ -35,6 +35,7 @@ class KaryawanController extends Controller
 
         $staff = StoreStaff::with('user.role')
             ->where('store_id', $storeId)
+            ->orderByDesc('created_at')
             ->orderByDesc('store_staff_id')
             ->paginate(15)
             ->withQueryString();
