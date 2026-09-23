@@ -39,8 +39,9 @@
             <div class="flex-1 text-center sm:text-left">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3 justify-center sm:justify-start">
                     <h2 class="raliva-figure text-[26px] text-on-surface">{{ $store?->nama_toko ?? 'Toko' }}</h2>
-                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full {{ $store?->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' }} text-[10px] font-bold uppercase border w-fit mx-auto sm:mx-0">
-                        <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : 'schedule' }}</span>{{ $store?->status === 'aktif' ? 'Terverifikasi' : ucfirst($store?->status ?? 'Menunggu') }}
+                    @php $heroDitolak = in_array($store?->status, ['ditolak', 'nonaktif'], true); @endphp
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full {{ $store?->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($heroDitolak ? 'bg-error/10 text-error border-error/25' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }} text-[10px] font-bold uppercase border w-fit mx-auto sm:mx-0">
+                        <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : ($heroDitolak ? 'cancel' : 'schedule') }}</span>{{ $store?->status === 'aktif' ? 'Terverifikasi' : ucfirst($store?->status ?? 'Menunggu') }}
                     </span>
                     @if(! $store)
                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[10px] font-bold uppercase w-fit mx-auto sm:mx-0" title="Terkunci — ajukan toko untuk membuka">
@@ -54,7 +55,7 @@
         </div>
     </section>
 
-    <form method="POST" action="{{ route('owner.data-toko.update') }}" id="form-data-toko" class="space-y-section-gap">
+    <form method="POST" action="{{ route('owner.data-toko.update') }}" id="form-data-toko" class="space-y-section-gap" @if(!empty($updatePending)) data-locked @endif>
         @csrf
         @method('PUT')
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-section-gap">
@@ -107,15 +108,22 @@
             </section>
         </div>
 
-        <p class="text-xs text-on-surface-variant flex items-start gap-2">
-            <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">info</span>
-            Toko buka 24 jam — siapa pun boleh memesan kapan pun. Perubahan nama atau alamat akan diverifikasi Super Admin.
-        </p>
+        @if(!empty($updatePending))
+            <p class="text-xs flex items-start gap-2 bg-gold-accent/10 border border-gold-accent/30 rounded-lg px-4 py-3">
+                <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">schedule</span>
+                <span class="text-on-surface">Perubahan data dikirim {{ $updatePending->created_at?->translatedFormat('d M Y H:i') ?? '' }} dan menunggu verifikasi Super Admin. Form dikunci sementara.</span>
+            </p>
+        @else
+            <p class="text-xs text-on-surface-variant flex items-start gap-2">
+                <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">info</span>
+                Toko buka 24 jam — siapa pun boleh memesan kapan pun. Setiap perubahan data akan menunggu verifikasi Super Admin sebelum berlaku.
+            </p>
+        @endif
 
         <div data-reveal class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter sticky bottom-20 md:bottom-4 z-30">
-            <button type="button" data-modal-open="modal-atur-ulang" class="py-3 px-6 bg-surface-container-lowest border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors shadow-sm">Atur Ulang</button>
-            <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined text-[16px]">save</span>Simpan Perubahan
+            <button type="button" data-modal-open="modal-atur-ulang" @if(!empty($updatePending)) disabled title="Terkunci — menunggu verifikasi" @endif class="py-3 px-6 bg-surface-container-lowest border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">Atur Ulang</button>
+            <button type="submit" @if(!empty($updatePending)) disabled title="Terkunci — menunggu verifikasi" @endif class="py-3 px-8 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                <span class="material-symbols-outlined text-[16px]">save</span>Ajukan Perubahan
             </button>
         </div>
     </form>
@@ -140,6 +148,12 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function(){
+    const lockedForm = document.querySelector('#form-data-toko[data-locked]');
+    if (lockedForm) {
+        lockedForm.querySelectorAll('input, select, textarea').forEach((el) => {
+            el.setAttribute('disabled', '');
+        });
+    }
   if (!document.querySelector('[data-real]')) return;
   // Check if no store banner exists (means no store)
   const noStore = document.querySelector('[data-no-store-banner]');
