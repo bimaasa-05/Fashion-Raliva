@@ -27,35 +27,63 @@
     @endif
     {{-- Podium Top Leader --}}
     @if ($top3->count() >= 1)
-    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 md:p-8 card-premium">
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 md:p-8">
         <div class="flex items-center justify-between mb-8">
-            <div>
-                <p class="raliva-label text-gold-accent">Papan Peringkat Pembeli</p>
-                <h2 class="font-title-md text-title-md text-on-surface premium-heading mt-1">Top Customer</h2>
+            <div class="border-l-4 border-[#821E36] pl-3">
+                <p class="text-[10px] md:text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Papan Peringkat Pembeli</p>
+                <h2 class="font-title-md text-title-md text-on-surface mt-1">Top Customer</h2>
             </div>
-            <span class="material-symbols-outlined text-[40px] text-gold-accent/20">workspace_premium</span>
+            <span class="material-symbols-outlined text-[32px] md:text-[40px] text-on-surface-variant/30">workspace_premium</span>
         </div>
 
-        {{-- Podium Flat — kardus --}}
+        {{-- Podium Flat --}}
         <style>
             .podium { position: relative; border:2px solid rgba(0,0,0,0.12); box-shadow: 0 8px 24px rgba(0,0,0,0.12); display:flex; align-items:center; justify-content:center; }
+            .crown-gold { background: linear-gradient(135deg, #FFF5C0 0%, #FBBF24 25%, #D97706 50%, #FEF08A 75%, #B45309 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+            .crown-container { position: relative; display: inline-flex; align-items: center; justify-content: center; animation: crownFloat 3s ease-in-out infinite, crownGlowPulse 2s ease-in-out infinite; }
+            .crown-container::before { content: ''; position: absolute; top: -10%; bottom: -10%; left: -80%; width: 45%; background: rgba(255, 255, 255, 0.55); transform: skewX(-24deg); pointer-events: none; z-index: 10; animation: crownShimmer 2.4s linear infinite; }
+            .crown-sparkle { position: absolute; top: 8px; right: 2px; width: 12px; height: 12px; background: #FFF; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); animation: sparkleTwinkle 1.8s ease-in-out infinite; pointer-events: none; }
+            @keyframes crownFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+            @keyframes crownGlowPulse { 0%, 100% { filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6)); } 50% { filter: drop-shadow(0 0 20px rgba(253, 224, 71, 0.95)); } }
+            @keyframes crownShimmer { 0% { left: -80%; } 65% { left: 180%; } 100% { left: 180%; } }
+            @keyframes sparkleTwinkle { 0%, 100% { transform: scale(0) rotate(0deg); opacity: 0; } 50% { transform: scale(1.3) rotate(90deg); opacity: 1; } }
+            @media (prefers-reduced-motion: reduce) { .crown-container, .crown-container::before, .crown-sparkle { animation: none; } }
         </style>
+        
         <div class="flex items-end justify-center gap-3 md:gap-6 pt-6 pb-4">
-            @php $maxBelanja = $top3->max('total_belanja') ?: 1; @endphp
             @foreach($top3->sortByDesc('total_belanja')->values() as $idx => $c)
                 @php
                     $rank = $idx + 1;
                     $isTop = $rank === 1;
                     $isSecond = $rank === 2;
                     $h = $isTop ? 'h-[160px] md:h-[190px]' : ($isSecond ? 'h-[115px] md:h-[145px]' : 'h-[90px] md:h-[115px]');
-                    $frontBg = $isTop ? 'bg-gold-accent' : ($isSecond ? 'bg-[#9CA3AF]' : 'bg-[#B45309]');
+                    $frontBg = $isTop ? 'bg-[#821E36]' : ($isSecond ? 'bg-[#9CA3AF]' : 'bg-[#B45309]');
                 @endphp
                 <div class="flex-1 max-w-[150px] flex flex-col items-center {{ $isTop ? 'order-2' : ($isSecond ? 'order-1' : 'order-3') }}">
-                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-full {{ $isTop ? 'bg-gold-accent text-white ring-4 ring-gold-accent/20' : 'bg-surface-container-high border border-outline-variant text-on-surface' }} flex items-center justify-center font-bold text-sm shadow-md">{{ $c->initials }}</div>
-                    <p class="font-bold text-xs md:text-sm mt-2 truncate max-w-[110px] text-center">{{ $c->name }}</p>
+                    <!-- Container Foto Profil -->
+                    <div class="relative flex flex-col justify-center items-center mt-5">
+                        @if ($isTop)
+                            <!-- Mahkota di BELAKANG -->
+                            <div class="absolute inset-x-0 -top-9 z-0 flex justify-center pointer-events-none" aria-hidden="true">
+                                <div class="crown-container overflow-hidden px-2 pb-3">
+                                    <span class="material-symbols-outlined crown-gold block text-[56px] md:text-[64px]" style="font-variation-settings: 'FILL' 1, 'wght' 700;">
+                                        crown
+                                    </span>
+                                    <div class="crown-sparkle"></div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Avatar di DEPAN -->
+                        <div class="relative z-10 w-12 h-12 md:w-14 md:h-14 rounded-full {{ $isTop ? 'bg-[#821E36] text-white ring-4 ring-surface-container-lowest shadow-[0_4px_16px_rgba(130,30,54,0.4)]' : 'bg-surface-container-high border border-outline-variant text-on-surface' }} flex items-center justify-center font-bold text-sm">
+                            {{ $c->initials }}
+                        </div>
+                    </div>
+
+                    <p class="font-bold text-xs md:text-sm mt-3 truncate w-full max-w-[110px] text-center">{{ $c->name }}</p>
                     <p class="text-[10px] text-on-surface-variant">{{ $c->jumlah_order }} pesanan</p>
-                    <p class="font-bold text-[11px] text-gold-accent mt-1">Rp {{ number_format($c->total_belanja,0,',','.') }}</p>
-                    <div class="podium w-full {{ $h }} mt-3 {{ $frontBg }} text-white rounded-xl flex flex-col items-center justify-center ring-2 {{ $isTop ? 'ring-gold-accent/30' : 'ring-black/5' }} shadow-lg">
+                    <p class="font-bold text-[11px] text-[#821E36] mt-1">Rp {{ number_format($c->total_belanja,0,',','.') }}</p>
+                    <div class="podium w-full {{ $h }} mt-3 {{ $frontBg }} text-white rounded-xl flex flex-col items-center justify-center ring-2 {{ $isTop ? 'ring-[#821E36]/30' : 'ring-black/5' }} shadow-lg">
                         <span class="{{ $isTop ? 'text-3xl md:text-4xl' : 'text-2xl md:text-3xl' }} font-black drop-shadow-lg">#{{ $rank }}</span>
                     </div>
                 </div>
@@ -63,10 +91,10 @@
         </div>
     </section>
     @else
-    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 md:p-8 card-premium text-center">
-        <span class="material-symbols-outlined text-[40px] text-on-surface-variant">group</span>
-        <p class="font-title-md text-title-md text-on-surface mt-3">Belum ada pembeli</p>
-        <p class="text-on-surface-variant text-sm mt-1">Data Top Customer akan muncul setelah ada transaksi pada toko ini.</p>
+    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 md:p-8 text-center flex flex-col items-center justify-center min-h-[300px]">
+        <span class="material-symbols-outlined text-[48px] text-on-surface-variant mb-4">group</span>
+        <h2 class="font-title-md text-title-md text-on-surface">Belum ada pembeli</h2>
+        <p class="text-on-surface-variant text-sm mt-2">Data Top Customer akan muncul setelah ada transaksi pada toko ini.</p>
     </section>
     @endif
 
