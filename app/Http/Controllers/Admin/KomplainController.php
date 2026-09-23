@@ -227,6 +227,8 @@ class KomplainController extends Controller
             ]);
         }
 
+        Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Komplain Dieskalasi', sprintf('Komplain #%d dieskalasi ke Owner.', $komplain->complaint_id), route('admin.komplain'));
+
         return back()->with('success', 'Komplain dieskalasi ke Owner Toko.');
     }
 
