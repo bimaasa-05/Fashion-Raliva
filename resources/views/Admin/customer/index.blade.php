@@ -114,8 +114,11 @@
                     <div class="grid grid-cols-1 gap-2">
                         @foreach ($c->orders as $o)
                             <a href="{{ route('admin.pesanan') }}?cari={{ $o->nomor_order ?? $o->order_id }}" class="flex items-center justify-between gap-3 bg-surface-container-low rounded-lg p-3 hover:border-gold-accent border border-transparent transition-colors">
-                                <span class="text-on-surface font-mono text-sm">{{ $o->nomor_order ?? ('#'.$o->order_id) }}</span>
-                                <span class="text-gold-accent font-bold text-sm">Rp {{ number_format((float) ($o->grand_total ?? 0), 0, ',', '.') }}</span>
+                                <span class="min-w-0">
+                                    <span class="block text-on-surface font-mono text-sm">{{ $o->nomor_order ?? ('#'.$o->order_id) }}</span>
+                                    <span class="block text-on-surface-variant text-xs mt-0.5">Beli {{ $o->created_at?->translatedFormat('d M Y') ?? '-' }} &#8226; {{ ucfirst(str_replace('_', ' ', $o->status ?? '-')) }}</span>
+                                </span>
+                                <span class="text-gold-accent font-bold text-sm shrink-0">Rp {{ number_format((float) ($o->grand_total ?? 0), 0, ',', '.') }}</span>
                             </a>
                         @endforeach
                     </div>
