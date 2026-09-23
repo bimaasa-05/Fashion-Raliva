@@ -58,38 +58,38 @@
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Podium Peringkat Saat Ini</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter items-end">
+            @if(isset($top3[0]))
+            <div class="md:order-2 border-2 border-amber-400 rounded-xl p-6 flex flex-col items-center text-center gap-3 relative overflow-hidden bg-gradient-to-b from-amber-400/20 via-amber-400/5 to-transparent">
+                <span class="absolute top-3 right-3 material-symbols-outlined text-amber-400 fill text-[28px]">workspace_premium</span>
+                <span class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 text-white flex items-center justify-center font-title-md text-title-md font-bold shadow-lg">1</span>
+                <div>
+                    <p class="font-title-md text-title-md text-on-surface leading-snug">{{ $top3[0]->product->nama_produk ?? '-' }}</p>
+                    <p class="text-on-surface-variant text-xs mt-0.5">{{ $top3[0]->store->nama_toko ?? '-' }}</p>
+                </div>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-black leading-none">Rp {{ number_format((float)$top3[0]->nominal_bid, 0, ',', '.') }}</span>
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/15 text-amber-500 text-[10px] font-bold uppercase border border-amber-400/40"><span class="material-symbols-outlined text-[12px]">check_circle</span>Posisi Teratas</span>
+            </div>
+            @endif
             @if(isset($top3[1]))
-            <div class="md:order-1 bg-surface-container-low border border-muted-border rounded-xl p-6 flex flex-col items-center text-center gap-3">
-                <span class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant text-on-surface flex items-center justify-center font-title-md font-bold">2</span>
+            <div class="md:order-1 bg-surface-container-low bg-gradient-to-b from-slate-400/30 via-slate-400/10 to-transparent border border-slate-400/60 rounded-xl p-6 flex flex-col items-center text-center gap-3">
+                <span class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-400 via-slate-500 to-slate-700 text-white flex items-center justify-center font-title-md font-bold shadow-lg">2</span>
                 <div>
                     <p class="font-title-md text-sm text-on-surface leading-snug">{{ $top3[1]->product->nama_produk ?? '-' }}</p>
                     <p class="text-on-surface-variant text-xs mt-0.5">{{ $top3[1]->store->nama_toko ?? '-' }}</p>
                 </div>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-none">Rp {{ number_format((float)$top3[1]->nominal_bid, 0, ',', '.') }}</span>
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-muted-border">Aktif</span>
-            </div>
-            @endif
-            @if(isset($top3[0]))
-            <div class="md:order-2 border-2 border-gold-accent rounded-xl p-6 flex flex-col items-center text-center gap-3 relative overflow-hidden bg-gradient-to-b from-gold-accent/10 to-transparent hero-glow">
-                <span class="absolute top-3 right-3 material-symbols-outlined text-gold-accent fill text-[28px]">workspace_premium</span>
-                <span class="w-12 h-12 rounded-full bg-gold-accent text-white flex items-center justify-center font-title-md text-title-md font-bold shadow-lg">1</span>
-                <div>
-                    <p class="font-title-md text-title-md text-on-surface leading-snug">{{ $top3[0]->product->nama_produk ?? '-' }}</p>
-                    <p class="text-on-surface-variant text-xs mt-0.5">{{ $top3[0]->store->nama_toko ?? '-' }}</p>
-                </div>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold leading-none">Rp {{ number_format((float)$top3[0]->nominal_bid, 0, ',', '.') }}</span>
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30"><span class="material-symbols-outlined text-[12px]">check_circle</span>Posisi Teratas</span>
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-400/25 text-on-surface-variant text-[10px] font-bold uppercase border border-slate-400/60">Posisi 2</span>
             </div>
             @endif
             @if(isset($top3[2]))
-            <div class="md:order-3 bg-surface-container-low border border-muted-border rounded-xl p-6 flex flex-col items-center text-center gap-3">
-                <span class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant text-on-surface flex items-center justify-center font-title-md font-bold">3</span>
+            <div class="md:order-3 bg-surface-container-low bg-gradient-to-b from-amber-500/10 to-transparent border border-muted-border rounded-xl p-6 flex flex-col items-center text-center gap-3">
+                <span class="w-10 h-10 rounded-full bg-amber-600 text-white flex items-center justify-center font-title-md font-bold">3</span>
                 <div>
                     <p class="font-title-md text-sm text-on-surface leading-snug">{{ $top3[2]->product->nama_produk ?? '-' }}</p>
                     <p class="text-on-surface-variant text-xs mt-0.5">{{ $top3[2]->store->nama_toko ?? '-' }}</p>
                 </div>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-none">Rp {{ number_format((float)$top3[2]->nominal_bid, 0, ',', '.') }}</span>
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-muted-border">Aktif</span>
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Posisi 3</span>
             </div>
             @endif
         </div>
@@ -136,15 +136,17 @@
                             ];
                             $st = $statusMap[$slot->status] ?? [$slot->status, \App\Support\StatusStyle::CLASS_NEUTRAL];
                             $rank = $i + 1;
+                            $posCls = match(true) {
+                                $rank === 1 => 'bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 text-white',
+                                $rank === 2 => 'bg-gradient-to-br from-slate-400 via-slate-500 to-slate-700 text-white',
+                                $rank === 3 => 'bg-amber-600 text-white',
+                                default     => 'bg-surface-container-high border border-outline-variant text-on-surface',
+                            };
                         @endphp
                         <tr data-table-row class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                             <td class="p-4 text-center text-on-surface-variant font-mono">{{ $loop->iteration }}</td>
                             <td class="p-4">
-                                @if($rank <= 3)
-                                    <span class="inline-flex w-8 h-8 rounded-full {{ $rank === 1 ? 'bg-gold-accent text-white' : 'bg-surface-container-high border border-outline-variant text-on-surface' }} items-center justify-center font-bold">{{ $rank }}</span>
-                                @else
-                                    <span class="inline-flex w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant text-on-surface items-center justify-center font-bold text-sm">{{ $rank }}</span>
-                                @endif
+                                <span class="inline-flex w-8 h-8 rounded-full {{ $posCls }} items-center justify-center font-bold{{ $rank > 3 ? ' text-sm' : '' }}">{{ $rank }}</span>
                             </td>
                             <td class="p-4 font-medium text-on-surface">{{ $slot->product->nama_produk ?? '-' }}</td>
                             <td class="p-4 text-on-surface-variant">{{ $slot->store->nama_toko ?? '-' }}</td>
@@ -190,14 +192,19 @@ $statusMap = [
                         'ditunda' => ['Ditunda', \App\Support\StatusStyle::badgeClass('ditunda')],
                     ];
                     $st = $statusMap[$slot->status] ?? [$slot->status, \App\Support\StatusStyle::CLASS_NEUTRAL];
-                    $rank = 0;
-                    foreach ($slots as $k => $item) { if ($item->slot_id === $slot->slot_id) { $rank = $k + 1; break; } }
+                    $rank = $loop->iteration;
+                    $posCls = match(true) {
+                        $rank === 1 => 'bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 text-white',
+                        $rank === 2 => 'bg-gradient-to-br from-slate-400 via-slate-500 to-slate-700 text-white',
+                        $rank === 3 => 'bg-amber-600 text-white',
+                        default     => 'bg-surface-container-high border border-outline-variant text-on-surface',
+                    };
                 @endphp
                 <article class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
                     <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">leaderboard</span>
                     <div class="flex items-center justify-between gap-3 mb-3">
                         <div class="flex items-center gap-3">
-                            <span class="inline-flex w-9 h-9 rounded-full {{ $rank <= 3 ? ($rank === 1 ? 'bg-gold-accent text-white' : 'bg-surface-container-high border border-outline-variant text-on-surface') : 'bg-surface-container-high border border-outline-variant text-on-surface' }} items-center justify-center font-bold shrink-0">{{ $rank }}</span>
+                            <span class="inline-flex w-9 h-9 rounded-full {{ $posCls }} items-center justify-center font-bold shrink-0">{{ $rank }}</span>
                             <div class="min-w-0">
                                 <p class="font-title-md text-title-md text-on-surface truncate">{{ $slot->product->nama_produk ?? '-' }}</p>
                                 <p class="text-on-surface-variant text-xs truncate">{{ $slot->store->nama_toko ?? '-' }}</p>
