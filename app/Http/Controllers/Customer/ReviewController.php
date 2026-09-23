@@ -91,7 +91,16 @@ class ReviewController extends Controller
             ]);
         }
 
-        return redirect()->route('customer.reviews')->with('toast', [
+        $productId = $orderItem->productVariant?->product_id;
+
+        if (! $productId) {
+            return redirect()->route('customer.reviews')->with('toast', [
+                'message' => 'Review berhasil dikirim dan langsung tampil di produk.',
+                'icon' => 'task_alt',
+            ]);
+        }
+
+        return redirect()->route('customer.shop.produk-riviews', $productId)->with('toast', [
             'message' => 'Review berhasil dikirim dan langsung tampil di produk.',
             'icon' => 'task_alt',
         ]);
@@ -137,6 +146,13 @@ class ReviewController extends Controller
         }
 
         $review->update($payload);
+
+        if ($review->product_id) {
+            return redirect()->route('customer.shop.produk-riviews', $review->product_id)->with('toast', [
+                'message' => 'Review berhasil diperbarui.',
+                'icon' => 'task_alt',
+            ]);
+        }
 
         return redirect()->route('customer.reviews')->with('toast', [
             'message' => 'Review berhasil diperbarui.',
