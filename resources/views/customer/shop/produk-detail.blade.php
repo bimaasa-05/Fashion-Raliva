@@ -619,6 +619,9 @@
                                             </div>
                                         </div>
                                     <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm">{{ $review->ulasan }}</p>
+                                    @if ($review->foto)
+                                    <img src="{{ asset('storage/' . ltrim($review->foto, '/')) }}" alt="{{ __('Foto ulasan') }}" class="mt-sm w-24 h-24 object-cover rounded-xl border border-outline-variant" loading="lazy" />
+                                    @endif
                                     </article>
 @empty
                                 <article class="px-container-margin md:px-[64px] py-md text-center">
@@ -628,7 +631,7 @@
                                 @if ($reviewCount > 3)
                                 <div class="px-container-margin md:px-[64px] py-md flex justify-center">
                                     <a href="{{ route('customer.shop.produk-riviews', $product->product_id) }}" class="inline-flex items-center gap-sm font-label-caps text-label-caps uppercase tracking-widest text-secondary hover:text-primary transition-colors">
-                                        <span>{{ __('Lihat selengkapnya') }}</span>
+                                        <span>{{ __('Lihat semua ulasan') }}</span>
                                         <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
                                     </a>
                                 </div>
