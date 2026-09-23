@@ -300,11 +300,11 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 <input id="review-foto" name="foto" type="file" accept="image/jpeg,image/png,image/jpg" class="sr-only" onchange="previewReviewFoto(this)" />
 <div id="review-foto-wrap" class="{{ $review->foto ? '' : 'hidden' }} relative w-20 h-20 shrink-0">
 <img id="preview-review-foto" src="{{ $review->foto ? asset('storage/' . ltrim($review->foto, '/')) : '' }}" alt="{{ __('Pratinjau foto') }}" class="w-20 h-20 object-cover rounded-xl border border-outline-variant" />
-<button type="button" onclick="document.getElementById('review-foto').click()" aria-label="{{ __('Ganti foto') }}" title="{{ __('Ganti foto') }}" class="absolute -bottom-2 -left-2 w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center shadow-lg hover:opacity-80 transition-opacity">
-<span class="material-symbols-outlined text-[16px]">swap_horiz</span>
+<button type="button" onclick="document.getElementById('review-foto').click()" aria-label="{{ __('Ganti foto') }}" title="{{ __('Ganti foto') }}" class="absolute -bottom-2 -left-2 w-7 h-7 rounded-full bg-secondary text-white flex items-center justify-center shadow-lg hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-[14px]">swap_horiz</span>
 </button>
-<button type="button" onclick="clearReviewFoto()" aria-label="{{ __('Batalkan foto') }}" title="{{ __('Batalkan foto') }}" class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-error text-white flex items-center justify-center shadow-lg hover:opacity-80 transition-opacity">
-<span class="material-symbols-outlined text-[16px]">close</span>
+<button type="button" onclick="clearReviewFoto()" aria-label="{{ __('Batalkan foto') }}" title="{{ __('Batalkan foto') }}" class="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-error text-white flex items-center justify-center shadow-lg hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-[14px]">close</span>
 </button>
 </div>
 </div>
