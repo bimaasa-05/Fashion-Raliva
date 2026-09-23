@@ -190,8 +190,7 @@ $statusMap = [
                         'ditunda' => ['Ditunda', \App\Support\StatusStyle::badgeClass('ditunda')],
                     ];
                     $st = $statusMap[$slot->status] ?? [$slot->status, \App\Support\StatusStyle::CLASS_NEUTRAL];
-                    $rank = 0;
-                    foreach ($slots as $k => $item) { if ($item->slot_id === $slot->slot_id) { $rank = $k + 1; break; } }
+                    $rank = $loop->iteration;
                 @endphp
                 <article class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
                     <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">leaderboard</span>

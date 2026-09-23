@@ -36,6 +36,7 @@ class PeringkatIklanController extends Controller
             ->whereNotNull('tanggal_selesai')
             ->whereDate('tanggal_mulai', '<=', now()->toDateString())
             ->whereDate('tanggal_selesai', '>=', now()->toDateString())
+            ->orderBy('ad_slot_id')
             ->limit(3)->get();
 
         $today = now()->toDateString();
@@ -46,10 +47,21 @@ class PeringkatIklanController extends Controller
                 ->paginate(20)->withQueryString();
         } elseif ($tab === 'daftar') {
             $slots = (clone $slotsQuery)
-                ->whereIn('status', [AdSlot::STATUS_AKTIF, AdSlot::STATUS_TERJADWAL])
+                ->where(function ($q) use ($today) {
+                    $q->where(function ($q2) use ($today) {
+                        $q2->where('status', AdSlot::STATUS_AKTIF)
+                            ->whereDate('tanggal_mulai', '<=', $today)
+                            ->whereDate('tanggal_selesai', '>=', $today);
+                    })->orWhere(function ($q2) use ($today) {
+                        $q2->where('status', AdSlot::STATUS_TERJADWAL)
+                            ->whereDate('tanggal_mulai', '>', $today);
+                    });
+                })
                 ->whereNotNull('tanggal_mulai')
                 ->whereNotNull('tanggal_selesai')
+                ->orderByRaw('CASE WHEN status = ? THEN 0 ELSE 1 END', [AdSlot::STATUS_AKTIF])
                 ->orderByDesc('nominal_bid')
+                ->orderBy('ad_slot_id')
                 ->paginate(20)->withQueryString();
         } else {
             $slots = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko', 'bankAccount.bank'])
