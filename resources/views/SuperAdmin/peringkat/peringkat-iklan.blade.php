@@ -136,15 +136,17 @@
                             ];
                             $st = $statusMap[$slot->status] ?? [$slot->status, \App\Support\StatusStyle::CLASS_NEUTRAL];
                             $rank = $i + 1;
+                            $posCls = match(true) {
+                                $rank === 1 => 'bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 text-white',
+                                $rank === 2 => 'bg-gradient-to-br from-slate-400 via-slate-500 to-slate-700 text-white',
+                                $rank === 3 => 'bg-amber-600 text-white',
+                                default     => 'bg-surface-container-high border border-outline-variant text-on-surface',
+                            };
                         @endphp
                         <tr data-table-row class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
                             <td class="p-4 text-center text-on-surface-variant font-mono">{{ $loop->iteration }}</td>
                             <td class="p-4">
-                                @if($rank <= 3)
-                                    <span class="inline-flex w-8 h-8 rounded-full {{ $rank === 1 ? 'bg-gold-accent text-white' : 'bg-surface-container-high border border-outline-variant text-on-surface' }} items-center justify-center font-bold">{{ $rank }}</span>
-                                @else
-                                    <span class="inline-flex w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant text-on-surface items-center justify-center font-bold text-sm">{{ $rank }}</span>
-                                @endif
+                                <span class="inline-flex w-8 h-8 rounded-full {{ $posCls }} items-center justify-center font-bold{{ $rank > 3 ? ' text-sm' : '' }}">{{ $rank }}</span>
                             </td>
                             <td class="p-4 font-medium text-on-surface">{{ $slot->product->nama_produk ?? '-' }}</td>
                             <td class="p-4 text-on-surface-variant">{{ $slot->store->nama_toko ?? '-' }}</td>
@@ -191,12 +193,18 @@ $statusMap = [
                     ];
                     $st = $statusMap[$slot->status] ?? [$slot->status, \App\Support\StatusStyle::CLASS_NEUTRAL];
                     $rank = $loop->iteration;
+                    $posCls = match(true) {
+                        $rank === 1 => 'bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 text-white',
+                        $rank === 2 => 'bg-gradient-to-br from-slate-400 via-slate-500 to-slate-700 text-white',
+                        $rank === 3 => 'bg-amber-600 text-white',
+                        default     => 'bg-surface-container-high border border-outline-variant text-on-surface',
+                    };
                 @endphp
                 <article class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
                     <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">leaderboard</span>
                     <div class="flex items-center justify-between gap-3 mb-3">
                         <div class="flex items-center gap-3">
-                            <span class="inline-flex w-9 h-9 rounded-full {{ $rank <= 3 ? ($rank === 1 ? 'bg-gold-accent text-white' : 'bg-surface-container-high border border-outline-variant text-on-surface') : 'bg-surface-container-high border border-outline-variant text-on-surface' }} items-center justify-center font-bold shrink-0">{{ $rank }}</span>
+                            <span class="inline-flex w-9 h-9 rounded-full {{ $posCls }} items-center justify-center font-bold shrink-0">{{ $rank }}</span>
                             <div class="min-w-0">
                                 <p class="font-title-md text-title-md text-on-surface truncate">{{ $slot->product->nama_produk ?? '-' }}</p>
                                 <p class="text-on-surface-variant text-xs truncate">{{ $slot->store->nama_toko ?? '-' }}</p>

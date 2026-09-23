@@ -483,8 +483,12 @@
             const li = document.createElement('li');
             li.className = 'flex items-center gap-3 py-3.5' + (i < rows.length - 1 ? ' border-b border-muted-border' : '');
             const rankCls = i === 0
-                ? 'bg-gold-accent/15 text-gold-accent border border-gold-accent/40'
-                : 'bg-surface-container-high text-on-surface-variant border border-transparent';
+                ? 'bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 text-white'
+                : (i === 1
+                    ? 'bg-gradient-to-br from-slate-400 via-slate-500 to-slate-700 text-white'
+                    : (i === 2
+                        ? 'bg-amber-600 text-white'
+                        : 'bg-surface-container-high text-on-surface-variant border border-transparent'));
             li.innerHTML =
                 '<span class="w-8 h-8 rounded-full flex items-center justify-center font-label-sm text-xs font-bold shrink-0 ' + rankCls + '">' + (i + 1) + '</span>' +
                 '<div class="flex-1 min-w-0">' +
