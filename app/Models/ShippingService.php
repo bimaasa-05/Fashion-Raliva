@@ -15,11 +15,17 @@ class ShippingService extends Model
     public const STATUS_NONAKTIF = 'nonaktif';
 
     protected $fillable = [
+        'store_id',
         'courier_id',
         'nama_layanan',
         'estimasi_hari',
         'status',
     ];
+
+    public function store(): BelongsTo
+    {
+        return $this->belongsTo(Store::class, 'store_id', 'store_id');
+    }
 
     public function courier(): BelongsTo
     {
