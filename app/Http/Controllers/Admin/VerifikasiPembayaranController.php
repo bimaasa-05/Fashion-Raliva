@@ -139,10 +139,12 @@ class VerifikasiPembayaranController extends Controller
             Role::PRODUKSI,
             Notification::TIPE_SISTEM,
             'Pesanan Siap Diproduksi',
-            sprintf('Pembayaran pesanan #%d telah diverifikasi. Menunggu input bahan dari Admin.', $pembayaran->checkout_id),
+            sprintf('Pembayaran pesanan #%d telah diverifikasi. Silakan input kebutuhan bahan.', $pembayaran->checkout_id),
             ActivityLogger::resolveActorId(),
             route('produksi.data-produksi')
         );
+
+        Notification::fireSelf(Notification::TIPE_PEMBAYARAN, 'Pembayaran Diverifikasi', sprintf('Pembayaran checkout #%d diverifikasi.', $pembayaran->checkout_id), route('admin.verifikasi-pembayaran'));
 
         return back()->with('toast', [
             'message' => 'Pembayaran diverifikasi. Pesanan kini berstatus menunggu produksi.',
@@ -195,6 +197,8 @@ class VerifikasiPembayaranController extends Controller
         );
 
         $this->notifyCustomer($pembayaran, 'Pembayaran Ditolak', sprintf('Bukti pembayaran Anda ditolak. Alasan: %s. Silakan unggah ulang bukti yang benar.', $data['alasan']));
+
+        Notification::fireSelf(Notification::TIPE_PEMBAYARAN, 'Pembayaran Ditolak', sprintf('Pembayaran checkout #%d ditolak.', $pembayaran->checkout_id), route('admin.verifikasi-pembayaran'));
 
         return back()->with('toast', [
             'message' => 'Pembayaran ditolak. Customer dinotifikasi untuk upload ulang.',
