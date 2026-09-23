@@ -94,8 +94,18 @@ A → B → C → D → E → F. Verifikasi manual per paket sebelum lanjut.
 ## Status eksekusi (2026-09-22)
 
 - [x] Paket A, B, C, D, E, F selesai.
+- [x] Batch 2: invoice di Detail; Selesai = siap_kirim online+offline;
+  tanggal riwayat customer; sticky footer supplier; kurir per toko
+  (migrasi store_id + CRUD + scope); verifikasi akhir.
 - Ditunda: export Excel/PDF ala Owner di laporan Admin; UI kelola ukuran
   di SuperAdmin (seeder + fallback code saja); popup refund customer.
 - Kolom DB `suppliers.stok/jenis` dibiarkan (tak dipakai UI lagi).
 - `ProductionOrderBahan.sumber=admin` kini hanya historis (semua input baru
   dari Produksi).
+
+## Temuan saat verifikasi (sudah diperbaiki)
+
+- `php artisan route:list` sempat rusak: route permintaan-operasional memakai
+  `AdminPermintaanOperasionalController` tanpa import → ReflectionException.
+  Diperbaiki dengan satu baris `use ... as AdminPermintaanOperasionalController`
+  di `routes/web.php`. Terverifikasi via `route:list`.
