@@ -47,6 +47,7 @@ class PeringkatIklanController extends Controller
                 ->paginate(20)->withQueryString();
         } elseif ($tab === 'daftar') {
             $slots = (clone $slotsQuery)
+                ->reorder()
                 ->where(function ($q) use ($today) {
                     $q->where(function ($q2) use ($today) {
                         $q2->where('status', AdSlot::STATUS_AKTIF)
