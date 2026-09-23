@@ -310,13 +310,18 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 @endfor
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant ml-1">{{ $rv->created_at->format('M j, Y') }}</span>
-@if ($rv->status !== \App\Models\Review::STATUS_AKTIF)
+@if ($rv->status === \App\Models\Review::STATUS_DIMODERASI)
 <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-low border border-outline-variant font-label-sm text-label-sm text-on-surface-variant">{{ __('Menunggu moderasi') }}</span>
+@elseif ($rv->status !== \App\Models\Review::STATUS_AKTIF)
+<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-low border border-outline-variant font-label-sm text-label-sm text-on-surface-variant">{{ __('Dinonaktifkan admin') }}</span>
 @endif
 </div>
 </div>
 </div>
 <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-md">{{ $rv->ulasan }}</p>
+@if ($rv->foto)
+<img src="{{ asset('storage/' . ltrim($rv->foto, '/')) }}" alt="{{ __('Foto ulasan') }}" class="mt-sm w-24 h-24 object-cover rounded-xl border border-outline-variant" loading="lazy" />
+@endif
 <div class="flex flex-col sm:flex-row justify-end gap-sm mt-md pt-sm border-t border-outline-variant">
 <a href="{{ route('customer.reviews.edit', $rv->review_id) }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-secondary/5">
 <span class="material-symbols-outlined text-[18px]">edit</span>{{ __('Edit') }}</a>
