@@ -243,7 +243,7 @@
 <div class="mx-auto max-w-[1600px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('REVIEWS') }}</p>
-<form id="review-form" method="POST" action="{{ route('customer.reviews.update', $review->review_id) }}">
+<form id="review-form" method="POST" action="{{ route('customer.reviews.update', $review->review_id) }}" enctype="multipart/form-data">
 @csrf
 @method('PUT')
 <!-- Product Summary -->
@@ -292,13 +292,41 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 <!-- Photos -->
 <section class="pt-lg mt-lg border-t border-outline-variant">
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Add Photos') }} <span class="normal-case tracking-normal text-on-surface-variant/70">{{ __('(optional)') }}</span></h3>
-<div class="flex gap-gutter">
-<span role="button" tabindex="0" class="w-20 h-20 border border-dashed border-outline rounded-xl flex flex-col items-center justify-center gap-xs cursor-pointer hover:border-secondary hover:text-secondary transition-colors text-on-surface-variant">
+<div class="flex gap-gutter items-start">
+@if ($review->foto)
+<img src="{{ asset('storage/' . ltrim($review->foto, '/')) }}" alt="{{ __('Foto ulasan') }}" class="w-20 h-20 object-cover rounded-xl border border-outline-variant shrink-0" />
+@endif
+<label for="review-foto" class="w-20 h-20 border border-dashed border-outline rounded-xl flex flex-col items-center justify-center gap-xs cursor-pointer hover:border-secondary hover:text-secondary transition-colors text-on-surface-variant shrink-0">
 <span class="material-symbols-outlined text-[24px]">add_a_photo</span>
 <span class="font-label-sm text-[10px]">{{ __('Add Photo') }}</span>
-</span>
+</label>
+<input id="review-foto" name="foto" type="file" accept="image/jpeg,image/png,image/jpg" class="sr-only" onchange="previewReviewFoto(this)" />
+<img id="preview-review-foto" alt="{{ __('Pratinjau foto') }}" class="hidden w-20 h-20 object-cover rounded-xl border border-outline-variant" />
 </div>
+@if ($review->foto)
+<label class="mt-sm inline-flex items-center gap-xs font-body-sm text-body-sm text-on-surface-variant cursor-pointer">
+<input type="checkbox" name="hapus_foto" value="1" class="w-4 h-4" />{{ __('Hapus foto saat ini') }}
+</label>
+@endif
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('JPG/PNG, maks 2 MB.') }}</p>
+@error('foto')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
 </section>
+<script>
+function previewReviewFoto(input) {
+    var preview = document.getElementById('preview-review-foto');
+    if (!preview) return;
+    var file = input && input.files ? input.files[0] : null;
+    if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.classList.remove('hidden');
+    } else {
+        preview.removeAttribute('src');
+        preview.classList.add('hidden');
+    }
+}
+</script>
 </form>
 </div>
 </div>
