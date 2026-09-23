@@ -184,7 +184,7 @@
 <!-- Chat Komplain Modal (synced identical to Customer & Super Admin) -->
 <div class="hidden fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
     <div class="min-h-full lg:h-full flex flex-col justify-end lg:flex-row lg:justify-end" onclick="if(event.target===this) closeChatModal()">
-        <div id="chat-panel" class="flex flex-col bg-surface-container-low border-t md:border lg:border-t-0 lg:border-l border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-t-3xl md:rounded-2xl lg:rounded-none max-h-[85dvh] md:max-h-[78dvh] lg:max-h-full lg:h-full w-full md:w-[520px] lg:w-[560px] xl:w-[600px] md:max-w-[88vw] lg:max-w-full md:mx-auto lg:mx-0 overflow-hidden md:shadow-2xl lg:shadow-none" onclick="event.stopPropagation()">
+        <div id="chat-panel" class="flex flex-col bg-surface-container-low border-t md:border lg:border-t-0 lg:border-l border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-t-3xl md:rounded-2xl lg:rounded-none h-[92dvh] max-h-[92dvh] md:h-auto md:max-h-[78dvh] lg:max-h-full lg:h-full w-full md:w-[520px] lg:w-[560px] xl:w-[600px] md:max-w-[88vw] lg:max-w-full md:mx-auto lg:mx-0 overflow-hidden md:shadow-2xl lg:shadow-none" onclick="event.stopPropagation()">
             <div class="relative flex items-center justify-between gap-2 lg:gap-3 pl-6 pr-3 lg:px-6 py-3.5 lg:py-4 border-b border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shrink-0 bg-surface-container-low z-10 overflow-visible" id="chat-header">
                 <div class="min-w-0 flex-1 chat-header-item" id="chat-header-title">
                     <h3 class="font-title-md text-title-md text-on-surface truncate leading-tight" id="chat-subject">-</h3>
@@ -234,6 +234,7 @@
             </div>
             <div class="relative px-3 lg:px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] shrink-0 bg-transparent" id="chat-input-area">
                 <div id="chat-emoji-panel" class="hidden absolute bottom-full mb-3 left-3 lg:left-4 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] bg-surface-container-high p-3 shadow-xl"></div>
+                <p id="chat-limit-note" class="hidden text-center font-body-sm text-body-sm text-secondary pb-3">Batas 3 balasan tercapai, menunggu balasan toko.</p>
                 <div id="chat-composer" class="flex items-end gap-1 lg:gap-1.5 bg-surface-container-lowest dark:bg-[#1c1c1c] border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-[26px] lg:rounded-[28px] px-2 lg:px-2.5 py-2 lg:py-2.5 shadow-sm transition-colors duration-150 focus-within:border-secondary">
                     <button type="button" onclick="toggleEmojiPanel()" id="chat-emoji-toggle" aria-label="Emoji" title="Emoji" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0">
                         <span class="material-symbols-outlined text-[20px]">mood</span>
@@ -658,6 +659,15 @@
         el.innerHTML = messages.map(function (m) {
             const mine = String(m.sender_id) === String(myId) || (myRole === 'Super Admin' && m.sender?.role === 'Super Admin');
             const sender = mine ? 'Anda' : (m.sender ? m.sender.nama_lengkap : 'Toko');
+            const roleTag = (function () {
+                if (mine) return '';
+                const r = m.sender ? m.sender.role : null;
+                if (r === 'Admin') return ' <span class="inline-flex items-center px-1.5 py-px rounded-full bg-blue-100 text-blue-800 text-[9px] font-bold tracking-wide">ADMIN</span>';
+                if (r === 'Owner') return ' <span class="inline-flex items-center px-1.5 py-px rounded-full bg-amber-100 text-amber-800 text-[9px] font-bold tracking-wide">OWNER</span>';
+                if (r === 'Customer') return ' <span class="inline-flex items-center px-1.5 py-px rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-bold tracking-wide">CUSTOMER</span>';
+                if (r) return ' <span class="inline-flex items-center px-1.5 py-px rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold tracking-wide">' + escapeHtml(String(r).toUpperCase()) + '</span>';
+                return '';
+            })();
             const time = mine ? 'text-white/40' : 'text-on-surface-variant/50';
             const bubble = mine ? 'bg-secondary text-white' : 'bg-surface-container-low';
             const meta = mine ? 'text-white/60' : 'text-on-surface-variant';
@@ -705,7 +715,7 @@
                 selFirst +
                 '<div class="max-w-[82%] lg:max-w-[72%] rounded-2xl px-3.5 lg:px-4 pt-3 pb-5 relative ' + bubble + ' shadow-sm" data-bubble>' +
                 '<div class="flex items-start justify-between gap-2 mb-1">' +
-                '<p class="text-[11px] ' + meta + ' uppercase tracking-[0.06em] font-medium">' + escapeHtml(sender) + '</p>' +
+                '<p class="text-[11px] ' + meta + ' uppercase tracking-[0.06em] font-medium">' + escapeHtml(sender) + roleTag + '</p>' +
                 menu +
                 '</div>' +
                 '<p class="font-body-sm text-body-sm whitespace-pre-wrap break-words leading-relaxed" data-pesan>' + escapeHtml(m.pesan) + '</p>' +
