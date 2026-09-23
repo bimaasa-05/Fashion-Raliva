@@ -133,6 +133,11 @@
                             <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-0.5">Rating</span>
                         </div>
                     </div>
+                    @if ($item->update_request)
+                        <button type="button" onclick="event.stopPropagation()" data-modal-open="modal-perubahan-{{ $item->update_request->store_update_request_id }}" class="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gold-accent/10 border border-gold-accent/30 text-gold-accent font-label-sm text-[11px] uppercase tracking-widest hover:bg-gold-accent/20 transition-colors">
+                            <span class="material-symbols-outlined text-[16px]">edit_note</span>Perubahan Data Menunggu
+                        </button>
+                    @endif
                     <div class="flex items-center justify-between pt-4 border-t border-muted-border">
                         <span class="toko-detail-hint font-label-sm text-[11px] uppercase tracking-widest text-gold-accent inline-flex items-center gap-1">Lihat Detail <span class="material-symbols-outlined text-[14px]">arrow_forward</span></span>
                         <span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">place</span>{{ $item->location }}</span>
@@ -747,4 +752,47 @@ document.addEventListener('DOMContentLoaded', () => {
         @endslot
     @endcomponent
 </form>
+
+{{-- Modal perubahan data toko (server-rendered per toko yang mengajukan) --}}
+@foreach ($stores as $item)
+    @if ($item->update_request)
+        @php $pr = $item->update_request; $st = $item->model; @endphp
+        <div id="modal-perubahan-{{ $pr->store_update_request_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+            <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+            <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
+                <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+                    <div>
+                        <p class="raliva-label text-gold-accent">Perubahan Data Toko</p>
+                        <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $st->nama_toko }}</h3>
+                        <p class="text-on-surface-variant text-xs mt-1">Diajukan {{ $pr->created_at?->translatedFormat('d M Y H:i') ?? '-' }}</p>
+                    </div>
+                    <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors shrink-0"><span class="material-symbols-outlined">close</span></button>
+                </div>
+                <div class="p-6 space-y-3 text-sm">
+                    @foreach ([['Nama Toko', $st->nama_toko, $pr->nama_toko], ['Kategori', $st->kategori ?? '-', $pr->kategori ?? '-'], ['Alamat', $st->alamat, $pr->alamat], ['Telepon', $st->nomor_telepon, $pr->nomor_telepon]] as $row)
+                        <div class="grid grid-cols-2 gap-3 border border-muted-border rounded-lg p-3 {{ $row[1] != $row[2] ? 'border-gold-accent/40 bg-gold-accent/5' : '' }}">
+                            <div><p class="text-[10px] uppercase text-on-surface-variant">{{ $row[0] }} (lama)</p><p class="text-on-surface mt-0.5">{{ $row[1] }}</p></div>
+                            <div><p class="text-[10px] uppercase text-on-surface-variant">{{ $row[0] }} (baru)</p><p class="font-bold text-on-surface mt-0.5">{{ $row[2] }}</p></div>
+                        </div>
+                    @endforeach
+                    <div class="border border-muted-border rounded-lg p-3">
+                        <p class="text-[10px] uppercase text-on-surface-variant">Deskripsi (baru)</p>
+                        <p class="text-on-surface mt-0.5">{{ $pr->deskripsi ?? '-' }}</p>
+                    </div>
+                </div>
+                <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex gap-3">
+                    <form method="POST" action="{{ route('superadmin.manajemen-toko.perubahan.tolak', [$st->store_id, $pr->store_update_request_id]) }}" class="flex-1 flex gap-2">
+                        @csrf
+                        <input type="text" name="alasan" required minlength="3" maxlength="1000" placeholder="Alasan penolakan..." class="raliva-input flex-1 text-sm" />
+                        <button type="submit" class="px-5 py-2.5 bg-error/10 border border-error/20 text-error text-xs font-semibold rounded-lg hover:bg-error hover:text-white transition-colors shrink-0">Tolak</button>
+                    </form>
+                    <form method="POST" action="{{ route('superadmin.manajemen-toko.perubahan.setujui', [$st->store_id, $pr->store_update_request_id]) }}" class="shrink-0">
+                        @csrf
+                        <button type="submit" class="px-5 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded-lg btn-premium h-full">Setujui</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+@endforeach
 @endpush
