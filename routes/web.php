@@ -262,6 +262,8 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/manajemen-toko/{toko}/aktifkan', [ManajemenTokoController::class, 'aktifkan'])->name('manajemen-toko.aktifkan');
     Route::post('/manajemen-toko/{toko}/dokumen/{dokumen}/setujui', [ManajemenTokoController::class, 'verifikasiDokumen'])->name('manajemen-toko.dokumen.setujui');
     Route::post('/manajemen-toko/{toko}/dokumen/{dokumen}/tolak', [ManajemenTokoController::class, 'tolakDokumen'])->name('manajemen-toko.dokumen.tolak');
+    Route::post('/manajemen-toko/{toko}/perubahan/{permintaan}/setujui', [ManajemenTokoController::class, 'setujuiUpdate'])->name('manajemen-toko.perubahan.setujui');
+    Route::post('/manajemen-toko/{toko}/perubahan/{permintaan}/tolak', [ManajemenTokoController::class, 'tolakUpdate'])->name('manajemen-toko.perubahan.tolak');
     Route::get('/moderasi-produk', [ModerasiProdukController::class, 'index'])->name('moderasi-produk');
     Route::post('/moderasi-produk/{produk}/setujui', [ModerasiProdukController::class, 'setujui'])->name('moderasi-produk.setujui');
     Route::post('/moderasi-produk/{produk}/tolak', [ModerasiProdukController::class, 'tolak'])->name('moderasi-produk.tolak');
@@ -470,6 +472,7 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::put('/data-toko', [DataTokoController::class, 'update'])->name('data-toko.update');
     Route::get('/pengajuan-toko', [PengajuanTokoController::class, 'index'])->name('pengajuan-toko');
     Route::post('/pengajuan-toko', [PengajuanTokoController::class, 'store'])->name('pengajuan-toko.store');
+    Route::post('/pengajuan-toko/reupload', [PengajuanTokoController::class, 'reupload'])->name('pengajuan-toko.reupload');
     Route::get('/pengaturan-toko', [PengaturanTokoController::class, 'index'])->name('pengaturan-toko');
     Route::get('/produk', [OwnerProdukController::class, 'index'])->name('produk');
     Route::put('/produk/{product}', [OwnerProdukController::class, 'update'])->name('produk.update');
