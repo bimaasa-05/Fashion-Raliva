@@ -64,7 +64,7 @@ class DataProdukController extends Controller
             'ukuran_terpilih' => 'required|string|max:1000',
             'varian_stok' => 'required|array|min:1',
             'varian_stok.*.ukuran' => 'required|string|max:255',
-            'varian_stok.*.warna' => 'required|string|max:100',
+            'varian_stok.*.warna' => 'nullable|string|max:100',
             'varian_stok.*.stok' => 'required|integer|min:1',
             'varian_stok.*.stok_minimum' => 'required|integer|min:0',
         ], [
@@ -87,7 +87,9 @@ class DataProdukController extends Controller
             'varian_stok.*.stok_minimum.required' => 'Ambang menipis tiap varian wajib diisi.',
         ]);
 
-        $warna = WarnaPalet::normalizeSubmissionOrFail($request->input('warna'), $request->input('warna_hex'));
+        $warnaInput = $request->input('warna', []);
+        $warnaHexInput = $request->input('warna_hex', []);
+        $warna = WarnaPalet::normalizeOptionalSubmissionOrFail($warnaInput, $warnaHexInput);
         $data['warna'] = $warna['names'];
         $data['warna_hex'] = $warna['hexes'];
 
@@ -147,10 +149,13 @@ class DataProdukController extends Controller
 
         // Handle variasi
         $ukuranList = $data['ukuran_terpilih'] ? explode(',', $data['ukuran_terpilih']) : ['All Size'];
-        $warnaList = $data['warna'] ?? ['Hitam'];
+        $warnaList = ($data['warna'] ?? []) !== [] ? $data['warna'] : [null];
 
         $warnaHexMap = collect($warnaList)->values()->mapWithKeys(function ($warna, $i) use ($data) {
-            $name = trim($warna);
+            if ($warna === null) {
+                return [];
+            }
+            $name = trim((string) $warna);
             $hex = trim((string) ($data['warna_hex'][$i] ?? ''));
             $resolved = \App\Support\WarnaPalet::resolve($hex, $name) ?? '';
 
@@ -158,7 +163,7 @@ class DataProdukController extends Controller
         })->all();
 
         $perVarian = collect($data['varian_stok'] ?? [])->keyBy(function ($v) {
-            return trim($v['ukuran']) . '|' . trim($v['warna']);
+            return trim((string) ($v['ukuran'] ?? '')) . '|' . trim((string) ($v['warna'] ?? ''));
         });
 
         $warehouse = \App\Models\Warehouse::where('store_id', $storeId)->where('status', \App\Models\Warehouse::STATUS_AKTIF)->first();
@@ -172,15 +177,16 @@ class DataProdukController extends Controller
 
         foreach ($ukuranList as $uk) {
             foreach ($warnaList as $wr) {
-                $key = trim($uk) . '|' . trim($wr);
+                $color = $wr === null ? null : trim((string) $wr);
+                $key = trim((string) $uk) . '|' . trim((string) $color);
                 $detail = $perVarian->get($key);
 
                 $variant = \App\Models\ProductVariant::create([
                     'product_id' => $product->product_id,
-                    'sku' => strtoupper(substr($product->nama_produk, 0, 3)).'-'.str_pad($product->product_id, 4, '0').'-'.strtoupper(substr($uk,0,1)).substr($wr,0,1).rand(10,99),
+                    'sku' => strtoupper(substr($product->nama_produk, 0, 3)).'-'.str_pad($product->product_id, 4, '0').'-'.strtoupper(substr($uk,0,1)).($color === null ? '' : substr($color,0,1)).rand(10,99),
                     'ukuran' => trim($uk),
-                    'warna' => trim($wr),
-                    'warna_hex' => $warnaHexMap[trim($wr)] ?? \App\Support\WarnaPalet::resolve(null, trim($wr)),
+                    'warna' => $color,
+                    'warna_hex' => $color === null ? null : ($warnaHexMap[$color] ?? \App\Support\WarnaPalet::resolve(null, $color)),
                     'harga' => $data['harga_dasar'],
                     'status' => 'aktif',
                 ]);
@@ -236,7 +242,7 @@ class DataProdukController extends Controller
         ]);
 
         if ($request->has('warna') || $request->has('warna_hex')) {
-            $warna = WarnaPalet::normalizeSubmissionOrFail($request->input('warna'), $request->input('warna_hex'));
+            $warna = WarnaPalet::normalizeOptionalSubmissionOrFail($request->input('warna'), $request->input('warna_hex'));
             $data['warna'] = $warna['names'];
             $data['warna_hex'] = $warna['hexes'];
         }
