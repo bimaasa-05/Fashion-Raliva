@@ -39,7 +39,7 @@
     </div>
     <section>
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Penarikan</h2>
-        <div data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        <div data-reveal-group class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Verifikasi</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-primary break-words">{{ $stats['pending'] }}</span>
@@ -57,6 +57,12 @@
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">{{ $stats['dibayar'] }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">pengajuan selesai ditransfer</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">task_alt</span>
+            </div>
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-gold-accent/25 rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium hover:border-gold-accent transition-colors hero-glow">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Fee Terkumpul</span>
+                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold break-words">Rp {{ number_format($stats['fee_terkumpul'], 0, ',', '.') }}</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">dari penarikan yang dibayar</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">percent</span>
             </div>
         </div>
     </section>
