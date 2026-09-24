@@ -136,6 +136,17 @@
     html.theme-dark .border-error { border-color: #ffb4ab !important; }
     html.theme-dark .bg-error-container { background-color: #3a1210 !important; }
     html.theme-dark .focus\:border-secondary:focus { border-color: #A32626 !important; }
+    /* Auth: ring fokus maroon (timpa sisa ring biru forms-plugin) */
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+        --tw-ring-color: rgba(139, 30, 30, .22) !important;
+    }
+    html.theme-dark input[type="text"]:focus,
+    html.theme-dark input[type="email"]:focus,
+    html.theme-dark input[type="password"]:focus {
+        --tw-ring-color: rgba(163, 38, 38, .35) !important;
+    }
 </style>
 <style>
     /* ============ GOLD BUTTON + LIGHT FLASH ============ */
