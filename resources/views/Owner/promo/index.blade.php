@@ -284,7 +284,7 @@
             <div class="grid grid-cols-2 gap-gutter">
                 <div>
                     <label class="block raliva-label mb-2">Min. Pembelian (Rp)</label>
-                    <input name="minimal_pembelian" type="number" min="0" placeholder="0" class="raliva-input" />
+                    <input name="minimal_pembelian" type="number" min="3" placeholder="3" class="raliva-input" />
                 </div>
                 <div>
                     <label class="block raliva-label mb-2">Maks. Diskon (Rp)</label>
