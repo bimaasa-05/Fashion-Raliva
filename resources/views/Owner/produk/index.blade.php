@@ -8,7 +8,7 @@
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
-    <div class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         @for ($i = 0; $i < 4; $i++)
             <div class="h-28 bg-surface-container-high rounded-lg animate-pulse"></div>
         @endfor
@@ -282,7 +282,7 @@
                         <img src="{{ $galImgs[0] }}" alt="{{ $p->nama_produk }}" class="w-full h-full object-cover" loading="lazy" />
                     </div>
                     @if (count($galImgs) > 1)
-                        <div class="grid grid-cols-4 gap-2 mt-2">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
                             @foreach ($galImgs as $gi)
                                 <div class="h-16 rounded-lg overflow-hidden border border-outline-variant bg-surface-container-high">
                                     <img src="{{ $gi }}" alt="" class="w-full h-full object-cover" loading="lazy" />
@@ -386,7 +386,7 @@
             @if ($p->images->isNotEmpty())
                 <div>
                     <p class="raliva-label mb-2">Foto Saat Ini</p>
-                    <div class="grid grid-cols-4 gap-2">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         @foreach ($p->images as $img)
                             <div class="h-20 rounded-lg overflow-hidden border border-outline-variant bg-surface-container-high">
                                 <img src="{{ filter_var($img->file_gambar, FILTER_VALIDATE_URL) ? $img->file_gambar : (str_starts_with(ltrim($img->file_gambar, '/'), 'assets/') ? asset(ltrim($img->file_gambar, '/')) : asset('storage/' . ltrim($img->file_gambar, '/'))) }}" alt="Foto produk" class="w-full h-full object-cover" loading="lazy" />
