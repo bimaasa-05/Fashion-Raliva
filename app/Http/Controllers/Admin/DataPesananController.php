@@ -47,6 +47,7 @@ class DataPesananController extends Controller
                 array_key_exists($status, $statuses),
                 fn ($query) => $query->where('status', $status)
             )
+            ->prioritasStatus()
             ->orderByDesc('updated_at')
             ->orderByDesc('order_id')
             ->get();
@@ -379,6 +380,14 @@ class DataPesananController extends Controller
             ]);
         }
 
+        $pesanan->loadMissing('checkout.payment');
+        if ($pesanan->isPaymentVerified()) {
+            return back()->with('toast', [
+                'message' => 'Pembayaran pesanan ini sudah terverifikasi sehingga tidak dapat dibatalkan langsung. Selesaikan lewat alur Admin/Owner.',
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
         $data = $request->validate([
             'alasan' => 'required|string|min:10|max:1000',
         ], [
@@ -501,6 +510,132 @@ class DataPesananController extends Controller
 
         return back()->with('toast', [
             'message' => "Pesanan {$pesanan->nomor_order} diselesaikan.",
+            'icon' => 'task_alt',
+        ]);
+    }
+
+    public function alihFulfillment(Request $request, Order $pesanan)
+    {
+        if (! AdminContext::canAccessStore($pesanan->store_id)) {
+            return back()->with('toast', [
+                'message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.',
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
+        $data = $request->validate([
+            'tipe' => ['required', 'in:online,offline'],
+        ], [
+            'tipe.required' => 'Pilihan fulfillment wajib diisi.',
+            'tipe.in' => 'Pilihan fulfillment tidak valid.',
+        ]);
+
+        $target = $data['tipe'];
+        $blocked = [Order::STATUS_DIKIRIM, Order::STATUS_SELESAI, Order::STATUS_DIBATALKAN, Order::STATUS_REFUND];
+
+        if (in_array($pesanan->status, $blocked, true)) {
+            return back()->with('toast', [
+                'message' => 'Pesanan sudah dikirim, selesai, atau dibatalkan — fulfillment tidak dapat diubah.',
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
+        if ($target === $pesanan->tipe_pesanan) {
+            return back()->with('toast', [
+                'message' => 'Fulfillment pesanan memang sudah begitu.',
+                'icon' => 'info',
+            ]);
+        }
+
+        if ($pesanan->shipments()->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->exists()) {
+            return back()->with('toast', [
+                'message' => 'Pesanan sudah memiliki pengiriman aktif — fulfillment tidak dapat diubah.',
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
+        $lama = $pesanan->only(['tipe_pesanan', 'total_ongkir', 'grand_total']);
+        $ongkirDibatalkan = 0.0;
+
+        try {
+            DB::transaction(function () use ($pesanan, $target, &$ongkirDibatalkan) {
+                $order = Order::whereKey($pesanan->order_id)->lockForUpdate()->firstOrFail();
+                $blocked = [Order::STATUS_DIKIRIM, Order::STATUS_SELESAI, Order::STATUS_DIBATALKAN, Order::STATUS_REFUND];
+
+                if (in_array($order->status, $blocked, true)) {
+                    throw new \RuntimeException('Status pesanan berubah, fulfillment tidak dapat diubah.');
+                }
+                if ($target === $order->tipe_pesanan) {
+                    throw new \RuntimeException('Fulfillment pesanan memang sudah begitu.');
+                }
+                if ($order->shipments()->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->exists()) {
+                    throw new \RuntimeException('Pesanan sudah memiliki pengiriman aktif.');
+                }
+
+                if ($target === Order::TIPE_PESANAN_OFFLINE) {
+                    $ongkir = (float) ($order->total_ongkir ?? 0);
+                    $baruGrand = max(0, (float) $order->grand_total - $ongkir);
+
+                    $order->update([
+                        'tipe_pesanan' => Order::TIPE_PESANAN_OFFLINE,
+                        'total_ongkir' => 0,
+                        'grand_total' => $baruGrand,
+                    ]);
+
+                    if ($ongkir > 0) {
+                        $checkout = \App\Models\Checkout::whereKey($order->checkout_id)->lockForUpdate()->first();
+                        if ($checkout) {
+                            $checkout->update([
+                                'total_ongkir' => max(0, (float) $checkout->total_ongkir - $ongkir),
+                                'grand_total' => max(0, (float) $checkout->grand_total - $ongkir),
+                            ]);
+                        }
+                        $ongkirDibatalkan = $ongkir;
+                    }
+                } else {
+                    $order->update(['tipe_pesanan' => Order::TIPE_PESANAN_ONLINE]);
+                }
+            });
+        } catch (\RuntimeException $e) {
+            return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
+        }
+
+        $pesanLog = $target === Order::TIPE_PESANAN_OFFLINE
+            ? sprintf(
+                'Pesanan %s dialihkan ke ambil di toko. Ongkir Rp %s dibatalkan, grand total jadi Rp %s.',
+                $pesanan->nomor_order,
+                number_format($ongkirDibatalkan, 0, ',', '.'),
+                number_format((float) Order::whereKey($pesanan->order_id)->value('grand_total'), 0, ',', '.')
+            )
+            : sprintf('Pesanan %s dialihkan ke kirim kurir. Ongkir tidak dipulihkan otomatis.', $pesanan->nomor_order);
+
+        ActivityLogger::log(
+            'admin.order.fulfillment',
+            Order::class,
+            $pesanan->order_id,
+            $lama,
+            ['tipe_pesanan' => $target, 'total_ongkir' => $target === Order::TIPE_PESANAN_OFFLINE ? 0 : $lama['total_ongkir']],
+            $pesanLog
+        );
+
+        if ($target === Order::TIPE_PESANAN_OFFLINE) {
+            $this->notifyCustomer($pesanan, 'Pesanan Diambil di Toko', sprintf(
+                'Pesanan %s dialihkan menjadi ambil di toko. Silakan ambil pesanan Anda di toko kami setelah dikonfirmasi siap.',
+                $pesanan->nomor_order
+            ));
+        } else {
+            $this->notifyCustomer($pesanan, 'Pesanan Dikirim', sprintf(
+                'Pesanan %s dialihkan menjadi dikirim ke alamat Anda.',
+                $pesanan->nomor_order
+            ));
+        }
+
+        Notification::fireSelf(Notification::TIPE_ORDER, 'Fulfillment Diubah', $pesanLog, route('admin.pesanan'));
+
+        return back()->with('toast', [
+            'message' => $target === Order::TIPE_PESANAN_OFFLINE
+                ? "Pesanan {$pesanan->nomor_order} dialihkan ke ambil di toko."
+                : "Pesanan {$pesanan->nomor_order} dialihkan ke kirim kurir.",
             'icon' => 'task_alt',
         ]);
     }
