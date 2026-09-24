@@ -135,7 +135,7 @@
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
     html.theme-dark .border-error { border-color: #ffb4ab !important; }
     html.theme-dark .bg-error-container { background-color: #3a1210 !important; }
-    html.theme-dark .focus\:border-primary:focus { border-color: #f2efec !important; }
+    html.theme-dark .focus\:border-secondary:focus { border-color: #A32626 !important; }
     /* ============ GOLD INNER GLOW FRAME ============ */
     .frame-gold {
         box-shadow:
@@ -358,7 +358,7 @@
 <!-- Email -->
 <div class="mb-md">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">{{ __('Email') }}</label>
-<input autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors @error('email') border-error @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" type="email" required autofocus/>
+<input autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors @error('email') border-error @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" type="email" required autofocus/>
 @error('email')
 <p class="font-label-sm text-label-sm text-error mt-xs">{{ $message }}</p>
 @enderror
