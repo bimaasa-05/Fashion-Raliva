@@ -40,41 +40,40 @@ class PeringkatIklanController extends Controller
             ->limit(3)->get();
 
         $today = now()->toDateString();
-        if ($tab === 'pengajuan') {
-            $slots = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko', 'bankAccount.bank'])
-                ->where('status', AdSlot::STATUS_DITUNDA)
-                ->orderByDesc('created_at')
-                ->paginate(20)->withQueryString();
-        } elseif ($tab === 'daftar') {
-            $slots = (clone $slotsQuery)
-                ->reorder()
-                ->where(function ($q) use ($today) {
-                    $q->where(function ($q2) use ($today) {
-                        $q2->where('status', AdSlot::STATUS_AKTIF)
-                            ->whereDate('tanggal_mulai', '<=', $today)
-                            ->whereDate('tanggal_selesai', '>=', $today);
-                    })->orWhere(function ($q2) use ($today) {
-                        $q2->where('status', AdSlot::STATUS_TERJADWAL)
-                            ->whereDate('tanggal_mulai', '>', $today);
+
+        $pengajuanSlots = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko', 'bankAccount.bank'])
+            ->where('status', AdSlot::STATUS_DITUNDA)
+            ->orderByDesc('created_at')
+            ->paginate(20)->withQueryString();
+
+        $daftarSlots = (clone $slotsQuery)
+            ->reorder()
+            ->where(function ($q) use ($today) {
+                $q->where(function ($q2) use ($today) {
+                    $q2->where('status', AdSlot::STATUS_AKTIF)
+                        ->whereDate('tanggal_mulai', '<=', $today)
+                        ->whereDate('tanggal_selesai', '>=', $today);
+                })->orWhere(function ($q2) use ($today) {
+                    $q2->where('status', AdSlot::STATUS_TERJADWAL)
+                        ->whereDate('tanggal_mulai', '>', $today);
+                });
+            })
+            ->whereNotNull('tanggal_mulai')
+            ->whereNotNull('tanggal_selesai')
+            ->orderByRaw('CASE WHEN status = ? THEN 0 ELSE 1 END', [AdSlot::STATUS_AKTIF])
+            ->orderByDesc('nominal_bid')
+            ->orderBy('ad_slot_id')
+            ->paginate(20)->withQueryString();
+
+        $riwayatSlots = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko', 'bankAccount.bank'])
+            ->where(function ($q) use ($today) {
+                $q->where('status', AdSlot::STATUS_NONAKTIF)
+                    ->orWhere(function ($q2) use ($today) {
+                        $q2->where('status', AdSlot::STATUS_AKTIF)->whereDate('tanggal_selesai', '<', $today);
                     });
-                })
-                ->whereNotNull('tanggal_mulai')
-                ->whereNotNull('tanggal_selesai')
-                ->orderByRaw('CASE WHEN status = ? THEN 0 ELSE 1 END', [AdSlot::STATUS_AKTIF])
-                ->orderByDesc('nominal_bid')
-                ->orderBy('ad_slot_id')
-                ->paginate(20)->withQueryString();
-        } else {
-            $slots = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko', 'bankAccount.bank'])
-                ->where(function ($q) use ($today) {
-                    $q->where('status', AdSlot::STATUS_NONAKTIF)
-                        ->orWhere(function ($q2) use ($today) {
-                            $q2->where('status', AdSlot::STATUS_AKTIF)->whereDate('tanggal_selesai', '<', $today);
-                        });
-                })
-                ->orderByDesc('created_at')
-                ->paginate(20)->withQueryString();
-        }
+            })
+            ->orderByDesc('created_at')
+            ->paginate(20)->withQueryString();
 
         $products = Product::with('store:store_id,nama_toko')
             ->orderBy('nama_produk')
@@ -83,7 +82,9 @@ class PeringkatIklanController extends Controller
         $rekenings = PlatformBankAccount::with('bank')->whereNotNull('bank_id')->where('status', PlatformBankAccount::STATUS_AKTIF)->orderBy('nomor_rekening')->get();
 
         return view('SuperAdmin.peringkat.peringkat-iklan', [
-            'slots' => $slots,
+            'pengajuanSlots' => $pengajuanSlots,
+            'daftarSlots' => $daftarSlots,
+            'riwayatSlots' => $riwayatSlots,
             'top3' => $top3,
             'tab' => $tab,
             'totalPendapatan' => $totalPendapatan,
