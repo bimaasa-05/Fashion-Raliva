@@ -17,10 +17,15 @@ class CustomerWalletTransaction extends Model
 
     public const JENIS_PENYESUAIAN = 'penyesuaian';
 
+    public const JENIS_PENARIKAN_KELUAR = 'penarikan_keluar';
+
+    public const JENIS_PENARIKAN_MASUK = 'penarikan_masuk';
+
     protected $fillable = [
         'customer_wallet_id',
         'customer_topup_id',
         'order_id',
+        'customer_withdrawal_id',
         'jenis_transaksi',
         'jumlah',
         'saldo_sebelum',
@@ -50,5 +55,10 @@ class CustomerWalletTransaction extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class, 'order_id', 'order_id');
+    }
+
+    public function withdrawal(): BelongsTo
+    {
+        return $this->belongsTo(CustomerWithdrawal::class, 'customer_withdrawal_id', 'customer_withdrawal_id');
     }
 }
