@@ -71,6 +71,7 @@
                 @php
                     $skuA = $p->variants->first()?->sku ?? '-';
                     $statusA = $p->status;
+                    $pengajuanTerkunci = in_array($p->product_id, $pendingUpdateIds ?? [], true);
                     $normFotoA = function ($raw) {
                         if (filter_var($raw, FILTER_VALIDATE_URL)) return $raw;
                         $raw = ltrim($raw, '/');
@@ -79,7 +80,7 @@
                     };
                     $fotosA = $p->images->map(fn ($img) => $normFotoA($img->file_gambar))->values()->all();
                     $editFotosJson = json_encode($p->images->map(fn ($img) => ['id' => $img->product_image_id, 'url' => $normFotoA($img->file_gambar)])->values()->all());
-                    $editVarianJson = json_encode($p->variants->map(fn ($v) => ['id' => $v->product_variant_id, 'ukuran' => $v->ukuran, 'warna' => $v->warna, 'stok' => (int) $v->warehouseStocks->sum('jumlah_stok'), 'min' => (int) ($v->warehouseStocks->min('stok_minimum') ?? 0)])->values()->all());
+                    $editVarianJson = json_encode($p->variants->map(fn ($v) => ['id' => $v->product_variant_id, 'ukuran' => $v->ukuran, 'warna' => $v->warna, 'hex' => (\App\Support\WarnaPalet::resolve($v->warna_hex, $v->warna) ?? ''), 'stok' => (int) $v->warehouseStocks->sum('jumlah_stok'), 'min' => (int) ($v->warehouseStocks->min('stok_minimum') ?? 0)])->values()->all());
                 @endphp
                 <article data-reveal data-adm-row data-status="{{ $statusA === 'aktif' ? 'disetujui' : $statusA }}" data-produk-id="{{ $p->product_id }}" data-produk-nama="{{ $p->nama_produk }}" data-produk-sku="{{ $skuA }}" data-produk-created="{{ $p->created_at?->translatedFormat('d M Y') }}" data-produk-harga="Rp {{ number_format((float) $p->harga_dasar, 0, ',', '.') }}" data-produk-kategori="{{ $p->category?->nama_kategori ?? '-' }}" data-produk-tipe="{{ ucfirst($p->tipe_produk ?? 'regular') }}" data-produk-varian="{{ $p->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}" data-produk-deskripsi="{{ $p->deskripsi }}" data-produk-status="{{ $statusA }}" data-produk-alasan="{{ $statusA === 'ditolak' ? ($p->alasan_penolakan ?? '') : '' }}" data-produk-images='@json($fotosA)' class="group bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium flex flex-col">
                     <div class="relative aspect-[3/4] bg-surface-container-low overflow-hidden max-h-48" data-produk-gallery>
@@ -115,9 +116,12 @@
                         <p class="font-body-md text-gold-accent font-bold mt-1">Rp {{ number_format((float) $p->harga_dasar, 0, ',', '.') }}</p>
                         <div class="flex flex-col gap-2 mt-3 pt-3 border-t border-muted-border sm:flex-row sm:items-center sm:justify-between sm:flex-wrap">
                             <span class="text-xs text-on-surface-variant truncate">{{ $p->category?->nama_kategori ?? '-' }}</span>
+                            @if ($pengajuanTerkunci)
+                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30 whitespace-nowrap">Pengajuan Pending</span>
+                            @endif
                             <div class="flex items-center gap-1.5">
                                 <button type="button" data-produk-detail class="inline-flex items-center gap-1 px-2.5 py-1 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">visibility</span>Detail</button>
-                                <button type="button" data-produk-edit data-action="{{ route('admin.produk.update', $p) }}" data-nama="{{ $p->nama_produk }}" data-kategori="{{ $p->category_id }}" data-kategori-nama="{{ $p->category?->nama_kategori ?? '' }}" data-harga="{{ $p->harga_dasar }}" data-tipe="{{ $p->tipe_produk }}" data-deskripsi="{{ $p->deskripsi }}" data-fotos="{{ $editFotosJson }}" data-varian="{{ $editVarianJson }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gold-accent/10 border border-gold-accent/30 rounded-lg text-xs font-semibold text-gold-accent hover:bg-gold-accent/20 transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">edit</span>Edit</button>
+                                <button type="button" data-produk-edit @disabled($pengajuanTerkunci) title="{{ $pengajuanTerkunci ? 'Menunggu keputusan Super Admin' : 'Ajukan perubahan produk' }}" data-action="{{ route('admin.produk.update', $p) }}" data-nama="{{ $p->nama_produk }}" data-kategori="{{ $p->category_id }}" data-kategori-nama="{{ $p->category?->nama_kategori ?? '' }}" data-harga="{{ $p->harga_dasar }}" data-tipe="{{ $p->tipe_produk }}" data-deskripsi="{{ $p->deskripsi }}" data-fotos="{{ $editFotosJson }}" data-varian="{{ $editVarianJson }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gold-accent/10 border border-gold-accent/30 rounded-lg text-xs font-semibold text-gold-accent hover:bg-gold-accent/20 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"><span class="material-symbols-outlined text-[14px]">edit</span>Edit</button>
                             </div>
                         </div>
                     </div>
@@ -249,7 +253,7 @@
                     </div>
                     <div id="edit-warna-custom-chips" class="flex flex-wrap gap-2 mt-2"></div>
                     <div class="flex items-center gap-2 mt-3 flex-wrap">
-                        <input type="text" id="edit-warna-custom-name" placeholder="Warna baru (cth: Tosca)" maxlength="30" class="raliva-input text-sm flex-1" style="min-width:10rem;" />
+                        <input type="text" id="edit-warna-custom-name" placeholder="Warna baru (wajib, cth: Tosca)" maxlength="30" class="raliva-input text-sm flex-1" style="min-width:10rem;" />
                         <div class="flex items-center gap-1.5 shrink-0">
                             <span class="text-on-surface-variant font-bold text-sm">#</span>
                             <input type="text" id="edit-warna-custom-hex" placeholder="f4f4f4" maxlength="6" autocomplete="off" spellcheck="false" class="raliva-input text-sm font-mono uppercase" style="width: 7.5rem;" title="Ketik kode warna hex, cth: f4f4f4" />
@@ -266,9 +270,12 @@
                 </div>
             </div>
         </div>
-        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border px-6 py-4 flex gap-3">
-            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
-            <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded transition-colors btn-premium">Simpan Perubahan</button>
+        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border px-6 py-4 space-y-3">
+            <p class="text-xs text-on-surface-variant">Perubahan tidak langsung berlaku. Pengajuan ini dikunci sampai diputuskan Super Admin.</p>
+            <div class="flex gap-3">
+                <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
+                <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded transition-colors btn-premium">Ajukan Perubahan</button>
+            </div>
         </div>
     </form>
 </div>
@@ -363,11 +370,13 @@
             box.appendChild(chip);
         }
 
-        function editEnsureWarnaChecked(name) {
+        function editEnsureWarnaChecked(name, storedHex = '') {
             let cb = document.querySelector(`#edit-warna-presets input[name="warna[]"][value="${CSS.escape(name)}"]`);
             if (cb) { cb.checked = true; return; }
             cb = document.querySelector(`#edit-warna-custom-chips input[name="warna[]"][value="${CSS.escape(name)}"]`);
             if (cb) { cb.checked = true; return; }
+            window.__warnaCustomHex = window.__warnaCustomHex || {};
+            if (storedHex && !window.__warnaCustomHex[name]) window.__warnaCustomHex[name] = storedHex;
             const wrap = document.getElementById('edit-warna-custom-chips');
             const label = document.createElement('label');
             label.className = 'flex items-center gap-2 py-1.5 pr-2 pl-2 rounded-lg border border-gold-accent bg-gold-accent/10 cursor-pointer';
@@ -413,14 +422,21 @@
         document.getElementById('edit-warna-custom-add')?.addEventListener('click', () => {
             const nameInput = document.getElementById('edit-warna-custom-name');
             const colorInput = document.getElementById('edit-warna-custom-color');
-            const nama = (nameInput.value || '').trim() || ('Warna ' + (document.querySelectorAll('#edit-warna-presets input[name="warna[]"], #edit-warna-custom-chips input[name="warna[]"]').length + 1));
-            if (editHexInput && editHexInput.value.trim() !== '' && !editNormHex(editHexInput.value)) {
-                window.showRalivaToast('Kode hex tidak valid. Contoh: f4f4f4.', 'gpp_bad');
+            const nama = (nameInput.value || '').trim();
+            const hex = editNormHex(editHexInput?.value || '');
+            if (nama.length < 2 || /^warna\s*\d+$/i.test(nama)) {
+                window.showRalivaToast('Nama warna custom wajib diisi minimal 2 karakter.', 'gpp_bad');
+                nameInput.focus();
+                return;
+            }
+            if (!hex) {
+                window.showRalivaToast('Kode hex warna custom wajib valid. Contoh: f4f4f4.', 'gpp_bad');
                 editHexInput.focus();
                 return;
             }
+            colorInput.value = hex;
             window.__warnaCustomHex = window.__warnaCustomHex || {};
-            window.__warnaCustomHex[nama] = colorInput.value;
+            window.__warnaCustomHex[nama] = hex;
             editEnsureWarnaChecked(nama);
             nameInput.value = '';
             if (editHexInput) { editHexInput.value = colorInput.value.replace('#', ''); editHexInput.classList.remove('border-error'); }
@@ -472,10 +488,13 @@
                 });
                 document.querySelectorAll('#edit-warna-presets input[name="warna[]"]').forEach(cb => { cb.checked = false; });
                 document.getElementById('edit-warna-custom-chips').innerHTML = '';
+                window.__warnaCustomHex = {};
                 const ukSet = [...new Set(varian.map(v => v.ukuran).filter(Boolean))];
-                const wrSet = [...new Set(varian.map(v => v.warna).filter(Boolean))];
+                const wrHex = {};
+                varian.forEach(v => { if (v.warna && v.hex && !wrHex[v.warna]) wrHex[v.warna] = v.hex; });
                 ukSet.forEach(s => { editEnsureUkuranChip(s); editUkuranSelected.add(s); editSetUkuranChip(s, true); });
-                wrSet.forEach(w => editEnsureWarnaChecked(w));
+                Object.keys(wrHex).forEach(w => editEnsureWarnaChecked(w, wrHex[w]));
+                [...new Set(varian.map(v => v.warna).filter(Boolean))].filter(w => !wrHex[w]).forEach(w => editEnsureWarnaChecked(w));
                 editSyncUkuranHidden();
                 editRenderVarian();
                 openModal(editModal);
@@ -815,7 +834,7 @@
                                 <span class="text-on-surface-variant font-bold text-sm">#</span>
                                 <input type="text" id="warna-custom-hex" placeholder="f4f4f4" maxlength="6" autocomplete="off" spellcheck="false" class="raliva-input text-sm font-mono uppercase" style="width: 7.5rem;" title="Ketik kode warna hex, cth: f4f4f4" />
                             </div>
-                            <input type="text" id="warna-custom-name" placeholder="Nama warna (opsional) — cth: Tosca" maxlength="30" class="raliva-input text-sm flex-1" style="width:auto;min-width:10rem;" />
+                            <input type="text" id="warna-custom-name" placeholder="Nama warna (wajib) — cth: Tosca" maxlength="30" required class="raliva-input text-sm flex-1" style="width:auto;min-width:10rem;" />
                             <button type="button" id="warna-custom-add" class="px-4 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium shrink-0">Tambah</button>
                         </div>
                         <div id="warna-custom-chips" class="flex flex-wrap gap-2"></div>
@@ -926,7 +945,9 @@ function warnaSwatch(name) {
     window.__warnaPresetHex = window.__warnaPresetHex || @json(\App\Support\WarnaPalet::all());
     if (!window.__warnaPresetHex) window.__warnaPresetHex = {};
     if (window.__warnaCustomHex && window.__warnaCustomHex[name]) return window.__warnaCustomHex[name];
-    return window.__warnaPresetHex[name] || '#cccccc';
+    const key = name.toLowerCase();
+    const preset = Object.keys(window.__warnaPresetHex).find((label) => label.toLowerCase() === key);
+    return preset ? window.__warnaPresetHex[preset] : '#cccccc';
 }
 
 function updateUkuranTerpilih() {
@@ -1149,19 +1170,24 @@ initKategoriCombobox('edit');
 
     if (hexInput && !hexInput.value) hexInput.value = colorInput.value.replace('#', '');
 
-    const autoName = () => 'Warna ' + (document.querySelectorAll('[name="warna[]"]').length + 1);
-
     const addCustomWarna = () => {
-        const nama = (nameInput.value || '').trim() || autoName();
+        const nama = (nameInput.value || '').trim();
+        const hex = normHex(hexInput?.value || '');
+        if (nama.length < 2 || /^warna\s*\d+$/i.test(nama)) {
+            window.showRalivaToast('Nama warna custom wajib diisi minimal 2 karakter.', 'gpp_bad');
+            nameInput.focus();
+            return;
+        }
         const exists = Array.from(document.querySelectorAll('[name="warna[]"]')).some((cb) => cb.value.toLowerCase() === nama.toLowerCase());
         if (exists) { window.showRalivaToast('Warna "' + nama + '" sudah ada.', 'gpp_bad'); return; }
-        if (hexInput && hexInput.value.trim() !== '' && !normHex(hexInput.value)) {
-            window.showRalivaToast('Kode hex tidak valid. Contoh: f4f4f4.', 'gpp_bad');
+        if (!hex) {
+            window.showRalivaToast('Kode hex warna custom wajib valid. Contoh: f4f4f4.', 'gpp_bad');
             hexInput.focus();
             return;
         }
 
-        window.__warnaCustomHex[nama] = colorInput.value;
+        colorInput.value = hex;
+        window.__warnaCustomHex[nama] = hex;
 
         const labelEl = document.createElement('label');
         labelEl.className = 'warna-chip flex items-center gap-2 py-1.5 pr-2 pl-2 rounded-lg border border-muted-border cursor-pointer hover:border-gold-accent transition-colors has-[:checked]:bg-gold-accent/10 has-[:checked]:border-gold-accent';
