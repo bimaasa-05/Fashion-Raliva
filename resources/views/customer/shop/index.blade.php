@@ -602,7 +602,7 @@
 </div>
 <div class="overflow-y-auto px-container-margin pb-md grow">
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Category') }}</h3>
-<div class="grid grid-cols-2 gap-sm">
+<div class="grid grid-cols-1 gap-sm">
 @forelse ($parentCats as $pc)
 <label class="flex items-center gap-sm py-xs cursor-pointer"><input class="w-4 h-4 shop-checkbox" type="checkbox"/><span class="font-body-sm text-body-sm">{{ $pc }}</span></label>
 @empty
