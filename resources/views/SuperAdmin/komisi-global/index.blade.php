@@ -95,7 +95,7 @@
 
     <section>
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Dampak Komisi Bulan Ini</h2>
-        <div data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Estimasi Komisi</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp {{ number_format($stats['estimasi_komisi'], 0, ',', '.') }}</span>
