@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Product;
+use App\Models\ProductMaterialRequirement;
 use App\Models\ProductUpdateRequest;
 use App\Models\Role;
 use App\Models\StoreStaff;
@@ -97,14 +98,31 @@ class ProductUpdateWorkflowTest extends TestCase
             'store_id' => $storeId,
             'requested_by' => $admin->user_id,
             'status' => ProductUpdateRequest::STATUS_PENDING,
-            'before_snapshot' => ['product' => ['nama_produk' => $product->nama_produk]],
-            'after_payload' => ['nama_produk' => $product->nama_produk.' Review'],
+            'before_snapshot' => [
+                'product' => ['nama_produk' => $product->nama_produk, 'harga_dasar' => 20000, 'target_produksi' => 1, 'biaya_tambahan' => 0],
+                'resep' => [
+                    ['material_id' => null, 'nama_bahan' => 'Kain Lama', 'satuan' => 'meter', 'jumlah_per_unit' => 1, 'biaya_per_unit' => 1000],
+                ],
+            ],
+            'after_payload' => [
+                'nama_produk' => $product->nama_produk.' Review',
+                'harga_dasar' => 20000,
+                'resep_diubah' => true,
+                'target_produksi' => 2,
+                'biaya_tambahan' => 0,
+                'resep' => [
+                    ['material_id' => null, 'nama_bahan' => 'Kain Baru', 'satuan' => 'meter', 'jumlah_per_unit' => 2, 'biaya_per_unit' => 1000],
+                ],
+            ],
         ]);
 
         $response = $this->actingAs($this->superAdmin())->get(route('superadmin.perubahan-produk'));
 
         $response->assertOk();
         $response->assertSee($product->nama_produk, false);
+        $response->assertSee('Kain Lama', false);
+        $response->assertSee('Kain Baru', false);
+        $response->assertSee('2 unit', false);
         $response->assertSee('Setujui', false);
     }
 
@@ -140,6 +158,55 @@ class ProductUpdateWorkflowTest extends TestCase
         $this->assertSame($product->nama_produk.' Disetujui', $product->fresh()->nama_produk);
         $this->assertDatabaseHas('product_images', ['product_id' => $product->product_id, 'file_gambar' => 'products/'.$product->product_id.'-'.$this->stagedUuid($request).'.jpg']);
         $this->assertSame(ProductUpdateRequest::STATUS_DISETUJUI, $request->fresh()->status);
+    }
+
+    public function test_superadmin_approve_applies_recipe_changes(): void
+    {
+        [$admin, $storeId] = $this->admin();
+        $product = Product::where('store_id', $storeId)->firstOrFail();
+        ProductMaterialRequirement::create([
+            'product_id' => $product->product_id,
+            'material_id' => null,
+            'nama_bahan' => 'Kain Lama',
+            'satuan' => 'meter',
+            'jumlah_per_unit' => 1,
+            'biaya_per_unit' => 1000,
+        ]);
+        $request = ProductUpdateRequest::create([
+            'product_id' => $product->product_id,
+            'store_id' => $storeId,
+            'requested_by' => $admin->user_id,
+            'status' => ProductUpdateRequest::STATUS_PENDING,
+            'before_snapshot' => [],
+            'after_payload' => [
+                'nama_produk' => $product->nama_produk,
+                'harga_dasar' => 20000,
+                'category_id' => $product->category_id,
+                'tipe_produk' => $product->tipe_produk,
+                'deskripsi' => $product->deskripsi,
+                'resep_diubah' => true,
+                'target_produksi' => 5,
+                'biaya_tambahan' => 1000,
+                'resep' => [
+                    ['material_id' => null, 'nama_bahan' => 'Kain Baru', 'satuan' => 'meter', 'jumlah_per_unit' => 2, 'biaya_per_unit' => 5000],
+                ],
+            ],
+        ]);
+
+        $response = $this->actingAs($this->superAdmin())->post(route('superadmin.perubahan-produk.setujui', [$product, $request]));
+
+        $response->assertStatus(302);
+        $fresh = $product->fresh();
+        $this->assertSame(5, $fresh->target_produksi);
+        $this->assertSame(11000.0, $fresh->modal_produksi);
+        $this->assertDatabaseHas('product_material_requirements', [
+            'product_id' => $product->product_id,
+            'nama_bahan' => 'Kain Baru',
+        ]);
+        $this->assertDatabaseMissing('product_material_requirements', [
+            'product_id' => $product->product_id,
+            'nama_bahan' => 'Kain Lama',
+        ]);
     }
 
     public function test_superadmin_reject_removes_staged_files(): void
