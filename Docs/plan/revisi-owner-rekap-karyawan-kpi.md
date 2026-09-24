@@ -1,7 +1,7 @@
-# Revisi Rekap Karyawan dan KPI per Role
+﻿# Revisi Rekap Karyawan dan KPI per Role
 
 Tanggal keputusan: 2026-09-24.
-Status dokumen: rencana disepakati, belum dieksekusi.
+Status dokumen: Paket 1–6 selesai di kode dan test otomatis 2026-09-24; verifikasi browser manual belum dilakukan.
 
 Scope: file Owner untuk rekap karyawan, service laporan, tampilan, dan export.
 Query boleh membaca data operasional Produksi, Gudang, dan Admin, tetapi workflow
@@ -28,12 +28,12 @@ role tersebut tidak diubah.
 
 ## Paket 1 — Fondasi role dan periode
 
-- [ ] Ganti pemetaan ID hardcoded dengan nama role resmi.
-- [ ] Gunakan resolusi role yang sama dengan manajemen karyawan Owner.
-- [ ] Tambahkan filter periode eksplisit dengan default `semua`.
-- [ ] Pertahankan filter query pada export Excel dan PDF.
-- [ ] Pisahkan metode service untuk Admin, Produksi, dan Gudang.
-- [ ] Hindari query N+1 pada agregasi karyawan.
+- [x] Ganti pemetaan ID hardcoded dengan nama role resmi.
+- [x] Gunakan resolusi role yang sama dengan manajemen karyawan Owner.
+- [x] Tambahkan filter periode eksplisit dengan default `semua`.
+- [x] Pertahankan filter query pada export Excel dan PDF.
+- [x] Pisahkan metode service untuk Admin, Produksi, dan Gudang.
+- [x] Hindari query N+1 pada agregasi karyawan.
 
 ## Paket 2 — Kartu keuangan Owner
 
@@ -44,10 +44,10 @@ ROI = laba bersih / total investasi x 100%
 LTV = total pendapatan / jumlah customer unik dalam periode
 ```
 
-- [ ] Definisikan laba bersih dari pendapatan selesai dikurangi refund, expense, dan biaya iklan.
-- [ ] Definisikan basis investasi awal dari kategori Modal, Investor, dan biaya iklan.
-- [ ] Tampilkan periode dan definisi investasi pada kartu agar tidak disalahartikan.
-- [ ] Jangan menampilkan ROI bila basis investasi nol; tampilkan status “belum dapat dihitung”.
+- [x] Definisikan laba bersih dari pendapatan selesai dikurangi refund, expense, dan biaya iklan.
+- [x] Definisikan basis investasi awal dari kategori Modal, Investor, dan biaya iklan.
+- [x] Tampilkan periode dan definisi investasi pada kartu agar tidak disalahartikan.
+- [x] Jangan menampilkan ROI bila basis investasi nol; tampilkan status “belum dapat dihitung”.
 
 ## Paket 3 — Tabel Admin
 
@@ -59,12 +59,12 @@ AOV = pendapatan sukses yang diatribusikan / jumlah pesanan sukses yang diatribu
 Rating = rata-rata rating review yang terhubung ke pembayaran yang diverifikasi karyawan
 ```
 
-- [ ] Atribusikan pembayaran sukses ke `verifier_id`.
-- [ ] Hitung pembayaran ditangani dari verifikasi diterima dan ditolak.
-- [ ] Gunakan hanya order selesai untuk pendapatan dan AOV.
-- [ ] Telusuri review melalui order item dan verifikasi pembayaran.
-- [ ] Tampilkan rata-rata rating toko sebagai konteks, bukan sebagai skor pribadi.
-- [ ] Beri label bahwa rating Admin adalah proxy atribusi, bukan moderator review.
+- [x] Atribusikan pembayaran sukses ke `verifier_id`.
+- [x] Hitung pembayaran ditangani dari verifikasi diterima dan ditolak.
+- [x] Gunakan hanya order selesai untuk pendapatan dan AOV.
+- [x] Telusuri review melalui order item dan verifikasi pembayaran.
+- [x] Tampilkan rata-rata rating toko sebagai konteks, bukan sebagai skor pribadi.
+- [x] Beri label bahwa rating Admin adalah proxy atribusi, bukan moderator review.
 
 ## Paket 4 — Tabel Produksi
 
@@ -77,51 +77,54 @@ Rata-rata durasi = total durasi order selesai / jumlah order selesai berdurasi v
 Persentase berhasil = production order selesai / seluruh production order yang ditugaskan x 100%
 ```
 
-- [ ] Atribusikan production order melalui `assigned_to`.
-- [ ] Pisahkan order tanpa penugasan ke baris “tanpa penugasan”.
-- [ ] Kecualikan durasi yang tanggal mulai atau selesainya kosong.
-- [ ] Gunakan status selesai resmi sebagai definisi berhasil.
-- [ ] Tampilkan jumlah sampel untuk setiap rata-rata.
-- [ ] Jangan menggabungkan unit diminta dan unit lulus QC dalam satu angka.
+- [x] Atribusikan production order melalui `assigned_to`.
+- [x] Pisahkan order tanpa penugasan ke baris “tanpa penugasan”.
+- [x] Kecualikan durasi yang tanggal mulai atau selesainya kosong.
+- [x] Gunakan status selesai resmi sebagai definisi berhasil.
+- [x] Tampilkan jumlah sampel untuk setiap rata-rata.
+- [x] Jangan menggabungkan unit diminta dan unit lulus QC dalam satu angka.
 
 ## Paket 5 — Tabel Gudang
 
 Gunakan metrik yang tersedia berikut:
 
-- [ ] Transfer yang diminta oleh karyawan.
-- [ ] Transfer selesai dan dibatalkan.
-- [ ] Rata-rata waktu dari diminta sampai diterima.
-- [ ] Mutasi stok yang dibuat karyawan.
-- [ ] Opname yang dibuat karyawan.
-- [ ] Akurasi opname berdasarkan selisih nol.
-- [ ] Kerusakan yang dicatat karyawan.
-- [ ] Atribusikan transfer melalui peminta, bukan penyetuju.
-- [ ] Kecualikan transfer tanpa tanggal valid dari rata-rata durasi.
-- [ ] Beri label periode dan jumlah sampel pada setiap metrik.
+- [x] Transfer yang diminta oleh karyawan.
+- [x] Transfer selesai dan dibatalkan.
+- [x] Rata-rata waktu dari diminta sampai diterima.
+- [x] Mutasi stok yang dibuat karyawan.
+- [x] Opname yang dibuat karyawan.
+- [x] Akurasi opname berdasarkan selisih nol.
+- [x] Kerusakan yang dicatat karyawan.
+- [x] Atribusikan transfer melalui peminta, bukan penyetuju.
+- [x] Kecualikan transfer tanpa tanggal valid dari rata-rata durasi.
+- [x] Beri label periode dan jumlah sampel pada setiap metrik.
 
 ## Paket 6 — Tampilan dan export
 
-- [ ] Render tabel berbeda dengan kondisi filter role aktif.
-- [ ] Buat header dan baris khusus untuk Admin, Produksi, dan Gudang.
-- [ ] Sesuaikan total dan rata-rata dengan jenis metrik tiap tabel.
-- [ ] Jangan menjumlahkan persen atau rating secara langsung.
-- [ ] Gunakan rata-rata tertimbang untuk Closing Rate, AOV, rating, dan keberhasilan.
-- [ ] Buat skema Excel berbeda untuk tiap role.
-- [ ] Buat tampilan PDF berbeda untuk tiap role.
-- [ ] Perbarui lebar kolom dan format Rupiah sesuai skema aktif.
-- [ ] Tambahkan catatan definisi metrik pada halaman dan dokumen export.
+- [x] Render tabel berbeda dengan kondisi filter role aktif.
+- [x] Buat header dan baris khusus untuk Admin, Produksi, dan Gudang.
+- [x] Sesuaikan total dan rata-rata dengan jenis metrik tiap tabel.
+- [x] Jangan menjumlahkan persen atau rating secara langsung.
+- [x] Gunakan rata-rata tertimbang untuk Closing Rate, AOV, rating, dan keberhasilan.
+- [x] Buat skema Excel berbeda untuk tiap role.
+- [x] Buat tampilan PDF berbeda untuk tiap role.
+- [x] Perbarui lebar kolom dan format Rupiah sesuai skema aktif.
+- [x] Tambahkan catatan definisi metrik pada halaman dan dokumen export.
 
 ## Verifikasi
 
-- [ ] `php -l` untuk controller dan service yang diubah.
-- [ ] `php artisan view:cache` lalu `view:clear`.
+- [x] `php -l` untuk controller dan service yang diubah.
+- [x] `php artisan view:cache` lalu `view:clear`.
 - [ ] Manual:
   - [ ] Filter Admin menampilkan kolom CR, AOV, dan rating.
   - [ ] Filter Produksi menampilkan unit, durasi, dan keberhasilan.
   - [ ] Filter Gudang menampilkan transfer dan akurasi stok.
   - [ ] Filter semua mempertahankan ringkasan keuangan lama.
   - [ ] Export mengikuti filter role dan periode.
-- [ ] Tambahkan test agregasi untuk tiap role dan kondisi data kosong.
+- [x] Test agregasi tiap role (`KaryawanKpiTest`: 9 test, 122 assertions) + render tiap filter role.
+- [x] Bugfix 2026-09-24: baris role kini selalu membawa key keuangan dasar agar filter Semua tidak error `Undefined array key "pengeluaran"`.
+- [x] Default filter role adalah Admin (bukan Semua); pilihan tidak valid jatuh kembali ke Admin.
+- [x] Kategori Semua Role dihapus total (dropdown, tabel, export, PDF); hanya Admin/Produksi/Gudang.
 
 ## Risiko
 
