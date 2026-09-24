@@ -147,6 +147,26 @@
     html.theme-dark input[type="password"]:focus {
         --tw-ring-color: rgba(163, 38, 38, .35) !important;
     }
+    /* Auth: samakan latar autofill browser dengan tema (timpa putih/kuning bawaan Chrome) */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-text-fill-color: #1b1c1c !important;
+        -webkit-box-shadow: 0 0 0 1000px #fbf9f9 inset !important;
+        box-shadow: 0 0 0 1000px #fbf9f9 inset !important;
+        caret-color: #1b1c1c;
+        transition: background-color 9999s ease-in-out 0s;
+    }
+    html.theme-dark input:-webkit-autofill,
+    html.theme-dark input:-webkit-autofill:hover,
+    html.theme-dark input:-webkit-autofill:focus,
+    html.theme-dark input:-webkit-autofill:active {
+        -webkit-text-fill-color: #e6e4e1 !important;
+        -webkit-box-shadow: 0 0 0 1000px #161514 inset !important;
+        box-shadow: 0 0 0 1000px #161514 inset !important;
+        caret-color: #e6e4e1;
+    }
 </style>
 <style>
     /* ============ GOLD BUTTON + LIGHT FLASH ============ */
