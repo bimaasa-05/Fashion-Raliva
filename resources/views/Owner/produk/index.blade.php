@@ -99,6 +99,7 @@
             </div>
         </div>
 
+        <div class="hidden md:block">
         <div data-table-wrap class="overflow-x-auto min-h-[380px]">
             <table class="premium-table w-full min-w-[900px] font-body-md text-sm">
                 <thead>
@@ -173,6 +174,57 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        </div>
+        <div class="md:hidden space-y-3">
+            @forelse ($products as $p)
+                @php $firstImg = $p->images->first(); $rawImg = $firstImg?->file_gambar; $imgSrc = $rawImg ? (filter_var($rawImg, FILTER_VALIDATE_URL) ? $rawImg : (str_starts_with(ltrim($rawImg, '/'), 'assets/') ? asset(ltrim($rawImg, '/')) : asset('storage/' . ltrim($rawImg, '/')))) : null; @endphp
+                <article data-table-row data-kategori="{{ $p->category?->nama_kategori }}" data-status-produk="{{ $p->status }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-14 rounded-md bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0 overflow-hidden">
+                            @if($imgSrc)
+                                <img src="{{ $imgSrc }}" alt="{{ $p->nama_produk }}" loading="lazy" class="w-full h-full object-cover" />
+                            @else
+                                <span class="material-symbols-outlined text-[22px] text-on-surface-variant">checkroom</span>
+                            @endif
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <p class="font-bold text-on-surface truncate">{{ $p->nama_produk }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5 truncate">{{ $p->variants->first()?->sku ?? '-' }} • {{ $p->category?->nama_kategori ?? '-' }}</p>
+                        </div>
+                        @if (in_array($p->status, ['aktif', 'nonaktif', 'draft'], true))
+                            <form method="POST" action="{{ route('owner.produk.status', $p) }}" class="shrink-0">
+                                @csrf
+                                <select name="status" data-status-select data-current="{{ $p->status }}" title="Ubah status" class="cursor-pointer text-[10px] font-bold uppercase border rounded-full pl-2 pr-6 py-1 {{ $p->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($p->status === 'nonaktif' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }}">
+                                    @foreach (($statusOptions[$p->status] ?? [$p->status]) as $opt)
+                                        <option value="{{ $opt }}" @selected($opt === $p->status)>{{ ucfirst($opt) }}</option>
+                                    @endforeach
+                                </select>
+                            </form>
+                        @elseif ($p->status === 'pending')
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30 shrink-0">Menunggu</span>
+                        @elseif (in_array($p->status, ['ditolak', 'habis'], true))
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20 shrink-0">{{ ucfirst($p->status) }}</span>
+                        @else
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant shrink-0">{{ ucfirst($p->status) }}</span>
+                        @endif
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-muted-border text-sm text-center">
+                        <div><p class="text-[11px] text-on-surface-variant">Harga</p><p class="font-bold text-gold-accent whitespace-nowrap">{{ 'Rp ' . number_format($p->harga_dasar, 0, ',', '.') }}</p></div>
+                        <div><p class="text-[11px] text-on-surface-variant">Stok</p><p class="font-semibold text-on-surface">{{ $p->variants->count() }} varian</p></div>
+                        <div><p class="text-[11px] text-on-surface-variant">Terjual</p><p class="font-semibold text-on-surface">{{ $p->terjual }} pcs</p></div>
+                    </div>
+                    <div class="flex gap-2 mt-3">
+                        <button type="button" data-modal-open="modal-produk-{{ $p->product_id }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">visibility</span>Detail</button>
+                        @if (in_array($p->status, ['pending', 'ditolak', 'draft'], true))
+                            <button type="button" data-modal-open="modal-edit-produk-{{ $p->product_id }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">edit</span>Edit</button>
+                        @endif
+                        <button type="button" data-modal-open="modal-hapus-produk-{{ $p->product_id }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-error/10 border border-error/20 rounded-lg text-xs font-semibold text-error hover:bg-error/20 transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">delete</span>Hapus</button>
+                    </div>
+                </article>
+            @empty
+                <p class="py-6 text-center text-on-surface-variant">Belum ada produk.</p>
+            @endforelse
         </div>
 
         <div data-empty-state class="hidden flex-col items-center justify-center py-12 min-h-[260px] text-center gap-3">
