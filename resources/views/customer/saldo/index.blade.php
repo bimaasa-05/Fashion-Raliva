@@ -117,8 +117,9 @@
         html.theme-dark .scroll-x-visible { scrollbar-color: rgba(139, 30, 63, .6) transparent !important; }
         html.theme-dark .scroll-x-visible::-webkit-scrollbar-thumb { background: rgba(139, 30, 63, .6) !important; }
         @media (prefers-reduced-motion: reduce) { [data-bars] .raliva-bar { transition: none; } }
-        /* Saldo: pagination bawaan Laravel ikut mulus */
+        /* Saldo: pagination bawaan Laravel ikut mulus + wrap di mobile */
         nav[aria-label="Pagination Navigation"] [class*="rounded"] { border-radius: 0.75rem !important; }
+        nav[aria-label="Pagination Navigation"] { flex-wrap: wrap; row-gap: .5rem; }
     </style>
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] lg:pl-72">
@@ -405,7 +406,7 @@
                             {{ __('Nominal tidak akan diproses.') }}</p>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-sm">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
                     <button type="button" data-batal-close
                         class="h-12 w-full inline-flex items-center justify-center gap-2 px-sm rounded-full font-label-caps text-label-caps uppercase tracking-widest border border-outline text-on-surface hover:bg-surface-container-high transition-colors">
                         <span class="material-symbols-outlined text-[18px]">close</span>
