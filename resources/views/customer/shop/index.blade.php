@@ -422,22 +422,14 @@
         ->values();
     $filterColors = $products
         ->flatMap(fn ($p) => $p->variants->pluck('warna'))
-        ->filter()
+        ->filter(fn ($warna) => trim((string) $warna) !== '')
         ->unique()
         ->values();
-    $colorHexMap = [
-        'white' => '#f5f5f5', 'black' => '#1b1b1b', 'beige' => '#e6d3b3',
-        'ivory' => '#f6f1e7', 'muted sand' => '#cfc0a8', 'charcoal' => '#3a3a3a',
-        'warm sand' => '#cfc1a6', 'taupe' => '#8b7d6b', 'blush' => '#f4c2c2',
-        'sand' => '#d8c7ad', 'grey' => '#8f9396', 'gray' => '#8f9396',
-        'navy' => '#1f2a44', 'brown' => '#7a5636', 'green' => '#5c6b4a',
-        'blue' => '#2f5f8f', 'red' => '#b03a3a', 'cream' => '#f3e9d8',
-        'gold' => '#d4af37', 'olive' => '#7a7a3a', 'khaki' => '#b5a06b',
-        'sage' => '#9caf88', 'camel' => '#b98d5f', 'indigo' => '#3f3f67',
-        'washed' => '#7f93a8', 'denim' => '#4a5d7a', 'coral' => '#e07a6a',
-        'pink' => '#e5a2b8', 'purple' => '#7a5f8f', 'lilac' => '#b0a6d1',
-        'yellow' => '#e7d15c', 'orange' => '#d9823f', 'mustard' => '#d1a53f',
-    ];
+    $colorHexMap = $products
+        ->flatMap(fn ($p) => $p->variants)
+        ->groupBy(fn ($v) => mb_strtolower(trim((string) $v->warna)))
+        ->map(fn ($vs) => \App\Support\WarnaPalet::resolve($vs->first()->warna_hex, $vs->first()->warna) ?? '')
+        ->all();
 @endphp
 @foreach ($parentCats as $pc)
         <button type="button" data-cat="{{ $pc }}" onclick="selectCategory('{{ $pc }}')" class="cat-pill shrink-0 px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ $pc }}</button>
@@ -540,7 +532,7 @@
 @php
     $parentCat = $p->category?->parent?->nama_kategori ?? $p->category?->nama_kategori;
     $sizes = $p->variants->pluck('ukuran')->unique()->implode('|');
-    $colors = $p->variants->pluck('warna')->unique()->implode('|');
+    $colors = $p->variants->pluck('warna')->filter(fn ($warna) => trim((string) $warna) !== '')->unique()->implode('|');
     $minPrice = $p->variants->min('harga') ?? $p->harga_dasar;
     $firstImage = $p->images->first()->file_gambar ?? '';
     $defaultVariant = $p->variants->sortBy('harga')->first();
@@ -620,8 +612,8 @@
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest pt-lg pb-sm">{{ __('Color') }}</h3>
 <div class="flex flex-wrap gap-md">
 @forelse ($filterColors as $fc)
-@php $fHex = $colorHexMap[strtolower($fc)] ?? ''; @endphp
-<button data-type="color" aria-label="{{ $fc }}" title="{{ $fc }}" class="f-opt w-8 h-8 rounded-full border border-outline-variant transition-shadow{{ $fHex ? '' : ' text-on-surface-variant font-label-sm text-label-sm' }}" style="{{ $fHex ? 'background-color:' . $fHex . ';' : 'background-color:var(--surface-container-high);' }}" onclick="toggleSel(this)" type="button">{{ $fHex ? '' : mb_substr($fc, 0, 1) }}</button>
+@php $fHex = $colorHexMap[mb_strtolower(trim((string) $fc))] ?? ''; @endphp
+<button data-type="color" aria-label="{{ $fc }}" title="{{ $fc }}" class="f-opt w-8 h-8 rounded-full border border-outline-variant transition-shadow" style="{{ $fHex ? 'background-color:' . $fHex . ';' : 'background-color:var(--surface-container-high);' }}" onclick="toggleSel(this)" type="button">@if(!$fHex)<span class="sr-only">{{ $fc }}</span>@endif</button>
 @empty
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('No colors available.') }}</p>
 @endforelse
