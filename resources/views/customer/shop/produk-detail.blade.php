@@ -548,7 +548,7 @@
 </button>
 @endforeach
                                     </div>
-                                <div id="size-guide" class="hidden mt-sm bg-surface-container-low border border-outline-variant rounded-lg p-md">
+                                <div id="size-guide" class="hidden mt-sm bg-surface-container-low border border-outline-variant rounded-lg p-md overflow-x-auto">
                                     <p class="font-label-caps text-label-caps text-on-surface mb-xs">{{ __('Ukuran (cm)') }} · <span class="font-label-sm text-label-sm text-on-surface-variant normal-case tracking-normal">{{ __('contoh untuk S/M/L') }}</span></p>
                                     <table class="w-full text-left text-sm">
                                         <thead>
