@@ -50,6 +50,7 @@
                     <button type="button" data-lr-range="30" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">30 Hari</button>
                     <button type="button" data-lr-range="90" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant">3 Bulan</button>
                     <button type="button" data-lr-range="365" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant">12 Bulan</button>
+                    <button type="button" data-lr-range="1825" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant">5 Tahun</button>
                 </div>
             </div>
             <div id="chart-wrap" class="relative h-72 md:h-80"><canvas id="revenue-chart"></canvas></div>
@@ -74,6 +75,7 @@
                     <option value="30" @selected($period === 30)>30 Hari</option>
                     <option value="90" @selected($period === 90)>3 Bulan</option>
                     <option value="365" @selected($period === 365)>1 Tahun</option>
+                    <option value="1825" @selected($period === 1825)>5 Tahun</option>
                 </select>
                 @php $lapNoStore = ! \App\Support\OwnerContext::currentStore(); @endphp
                 <a href="{{ route('owner.laporan.export-excel', ['period' => $period]) }}" @if($lapNoStore) aria-disabled="true" tabindex="-1" title="Ajukan toko dulu" @endif class="flex items-center justify-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors shrink-0 {{ $lapNoStore ? 'opacity-60 pointer-events-none' : '' }}">
