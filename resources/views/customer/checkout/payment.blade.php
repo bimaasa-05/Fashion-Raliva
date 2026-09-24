@@ -1567,7 +1567,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                         </p>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-sm">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
                     <button type="button" data-confirm-cancel
                         class="h-12 w-full inline-flex items-center justify-center gap-2 px-sm rounded-full font-label-caps text-label-caps uppercase tracking-widest border border-outline text-on-surface hover:bg-surface-container-high transition-colors">
                         <span class="material-symbols-outlined text-[18px]">close</span>
