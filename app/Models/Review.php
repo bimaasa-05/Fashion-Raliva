@@ -22,6 +22,7 @@ class Review extends Model
         'store_id',
         'rating',
         'ulasan',
+        'foto',
         'status',
     ];
 

@@ -15,12 +15,15 @@ class OrderTrackingController extends Controller
 {
     /**
      * Status order yang dianggap titik aktif pada timeline.
-     * 1=Preparing, 2=Packed, 3=Shipped, 4=Delivered.
+     * 1=Disiapkan (Produksi), 2=Dikemas (Produksi), 3=Dikirim (Admin), 4=Diterima (Customer).
      */
     public const STATUS_STEPS = [
         Order::STATUS_PENDING_PAYMENT => 0,
         Order::STATUS_DIBAYAR => 1,
+        Order::STATUS_MENUNGGU_PRODUKSI => 1,
         Order::STATUS_DIPROSES => 1,
+        Order::STATUS_MENUNGGU_QC => 1,
+        Order::STATUS_SIAP_KIRIM => 2,
         Order::STATUS_DIKIRIM => 3,
         Order::STATUS_SELESAI => 4,
         Order::STATUS_DIBATALKAN => null,
@@ -29,10 +32,13 @@ class OrderTrackingController extends Controller
 
     public const STATUS_LABELS = [
         Order::STATUS_PENDING_PAYMENT => 'Menunggu Pembayaran',
-        Order::STATUS_DIBAYAR => 'Pembayaran Diterima',
-        Order::STATUS_DIPROSES => 'Sedang Diproses',
+        Order::STATUS_DIBAYAR => 'Disiapkan',
+        Order::STATUS_MENUNGGU_PRODUKSI => 'Disiapkan',
+        Order::STATUS_DIPROSES => 'Disiapkan',
+        Order::STATUS_MENUNGGU_QC => 'Disiapkan',
+        Order::STATUS_SIAP_KIRIM => 'Dikemas',
         Order::STATUS_DIKIRIM => 'Dikirim',
-        Order::STATUS_SELESAI => 'Selesai',
+        Order::STATUS_SELESAI => 'Diterima',
         Order::STATUS_DIBATALKAN => 'Dibatalkan',
         Order::STATUS_REFUND => 'Refund',
     ];
@@ -51,6 +57,7 @@ class OrderTrackingController extends Controller
                 'items.productVariant.product.images',
                 'shipments.courier',
                 'refunds',
+                'complaints',
                 'checkout.payment.paymentMethod',
                 'checkout.payment.account',
             ])
@@ -79,11 +86,47 @@ class OrderTrackingController extends Controller
             $alasanPembatalan = $cancelLog?->nilai_baru['alasan'] ?? null;
         }
 
+        // Timeline ceklis berbasis aksi role:
+        // Disiapkan ✓ saat Produksi klik Selesai (menunggu_qc),
+        // Dikemas ✓ saat Produksi klik Selesai QC+PACKING (siap_kirim),
+        // Dikirim ✓ saat Admin klik Tandai Dikirim (dikirim),
+        // Diterima ✓ saat Customer klik Konfirmasi (selesai).
+        $hasResi = $selected->shipments->contains(fn ($s) => ! empty($s->nomor_resi));
+        $timelineStatus = $selected->status;
+        $timeline = [
+            [
+                'label' => __('Disiapkan'),
+                'role' => 'Produksi',
+                'done' => in_array($timelineStatus, [Order::STATUS_MENUNGGU_QC, Order::STATUS_SIAP_KIRIM, Order::STATUS_DIKIRIM, Order::STATUS_SELESAI], true),
+            ],
+            [
+                'label' => __('Dikemas'),
+                'role' => 'Produksi',
+                'done' => in_array($timelineStatus, [Order::STATUS_SIAP_KIRIM, Order::STATUS_DIKIRIM, Order::STATUS_SELESAI], true),
+            ],
+            [
+                'label' => __('Dikirim'),
+                'role' => 'Admin',
+                'done' => in_array($timelineStatus, [Order::STATUS_DIKIRIM, Order::STATUS_SELESAI], true),
+            ],
+            [
+                'label' => __('Diterima'),
+                'role' => 'Customer',
+                'done' => $timelineStatus === Order::STATUS_SELESAI,
+            ],
+        ];
+
+        // Komplain existing pesanan terpilih (satu pesanan = satu komplain).
+        $existingComplaint = $selected->complaints->sortByDesc('complaint_id')->first();
+
         return view('customer.order-tracking.index', [
             'orders' => $orders,
             'selected' => $selected,
             'selectedStep' => self::STATUS_STEPS[$selected->status] ?? 1,
             'alasanPembatalan' => $alasanPembatalan,
+            'timeline' => $timeline,
+            'hasResi' => $hasResi,
+            'existingComplaint' => $existingComplaint,
         ]);
     }
 
@@ -110,6 +153,7 @@ class OrderTrackingController extends Controller
 
                 $locked->update(['status' => Order::STATUS_SELESAI]);
                 WalletService::creditOrder($locked);
+                \App\Support\StockDeductionService::deductForOrder($locked);
 
                 $locked->shipments()->where('status', \App\Models\Shipment::STATUS_DIKIRIM)->lockForUpdate()->get()->each(function ($shipment) {
                     if ($shipment->canTransitionTo(\App\Models\Shipment::STATUS_DITERIMA)) {

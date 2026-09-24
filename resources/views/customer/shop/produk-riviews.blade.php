@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-
-<html class="light" lang="{{ app()->getLocale() }}"><head>
+<html class="light" lang="{{ app()->getLocale() }}">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
 <title>{{ $product->nama_produk }} - {{ __('Reviews') }} | RALIVA</title>
@@ -261,17 +261,19 @@
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('REVIEWS') }}</h1>
-<div class="w-10"></div> <!-- Spacer for centering -->
+<a href="{{ route('customer.reviews') }}" aria-label="{{ __('My reviews') }}" title="{{ __('My reviews') }}" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors shrink-0">
+<span class="material-symbols-outlined text-[22px]">rate_review</span>
+</a>
 </header>
 <!-- Main Content -->
 <main class="pt-16 pb-[120px] w-full">
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
-<!-- product context card -->
-<a href="{{ route('customer.shop.produk-detail', $product->product_id) }}" class="block bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium hover:border-[var(--chrome-accent)] transition-colors">
+<div class="mx-auto max-w-[1400px] px-container-margin space-y-md md:space-y-lg">
+<!-- Product Context Card (Dipisah dengan div sendiri) -->
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="flex items-center gap-md">
 @php $pImg = $product->images->first()?->file_gambar; @endphp
-<div class="w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden border border-outline-variant shrink-0 bg-surface-container-high">
+<div class="w-20 aspect-[9/16] h-auto md:w-24 md:h-24 md:aspect-auto rounded-xl overflow-hidden border border-outline-variant shrink-0 bg-surface-container-high">
 @if ($pImg)
 <img alt="{{ $product->nama_produk }}" class="w-full h-full object-cover" src="{{ photo_url($pImg) }}"/>
 @else
@@ -282,8 +284,8 @@
 </div>
 <div class="min-w-0 flex-1">
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-1">{{ __('PRODUCT REVIEWS') }}</p>
-<h2 class="premium-heading font-headline-md text-headline-md text-on-surface truncate">{{ $product->nama_produk }}</h2>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs truncate">{{ $product->store?->nama_toko }}</p>
+<h2 class="premium-heading font-headline-md text-headline-md text-on-surface break-words leading-snug">{{ $product->nama_produk }}</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs break-words leading-snug">{{ $product->store?->nama_toko }}</p>
 <div class="flex items-center gap-xs text-on-surface-variant font-label-sm text-label-sm mt-sm">
 <span class="material-symbols-outlined text-secondary text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
 <span>{{ $averageRating ? number_format($averageRating, 1) : __('No rating yet') }}</span>
@@ -291,11 +293,10 @@
 <span>{{ $reviewCount }} {{ __('Reviews') }}</span>
 </div>
 </div>
-<span class="material-symbols-outlined text-on-surface-variant shrink-0">chevron_right</span>
 </div>
-</a>
+</div>
 
-<section class="pt-lg mt-lg reveal-up">
+<!-- Rating Summary & Review List Card (Dipisah ke dalam kartu/div tersendiri) -->
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <!-- Rating summary -->
 <div class="flex flex-col md:flex-row md:items-center gap-md md:gap-lg border-b border-outline-variant pb-lg mb-lg">
@@ -362,6 +363,9 @@
 <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm" data-state="original" data-original="{{ $review->ulasan }}" data-translated="{{ $review->ulasan }}" id="rv-text-{{ $ri }}">
 {{ $review->ulasan }}
 </p>
+@if ($review->foto)
+<img src="{{ asset('storage/' . ltrim($review->foto, '/')) }}" alt="{{ __('Foto ulasan') }}" class="mt-sm w-24 h-24 object-cover rounded-xl border border-outline-variant" loading="lazy" />
+@endif
 </article>
 @empty
 <div class="text-center py-xl">
@@ -369,7 +373,7 @@
 </div>
 @endforelse
 </div>
-</section>
+
 </div>
 </section>
 <div class="md:hidden h-24"></div>
@@ -468,4 +472,5 @@
         });
     </script>
 @include('customer._partials.drawer')
-</body></html>
+</body>
+</html>
