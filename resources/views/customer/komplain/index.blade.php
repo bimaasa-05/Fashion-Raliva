@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+f<!DOCTYPE html>
 
 <html class="light" lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
@@ -491,9 +491,6 @@
                             <button type="button" onclick="selectMessagesMode()" id="chat-more-item-select" class="w-full text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2">
                                 <span class="material-symbols-outlined text-[19px]">check_box</span>{{ __('Select Messages') }}
                             </button>
-                            <button type="button" onclick="openRefundFromChat()" id="chat-more-item-refund" class="hidden border-t border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] w-full text-left px-4 py-2.5 font-body-md text-sm text-secondary hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-2 mt-1">
-                                <span class="material-symbols-outlined text-[19px]">assignment_return</span>{{ __('Ajukan Refund') }}
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -603,43 +600,6 @@
                 </div>
             </div>
         </div>
-    <div id="modal-refund" class="fixed inset-0 z-[90] hidden items-center justify-center p-4">
-    <div class="absolute inset-0 bg-black/50" onclick="closeRefundFromChat()"></div>
-    <form method="POST" action="{{ route('customer.refund.store') }}" enctype="multipart/form-data" class="relative mx-auto w-full max-w-md bg-surface border border-outline-variant rounded-xl shadow-xl max-h-[85vh] overflow-y-auto p-6 space-y-4">
-        @csrf
-        <input type="hidden" name="order_id" id="refund-order-id" value="" />
-        <input type="hidden" name="complaint_id" id="refund-complaint-id" value="" />
-        <h3 class="font-title-md text-title-md text-on-surface">Ajukan Refund</h3>
-        <p class="font-body-sm text-body-sm text-on-surface-variant" id="refund-order-info">-</p>
-        <div>
-            <label class="block font-label-sm text-label-sm mb-2">Jenis Refund</label>
-            <select name="tipe_refund" required class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3">
-                <option value="full">Penuh (full)</option>
-                <option value="partial">Sebagian (partial)</option>
-            </select>
-        </div>
-        <div>
-            <label class="block font-label-sm text-label-sm mb-2">Nominal Diajukan (Rp)</label>
-            <input id="refund-jumlah" name="jumlah" type="number" min="1" required class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3" />
-        </div>
-        <div>
-            <label class="block font-label-sm text-label-sm mb-2">Alasan (min. 20 karakter)</label>
-            <textarea name="alasan" rows="4" required minlength="20" maxlength="2000" class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3" placeholder="Jelaskan kondisi barang..."></textarea>
-        </div>
-        <div>
-            <label class="block font-label-sm text-label-sm mb-2">Foto Bukti Barang (JPG/PNG, maks. 4 MB)</label>
-            <input name="file_bukti_request" type="file" accept="image/jpeg,image/png,image/jpg" required class="w-full font-body-sm text-body-sm" />
-        </div>
-        <div>
-            <label class="block font-label-sm text-label-sm mb-2">Keterangan Foto (opsional)</label>
-            <input name="deskripsi_bukti_request" type="text" maxlength="1000" class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3" placeholder="cth. Foto bagian sobek" />
-        </div>
-        <div class="flex gap-3">
-            <button type="button" onclick="closeRefundFromChat()" class="flex-1 py-3 rounded-lg border border-outline-variant text-sm font-semibold">Batal</button>
-            <button type="submit" class="btn-gold flex-1 py-3 rounded-lg text-sm font-semibold">Kirim Pengajuan</button>
-        </div>
-    </form>
-</div>
 </div>
 </div><!-- /#chat-container -->
 <script>
@@ -741,7 +701,6 @@
         closeDeleteDialog();
         closeEditDialog();
         closeEmojiPanel();
-        closeRefundFromChat();
         currentChat.order = null;
         document.body.style.overflow = '';
         const drawer2 = document.getElementById('drawer-panel');
@@ -1049,15 +1008,9 @@
     }
 
     function syncChatRefundUI() {
-        const item = document.getElementById('chat-more-item-refund');
         const badge = document.getElementById('chat-refund-badge');
         const bukti = document.getElementById('chat-refund-bukti');
         const o = currentChat.order;
-
-        if (item) {
-            const show = o && o.elig === '1' && o.refundAktif !== '1' && o.id !== '';
-            item.classList.toggle('hidden', !show);
-        }
 
         if (badge) {
             if (o && o.refundLabel) {
@@ -1075,31 +1028,7 @@
         }
     }
 
-    function openRefundFromChat() {
-        const o = currentChat.order;
-        if (!o || o.elig !== '1' || o.refundAktif === '1' || o.id === '') return;
 
-        const orderInput = document.getElementById('refund-order-id');
-        const complaintInput = document.getElementById('refund-complaint-id');
-        const jumlah = document.getElementById('refund-jumlah');
-        const info = document.getElementById('refund-order-info');
-        const modal = document.getElementById('modal-refund');
-
-        if (orderInput) orderInput.value = o.id;
-        if (complaintInput) complaintInput.value = currentChat.id || '';
-        if (jumlah) { jumlah.value = o.grand || ''; jumlah.max = o.grand || ''; }
-        if (info) info.textContent = 'Pesanan ' + (o.nomor || '-') + ' • Total Rp ' + Number(o.grand || 0).toLocaleString('id-ID');
-
-        closeChatMoreMenu();
-        if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); document.body.style.overflow = 'hidden'; }
-    }
-
-    function closeRefundFromChat() {
-        const modal = document.getElementById('modal-refund');
-        if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); document.body.style.overflow = ''; }
-    }
-
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeRefundFromChat(); });
 
     let chatSearchOpen = false;
 
