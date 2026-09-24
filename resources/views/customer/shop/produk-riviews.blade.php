@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-
-<html class="light" lang="{{ app()->getLocale() }}"><head>
+<html class="light" lang="{{ app()->getLocale() }}">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
 <title>{{ $product->nama_produk }} - {{ __('Reviews') }} | RALIVA</title>
@@ -268,8 +268,8 @@
 <!-- Main Content -->
 <main class="pt-16 pb-[120px] w-full">
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
-<!-- product context card -->
+<div class="mx-auto max-w-[1400px] px-container-margin space-y-md md:space-y-lg">
+<!-- Product Context Card (Dipisah dengan div sendiri) -->
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="flex items-center gap-md">
 @php $pImg = $product->images->first()?->file_gambar; @endphp
@@ -294,8 +294,9 @@
 </div>
 </div>
 </div>
+</div>
 
-<section class="pt-lg mt-lg reveal-up">
+<!-- Rating Summary & Review List Card (Dipisah ke dalam kartu/div tersendiri) -->
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <!-- Rating summary -->
 <div class="flex flex-col md:flex-row md:items-center gap-md md:gap-lg border-b border-outline-variant pb-lg mb-lg">
@@ -372,7 +373,7 @@
 </div>
 @endforelse
 </div>
-</section>
+
 </div>
 </section>
 <div class="md:hidden h-24"></div>
@@ -471,4 +472,5 @@
         });
     </script>
 @include('customer._partials.drawer')
-</body></html>
+</body>
+</html>
