@@ -28,7 +28,12 @@ class ReviewController extends Controller
         $toReviewItems = OrderItem::query()
             ->whereHas('order.checkout', fn ($q) => $q->where('user_id', $user->user_id))
             ->whereHas('order', fn ($q) => $q->where('status', Order::STATUS_SELESAI))
-            ->doesntHave('review')
+            ->whereDoesntHave('review')
+            ->whereHas('productVariant', function ($q) use ($user) {
+                $reviewed = Review::where('user_id', $user->user_id)->pluck('product_id')->all();
+
+                return $q->when(! empty($reviewed), fn ($qq) => $qq->whereNotIn('product_id', $reviewed));
+            })
             ->with(['order.store', 'productVariant.product.images'])
             ->latest('order_item_id')
             ->get();
