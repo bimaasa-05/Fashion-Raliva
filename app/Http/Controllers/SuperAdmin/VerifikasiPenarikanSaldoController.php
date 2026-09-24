@@ -27,6 +27,7 @@ class VerifikasiPenarikanSaldoController extends Controller
             'disetujui' => $penarikans->where('status', CustomerWithdrawal::STATUS_DISETUJUI)->count(),
             'dibayar' => $penarikans->where('status', CustomerWithdrawal::STATUS_DIBAYAR)->count(),
             'ditolak' => $penarikans->where('status', CustomerWithdrawal::STATUS_DITOLAK)->count(),
+            'fee_terkumpul' => (float) $penarikans->where('status', CustomerWithdrawal::STATUS_DIBAYAR)->sum('fee'),
         ];
 
         return view('SuperAdmin.verifikasi-penarikan-saldo.index', [
