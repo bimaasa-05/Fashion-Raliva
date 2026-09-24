@@ -42,7 +42,7 @@
             <div>
                 <p class="raliva-label text-gold-accent">Kuota Aktif</p>
                 <p class="raliva-figure text-[34px] md:text-[42px] mt-2">{{ $used ?? 0 }} <span class="text-on-primary/50 text-[22px] font-normal">/ {{ $total ?? 0 }}</span> <span class="text-sm font-normal text-on-primary/60">slot terpakai</span></p>
-                <p class="font-body-md text-sm text-inverse-on-surface/60 mt-2">Sisa {{ $sisa ?? 0 }} slot • Kelola penuh oleh SuperAdmin</p>
+                <p class="font-body-md text-sm text-inverse-on-surface/60 mt-2">Sisa {{ $sisa ?? 0 }} dari Maksimal {{ $total ?? 0 }} slot • Kelola penuh oleh SuperAdmin</p>
             </div>
             <div class="w-full max-w-md">
                 <div class="h-3 bg-white/10 rounded-full overflow-hidden">
@@ -134,8 +134,8 @@
                         @forelse ($riwayat as $row)
                             <tr data-table-row class="border-b border-muted-border last:border-0">
                                 <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $row['tanggal']?->translatedFormat('d M Y') ?? '-' }}</td>
-                                <td class="py-3.5 px-4 text-on-surface whitespace-nowrap">{{ $row['tipe'] === 'permintaan' ? 'Beli Fleksibel' : 'Grant ('.$row['tipe'].')' }}</td>
-                                <td class="py-3.5 px-4 text-right font-bold text-gold-accent whitespace-nowrap">+{{ $row['jumlah_slot'] }}</td>
+                                <td class="py-3.5 px-4 text-on-surface whitespace-nowrap">{{ $row['sumber'] ?? ($row['tipe'] === 'permintaan' ? 'Beli Fleksibel' : 'Grant ('.$row['tipe'].')') }}</td>
+                                <td class="py-3.5 px-4 text-right font-bold whitespace-nowrap {{ in_array($row['status'], ['ditolak', 'pending'], true) ? 'text-on-surface-variant' : 'text-gold-accent' }}">{{ in_array($row['status'], ['ditolak', 'pending'], true) ? $row['jumlah_slot'] : '+'.$row['jumlah_slot'] }}</td>
                                 <td class="py-3.5 px-4 text-right text-on-surface whitespace-nowrap">{{ $row['total_harga'] !== null ? 'Rp '.number_format($row['total_harga'], 0, ',', '.') : '—' }}</td>
                                 <td class="py-3.5 px-4 text-on-surface-variant max-w-[200px]">{{ $row['catatan'] ?? '-' }}</td>
                                 <td class="py-3.5 px-4 text-center">
@@ -146,19 +146,20 @@
                                     @endif
                                 </td>
                             </tr>
-                        @empty
-                            <tr><td colspan="6" class="py-8 text-center text-on-surface-variant text-sm">Belum ada riwayat slot.</td></tr>
-                        @endforelse
+                    @empty
+                        <tr><td colspan="6" class="py-8 text-center text-on-surface-variant text-sm">Belum ada riwayat slot.</td></tr>
+                    @endforelse
                     </tbody>
                 </table>
             </div>
+            <div class="mt-4 flex justify-center">{{ $riwayat->links() }}</div>
 
             <div class="md:hidden grid grid-cols-1 gap-gutter mt-6" data-mobile-list>
                 @forelse ($riwayat as $row)
                     <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
                         <div class="flex items-start justify-between gap-3">
                             <div class="min-w-0">
-                                <p class="font-bold text-on-surface text-sm">{{ $row['tipe'] === 'permintaan' ? 'Beli Fleksibel' : 'Grant ('.$row['tipe'].')' }}</p>
+                                <p class="font-bold text-on-surface text-sm">{{ $row['sumber'] ?? ($row['tipe'] === 'permintaan' ? 'Beli Fleksibel' : 'Grant ('.$row['tipe'].')') }}</p>
                                 <p class="text-xs text-on-surface-variant mt-0.5">{{ $row['tanggal']?->translatedFormat('d M Y') ?? '-' }}</p>
                             </div>
                             @if ($row['payment_status'] !== null)
@@ -170,7 +171,7 @@
                         <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-muted-border">
                             <div>
                                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Tambahan</p>
-                                <p class="font-bold text-gold-accent mt-0.5">+{{ $row['jumlah_slot'] }}</p>
+                                <p class="font-bold mt-0.5 {{ in_array($row['status'], ['ditolak', 'pending'], true) ? 'text-on-surface-variant' : 'text-gold-accent' }}">{{ in_array($row['status'], ['ditolak', 'pending'], true) ? $row['jumlah_slot'] : '+'.$row['jumlah_slot'] }}</p>
                             </div>
                             <div>
                                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Total Bayar</p>
