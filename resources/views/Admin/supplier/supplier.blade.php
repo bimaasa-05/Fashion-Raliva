@@ -67,6 +67,10 @@
                         <option value="kemasan">Kemasan</option>
                         <option value="jadi">Produk Jadi</option>
                     </select>
+                    <select onchange="window.location.href='?sort='+this.value" aria-label="Urutkan" class="bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
+                        <option value="nama" @selected(($sort ?? 'nama') === 'nama')>A–Z</option>
+                        <option value="terbaru" @selected(($sort ?? '') === 'terbaru')>Terbaru</option>
+                    </select>
                     <select data-table-filter="status" aria-label="Filter status" class="bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
                         <option value="semua">Semua Status</option>
                         <option value="aktif">Aktif</option>
