@@ -41,7 +41,7 @@ class PesananController extends Controller
             $query->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year);
         }
 
-        $orders = $query->latest()->paginate(15)->withQueryString();
+        $orders = $query->prioritasStatus()->latest()->paginate(15)->withQueryString();
 
         $counts = [
             'semua' => Order::where('store_id', $storeId)->count(),
