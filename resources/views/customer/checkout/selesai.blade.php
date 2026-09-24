@@ -240,7 +240,7 @@
                             <p class="font-body-lg text-body-lg font-semibold text-on-surface">{{ $o->nomor_order }}</p>
                         @endforeach
                     </div>
-                    <div class="text-right">
+                    <div class="text-left sm:text-right">
                         <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Tanggal') }}</p>
                         <p class="font-body-lg text-body-lg font-semibold text-on-surface">{{ $checkout->created_at ? $checkout->created_at->format('d M Y, H:i') : '—' }}</p>
                     </div>
