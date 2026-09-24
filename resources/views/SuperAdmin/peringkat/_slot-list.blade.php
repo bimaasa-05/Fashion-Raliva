@@ -72,7 +72,7 @@
 </div>
 
 <!-- Mobile: kartu peringkat -->
-<div class="md:hidden grid grid-cols-1 gap-gutter">
+<div class="md:hidden grid grid-cols-1 gap-gutter px-4 pb-4">
     @forelse($slots as $slot)
         @php
             $statusMap = [
@@ -100,7 +100,6 @@
                         <p class="text-on-surface-variant text-xs truncate">{{ $slot->store->nama_toko ?? '-' }}</p>
                     </div>
                 </div>
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full {{ $st[1] }} text-[10px] font-bold uppercase border shrink-0">{{ $st[0] }}</span>
             </div>
             <dl class="space-y-2 font-body-md text-sm mb-4">
                 <div class="flex justify-between gap-3">
@@ -110,6 +109,10 @@
                 <div class="flex justify-between gap-3">
                     <dt class="text-on-surface-variant">Periode</dt>
                     <dd class="text-on-surface-variant text-xs text-right whitespace-nowrap">{{ $slot->tanggal_mulai ? \Carbon\Carbon::parse($slot->tanggal_mulai)->locale('id')->translatedFormat('d M') : '-' }} – {{ $slot->tanggal_selesai ? \Carbon\Carbon::parse($slot->tanggal_selesai)->locale('id')->translatedFormat('d M Y') : 'Menunggu' }}</dd>
+                </div>
+                <div class="flex justify-between gap-3 items-center">
+                    <dt class="text-on-surface-variant">Status</dt>
+                    <dd class="text-right"><span class="inline-flex items-center gap-1 px-2 py-1 rounded-full {{ $st[1] }} text-[10px] font-bold uppercase border">{{ $st[0] }}</span></dd>
                 </div>
                 @if($slot->status === 'ditunda')
                     <div class="flex justify-between gap-3">
