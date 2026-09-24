@@ -3,15 +3,18 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bank;
 use App\Models\CustomerTopup;
 use App\Models\CustomerWallet;
 use App\Models\CustomerWalletTransaction;
+use App\Models\CustomerWithdrawal;
 use App\Models\Notification;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
 use App\Models\PaymentProof;
 use App\Models\PlatformBankAccount;
 use App\Models\Role;
+use App\Models\Setting;
 use App\Services\NotificationService;
 use App\Support\CustomerWalletService;
 use Carbon\Carbon;
@@ -26,6 +29,8 @@ class SaldoController extends Controller
     protected const MIN_NOMINAL = 10000;
 
     protected const MAX_NOMINAL = 100000000;
+
+    protected const MIN_TARIK = 50000;
 
     public function index()
     {
@@ -114,7 +119,13 @@ class SaldoController extends Controller
             ->orderByDesc('customer_topup_id')
             ->get();
 
-        return view('customer.saldo.index', compact('saldo', 'totalTopup', 'totalBelanja', 'transactions', 'activeTopups', 'ranges'));
+        $riwayatTarik = CustomerWithdrawal::where('user_id', $user->user_id)
+            ->with('bank')
+            ->orderByDesc('customer_withdrawal_id')
+            ->limit(10)
+            ->get();
+
+        return view('customer.saldo.index', compact('saldo', 'totalTopup', 'totalBelanja', 'transactions', 'activeTopups', 'ranges', 'riwayatTarik'));
     }
 
     public function isiSaldo()
@@ -316,6 +327,166 @@ class SaldoController extends Controller
         $topup->load(['payment.paymentMethod', 'payment.account']);
 
         return view('customer.saldo.selesai', compact('topup'));
+    }
+
+    /**
+     * Form pengajuan penarikan saldo (langkah 1).
+     */
+    public function tarik()
+    {
+        $user = Auth::user();
+        $saldo = CustomerWalletService::balance($user);
+        $fee = (float) Setting::get(Setting::BIAYA_PENARIKAN_SALDO, '0');
+        $minTarik = static::MIN_TARIK;
+        $banks = Bank::where('status', 'aktif')->orderBy('nama_bank')->get();
+
+        return view('customer.saldo.tarik', compact('saldo', 'fee', 'minTarik', 'banks'));
+    }
+
+    /**
+     * Simpan pengajuan penarikan + tahan (hold) saldo.
+     */
+    public function storeTarik(Request $request)
+    {
+        $validated = $request->validate([
+            'nominal' => ['required', 'integer', 'min:' . static::MIN_TARIK, 'max:' . static::MAX_NOMINAL],
+            'tipe_tujuan' => ['required', 'in:' . CustomerWithdrawal::TIPE_BANK . ',' . CustomerWithdrawal::TIPE_EWALLET],
+            'bank_id' => ['required_if:tipe_tujuan,' . CustomerWithdrawal::TIPE_BANK, 'nullable', 'integer', 'exists:banks,bank_id'],
+            'penyedia' => ['required_if:tipe_tujuan,' . CustomerWithdrawal::TIPE_EWALLET, 'nullable', 'string', 'max:100'],
+            'nomor_tujuan' => ['required', 'string', 'max:50'],
+            'nama_pemilik' => ['nullable', 'string', 'max:150'],
+        ], [
+            'nominal.required' => 'Masukkan nominal penarikan.',
+            'nominal.integer' => 'Nominal harus berupa angka.',
+            'nominal.min' => 'Nominal minimal Rp ' . number_format(static::MIN_TARIK, 0, ',', '.') . '.',
+            'nominal.max' => 'Nominal maksimal Rp ' . number_format(static::MAX_NOMINAL, 0, ',', '.') . '.',
+            'tipe_tujuan.required' => 'Pilih tipe tujuan pencairan.',
+            'tipe_tujuan.in' => 'Tipe tujuan tidak valid.',
+            'bank_id.required_if' => 'Pilih bank tujuan.',
+            'bank_id.exists' => 'Bank tujuan tidak valid.',
+            'penyedia.required_if' => 'Masukkan penyedia e-wallet.',
+            'nomor_tujuan.required' => 'Masukkan nomor tujuan.',
+        ]);
+
+        $user = Auth::user();
+        $jumlah = (float) $validated['nominal'];
+        $fee = (float) Setting::get(Setting::BIAYA_PENARIKAN_SALDO, '0');
+        $bersih = $jumlah - $fee;
+
+        if ($bersih <= 0) {
+            return back()
+                ->with('toast', ['message' => 'Nominal harus lebih besar dari biaya platform Rp ' . number_format($fee, 0, ',', '.') . '.', 'icon' => 'gpp_maybe'])
+                ->withInput();
+        }
+
+        if (CustomerWalletService::balance($user) < $jumlah) {
+            return back()
+                ->with('toast', ['message' => 'Saldo akun tidak mencukupi untuk penarikan ini.', 'icon' => 'gpp_maybe'])
+                ->withInput();
+        }
+
+        $penarikan = DB::transaction(function () use ($user, $validated, $jumlah, $fee, $bersih) {
+            $penarikan = CustomerWithdrawal::create([
+                'user_id' => $user->user_id,
+                'jumlah' => $jumlah,
+                'fee' => $fee,
+                'jumlah_bersih' => $bersih,
+                'tipe_tujuan' => $validated['tipe_tujuan'],
+                'bank_id' => $validated['tipe_tujuan'] === CustomerWithdrawal::TIPE_BANK ? ($validated['bank_id'] ?? null) : null,
+                'penyedia' => $validated['tipe_tujuan'] === CustomerWithdrawal::TIPE_EWALLET ? ($validated['penyedia'] ?? null) : null,
+                'nomor_tujuan' => $validated['nomor_tujuan'],
+                'nama_pemilik' => $validated['nama_pemilik'] ?? null,
+                'status' => CustomerWithdrawal::STATUS_PENDING,
+                'diajukan_pada' => now(),
+            ]);
+
+            CustomerWalletService::debitForWithdrawal($user, $penarikan, $jumlah);
+
+            return $penarikan;
+        });
+
+        NotificationService::fire(
+            Auth::id(),
+            Notification::TIPE_PEMBAYARAN,
+            'Penarikan Saldo Diajukan',
+            'Pengajuan penarikan saldo Rp ' . number_format($jumlah, 0, ',', '.') . ' sedang diverifikasi.',
+        );
+
+        NotificationService::sendToRole(
+            Role::SUPER_ADMIN,
+            Notification::TIPE_WALLET,
+            'Pengajuan Penarikan Saldo Baru',
+            'Customer mengajukan penarikan saldo Rp ' . number_format($jumlah, 0, ',', '.') . ' (bersih Rp ' . number_format($bersih, 0, ',', '.') . '). Segera verifikasi.',
+            Auth::id(),
+            route('superadmin.verifikasi-penarikan-saldo')
+        );
+
+        return redirect()->route('customer.saldo.tarik.show', $penarikan->customer_withdrawal_id)
+            ->with('toast', ['message' => 'Pengajuan penarikan dibuat. Menunggu verifikasi Super Admin.', 'icon' => 'task_alt']);
+    }
+
+    /**
+     * Halaman status penarikan (langkah 2 Verifikasi / 3 Selesai).
+     */
+    public function penarikan(CustomerWithdrawal $penarikan)
+    {
+        if (! Auth::check()) {
+            return redirect()->route('login', ['redirect' => route('customer.saldo.tarik.show', $penarikan->customer_withdrawal_id)]);
+        }
+        if (Auth::user()->role?->nama_role !== Role::CUSTOMER) {
+            abort(403);
+        }
+        if ($penarikan->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $penarikan->load('bank');
+
+        return view('customer.saldo.penarikan', compact('penarikan'));
+    }
+
+    public function penarikanStatus(CustomerWithdrawal $penarikan)
+    {
+        if (! Auth::check()) {
+            return response()->json(['unauthenticated' => true], 401);
+        }
+
+        if ($penarikan->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $penarikan->refresh();
+
+        return response()->json([
+            'status' => $penarikan->status,
+            'done' => in_array($penarikan->status, [
+                CustomerWithdrawal::STATUS_DIBAYAR,
+                CustomerWithdrawal::STATUS_DITOLAK,
+                CustomerWithdrawal::STATUS_DIBATALKAN,
+            ], true),
+        ]);
+    }
+
+    /**
+     * Batalkan penarikan milik sendiri (hanya pending) + kembalikan hold.
+     */
+    public function batalkanTarik(CustomerWithdrawal $penarikan)
+    {
+        if ($penarikan->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($penarikan->status !== CustomerWithdrawal::STATUS_PENDING) {
+            return back()->with('toast', ['message' => 'Penarikan ini sudah tidak bisa dibatalkan.', 'icon' => 'gpp_maybe']);
+        }
+
+        DB::transaction(function () use ($penarikan) {
+            $penarikan->update(['status' => CustomerWithdrawal::STATUS_DIBATALKAN]);
+            CustomerWalletService::creditWithdrawalRefund(Auth::user(), $penarikan, (float) $penarikan->jumlah);
+        });
+
+        return redirect()->route('customer.saldo')
+            ->with('toast', ['message' => 'Penarikan Rp ' . number_format((float) $penarikan->jumlah, 0, ',', '.') . ' dibatalkan, saldo dikembalikan.', 'icon' => 'task_alt']);
     }
 
     public function paymentStatus(CustomerTopup $topup)
