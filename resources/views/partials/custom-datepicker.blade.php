@@ -41,6 +41,54 @@
     }
     function lastDayOf(y, m) { return new Date(y, m, 0).getDate(); }
 
+    function stepBtn(kind, dir, icon, label) {
+        var b = newEl('button', 'rdp-step w-9 h-9 flex items-center justify-center rounded-lg border border-muted-border bg-surface-container-low hover:bg-surface-container-high text-on-surface-variant active:opacity-70 transition-colors cursor-pointer');
+        b.type = 'button';
+        b.setAttribute('data-kind', kind);
+        b.setAttribute('data-dir', String(dir));
+        b.setAttribute('aria-label', label);
+        b.appendChild(iconSpan(icon));
+        b.addEventListener('click', function (e) { e.stopPropagation(); stepTime(kind, dir); });
+        return b;
+    }
+
+    function stepCol(kind, label) {
+        var col = newEl('div', 'flex-1 flex flex-col items-center gap-1');
+        var up = stepBtn(kind, 1, 'expand_less', 'Naik ' + label);
+        var val = newEl('span', 'rdp-val text-lg font-bold text-on-surface', '00');
+        val.dataset.kind = kind;
+        var down = stepBtn(kind, -1, 'expand_more', 'Turun ' + label);
+        col.appendChild(up);
+        col.appendChild(val);
+        col.appendChild(down);
+        col.appendChild(newEl('span', 'text-[10px] font-bold uppercase tracking-wider text-on-surface-variant', label));
+        return col;
+    }
+
+    function stepTime(kind, dir) {
+        if (!active) return;
+        var i = parseInt(kind === 'h' ? active.timeH : active.timeM, 10) || 0;
+        i += dir;
+        if (kind === 'h') {
+            if (i < 0) i = 23;
+            if (i > 23) i = 0;
+            active.timeH = pad(i);
+        } else {
+            if (i < 0) i = 59;
+            if (i > 59) i = 0;
+            active.timeM = pad(i);
+        }
+        updateTimeUI();
+    }
+
+    function updateTimeUI() {
+        if (!panel || !active) return;
+        panel.querySelectorAll('.rdp-val[data-kind="h"]').forEach(function (el) { el.textContent = active.timeH; });
+        panel.querySelectorAll('.rdp-val[data-kind="m"]').forEach(function (el) { el.textContent = active.timeM; });
+        var st = panel.querySelector('.rdp-date-status');
+        if (st) st.textContent = active.pendingDate ? 'Dipilih: ' + fmtDisplay(active.pendingDate) : '';
+    }
+
     var panel = null;
     var active = null;
 
@@ -75,18 +123,14 @@
         panel.appendChild(grid);
 
         var timeRow = newEl('div', 'rdp-time hidden mt-3 pt-3 border-t border-muted-border');
-        timeRow.appendChild(newEl('div', 'font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mb-1', 'Jam'));
-        var timeSel = newEl('div', 'flex items-center gap-2');
-        var selH = newEl('select', 'rdp-h w-full bg-surface-container-low border border-muted-border rounded-lg px-2 py-2 text-sm text-on-surface focus:outline-none focus:border-gold-accent');
-        var selM = newEl('select', 'rdp-m w-full bg-surface-container-low border border-muted-border rounded-lg px-2 py-2 text-sm text-on-surface focus:outline-none focus:border-gold-accent');
-        var sep = newEl('span', 'text-on-surface-variant font-bold', ':');
-        timeSel.appendChild(selH);
-        timeSel.appendChild(sep);
-        timeSel.appendChild(selM);
+        timeRow.appendChild(newEl('div', 'rdp-date-status font-body-md text-body-md text-on-surface mb-2'));
+        timeRow.appendChild(newEl('div', 'font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mb-2', 'Jam'));
+        var timeSel = newEl('div', 'flex items-start justify-center gap-3');
+        timeSel.appendChild(stepCol('h', 'Jam'));
+        timeSel.appendChild(newEl('span', 'text-xl font-bold text-on-surface-variant pt-7', ':'));
+        timeSel.appendChild(stepCol('m', 'Menit'));
         timeRow.appendChild(timeSel);
-        for (var h = 0; h < 24; h++) { var o = newEl('option', '', pad(h)); o.value = pad(h); selH.appendChild(o); }
-        for (var mn = 0; mn < 60; mn++) { var om = newEl('option', '', pad(mn)); om.value = pad(mn); selM.appendChild(om); }
-        var saveBtn = newEl('button', 'rdp-save mt-2 ml-auto block w-full btn-modal btn-modal-primary py-2 text-center');
+        var saveBtn = newEl('button', 'rdp-save mt-3 block w-full btn-modal btn-modal-primary py-2 text-center');
         saveBtn.type = 'button';
         saveBtn.textContent = 'Simpan';
         timeRow.appendChild(saveBtn);
@@ -145,8 +189,8 @@
             btn.textContent = day;
             var iso = isoDate(view.y, view.m, day);
             if (!inRange(view.y, view.m, day)) btn.disabled = true;
-            if (active && active.iso === iso) {
-                btn.classList.add('bg-gold-accent', 'text-white');
+            if (active && (active.isDatetime ? (active.pendingDate || active.iso) : active.iso) === iso) {
+                btn.classList.add('bg-gold-accent', 'text-white', 'ring-2', 'ring-gold-accent/60');
             } else if (view.y === t.y && view.m === t.m && day === t.d) {
                 btn.classList.add('ring-1', 'ring-gold-accent');
             }
@@ -168,6 +212,8 @@
             var h = active.timeH, mm = active.timeM;
             active.dateObj = { y: +pr[0], m: +pr[1], d: +pr[2], h: +h, min: +mm };
             panel.querySelector('.rdp-time').classList.remove('hidden');
+            renderMonth();
+            updateTimeUI();
         } else {
             setValue(active, iso);
             closePanel();
@@ -189,8 +235,8 @@
 
     function applyDateTime() {
         if (!active || !active.pendingDate) return;
-        var h = panel.querySelector('.rdp-h').value;
-        var m = panel.querySelector('.rdp-m').value;
+        var h = active.timeH;
+        var m = active.timeM;
         setValue(active, active.pendingDate + 'T' + h + ':' + m);
         closePanel();
     }
@@ -242,6 +288,7 @@
         closePanel();
         active = a;
         panel.querySelector('.rdp-time').classList.add('hidden');
+        updateTimeUI();
         refresh(a);
         renderMonth();
         var r = a.display.getBoundingClientRect();
