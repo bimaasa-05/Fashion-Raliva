@@ -137,6 +137,12 @@
             </div>
             <div>
                 <h3 class="font-title-md text-sm text-on-surface mb-3">Dokumen Persyaratan (minimal 3 dari 4)</h3>
+                <div class="flex items-center gap-3 mb-3" data-dok-progress>
+                    <div class="flex-1 h-2 rounded-full bg-surface-container-high overflow-hidden">
+                        <div class="h-full bg-gold-accent rounded-full transition-all duration-300" data-dok-bar style="width:0%"></div>
+                    </div>
+                    <span class="text-xs font-bold text-on-surface-variant whitespace-nowrap" data-dok-text>0/3 dokumen wajib</span>
+                </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
                     @foreach ([['ktp', 'description', 'KTP / Identitas Owner', true], ['npwp', 'receipt_long', 'NPWP Toko', true], ['foto_depan', 'storefront', 'Foto Depan Toko', false], ['siu', 'gavel', 'Surat Izin Usaha (NIB)', true]] as $doc)
                         @php $existing = $documents->firstWhere('jenis', $doc[0]); @endphp
@@ -150,7 +156,7 @@
                                     <span class="material-symbols-outlined fill text-[12px]">check_circle</span>{{ ucfirst($existing->status) }}
                                 </span>
                             @else
-                                <input type="file" name="{{ $doc[0] }}" accept=".jpg,.jpeg,.png,.pdf" aria-label="Unggah {{ $doc[2] }}" class="mt-auto block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
+                                <input type="file" name="{{ $doc[0] }}" accept=".jpg,.jpeg,.png,.pdf" aria-label="Unggah {{ $doc[2] }}" @if($doc[3]) data-wajib="1" @endif data-ada="0" class="mt-auto block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
                                 <p class="text-[11px] text-on-surface-variant">JPG / PNG / PDF, maks 5 MB.</p>
                                 @error($doc[0]) <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                             @endif
@@ -174,7 +180,8 @@
                 <p class="text-xs text-on-surface-variant mt-1">Status: <span class="font-bold {{ $isDitolak ? 'text-error' : 'text-gold-accent' }}">{{ ucfirst($store->status) }}</span> • {{ $dokValid }} / 3 dokumen valid (dari 4 jenis)</p>
             </div>
         </div>
-        <form method="POST" action="{{ route('owner.pengajuan-toko.store') }}" enctype="multipart/form-data" class="space-y-6" data-min-dok data-dok-valid="{{ $dokValid ?? 0 }}">
+        @php $trioOk = collect(['ktp','npwp','siu'])->filter(fn ($j) => ($d = $documents->firstWhere('jenis', $j)) && $d->status !== 'ditolak')->values()->implode(','); @endphp
+        <form method="POST" action="{{ route('owner.pengajuan-toko.store') }}" enctype="multipart/form-data" class="space-y-6" data-min-dok data-dok-valid="{{ $dokValid ?? 0 }}" data-trio-ok="{{ $trioOk }}">
             @csrf
             @if($isDitolak)
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
@@ -220,7 +227,7 @@
                             @if($existing->status === 'terverifikasi')
                                 <p class="mt-auto flex items-center gap-1.5 text-[11px] text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-gold-accent">lock</span>Terverifikasi — terkunci.</p>
                             @elseif($existing->status === 'ditolak')
-                                <input type="file" name="{{ $doc[0] }}" accept=".jpg,.jpeg,.png,.pdf" aria-label="Unggah ulang {{ $doc[2] }}" class="mt-auto block w-full text-xs text-on-surface-variant file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-error file:text-white file:cursor-pointer" />
+                                <input type="file" name="{{ $doc[0] }}" accept=".jpg,.jpeg,.png,.pdf" aria-label="Unggah ulang {{ $doc[2] }}" @if(in_array($doc[0], ['ktp','npwp','siu'], true)) data-wajib="1" @endif data-ada="0" class="mt-auto block w-full text-xs text-on-surface-variant file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-error file:text-white file:cursor-pointer" />
                                 <p class="text-[11px] text-on-surface-variant">JPG / PNG / PDF, maks 5 MB.</p>
                                 @error($doc[0]) <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                             @else
@@ -229,7 +236,7 @@
                                 @error($doc[0]) <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                             @endif
                         @else
-                            <input type="file" name="{{ $doc[0] }}" accept=".jpg,.jpeg,.png,.pdf" aria-label="Unggah {{ $doc[2] }}" class="mt-auto block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
+                            <input type="file" name="{{ $doc[0] }}" accept=".jpg,.jpeg,.png,.pdf" aria-label="Unggah {{ $doc[2] }}" @if(in_array($doc[0], ['ktp','npwp','siu'], true)) data-wajib="1" @endif data-ada="0" class="mt-auto block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
                                 <p class="text-[11px] text-on-surface-variant">JPG / PNG / PDF, maks 5 MB.</p>
                                 @error($doc[0]) <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                         @endif
@@ -255,7 +262,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h2 class="font-title-md text-title-md text-on-surface premium-heading">Dokumen Persyaratan</h2>
-                <p class="text-on-surface-variant text-sm mt-1">Toko Anda sudah {{ $isAktif ? 'aktif' : $store->status }}. Pengajuan dokumen dikunci.</p>
+                <p class="text-on-surface-variant text-sm mt-1">Toko Anda sudah {{ $isAktif ? 'aktif' : $store->status }}. {{ $isAktif ? 'Dokumen yang kurang/ditolak bisa dilengkapi di bawah — toko tetap aktif, dokumen baru menunggu verifikasi Super Admin.' : 'Pengajuan dokumen dikunci.' }}</p>
             </div>
             <button type="button" disabled class="py-3 px-8 bg-surface-container-low border border-muted-border rounded-lg text-sm font-semibold text-on-surface-variant cursor-not-allowed opacity-60 flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined text-[16px]">lock</span>{{ $isAktif ? 'Telah Aktif' : ucfirst($store->status) }}
@@ -281,12 +288,10 @@
                         </span>
                     @endif
                     @if($isAktif && (!$existing || $existing->status === 'ditolak'))
-                        <form method="POST" action="{{ route('owner.pengajuan-toko.reupload') }}" enctype="multipart/form-data" class="mt-auto">
+                        <form method="POST" action="{{ route('owner.pengajuan-toko.reupload') }}" enctype="multipart/form-data" class="mt-auto space-y-2" data-reupload-form>
                             @csrf
-                            <label class="block w-full text-xs text-center text-on-surface-variant border border-dashed border-outline-variant rounded-lg px-3 py-2 cursor-pointer hover:border-gold-accent hover:text-gold-accent transition-colors">
-                                <input type="file" name="{{ $doc[0] }}" accept=".jpg,.jpeg,.png,.pdf" class="hidden" onchange="this.form.requestSubmit()" />
-                                Unggah ulang {{ $doc[2] }}
-                            </label>
+                            <input type="file" name="{{ $doc[0] }}" accept=".jpg,.jpeg,.png,.pdf" aria-label="Pilih {{ $doc[2] }}" class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
+                            <button type="submit" data-reupload-submit disabled title="Pilih file dulu" class="w-full py-2 bg-deep-onyx text-on-primary text-xs font-semibold rounded-lg btn-premium disabled:opacity-50 disabled:cursor-not-allowed">Ajukan File</button>
                         </form>
                         @if($existing?->catatan)
                             <p class="text-xs mt-1"><span class="font-bold text-error">Alasan penolakan: </span><span class="font-bold text-on-surface">{{ $existing->catatan }}</span></p>
@@ -356,6 +361,34 @@
         });
     });
 
+    document.querySelectorAll('form[data-reupload-form]').forEach((form) => {
+        const submitBtn = form.querySelector('[data-reupload-submit], button[type="submit"]');
+        const input = form.querySelector('input[type="file"]');
+        const refresh = () => {
+            if (!submitBtn || !input) return;
+            submitBtn.disabled = !(input.files && input.files.length > 0);
+        };
+        input?.addEventListener('change', refresh);
+        refresh();
+    });
+
+    const TRIO = ['ktp', 'npwp', 'siu'];
+    const trioTerpenuhi = (form) => {
+        const ok = new Set((form.getAttribute('data-trio-ok') || '').split(',').filter(Boolean));
+        form.querySelectorAll('input[type="file"][data-wajib]').forEach((i) => {
+            if (i.files && i.files.length > 0) ok.add(i.name);
+        });
+        return ok;
+    };
+    const refreshDokProgress = (form) => {
+        const wrap = form.querySelector('[data-dok-progress]');
+        if (!wrap) return;
+        const n = trioTerpenuhi(form).size;
+        const bar = wrap.querySelector('[data-dok-bar]');
+        const text = wrap.querySelector('[data-dok-text]');
+        if (bar) bar.style.width = Math.round((n / 3) * 100) + '%';
+        if (text) text.textContent = n + '/3 dokumen wajib';
+    };
     document.querySelectorAll('form[data-min-dok]').forEach((form) => {
         const submitBtn = form.querySelector('[data-submit-dok]');
         const refreshSubmit = () => {
@@ -363,14 +396,19 @@
             const ada = Array.from(form.querySelectorAll('input[type="file"]:not([disabled])')).some((i) => i.files && i.files.length > 0);
             submitBtn.disabled = !ada;
         };
-        form.querySelectorAll('input[type="file"]').forEach((i) => i.addEventListener('change', refreshSubmit));
+        form.querySelectorAll('input[type="file"]').forEach((i) => i.addEventListener('change', () => { refreshSubmit(); refreshDokProgress(form); }));
         refreshSubmit();
+        refreshDokProgress(form);
         form.addEventListener('submit', (e) => {
             const valid = parseInt(form.getAttribute('data-dok-valid') || '0', 10);
             const baru = Array.from(form.querySelectorAll('input[type="file"]')).filter((i) => i.files && i.files.length > 0).length;
             if (valid + baru < 3) {
                 e.preventDefault();
                 window.showRalivaToast('Minimal 3 dokumen (saat ini ' + (valid + baru) + ').', 'gpp_bad');
+                const kurang = TRIO.find((j) => !trioTerpenuhi(form).has(j));
+                const inputKurang = kurang && form.querySelector('input[type="file"][name="' + kurang + '"]');
+                const kartu = inputKurang?.closest('div.bg-surface-container-low');
+                (kartu || form).scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         });
     });
