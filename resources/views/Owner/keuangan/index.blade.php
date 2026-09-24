@@ -81,7 +81,7 @@
                         </form>
                     </div>
                 </div>
-                <div data-reveal-group class="grid grid-cols-2 md:grid-cols-5 gap-gutter">
+                <div data-reveal-group class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
                     <div data-reveal
                         class="bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
                         <span class="text-on-surface-variant font-label-sm text-[12px] uppercase">Total Omzet <span
@@ -100,12 +100,7 @@
                                 class="normal-case text-[10px] italic text-gold-accent/70">EBITDA</span></span>
                         <span class="raliva-figure text-[24px] text-on-surface">{{ $fmt($margin['ebitda']) }}</span>
                     </div>
-                    <div data-reveal
-                        class="bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
-                        <span class="text-on-surface-variant font-label-sm text-[12px] uppercase">Laba Sebelum Pajak <span
-                                class="normal-case text-[10px] italic text-gold-accent/70">EBT</span></span>
-                        <span class="raliva-figure text-[24px] text-on-surface">{{ $fmt($margin['ebt']) }}</span>
-                    </div>
+
                     <div data-reveal
                         class="bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
                         <span class="text-on-surface-variant font-label-sm text-[12px] uppercase">Laba Bersih <span
@@ -119,8 +114,17 @@
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-section-gap">
                 <section data-reveal
                     class="lg:col-span-3 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-                    <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Tren Saldo — 6 Bulan
-                        Terakhir</h2>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+                        <h2 class="font-title-md text-title-md text-on-surface premium-heading">Tren Saldo — {{ ['7hari' => '7 Hari', '30hari' => '30 Hari', '90hari' => '90 Hari'][$grafik ?? '30hari'] ?? '30 Hari' }} Terakhir</h2>
+                        <form method="GET" action="{{ route('owner.keuangan') }}" class="flex items-center gap-2">
+                            @if(request('period'))<input type="hidden" name="period" value="{{ request('period') }}" />@endif
+                            <select name="grafik" onchange="this.form.submit()" class="raliva-select text-xs py-2 w-auto">
+                                <option value="7hari" @selected(($grafik ?? '30hari') === '7hari')>7 Hari</option>
+                                <option value="30hari" @selected(($grafik ?? '30hari') === '30hari')>30 Hari</option>
+                                <option value="90hari" @selected(($grafik ?? '') === '90hari')>90 Hari</option>
+                            </select>
+                        </form>
+                    </div>
                     <div id="chart-wrap" class="relative h-64 md:h-72"><canvas id="saldo-chart"></canvas></div>
                 </section>
 
@@ -160,12 +164,33 @@
             {{-- Riwayat Perubahan Saldo --}}
             <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium"
                 data-table-scope>
-                <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Riwayat Perubahan Saldo</h2>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <h2 class="font-title-md text-title-md text-on-surface premium-heading">Riwayat Perubahan Saldo</h2>
+                    <form method="GET" action="{{ route('owner.keuangan') }}" class="flex flex-wrap items-center gap-2">
+                        @if(request('period'))<input type="hidden" name="period" value="{{ request('period') }}" />@endif
+                        <select name="kategori" onchange="this.form.submit()" class="raliva-select text-xs py-2 w-auto">
+                            <option value="">Semua Kategori</option>
+                            @foreach (($kategoriList ?? []) as $kat)
+                                <option value="{{ $kat }}" @selected(($filterKategori ?? '') === $kat)>{{ $kat }}</option>
+                            @endforeach
+                        </select>
+                        <select name="jenis" onchange="this.form.submit()" class="raliva-select text-xs py-2 w-auto">
+                            <option value="">Semua Jenis</option>
+                            @foreach (($jenisList ?? []) as $jen)
+                                <option value="{{ $jen }}" @selected(($filterJenis ?? '') === $jen)>{{ $jen }}</option>
+                            @endforeach
+                        </select>
+                        @if(($filterKategori ?? '') !== '' || ($filterJenis ?? '') !== '')
+                            <a href="{{ route('owner.keuangan', array_filter(['period' => request('period')])) }}" class="text-xs text-on-surface-variant hover:text-gold-accent underline">Reset</a>
+                        @endif
+                    </form>
+                </div>
                 <div data-table-wrap class="overflow-x-auto">
-                    <table class="premium-table w-full min-w-[820px] font-body-md text-sm">
+                    <table class="premium-table w-full min-w-[900px] font-body-md text-sm">
                         <thead>
                             <tr class="border-b border-muted-border text-left">
                                 <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Waktu</th>
+                                <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Kategori</th>
                                 <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Keterangan</th>
                                 <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Perubahan</th>
                                 <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Saldo Akhir
@@ -178,6 +203,7 @@
                                 <tr class="border-b border-muted-border last:border-0">
                                     <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">
                                         {{ $row->created_at->format('d M Y, H:i') }}</td>
+                                    <td class="py-3.5 px-4 text-on-surface">{{ $row->kategori ?? 'Lainnya' }}</td>
                                     <td class="py-3.5 px-4 text-on-surface">{{ $row->keterangan }}</td>
                                     <td
                                         class="py-3.5 px-4 text-right font-bold whitespace-nowrap {{ $masuk ? 'text-secondary' : 'text-error' }}">
@@ -188,7 +214,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="py-8 text-center text-on-surface-variant">Belum ada mutasi
+                                    <td colspan="5" class="py-8 text-center text-on-surface-variant">Belum ada mutasi
                                         saldo.</td>
                                 </tr>
                             @endforelse
@@ -322,7 +348,20 @@
 
             <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium"
                 data-table-scope>
-                <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Daftar Pengeluaran</h2>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Pengeluaran</h2>
+                    <form method="GET" action="{{ route('owner.keuangan') }}#pengeluaran" class="flex items-center gap-2">
+                        <select name="kat_exp" onchange="this.form.submit()" class="raliva-select text-xs py-2 w-auto">
+                            <option value="">Semua Kategori</option>
+                            @foreach (($katExpList ?? []) as $kat)
+                                <option value="{{ $kat }}" @selected(($filterKatExp ?? '') === $kat)>{{ $kat }}</option>
+                            @endforeach
+                        </select>
+                        @if(($filterKatExp ?? '') !== '')
+                            <a href="{{ route('owner.keuangan') }}#pengeluaran" class="text-xs text-on-surface-variant hover:text-gold-accent underline">Reset</a>
+                        @endif
+                    </form>
+                </div>
                 <div data-table-wrap class="overflow-x-auto">
                     <table class="premium-table w-full min-w-[720px] font-body-md text-sm">
                         <thead>
