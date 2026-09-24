@@ -40,16 +40,26 @@ class ProductUpdateApplier
                     'jumlah_per_unit' => (float) $row->jumlah_per_unit,
                     'biaya_per_unit' => (float) $row->biaya_per_unit,
                 ])->all();
+            $operasionalChanged = ! empty($payload['operasional_diubah']);
+            $operasional = $operasionalChanged
+                ? collect($payload['operasional'] ?? [])->map(fn ($row) => [
+                    'nama_biaya' => trim((string) ($row['nama_biaya'] ?? '')),
+                    'nominal' => (float) ($row['nominal'] ?? 0),
+                ])->all()
+                : $product->operationalCosts()->get()->map(fn ($row) => [
+                    'nama_biaya' => $row->nama_biaya,
+                    'nominal' => (float) $row->nominal,
+                ])->all();
             $target = array_key_exists('target_produksi', $payload) && $payload['target_produksi'] !== null
                 ? (int) $payload['target_produksi']
                 : (int) ($product->target_produksi ?? 0);
-            $overhead = array_key_exists('biaya_tambahan', $payload) && $payload['biaya_tambahan'] !== null && $payload['biaya_tambahan'] !== ''
+            $legacyOverhead = array_key_exists('biaya_tambahan', $payload) && $payload['biaya_tambahan'] !== null && $payload['biaya_tambahan'] !== '' && $operasional === []
                 ? (float) $payload['biaya_tambahan']
-                : (float) ($product->biaya_tambahan ?? 0);
-            $cost = ProductCostCalculator::calculate($requirements, $overhead, $target, (float) $payload['harga_dasar']);
-            $profileChanged = $recipeChanged
+                : 0.0;
+            $cost = ProductCostCalculator::calculate($requirements, $legacyOverhead, $target, (float) $payload['harga_dasar'], $operasional);
+            $profileChanged = $recipeChanged || $operasionalChanged
                 || (array_key_exists('target_produksi', $payload) && $payload['target_produksi'] !== null)
-                || (array_key_exists('biaya_tambahan', $payload) && $payload['biaya_tambahan'] !== null && $payload['biaya_tambahan'] !== '');
+                || $legacyOverhead > 0;
 
             $product->update(array_merge([
                 'nama_produk' => $payload['nama_produk'],
@@ -62,12 +72,17 @@ class ProductUpdateApplier
             ], $profileChanged ? [
                 'target_produksi' => $target > 0 ? $target : null,
                 'modal_produksi' => $cost['modal_per_unit'],
-                'biaya_tambahan' => $overhead,
+                'biaya_tambahan' => $cost['biaya_operasional'],
             ] : []));
 
             if ($recipeChanged) {
                 $product->materialRequirements()->delete();
                 $product->materialRequirements()->createMany($requirements);
+            }
+
+            if ($operasionalChanged) {
+                $product->operationalCosts()->delete();
+                $product->operationalCosts()->createMany($operasional);
             }
 
             $hapusIds = collect($payload['hapus_foto_ids'] ?? [])
