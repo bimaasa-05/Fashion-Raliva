@@ -614,7 +614,7 @@ $buktiTokoNama = $latestRefund->file_bukti ? \Illuminate\Support\Str::afterLast(
 <div class="relative max-w-[480px] mx-auto">
 <div class="timeline-line"></div>
 <div class="timeline-progress" style="width: calc({{ $progressWidth }}% - {{ $progressWidth * 0.32 }}px);"></div>
-<div class="flex justify-between gap-2 relative z-10">
+<div class="flex justify-between gap-1 sm:gap-2 relative z-10">
 @foreach (($timeline ?? [1 => [__('Disiapkan'), 'Produksi'], 2 => [__('Dikemas'), 'Produksi'], 3 => [__('Dikirim'), 'Admin'], 4 => [__('Diterima'), 'Customer']]) as $idx => $tl)
 @php
 if (is_array($tl) && array_key_exists('done', $tl)) {
