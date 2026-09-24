@@ -115,7 +115,7 @@
                             <td class="py-3.5 px-4 text-on-surface">{{ $customer?->nama_lengkap ?? 'Customer' }}</td>
                             <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $itemCount }} produk</td>
                             <td class="py-3.5 px-4 font-bold text-gold-accent whitespace-nowrap">{{ 'Rp ' . number_format($o->grand_total, 0, ',', '.') }}</td>
-                            <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $o->checkout?->paymentMethod?->nama_metode ?? '-' }}</td>
+                            <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $o->checkout?->payment?->paymentMethod?->nama_metode ?? '-' }}</td>
                             <td class="py-3.5 px-4 text-center">
                                 <span class="inline-flex items-center px-2 py-1 rounded-full {{ $statusPill[$key] }} text-[10px] font-bold uppercase">{{ $o->status }}</span>
                             </td>
@@ -162,7 +162,7 @@
             <p class="text-xs font-medium text-on-surface-variant">Detail Pesanan</p>
             <h3 class="font-title-md text-title-md text-on-surface mt-1">{{ $o->nomor_order }}</h3>
         </div>
-        <button type="button" data-drawer-close class="text-on-surface-variant hover:text-on-surface transition-colors">
+        <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
             <span class="material-symbols-outlined">close</span>
         </button>
     </div>
@@ -207,10 +207,10 @@
                             <span class="material-symbols-outlined text-[20px] text-on-surface-variant">checkroom</span>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="font-title-md text-sm text-on-surface truncate">{{ $it->variant?->product?->nama_produk ?? '-' }}</p>
-                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $it->variant?->ukuran ?? '-' }} • {{ $it->variant?->warna ?? '-' }} × {{ $it->quantity }}</p>
+                            <p class="font-title-md text-sm text-on-surface truncate">{{ $it->productVariant?->product?->nama_produk ?? $it->nama_produk_snapshot ?? '-' }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $it->productVariant?->ukuran ?? '-' }} • {{ $it->productVariant?->warna ?? '-' }} × {{ $it->quantity }}</p>
                         </div>
-                        <span class="font-bold text-sm text-on-surface whitespace-nowrap">Rp {{ number_format($it->harga_satuan * $it->quantity, 0, ',', '.') }}</span>
+                        <span class="font-bold text-sm text-on-surface whitespace-nowrap">Rp {{ number_format((float) ($it->harga_snapshot ?? 0) * (int) $it->quantity, 0, ',', '.') }}</span>
                     </li>
                 @endforeach
             </ul>
@@ -224,8 +224,40 @@
                 <div class="flex justify-between"><dt class="text-on-surface-variant">Ongkos Kirim</dt><dd class="text-on-surface">Rp {{ number_format($o->total_ongkir, 0, ',', '.') }}</dd></div>
                 <div class="flex justify-between pt-2.5 border-t border-muted-border"><dt class="font-bold text-on-surface">Total Bayar</dt><dd class="font-bold text-gold-accent text-base">Rp {{ number_format($o->grand_total, 0, ',', '.') }}</dd></div>
             </dl>
-            <p class="text-xs text-on-surface-variant mt-3 flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-gold-accent">payments</span>Metode: {{ $oPayment?->nama_metode ?? '—' }} • Customer: {{ $oCustomer?->nama_lengkap ?? '-' }}</p>
+            <p class="text-xs text-on-surface-variant mt-3 flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-gold-accent">payments</span>Metode: {{ $oPayment?->paymentMethod?->nama_metode ?? '—' }} • Customer: {{ $oCustomer?->nama_lengkap ?? '-' }} • Status bayar: {{ ucfirst($oPayment?->status ?? '-') }}</p>
+            @if ($oPayment?->proofs?->isNotEmpty())
+                <div class="flex flex-wrap gap-2 mt-3">
+                    @foreach ($oPayment->proofs as $proof)
+                        <a href="{{ asset('storage/' . ltrim($proof->file_bukti, '/')) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors"><span class="material-symbols-outlined text-[14px]">receipt_long</span>Bukti bayar</a>
+                    @endforeach
+                </div>
+            @endif
         </section>
+
+        <section>
+            <p class="text-xs font-medium text-gold-accent mb-4">Alamat Penerima</p>
+            <dl class="space-y-2.5 font-body-md text-sm border border-muted-border rounded-lg p-4 bg-surface-container-low">
+                <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Nama</dt><dd class="text-on-surface text-right">{{ $o->checkout?->nama_penerima ?? $oCustomer?->nama_lengkap ?? '-' }}</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Telepon</dt><dd class="text-on-surface text-right">{{ $o->checkout?->nomor_telepon ?? '-' }}</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Alamat</dt><dd class="text-on-surface text-right">{{ $o->checkout?->alamat ?? '-' }}{{ $o->checkout?->kota ? ', '.$o->checkout->kota : '' }}{{ $o->checkout?->provinsi ? ' '.$o->checkout->provinsi : '' }} {{ $o->checkout?->kode_pos ?? '' }}</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Tipe</dt><dd class="text-on-surface text-right">{{ $o->isOffline() ? 'Offline (ambil di toko)' : 'Online (kurir)' }}</dd></div>
+                @if ($o->catatan)
+                    <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Catatan</dt><dd class="text-on-surface text-right">{{ $o->catatan }}</dd></div>
+                @endif
+            </dl>
+        </section>
+
+        @php $ship = $o->shipments->first(); @endphp
+        @if ($ship)
+            <section>
+                <p class="text-xs font-medium text-gold-accent mb-4">Pengiriman</p>
+                <dl class="space-y-2.5 font-body-md text-sm border border-muted-border rounded-lg p-4 bg-surface-container-low">
+                    <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Kurir</dt><dd class="text-on-surface text-right">{{ $ship->courier?->nama_kurir ?? '-' }}{{ $ship->shippingService ? ' • '.$ship->shippingService->nama_layanan : '' }}</dd></div>
+                    <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Resi</dt><dd class="font-mono text-on-surface text-right">{{ $ship->nomor_resi ?? '-' }}</dd></div>
+                    <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Status</dt><dd class="text-on-surface text-right">{{ ucfirst($ship->status) }}</dd></div>
+                </dl>
+            </section>
+        @endif
     </div>
     <div class="shrink-0 border-t border-muted-border p-4 flex flex-col-reverse sm:flex-row gap-gutter">
         <button type="button" onclick="window.print()" class="flex-1 py-3 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors flex items-center justify-center gap-2">
