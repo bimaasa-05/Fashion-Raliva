@@ -85,15 +85,57 @@
         .co-step:not(.active):not(.done) { color: var(--text-muted); }
         .co-step-line { width: 32px; height: 1px; background: var(--border-soft); }
         .co-step-line.done { background: #8B1E3F; }
+        @media (max-width: 480px) {
+            .co-stepper { gap: .35rem; }
+            .co-step { font-size: 10px; gap: .3rem; }
+            .co-step .num { width: 24px; height: 24px; font-size: 11px; }
+            .co-step-line { width: 16px; }
+        }
         @media (max-width: 374px) { .co-step { font-size: 0; gap: .3rem; } .co-step-line { display: none; } }
         .co-step .num.loading { border: 2px solid var(--border-soft); border-top-color: #8B1E3F; background: transparent !important; color: transparent !important; animation: co-spin 0.75s linear infinite; }
         .co-step .num.loading::after { content: ''; display: none; }
         @keyframes co-spin { to { transform: rotate(360deg); } }
         .co-step.done { cursor: pointer; text-decoration: none; transition: opacity .2s ease; }
         .co-step.done:hover { opacity: .75; }
-        .seg-btn { border: 1px solid var(--border-soft); background: var(--surface-warm); }
-        .seg-btn.active { border-color: #8B1E3F; background: rgba(139,30,63,.08); color: #8B1E3F; font-weight: 600; box-shadow: inset 0 0 0 1px rgba(139,30,63,.15); }
-        html.theme-dark .seg-btn.active { background: rgba(139,30,63,.18); color: #FFC2C9; }
+        .tujuan-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; }
+        .pay-method { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem; padding: .75rem; border: 1px solid var(--border-soft); border-radius: .75rem; background: var(--surface-warm); cursor: pointer; transition: background .18s, border-color .18s, color .18s; }
+        .pay-method:hover { background: #ECE7DF; border-color: #8B1E3F; color: #8B1E3F; }
+        .pay-method.selected { border-color: #8B1E3F; background: rgba(139, 30, 63, .08); color: #8B1E3F; font-weight: 600; box-shadow: inset 0 0 0 1px rgba(139, 30, 63, .15); }
+        html.theme-dark .pay-method:hover { background: #262524; }
+        html.theme-dark .pay-method.selected { background: rgba(139, 30, 63, .18); color: #FFC2C9; }
+        .tujuan-detail { margin-top: .75rem; animation: tujuanIn .25s ease both; }
+        @keyframes tujuanIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+        .acc-ew-brand.dana { --brand: #008EDA; --brand-rgb: 0, 142, 218; }
+        .acc-ew-brand.gopay { --brand: #00B7C4; --brand-rgb: 0, 183, 196; }
+        .acc-ew-brand.ovo { --brand: #4C2E8D; --brand-rgb: 76, 46, 141; }
+        .acc-ew-brand.shopeepay { --brand: #EE4D2D; --brand-rgb: 238, 77, 45; }
+        .acc-bank-brand.bca { --brand: #0060AE; --brand-rgb: 0, 96, 174; }
+        .acc-bank-brand.bri { --brand: #00529C; --brand-rgb: 0, 82, 156; }
+        .acc-bank-brand.bni { --brand: #F7941E; --brand-rgb: 247, 148, 30; }
+        .acc-bank-brand.mandiri { --brand: #FFC400; --brand-rgb: 255, 196, 0; }
+        .ew-accounts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; position: relative; width: 100%; }
+        .ew-card-wrap { width: 100%; transition: transform .3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity .25s ease; }
+        .ew-accounts-grid.ew-expanded .ew-card-wrap:not(.ew-active) { display: none !important; }
+        .ew-card-wrap.ew-active { grid-column: 1 / -1; width: 100%; }
+        .account-opt-ew { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.2rem; border: 1px solid var(--border-soft); border-radius: .6rem; background: var(--surface-warm); cursor: pointer; width: 100%; box-sizing: border-box; transition: transform .25s cubic-bezier(0.34, 1.56, 0.64, 1), border-color .2s ease, background .2s ease; }
+        .account-opt-ew:hover { border-color: var(--brand); transform: scale(1.02); }
+        .account-opt-ew.selected { border-color: var(--brand); background: rgba(var(--brand-rgb), .10); box-shadow: inset 0 0 0 1px rgba(var(--brand-rgb), .35); align-items: center; text-align: center; animation: bubblePopOpen .4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .account-opt-ew.selected .ew-brand-name { color: var(--brand); font-weight: 600; }
+        .account-opt-ew .ew-card-detail { display: none; width: 100%; }
+        .account-opt-ew.selected .ew-card-detail { display: block; animation: bubbleDetailFade .35s ease-out forwards; }
+        .account-opt-ew .ew-card-detail-inner { margin-top: .8rem; padding-top: .8rem; border-top: 1px solid rgba(var(--brand-rgb), .30); text-align: left; width: 100%; }
+        .ew-detail-nama { font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 700; line-height: 1.3; color: var(--brand); margin: 0 0 .4rem; }
+        .ew-detail-line { font-family: 'Manrope', sans-serif; font-size: 12px; line-height: 1.5; color: var(--text-muted); margin: 0; }
+        .ew-detail-line strong { color: var(--chrome-text); font-weight: 600; }
+        html.theme-dark .account-opt-ew { background: #201f1e; border-color: rgba(255,255,255,.08); }
+        html.theme-dark .account-opt-ew.selected { background: rgba(var(--brand-rgb), .14); }
+        html.theme-dark .ew-detail-line { color: #b9b6b1; }
+        html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
+        @keyframes bubblePopOpen { 0% { transform: scale(0.88); opacity: 0.7; } 60% { transform: scale(1.03); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes bubblePopClose { 0% { transform: scale(1); opacity: 1; } 40% { transform: scale(1.04); } 100% { transform: scale(0.92); opacity: 0.8; } }
+        @keyframes bubbleDetailFade { 0% { opacity: 0; transform: translateY(10px) scale(0.96); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        .account-opt-ew.closing { animation: bubblePopClose .25s cubic-bezier(0.4, 0, 0.2, 1) forwards !important; }
+        .tujuan-brand-name { font-size: 12px; line-height: 1.25; text-align: center; }
     </style>
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] lg:pl-72">
@@ -120,9 +162,20 @@
             </div>
 
             @if (session('toast'))
+                @php
+                    $toastIcon = is_array(session('toast')) ? (session('toast')['icon'] ?? '') : '';
+                    $isErr = in_array($toastIcon, ['gpp_maybe', 'block', 'error'], true);
+                    $isOk = in_array($toastIcon, ['task_alt', 'check', 'check_circle'], true);
+                @endphp
                 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-md flex items-center gap-sm">
-                    <span class="material-symbols-outlined text-secondary">task_alt</span>
-                    <p class="font-body-sm text-body-sm text-on-surface-variant">{{ session('toast')['message'] ?? session('toast') }}</p>
+                    @if ($isErr)
+                        <span class="material-symbols-outlined text-error">close</span>
+                    @elseif ($isOk)
+                        <span class="material-symbols-outlined text-emerald-600">check_circle</span>
+                    @else
+                        <span class="material-symbols-outlined text-secondary">task_alt</span>
+                    @endif
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">{{ is_array(session('toast')) ? (session('toast')['message'] ?? '') : session('toast') }}</p>
                 </div>
             @endif
 
@@ -154,28 +207,69 @@
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-sm">{{ __('Tujuan Pencairan') }}</label>
                         <input type="hidden" name="tipe_tujuan" id="tujuan-tipe" value="{{ old('tipe_tujuan', 'bank') }}" />
-                        <div class="grid grid-cols-2 gap-sm mb-sm">
-                            <button type="button" data-tujuan="bank" class="seg-btn px-4 py-2.5 rounded-xl font-label-caps text-label-caps uppercase tracking-widest transition-colors inline-flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined text-[18px]">account_balance</span>{{ __('Bank') }}
-                            </button>
-                            <button type="button" data-tujuan="e-wallet" class="seg-btn px-4 py-2.5 rounded-xl font-label-caps text-label-caps uppercase tracking-widest transition-colors inline-flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>{{ __('E-Wallet') }}
-                            </button>
+                        <input type="hidden" name="bank_id" id="input-bank-id" value="{{ old('bank_id', '') }}" />
+                        <input type="hidden" name="penyedia" id="input-penyedia" value="{{ old('penyedia', '') }}" />
+                        <div class="tujuan-grid" id="tujuan-grid">
+                            <div class="pay-method" data-tujuan="bank" role="button" tabindex="0">
+                                <span class="material-symbols-outlined text-[28px]">account_balance</span>
+                                <span class="text-center leading-tight text-sm">{{ __('Bank') }}</span>
+                            </div>
+                            <div class="pay-method" data-tujuan="e-wallet" role="button" tabindex="0">
+                                <span class="material-symbols-outlined text-[28px]">account_balance_wallet</span>
+                                <span class="text-center leading-tight text-sm">{{ __('E-Wallet') }}</span>
+                            </div>
                         </div>
-                        <div id="blok-bank">
-                            <select name="bank_id" id="input-bank" class="w-full border border-outline-variant rounded-xl px-md py-3 bg-surface-container-low text-on-surface outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/30 transition-colors">
-                                <option value="">{{ __('Pilih bank tujuan') }}</option>
+                        <div id="detail-bank" class="tujuan-detail hidden">
+                            <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-sm">{{ __('Pilih bank tujuan') }}:</p>
+                            <div class="ew-accounts-grid" id="grid-bank">
                                 @foreach ($banks as $b)
-                                    <option value="{{ $b->bank_id }}" {{ (string) old('bank_id') === (string) $b->bank_id ? 'selected' : '' }}>{{ $b->nama_bank }}{{ $b->kode_bank ? ' (' . $b->kode_bank . ')' : '' }}</option>
+                                    @php $bkode = strtolower($b->kode_bank ?? ''); $blogo = in_array($bkode, ['bca', 'bni', 'bri', 'mandiri'], true) ? asset('images/Bank/' . $bkode . '.png') : null; @endphp
+                                    <div class="ew-card-wrap" data-kode="{{ $bkode }}">
+                                        <div class="account-opt account-opt-ew acc-bank-brand {{ $bkode }}" data-bank-id="{{ $b->bank_id }}" data-nama="{{ $b->nama_bank }}" role="button" tabindex="0">
+                                            @if ($blogo)
+                                                <img src="{{ $blogo }}" alt="{{ $b->nama_bank }}" class="h-7 object-contain" />
+                                            @else
+                                                <span class="w-9 h-9 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center font-bold text-sm text-on-surface-variant">{{ strtoupper(substr($b->nama_bank ?? '?', 0, 1)) }}</span>
+                                            @endif
+                                            <span class="ew-brand-name text-xs leading-tight mt-1">{{ $b->nama_bank }}</span>
+                                            <div class="ew-card-detail">
+                                                <div class="ew-card-detail-inner">
+                                                    <p class="ew-detail-nama">{{ $b->nama_bank }}</p>
+                                                    <p class="ew-detail-line">
+                                                        <span>{{ __('Kode bank') }}:</span>
+                                                        <strong>{{ strtoupper($bkode) ?: '-' }}</strong>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 @endforeach
-                            </select>
+                            </div>
                             @error('bank_id')
                                 <p class="font-label-sm text-label-sm text-error mt-xs">{{ $message }}</p>
                             @enderror
                         </div>
-                        <div id="blok-ewallet" class="hidden">
-                            <input name="penyedia" type="text" maxlength="100" value="{{ old('penyedia') }}" placeholder="{{ __('cth. DANA, GoPay, OVO') }}"
-                                class="w-full border border-outline-variant rounded-xl px-md py-3 bg-surface-container-low text-on-surface outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/30 transition-colors" />
+                        <div id="detail-ewallet" class="tujuan-detail hidden">
+                            <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-sm">{{ __('Pilih e-wallet') }}:</p>
+                            <div class="ew-accounts-grid" id="grid-ewallet">
+                                @php $ewList = [['dana', 'DANA', 'images/E-Wallet/dana.png'], ['gopay', 'GoPay', 'images/E-Wallet/gopay.jpg'], ['ovo', 'OVO', 'images/E-Wallet/ovo.png'], ['shopeepay', 'ShopeePay', 'images/E-Wallet/shoopepay.jfif']]; @endphp
+                                @foreach ($ewList as [$ekode, $enama, $eimg])
+                                    <div class="ew-card-wrap" data-kode="{{ $ekode }}">
+                                        <div class="account-opt account-opt-ew acc-ew-brand {{ $ekode }}" data-penyedia="{{ $ekode }}" data-nama="{{ $enama }}" role="button" tabindex="0">
+                                            <img src="{{ asset($eimg) }}" alt="{{ $enama }}" class="h-7 object-contain" />
+                                            <span class="ew-brand-name text-xs leading-tight mt-1">{{ $enama }}</span>
+                                            <div class="ew-card-detail">
+                                                <div class="ew-card-detail-inner">
+                                                    <p class="ew-detail-nama">{{ $enama }}</p>
+                                                    <p class="ew-detail-line">
+                                                        <span>{{ __('E-wallet') }}</span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                             @error('penyedia')
                                 <p class="font-label-sm text-label-sm text-error mt-xs">{{ $message }}</p>
                             @enderror
@@ -235,9 +329,11 @@
             var feeEl = document.getElementById('ringkas-fee');
             var bersihEl = document.getElementById('ringkas-bersih');
             var tipeInput = document.getElementById('tujuan-tipe');
-            var segBtns = document.querySelectorAll('[data-tujuan]');
-            var blokBank = document.getElementById('blok-bank');
-            var blokEwallet = document.getElementById('blok-ewallet');
+            var bankIdInput = document.getElementById('input-bank-id');
+            var penyediaInput = document.getElementById('input-penyedia');
+            var methods = document.querySelectorAll('#tujuan-grid .pay-method');
+            var detailBank = document.getElementById('detail-bank');
+            var detailEwallet = document.getElementById('detail-ewallet');
 
             var digitsOnly = function(v) { return (v || '').replace(/\D/g, ''); };
             var formatRibuan = function(v) {
@@ -255,16 +351,87 @@
             };
             var syncTujuan = function() {
                 var v = tipeInput ? tipeInput.value : 'bank';
-                segBtns.forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-tujuan') === v); });
-                if (blokBank) blokBank.classList.toggle('hidden', v !== 'bank');
-                if (blokEwallet) blokEwallet.classList.toggle('hidden', v !== 'e-wallet');
+                methods.forEach(function(m) { m.classList.toggle('selected', m.getAttribute('data-tujuan') === v); });
+                if (detailBank) {
+                    detailBank.classList.toggle('hidden', v !== 'bank');
+                    if (v === 'bank') { detailBank.style.animation = 'none'; void detailBank.offsetWidth; detailBank.style.animation = ''; }
+                }
+                if (detailEwallet) {
+                    detailEwallet.classList.toggle('hidden', v !== 'e-wallet');
+                    if (v === 'e-wallet') { detailEwallet.style.animation = 'none'; void detailEwallet.offsetWidth; detailEwallet.style.animation = ''; }
+                }
+                syncOpts();
+            };
+            var syncOpts = function() {
+                var bid = bankIdInput ? String(bankIdInput.value || '') : '';
+                var bankGrid = document.getElementById('grid-bank');
+                var bankHas = false;
+                document.querySelectorAll('#detail-bank .account-opt-ew').forEach(function(o) {
+                    var on = bid !== '' && o.getAttribute('data-bank-id') === bid;
+                    o.classList.toggle('selected', on);
+                    var w = o.closest('.ew-card-wrap');
+                    if (w) w.classList.toggle('ew-active', on);
+                    if (on) bankHas = true;
+                });
+                if (bankGrid) bankGrid.classList.toggle('ew-expanded', bankHas);
+                var pv = penyediaInput ? String(penyediaInput.value || '') : '';
+                var ewGrid = document.getElementById('grid-ewallet');
+                var ewHas = false;
+                document.querySelectorAll('#detail-ewallet .account-opt-ew').forEach(function(o) {
+                    var on = pv !== '' && o.getAttribute('data-penyedia') === pv;
+                    o.classList.toggle('selected', on);
+                    var w2 = o.closest('.ew-card-wrap');
+                    if (w2) w2.classList.toggle('ew-active', on);
+                    if (on) ewHas = true;
+                });
+                if (ewGrid) ewGrid.classList.toggle('ew-expanded', ewHas);
+            };
+            var selectOpt = function(opt, kind) {
+                var grid = opt.closest('.ew-accounts-grid');
+                var wrap = opt.closest('.ew-card-wrap');
+                if (opt.classList.contains('selected')) {
+                    opt.classList.add('closing');
+                    setTimeout(function() {
+                        opt.classList.remove('selected', 'closing');
+                        if (wrap) wrap.classList.remove('ew-active');
+                        if (grid) grid.classList.remove('ew-expanded');
+                        if (kind === 'bank' && bankIdInput) bankIdInput.value = '';
+                        if (kind === 'ewallet' && penyediaInput) penyediaInput.value = '';
+                    }, 200);
+                    return;
+                }
+                if (grid) {
+                    grid.querySelectorAll('.ew-card-wrap').forEach(function(w) { w.classList.remove('ew-active'); });
+                    grid.querySelectorAll('.account-opt-ew').forEach(function(o) { o.classList.remove('selected', 'closing'); });
+                }
+                if (wrap) {
+                    wrap.classList.add('ew-active');
+                    setTimeout(function() { opt.classList.add('selected'); }, 120);
+                } else {
+                    opt.classList.add('selected');
+                }
+                if (grid) grid.classList.add('ew-expanded');
+                if (kind === 'bank' && bankIdInput) bankIdInput.value = opt.getAttribute('data-bank-id');
+                if (kind === 'ewallet' && penyediaInput) penyediaInput.value = opt.getAttribute('data-penyedia');
+            };
+            var bindOptKeys = function(el, fn) {
+                el.addEventListener('click', fn);
+                el.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); }
+                });
             };
 
-            segBtns.forEach(function(b) {
-                b.addEventListener('click', function() {
-                    if (tipeInput) tipeInput.value = b.getAttribute('data-tujuan');
+            methods.forEach(function(m) {
+                bindOptKeys(m, function() {
+                    if (tipeInput) tipeInput.value = m.getAttribute('data-tujuan');
                     syncTujuan();
                 });
+            });
+            document.querySelectorAll('#detail-bank .account-opt-ew').forEach(function(o) {
+                bindOptKeys(o, function() { selectOpt(o, 'bank'); });
+            });
+            document.querySelectorAll('#detail-ewallet .account-opt-ew').forEach(function(o) {
+                bindOptKeys(o, function() { selectOpt(o, 'ewallet'); });
             });
             if (input) {
                 if (input.value) input.value = formatRibuan(input.value);
