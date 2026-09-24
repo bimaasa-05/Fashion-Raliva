@@ -908,13 +908,15 @@
         });
     </script>
     <script>
-        /* Arrow back = kembali ke halaman customer sebelumnya (kecuali dari checkout, agar tidak bolak-balik) */
+        /* Arrow back = kembali ke halaman customer sebelumnya (kecuali dari checkout/riviews/halaman sendiri, agar tidak bolak-balik) */
         document.addEventListener('click', function (e) {
             var back = e.target.closest('[data-go-back]');
             if (!back) return;
             e.preventDefault();
             var ref = document.referrer;
-            if (ref && ref.indexOf(window.location.origin) === 0 && ref.indexOf('/checkout') === -1) {
+            var selfUrl = window.location.href.split('?')[0].replace(/\/$/, '');
+            var refPath = ref ? ref.split('?')[0].replace(/\/$/, '') : '';
+            if (ref && ref.indexOf(window.location.origin) === 0 && ref.indexOf('/checkout') === -1 && ref.indexOf('/riviews') === -1 && refPath !== selfUrl) {
                 window.history.back();
             } else {
                 window.location.href = back.getAttribute('href');

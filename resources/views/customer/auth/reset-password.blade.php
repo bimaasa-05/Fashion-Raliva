@@ -135,7 +135,38 @@
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
     html.theme-dark .border-error { border-color: #ffb4ab !important; }
     html.theme-dark .bg-error-container { background-color: #3a1210 !important; }
-    html.theme-dark .focus\:border-primary:focus { border-color: #f2efec !important; }
+    html.theme-dark .focus\:border-secondary:focus { border-color: #A32626 !important; }
+    /* Auth: ring fokus maroon (timpa sisa ring biru forms-plugin) */
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+        --tw-ring-color: rgba(139, 30, 30, .22) !important;
+    }
+    html.theme-dark input[type="text"]:focus,
+    html.theme-dark input[type="email"]:focus,
+    html.theme-dark input[type="password"]:focus {
+        --tw-ring-color: rgba(163, 38, 38, .35) !important;
+    }
+    /* Auth: samakan latar autofill browser dengan tema (timpa putih/kuning bawaan Chrome) */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-text-fill-color: #1b1c1c !important;
+        -webkit-box-shadow: 0 0 0 1000px #fbf9f9 inset !important;
+        box-shadow: 0 0 0 1000px #fbf9f9 inset !important;
+        caret-color: #1b1c1c;
+        transition: background-color 9999s ease-in-out 0s;
+    }
+    html.theme-dark input:-webkit-autofill,
+    html.theme-dark input:-webkit-autofill:hover,
+    html.theme-dark input:-webkit-autofill:focus,
+    html.theme-dark input:-webkit-autofill:active {
+        -webkit-text-fill-color: #e6e4e1 !important;
+        -webkit-box-shadow: 0 0 0 1000px #161514 inset !important;
+        box-shadow: 0 0 0 1000px #161514 inset !important;
+        caret-color: #e6e4e1;
+    }
 </style>
 <style>
     /* ============ GOLD BUTTON + LIGHT FLASH ============ */
@@ -200,7 +231,7 @@
 <div class="mb-md">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password">{{ __('New Password') }}</label>
 <div class="relative">
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors @error('password') border-error @enderror" id="password" name="password" placeholder="{{ __('Minimum 8 characters') }}" type="password" required autofocus/>
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-secondary transition-colors @error('password') border-error @enderror" id="password" name="password" placeholder="{{ __('Minimum 8 characters') }}" type="password" required autofocus/>
 <button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="password-toggle" type="button">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </button>
@@ -212,10 +243,10 @@
 <!-- Confirm New Password -->
 <div class="mb-md">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password_confirmation">{{ __('Confirm New Password') }}</label>
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password_confirmation" name="password_confirmation" placeholder="{{ __('Re-enter your new password') }}" type="password" required/>
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-secondary transition-colors" id="password_confirmation" name="password_confirmation" placeholder="{{ __('Re-enter your new password') }}" type="password" required/>
 </div>
 <!-- Submit -->
-<button class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="reset-btn" type="submit">
+<button class="w-full h-14 btn-gold rounded-xl font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="reset-btn" type="submit">
 <span id="reset-btn-text">{{ __('RESET PASSWORD') }}</span>
 <span class="material-symbols-outlined text-[20px] animate-spin hidden" id="reset-spinner">progress_activity</span>
 </button>
