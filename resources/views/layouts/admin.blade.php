@@ -273,6 +273,7 @@
     @include('partials.notification-popup')
     @include('partials.layout-scripts')
     @include('partials.ui-scripts')
+    @include('partials.custom-datepicker')
     @stack('scripts')
 </body>
 </html>
