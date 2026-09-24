@@ -343,7 +343,7 @@
 <button aria-label="{{ __('More options') }}" class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant" onclick="toggleReviewMenu(event, 'rv-menu-{{ $ri }}')" type="button">
 <span class="material-symbols-outlined text-[18px]">more_vert</span>
 </button>
-<div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT shadow-xl overflow-hidden" id="rv-menu-{{ $ri }}">
+<div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl overflow-hidden" id="rv-menu-{{ $ri }}">
 <button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="translateReview('rv-text-{{ $ri }}', this)" type="button">
 <span class="material-symbols-outlined text-[18px] text-on-surface-variant">translate</span><span class="rv-label" data-state="b" data-a="{{ __('See original') }}" data-b="{{ __('Translate') }}">{{ __('Translate') }}</span>
 </button>
@@ -400,14 +400,14 @@
 <span class="font-body-sm text-body-sm text-on-surface">{{ __('Irrelevant to the store') }}</span>
 </label>
 <div class="flex gap-gutter mt-lg">
-<button class="flex-1 h-12 border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-widest hover:bg-secondary/5 transition-colors" onclick="closeReport()" type="button">{{ __('Cancel') }}</button>
-<button class="flex-1 h-12 btn-gold font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center" type="submit">{{ __('Send report') }}</button>
+<button class="flex-1 h-12 border border-secondary rounded-xl text-secondary font-label-caps text-label-caps uppercase tracking-widest hover:bg-secondary/5 transition-colors" onclick="closeReport()" type="button">{{ __('Cancel') }}</button>
+<button class="flex-1 h-12 btn-gold rounded-xl font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center" type="submit">{{ __('Send report') }}</button>
 </div>
 </form>
 <div class="hidden text-center py-md" id="report-success">
 <span class="material-symbols-outlined text-secondary text-[48px]">check_circle</span>
 <p class="font-body-lg text-body-lg text-on-surface mt-sm mb-lg">{{ __('Thank you. Your report has been submitted.') }}</p>
-<button class="w-full h-12 btn-gold font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center" onclick="closeReport()" type="button">{{ __('Close') }}</button>
+<button class="w-full h-12 btn-gold rounded-xl font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center" onclick="closeReport()" type="button">{{ __('Close') }}</button>
 </div>
 </div>
 </div>

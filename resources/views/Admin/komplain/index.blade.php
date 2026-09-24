@@ -59,8 +59,8 @@
 
     {{-- Daftar Komplain --}}
     <section data-table-scope>
-        <div data-reveal class="flex items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Daftar Komplain</h2>
+        <div data-reveal class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6">
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading sm:whitespace-nowrap">Daftar Komplain</h2>
             <select data-table-filter="status" class="raliva-select">
                 <option value="">Semua Status</option>
                 <option value="open">Komplain Baru</option>

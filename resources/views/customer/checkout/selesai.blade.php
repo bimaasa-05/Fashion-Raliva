@@ -207,7 +207,7 @@
                 @elseif($isRejected)
                     {{ __('Pembayaran belum berhasil') }}
                 @else
-                    {{ __('Pesanan Berhasil!') }}
+                    {{ __('Sedang diverifikasi…') }}
                 @endif
             </h2>
             <p id="pay-desc" class="font-body-sm text-body-sm text-on-surface-variant mt-sm max-w-xl mx-auto">
@@ -216,7 +216,7 @@
                 @elseif($isRejected)
                     {{ __('Pembayaranmu ditolak atau melewati batas waktu. Silakan lakukan pembayaran ulang sebelum pesanan dibatalkan.') }}
                 @else
-                    {{ __('Terima kasih. Pesananmu telah kami terima dan bukti pembayaran sedang diverifikasi admin.') }}
+                    {{ __('Tunggu sebentar, pesanan Anda sedang diverifikasi.') }}
                 @endif
             </p>
             @if($isRejected)
@@ -240,7 +240,7 @@
                             <p class="font-body-lg text-body-lg font-semibold text-on-surface">{{ $o->nomor_order }}</p>
                         @endforeach
                     </div>
-                    <div class="text-right">
+                    <div class="text-left sm:text-right">
                         <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ __('Tanggal') }}</p>
                         <p class="font-body-lg text-body-lg font-semibold text-on-surface">{{ $checkout->created_at ? $checkout->created_at->format('d M Y, H:i') : '—' }}</p>
                     </div>

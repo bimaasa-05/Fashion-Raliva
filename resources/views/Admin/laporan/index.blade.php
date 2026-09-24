@@ -21,7 +21,7 @@
     <div data-lap-type="operasional" class="space-y-section-gap">
     <section>
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Kinerja Operasional 30 Hari</h2>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pesanan Selesai</span>
                 <span class="raliva-figure text-[26px] text-on-surface">{{ $pesananDiproses ?? 0 }}</span>
@@ -68,7 +68,7 @@
     <section class="space-y-gutter">
         <h2 class="font-title-md text-title-md text-on-surface premium-heading">Laporan Penjualan Saya</h2>
         <p class="text-xs text-on-surface-variant -mt-2">Order yang pembayarannya kamu verifikasi sendiri — sebagai kasir, kontribusimu terpisah dari angka toko.</p>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pesanan Saya</span>
                 <span class="raliva-figure text-[26px] text-on-surface">{{ $saya['pesanan'] ?? 0 }}</span>

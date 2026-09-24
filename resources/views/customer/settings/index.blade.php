@@ -319,13 +319,13 @@
 <h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Language') }}</h2>
 <form id="language-form" action="{{ route('customer.locale.switch') }}" method="POST">
 @csrf
-<div class="grid grid-cols-2 gap-gutter">
-<label class="flex items-center justify-center py-sm border-2 {{ app()->getLocale() === 'en' ? 'border-secondary' : 'border-outline-variant' }} rounded-DEFAULT bg-surface-container-low cursor-pointer hover:border-secondary transition-colors">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
+<label class="flex items-center justify-center py-sm border-2 {{ app()->getLocale() === 'en' ? 'border-secondary' : 'border-outline-variant' }} rounded-xl bg-surface-container-low cursor-pointer hover:border-secondary transition-colors">
 <input {{ app()->getLocale() === 'en' ? 'checked' : '' }} class="sr-only" name="locale" type="radio" value="en" onchange="document.getElementById('language-form').submit()"/>
 <span class="material-symbols-outlined text-[20px] mr-xs">language</span>
 <span class="font-body-sm text-body-sm {{ app()->getLocale() === 'en' ? 'font-semibold' : '' }}">English</span>
 </label>
-<label class="flex items-center justify-center py-sm border-2 {{ app()->getLocale() === 'id' ? 'border-secondary' : 'border-outline-variant' }} rounded-DEFAULT bg-surface-container-low cursor-pointer hover:border-secondary transition-colors">
+<label class="flex items-center justify-center py-sm border-2 {{ app()->getLocale() === 'id' ? 'border-secondary' : 'border-outline-variant' }} rounded-xl bg-surface-container-low cursor-pointer hover:border-secondary transition-colors">
 <input {{ app()->getLocale() === 'id' ? 'checked' : '' }} class="sr-only" name="locale" type="radio" value="id" onchange="document.getElementById('language-form').submit()"/>
 <span class="material-symbols-outlined text-[20px] mr-xs">translate</span>
 <span class="font-body-sm text-body-sm {{ app()->getLocale() === 'id' ? 'font-semibold' : '' }}">Bahasa Indonesia</span>

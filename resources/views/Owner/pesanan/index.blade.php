@@ -24,7 +24,7 @@
         </div>
     @endif
     {{-- Ringkasan Status — tambah icon watermark agar tidak polos --}}
-    <section data-reveal-group class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-gutter">
+    <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-gutter">
         @foreach ([['Semua', $counts['semua'], 'on-surface', 'inventory_2'], ['Baru', $counts['baru'], 'gold-accent', 'shopping_cart'], ['Diproses', $counts['diproses'], 'secondary', 'precision_manufacturing'], ['Dikirim', $counts['dikirim'], 'on-surface', 'local_shipping'], ['Selesai', $counts['selesai'], 'secondary', 'task_alt'], ['Refund', $counts['refund'], 'error', 'sync_problem'], ['Dibatalkan', $counts['dibatalkan'], 'error', 'cancel']] as $stat)
             <div data-reveal class="bg-surface-container-lowest p-5 md:p-6 border border-muted-border rounded-xl flex flex-col gap-1.5 relative overflow-hidden card-premium">
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none fill" aria-hidden="true">{{ $stat[3] }}</span>
@@ -69,6 +69,7 @@
             </div>
         </div>
 
+        <div class="hidden md:block">
         <div data-table-wrap class="overflow-x-auto min-h-[380px]">
             <table class="premium-table w-full min-w-[920px] font-body-md text-sm">
                 <thead>
@@ -128,6 +129,41 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        </div>
+        <div class="md:hidden space-y-3">
+            @forelse ($orders as $o)
+                @php
+                    $key = match($o->status) {
+                        'selesai' => 'selesai',
+                        'refund' => 'refund',
+                        'dibatalkan' => 'dibatalkan',
+                        'dikirim' => 'dikirim',
+                        'diproses' => 'diproses',
+                        default => 'baru',
+                    };
+                    $customer = $o->checkout?->user;
+                    $itemCount = $o->items?->count() ?? 0;
+                @endphp
+                <article data-table-row data-status="{{ $key }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                            <p class="font-bold text-on-surface truncate">{{ $o->nomor_order }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5 truncate">{{ $customer?->nama_lengkap ?? 'Customer' }} • {{ $itemCount }} produk</p>
+                        </div>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full {{ $statusPill[$key] }} text-[10px] font-bold uppercase shrink-0">{{ $o->status }}</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3 pt-3 border-t border-muted-border">
+                        <div class="min-w-0">
+                            <p class="font-bold text-gold-accent">{{ 'Rp ' . number_format($o->grand_total, 0, ',', '.') }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5 truncate">{{ $o->checkout?->payment?->paymentMethod?->nama_metode ?? '-' }}</p>
+                        </div>
+                        <button type="button" data-modal-open="modal-order-{{ $o->order_id }}" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap shrink-0">Detail</button>
+                    </div>
+                </article>
+            @empty
+                <p class="py-6 text-center text-on-surface-variant">Belum ada pesanan.</p>
+            @endforelse
         </div>
 
         <div data-empty-state class="hidden flex-col items-center py-12 text-center gap-3">

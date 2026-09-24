@@ -71,6 +71,7 @@
             </div>
         </div>
 
+        <div class="hidden md:block">
         <div data-table-wrap class="overflow-x-auto">
             <table class="premium-table w-full min-w-[960px] font-body-md text-sm">
                 <thead>
@@ -138,6 +139,49 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        </div>
+        <div class="md:hidden space-y-3">
+            @forelse ($staff as $s)
+                @php
+                    $u = $s->user;
+                    $nm = $u?->nama_lengkap ?? '-';
+                    $initial = collect(explode(' ', $nm))->map(fn($w)=>mb_substr($w,0,1))->slice(0,2)->implode('');
+                    $rkey = \App\Http\Controllers\Owner\KaryawanController::roleOf($s);
+                    $rlabel = $roleLabel[$rkey] ?? ucfirst($rkey);
+                @endphp
+                <article data-table-row data-role="{{ $rkey }}" data-status="{{ $s->status }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0 font-title-md text-xs text-on-surface">{{ $initial }}</div>
+                        <div class="flex-grow min-w-0">
+                            <p class="font-bold text-on-surface truncate">{{ $nm }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5 truncate">{{ $u?->email }}</p>
+                        </div>
+                        @if ($s->status === 'aktif')
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20 shrink-0">Aktif</span>
+                        @else
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20 shrink-0">Nonaktif</span>
+                        @endif
+                    </div>
+                    <div class="flex flex-wrap items-center gap-1.5 mt-3">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $rkey === 'admin' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : ($rkey === 'produksi' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : 'bg-surface-container-high text-on-surface-variant border-outline-variant') }} text-[9px] font-bold uppercase border whitespace-nowrap">{{ $rlabel }}</span>
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-surface-container-low border border-muted-border text-on-surface-variant text-[11px] whitespace-nowrap">{{ $storeName }}</span>
+                        <span class="text-[11px] text-on-surface-variant">{{ optional(\Carbon\Carbon::parse($s->tanggal_penugasan))->translatedFormat('M Y') }}</span>
+                    </div>
+                    <div class="flex gap-2 mt-3">
+                        <button type="button" data-modal-open="modal-edit-karyawan-{{ $s->store_staff_id }}" class="flex-1 inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
+                            <span class="material-symbols-outlined text-[16px]">edit</span>Edit
+                        </button>
+                        @if ($s->status === 'aktif')
+                        <button type="button" data-modal-open="modal-nonaktifkan-{{ $s->store_staff_id }}" class="flex-1 inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-lg border border-error/30 text-xs font-semibold text-error hover:bg-error/10 transition-colors">
+                            <span class="material-symbols-outlined text-[16px]">person_off</span>Nonaktifkan
+                        </button>
+                        @endif
+                    </div>
+                </article>
+            @empty
+                <p class="py-6 text-center text-on-surface-variant">Belum ada karyawan.</p>
+            @endforelse
         </div>
 
         <div data-empty-state class="hidden flex-col items-center py-12 text-center gap-3">

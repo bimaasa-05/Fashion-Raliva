@@ -19,7 +19,7 @@
         <p class="font-body-md text-sm text-on-surface">Akses terbatas: produk yang kamu tambahkan akan diajukan dan menunggu persetujuan Super Admin (status <b>pending</b>).</p>
     </div>
 
-    <section data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+    <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">inventory_2</span>
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Total Produk</span>
@@ -66,7 +66,7 @@
         @if ($products->isEmpty())
             <p class="text-on-surface-variant text-sm py-10 text-center">Tidak ada produk ditemukan.</p>
         @else
-        <div data-reveal-group class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-gutter">
+        <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-gutter">
             @forelse ($products as $p)
                 @php
                     $skuA = $p->variants->first()?->sku ?? '-';
@@ -155,7 +155,7 @@
                     <p class="text-xs">Belum ada foto produk</p>
                 </div>
             </div>
-            <div id="detail-gallery" class="grid grid-cols-4 gap-2"></div>
+            <div id="detail-gallery" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                 <div><dt class="raliva-label">Harga Dasar</dt><dd id="detail-harga" class="font-bold text-on-surface mt-1">-</dd></div>
                 <div><dt class="raliva-label">Kategori</dt><dd id="detail-kategori" class="text-on-surface mt-1">-</dd></div>
@@ -187,10 +187,10 @@
             {{-- Foto: lama (centang untuk hapus) + tambah baru --}}
             <div>
                 <label class="block raliva-label mb-2">Foto Saat Ini <span class="normal-case font-normal">(centang untuk hapus)</span></label>
-                <div id="edit-foto-lama" class="grid grid-cols-4 gap-2"></div>
+                <div id="edit-foto-lama" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
                 <p id="edit-foto-kosong" class="hidden text-xs text-on-surface-variant">Belum ada foto.</p>
                 <label class="block raliva-label mt-4 mb-2">Tambah Foto Baru <span class="normal-case font-normal">(maks. total 5)</span></label>
-                <div id="edit-foto-slot-grid" class="grid grid-cols-4 gap-2"></div>
+                <div id="edit-foto-slot-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
                 <p class="text-xs text-on-surface-variant mt-2"><span id="edit-foto-count">0</span> foto lama + <span id="edit-foto-baru-count">0</span> baru (maks. total 5).</p>
             </div>
             <div class="space-y-4">

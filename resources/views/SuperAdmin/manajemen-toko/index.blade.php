@@ -648,7 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-gutter">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
                 <div class="relative overflow-hidden bg-surface-container-low border border-muted-border rounded-lg p-4 text-center">
                     <span class="block font-headline-lg-mobile text-headline-lg-mobile text-on-surface" id="stat-products">-</span>
                     <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-1">Produk Aktif</span>

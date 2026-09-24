@@ -63,6 +63,7 @@
             </div>
         </div>
 
+        <div class="hidden md:block">
         <div data-table-wrap class="overflow-x-auto">
             <table class="premium-table w-full min-w-[1000px] font-body-md text-sm">
                 <thead>
@@ -198,6 +199,93 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+        <div class="md:hidden space-y-3">
+            @forelse ($orders as $o)
+                @php
+                    $isDiproses = $o->status === \App\Models\Order::STATUS_DIPROSES;
+                    $isMenunggu = $o->status === \App\Models\Order::STATUS_MENUNGGU_PRODUKSI;
+                    $hasDates = $o->tgl_mulai_produksi && $o->tgl_berakhir_produksi;
+                    $progressPct = 0;
+                    $isTerlambat = false;
+                    if ($hasDates) {
+                        $start = $o->tgl_mulai_produksi->timestamp;
+                        $end = $o->tgl_berakhir_produksi->timestamp;
+                        $now = now()->timestamp;
+                        $totalSeconds = max(1, $end - $start);
+                        $elapsedSeconds = max(0, min($totalSeconds, $now - $start));
+                        $progressPct = min(100, round(($elapsedSeconds / $totalSeconds) * 100));
+                        $isTerlambat = $now > $end;
+                    }
+                    $accepted = (bool) $o->produksi_dimulai_pada;
+                    $rejectedNote = $o->produksi_catatan_tolak;
+                @endphp
+                <article data-table-row data-status-produksi="{{ $o->status }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                            <p class="font-bold text-on-surface truncate">{{ $o->nomor_order }}</p>
+                            <p class="text-xs text-on-surface mt-0.5 truncate">{{ $o->checkout?->nama_penerima ?? $o->checkout?->user?->nama_lengkap ?? '-' }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->created_at?->translatedFormat('d M Y') ?? '-' }}</p>
+                        </div>
+                        @if ($isMenunggu)
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30 shrink-0">Menunggu</span>
+                        @elseif ($isDiproses)
+                            @if ($accepted)
+                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30 shrink-0">Diproses</span>
+                            @else
+                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30 shrink-0">Accept?</span>
+                            @endif
+                        @elseif ($o->status === \App\Models\Order::STATUS_MENUNGGU_QC)
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30 shrink-0">QC</span>
+                        @endif
+                    </div>
+                    @if ($rejectedNote)
+                        <p class="text-xs text-error mt-2">⚠ Ditolak: {{ \Illuminate\Support\Str::limit($rejectedNote, 40) }}</p>
+                    @endif
+                    <div class="mt-3 pt-3 border-t border-muted-border text-sm">
+                        @foreach ($o->items as $item)
+                            <p class="text-on-surface">{{ $item->nama_produk_snapshot }} <span class="text-on-surface-variant">× {{ $item->quantity }}</span></p>
+                        @endforeach
+                    </div>
+                    @if ($hasDates)
+                        <div class="mt-3">
+                            <p class="text-xs text-on-surface-variant">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
+                            <div class="progress-track mt-1.5">
+                                <div class="progress-bar-fill {{ $isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent') }}" style="width: {{ $progressPct }}%"></div>
+                            </div>
+                            @if ($progressPct >= 100)
+                                <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
+                            @else
+                                <p class="text-xs mt-1 countdown-badge {{ $isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant' }}"
+                                   data-countdown-deadline="{{ $o->tgl_berakhir_produksi->timestamp }}"
+                                   data-countdown-progress="{{ $progressPct }}">Memuat...</p>
+                            @endif
+                        </div>
+                    @endif
+                    <div class="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-muted-border">
+                        <button type="button" onclick="openDetailProduksi('{{ $o->order_id }}')" title="Detail produksi" class="inline-flex items-center justify-center px-2.5 py-2 border border-muted-border text-on-surface-variant rounded hover:border-gold-accent hover:text-gold-accent transition-colors">
+                            <span class="material-symbols-outlined text-[16px]">timeline</span>
+                        </button>
+                        @if ($isDiproses)
+                            @if (! $accepted)
+                                <form method="POST" action="{{ route('produksi.data-produksi.accept', $o) }}" class="inline">
+                                    @csrf
+                                    <button type="submit" class="px-2.5 py-2 bg-secondary text-on-secondary text-[10px] font-bold uppercase rounded hover:opacity-90 transition-opacity">Accept</button>
+                                </form>
+                                <button type="button" onclick="document.getElementById('modal-tolak-{{ $o->order_id }}').classList.remove('hidden')" class="px-2.5 py-2 bg-error/10 border border-error/20 text-error text-[10px] font-bold uppercase rounded hover:bg-error/20 transition-colors">Tolak</button>
+                            @else
+                                <button type="button" onclick="openModalBahan('{{ $o->order_id }}')" class="px-2.5 py-2 border border-gold-accent/40 text-gold-accent text-[10px] font-bold uppercase rounded hover:bg-gold-accent/10 transition-colors">+ Bahan</button>
+                                <button type="button" onclick="openModalSelesai('{{ $o->order_id }}')" class="px-2.5 py-2 bg-deep-onyx text-on-primary text-[10px] font-bold uppercase rounded hover:opacity-90 transition-opacity">Selesai</button>
+                            @endif
+                        @else
+                            <span class="text-on-surface-variant text-xs">Menunggu Admin proses</span>
+                        @endif
+                    </div>
+                </article>
+            @empty
+                <p class="py-12 text-center text-on-surface-variant">Tidak ada pesanan dalam produksi.</p>
+            @endforelse
+        </div>
             {{ $orders->withQueryString()->links() }}
         </section>
     </div>
@@ -361,11 +449,11 @@
                     <span class="material-symbols-outlined text-[18px]">delete</span>
                 </button>
             </div>
-            <div class="grid grid-cols-[1fr_110px] gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-[1fr_110px] gap-3">
                 <input type="text" name="bahan[${idx}][nama_bahan]" required class="raliva-input w-full" placeholder="Nama bahan" />
                 <input type="number" name="bahan[${idx}][jumlah]" required min="0.01" step="0.01" class="raliva-input w-full py-2 text-center" placeholder="Jumlah" />
             </div>
-            <div class="grid grid-cols-[110px_1fr] gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-[110px_1fr] gap-3">
                 <select name="bahan[${idx}][satuan]" required class="raliva-select w-full">
                     <option value="">— Satuan —</option>
                     @foreach (\App\Models\ProductionOrderBahan::SATUAN as $st)

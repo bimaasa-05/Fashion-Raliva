@@ -9,7 +9,7 @@
 @section('content')
 <div data-skeleton class="space-y-section-gap">
     <div class="h-[110px] bg-surface-container-high rounded-lg animate-pulse"></div>
-    <div class="grid grid-cols-2 xl:grid-cols-3 gap-gutter">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-gutter">
         @for ($i = 0; $i < 6; $i++)
             <div class="h-28 bg-surface-container-high rounded-lg animate-pulse"></div>
         @endfor
@@ -52,7 +52,7 @@
     {{-- Ringkasan Produksi --}}
     <section>
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Produksi</h2>
-        <div data-reveal-group class="grid grid-cols-2 xl:grid-cols-3 gap-gutter">
+        <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-gutter">
             <a href="{{ route('produksi.data-produksi') }}" class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hover:border-gold-accent transition-colors" data-reveal>
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Diproses</span>
                 <span class="raliva-figure text-[26px] text-gold-accent">{{ $stats['diproses'] }}</span>

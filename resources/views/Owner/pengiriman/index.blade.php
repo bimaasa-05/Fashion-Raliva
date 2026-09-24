@@ -115,6 +115,7 @@
                 </select>
             </div>
         </div>
+        <div class="hidden md:block">
         <div data-table-wrap class="overflow-x-auto">
             <table class="premium-table w-full min-w-[880px] font-body-md text-sm">
                 <thead>
@@ -158,6 +159,31 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        </div>
+        <div class="md:hidden space-y-3">
+            @forelse ($shipments as $ship)
+                @php
+                    $key = $ship->status === 'selesai' ? 'sampai' : 'jalan';
+                    $tgl = $ship->updated_at->translatedFormat('d M Y');
+                @endphp
+                <article data-table-row data-status-kirim="{{ $key }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                            <p class="font-bold text-on-surface">#{{ $ship->order_id }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $tgl }}</p>
+                        </div>
+                        @if ($key === 'sampai')
+                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20 shrink-0"><span class="material-symbols-outlined fill text-[12px]">check_circle</span>Terkirim</span>
+                        @else
+                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-sky-500/10 text-sky-600 text-[10px] font-bold uppercase border border-sky-500/30 shrink-0"><span class="material-symbols-outlined fill text-[12px]">local_shipping</span>Jalan</span>
+                        @endif
+                    </div>
+                    <button type="button" data-modal-open="modal-kirim-{{ $ship->order_id }}" class="mt-3 w-full py-2 rounded-lg border border-muted-border text-xs font-semibold text-gold-accent hover:border-gold-accent transition-colors">Lacak</button>
+                </article>
+            @empty
+                <p class="py-8 text-center text-on-surface-variant text-sm">Tidak ada pengiriman aktif.</p>
+            @endforelse
         </div>
         <div data-empty-state class="hidden flex-col items-center py-12 text-center gap-3">
             <span class="material-symbols-outlined text-[40px] text-on-surface-variant">inbox</span>

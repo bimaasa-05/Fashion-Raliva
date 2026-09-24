@@ -71,7 +71,7 @@
                     ][$activeTab] ?? ['label' => ucfirst($activeTab), 'icon' => 'info', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'];
                 @endphp
                 <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-id="{{ $pembayaran->payment_id }}">
-                    <div class="flex items-start justify-between mb-4">
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
                         <div>
                             <p class="font-mono text-sm text-on-surface-variant">#CKT-{{ str_pad((string) $pembayaran->checkout_id, 4, '0', STR_PAD_LEFT) }} &#8226; {{ $pembayaran->checkout?->user?->nama_lengkap ?? '-' }}</p>
                             <p class="text-xs text-on-surface-variant mt-0.5">{{ $orderUtama?->store?->nama_toko ?? '-' }}</p>

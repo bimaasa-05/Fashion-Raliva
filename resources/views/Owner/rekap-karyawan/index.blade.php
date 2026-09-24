@@ -76,6 +76,7 @@
             </div>
         </div>
 
+        <div class="hidden md:block">
         <div data-table-wrap class="overflow-x-auto">
             <table class="premium-table w-full min-w-[960px] font-body-md text-sm">
                 <thead>
@@ -137,6 +138,51 @@
                     </tr>
                 </tfoot>
             </table>
+        </div>
+        </div>
+        <div class="md:hidden space-y-3">
+            <div class="bg-gold-accent/5 border border-gold-accent/40 rounded-xl p-4">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Total Semua Karyawan</p>
+                <div class="grid grid-cols-2 gap-2 text-sm">
+                    <div><p class="text-[11px] text-on-surface-variant">Pesanan</p><p class="font-bold text-on-surface">{{ number_format($totals['pesanan'],0,',','.') }}</p></div>
+                    <div class="text-right"><p class="text-[11px] text-on-surface-variant">Bersih</p><p class="font-bold {{ $totals['bersih'] >= 0 ? 'text-secondary' : 'text-error' }}">Rp {{ number_format($totals['bersih'],0,',','.') }}</p></div>
+                    <div><p class="text-[11px] text-on-surface-variant">Pendapatan</p><p class="font-bold text-secondary">Rp {{ number_format($totals['pendapatan'],0,',','.') }}</p></div>
+                    <div class="text-right"><p class="text-[11px] text-on-surface-variant">Pengeluaran</p><p class="font-bold text-error">Rp {{ number_format($totals['pengeluaran'],0,',','.') }}</p></div>
+                </div>
+            </div>
+            @forelse ($rows as $r)
+                @php
+                    $nm = $r['nama'];
+                    $initial = collect(explode(' ', $nm))->map(fn($w)=>mb_substr($w,0,1))->slice(0,2)->implode('');
+                    $rlabel = ucfirst($r['role']);
+                @endphp
+                <article data-table-row data-role="{{ $r['role'] }}" data-status="{{ $r['status'] }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0 font-title-md text-xs text-on-surface">{{ $initial }}</div>
+                        <div class="flex-grow min-w-0">
+                            <p class="font-bold text-on-surface truncate">{{ $nm }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5 truncate">{{ $r['email'] }}</p>
+                        </div>
+                        @if ($r['status'] === 'aktif')
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20 shrink-0">Aktif</span>
+                        @else
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20 shrink-0">Nonaktif</span>
+                        @endif
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-3 text-sm border-t border-muted-border pt-3">
+                        <div><p class="text-[11px] text-on-surface-variant">Role</p><p class="font-semibold text-on-surface capitalize">{{ $rlabel }}</p></div>
+                        <div class="text-right"><p class="text-[11px] text-on-surface-variant">Pesanan</p><p class="font-semibold text-on-surface">{{ number_format($r['pesanan'],0,',','.') }}</p></div>
+                        <div><p class="text-[11px] text-on-surface-variant">Pendapatan</p><p class="font-semibold text-secondary">Rp {{ number_format($r['pendapatan'],0,',','.') }}</p></div>
+                        <div class="text-right"><p class="text-[11px] text-on-surface-variant">Pengeluaran</p><p class="font-semibold text-error">Rp {{ number_format($r['pengeluaran'],0,',','.') }}</p></div>
+                    </div>
+                    <div class="flex items-center justify-between mt-2 pt-2 border-t border-muted-border">
+                        <p class="text-[11px] text-on-surface-variant">Bersih</p>
+                        <p class="font-bold {{ $r['bersih'] >= 0 ? 'text-secondary' : 'text-error' }}">Rp {{ number_format($r['bersih'],0,',','.') }}</p>
+                    </div>
+                </article>
+            @empty
+                <p class="py-6 text-center text-on-surface-variant">Belum ada karyawan yang ditugaskan.</p>
+            @endforelse
         </div>
 
         <div data-empty-state class="hidden flex-col items-center py-12 text-center gap-3">

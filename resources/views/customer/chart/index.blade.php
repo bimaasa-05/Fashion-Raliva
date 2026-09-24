@@ -273,7 +273,7 @@
 <div id="cart-empty" class="{{ $items->count() ? 'hidden' : '' }} flex flex-col items-center justify-center text-center gap-md py-2xl px-container-margin min-h-[calc(100dvh-4rem)]">
 <span class="material-symbols-outlined text-[72px] text-on-surface-variant/40" data-icon="shopping_bag">shopping_bag</span>
 <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('Keranjang kamu masih kosong.') }}</p>
-<a href="{{ route('customer.shop') }}" class="btn-gold mt-sm font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest transition-colors">{{ __('START SHOPPING') }}</a>
+<a href="{{ route('customer.shop') }}" class="btn-gold rounded-xl mt-sm font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest transition-colors">{{ __('START SHOPPING') }}</a>
 </div>
 
 <div id="cart-content" class="{{ $items->count() ? '' : 'hidden' }} w-full">
@@ -325,6 +325,7 @@
 </div>
 </div>
 </div>
+<div class="h-28 lg:hidden" aria-hidden="true"></div>
 </main>
 <!-- Sticky Bottom Toolbar: Order Summary + Checkout -->
 <div id="cart-footer" class="{{ $items->count() ? '' : 'hidden' }} fixed bottom-0 inset-x-0 lg:left-72 z-50 px-container-margin py-sm pb-safe">

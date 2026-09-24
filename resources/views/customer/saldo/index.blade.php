@@ -117,6 +117,9 @@
         html.theme-dark .scroll-x-visible { scrollbar-color: rgba(139, 30, 63, .6) transparent !important; }
         html.theme-dark .scroll-x-visible::-webkit-scrollbar-thumb { background: rgba(139, 30, 63, .6) !important; }
         @media (prefers-reduced-motion: reduce) { [data-bars] .raliva-bar { transition: none; } }
+        /* Saldo: pagination bawaan Laravel ikut mulus + wrap di mobile */
+        nav[aria-label="Pagination Navigation"] [class*="rounded"] { border-radius: 0.75rem !important; }
+        nav[aria-label="Pagination Navigation"] { flex-wrap: wrap; row-gap: .5rem; }
     </style>
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] lg:pl-72">
@@ -142,7 +145,7 @@
             <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-lg items-center">
                     <div class="min-w-0">
-                        <div class="flex items-center justify-between gap-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-sm">
                             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)]">{{ __('SALDO TERSEDIA') }}</p>
                             <a href="{{ route('customer.saldo.isi') }}"
                                 class="btn-gold inline-flex items-center justify-center gap-1 px-md py-2.5 rounded-full font-label-caps text-label-caps uppercase tracking-widest whitespace-nowrap">
@@ -150,7 +153,7 @@
                                 <span>{{ __('Isi Saldo') }}</span>
                             </a>
                         </div>
-                        <div class="flex items-center gap-sm mt-sm">
+                        <div class="flex flex-wrap items-center gap-sm mt-sm">
                             <a href="{{ route('customer.saldo.tarik') }}"
                                 class="inline-flex items-center justify-center gap-1 px-md py-2.5 rounded-full font-label-caps text-label-caps uppercase tracking-widest whitespace-nowrap border border-secondary text-secondary hover:bg-secondary/5 transition-colors">
                                 <span class="material-symbols-outlined text-[16px]">payments</span>
@@ -353,7 +356,7 @@
                             <tbody class="font-body-sm text-body-sm">
                                 @foreach ($transactions as $trx)
                                     <tr class="border-b border-outline-variant/60" data-jenis="{{ $trx->jenis_transaksi }}">
-                                        <td class="py-3 pr-md text-on-surface-variant">{{ $trx->created_at->format('d M Y, H:i') }}</td>
+                                        <td class="py-3 pr-md text-on-surface-variant whitespace-nowrap">{{ $trx->created_at->format('d M Y, H:i') }}</td>
                                         <td class="py-3 pr-md">
                                             <span class="inline-flex items-center gap-1">
                                                 <span class="material-symbols-outlined text-[16px] text-on-surface-variant">
@@ -362,12 +365,12 @@
                                                 <span>{{ $trx->jenis_transaksi }}</span>
                                             </span>
                                         </td>
-                                        <td class="py-3 pr-md font-semibold
+                                        <td class="py-3 pr-md font-semibold tabular-nums whitespace-nowrap
                                             @if (in_array($trx->jenis_transaksi, [\App\Models\CustomerWalletTransaction::JENIS_TOPUP, \App\Models\CustomerWalletTransaction::JENIS_REFUND_MASUK], true)) text-emerald-700 @else text-red-700 @endif">
                                             @if (in_array($trx->jenis_transaksi, [\App\Models\CustomerWalletTransaction::JENIS_TOPUP, \App\Models\CustomerWalletTransaction::JENIS_REFUND_MASUK], true)) + @else - @endif
                                             Rp {{ number_format((float) $trx->jumlah, 0, ',', '.') }}
                                         </td>
-                                        <td class="py-3 text-on-surface">Rp {{ number_format((float) $trx->saldo_sesudah, 0, ',', '.') }}</td>
+                                        <td class="py-3 text-on-surface tabular-nums whitespace-nowrap">Rp {{ number_format((float) $trx->saldo_sesudah, 0, ',', '.') }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -403,7 +406,7 @@
                             {{ __('Nominal tidak akan diproses.') }}</p>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-sm">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
                     <button type="button" data-batal-close
                         class="h-12 w-full inline-flex items-center justify-center gap-2 px-sm rounded-full font-label-caps text-label-caps uppercase tracking-widest border border-outline text-on-surface hover:bg-surface-container-high transition-colors">
                         <span class="material-symbols-outlined text-[18px]">close</span>

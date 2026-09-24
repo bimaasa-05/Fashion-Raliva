@@ -271,7 +271,7 @@
 <div class="flex flex-col items-center md:items-start justify-center flex-grow text-center md:text-left">
 <h3 class="font-title-md text-title-md text-on-surface mb-1">{{ __('Welcome') }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mb-md max-w-xs">{{ __('Register to track your orders and save your wishlist.') }}</p>
-<a class="btn-gold w-full md:w-auto h-14 px-xl font-label-caps text-label-caps uppercase tracking-widest inline-flex items-center justify-center" href="{{ route('register') }}">
+<a class="btn-gold rounded-xl w-full md:w-auto h-14 px-xl font-label-caps text-label-caps uppercase tracking-widest inline-flex items-center justify-center" href="{{ route('register') }}">
 <span>{{ __('Register Now') }}</span>
 </a>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-md">

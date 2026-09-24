@@ -192,7 +192,7 @@
                 @elseif($isRejected)
                     {{ __('Pembayaran belum berhasil') }}
                 @else
-                    {{ __('Top Up Berhasil!') }}
+                    {{ __('Sedang diverifikasi…') }}
                 @endif
             </h2>
             <p id="pay-desc" class="font-body-sm text-body-sm text-on-surface-variant mt-sm max-w-xl mx-auto">
@@ -201,7 +201,7 @@
                 @elseif($isRejected)
                     {{ __('Pembayaranmu ditolak atau melewati batas waktu. Silakan lakukan pembayaran ulang.') }}
                 @else
-                    {{ __('Terima kasih. Top up saldo telah kami terima dan bukti pembayaran sedang diverifikasi admin.') }}
+                    {{ __('Tunggu sebentar, top up saldo Anda sedang diverifikasi.') }}
                 @endif
             </p>
             @if($isRejected)

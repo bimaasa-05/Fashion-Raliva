@@ -11,7 +11,7 @@
 
 <div class="space-y-section-gap">
     {{-- Stats --}}
-    <section class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu QC</span>
             <span class="raliva-figure text-[26px] text-gold-accent">{{ $stats['menunggu_qc'] ?? 0 }}</span>

@@ -390,7 +390,7 @@ $selectedIcon = $labelIcons[$selectedLabel] ?? 'location_on';
 <p class="text-error text-label-sm mt-xs">{{ $message }}</p>
 @enderror
 </div>
-<div class="grid grid-cols-2 gap-sm">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
 <div>
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('City') }}</label>
 <input type="text" name="kota" id="address_kota" required maxlength="100" value="{{ old('kota', $address->kota) }}" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none" placeholder="{{ __('Jakarta') }}"/>
@@ -406,7 +406,7 @@ $selectedIcon = $labelIcons[$selectedLabel] ?? 'location_on';
 @enderror
 </div>
 </div>
-<div class="grid grid-cols-2 gap-sm">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
 <div>
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('Postal Code') }}</label>
 <input type="text" name="kode_pos" id="address_kode_pos" maxlength="20" value="{{ old('kode_pos', $address->kode_pos) }}" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none" placeholder="12345"/>

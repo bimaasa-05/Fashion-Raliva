@@ -21,7 +21,7 @@
                     "surface-variant": "rgb(var(--c-sc-highest) / <alpha-value>)",
                     "tertiary-fixed": "rgb(var(--c-sc-highest) / <alpha-value>)",
                     "secondary-container": "#fdd177",
-                    "gold-accent": "#C9A24D",
+                    "gold-accent": "#8B1E3F",
                     "on-error": "rgb(var(--c-on-error) / <alpha-value>)",
                     "background": "rgb(var(--c-background) / <alpha-value>)",
                     "on-tertiary-container": "rgb(var(--c-on-muted) / <alpha-value>)",

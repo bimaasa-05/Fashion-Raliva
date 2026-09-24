@@ -430,7 +430,7 @@
 <div class="flex flex-wrap justify-between items-end gap-sm">
 <div>
 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-1">{{ __('Order ID') }}</p>
-<p class="font-title-md text-title-md md:text-headline-md font-semibold text-on-surface tracking-tight">#{{ $selected->nomor_order }}</p>
+<p class="font-title-md text-title-md md:text-headline-md font-semibold text-on-surface tracking-tight break-all">#{{ $selected->nomor_order }}</p>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">{{ $selected->created_at->format('M j, Y') }} • {{ $itemsCount }} {{ __('items') }}</p>
 </div>
 <div class="text-left md:text-right">
@@ -444,9 +444,9 @@
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ $estDeliv ? __('Est. delivery:').' '.$estDeliv->format('M j, Y') : __('Menunggu konfirmasi pengiriman') }}</p>
 @endif
 @if($shipment && $shipment->nomor_resi)
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ __('Resi') }}: <strong class="text-on-surface">{{ $shipment->nomor_resi }}</strong> @if($shipment->courier) • {{ $shipment->courier->nama_kurir }}@endif @if($shipment->shippingService) • {{ $shipment->shippingService->nama_layanan }}@endif</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right break-all">{{ __('Resi') }}: <strong class="text-on-surface">{{ $shipment->nomor_resi }}</strong> @if($shipment->courier) • {{ $shipment->courier->nama_kurir }}@endif @if($shipment->shippingService) • {{ $shipment->shippingService->nama_layanan }}@endif</p>
 @elseif($shipment)
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ __('Ekspedisi') }}: {{ $shipment->courier?->nama_kurir ?? '-' }} @if($shipment->shippingService) • {{ $shipment->shippingService->nama_layanan }}@endif • {{ __('Status pengiriman') }}: {{ $shipment->status }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right break-all">{{ __('Ekspedisi') }}: {{ $shipment->courier?->nama_kurir ?? '-' }} @if($shipment->shippingService) • {{ $shipment->shippingService->nama_layanan }}@endif • {{ __('Status pengiriman') }}: {{ $shipment->status }}</p>
 @endif
 </div>
 </div>
@@ -614,7 +614,7 @@ $buktiTokoNama = $latestRefund->file_bukti ? \Illuminate\Support\Str::afterLast(
 <div class="relative max-w-[480px] mx-auto">
 <div class="timeline-line"></div>
 <div class="timeline-progress" style="width: calc({{ $progressWidth }}% - {{ $progressWidth * 0.32 }}px);"></div>
-<div class="flex justify-between gap-2 relative z-10">
+<div class="flex justify-between gap-1 sm:gap-2 relative z-10">
 @foreach (($timeline ?? [1 => [__('Disiapkan'), 'Produksi'], 2 => [__('Dikemas'), 'Produksi'], 3 => [__('Dikirim'), 'Admin'], 4 => [__('Diterima'), 'Customer']]) as $idx => $tl)
 @php
 if (is_array($tl) && array_key_exists('done', $tl)) {
