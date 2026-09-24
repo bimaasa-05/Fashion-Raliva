@@ -357,9 +357,9 @@
 <div class="flex items-center justify-between gap-sm mb-xs">
 <p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Raliva Account') }}</p>
 <!-- Account Type -->
-<div id="role-switch" class="flex shrink-0 items-center gap-1 rounded-full border-2 border-secondary p-1 frame-gold" data-initial-role="{{ old('role', 'owner') }}">
-    <button type="button" id="pill-customer" data-role="customer" class="role-pill cursor-pointer rounded-full px-3 py-1 font-label-caps text-label-caps uppercase tracking-wider text-on-surface transition-all{{ old('role', 'owner') === 'customer' ? ' active' : '' }}">Pelanggan</button>
-    <button type="button" id="pill-owner" data-role="owner" class="role-pill cursor-pointer rounded-full px-3 py-1 font-label-caps text-label-caps uppercase tracking-wider text-on-surface transition-all{{ old('role', 'owner') === 'owner' ? ' active' : '' }}">Pemilik Brand</button>
+<div id="role-switch" class="flex shrink-0 items-center gap-0.5 rounded-full border border-secondary p-0.5 frame-gold" data-initial-role="{{ old('role', 'owner') }}">
+    <button type="button" id="pill-customer" data-role="customer" class="role-pill cursor-pointer rounded-full px-2.5 py-0.5 font-label-caps text-[10px] uppercase tracking-wider text-on-surface transition-all{{ old('role', 'owner') === 'customer' ? ' active' : '' }}">Pelanggan</button>
+    <button type="button" id="pill-owner" data-role="owner" class="role-pill cursor-pointer rounded-full px-2.5 py-0.5 font-label-caps text-[10px] uppercase tracking-wider text-on-surface transition-all{{ old('role', 'owner') === 'owner' ? ' active' : '' }}">Pemilik Brand</button>
 </div>
 </div>
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Create Your Account') }}</h2>
