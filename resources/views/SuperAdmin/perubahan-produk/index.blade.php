@@ -93,8 +93,46 @@
                                     @endphp
                                     <tr class="border-t border-muted-border {{ $resepBerubah ? 'bg-gold-accent/5' : '' }}">
                                         <td class="px-4 py-2 font-semibold text-on-surface">{{ $resepSesudah['nama_bahan'] ?? $resepSebelum['nama_bahan'] }} • {{ $resepSesudah['satuan'] ?? $resepSebelum['satuan'] }}</td>
-                                        <td class="px-4 py-2 text-on-surface-variant">{{ $resepSebelum ? number_format($resepSebelum['jumlah_per_unit'], 3, ',', '.').' × Rp '.number_format($resepSebelum['biaya_per_unit'], 2, ',', '.') : 'Tidak ada' }}</td>
-                                        <td class="px-4 py-2 text-on-surface">{{ $resepSesudah ? number_format($resepSesudah['jumlah_per_unit'], 3, ',', '.').' × Rp '.number_format($resepSesudah['biaya_per_unit'], 2, ',', '.') : 'Tidak ada' }}</td>
+                                        <td class="px-4 py-2 text-on-surface-variant">{{ $resepSebelum ? number_format($resepSebelum['jumlah_per_unit'], 3, ',', '.').' × Rp '.number_format($resepSebelum['biaya_per_unit'], 0, ',', '.') : 'Tidak ada' }}</td>
+                                        <td class="px-4 py-2 text-on-surface">{{ $resepSesudah ? number_format($resepSesudah['jumlah_per_unit'], 3, ',', '.').' × Rp '.number_format($resepSesudah['biaya_per_unit'], 0, ',', '.') : 'Tidak ada' }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
+                </div>
+            </details>
+
+            <details class="mt-4 border border-muted-border rounded-lg bg-surface-container-low">
+                <summary class="cursor-pointer px-4 py-3 text-xs font-bold uppercase tracking-widest text-on-surface">Perbandingan biaya operasional</summary>
+                <div class="overflow-x-auto border-t border-muted-border">
+                    @php
+                        $opLama = collect($diff['recipes']['before']['operasional'] ?? [])->mapWithKeys(fn ($row) => [trim($row['nama_biaya'] ?? '') => $row]);
+                        $opBaru = collect($diff['recipes']['after']['operasional'] ?? [])->mapWithKeys(fn ($row) => [trim($row['nama_biaya'] ?? '') => $row]);
+                        $opKeys = $opLama->keys()->merge($opBaru->keys())->unique()->values();
+                    @endphp
+                    @if ($opKeys->isEmpty())
+                        <p class="px-4 py-3 text-xs text-on-surface-variant">Tidak ada biaya operasional.</p>
+                    @else
+                        <table class="w-full min-w-[720px] text-sm">
+                            <thead>
+                                <tr class="text-left text-[10px] uppercase tracking-widest text-on-surface-variant">
+                                    <th class="px-4 py-2">Biaya</th>
+                                    <th class="px-4 py-2">Sebelum</th>
+                                    <th class="px-4 py-2">Sesudah</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($opKeys as $opKey)
+                                    @php
+                                        $opSebelum = $opLama[$opKey] ?? null;
+                                        $opSesudah = $opBaru[$opKey] ?? null;
+                                        $opBerubah = json_encode($opSebelum) !== json_encode($opSesudah);
+                                    @endphp
+                                    <tr class="border-t border-muted-border {{ $opBerubah ? 'bg-gold-accent/5' : '' }}">
+                                        <td class="px-4 py-2 font-semibold text-on-surface">{{ $opKey }}</td>
+                                        <td class="px-4 py-2 text-on-surface-variant">{{ $opSebelum ? 'Rp '.number_format($opSebelum['nominal'], 0, ',', '.') : 'Tidak ada' }}</td>
+                                        <td class="px-4 py-2 text-on-surface">{{ $opSesudah ? 'Rp '.number_format($opSesudah['nominal'], 0, ',', '.') : 'Tidak ada' }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
