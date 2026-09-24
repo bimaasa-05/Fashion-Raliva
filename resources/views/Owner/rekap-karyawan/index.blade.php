@@ -29,14 +29,24 @@
     <section data-reveal class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
         <span class="material-symbols-outlined text-gold-accent mt-0.5">info</span>
         <div class="text-sm text-on-surface">
-            <p class="font-bold">Pendapatan karyawan dihitung dari order yang pembayarannya diverifikasi karyawan tersebut.</p>
-            <p class="text-on-surface-variant text-xs mt-1">Pengeluaran = refund yang diselesaikan karyawan (hanya refund berstatus selesai) + pengeluaran toko yang dicatatnya. Pengeluaran toko lama tanpa nama pencatat tidak termasuk hitungan per karyawan.</p>
+            <p class="font-bold">Tabel berubah mengikuti filter role: Admin (CR/AOV/rating), Produksi (unit/durasi/keberhasilan), Gudang (transfer/stok).</p>
+            <p class="text-on-surface-variant text-xs mt-1">Closing Rate = pembayaran sukses yang ditangani / seluruh pembayaran yang ditangani. Rating Admin adalah proxy dari ulasan pada order yang pembayarannya diverifikasi karyawan tersebut. ROI = laba bersih / total investasi (kategori Modal, Investor, dan biaya iklan).</p>
         </div>
     </section>
 
     {{-- Ringkasan --}}
+    @php
+        $roiLbl = $ringkasan && $ringkasan['roi'] !== null ? number_format($ringkasan['roi'], 2, ',', '.').'%' : '—';
+        $ltvLbl = $ringkasan ? 'Rp '.number_format($ringkasan['ltv'] ?? 0, 0, ',', '.') : 'Rp 0';
+        $kartuKeempat = match ($roleFilter) {
+            'admin' => ['Rata-rata CR', ($totals['cr'] ?? null) !== null ? number_format($totals['cr'], 2, ',', '.').'%' : '—', 'secondary', 'percent'],
+            'produksi' => ['Keberhasilan', ($totals['sukses_persen'] ?? null) !== null ? number_format($totals['sukses_persen'], 2, ',', '.').'%' : '—', 'secondary', 'precision_manufacturing'],
+            'gudang' => ['Akurasi Opname', ($totals['akurasi_persen'] ?? null) !== null ? number_format($totals['akurasi_persen'], 2, ',', '.').'%' : '—', 'secondary', 'inventory'],
+            default => ['Total Bersih', 'Rp '.number_format($totals['bersih'] ?? 0,0,',','.'), (($totals['bersih'] ?? 0) >= 0 ? 'secondary' : 'error'), 'account_balance_wallet'],
+        };
+    @endphp
     <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
-        @foreach ([['Total Karyawan', count($rows) + 0, 'on-surface', 'groups'], ['Total Pendapatan', 'Rp '.number_format($totals['pendapatan'],0,',','.'), 'secondary', 'payments'], ['Total Pengeluaran', 'Rp '.number_format($totals['pengeluaran'],0,',','.'), 'error', 'receipt_long'], ['Total Bersih', 'Rp '.number_format($totals['bersih'],0,',','.'), ($totals['bersih'] >= 0 ? 'secondary' : 'error'), 'account_balance_wallet']] as $stat)
+        @foreach ([['Total Karyawan', count($rows) + 0, 'on-surface', 'groups'], ['ROI Toko', $roiLbl, 'secondary', 'trending_up'], ['LTV Pelanggan', $ltvLbl, 'secondary', 'loyalty'], $kartuKeempat] as $stat)
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ $stat[0] }}</span>
                 <span class="raliva-figure text-[26px] text-{{ $stat[2] }}">{{ $stat[1] }}</span>
@@ -54,27 +64,40 @@
             </div>
             <div class="flex items-center gap-2 flex-wrap">
                 <select data-role-filter class="raliva-select">
-                    <option value="semua" @selected($roleFilter === 'semua')>Semua Role</option>
                     <option value="admin" @selected($roleFilter === 'admin')>Admin Toko</option>
                     <option value="produksi" @selected($roleFilter === 'produksi')>Produksi</option>
                     <option value="gudang" @selected($roleFilter === 'gudang')>Gudang</option>
                 </select>
-                @php $rkNoStore = ! \App\Support\OwnerContext::currentStore(); @endphp
-                <a href="{{ route('owner.rekap-karyawan.export-excel', ['role' => $roleFilter]) }}" @if($rkNoStore) aria-disabled="true" tabindex="-1" title="Ajukan toko dulu" @endif class="flex items-center justify-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors shrink-0 {{ $rkNoStore ? 'opacity-60 pointer-events-none' : '' }}">
+                @php
+                    $rkNoStore = ! \App\Support\OwnerContext::currentStore();
+                    $rkParams = array_filter(['role' => $roleFilter, 'dari' => $dari ?? null, 'sampai' => $sampai ?? null]);
+                @endphp
+                <a href="{{ route('owner.rekap-karyawan.export-excel', $rkParams) }}" @if($rkNoStore) aria-disabled="true" tabindex="-1" title="Ajukan toko dulu" @endif class="flex items-center justify-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors shrink-0 {{ $rkNoStore ? 'opacity-60 pointer-events-none' : '' }}">
                     <span class="material-symbols-outlined text-[16px]">{{ $rkNoStore ? 'lock' : 'download' }}</span>Excell
                 </a>
-                <a href="{{ route('owner.rekap-karyawan.export-pdf', ['role' => $roleFilter]) }}" @if($rkNoStore) aria-disabled="true" tabindex="-1" title="Ajukan toko dulu" @endif class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium shrink-0 {{ $rkNoStore ? 'opacity-60 pointer-events-none' : '' }}">
+                <a href="{{ route('owner.rekap-karyawan.export-pdf', $rkParams) }}" @if($rkNoStore) aria-disabled="true" tabindex="-1" title="Ajukan toko dulu" @endif class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium shrink-0 {{ $rkNoStore ? 'opacity-60 pointer-events-none' : '' }}">
                     <span class="material-symbols-outlined text-[16px]">{{ $rkNoStore ? 'lock' : 'picture_as_pdf' }}</span>PDF
                 </a>
             </div>
         </div>
 
-        <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
+        <form method="GET" action="{{ route('owner.rekap-karyawan') }}" class="flex flex-col lg:flex-row lg:items-end gap-3 mb-6">
+            <input type="hidden" name="role" value="{{ $roleFilter }}" />
             <div class="relative flex-1 min-w-[220px]">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                 <input type="text" placeholder="Cari nama atau email..." data-table-search class="raliva-search" />
             </div>
-        </div>
+            <label class="flex flex-col gap-1 text-xs text-on-surface-variant">Dari
+                <input type="date" name="dari" value="{{ $dari ?? '' }}" class="raliva-input py-2" />
+            </label>
+            <label class="flex flex-col gap-1 text-xs text-on-surface-variant">Sampai
+                <input type="date" name="sampai" value="{{ $sampai ?? '' }}" class="raliva-input py-2" />
+            </label>
+            <button type="submit" class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors shrink-0">Terapkan</button>
+            @if(!empty($dari) || !empty($sampai))
+                <a href="{{ route('owner.rekap-karyawan', ['role' => $roleFilter]) }}" class="px-5 py-2.5 text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-colors shrink-0">Reset</a>
+            @endif
+        </form>
 
         <div class="hidden md:block">
         <div data-table-wrap class="overflow-x-auto">
@@ -84,10 +107,22 @@
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Karyawan</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Role</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Pesanan</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Pendapatan</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Pengeluaran</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Bersih</th>
+                        @if ($roleFilter === 'admin')
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">CR</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">AOV</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Rating</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Pesanan</th>
+                        @elseif ($roleFilter === 'produksi')
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Ditugaskan</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Rata2 Unit</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Rata2 Durasi</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Berhasil</th>
+                        @else
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Transfer</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Rata2 Putaran</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Akurasi</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Rusak</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -117,39 +152,64 @@
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Nonaktif</span>
                                 @endif
                             </td>
-                            <td class="py-3.5 px-4 text-right text-on-surface">{{ number_format($r['pesanan'],0,',','.') }}</td>
-                            <td class="py-3.5 px-4 text-right text-secondary">Rp {{ number_format($r['pendapatan'],0,',','.') }}</td>
-                            <td class="py-3.5 px-4 text-right text-error">Rp {{ number_format($r['pengeluaran'],0,',','.') }}</td>
-                            <td class="py-3.5 px-4 text-right font-bold {{ $r['bersih'] >= 0 ? 'text-secondary' : 'text-error' }}">Rp {{ number_format($r['bersih'],0,',','.') }}</td>
+                            @if ($roleFilter === 'admin')
+                                <td class="py-3.5 px-4 text-right text-on-surface">{{ $r['cr'] !== null ? number_format($r['cr'], 2, ',', '.').'%' : '—' }}</td>
+                                <td class="py-3.5 px-4 text-right text-secondary">{{ $r['aov'] !== null ? 'Rp '.number_format($r['aov'], 0, ',', '.') : '—' }}</td>
+                                <td class="py-3.5 px-4 text-right text-on-surface">{{ $r['rating'] !== null ? number_format($r['rating'], 1).' ★ ('.$r['rating_count'].')' : '—' }}</td>
+                                <td class="py-3.5 px-4 text-right text-on-surface">{{ number_format($r['pesanan'],0,',','.') }}</td>
+                            @elseif ($roleFilter === 'produksi')
+                                <td class="py-3.5 px-4 text-right text-on-surface">{{ number_format($r['ditugaskan'],0,',','.') }}</td>
+                                <td class="py-3.5 px-4 text-right text-on-surface">{{ $r['rata_unit_diminta'] !== null ? number_format($r['rata_unit_diminta'], 1, ',', '.') : '—' }}</td>
+                                <td class="py-3.5 px-4 text-right text-on-surface">{{ $r['rata_durasi_jam'] !== null ? number_format($r['rata_durasi_jam'], 1, ',', '.').' jam' : '—' }}</td>
+                                <td class="py-3.5 px-4 text-right font-bold text-secondary">{{ $r['sukses_persen'] !== null ? number_format($r['sukses_persen'], 2, ',', '.').'%' : '—' }}</td>
+                            @else
+                                <td class="py-3.5 px-4 text-right text-on-surface">{{ number_format($r['transfer_diminta'],0,',','.') }} <span class="text-on-surface-variant text-xs">({{ $r['transfer_selesai'] }} ok / {{ $r['transfer_batal'] }} btl)</span></td>
+                                <td class="py-3.5 px-4 text-right text-on-surface">{{ $r['rata_putaran_jam'] !== null ? number_format($r['rata_putaran_jam'], 1, ',', '.').' jam' : '—' }}</td>
+                                <td class="py-3.5 px-4 text-right font-bold text-secondary">{{ $r['akurasi_persen'] !== null ? number_format($r['akurasi_persen'], 2, ',', '.').'%' : '—' }}</td>
+                                <td class="py-3.5 px-4 text-right text-error">{{ number_format($r['kerusakan_qty'],0,',','.') }} <span class="text-on-surface-variant text-xs">({{ $r['kerusakan'] }}x)</span></td>
+                            @endif
                         </tr>
                     @empty
                         <tr><td colspan="7" class="py-6 text-center text-on-surface-variant">Belum ada karyawan yang ditugaskan.</td></tr>
                     @endforelse
                 </tbody>
                 <tfoot>
-                    <tr class="border-t-2 border-gold-accent/40 bg-gold-accent/5">
-                        <td class="py-3.5 px-4 font-bold text-on-surface">Total Semua Karyawan</td>
-                        <td class="py-3.5 px-4"></td>
-                        <td class="py-3.5 px-4"></td>
-                        <td class="py-3.5 px-4 text-right font-bold text-on-surface">{{ number_format($totals['pesanan'],0,',','.') }}</td>
-                        <td class="py-3.5 px-4 text-right font-bold text-secondary">Rp {{ number_format($totals['pendapatan'],0,',','.') }}</td>
-                        <td class="py-3.5 px-4 text-right font-bold text-error">Rp {{ number_format($totals['pengeluaran'],0,',','.') }}</td>
-                        <td class="py-3.5 px-4 text-right font-bold {{ $totals['bersih'] >= 0 ? 'text-secondary' : 'text-error' }}">Rp {{ number_format($totals['bersih'],0,',','.') }}</td>
-                    </tr>
+                    @if ($roleFilter === 'admin')
+                        <tr class="border-t-2 border-gold-accent/40 bg-gold-accent/5">
+                            <td class="py-3.5 px-4 font-bold text-on-surface">Total ({{ $totals['karyawan'] }} admin)</td>
+                            <td class="py-3.5 px-4"></td>
+                            <td class="py-3.5 px-4"></td>
+                            <td class="py-3.5 px-4 text-right font-bold text-on-surface">{{ $totals['cr'] !== null ? number_format($totals['cr'], 2, ',', '.').'%' : '—' }}</td>
+                            <td class="py-3.5 px-4 text-right font-bold text-secondary">{{ $totals['aov'] !== null ? 'Rp '.number_format($totals['aov'], 0, ',', '.') : '—' }}</td>
+                            <td class="py-3.5 px-4 text-right font-bold text-on-surface">{{ $totals['rating'] !== null ? number_format($totals['rating'], 1).' ★ ('.$totals['rating_count'].')' : '—' }}</td>
+                            <td class="py-3.5 px-4 text-right font-bold text-on-surface">{{ number_format($totals['pesanan'],0,',','.') }}</td>
+                        </tr>
+                    @elseif ($roleFilter === 'produksi')
+                        <tr class="border-t-2 border-gold-accent/40 bg-gold-accent/5">
+                            <td class="py-3.5 px-4 font-bold text-on-surface">Total Tim Produksi</td>
+                            <td class="py-3.5 px-4"></td>
+                            <td class="py-3.5 px-4"></td>
+                            <td class="py-3.5 px-4 text-right font-bold text-on-surface">{{ number_format($totals['ditugaskan'],0,',','.') }} <span class="text-on-surface-variant text-xs font-normal">({{ $totals['selesai'] }} selesai)</span></td>
+                            <td class="py-3.5 px-4 text-right font-bold text-on-surface">—</td>
+                            <td class="py-3.5 px-4 text-right font-bold text-on-surface">—</td>
+                            <td class="py-3.5 px-4 text-right font-bold text-secondary">{{ $totals['sukses_persen'] !== null ? number_format($totals['sukses_persen'], 2, ',', '.').'%' : '—' }}</td>
+                        </tr>
+                    @else
+                        <tr class="border-t-2 border-gold-accent/40 bg-gold-accent/5">
+                            <td class="py-3.5 px-4 font-bold text-on-surface">Total Tim Gudang</td>
+                            <td class="py-3.5 px-4"></td>
+                            <td class="py-3.5 px-4"></td>
+                            <td class="py-3.5 px-4 text-right font-bold text-on-surface">{{ number_format($totals['transfer_diminta'],0,',','.') }} <span class="text-on-surface-variant text-xs font-normal">({{ $totals['transfer_selesai'] }} selesai)</span></td>
+                            <td class="py-3.5 px-4 text-right font-bold text-on-surface">—</td>
+                            <td class="py-3.5 px-4 text-right font-bold text-secondary">{{ $totals['akurasi_persen'] !== null ? number_format($totals['akurasi_persen'], 2, ',', '.').'%' : '—' }}</td>
+                            <td class="py-3.5 px-4 text-right font-bold text-error">{{ number_format($totals['kerusakan_qty'],0,',','.') }}</td>
+                        </tr>
+                    @endif
                 </tfoot>
             </table>
         </div>
         </div>
         <div class="md:hidden space-y-3">
-            <div class="bg-gold-accent/5 border border-gold-accent/40 rounded-xl p-4">
-                <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Total Semua Karyawan</p>
-                <div class="grid grid-cols-2 gap-2 text-sm">
-                    <div><p class="text-[11px] text-on-surface-variant">Pesanan</p><p class="font-bold text-on-surface">{{ number_format($totals['pesanan'],0,',','.') }}</p></div>
-                    <div class="text-right"><p class="text-[11px] text-on-surface-variant">Bersih</p><p class="font-bold {{ $totals['bersih'] >= 0 ? 'text-secondary' : 'text-error' }}">Rp {{ number_format($totals['bersih'],0,',','.') }}</p></div>
-                    <div><p class="text-[11px] text-on-surface-variant">Pendapatan</p><p class="font-bold text-secondary">Rp {{ number_format($totals['pendapatan'],0,',','.') }}</p></div>
-                    <div class="text-right"><p class="text-[11px] text-on-surface-variant">Pengeluaran</p><p class="font-bold text-error">Rp {{ number_format($totals['pengeluaran'],0,',','.') }}</p></div>
-                </div>
-            </div>
             @forelse ($rows as $r)
                 @php
                     $nm = $r['nama'];
@@ -169,16 +229,28 @@
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20 shrink-0">Nonaktif</span>
                         @endif
                     </div>
+                    @if ($roleFilter === 'admin')
                     <div class="grid grid-cols-2 gap-2 mt-3 text-sm border-t border-muted-border pt-3">
-                        <div><p class="text-[11px] text-on-surface-variant">Role</p><p class="font-semibold text-on-surface capitalize">{{ $rlabel }}</p></div>
+                        <div><p class="text-[11px] text-on-surface-variant">Closing Rate</p><p class="font-semibold text-on-surface">{{ $r['cr'] !== null ? number_format($r['cr'], 2, ',', '.').'%' : '—' }}</p></div>
+                        <div class="text-right"><p class="text-[11px] text-on-surface-variant">AOV</p><p class="font-semibold text-secondary">{{ $r['aov'] !== null ? 'Rp '.number_format($r['aov'], 0, ',', '.') : '—' }}</p></div>
+                        <div><p class="text-[11px] text-on-surface-variant">Rating</p><p class="font-semibold text-on-surface">{{ $r['rating'] !== null ? number_format($r['rating'], 1).' ★' : '—' }}</p></div>
                         <div class="text-right"><p class="text-[11px] text-on-surface-variant">Pesanan</p><p class="font-semibold text-on-surface">{{ number_format($r['pesanan'],0,',','.') }}</p></div>
-                        <div><p class="text-[11px] text-on-surface-variant">Pendapatan</p><p class="font-semibold text-secondary">Rp {{ number_format($r['pendapatan'],0,',','.') }}</p></div>
-                        <div class="text-right"><p class="text-[11px] text-on-surface-variant">Pengeluaran</p><p class="font-semibold text-error">Rp {{ number_format($r['pengeluaran'],0,',','.') }}</p></div>
                     </div>
-                    <div class="flex items-center justify-between mt-2 pt-2 border-t border-muted-border">
-                        <p class="text-[11px] text-on-surface-variant">Bersih</p>
-                        <p class="font-bold {{ $r['bersih'] >= 0 ? 'text-secondary' : 'text-error' }}">Rp {{ number_format($r['bersih'],0,',','.') }}</p>
+                    @elseif ($roleFilter === 'produksi')
+                    <div class="grid grid-cols-2 gap-2 mt-3 text-sm border-t border-muted-border pt-3">
+                        <div><p class="text-[11px] text-on-surface-variant">Ditugaskan</p><p class="font-semibold text-on-surface">{{ number_format($r['ditugaskan'],0,',','.') }} ({{ $r['selesai'] }} selesai)</p></div>
+                        <div class="text-right"><p class="text-[11px] text-on-surface-variant">Keberhasilan</p><p class="font-semibold text-secondary">{{ $r['sukses_persen'] !== null ? number_format($r['sukses_persen'], 2, ',', '.').'%' : '—' }}</p></div>
+                        <div><p class="text-[11px] text-on-surface-variant">Rata2 Unit</p><p class="font-semibold text-on-surface">{{ $r['rata_unit_diminta'] !== null ? number_format($r['rata_unit_diminta'], 1, ',', '.') : '—' }}</p></div>
+                        <div class="text-right"><p class="text-[11px] text-on-surface-variant">Rata2 Durasi</p><p class="font-semibold text-on-surface">{{ $r['rata_durasi_jam'] !== null ? number_format($r['rata_durasi_jam'], 1, ',', '.').' jam' : '—' }}</p></div>
                     </div>
+                    @else
+                    <div class="grid grid-cols-2 gap-2 mt-3 text-sm border-t border-muted-border pt-3">
+                        <div><p class="text-[11px] text-on-surface-variant">Transfer</p><p class="font-semibold text-on-surface">{{ number_format($r['transfer_diminta'],0,',','.') }} ({{ $r['transfer_selesai'] }} ok)</p></div>
+                        <div class="text-right"><p class="text-[11px] text-on-surface-variant">Akurasi</p><p class="font-semibold text-secondary">{{ $r['akurasi_persen'] !== null ? number_format($r['akurasi_persen'], 2, ',', '.').'%' : '—' }}</p></div>
+                        <div><p class="text-[11px] text-on-surface-variant">Mutasi</p><p class="font-semibold text-on-surface">{{ number_format($r['mutasi'],0,',','.') }}</p></div>
+                        <div class="text-right"><p class="text-[11px] text-on-surface-variant">Rusak</p><p class="font-semibold text-error">{{ number_format($r['kerusakan_qty'],0,',','.') }}</p></div>
+                    </div>
+                    @endif
                 </article>
             @empty
                 <p class="py-6 text-center text-on-surface-variant">Belum ada karyawan yang ditugaskan.</p>
@@ -195,7 +267,13 @@
 
         <p class="text-xs text-on-surface-variant mt-6 pt-5 border-t border-muted-border flex items-start gap-2">
             <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 shrink-0">info</span>
-            Rekap hanya mencakup toko Anda ({{ $storeName }}). Urutan berdasarkan pendapatan tertinggi.
+            @if ($roleFilter === 'admin')
+                CR = pembayaran diterima / seluruh pembayaran yang ditangani karyawan. Rating adalah proxy dari ulasan pada order yang pembayarannya diverifikasi karyawan tersebut, bukan bukti pelayanan langsung.{{ !empty($dari) || !empty($sampai) ? ' Periode: '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang').'.' : '' }}
+            @elseif ($roleFilter === 'produksi')
+                Metrik dihitung dari production order yang ditugaskan ke karyawan (assigned_to). Durasi hanya dari order selesai yang memiliki tanggal mulai dan selesai valid.{{ !empty($dari) || !empty($sampai) ? ' Periode: '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang').'.' : '' }}
+            @else
+                Transfer diatribusikan ke peminta, bukan penyetuju. Akurasi = opname tanpa selisih / total opname.{{ !empty($dari) || !empty($sampai) ? ' Periode: '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang').'.' : '' }}
+            @endif
         </p>
     </section>
 </div>
@@ -209,9 +287,10 @@ document.addEventListener('DOMContentLoaded', function(){
     const select = scope.querySelector('[data-role-filter]');
     if (!select) return;
     select.addEventListener('change', function () {
-        const role = this.value;
-        if (role === 'semua') { window.location.href = '{{ route("owner.rekap-karyawan") }}'; return; }
-        window.location.href = '{{ route("owner.rekap-karyawan") }}?role=' + role;
+        const params = new URLSearchParams(window.location.search);
+        params.set('role', this.value);
+        params.delete('page');
+        window.location.href = '{{ route("owner.rekap-karyawan") }}?' + params.toString();
     });
 });
 </script>
