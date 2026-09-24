@@ -60,7 +60,7 @@ class PengaturanSistemController extends Controller
             'komisi_persen_default' => 'sometimes|required|numeric|min:0|max:15',
             'biaya_layanan' => 'sometimes|required|numeric|min:0',
             'min_pencairan' => 'sometimes|required|numeric|min:0',
-            'biaya_penarikan_saldo' => 'sometimes|required|numeric|min:0',
+            'biaya_penarikan_saldo' => 'sometimes|required|numeric|min:0|max:100',
             'mode_maintenance' => 'sometimes|nullable|in:0,1',
             'moderasi_otomatis' => 'sometimes|nullable|in:0,1',
             'maks_pengajuan_pencairan' => 'sometimes|nullable|numeric|min:1',
