@@ -252,8 +252,8 @@
             background-color: #3a1210 !important;
         }
 
-        html.theme-dark .focus\:border-primary:focus {
-            border-color: #f2efec !important;
+        html.theme-dark .focus\:border-secondary:focus {
+            border-color: #A32626 !important;
         }
 
         /* ============ GOLD INNER GLOW FRAME ============ */
@@ -741,7 +741,7 @@
                         <label class="font-label-sm text-label-sm text-on-surface block mb-xs"
                             for="email">{{ __('Email') }}</label>
                         <input name="email" autocomplete="email"
-                            class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
+                            class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors"
                             id="email" placeholder="you@example.com" type="email" />
                         <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-error">
                             {{ __('Invalid email address.') }}</p>
@@ -752,7 +752,7 @@
                             for="password">{{ __('Password') }}</label>
                         <div class="relative">
                             <input name="password" autocomplete="current-password"
-                                class="w-full bg-surface border border-outline-variant rounded-xl pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors"
+                                class="w-full bg-surface border border-outline-variant rounded-xl pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-secondary transition-colors"
                                 id="password" placeholder="{{ __('Enter your password') }}" type="password" />
                             <button aria-label="{{ __('Show password') }}"
                                 class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex"
