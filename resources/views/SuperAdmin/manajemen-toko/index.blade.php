@@ -286,9 +286,17 @@
 
     function confirmStoreAction() {
         if (document.getElementById('store-action-main').dataset.confirm === 'true') {
-            if (! confirm('Pulihkan dan setujui toko yang sebelumnya ditolak ini?')) {
-                return false;
-            }
+            pageConfirm('Pulihkan dan setujui toko yang sebelumnya ditolak ini?', {
+                title: 'Setujui Toko',
+                sub: 'Toko akan kembali aktif dan dapat menerima pesanan.',
+                accent: 'primary',
+                yesLabel: 'Ya, Setujui',
+                onConfirm: function () {
+                    closeStoreModal();
+                    document.getElementById('store-action-form').submit();
+                }
+            });
+            return false;
         }
         closeStoreModal();
         return true;
@@ -462,32 +470,89 @@
         modal.classList.remove('flex');
     }
 
+    let _confirmCb = null;
+
+    function pageConfirm(message, options) {
+        options = options || {};
+        document.getElementById('confirm-message').textContent = message;
+        document.getElementById('confirm-title').textContent = options.title || 'Konfirmasi';
+        document.getElementById('confirm-sub').textContent = options.sub || '';
+        const yes = document.getElementById('confirm-yes');
+        yes.className = 'btn-modal ' + (options.accent === 'primary' ? 'btn-modal-primary' : 'btn-modal-danger');
+        yes.textContent = options.yesLabel || 'Ya, Lanjutkan';
+        _confirmCb = options.onConfirm || (function () {});
+        const modal = document.getElementById('confirm-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        yes.focus();
+    }
+
+    function closeConfirmModal() {
+        _confirmCb = null;
+        const modal = document.getElementById('confirm-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function resetConfirmModal() {
+        _confirmCb = null;
+        const modal = document.getElementById('confirm-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    }
+
+    resetConfirmModal();
+
+    document.addEventListener('click', function (event) {
+        const yes = event.target && event.target.closest ? event.target.closest('#confirm-yes') : null;
+        if (! yes) return;
+        const cb = _confirmCb;
+        closeConfirmModal();
+        if (cb) cb();
+    });
+
     function confirmSuspend() {
         const isSementara = document.querySelector('input[name="tipe_suspend"][value="sementara"]').checked;
         if (isSementara) {
             const sampai = document.getElementById('sampai-input').value;
             if (! sampai) {
-                alert('Mohon pilih tanggal berakhirnya penangguhan.');
+                showRalivaToast('Mohon pilih tanggal berakhirnya penangguhan.', 'warning');
                 return false;
             }
             if (new Date(sampai) <= new Date()) {
-                alert('Batas waktu harus di masa depan.');
+                showRalivaToast('Batas waktu harus di masa depan.', 'warning');
                 return false;
             }
-            if (! confirm('Toko akan ditangguhkan sementara hingga ' + new Date(sampai).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}) + '. Lanjutkan?')) {
-                return false;
-            }
-        } else {
-            if (! confirm('Toko akan ditangguhkan secara permanen. Lanjutkan?')) {
-                return false;
-            }
+            const tanggal = new Date(sampai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            pageConfirm('Toko akan ditangguhkan sementara hingga ' + tanggal + '. Lanjutkan?', {
+                title: 'Konfirmasi Penangguhan',
+                sub: 'Toko aktif kembali otomatis saat melewati batas waktu tersebut.',
+                accent: 'danger',
+                yesLabel: 'Ya, Tangguhkan',
+                onConfirm: function () {
+                    closeSuspendModal();
+                    document.getElementById('suspend-form').submit();
+                }
+            });
+            return false;
         }
-        closeSuspendModal();
-        return true;
+        pageConfirm('Toko akan ditangguhkan secara permanen. Lanjutkan?', {
+            title: 'Konfirmasi Penangguhan',
+            sub: 'Hanya Super Admin yang dapat mengaktifkan kembali toko ini.',
+            accent: 'danger',
+            yesLabel: 'Ya, Tangguhkan',
+            onConfirm: function () {
+                closeSuspendModal();
+                document.getElementById('suspend-form').submit();
+            }
+        });
+        return false;
     }
 
     document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') { closeAllDocs(); closeStoreModal(); closeRejectModal(); closeDocRejectModal(); closeSuspendModal(); }
+        if (event.key === 'Escape') { closeAllDocs(); closeStoreModal(); closeRejectModal(); closeDocRejectModal(); closeSuspendModal(); closeConfirmModal(); }
     });
 </script>
 @endpush
@@ -757,6 +822,28 @@ document.addEventListener('DOMContentLoaded', () => {
         @endslot
     @endcomponent
 </form>
+
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'confirm-modal',
+    'icon' => 'help',
+    'iconBox' => 'bg-gold-accent/20 border-gold-accent/30',
+    'iconColor' => 'text-gold-accent',
+    'zIndex' => 110,
+    'close' => 'closeConfirmModal',
+    'dataModal' => true,
+])
+    <div class="p-6 text-center">
+        <h3 id="confirm-title" class="font-display-lg text-headline-lg-mobile text-on-surface">Konfirmasi</h3>
+        <p id="confirm-sub" class="text-xs text-on-surface-variant mt-1"></p>
+        <p id="confirm-message" class="text-sm text-on-surface font-semibold mt-4"></p>
+    </div>
+    @slot('footer')
+        <div class="flex justify-end gap-3">
+            <button type="button" class="btn-modal btn-modal-ghost" onclick="closeConfirmModal()">Batal</button>
+            <button type="button" id="confirm-yes" class="btn-modal btn-modal-danger">Ya, Lanjutkan</button>
+        </div>
+    @endslot
+@endcomponent
 
 {{-- Modal perubahan data toko (server-rendered per toko yang mengajukan) --}}
 @foreach ($stores as $item)

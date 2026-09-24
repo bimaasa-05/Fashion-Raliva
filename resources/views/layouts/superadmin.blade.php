@@ -338,6 +338,7 @@
     @include('partials.notification-popup')
     @include('partials.layout-scripts')
     @include('partials.ui-scripts')
+    @include('partials.custom-datepicker')
     <script>
         /* ===== Raliva Motion — reveal on scroll seragam untuk semua halaman Super Admin ===== */
         if (!window.matchReducedMotion) {
