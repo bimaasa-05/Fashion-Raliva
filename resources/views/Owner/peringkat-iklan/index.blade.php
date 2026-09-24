@@ -32,7 +32,7 @@
             @csrf
             <div>
                 <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Produk</label>
-                <select name="product_id" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent">
+                <select name="product_id" required class="raliva-input">
                     <option value="">Pilih Produk</option>
                     @foreach($products as $p)
                         <option value="{{ $p->product_id }}">{{ $p->nama_produk }}</option>
@@ -43,12 +43,15 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Nominal Bid (Rp)</label>
-                    <input type="number" name="nominal_bid" min="100000" step="50000" value="{{ old('nominal_bid', 500000) }}" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent" />
+                    <div class="flex items-stretch">
+                        <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
+                        <input type="text" name="nominal_bid" inputmode="numeric" data-rupiah value="{{ old('nominal_bid', '500.000') }}" required placeholder="500.000" class="raliva-input" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                    </div>
                     @error('nominal_bid')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Metode Pembayaran</label>
-                    <select name="metode_pembayaran" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent">
+                    <select name="metode_pembayaran" required class="raliva-input">
                         <option value="">Pilih metode</option>
                         @foreach($metode as $m)
                             <option value="{{ $m->payment_method_id }}">{{ $m->nama_metode }}</option>
@@ -59,7 +62,7 @@
             </div>
             <div>
                 <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Rekening Tujuan Transfer</label>
-                <select name="platform_bank_account_id" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent">
+                <select name="platform_bank_account_id" required class="raliva-input">
                     <option value="">Pilih rekening tujuan</option>
                     @forelse($rekenings as $rek)
                         <option value="{{ $rek->platform_bank_account_id }}">{{ $rek->bank->nama_bank ?? '-' }} • {{ $rek->nomor_rekening }} a.n. {{ $rek->nama_pemilik }}</option>
@@ -72,12 +75,12 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Tanggal Mulai Tayang</label>
-                    <input type="date" name="tanggal_mulai" value="{{ old('tanggal_mulai', now()->format('Y-m-d')) }}" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent" />
+                    <input type="date" name="tanggal_mulai" value="{{ old('tanggal_mulai', now()->format('Y-m-d')) }}" required class="raliva-input" />
                     @error('tanggal_mulai')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Tanggal Selesai Tayang</label>
-                    <input type="date" name="tanggal_selesai" value="{{ old('tanggal_selesai', now()->format('Y-m-d')) }}" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent" />
+                    <input type="date" name="tanggal_selesai" value="{{ old('tanggal_selesai') }}" required class="raliva-input" />
                     @error('tanggal_selesai')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
             </div>
@@ -185,6 +188,19 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('[data-rupiah]').forEach((el) => {
+            const fmt = () => {
+                const digits = el.value.replace(/\D/g, '').slice(0, 12).replace(/^0+(?=\d)/, '');
+                el.value = digits ? new Intl.NumberFormat('id-ID').format(digits) : '';
+            };
+            el.addEventListener('input', fmt);
+            if (el.value) fmt();
+        });
+        document.querySelectorAll('form').forEach((f) => {
+            f.addEventListener('submit', () => {
+                f.querySelectorAll('[data-rupiah]').forEach((el) => { el.value = el.value.replace(/\./g, ''); });
+            });
+        });
         // Check if no store banner exists (means no store)
         const noStore = document.querySelector('[data-no-store-banner]');
         if (noStore) {
