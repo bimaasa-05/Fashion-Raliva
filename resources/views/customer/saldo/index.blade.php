@@ -117,6 +117,8 @@
         html.theme-dark .scroll-x-visible { scrollbar-color: rgba(139, 30, 63, .6) transparent !important; }
         html.theme-dark .scroll-x-visible::-webkit-scrollbar-thumb { background: rgba(139, 30, 63, .6) !important; }
         @media (prefers-reduced-motion: reduce) { [data-bars] .raliva-bar { transition: none; } }
+        /* Saldo: pagination bawaan Laravel ikut mulus */
+        nav[aria-label="Pagination Navigation"] [class*="rounded"] { border-radius: 0.75rem !important; }
     </style>
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] lg:pl-72">
