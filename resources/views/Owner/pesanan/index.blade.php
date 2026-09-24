@@ -69,6 +69,7 @@
             </div>
         </div>
 
+        <div class="hidden md:block">
         <div data-table-wrap class="overflow-x-auto min-h-[380px]">
             <table class="premium-table w-full min-w-[920px] font-body-md text-sm">
                 <thead>
@@ -128,6 +129,41 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        </div>
+        <div class="md:hidden space-y-3">
+            @forelse ($orders as $o)
+                @php
+                    $key = match($o->status) {
+                        'selesai' => 'selesai',
+                        'refund' => 'refund',
+                        'dibatalkan' => 'dibatalkan',
+                        'dikirim' => 'dikirim',
+                        'diproses' => 'diproses',
+                        default => 'baru',
+                    };
+                    $customer = $o->checkout?->user;
+                    $itemCount = $o->items?->count() ?? 0;
+                @endphp
+                <article data-table-row data-status="{{ $key }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                            <p class="font-bold text-on-surface truncate">{{ $o->nomor_order }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5 truncate">{{ $customer?->nama_lengkap ?? 'Customer' }} • {{ $itemCount }} produk</p>
+                        </div>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full {{ $statusPill[$key] }} text-[10px] font-bold uppercase shrink-0">{{ $o->status }}</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-3 pt-3 border-t border-muted-border">
+                        <div class="min-w-0">
+                            <p class="font-bold text-gold-accent">{{ 'Rp ' . number_format($o->grand_total, 0, ',', '.') }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5 truncate">{{ $o->checkout?->payment?->paymentMethod?->nama_metode ?? '-' }}</p>
+                        </div>
+                        <button type="button" data-modal-open="modal-order-{{ $o->order_id }}" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap shrink-0">Detail</button>
+                    </div>
+                </article>
+            @empty
+                <p class="py-6 text-center text-on-surface-variant">Belum ada pesanan.</p>
+            @endforelse
         </div>
 
         <div data-empty-state class="hidden flex-col items-center py-12 text-center gap-3">
