@@ -101,6 +101,7 @@ use App\Http\Controllers\SuperAdmin\PengirimanController as SaPengirimanControll
 use App\Http\Controllers\SuperAdmin\PeringkatController;
 use App\Http\Controllers\SuperAdmin\PeringkatIklanController;
 use App\Http\Controllers\SuperAdmin\PermintaanPenarikanController;
+use App\Http\Controllers\SuperAdmin\PerubahanProdukController;
 use App\Http\Controllers\SuperAdmin\ProdukController;
 use App\Http\Controllers\SuperAdmin\ProduksiController;
 use App\Http\Controllers\SuperAdmin\ProfilController;
@@ -267,6 +268,9 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/moderasi-produk', [ModerasiProdukController::class, 'index'])->name('moderasi-produk');
     Route::post('/moderasi-produk/{produk}/setujui', [ModerasiProdukController::class, 'setujui'])->name('moderasi-produk.setujui');
     Route::post('/moderasi-produk/{produk}/tolak', [ModerasiProdukController::class, 'tolak'])->name('moderasi-produk.tolak');
+    Route::get('/perubahan-produk', [PerubahanProdukController::class, 'index'])->name('perubahan-produk');
+    Route::post('/perubahan-produk/{produk}/{permintaan}/setujui', [PerubahanProdukController::class, 'approve'])->name('perubahan-produk.setujui');
+    Route::post('/perubahan-produk/{produk}/{permintaan}/tolak', [PerubahanProdukController::class, 'reject'])->name('perubahan-produk.tolak');
     Route::get('/kategori', [KategoriProdukController::class, 'index'])->name('kategori');
     Route::post('/kategori', [KategoriProdukController::class, 'store'])->name('kategori.store');
     Route::post('/kategori/{kategori}/update', [KategoriProdukController::class, 'update'])->name('kategori.update');
