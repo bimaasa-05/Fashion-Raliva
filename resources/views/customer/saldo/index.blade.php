@@ -268,10 +268,41 @@
 
             @if ($riwayatTarik->isNotEmpty())
                 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
-                    <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Riwayat Penarikan') }}</h3>
-                    <div class="space-y-sm">
+                    <div class="flex items-center justify-between gap-2 flex-wrap mb-md">
+                        <h3 class="premium-heading font-title-md text-title-md text-on-surface">{{ __('Riwayat Penarikan') }}</h3>
+                        <div class="relative" id="tarik-range-container">
+                            <button type="button" onclick="toggleTarikRange()"
+                                class="inline-flex items-center justify-center gap-1 min-h-8 rounded-xl border border-outline-variant px-3 py-1.5 font-label-sm text-label-sm text-on-surface hover:text-secondary hover:border-secondary transition-colors">
+                                <span id="tarik-range-label">{{ __('Semua') }}</span>
+                                <span class="material-symbols-outlined text-[16px] transition-transform duration-200" id="tarik-range-chevron">expand_more</span>
+                            </button>
+                            <div id="tarik-range-menu" class="absolute right-0 top-full mt-xs w-44 bg-surface rounded-lg border border-outline-variant shadow-xl z-20 py-xs origin-top-right transition-all duration-200 ease-out invisible opacity-0 scale-95 -translate-y-1">
+                                <button type="button" data-tarik-range="semua" data-label="{{ __('Semua') }}" onclick="selectTarikRange(this)"
+                                    class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm font-semibold text-on-surface hover:bg-surface-container-low transition-colors">
+                                    <span>{{ __('Semua') }}</span>
+                                    <span class="material-symbols-outlined text-[18px] text-secondary range-check">check</span>
+                                </button>
+                                <button type="button" data-tarik-range="12" data-label="{{ __('1 Tahun') }}" onclick="selectTarikRange(this)"
+                                    class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors">
+                                    <span>{{ __('1 Tahun') }}</span>
+                                    <span class="material-symbols-outlined text-[18px] text-secondary range-check invisible">check</span>
+                                </button>
+                                <button type="button" data-tarik-range="6" data-label="{{ __('6 Bulan') }}" onclick="selectTarikRange(this)"
+                                    class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors">
+                                    <span>{{ __('6 Bulan') }}</span>
+                                    <span class="material-symbols-outlined text-[18px] text-secondary range-check invisible">check</span>
+                                </button>
+                                <button type="button" data-tarik-range="3" data-label="{{ __('3 Bulan') }}" onclick="selectTarikRange(this)"
+                                    class="w-full flex items-center justify-between gap-sm text-left px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors">
+                                    <span>{{ __('3 Bulan') }}</span>
+                                    <span class="material-symbols-outlined text-[18px] text-secondary range-check invisible">check</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-sm" id="tarik-list">
                         @foreach ($riwayatTarik as $wd)
-                            <a href="{{ route('customer.saldo.tarik.show', $wd->customer_withdrawal_id) }}"
+                            <a href="{{ route('customer.saldo.tarik.show', $wd->customer_withdrawal_id) }}" data-tanggal="{{ ($wd->diajukan_pada ?? $wd->created_at)?->toIso8601String() }}"
                                 class="flex flex-col md:flex-row md:items-center justify-between gap-sm rounded-xl p-md border border-outline-variant hover:border-secondary transition-colors">
                                 <div class="min-w-0">
                                     <p class="font-body-lg text-body-lg font-semibold text-on-surface">Rp {{ number_format((float) $wd->jumlah, 0, ',', '.') }}</p>
@@ -288,6 +319,7 @@
                             </a>
                         @endforeach
                     </div>
+                    <p id="tarik-empty" class="hidden text-center font-body-sm text-body-sm text-on-surface-variant py-6">{{ __('Tidak ada penarikan pada periode ini.') }}</p>
                 </div>
             @endif
 
@@ -296,6 +328,12 @@
                 @if ($transactions->isEmpty())
                     <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Belum ada transaksi saldo.') }}</p>
                 @else
+                    <div class="flex flex-wrap gap-2 mb-md" id="trx-pills">
+                        <button type="button" data-trx-filter="semua" class="trx-pill px-3 py-1.5 rounded-full font-label-sm text-label-sm bg-secondary text-white border border-secondary transition-colors">{{ __('Semua') }}</button>
+                        <button type="button" data-trx-filter="masuk" class="trx-pill px-3 py-1.5 rounded-full font-label-sm text-label-sm text-on-surface-variant border border-outline-variant hover:border-secondary hover:text-secondary transition-colors">{{ __('Masuk') }}</button>
+                        <button type="button" data-trx-filter="keluar" class="trx-pill px-3 py-1.5 rounded-full font-label-sm text-label-sm text-on-surface-variant border border-outline-variant hover:border-secondary hover:text-secondary transition-colors">{{ __('Keluar') }}</button>
+                        <button type="button" data-trx-filter="topup" class="trx-pill px-3 py-1.5 rounded-full font-label-sm text-label-sm text-on-surface-variant border border-outline-variant hover:border-secondary hover:text-secondary transition-colors">{{ __('Topup') }}</button>
+                    </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
                             <thead>
@@ -308,7 +346,7 @@
                             </thead>
                             <tbody class="font-body-sm text-body-sm">
                                 @foreach ($transactions as $trx)
-                                    <tr class="border-b border-outline-variant/60">
+                                    <tr class="border-b border-outline-variant/60" data-jenis="{{ $trx->jenis_transaksi }}">
                                         <td class="py-3 pr-md text-on-surface-variant">{{ $trx->created_at->format('d M Y, H:i') }}</td>
                                         <td class="py-3 pr-md">
                                             <span class="inline-flex items-center gap-1">
@@ -329,6 +367,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <p id="trx-empty" class="hidden text-center font-body-sm text-body-sm text-on-surface-variant py-6">{{ __('Tidak ada transaksi yang cocok.') }}</p>
                     <div class="mt-sm">{{ $transactions->links() }}</div>
                 @endif
             </div>
@@ -577,6 +616,117 @@
             window.toggleRangeMenu = toggleRangeMenu;
             window.closeRangeMenu = closeRangeMenu;
             window.selectRange = selectRange;
+
+            /* Filter periode Riwayat Penarikan (cermin dropdown aktivitas) */
+            var tarikMenu = document.getElementById('tarik-range-menu');
+            var tarikLabel = document.getElementById('tarik-range-label');
+            var tarikChevron = document.getElementById('tarik-range-chevron');
+            var tarikRange = 'semua';
+
+            function toggleTarikRange() {
+                if (!tarikMenu) return;
+                if (tarikMenu.classList.contains('invisible')) {
+                    tarikMenu.classList.remove('invisible', 'opacity-0', 'scale-95', '-translate-y-1');
+                    if (tarikChevron) tarikChevron.classList.add('rotate-180');
+                } else {
+                    closeTarikRange();
+                }
+            }
+
+            function closeTarikRange() {
+                if (!tarikMenu) return;
+                tarikMenu.classList.add('invisible', 'opacity-0', 'scale-95', '-translate-y-1');
+                if (tarikChevron) tarikChevron.classList.remove('rotate-180');
+            }
+
+            function selectTarikRange(btn) {
+                tarikRange = btn.getAttribute('data-tarik-range');
+                if (tarikLabel) tarikLabel.textContent = btn.getAttribute('data-label');
+                document.querySelectorAll('#tarik-range-menu [data-tarik-range]').forEach(function(b) {
+                    var check = b.querySelector('.range-check');
+                    if (b === btn) {
+                        if (check) check.classList.remove('invisible');
+                        b.classList.add('font-semibold');
+                    } else {
+                        if (check) check.classList.add('invisible');
+                        b.classList.remove('font-semibold');
+                    }
+                });
+                applyTarikFilter();
+                closeTarikRange();
+            }
+
+            function applyTarikFilter() {
+                var now = new Date();
+                var shown = 0;
+                var total = 0;
+                document.querySelectorAll('#tarik-list [data-tanggal]').forEach(function(row) {
+                    total++;
+                    var ok = true;
+                    if (tarikRange !== 'semua') {
+                        var d = new Date(row.getAttribute('data-tanggal'));
+                        if (isNaN(d.getTime())) {
+                            ok = false;
+                        } else {
+                            var months = (now.getFullYear() - d.getFullYear()) * 12 + (now.getMonth() - d.getMonth());
+                            ok = months <= parseInt(tarikRange, 10);
+                        }
+                    }
+                    row.classList.toggle('hidden', !ok);
+                    if (ok) shown++;
+                });
+                var emptyEl = document.getElementById('tarik-empty');
+                if (emptyEl) emptyEl.classList.toggle('hidden', shown > 0 || total === 0);
+            }
+
+            window.toggleTarikRange = toggleTarikRange;
+            window.selectTarikRange = selectTarikRange;
+
+            document.addEventListener('click', function(e) {
+                var container = document.getElementById('tarik-range-container');
+                if (container && !container.contains(e.target)) closeTarikRange();
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeTarikRange();
+            });
+
+            /* Pill filter Riwayat Transaksi */
+            var trxMasuk = ['topup', 'refund_masuk', 'penarikan_masuk'];
+            var trxKeluar = ['pembayaran_keluar', 'penarikan_keluar'];
+            var trxActive = 'semua';
+
+            function applyTrxFilter() {
+                var shown = 0;
+                var total = 0;
+                document.querySelectorAll('tbody tr[data-jenis]').forEach(function(row) {
+                    total++;
+                    var j = row.getAttribute('data-jenis');
+                    var ok = trxActive === 'semua'
+                        || (trxActive === 'masuk' && trxMasuk.indexOf(j) >= 0)
+                        || (trxActive === 'keluar' && trxKeluar.indexOf(j) >= 0)
+                        || (trxActive === 'topup' && j === 'topup');
+                    row.classList.toggle('hidden', !ok);
+                    if (ok) shown++;
+                });
+                var emptyTrx = document.getElementById('trx-empty');
+                if (emptyTrx) emptyTrx.classList.toggle('hidden', shown > 0 || total === 0);
+            }
+
+            document.querySelectorAll('#trx-pills [data-trx-filter]').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    trxActive = btn.getAttribute('data-trx-filter');
+                    document.querySelectorAll('#trx-pills [data-trx-filter]').forEach(function(b) {
+                        var on = b === btn;
+                        b.classList.toggle('bg-secondary', on);
+                        b.classList.toggle('text-white', on);
+                        b.classList.toggle('border-secondary', on);
+                        b.classList.toggle('text-on-surface-variant', !on);
+                        b.classList.toggle('border-outline-variant', !on);
+                    });
+                    applyTrxFilter();
+                });
+            });
 
             setActiveMode('in');
             renderBars();
