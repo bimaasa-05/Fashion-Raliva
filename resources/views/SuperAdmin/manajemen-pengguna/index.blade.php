@@ -81,7 +81,7 @@
 @section('content')
 @include('partials.flash-toast')
 
-<div class="w-full max-w-7xl mx-auto space-y-section-gap">
+<div class="w-full space-y-section-gap">
     <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent">
             <span class="material-symbols-outlined text-[14px]">calendar_today</span>
