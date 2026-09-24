@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
             \Illuminate\Session\Middleware\AuthenticateSession::class,
+            \App\Http\Middleware\ReactivateExpiredStores::class,
         ]);
         $middleware->alias([
             'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
