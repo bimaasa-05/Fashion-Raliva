@@ -182,6 +182,14 @@ class PeringkatIklanController extends Controller
                 'pesan' => $pesan,
                 'url' => route('owner.peringkat-iklan'),
             ]);
+            Notification::create([
+                'user_id' => $ownerId,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_WALLET,
+                'judul' => 'Saldo Terdebit Biaya Iklan',
+                'pesan' => sprintf('Saldo toko terdebit Rp %s untuk biaya iklan "%s".', number_format((float) $slot->nominal_bid, 0, ',', '.'), $slot->product->nama_produk ?? '-'),
+                'url' => route('owner.keuangan'),
+            ]);
         }
 
         $toast = $slot->status === AdSlot::STATUS_TERJADWAL
