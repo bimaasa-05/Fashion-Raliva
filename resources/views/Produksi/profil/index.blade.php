@@ -61,7 +61,7 @@
                             <span class="inline-flex px-2 py-0.5 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">{{ $roleName }}</span>
                             <span class="inline-flex px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 text-[9px] font-bold uppercase">{{ ucfirst($user->status ?? 'aktif') }}</span>
                         </div>
-                        <div class="grid grid-cols-3 gap-3 mt-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
                             <div class="profil-stat">
                                 <span class="material-symbols-outlined">calendar_month</span>
                                 <span class="lbl">Bergabung</span>
