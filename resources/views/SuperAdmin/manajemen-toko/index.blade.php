@@ -235,14 +235,15 @@
             mainForm.action = actionUrls.setujui(d.id);
             rejectBtn.classList.remove('hidden');
             document.getElementById('store-action-info')?.classList.remove('hidden');
+            document.getElementById('store-action-suspend')?.classList.add('hidden');
         } else if (d.status === 'aktif') {
             mainBtn.classList.add('hidden');
-            mainForm.action = actionUrls.tangguhkan(d.id);
             rejectBtn.classList.add('hidden');
             document.getElementById('store-action-info')?.classList.add('hidden');
-            closeStoreModal();
-            openSuspendModal(d.id, d.name);
-            return;
+            document.getElementById('store-action-suspend')?.classList.add('hidden');
+            const suspendBtn = document.getElementById('store-action-suspend');
+            suspendBtn.classList.remove('hidden');
+            suspendBtn.onclick = () => { closeStoreModal(); openSuspendModal(d.id, d.name); };
         } else if (d.status === 'nonaktif') {
             mainBtn.textContent = 'Aktifkan Kembali';
             mainBtn.dataset.confirm = 'false';
@@ -250,6 +251,7 @@
             mainForm.action = actionUrls.aktifkan(d.id);
             rejectBtn.classList.add('hidden');
             document.getElementById('store-action-info')?.classList.add('hidden');
+            document.getElementById('store-action-suspend')?.classList.add('hidden');
             meta.verification = d.sampai
                 ? 'Ditangguhkan sementara — aktif kembali ' + d.sampai
                 : 'Ditangguhkan oleh Admin tanpa batas waktu';
@@ -260,10 +262,12 @@
             mainForm.action = actionUrls.setujui(d.id);
             rejectBtn.classList.add('hidden');
             document.getElementById('store-action-info')?.classList.add('hidden');
+            document.getElementById('store-action-suspend')?.classList.add('hidden');
         } else {
             mainBtn.classList.add('hidden');
             rejectBtn.classList.add('hidden');
             document.getElementById('store-action-info')?.classList.add('hidden');
+            document.getElementById('store-action-suspend')?.classList.add('hidden');
         }
 
         document.getElementById('store-modal-scroll').scrollTop = 0;
@@ -638,6 +642,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p id="store-action-info" class="text-[11px] text-on-surface-variant hidden">Menyetujui akan otomatis verifikasi dokumen pending & beri 5 slot awal bila kosong.</p>
             </div>
             <div class="flex gap-3 w-full sm:w-auto">
+                <button id="store-action-suspend" type="button" class="hidden flex-1 sm:flex-none px-6 py-3 border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-wider rounded-lg hover:bg-error/10 transition-colors">Tangguhkan</button>
                 <button id="store-action-reject" type="button" onclick="openRejectModal()" class="flex-1 sm:flex-none px-6 py-3 border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-wider rounded-lg hover:bg-error/10 transition-colors">Tolak</button>
                 <form id="store-action-form" method="POST" action="" onsubmit="return confirmStoreAction()">
                     @csrf
