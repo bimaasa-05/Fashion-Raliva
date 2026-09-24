@@ -346,7 +346,7 @@
 <!-- Main Content -->
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Hero Section (editorial crossfade, RALIVA Home pictures) -->
-<section class="relative w-full h-[78vh] min-h-[560px] max-h-[860px] overflow-hidden">
+<section class="relative w-full h-[78vh] min-h-[480px] max-h-[860px] overflow-hidden">
 <div class="hero-photos absolute inset-0">
 <img alt="RALIVA Home Editorial 1" src="{{ asset('assets/picture/home-pictures/1.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000" data-hero-slide/>
 <img alt="RALIVA Home Editorial 2" src="{{ asset('assets/picture/home-pictures/2.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" data-hero-slide/>
