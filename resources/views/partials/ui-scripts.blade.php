@@ -43,6 +43,9 @@
         if (typeof window.__ralivaPauseCardGalleries === 'function') {
             try { window.__ralivaPauseCardGalleries(); } catch (e) {}
         }
+        // Portal: tempelkan modal ke body agar tidak terpotong oleh
+        // ancestor ber-overflow (tabel responsif, kartu, dsb).
+        if (modal.parentNode !== document.body) document.body.appendChild(modal);
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         ralivaLockScroll();
