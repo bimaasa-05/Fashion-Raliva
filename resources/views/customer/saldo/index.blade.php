@@ -149,6 +149,14 @@
                                 <span>{{ __('Isi Saldo') }}</span>
                             </a>
                         </div>
+                        <div class="flex items-center gap-sm mt-sm">
+                            <a href="{{ route('customer.saldo.tarik') }}"
+                                class="inline-flex items-center justify-center gap-1 px-md py-2.5 rounded-full font-label-caps text-label-caps uppercase tracking-widest whitespace-nowrap border border-secondary text-secondary hover:bg-secondary/5 transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">payments</span>
+                                <span>{{ __('Tarik Saldo') }}</span>
+                            </a>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Tarik ke bank/e-wallet dengan verifikasi.') }}</p>
+                        </div>
                         <p class="font-display-lg text-display-lg text-on-surface mt-sm">Rp {{ number_format($saldo, 0, ',', '.') }}</p>
                         <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Top up saldo untuk berbelanja lebih mudah.') }}</p>
                     </div>
@@ -258,6 +266,31 @@
                                     @endif
                                 </div>
                             </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            @if ($riwayatTarik->isNotEmpty())
+                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
+                    <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Riwayat Penarikan') }}</h3>
+                    <div class="space-y-sm">
+                        @foreach ($riwayatTarik as $wd)
+                            <a href="{{ route('customer.saldo.tarik.show', $wd->customer_withdrawal_id) }}"
+                                class="flex flex-col md:flex-row md:items-center justify-between gap-sm rounded-xl p-md border border-outline-variant hover:border-secondary transition-colors">
+                                <div class="min-w-0">
+                                    <p class="font-body-lg text-body-lg font-semibold text-on-surface">Rp {{ number_format((float) $wd->jumlah, 0, ',', '.') }}</p>
+                                    <p class="font-label-sm text-label-sm text-on-surface-variant">#{{ $wd->customer_withdrawal_id }} • {{ $wd->tipe_tujuan === 'bank' ? ($wd->bank?->nama_bank ?? 'Bank') : ($wd->penyedia ?? 'E-Wallet') }} • {{ $wd->nomor_tujuan }}</p>
+                                </div>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold self-start md:self-auto
+                                    @if($wd->status === 'pending') bg-amber-100 text-amber-800
+                                    @elseif($wd->status === 'disetujui') bg-blue-100 text-blue-800
+                                    @elseif($wd->status === 'dibayar') bg-emerald-100 text-emerald-800
+                                    @elseif($wd->status === 'ditolak') bg-red-100 text-red-800
+                                    @else bg-surface-container text-on-surface-variant @endif">
+                                    {{ $wd->status }}
+                                </span>
+                            </a>
                         @endforeach
                     </div>
                 </div>
