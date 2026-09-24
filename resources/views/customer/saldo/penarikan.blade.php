@@ -85,6 +85,12 @@
         .co-step:not(.active):not(.done) { color: var(--text-muted); }
         .co-step-line { width: 32px; height: 1px; background: var(--border-soft); }
         .co-step-line.done { background: #8B1E3F; }
+        @media (max-width: 480px) {
+            .co-stepper { gap: .35rem; }
+            .co-step { font-size: 10px; gap: .3rem; }
+            .co-step .num { width: 24px; height: 24px; font-size: 11px; }
+            .co-step-line { width: 16px; }
+        }
         @media (max-width: 374px) { .co-step { font-size: 0; gap: .3rem; } .co-step-line { display: none; } }
         .co-step .num.loading { border: 2px solid var(--border-soft); border-top-color: #8B1E3F; background: transparent !important; color: transparent !important; animation: co-spin 0.75s linear infinite; }
         .co-step .num.loading::after { content: ''; display: none; }
@@ -136,9 +142,20 @@
             </div>
 
             @if (session('toast'))
+                @php
+                    $toastIcon2 = is_array(session('toast')) ? (session('toast')['icon'] ?? '') : '';
+                    $isErr2 = in_array($toastIcon2, ['gpp_maybe', 'block', 'error'], true);
+                    $isOk2 = in_array($toastIcon2, ['task_alt', 'check', 'check_circle'], true);
+                @endphp
                 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-md flex items-center gap-sm">
-                    <span class="material-symbols-outlined text-secondary">task_alt</span>
-                    <p class="font-body-sm text-body-sm text-on-surface-variant">{{ session('toast')['message'] ?? session('toast') }}</p>
+                    @if ($isErr2)
+                        <span class="material-symbols-outlined text-error">close</span>
+                    @elseif ($isOk2)
+                        <span class="material-symbols-outlined text-emerald-600">check_circle</span>
+                    @else
+                        <span class="material-symbols-outlined text-secondary">task_alt</span>
+                    @endif
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">{{ is_array(session('toast')) ? (session('toast')['message'] ?? '') : session('toast') }}</p>
                 </div>
             @endif
 
