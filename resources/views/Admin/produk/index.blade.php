@@ -241,7 +241,7 @@
                     <input type="hidden" name="ukuran_terpilih" id="edit-ukuran-terpilih" />
                 </div>
                 <div>
-                    <p class="raliva-label mb-2">Warna <span class="text-xs font-normal text-on-surface-variant">(klik untuk pilih, bisa lebih dari satu)</span></p>
+                <p class="raliva-label mb-2">Warna <span class="text-xs font-normal text-on-surface-variant">(opsional; klik untuk pilih, bisa lebih dari satu)</span></p>
                     <div class="grid grid-cols-4 sm:grid-cols-5 gap-2" id="edit-warna-presets">
                         @foreach ([['Navy', '#22304a'], ['Camel', '#c19a6b'], ['Putih', '#f5f3f3'], ['Merah', '#c62828'], ['Biru', '#2360a8'], ['Kuning', '#e6b91e'], ['Marun', '#7d2b33'], ['Hijau', '#2e7d32'], ['Emerald', '#046e4c'], ['Coral', '#f2875c'], ['Teal', '#0f766e'], ['Cream', '#f6ecd9'], ['Violet', '#7c3aed'], ['Sage', '#9caf88']] as $color)
                             <label class="edit-warna-chip flex flex-col items-center gap-1 py-2 rounded-lg border border-muted-border cursor-pointer hover:border-gold-accent transition-colors has-[:checked]:bg-gold-accent/10 has-[:checked]:border-gold-accent" data-warna-value="{{ $color[0] }}" data-hex="{{ $color[1] }}">
@@ -253,7 +253,7 @@
                     </div>
                     <div id="edit-warna-custom-chips" class="flex flex-wrap gap-2 mt-2"></div>
                     <div class="flex items-center gap-2 mt-3 flex-wrap">
-                        <input type="text" id="edit-warna-custom-name" placeholder="Warna baru (wajib, cth: Tosca)" maxlength="30" class="raliva-input text-sm flex-1" style="min-width:10rem;" />
+                        <input type="text" id="edit-warna-custom-name" placeholder="Warna baru (wajib bila tambah warna, cth: Tosca)" maxlength="30" class="raliva-input text-sm flex-1" style="min-width:10rem;" />
                         <div class="flex items-center gap-1.5 shrink-0">
                             <span class="text-on-surface-variant font-bold text-sm">#</span>
                             <input type="text" id="edit-warna-custom-hex" placeholder="f4f4f4" maxlength="6" autocomplete="off" spellcheck="false" class="raliva-input text-sm font-mono uppercase" style="width: 7.5rem;" title="Ketik kode warna hex, cth: f4f4f4" />
@@ -266,7 +266,7 @@
                     <p class="raliva-label mb-1">Stok per Varian</p>
                     <p class="text-xs text-on-surface-variant mb-3">Ubah stok untuk setiap kombinasi varian. Kombinasi baru akan dibuat otomatis.</p>
                     <div id="edit-varian-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-                    <p id="edit-varian-empty" class="mt-2 p-4 border border-dashed border-outline-variant rounded-lg text-center text-xs text-on-surface-variant">Belum ada varian. Pilih ukuran &amp; warna di atas.</p>
+                    <p id="edit-varian-empty" class="mt-2 p-4 border border-dashed border-outline-variant rounded-lg text-center text-xs text-on-surface-variant">Belum ada varian. Pilih ukuran di atas; warna boleh dikosongkan.</p>
                 </div>
             </div>
         </div>
@@ -300,27 +300,28 @@
         function editRenderVarian() {
             const ukuran = editGetUkuran();
             const warna = editGetWarna();
+            const barisWarna = warna.length ? warna : [null];
             const grid = document.getElementById('edit-varian-grid');
             const empty = document.getElementById('edit-varian-empty');
             if (!grid || !empty) return;
             const byKey = {};
             editVarianExisting.forEach(v => { byKey[(v.ukuran || '') + '|' + (v.warna || '')] = v; });
-            const count = ukuran.length * warna.length;
+            const count = ukuran.length * barisWarna.length;
             empty.style.display = count > 0 ? 'none' : 'block';
             grid.innerHTML = '';
             let i = 0;
             ukuran.forEach(uk => {
-                warna.forEach(wr => {
-                    const ex = byKey[uk + '|' + wr];
+                barisWarna.forEach(wr => {
+                    const ex = byKey[uk + '|' + (wr || '')];
                     const row = document.createElement('div');
                     row.className = 'p-3 border border-muted-border rounded-lg bg-surface-container-low space-y-2';
                     row.innerHTML = `
                         <input type="hidden" name="varian_stok[${i}][variant_id]" value="${ex ? ex.id : ''}" />
                         <input type="hidden" name="varian_stok[${i}][ukuran]" value="${escapeHtml(uk)}" />
-                        <input type="hidden" name="varian_stok[${i}][warna]" value="${escapeHtml(wr)}" />
+                        <input type="hidden" name="varian_stok[${i}][warna]" value="${wr === null ? '' : escapeHtml(wr)}" />
                         <div class="flex items-center gap-2">
-                            <span class="w-4 h-4 rounded-full border border-outline-variant shrink-0 inline-block" style="background-color: ${warnaSwatch(wr)}"></span>
-                            <span class="text-xs font-bold text-on-surface truncate">${escapeHtml(uk)} · ${escapeHtml(wr)}${ex ? '' : ' <span class="text-gold-accent font-normal">(baru)</span>'}</span>
+                            ${wr === null ? '' : `<span class="w-4 h-4 rounded-full border border-outline-variant shrink-0 inline-block" style="background-color: ${warnaSwatch(wr)}"></span>`}
+                            <span class="text-xs font-bold text-on-surface truncate">${escapeHtml(uk)}${wr === null ? '' : ` · ${escapeHtml(wr)}`}${ex ? '' : ' <span class="text-gold-accent font-normal">(baru)</span>'}</span>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
@@ -834,7 +835,7 @@
                                 <span class="text-on-surface-variant font-bold text-sm">#</span>
                                 <input type="text" id="warna-custom-hex" placeholder="f4f4f4" maxlength="6" autocomplete="off" spellcheck="false" class="raliva-input text-sm font-mono uppercase" style="width: 7.5rem;" title="Ketik kode warna hex, cth: f4f4f4" />
                             </div>
-                            <input type="text" id="warna-custom-name" placeholder="Nama warna (wajib) — cth: Tosca" maxlength="30" required class="raliva-input text-sm flex-1" style="width:auto;min-width:10rem;" />
+                            <input type="text" id="warna-custom-name" placeholder="Nama warna (wajib bila tambah warna) — cth: Tosca" maxlength="30" class="raliva-input text-sm flex-1" style="width:auto;min-width:10rem;" />
                             <button type="button" id="warna-custom-add" class="px-4 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium shrink-0">Tambah</button>
                         </div>
                         <div id="warna-custom-chips" class="flex flex-wrap gap-2"></div>
@@ -843,9 +844,9 @@
             </div>
             <div>
                 <p class="raliva-label mb-1">Stok per Varian</p>
-                <p class="text-xs text-on-surface-variant mb-3">Setelah pilih ukuran &amp; warna, isi stok untuk setiap kombinasi varian.</p>
+                <p class="text-xs text-on-surface-variant mb-3">Setelah pilih ukuran, isi stok untuk setiap varian. Warna boleh dikosongkan.</p>
                 <div id="varian-stok-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-                <div id="varian-stok-empty" class="mt-2 p-4 border border-dashed border-outline-variant rounded-lg text-center text-xs text-on-surface-variant">Belum ada varian. Pilih ukuran &amp; warna di atas untuk mengatur stok per varian.</div>
+                <div id="varian-stok-empty" class="mt-2 p-4 border border-dashed border-outline-variant rounded-lg text-center text-xs text-on-surface-variant">Belum ada varian. Pilih ukuran di atas untuk mengatur stok per varian.</div>
                 <input type="hidden" name="stok_awal" id="fp-stok-synced" value="0" />
                 <input type="hidden" name="stok_minimum" id="fp-min-restock-synced" value="0" />
             </div>
@@ -889,25 +890,26 @@ function getSelectedWarna() {
 function renderVarianStok() {
     const ukuran = getSelectedUkuran();
     const warna = getSelectedWarna();
+    const barisWarna = warna.length ? warna : [null];
     const grid = document.getElementById('varian-stok-grid');
     const empty = document.getElementById('varian-stok-empty');
     if (!grid || !empty) return;
 
-    const count = ukuran.length * warna.length;
+    const count = ukuran.length * barisWarna.length;
     empty.style.display = count > 0 ? 'none' : 'block';
     grid.innerHTML = '';
 
     let i = 0;
     for (const uk of ukuran) {
-        for (const wr of warna) {
+        for (const wr of barisWarna) {
             const row = document.createElement('div');
             row.className = 'p-3 border border-muted-border rounded-lg bg-surface-container-low space-y-2';
             row.innerHTML = `
                 <input type="hidden" name="varian_stok[${i}][ukuran]" value="${escapeHtml(uk)}" />
-                <input type="hidden" name="varian_stok[${i}][warna]" value="${escapeHtml(wr)}" />
+                <input type="hidden" name="varian_stok[${i}][warna]" value="${wr === null ? '' : escapeHtml(wr)}" />
                 <div class="flex items-center gap-2">
-                    <span class="w-4 h-4 rounded-full border border-outline-variant shrink-0 inline-block" style="background-color: ${warnaSwatch(wr)}"></span>
-                    <span class="text-xs font-bold text-on-surface truncate">${escapeHtml(uk)} · ${escapeHtml(wr)}</span>
+                    ${wr === null ? '' : `<span class="w-4 h-4 rounded-full border border-outline-variant shrink-0 inline-block" style="background-color: ${warnaSwatch(wr)}"></span>`}
+                    <span class="text-xs font-bold text-on-surface truncate">${escapeHtml(uk)}${wr === null ? '' : ` · ${escapeHtml(wr)}`}</span>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
@@ -1298,9 +1300,8 @@ function updateFotoCount() {
         if (!fotoTerisi) return fail('Wajib: unggah minimal 1 foto produk.', form.querySelector('input[name="foto_produk[]"]'));
         if (!document.getElementById('fp-kategori-hidden')?.value) return fail('Wajib: pilih kategori produk.', document.getElementById('fp-kategori-box'));
         if (getSelectedUkuran().length === 0) return fail('Wajib: pilih minimal 1 ukuran.', document.getElementById('ukuran-chips'));
-        if (getSelectedWarna().length === 0) return fail('Wajib: pilih minimal 1 warna.', document.getElementById('warna-presets'));
         const rows = Array.from(document.querySelectorAll('#varian-stok-grid [name$="[stok]"]'));
-        if (!rows.length) return fail('Wajib: isi stok tiap varian (pilih ukuran & warna dulu).', document.getElementById('varian-stok-empty'));
+        if (!rows.length) return fail('Wajib: isi stok tiap varian (pilih ukuran dulu).', document.getElementById('varian-stok-empty'));
         const kosong = rows.find(i => i.value === '' || parseInt(i.value, 10) < 1);
         if (kosong) return fail('Wajib: stok tiap varian minimal 1.', kosong);
         const minKosong = Array.from(document.querySelectorAll('#varian-stok-grid [name$="[stok_minimum]"]')).find(i => i.value === '');
