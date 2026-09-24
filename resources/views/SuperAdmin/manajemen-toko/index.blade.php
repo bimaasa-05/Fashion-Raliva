@@ -525,7 +525,7 @@
                 showRalivaToast('Batas waktu harus di masa depan.', 'warning');
                 return false;
             }
-            const tanggal = new Date(sampai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            const tanggal = new Date(sampai).toLocaleString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
             pageConfirm('Toko akan ditangguhkan sementara hingga ' + tanggal + '. Lanjutkan?', {
                 title: 'Konfirmasi Penangguhan',
                 sub: 'Toko aktif kembali otomatis saat melewati batas waktu tersebut.',
