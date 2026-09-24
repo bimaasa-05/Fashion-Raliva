@@ -338,7 +338,7 @@ class SaldoController extends Controller
         $saldo = CustomerWalletService::balance($user);
         $feePersen = min(100, max(0, (float) Setting::get(Setting::BIAYA_PENARIKAN_SALDO, '0')));
         $minTarik = static::MIN_TARIK;
-        $banks = Bank::where('status', 'aktif')->orderBy('nama_bank')->get();
+        $banks = Bank::where('status', 'aktif')->whereRaw('LOWER(kode_bank) != ?', ['bsi'])->orderBy('nama_bank')->get();
 
         return view('customer.saldo.tarik', compact('saldo', 'feePersen', 'minTarik', 'banks'));
     }
@@ -373,6 +373,15 @@ class SaldoController extends Controller
         $feePersen = min(100, max(0, (float) Setting::get(Setting::BIAYA_PENARIKAN_SALDO, '0')));
         $fee = (float) round($jumlah * $feePersen / 100);
         $bersih = $jumlah - $fee;
+
+        if ($validated['tipe_tujuan'] === CustomerWithdrawal::TIPE_BANK && ! empty($validated['bank_id'])) {
+            $bankTujuan = Bank::where('bank_id', $validated['bank_id'])->first();
+            if (! $bankTujuan || strtolower($bankTujuan->kode_bank ?? '') === 'bsi') {
+                return back()
+                    ->with('toast', ['message' => 'Bank tujuan tidak tersedia untuk penarikan.', 'icon' => 'gpp_maybe'])
+                    ->withInput();
+            }
+        }
 
         if ($bersih <= 0) {
             return back()
