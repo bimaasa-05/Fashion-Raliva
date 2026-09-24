@@ -12,7 +12,7 @@
 @section('content')
 @include('partials.flash-toast')
 
-<div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+<div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
 
     <!-- Kolom kiri: Hero Profil -->
     <div class="lg:col-span-5">
