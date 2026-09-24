@@ -630,18 +630,18 @@
 <div class="flex items-end gap-gutter">
 <div class="flex-1">
 <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs" for="price-min">{{ __('Min') }}</label>
-<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-sm text-body-sm focus:outline-none focus:ring-0 focus:border-secondary transition-colors" id="price-min" inputmode="numeric" placeholder="Rp 0"/>
+<input class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-sm text-body-sm focus:outline-none focus:ring-0 focus:border-secondary transition-colors" id="price-min" inputmode="numeric" placeholder="Rp 0"/>
 </div>
 <span class="text-on-surface-variant pb-sm">—</span>
 <div class="flex-1">
 <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs" for="price-max">{{ __('Max') }}</label>
-<input class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-sm text-body-sm focus:outline-none focus:ring-0 focus:border-secondary transition-colors" id="price-max" inputmode="numeric" placeholder="Rp 1.000.000"/>
+<input class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-sm text-body-sm focus:outline-none focus:ring-0 focus:border-secondary transition-colors" id="price-max" inputmode="numeric" placeholder="Rp 1.000.000"/>
 </div>
 </div>
 </div>
 <div class="flex gap-gutter px-container-margin py-md border-t border-outline-variant shrink-0">
-<button class="flex-1 h-12 border border-secondary text-secondary font-label-caps text-label-caps tracking-widest hover:bg-secondary/5 transition-colors" onclick="resetFilters()" type="button">{{ __('RESET') }}</button>
-<button class="btn-gold flex-1 h-12 font-label-caps text-label-caps tracking-widest" onclick="applyFilters()" type="button">{{ __('APPLY') }}</button>
+<button class="flex-1 h-12 border border-secondary rounded-xl text-secondary font-label-caps text-label-caps tracking-widest hover:bg-secondary/5 transition-colors" onclick="resetFilters()" type="button">{{ __('RESET') }}</button>
+<button class="btn-gold flex-1 h-12 rounded-xl font-label-caps text-label-caps tracking-widest" onclick="applyFilters()" type="button">{{ __('APPLY') }}</button>
 </div>
 </div>
     <script>
