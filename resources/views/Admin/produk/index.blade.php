@@ -81,8 +81,20 @@
                     $fotosA = $p->images->map(fn ($img) => $normFotoA($img->file_gambar))->values()->all();
                     $editFotosJson = json_encode($p->images->map(fn ($img) => ['id' => $img->product_image_id, 'url' => $normFotoA($img->file_gambar)])->values()->all());
                     $editVarianJson = json_encode($p->variants->map(fn ($v) => ['id' => $v->product_variant_id, 'ukuran' => $v->ukuran, 'warna' => $v->warna, 'hex' => (\App\Support\WarnaPalet::resolve($v->warna_hex, $v->warna) ?? ''), 'stok' => (int) $v->warehouseStocks->sum('jumlah_stok'), 'min' => (int) ($v->warehouseStocks->min('stok_minimum') ?? 0)])->values()->all());
+                    $editResepJson = json_encode($p->materialRequirements->map(fn ($row) => ['material_id' => $row->material_id, 'nama' => $row->nama_bahan, 'satuan' => $row->satuan, 'jumlah' => (float) $row->jumlah_per_unit, 'biaya' => (float) $row->biaya_per_unit])->values()->all());
+                    $resepSummary = $p->productionSummary();
+                    $resepRows = $p->materialRequirements->map(fn ($row) => [
+                        'nama' => $row->nama_bahan,
+                        'satuan' => $row->satuan,
+                        'jumlah' => (float) $row->jumlah_per_unit,
+                        'biaya' => 'Rp '.number_format((float) $row->biaya_per_unit, 2, ',', '.'),
+                        'total' => 'Rp '.number_format((float) $row->jumlah_per_unit * (float) $row->biaya_per_unit, 2, ',', '.'),
+                    ])->values()->all();
+                    $resepRingkasan = $p->target_produksi && $resepRows !== []
+                        ? 'Target '.number_format((int) $p->target_produksi, 0, ',', '.').' unit • Modal Rp '.number_format($resepSummary['modal_per_unit'], 2, ',', '.').'/unit • Batch Rp '.number_format($resepSummary['modal_batch'], 2, ',', '.').' • Margin Rp '.number_format($resepSummary['margin_per_unit'], 2, ',', '.').' ('.number_format($resepSummary['margin_persen'] ?? 0, 2, ',', '.').'%)'
+                        : 'Belum ada rencana produksi.';
                 @endphp
-                <article data-reveal data-adm-row data-status="{{ $statusA === 'aktif' ? 'disetujui' : $statusA }}" data-produk-id="{{ $p->product_id }}" data-produk-nama="{{ $p->nama_produk }}" data-produk-sku="{{ $skuA }}" data-produk-created="{{ $p->created_at?->translatedFormat('d M Y') }}" data-produk-harga="Rp {{ number_format((float) $p->harga_dasar, 0, ',', '.') }}" data-produk-kategori="{{ $p->category?->nama_kategori ?? '-' }}" data-produk-tipe="{{ ucfirst($p->tipe_produk ?? 'regular') }}" data-produk-varian="{{ $p->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}" data-produk-deskripsi="{{ $p->deskripsi }}" data-produk-status="{{ $statusA }}" data-produk-alasan="{{ $statusA === 'ditolak' ? ($p->alasan_penolakan ?? '') : '' }}" data-produk-images='@json($fotosA)' class="group bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium flex flex-col">
+                <article data-reveal data-adm-row data-status="{{ $statusA === 'aktif' ? 'disetujui' : $statusA }}" data-produk-id="{{ $p->product_id }}" data-produk-nama="{{ $p->nama_produk }}" data-produk-sku="{{ $skuA }}" data-produk-created="{{ $p->created_at?->translatedFormat('d M Y') }}" data-produk-harga="Rp {{ number_format((float) $p->harga_dasar, 0, ',', '.') }}" data-produk-kategori="{{ $p->category?->nama_kategori ?? '-' }}" data-produk-tipe="{{ ucfirst($p->tipe_produk ?? 'regular') }}" data-produk-varian="{{ $p->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}" data-produk-deskripsi="{{ $p->deskripsi }}" data-produk-status="{{ $statusA }}" data-produk-alasan="{{ $statusA === 'ditolak' ? ($p->alasan_penolakan ?? '') : '' }}" data-produk-images='@json($fotosA)' data-resep-ringkasan="{{ $resepRingkasan }}" data-resep-rows='@json($resepRows)' class="group bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium flex flex-col">
                     <div class="relative aspect-[3/4] bg-surface-container-low overflow-hidden max-h-48" data-produk-gallery>
                         @if (count($fotosA))
                             <div class="block w-full h-full" data-produk-main>
@@ -121,7 +133,7 @@
                             @endif
                             <div class="flex items-center gap-1.5">
                                 <button type="button" data-produk-detail class="inline-flex items-center gap-1 px-2.5 py-1 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">visibility</span>Detail</button>
-                                <button type="button" data-produk-edit @disabled($pengajuanTerkunci) title="{{ $pengajuanTerkunci ? 'Menunggu keputusan Super Admin' : 'Ajukan perubahan produk' }}" data-action="{{ route('admin.produk.update', $p) }}" data-nama="{{ $p->nama_produk }}" data-kategori="{{ $p->category_id }}" data-kategori-nama="{{ $p->category?->nama_kategori ?? '' }}" data-harga="{{ $p->harga_dasar }}" data-tipe="{{ $p->tipe_produk }}" data-deskripsi="{{ $p->deskripsi }}" data-fotos="{{ $editFotosJson }}" data-varian="{{ $editVarianJson }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gold-accent/10 border border-gold-accent/30 rounded-lg text-xs font-semibold text-gold-accent hover:bg-gold-accent/20 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"><span class="material-symbols-outlined text-[14px]">edit</span>Edit</button>
+                                <button type="button" data-produk-edit @disabled($pengajuanTerkunci) title="{{ $pengajuanTerkunci ? 'Menunggu keputusan Super Admin' : 'Ajukan perubahan produk' }}" data-action="{{ route('admin.produk.update', $p) }}" data-nama="{{ $p->nama_produk }}" data-kategori="{{ $p->category_id }}" data-kategori-nama="{{ $p->category?->nama_kategori ?? '' }}" data-harga="{{ $p->harga_dasar }}" data-tipe="{{ $p->tipe_produk }}" data-deskripsi="{{ $p->deskripsi }}" data-fotos="{{ $editFotosJson }}" data-varian="{{ $editVarianJson }}" data-resep-target="{{ $p->target_produksi ?? '' }}" data-resep-overhead="{{ $p->biaya_tambahan ?? '' }}" data-resep-rows="{{ $editResepJson }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gold-accent/10 border border-gold-accent/30 rounded-lg text-xs font-semibold text-gold-accent hover:bg-gold-accent/20 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"><span class="material-symbols-outlined text-[14px]">edit</span>Edit</button>
                             </div>
                         </div>
                     </div>
@@ -166,6 +178,23 @@
                 <div><dt class="raliva-label">Tipe</dt><dd id="detail-tipe" class="text-on-surface mt-1">-</dd></div>
                 <div><dt class="raliva-label">Varian</dt><dd id="detail-varian" class="text-on-surface mt-1">-</dd></div>
                 <div class="sm:col-span-2"><dt class="raliva-label">Deskripsi</dt><dd id="detail-deskripsi" class="text-on-surface mt-1 whitespace-pre-line">-</dd></div>
+                <div class="sm:col-span-2">
+                    <dt class="raliva-label">Rencana Produksi</dt>
+                    <dd id="detail-resep-ringkasan" class="text-on-surface mt-1">-</dd>
+                    <div id="detail-resep-wrap" class="hidden overflow-x-auto mt-2">
+                        <table class="w-full min-w-[520px] text-xs">
+                            <thead>
+                                <tr class="text-left uppercase tracking-wider text-on-surface-variant">
+                                    <th class="py-1 pr-2">Bahan</th>
+                                    <th class="py-1 pr-2">Jumlah</th>
+                                    <th class="py-1 pr-2">Biaya</th>
+                                    <th class="py-1 text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detail-resep-rows"></tbody>
+                        </table>
+                    </div>
+                </div>
             </dl>
             <div id="detail-reason-box" class="hidden rounded-lg border border-error/20 bg-error/5 px-4 py-3">
                 <p class="font-label-sm text-[10px] uppercase tracking-wider text-error">Alasan Penolakan</p>
@@ -209,24 +238,51 @@
                         @include('partials.kategori-combobox', ['prefix' => 'edit', 'categories' => $categories, 'selectedId' => '', 'selectedName' => ''])
                     </div>
                     <div>
-                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Harga Dasar (Rp) *</label>
-                        <div class="flex items-stretch">
-                            <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
-                            <input type="text" id="edit-harga-dasar" name="harga_dasar" required inputmode="numeric" data-rupiah placeholder="949.000" class="raliva-input w-full" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
-                        </div>
+                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Tipe Produk</label>
+                        <select id="edit-tipe-produk" name="tipe_produk" class="raliva-select w-full">
+                            <option value="regular">Regular</option>
+                            <option value="preorder">Pre-Order</option>
+                            <option value="made_to_order">Made to Order</option>
+                        </select>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Tipe Produk</label>
-                    <select id="edit-tipe-produk" name="tipe_produk" class="raliva-select w-full">
-                        <option value="regular">Regular</option>
-                        <option value="preorder">Pre-Order</option>
-                        <option value="made_to_order">Made to Order</option>
-                    </select>
+                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Harga Dasar (Rp) *</label>
+                    <div class="flex items-stretch">
+                        <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
+                        <input type="text" id="edit-harga-dasar" name="harga_dasar" required inputmode="numeric" data-rupiah placeholder="949.000" class="raliva-input w-full" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                    </div>
                 </div>
                 <div>
                     <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Deskripsi</label>
                     <textarea id="edit-deskripsi" name="deskripsi" rows="3" class="raliva-textarea w-full" placeholder="Deskripsi produk..."></textarea>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">Rencana Produksi</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label for="edit-target" class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Target Produksi (unit)</label>
+                            <input id="edit-target" name="target_produksi" type="text" inputmode="numeric" data-ribuan-int placeholder="10.000" class="raliva-input text-sm" />
+                        </div>
+                        <div>
+                            <label for="edit-overhead" class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Biaya Tambahan / Unit (Rp)</label>
+                            <div class="flex items-stretch">
+                                <span class="inline-flex items-center px-3 text-xs font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
+                                <input id="edit-overhead" name="biaya_tambahan" type="text" inputmode="numeric" data-rupiah placeholder="10.000" class="raliva-input text-sm" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                            </div>
+                        </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between gap-3 mb-2">
+                        <p class="raliva-label">Bahan Produksi</p>
+                        <button type="button" id="edit-resep-tambah" class="px-3 py-1.5 rounded-lg border border-dashed border-gold-accent/40 text-gold-accent text-xs font-medium hover:bg-gold-accent/5 transition-colors">+ Tambah Bahan</button>
+                    </div>
+                    <div id="edit-resep-rows" class="space-y-3"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 border border-muted-border rounded-lg bg-surface-container-low p-3 text-xs">
+                    <div><p class="uppercase tracking-wider text-on-surface-variant">Modal / unit</p><p id="edit-resep-modal-unit" class="font-bold text-on-surface">Rp 0</p></div>
+                    <div><p class="uppercase tracking-wider text-on-surface-variant">Modal batch</p><p id="edit-resep-modal-batch" class="font-bold text-on-surface">Rp 0</p></div>
                 </div>
             </div>
             <div class="space-y-4">
@@ -326,11 +382,11 @@
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Stok</label>
-                                <input type="number" name="varian_stok[${i}][stok]" value="${ex ? ex.stok : 0}" min="0" class="raliva-input text-sm" />
+                                <input type="text" inputmode="numeric" data-ribuan-int placeholder="10.000" name="varian_stok[${i}][stok]" value="${ex ? ex.stok : 0}" class="raliva-input text-sm" />
                             </div>
                             <div>
                                 <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Ambang Menipis</label>
-                                <input type="number" name="varian_stok[${i}][stok_minimum]" value="${ex ? ex.min : 0}" min="0" class="raliva-input text-sm" />
+                                <input type="text" inputmode="numeric" data-ribuan-int placeholder="10.000" name="varian_stok[${i}][stok_minimum]" value="${ex ? ex.min : 0}" class="raliva-input text-sm" />
                             </div>
                         </div>
                     `;
@@ -444,6 +500,89 @@
             editRenderVarian();
         });
 
+        let editResepIndex = 0;
+        const editSatuanOptions = @json(\App\Models\ProductionOrderBahan::SATUAN);
+        const editBahanOptions = @json(($bahanOptions ?? collect())->map(fn ($bahan) => ['id' => $bahan->bahan_id, 'nama' => $bahan->nama_bahan, 'satuan' => $bahan->satuan])->values());
+        const editParseResep = (raw) => {
+            const text = String(raw ?? '').trim().replace(/\s/g, '').replace(/\./g, '').replace(',', '.');
+            const value = Number(text === '' ? 0 : text);
+            return Number.isFinite(value) ? value : 0;
+        };
+        const editFmtRp = (value) => 'Rp ' + (Number(value) || 0).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        function editHitungResep() {
+            const rowsBox = document.getElementById('edit-resep-rows');
+            if (!rowsBox) return;
+            let modalBahan = 0;
+            rowsBox.querySelectorAll('[data-edit-resep-row]').forEach((row) => {
+                modalBahan += editParseResep(row.querySelector('[data-edit-resep-jumlah]')?.value) * editParseResep(row.querySelector('[data-edit-resep-biaya]')?.value);
+            });
+            const overhead = editParseResep(document.getElementById('edit-overhead')?.value);
+            const target = window.parseRibuanInt(document.getElementById('edit-target')?.value);
+            const modalUnit = modalBahan + overhead;
+            document.getElementById('edit-resep-modal-unit').textContent = editFmtRp(modalUnit);
+            document.getElementById('edit-resep-modal-batch').textContent = editFmtRp(modalUnit * target);
+        }
+        function editTambahBarisResep(data = {}) {
+            const rowsBox = document.getElementById('edit-resep-rows');
+            if (!rowsBox) return;
+            const index = editResepIndex++;
+            const row = document.createElement('div');
+            row.className = 'border border-muted-border rounded-lg bg-surface-container-low p-3 space-y-2';
+            row.setAttribute('data-edit-resep-row', '');
+            row.innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant">Bahan katalog
+                        <select name="resep[${index}][material_id]" data-edit-resep-material class="raliva-input text-sm mt-1">
+                            <option value="">Bahan manual</option>
+                            ${editBahanOptions.map((opt) => `<option value="${opt.id}" data-nama="${escapeHtml(opt.nama)}" data-satuan="${escapeHtml(opt.satuan)}">${escapeHtml(opt.nama)}</option>`).join('')}
+                        </select>
+                    </label>
+                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant">Nama bahan
+                        <input name="resep[${index}][nama_bahan]" data-edit-resep-nama type="text" maxlength="150" value="${escapeHtml(data.nama || '')}" class="raliva-input text-sm mt-1" />
+                    </label>
+                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant">Satuan
+                        <select name="resep[${index}][satuan]" data-edit-resep-satuan class="raliva-input text-sm mt-1">
+                            ${editSatuanOptions.map((satuan) => `<option value="${escapeHtml(satuan)}">${escapeHtml(satuan)}</option>`).join('')}
+                        </select>
+                    </label>
+                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant">Jumlah / unit
+                        <input name="resep[${index}][jumlah_per_unit]" data-edit-resep-jumlah type="text" inputmode="decimal" data-ribuan-decimal placeholder="1.000" value="${escapeHtml(data.jumlah ?? '')}" class="raliva-input text-sm mt-1" />
+                    </label>
+                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant sm:col-span-2">Biaya / unit (Rp)
+                        <div class="flex items-stretch mt-1">
+                            <span class="inline-flex items-center px-3 text-xs font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
+                            <input name="resep[${index}][biaya_per_unit]" data-edit-resep-biaya type="text" inputmode="numeric" data-rupiah placeholder="10.000" value="${escapeHtml(data.biaya ?? '')}" class="raliva-input text-sm" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                        </div>
+                    </label>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" data-edit-resep-hapus class="text-xs font-semibold text-error hover:underline">Hapus bahan</button>
+                </div>
+            `;
+            if (data.material_id) row.querySelector('[data-edit-resep-material]').value = String(data.material_id);
+            if (data.satuan) row.querySelector('[data-edit-resep-satuan]').value = data.satuan;
+            row.querySelector('[data-edit-resep-hapus]').addEventListener('click', () => { row.remove(); editHitungResep(); });
+            rowsBox.appendChild(row);
+            editHitungResep();
+        }
+        document.getElementById('edit-resep-rows')?.addEventListener('input', editHitungResep);
+        document.getElementById('edit-resep-rows')?.addEventListener('change', (event) => {
+            const select = event.target.closest('[data-edit-resep-material]');
+            if (select) {
+                const row = select.closest('[data-edit-resep-row]');
+                const option = select.selectedOptions[0];
+                const nama = row.querySelector('[data-edit-resep-nama]');
+                const satuan = row.querySelector('[data-edit-resep-satuan]');
+                if (select.value && option) {
+                    if (!nama.value.trim()) nama.value = option.getAttribute('data-nama') || '';
+                    if (option.getAttribute('data-satuan') && editSatuanOptions.includes(option.getAttribute('data-satuan'))) satuan.value = option.getAttribute('data-satuan');
+                }
+            }
+            editHitungResep();
+        });
+        document.getElementById('edit-resep-tambah')?.addEventListener('click', () => editTambahBarisResep());
+        ['edit-target', 'edit-overhead', 'edit-harga-dasar'].forEach((id) => document.getElementById(id)?.addEventListener('input', editHitungResep));
+
         document.querySelectorAll('[data-produk-edit]').forEach(btn => {
             btn.addEventListener('click', () => {
                 const editModal = document.getElementById('modal-edit-produk');
@@ -498,6 +637,15 @@
                 [...new Set(varian.map(v => v.warna).filter(Boolean))].filter(w => !wrHex[w]).forEach(w => editEnsureWarnaChecked(w));
                 editSyncUkuranHidden();
                 editRenderVarian();
+                document.getElementById('edit-target').value = btn.getAttribute('data-resep-target') || '';
+                document.getElementById('edit-overhead').value = btn.getAttribute('data-resep-overhead') || '';
+                let resepAwal = [];
+                try { resepAwal = JSON.parse(btn.getAttribute('data-resep-rows') || '[]'); } catch (e) { resepAwal = []; }
+                document.getElementById('edit-resep-rows').innerHTML = '';
+                editResepIndex = 0;
+                if (resepAwal.length) resepAwal.forEach((row) => editTambahBarisResep(row));
+                else editTambahBarisResep();
+                editHitungResep();
                 openModal(editModal);
             });
         });
@@ -552,6 +700,25 @@
                 e.preventDefault();
                 window.showRalivaToast('Maksimal total 5 foto (sekarang ' + (kept + baru) + ').', 'gpp_bad');
                 return;
+            }
+            const failResep = (msg, target) => {
+                e.preventDefault();
+                window.showRalivaToast(msg, 'gpp_bad');
+                target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            };
+            const editTarget = window.parseRibuanInt(document.getElementById('edit-target')?.value);
+            if (document.getElementById('edit-target').value !== '' && editTarget < 1) return failResep('Target produksi minimal 1 bila diisi.', document.getElementById('edit-target'));
+            if (editParseResep(document.getElementById('edit-overhead')?.value) < 0) return failResep('Biaya tambahan tidak boleh negatif.', document.getElementById('edit-overhead'));
+            const editRows = Array.from(document.querySelectorAll('#edit-resep-rows [data-edit-resep-row]'));
+            for (const row of editRows) {
+                const nama = row.querySelector('[data-edit-resep-nama]');
+                const satuan = row.querySelector('[data-edit-resep-satuan]');
+                const jumlah = row.querySelector('[data-edit-resep-jumlah]');
+                const biaya = row.querySelector('[data-edit-resep-biaya]');
+                if (!nama.value.trim()) return failResep('Nama bahan wajib diisi.', nama);
+                if (!editSatuanOptions.includes(satuan.value)) return failResep('Satuan bahan tidak valid.', satuan);
+                if (!(editParseResep(jumlah.value) >= 0.001)) return failResep('Jumlah bahan per unit minimal 0,001.', jumlah);
+                if (!(editParseResep(biaya.value) >= 0)) return failResep('Biaya bahan per unit harus diisi.', biaya);
             }
             this.querySelectorAll('input[name="warna_hex[]"]').forEach(h => h.remove());
             const hexOf = (name) => {
@@ -618,6 +785,24 @@
                 document.getElementById('detail-tipe').textContent = d.produkTipe || '-';
                 document.getElementById('detail-varian').textContent = d.produkVarian || '-';
                 document.getElementById('detail-deskripsi').textContent = d.produkDeskripsi || '-';
+                document.getElementById('detail-resep-ringkasan').textContent = d.resepRingkasan || '-';
+                let resepRows = [];
+                try { resepRows = JSON.parse(d.resepRows || '[]'); } catch (e) { resepRows = []; }
+                const resepWrap = document.getElementById('detail-resep-wrap');
+                const resepBody = document.getElementById('detail-resep-rows');
+                resepWrap.classList.toggle('hidden', resepRows.length === 0);
+                resepBody.innerHTML = '';
+                resepRows.forEach((row) => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'border-t border-muted-border';
+                    [['nama', `${row.nama} • ${row.satuan}`], ['jumlah', row.jumlah], ['biaya', row.biaya], ['total', row.total]].forEach(([key, value], index) => {
+                        const td = document.createElement('td');
+                        td.className = 'py-1 pr-2 text-on-surface' + (index === 3 ? ' text-right font-bold' : '');
+                        td.textContent = value ?? '-';
+                        tr.appendChild(td);
+                    });
+                    resepBody.appendChild(tr);
+                });
                 const rbox = document.getElementById('detail-reason-box');
                 if (d.produkStatus === 'ditolak' && d.produkAlasan) {
                     rbox.classList.remove('hidden');
@@ -760,30 +945,62 @@
                 <label for="fp-nama" class="block raliva-label mb-2">Nama Produk</label>
                 <input id="fp-nama" name="nama_produk" type="text" placeholder="cth. Blazer Wool Premium" required class="raliva-input" />
             </div>
-            <div>
-                <label for="fp-deskripsi" class="block raliva-label mb-2">Deskripsi <span class="text-error">*</span></label>
-                <textarea id="fp-deskripsi" name="deskripsi" rows="3" required minlength="10" maxlength="2000" placeholder="Bahan, potongan, keunggulan produk... (min. 10 karakter)" class="raliva-textarea"></textarea>
-            </div>
-            <div>
-                <label for="fp-tipe" class="block raliva-label mb-2">Tipe Produk</label>
-                <select id="fp-tipe" name="tipe_produk" required class="raliva-select">
-                    <option value="regular">Regular</option>
-                    <option value="preorder">Preorder</option>
-                    <option value="made_to_order">Made to Order</option>
-                </select>
-            </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
                 <div>
                         <label class="block raliva-label mb-2">Kategori <span class="text-error">*</span></label>
                     @include('partials.kategori-combobox', ['prefix' => 'fp', 'categories' => $categories, 'selectedId' => old('category_id', ''), 'selectedName' => ''])
                 </div>
                 <div>
+                    <label for="fp-tipe" class="block raliva-label mb-2">Tipe Produk</label>
+                    <select id="fp-tipe" name="tipe_produk" required class="raliva-select">
+                        <option value="regular">Regular</option>
+                        <option value="preorder">Preorder</option>
+                        <option value="made_to_order">Made to Order</option>
+                    </select>
+                </div>
+            </div>
+            <div>
                 <label for="fp-harga" class="block raliva-label mb-2">Harga (Rp) <span class="text-error">*</span></label>
                 <div class="flex items-stretch">
-                            <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
-                            <input id="fp-harga" name="harga_dasar" type="text" inputmode="numeric" data-rupiah-harga placeholder="949.000" required class="raliva-input" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
-                        </div>
+                    <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
+                    <input id="fp-harga" name="harga_dasar" type="text" inputmode="numeric" data-rupiah-harga placeholder="949.000" required class="raliva-input" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
                 </div>
+            </div>
+            <div>
+                <label for="fp-deskripsi" class="block raliva-label mb-2">Deskripsi <span class="text-error">*</span></label>
+                <textarea id="fp-deskripsi" name="deskripsi" rows="3" required minlength="10" maxlength="2000" placeholder="Bahan, potongan, keunggulan produk... (min. 10 karakter)" class="raliva-textarea"></textarea>
+            </div>
+        </div>
+
+        {{-- Rencana Produksi --}}
+        <div class="space-y-4">
+            <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">Rencana Produksi</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
+                <div>
+                    <label for="fp-target" class="block raliva-label mb-2">Target Produksi (unit) <span class="text-error">*</span></label>
+                    <input id="fp-target" name="target_produksi" type="text" inputmode="numeric" data-ribuan-int placeholder="10.000" value="10" required class="raliva-input" />
+                </div>
+                <div>
+                    <label for="fp-overhead" class="block raliva-label mb-2">Biaya Tambahan per Unit (Rp)</label>
+                    <div class="flex items-stretch">
+                        <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
+                        <input id="fp-overhead" name="biaya_tambahan" type="text" inputmode="numeric" data-rupiah placeholder="10.000" value="0" class="raliva-input" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="flex items-center justify-between gap-3 mb-2">
+                    <p class="raliva-label">Bahan Produksi <span class="text-error">*</span></p>
+                    <button type="button" id="resep-tambah" class="px-3 py-1.5 rounded-lg border border-dashed border-gold-accent/40 text-gold-accent text-xs font-medium hover:bg-gold-accent/5 transition-colors">+ Tambah Bahan</button>
+                </div>
+                <div id="resep-rows" class="space-y-3"></div>
+                <p class="text-xs text-on-surface-variant mt-2">Pilih bahan dari katalog bila tersedia, atau isi nama bahan manual. Biaya bahan per unit.</p>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 border border-muted-border rounded-lg bg-surface-container-low p-3 text-xs">
+                <div><p class="uppercase tracking-wider text-on-surface-variant">Modal bahan</p><p id="resep-modal-bahan" class="font-bold text-on-surface">Rp 0</p></div>
+                <div><p class="uppercase tracking-wider text-on-surface-variant">Modal / unit</p><p id="resep-modal-unit" class="font-bold text-on-surface">Rp 0</p></div>
+                <div><p class="uppercase tracking-wider text-on-surface-variant">Modal batch</p><p id="resep-modal-batch" class="font-bold text-on-surface">Rp 0</p></div>
+                <div><p class="uppercase tracking-wider text-on-surface-variant">Margin</p><p id="resep-margin" class="font-bold text-on-surface">Rp 0</p></div>
             </div>
         </div>
 
@@ -801,11 +1018,11 @@
                 <div id="custom-size-fields" class="hidden mt-3 p-3 border border-muted-border rounded-lg bg-surface-container-low space-y-2">
                     <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Ukuran Custom (isi yang relevan)</p>
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        <input type="number" name="custom_ld" placeholder="Lingkar Dada (cm)" class="raliva-input text-sm" />
-                        <input type="number" name="custom_pb" placeholder="Panjang Baju (cm)" class="raliva-input text-sm" />
-                        <input type="number" name="custom_lb" placeholder="Lebar Bahu (cm)" class="raliva-input text-sm" />
-                        <input type="number" name="custom_lt" placeholder="Lingkar Tangan (cm)" class="raliva-input text-sm" />
-                        <input type="number" name="custom_pl" placeholder="Panjang Lengan (cm)" class="raliva-input text-sm" />
+                        <input type="text" inputmode="numeric" data-ribuan-int name="custom_ld" placeholder="Lingkar Dada (cm)" class="raliva-input text-sm" />
+                        <input type="text" inputmode="numeric" data-ribuan-int name="custom_pb" placeholder="Panjang Baju (cm)" class="raliva-input text-sm" />
+                        <input type="text" inputmode="numeric" data-ribuan-int name="custom_lb" placeholder="Lebar Bahu (cm)" class="raliva-input text-sm" />
+                        <input type="text" inputmode="numeric" data-ribuan-int name="custom_lt" placeholder="Lingkar Tangan (cm)" class="raliva-input text-sm" />
+                        <input type="text" inputmode="numeric" data-ribuan-int name="custom_pl" placeholder="Panjang Lengan (cm)" class="raliva-input text-sm" />
                     </div>
                     <button type="button" onclick="addCustomSize()" class="px-3 py-1.5 bg-deep-onyx text-on-primary text-xs rounded">Tambah Ukuran Custom</button>
                 </div>
@@ -914,11 +1131,11 @@ function renderVarianStok() {
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Stok</label>
-                        <input type="number" name="varian_stok[${i}][stok]" value="0" min="0" class="raliva-input text-sm" />
+                        <input type="text" inputmode="numeric" data-ribuan-int placeholder="10.000" name="varian_stok[${i}][stok]" value="0" class="raliva-input text-sm" />
                     </div>
                     <div>
                         <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Ambang Menipis</label>
-                        <input type="number" name="varian_stok[${i}][stok_minimum]" value="0" min="0" class="raliva-input text-sm" />
+                        <input type="text" inputmode="numeric" data-ribuan-int placeholder="10.000" name="varian_stok[${i}][stok_minimum]" value="0" class="raliva-input text-sm" />
                     </div>
                 </div>
             `;
@@ -928,12 +1145,12 @@ function renderVarianStok() {
     }
 
     // sync hidden total (backward compat)
-    const total = Array.from(grid.querySelectorAll('[name$="[stok]"]')).reduce((s, el)=> s + (parseInt(el.value,10) || 0), 0);
+    const total = Array.from(grid.querySelectorAll('[name$="[stok]"]')).reduce((s, el)=> s + (window.parseRibuanInt(el.value)), 0);
     const syncTotal = document.getElementById('fp-stok-synced');
     const syncMin = document.getElementById('fp-min-restock-synced');
     if (syncTotal) syncTotal.value = total;
     if (syncMin) {
-        const mins = Array.from(grid.querySelectorAll('[name$="[stok_minimum]"]')).map(el=>parseInt(el.value,10)||0);
+        const mins = Array.from(grid.querySelectorAll('[name$="[stok_minimum]"]')).map(el=>window.parseRibuanInt(el.value));
         syncMin.value = mins.length ? Math.min(...mins) : 0;
     }
 }
@@ -958,11 +1175,11 @@ function updateUkuranTerpilih() {
 }
 
 function addCustomSize() {
-    const ld = document.querySelector('[name="custom_ld"]').value;
-    const pb = document.querySelector('[name="custom_pb"]').value;
-    const lb = document.querySelector('[name="custom_lb"]').value;
-    const lt = document.querySelector('[name="custom_lt"]').value;
-    const pl = document.querySelector('[name="custom_pl"]').value;
+    const ld = window.parseRibuanInt(document.querySelector('[name="custom_ld"]').value);
+    const pb = window.parseRibuanInt(document.querySelector('[name="custom_pb"]').value);
+    const lb = window.parseRibuanInt(document.querySelector('[name="custom_lb"]').value);
+    const lt = window.parseRibuanInt(document.querySelector('[name="custom_lt"]').value);
+    const pl = window.parseRibuanInt(document.querySelector('[name="custom_pl"]').value);
     const parts = [];
     if (ld) parts.push('LD=' + ld);
     if (pb) parts.push('PB=' + pb);
@@ -1268,22 +1485,56 @@ function updateFotoCount() {
     if (el) el.textContent = n;
 }
 
-// --- Format Rp live (10rb -> 10.000) + strip saat submit ---
+function parseRibuanInt(raw) {
+    const digits = String(raw ?? '').replace(/\D/g, '').slice(0, 12).replace(/^0+(?=\d)/, '');
+    return digits === '' ? 0 : parseInt(digits, 10);
+}
+
+function parseRibuanDecimal(raw) {
+    const text = String(raw ?? '').trim().replace(/\s/g, '');
+    if (!text) return 0;
+    const normalized = text.replace(/\./g, '').replace(',', '.');
+    const value = Number(normalized);
+    return Number.isFinite(value) ? value : 0;
+}
+
+// --- Format ribuan/Rp live (10000 -> 10.000) + normalisasi saat submit ---
 (function () {
     const fmtRp = (el) => {
         const digits = el.value.replace(/\D/g, '').slice(0, 12).replace(/^0+(?=\d)/, '');
         el.value = digits ? new Intl.NumberFormat('id-ID').format(digits) : '';
     };
-    const stripRp = (el) => { el.value = el.value.replace(/\./g, ''); };
-    document.querySelectorAll('[data-rupiah-harga], #edit-harga-dasar').forEach((el) => {
-        el.addEventListener('input', () => fmtRp(el));
+    const fmtRibuanInt = (el) => {
+        const digits = el.value.replace(/\D/g, '').slice(0, 12).replace(/^0+(?=\d)/, '');
+        el.value = digits ? new Intl.NumberFormat('id-ID').format(digits) : '';
+    };
+    const fmtRibuanDecimal = (el) => {
+        const text = el.value.replace(/[^0-9.,]/g, '');
+        const parts = text.split(',');
+        const digits = parts[0].replace(/\D/g, '').slice(0, 12).replace(/^0+(?=\d)/, '');
+        const decimals = (parts[1] || '').replace(/\D/g, '').slice(0, 3);
+        el.value = digits ? new Intl.NumberFormat('id-ID').format(digits) + (parts.length > 1 ? ',' + decimals : '') : '';
+    };
+    document.addEventListener('input', (event) => {
+        const intTarget = event.target.closest?.('[data-ribuan-int]');
+        if (intTarget) { fmtRibuanInt(intTarget); return; }
+        const decimalTarget = event.target.closest?.('[data-ribuan-decimal]');
+        if (decimalTarget) { fmtRibuanDecimal(decimalTarget); return; }
+        const rpTarget = event.target.closest?.('[data-rupiah], [data-rupiah-harga]');
+        if (rpTarget) fmtRp(rpTarget);
     });
+    const stripRp = (el) => { el.value = el.value.replace(/\./g, ''); };
     ['form-produk', 'form-edit-produk'].forEach((id) => {
         document.getElementById(id)?.addEventListener('submit', function () {
-            this.querySelectorAll('[data-rupiah-harga], #edit-harga-dasar').forEach(stripRp);
+            this.querySelectorAll('[data-rupiah-harga], #edit-harga-dasar, [data-rupiah], [data-ribuan-int]').forEach(stripRp);
+            this.querySelectorAll('[data-ribuan-decimal]').forEach((el) => {
+                el.value = String(el.value ?? '').replace(/\./g, '').replace(',', '.');
+            });
         });
     });
     window.__fmtRpHarga = fmtRp;
+    window.parseRibuanInt = parseRibuanInt;
+    window.parseRibuanDecimal = parseRibuanDecimal;
 })();
 
 // --- Validasi wajib-isi form tambah (semua harus diinput dulu) ---
@@ -1302,7 +1553,7 @@ function updateFotoCount() {
         if (getSelectedUkuran().length === 0) return fail('Wajib: pilih minimal 1 ukuran.', document.getElementById('ukuran-chips'));
         const rows = Array.from(document.querySelectorAll('#varian-stok-grid [name$="[stok]"]'));
         if (!rows.length) return fail('Wajib: isi stok tiap varian (pilih ukuran dulu).', document.getElementById('varian-stok-empty'));
-        const kosong = rows.find(i => i.value === '' || parseInt(i.value, 10) < 1);
+        const kosong = rows.find(i => i.value === '' || window.parseRibuanInt(i.value) < 1);
         if (kosong) return fail('Wajib: stok tiap varian minimal 1.', kosong);
         const minKosong = Array.from(document.querySelectorAll('#varian-stok-grid [name$="[stok_minimum]"]')).find(i => i.value === '');
         if (minKosong) return fail('Wajib: ambang menipis tiap varian harus diisi.', minKosong);
@@ -1327,6 +1578,132 @@ function updateFotoCount() {
             h.value = cb.closest('label')?.getAttribute('data-hex') || hexOf(cb.value);
             form.appendChild(h);
         });
+    });
+})();
+
+// --- Rencana Produksi ---
+(function () {
+    const form = document.getElementById('form-produk');
+    const rowsBox = document.getElementById('resep-rows');
+    if (!form || !rowsBox) return;
+    const targetInput = document.getElementById('fp-target');
+    const overheadInput = document.getElementById('fp-overhead');
+    const priceInput = document.getElementById('fp-harga');
+    const satuanOptions = @json(\App\Models\ProductionOrderBahan::SATUAN);
+    const bahanOptions = @json(($bahanOptions ?? collect())->map(fn ($bahan) => ['id' => $bahan->bahan_id, 'nama' => $bahan->nama_bahan, 'satuan' => $bahan->satuan])->values());
+    let resepIndex = 0;
+
+    const escapeResep = (value) => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const parseResep = (raw) => {
+        if (typeof raw === 'number') return Number.isFinite(raw) ? raw : 0;
+        const text = String(raw ?? '').trim().replace(/\s/g, '');
+        if (!text) return 0;
+        const normalized = text.replace(/\./g, '').replace(',', '.');
+        const value = Number(normalized);
+        return Number.isFinite(value) ? value : 0;
+    };
+    const fmtRpResep = (value) => 'Rp ' + (Number(value) || 0).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    function hitungResep() {
+        let modalBahan = 0;
+        rowsBox.querySelectorAll('[data-resep-row]').forEach((row) => {
+            modalBahan += parseResep(row.querySelector('[data-resep-jumlah]')?.value) * parseResep(row.querySelector('[data-resep-biaya]')?.value);
+        });
+        const overhead = parseResep(overheadInput?.value);
+        const target = window.parseRibuanInt(targetInput?.value);
+        const harga = parseResep(priceInput?.value);
+        const modalUnit = modalBahan + overhead;
+        const modalBatch = modalUnit * target;
+        const margin = harga - modalUnit;
+        const persen = harga > 0 ? (margin / harga) * 100 : 0;
+        document.getElementById('resep-modal-bahan').textContent = fmtRpResep(modalBahan);
+        document.getElementById('resep-modal-unit').textContent = fmtRpResep(modalUnit);
+        document.getElementById('resep-modal-batch').textContent = fmtRpResep(modalBatch);
+        document.getElementById('resep-margin').textContent = `${fmtRpResep(margin)} (${persen.toFixed(2)}%)`;
+    }
+
+    function tambahBarisResep(data = {}) {
+        const index = resepIndex++;
+        const row = document.createElement('div');
+        row.className = 'border border-muted-border rounded-lg bg-surface-container-low p-3 space-y-2';
+        row.setAttribute('data-resep-row', '');
+        row.innerHTML = `
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant">Bahan katalog
+                    <select name="resep[${index}][material_id]" data-resep-material class="raliva-input text-sm mt-1">
+                        <option value="">Bahan manual</option>
+                        ${bahanOptions.map((opt) => `<option value="${opt.id}" data-nama="${escapeResep(opt.nama)}" data-satuan="${escapeResep(opt.satuan)}">${escapeResep(opt.nama)}</option>`).join('')}
+                    </select>
+                </label>
+                <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant">Nama bahan *
+                    <input name="resep[${index}][nama_bahan]" data-resep-nama type="text" maxlength="150" value="${escapeResep(data.nama || '')}" class="raliva-input text-sm mt-1" />
+                </label>
+                <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant">Satuan *
+                    <select name="resep[${index}][satuan]" data-resep-satuan class="raliva-input text-sm mt-1">
+                        ${satuanOptions.map((satuan) => `<option value="${escapeResep(satuan)}">${escapeResep(satuan)}</option>`).join('')}
+                    </select>
+                </label>
+                <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant">Jumlah / unit *
+                    <input name="resep[${index}][jumlah_per_unit]" data-resep-jumlah type="text" inputmode="decimal" data-ribuan-decimal placeholder="1.000" value="${escapeResep(data.jumlah || '')}" class="raliva-input text-sm mt-1" />
+                </label>
+                <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant sm:col-span-2">Biaya / unit (Rp) *
+                    <div class="flex items-stretch mt-1">
+                        <span class="inline-flex items-center px-3 text-xs font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
+                        <input name="resep[${index}][biaya_per_unit]" data-resep-biaya type="text" inputmode="numeric" data-rupiah placeholder="10.000" value="${escapeResep(data.biaya || '')}" class="raliva-input text-sm" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                    </div>
+                </label>
+            </div>
+            <div class="flex justify-end">
+                <button type="button" data-resep-hapus class="text-xs font-semibold text-error hover:underline">Hapus bahan</button>
+            </div>
+        `;
+        if (data.material_id) row.querySelector('[data-resep-material]').value = String(data.material_id);
+        if (data.satuan) row.querySelector('[data-resep-satuan]').value = data.satuan;
+        row.querySelector('[data-resep-hapus]').addEventListener('click', () => { row.remove(); hitungResep(); });
+        rowsBox.appendChild(row);
+        hitungResep();
+    }
+
+    rowsBox.addEventListener('input', hitungResep);
+    rowsBox.addEventListener('change', (event) => {
+        const select = event.target.closest('[data-resep-material]');
+        if (select) {
+            const row = select.closest('[data-resep-row]');
+            const option = select.selectedOptions[0];
+            const nama = row.querySelector('[data-resep-nama]');
+            const satuan = row.querySelector('[data-resep-satuan]');
+            if (select.value && option) {
+                if (!nama.value.trim()) nama.value = option.getAttribute('data-nama') || '';
+                if (option.getAttribute('data-satuan') && satuanOptions.includes(option.getAttribute('data-satuan'))) satuan.value = option.getAttribute('data-satuan');
+            }
+        }
+        hitungResep();
+    });
+    [targetInput, overheadInput, priceInput].forEach((el) => el?.addEventListener('input', hitungResep));
+    document.getElementById('resep-tambah')?.addEventListener('click', () => tambahBarisResep());
+    tambahBarisResep();
+
+    form.addEventListener('submit', (e) => {
+        const fail = (msg, target) => {
+            e.preventDefault();
+            window.showRalivaToast(msg, 'gpp_bad');
+            target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+        const target = window.parseRibuanInt(targetInput?.value);
+        if (target < 1) return fail('Wajib: target produksi minimal 1.', targetInput);
+        if (parseResep(overheadInput?.value) < 0) return fail('Biaya tambahan tidak boleh negatif.', overheadInput);
+        const rows = Array.from(rowsBox.querySelectorAll('[data-resep-row]'));
+        if (!rows.length) return fail('Wajib: isi minimal 1 bahan produksi.', document.getElementById('resep-tambah'));
+        for (const row of rows) {
+            const nama = row.querySelector('[data-resep-nama]');
+            const satuan = row.querySelector('[data-resep-satuan]');
+            const jumlah = row.querySelector('[data-resep-jumlah]');
+            const biaya = row.querySelector('[data-resep-biaya]');
+            if (!nama.value.trim()) return fail('Wajib: nama bahan harus diisi.', nama);
+            if (!satuanOptions.includes(satuan.value)) return fail('Satuan bahan tidak valid.', satuan);
+            if (!(parseResep(jumlah.value) >= 0.001)) return fail('Wajib: jumlah bahan per unit minimal 0,001.', jumlah);
+            if (!(parseResep(biaya.value) >= 0)) return fail('Wajib: biaya bahan per unit harus diisi.', biaya);
+        }
     });
 })();
 
