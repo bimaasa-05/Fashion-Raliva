@@ -122,6 +122,10 @@
         .hover\:border-gold-accent:hover { border-color: #8B1E3F !important; }
         .focus\:border-gold-accent:focus { border-color: #8B1E3F !important; }
         .focus\:ring-gold-accent:focus { --tw-ring-color: rgba(139,30,63,0.1) !important; }
+        /* Kuning → maroon: ring statis + fokus raliva-* (compiled @apply) + varian focus:ring-gold-accent/* */
+        [class*="ring-gold-accent"] { --tw-ring-color: rgba(139,30,63,.25) !important; }
+        main .raliva-input:focus, main .raliva-textarea:focus, main .raliva-search:focus, main .raliva-select:focus,
+        [class*="focus:ring-gold-accent"]:focus { border-color: #8B1E3F !important; --tw-ring-color: rgba(139,30,63,.15) !important; }
         .group:hover .group-hover\:text-gold-accent { color: #8B1E3F !important; }
         .group:hover .group-hover\:border-gold-accent { border-color: #8B1E3F !important; }
         .group\/row:hover .group-hover\/row\:text-gold-accent { color: #8B1E3F !important; }
@@ -319,7 +323,7 @@
             <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Ini yang terjadi hari ini.')</p>
         </div>
 
-        <div class="page-enter px-container-margin pt-8 pb-section-gap flex flex-col gap-6 max-w-7xl mx-auto w-full">
+        <div class="page-enter px-container-margin pt-8 pb-section-gap flex flex-col gap-6 w-full">
             @yield('content')
         </div>
     </main>
@@ -338,6 +342,7 @@
     @include('partials.notification-popup')
     @include('partials.layout-scripts')
     @include('partials.ui-scripts')
+    @include('partials.custom-datepicker')
     <script>
         /* ===== Raliva Motion — reveal on scroll seragam untuk semua halaman Super Admin ===== */
         if (!window.matchReducedMotion) {

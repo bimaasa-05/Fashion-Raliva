@@ -231,13 +231,14 @@
     :root           { --btn-gold-bg:#8B1E3F; --btn-gold-text:#ffffff; }
     html.theme-dark { --btn-gold-bg:#6D1428; --btn-gold-text:#ffffff; }
     #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(139,30,63,.10); }
+    @media (min-width:1024px){ #drawer-panel{ transform:none !important; } }
     html.theme-dark #drawer-panel { --chrome-accent:#8B1E3F; --gold-wash:rgba(163,38,63,.16); }
   </style>
   </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[120px] lg:pl-72">
 <!-- TopAppBar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-<a href="{{ route('customer.account') }}" aria-label="{{ __('Go back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+<a href="{{ request()->query('order') ? route('customer.order-tracking', ['order' => request()->query('order')]) : route('customer.account') }}" aria-label="{{ __('Go back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('MY COMPLAINTS') }}</h1>
@@ -251,9 +252,6 @@
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('COMPLAINTS') }}</p>
 <div class="flex flex-wrap items-center justify-between gap-sm mb-md">
 <h2 class="font-title-md text-title-md text-on-surface">{{ __('Komplain Saya') }}</h2>
-<a href="{{ route('customer.komplain.create') }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest">
-<span class="material-symbols-outlined text-[18px]">add</span>{{ __('Ajukan Komplain') }}
-</a>
 </div>
 <div class="space-y-4 md:space-y-6">
 @forelse ($complaints as $c)
@@ -292,7 +290,7 @@
             <span class="material-symbols-outlined text-[22px]">{{ $done ? 'task_alt' : 'support_agent' }}</span>
         </div>
         <div class="flex-grow min-w-0">
-            <p class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">{{ $c->complaint_id }} • {{ $c->order_id ? $c->order_id : '-' }}</p>
+            <p class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant truncate">{{ $c->complaint_id }} • {{ $c->order_id ? $c->order_id : '-' }}</p>
             <p class="font-title-md text-title-md text-on-surface mt-1 truncate">{{ $c->subjek }}</p>
             <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">{{ $c->deskripsi }}</p>
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-xs text-on-surface-variant">
@@ -466,7 +464,7 @@
 <!-- Chat Komplain Modal (ala Super Admin; warna RALIVA) -->
 <div class="hidden fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm" id="chat-container" onclick="if(event.target===this) closeChatModal()">
     <div class="min-h-full lg:h-full flex flex-col justify-end lg:flex-row lg:justify-end" onclick="if(event.target===this) closeChatModal()">
-        <div id="chat-panel" class="flex flex-col bg-surface-container-low border-t md:border lg:border-t-0 lg:border-l border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-t-3xl md:rounded-2xl lg:rounded-none max-h-[85dvh] md:max-h-[78dvh] lg:max-h-full lg:h-full w-full md:w-[520px] lg:w-[560px] xl:w-[600px] md:max-w-[88vw] lg:max-w-full md:mx-auto lg:mx-0 overflow-hidden md:shadow-2xl lg:shadow-none" onclick="event.stopPropagation()">
+        <div id="chat-panel" class="flex flex-col bg-surface-container-low border-t md:border lg:border-t-0 lg:border-l border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-t-3xl md:rounded-2xl lg:rounded-none h-[92dvh] max-h-[92dvh] md:h-auto md:max-h-[78dvh] lg:max-h-full lg:h-full w-full md:w-[520px] lg:w-[560px] xl:w-[600px] md:max-w-[88vw] lg:max-w-full md:mx-auto lg:mx-0 overflow-hidden md:shadow-2xl lg:shadow-none" onclick="event.stopPropagation()">
             <div class="relative flex items-center justify-between gap-2 lg:gap-3 pl-6 pr-3 lg:px-6 py-3.5 lg:py-4 border-b border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shrink-0 bg-surface-container-low z-10 overflow-visible" id="chat-header">
                 <div class="min-w-0 flex-1 chat-header-item" id="chat-header-title">
                     <h3 class="font-title-md text-title-md text-on-surface truncate leading-tight" id="chat-subject">-</h3>
@@ -518,6 +516,7 @@
             </div>
             <div class="relative px-3 lg:px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] shrink-0 bg-transparent" id="chat-input-area">
                 <div id="chat-emoji-panel" class="hidden absolute bottom-full mb-3 left-3 lg:left-4 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] bg-surface-container-high p-3 shadow-xl"></div>
+                <p id="chat-limit-note" class="hidden text-center font-body-sm text-body-sm text-secondary pb-3">{{ __('Batas 3 balasan tercapai, menunggu balasan toko.') }}</p>
                 <div id="chat-composer" class="flex items-end gap-1 lg:gap-1.5 bg-surface-container-lowest dark:bg-[#1c1c1c] border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-[26px] lg:rounded-[28px] px-2 lg:px-2.5 py-2 lg:py-2.5 shadow-sm transition-colors duration-150 focus-within:border-secondary">
                     <button type="button" onclick="toggleEmojiPanel()" id="chat-emoji-toggle" aria-label="{{ __('Emoji') }}" title="{{ __('Emoji') }}" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0">
                         <span class="material-symbols-outlined text-[20px]">mood</span>
@@ -642,6 +641,7 @@
     </form>
 </div>
 </div>
+</div><!-- /#chat-container -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var els = document.querySelectorAll('.reveal-up');
@@ -714,11 +714,8 @@
         container.classList.add('raliva-chat-in');
         panel.classList.add('raliva-chat-in-sheet');
         document.body.style.overflow = 'hidden';
-        // Blur & disable sidebar like Super Admin
         const drawer = document.getElementById('drawer-panel');
         if (drawer) { drawer.style.filter = 'blur(2px)'; drawer.style.pointerEvents = 'none'; drawer.style.opacity = '0.7'; }
-        const drawerOverlay = document.getElementById('drawer-overlay');
-        if (drawerOverlay) drawerOverlay.classList.add('hidden');
 
         if (window.autoGrowChatInput) {
             requestAnimationFrame(function () {
@@ -834,6 +831,15 @@
         el.innerHTML = messages.map(function (m) {
             const mine = String(m.sender_id) === String(myId);
             const sender = mine ? 'Anda' : (m.sender ? m.sender.nama_lengkap : 'Toko');
+            const roleTag = (function () {
+                if (mine) return '';
+                const r = m.sender ? m.sender.role : null;
+                if (r === 'Admin') return ' <span class="inline-flex items-center px-1.5 py-px rounded-full bg-blue-100 text-blue-800 text-[9px] font-bold tracking-wide">ADMIN</span>';
+                if (r === 'Owner') return ' <span class="inline-flex items-center px-1.5 py-px rounded-full bg-amber-100 text-amber-800 text-[9px] font-bold tracking-wide">OWNER</span>';
+                if (r === 'Customer') return ' <span class="inline-flex items-center px-1.5 py-px rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-bold tracking-wide">CUSTOMER</span>';
+                if (r) return ' <span class="inline-flex items-center px-1.5 py-px rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold tracking-wide">' + escapeHtml(String(r).toUpperCase()) + '</span>';
+                return '';
+            })();
             const time = mine ? 'text-white/40' : 'text-on-surface-variant/50';
             const bubble = mine ? 'bg-secondary text-white' : 'bg-surface-container-low';
             const meta = mine ? 'text-white/60' : 'text-on-surface-variant';
@@ -881,7 +887,7 @@
                 selFirst +
                 '<div class="max-w-[82%] lg:max-w-[72%] rounded-2xl px-3.5 lg:px-4 pt-3 pb-5 relative ' + bubble + ' shadow-sm" data-bubble>' +
                 '<div class="flex items-start justify-between gap-2 mb-1">' +
-                '<p class="text-[11px] ' + meta + ' uppercase tracking-[0.06em] font-medium">' + escapeHtml(sender) + '</p>' +
+                '<p class="text-[11px] ' + meta + ' uppercase tracking-[0.06em] font-medium">' + escapeHtml(sender) + roleTag + '</p>' +
                 menu +
                 '</div>' +
                 '<p class="font-body-sm text-body-sm whitespace-pre-wrap break-words leading-relaxed" data-pesan>' + escapeHtml(m.pesan) + '</p>' +
@@ -898,6 +904,7 @@
             const sInput = document.getElementById('chat-search-input');
             filterChat(sInput ? sInput.value : '');
         }
+        syncChatLimitUI();
     }
 
     function formatTime(value) {
@@ -928,6 +935,36 @@
         const t = new Date(createdAt).getTime();
         if (isNaN(t)) return false;
         return (Date.now() - t) <= 1 * 24 * 60 * 60 * 1000;
+    }
+
+    function chatConsecutiveCount() {
+        const mine = String(myId);
+        let firstId = null;
+        let lastStaffId = 0;
+        chatMessages.forEach(function (m) {
+            const id = parseInt(m.complaint_message_id, 10) || 0;
+            if (firstId === null || id < firstId) firstId = id;
+            if (String(m.sender_id) !== mine && id > lastStaffId) lastStaffId = id;
+        });
+        if (firstId === null) return 0;
+        const since = Math.max(lastStaffId, firstId);
+        let n = 0;
+        chatMessages.forEach(function (m) {
+            const id = parseInt(m.complaint_message_id, 10) || 0;
+            if (id > since && String(m.sender_id) === mine) n++;
+        });
+        return n;
+    }
+
+    function syncChatLimitUI() {
+        const limited = !currentChat.done && chatConsecutiveCount() >= 3;
+        const note = document.getElementById('chat-limit-note');
+        const input = document.getElementById('chat-input');
+        const send = document.getElementById('chat-send');
+        if (note) note.classList.toggle('hidden', !limited);
+        if (input) input.disabled = limited;
+        if (send) send.disabled = limited;
+        return limited;
     }
 
     function toggleChatMenu(id) {
@@ -1625,6 +1662,7 @@
     async function sendMessage() {
         const composer = document.getElementById('chat-composer');
         if (composer.classList.contains('hidden')) return;
+        if (syncChatLimitUI()) { showChatToast('Batas 3 balasan tercapai, menunggu balasan toko.'); return; }
         const input = document.getElementById('chat-input');
         const pesan = input.value.trim();
         if (!pesan || !currentChat.id) return;
@@ -1690,12 +1728,16 @@
     });
 
     document.addEventListener('DOMContentLoaded', function () {
-        var params = new URLSearchParams(window.location.search);
-        var openId = params.get('open');
-        if (openId) {
-            var card = document.querySelector('[data-open-id="' + openId + '"]');
-            if (card) openChatFromCard(card);
-        }
+        var _drawer = document.getElementById('drawer-panel');
+        if (_drawer) { _drawer.style.filter = ''; _drawer.style.pointerEvents = ''; _drawer.style.opacity = ''; }
+        // Bersihkan ?open= lama agar tidak membuka modal otomatis.
+        try {
+            var cleanUrl = new URL(window.location.href);
+            if (cleanUrl.searchParams.has('open')) {
+                cleanUrl.searchParams.delete('open');
+                window.history.replaceState(null, '', cleanUrl.toString());
+            }
+        } catch (_) {}
     });
 </script>
 @include('customer._partials.drawer')

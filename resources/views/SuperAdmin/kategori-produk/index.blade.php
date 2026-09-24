@@ -195,7 +195,7 @@
             </div>
         </div>
 
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden card-premium">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl overflow-x-auto card-premium">
             <table class="w-full premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -255,7 +255,7 @@
             </div>
         </div>
 
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden card-premium">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl overflow-x-auto card-premium">
             <table class="w-full premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -320,7 +320,7 @@
             </div>
         </div>
 
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden card-premium">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl overflow-x-auto card-premium">
             <div class="overflow-x-auto">
             <table class="w-full min-w-[720px] premium-table">
                 <thead>

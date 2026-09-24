@@ -253,8 +253,8 @@
 
     <section>
         <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">checklist</span> Item Produksi <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[9px] font-bold" id="item-count">-</span></p>
-        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium card-static">
-            <table class="w-full text-sm premium-table">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-lg overflow-x-auto card-premium card-static">
+            <table class="w-full text-sm premium-table min-w-[520px]">
                 <thead class="bg-surface-container-high">
                     <tr class="border-b border-muted-border text-on-surface-variant font-label-sm text-label-sm uppercase">
                         <th class="p-3 text-left">Produk</th>

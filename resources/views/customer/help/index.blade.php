@@ -247,7 +247,7 @@
 </div>
 <div class="mt-xl pt-xl border-t border-[var(--border-soft)]">
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-md text-center">BROWSE BY CATEGORY</p>
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
 @forelse ($categories as $cat)
 <a href="#faq" class="flex flex-col items-center text-center gap-xs p-md border border-outline-variant rounded-lg bg-surface hover:border-secondary hover:bg-surface-container-low transition-colors group">
 <span class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-xs">

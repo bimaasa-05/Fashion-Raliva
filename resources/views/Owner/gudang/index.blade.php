@@ -90,7 +90,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-gutter pt-4 border-t border-muted-border text-center">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter pt-4 border-t border-muted-border text-center">
                         <div>
                             <p class="font-title-md text-base text-on-surface">{{ number_format($summary['unit'], 0, ',', '.') }}</p>
                             <p class="text-[11px] text-on-surface-variant mt-0.5">Unit Stok</p>
@@ -139,7 +139,7 @@
                     </p>
                     <p class="font-body-md text-sm text-on-surface-variant mt-1">Diminta oleh {{ $t->requester?->nama_lengkap ?? '-' }} • {{ optional($t->diminta_pada)->translatedFormat('d M Y, H.i') ?? '-' }}</p>
                 </div>
-                <div class="flex gap-3 shrink-0">
+                <div class="flex flex-wrap gap-3 shrink-0">
                     <form method="POST" action="{{ route('owner.gudang.setujui', $t->stock_transfer_id) }}">
                         @csrf
                         <button type="submit" class="px-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-tertiary-container transition-colors btn-premium whitespace-nowrap">Setujui</button>

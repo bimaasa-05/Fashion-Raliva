@@ -6,6 +6,7 @@ use App\Models\ActivityLog;
 use App\Models\AdSlot;
 use App\Models\Complaint;
 use App\Models\CustomerTopup;
+use App\Models\CustomerWithdrawal;
 use App\Models\Product;
 use App\Models\ProductUpdateRequest;
 use App\Models\Refund;
@@ -32,6 +33,7 @@ class SuperAdminBadgeCounter
             'refund' => Refund::where('status', Refund::STATUS_REQUESTED)->count(),
             'penarikan' => Withdrawal::where('status', Withdrawal::STATUS_PENDING)->count(),
             'topup' => CustomerTopup::whereIn('status', [CustomerTopup::STATUS_PENDING, CustomerTopup::STATUS_MENUNGGU_VERIFIKASI])->count(),
+            'penarikan_saldo' => CustomerWithdrawal::where('status', CustomerWithdrawal::STATUS_PENDING)->count(),
             'aktivitas' => $aktivitas,
         ];
     }

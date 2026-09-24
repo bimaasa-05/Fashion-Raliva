@@ -9,7 +9,7 @@
 @section('content')
 <div data-skeleton class="space-y-section-gap">
     <div class="h-[110px] bg-surface-container-high rounded-lg animate-pulse"></div>
-    <div class="grid grid-cols-2 xl:grid-cols-3 gap-gutter">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-gutter">
         @for ($i = 0; $i < 6; $i++)
             <div class="h-28 bg-surface-container-high rounded-lg animate-pulse"></div>
         @endfor
@@ -52,7 +52,7 @@
     {{-- Ringkasan Produksi --}}
     <section>
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Produksi</h2>
-        <div data-reveal-group class="grid grid-cols-2 xl:grid-cols-3 gap-gutter">
+        <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-gutter">
             <a href="{{ route('produksi.data-produksi') }}" class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hover:border-gold-accent transition-colors" data-reveal>
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Diproses</span>
                 <span class="raliva-figure text-[26px] text-gold-accent">{{ $stats['diproses'] }}</span>
@@ -242,7 +242,7 @@
                 data: {
                     labels: data.labels,
                     datasets: [
-                        { label: 'Output Aktual', data: data.output, borderColor: '#C9A24D', backgroundColor: 'rgba(201, 162, 77, 0.12)', fill: true, tension: 0.38, borderWidth: 2, pointBackgroundColor: '#C9A24D', pointRadius: 3 },
+                        { label: 'Output Aktual', data: data.output, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.12)', fill: true, tension: 0.38, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 },
                         { label: 'Target Harian', data: data.target, borderColor: c.tick, borderDash: [6, 4], backgroundColor: 'transparent', fill: false, tension: 0.2, borderWidth: 1.5, pointRadius: 0 }
                     ]
                 },

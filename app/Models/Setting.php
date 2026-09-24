@@ -16,6 +16,8 @@ class Setting extends Model
 
     public const MIN_PENCAIRAN = 'min_pencairan';
 
+    public const BIAYA_PENARIKAN_SALDO = 'biaya_penarikan_saldo';
+
     public const SLOT_AWAL_DEFAULT = 'slot_awal_default';
 
     public const SLOT_HARGA_PER_SLOT = 'slot_harga_per_slot';

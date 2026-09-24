@@ -252,8 +252,43 @@
             background-color: #3a1210 !important;
         }
 
-        html.theme-dark .focus\:border-primary:focus {
-            border-color: #f2efec !important;
+        html.theme-dark .focus\:border-secondary:focus {
+            border-color: #A32626 !important;
+        }
+
+        /* Auth: ring fokus maroon (timpa sisa ring biru forms-plugin) */
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            --tw-ring-color: rgba(139, 30, 30, .22) !important;
+        }
+
+        html.theme-dark input[type="text"]:focus,
+        html.theme-dark input[type="email"]:focus,
+        html.theme-dark input[type="password"]:focus {
+            --tw-ring-color: rgba(163, 38, 38, .35) !important;
+        }
+
+        /* Auth: samakan latar autofill browser dengan tema (timpa putih/kuning bawaan Chrome) */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            -webkit-text-fill-color: #1b1c1c !important;
+            -webkit-box-shadow: 0 0 0 1000px #fbf9f9 inset !important;
+            box-shadow: 0 0 0 1000px #fbf9f9 inset !important;
+            caret-color: #1b1c1c;
+            transition: background-color 9999s ease-in-out 0s;
+        }
+
+        html.theme-dark input:-webkit-autofill,
+        html.theme-dark input:-webkit-autofill:hover,
+        html.theme-dark input:-webkit-autofill:focus,
+        html.theme-dark input:-webkit-autofill:active {
+            -webkit-text-fill-color: #e6e4e1 !important;
+            -webkit-box-shadow: 0 0 0 1000px #161514 inset !important;
+            box-shadow: 0 0 0 1000px #161514 inset !important;
+            caret-color: #e6e4e1;
         }
 
         /* ============ GOLD INNER GLOW FRAME ============ */
@@ -699,7 +734,7 @@
                 </div>
                 @auth
                     <div
-                        class="mb-md rounded-DEFAULT border border-outline-variant bg-surface-container-low px-md py-sm font-body-sm text-body-sm text-on-surface-variant">
+                        class="mb-md rounded-xl border border-outline-variant bg-surface-container-low px-md py-sm font-body-sm text-body-sm text-on-surface-variant">
                         {{ __('Anda sudah login sebagai') }} <span
                             class="font-semibold text-on-surface">{{ Auth::user()->nama_lengkap }}</span>
                         ({{ Auth::user()->role?->nama_role }})
@@ -717,20 +752,20 @@
                 @endauth
                 @if (session('success'))
                     <div
-                        class="mb-md rounded-DEFAULT border border-green-500 bg-green-100 px-md py-sm font-body-sm text-body-sm text-black">
+                        class="mb-md rounded-xl border border-green-500 bg-green-100 px-md py-sm font-body-sm text-body-sm text-black">
                         {{ session('success') }}
                     </div>
                 @endif
 
                 @if (session('info'))
                     <div
-                        class="mb-md rounded-DEFAULT border border-outline-variant bg-surface-container-low px-md py-sm font-body-sm text-body-sm text-on-surface-variant">
+                        class="mb-md rounded-xl border border-outline-variant bg-surface-container-low px-md py-sm font-body-sm text-body-sm text-on-surface-variant">
                         {{ session('info') }}
                     </div>
                 @endif
                 @if ($errors->any())
                     <div
-                        class="mb-md rounded-DEFAULT border border-error bg-error-container px-md py-sm font-body-sm text-body-sm text-error">
+                        class="mb-md rounded-xl border border-error bg-error-container px-md py-sm font-body-sm text-body-sm text-error">
                         {{ $errors->first() }}
                     </div>
                 @endif
@@ -741,7 +776,7 @@
                         <label class="font-label-sm text-label-sm text-on-surface block mb-xs"
                             for="email">{{ __('Email') }}</label>
                         <input name="email" autocomplete="email"
-                            class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
+                            class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors"
                             id="email" placeholder="you@example.com" type="email" />
                         <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-error">
                             {{ __('Invalid email address.') }}</p>
@@ -752,7 +787,7 @@
                             for="password">{{ __('Password') }}</label>
                         <div class="relative">
                             <input name="password" autocomplete="current-password"
-                                class="w-full bg-surface border border-outline-variant rounded-DEFAULT pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors"
+                                class="w-full bg-surface border border-outline-variant rounded-xl pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-secondary transition-colors"
                                 id="password" placeholder="{{ __('Enter your password') }}" type="password" />
                             <button aria-label="{{ __('Show password') }}"
                                 class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex"
@@ -778,7 +813,7 @@
                     </div>
                     <!-- Submit -->
                     <button
-                        class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm mt-lg disabled:opacity-60 disabled:pointer-events-none"
+                        class="w-full h-14 btn-gold rounded-xl font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm mt-lg disabled:opacity-60 disabled:pointer-events-none"
                         id="login-btn" type="submit">
                         <span id="login-btn-text">{{ __('LOGIN') }}</span>
                         <span class="material-symbols-outlined text-[20px] animate-spin hidden"
@@ -794,7 +829,7 @@
                 </div>
                 <!-- Sign In with Google -->
                 <a href="#" aria-label="{{ __('Sign in with Google') }}"
-                    class="w-full h-14 border border-outline-variant bg-surface-container-lowest shadow-sm hover:border-secondary font-label-caps text-label-caps uppercase tracking-widest text-on-surface transition-colors flex items-center justify-center gap-sm">
+                    class="w-full h-14 border border-outline-variant rounded-xl bg-surface-container-lowest shadow-sm hover:border-secondary font-label-caps text-label-caps uppercase tracking-widest text-on-surface transition-colors flex items-center justify-center gap-sm">
                     <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                         <path fill="#4285F4"
                             d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z" />

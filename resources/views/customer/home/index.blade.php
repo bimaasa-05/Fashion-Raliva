@@ -346,7 +346,7 @@
 <!-- Main Content -->
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Hero Section (editorial crossfade, RALIVA Home pictures) -->
-<section class="relative w-full h-[78vh] min-h-[560px] max-h-[860px] overflow-hidden">
+<section class="relative w-full h-[78vh] min-h-[480px] max-h-[860px] overflow-hidden">
 <div class="hero-photos absolute inset-0">
 <img alt="RALIVA Home Editorial 1" src="{{ asset('assets/picture/home-pictures/1.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000" data-hero-slide/>
 <img alt="RALIVA Home Editorial 2" src="{{ asset('assets/picture/home-pictures/2.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" data-hero-slide/>
@@ -358,13 +358,13 @@
 <span class="hero-reveal font-label-caps text-label-caps uppercase tracking-[0.22em] text-white/90 mb-sm">{{ __('NEW COLLECTION') }}</span>
 <h2 class="hero-reveal font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-white mb-xs max-w-xl">{{ __('The Art of Everyday Dressing') }}</h2>
 <p class="hero-reveal font-body-lg text-body-lg text-white/85 mb-md max-w-md">{{ __('Timeless looks, made for you.') }}</p>
-<a href="{{ route('customer.shop') }}" class="hero-reveal btn-gold font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest inline-block">{{ __('SHOP COLLECTION') }}</a>
+<a href="{{ route('customer.shop') }}" class="hero-reveal btn-gold rounded-xl font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest inline-block">{{ __('SHOP COLLECTION') }}</a>
 </div>
 </section>
 <!-- Categories -->
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px] px-container-margin">
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium grid grid-cols-3 gap-sm md:flex md:items-center md:justify-center md:gap-md">
+<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex overflow-x-auto hide-scrollbar gap-sm md:items-center md:justify-center md:gap-md">
 <button type="button" data-cat="All" id="home-cat-all" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('Semua') }}</button>
 @foreach ($homeCats as $homeCat)
 <button type="button" data-cat="{{ $homeCat }}" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ $homeCat }}</button>
@@ -466,7 +466,7 @@
 </div>
 <p id="new-arrivals-empty" class="hidden text-center text-on-surface-variant font-body-lg py-md">{{ __('No products in this category.') }}</p>
 <div class="mt-md flex justify-center">
-<a href="{{ route('customer.shop') }}" class="border border-secondary text-secondary bg-transparent font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:bg-secondary/5 transition-colors inline-block">{{ __('VIEW ALL NEW ARRIVALS') }}</a>
+<a href="{{ route('customer.shop') }}" class="border border-secondary rounded-xl text-secondary bg-transparent font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:bg-secondary/5 transition-colors inline-block">{{ __('VIEW ALL NEW ARRIVALS') }}</a>
 </div>
 </div>
 </div>

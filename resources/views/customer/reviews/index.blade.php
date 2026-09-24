@@ -256,7 +256,18 @@
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-<a aria-label="{{ __('Go back') }}" href="{{ route('customer.account') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+@php
+    $backUrl = route('customer.account');
+    $ref = request()->headers->get('referer');
+    if ($ref) {
+        $refParts = parse_url($ref);
+        $refPath = $refParts['path'] ?? '';
+        if (($refParts['host'] ?? '') === request()->getHost() && preg_match('#^/customer/shop/produk/\d+(/riviews)?$#', $refPath)) {
+            $backUrl = $ref;
+        }
+    }
+@endphp
+<a aria-label="{{ __('Go back') }}" href="{{ $backUrl }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('MY REVIEWS') }}</h1>
@@ -310,20 +321,25 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 @endfor
 </div>
 <span class="font-label-sm text-label-sm text-on-surface-variant ml-1">{{ $rv->created_at->format('M j, Y') }}</span>
-@if ($rv->status !== \App\Models\Review::STATUS_AKTIF)
+@if ($rv->status === \App\Models\Review::STATUS_DIMODERASI)
 <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-low border border-outline-variant font-label-sm text-label-sm text-on-surface-variant">{{ __('Menunggu moderasi') }}</span>
+@elseif ($rv->status !== \App\Models\Review::STATUS_AKTIF)
+<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-low border border-outline-variant font-label-sm text-label-sm text-on-surface-variant">{{ __('Dinonaktifkan admin') }}</span>
 @endif
 </div>
 </div>
 </div>
 <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-md">{{ $rv->ulasan }}</p>
-<div class="flex flex-col sm:flex-row justify-end gap-sm mt-md pt-sm border-t border-outline-variant">
-<a href="{{ route('customer.reviews.edit', $rv->review_id) }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-secondary/5">
+@if ($rv->foto)
+<img src="{{ asset('storage/' . ltrim($rv->foto, '/')) }}" alt="{{ __('Foto ulasan') }}" class="mt-sm w-24 h-24 object-cover rounded-xl border border-outline-variant" loading="lazy" />
+@endif
+<div class="flex flex-row justify-end gap-sm mt-md pt-sm border-t border-outline-variant">
+<a href="{{ route('customer.reviews.edit', $rv->review_id) }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-secondary/5">
 <span class="material-symbols-outlined text-[18px]">edit</span>{{ __('Edit') }}</a>
-<form method="POST" action="{{ route('customer.reviews.destroy', $rv->review_id) }}" onsubmit="return confirm('{{ __('Are you sure you want to delete this review?') }}')" class="flex-1 sm:flex-none flex">
+<form method="POST" action="{{ route('customer.reviews.destroy', $rv->review_id) }}" onsubmit="return confirm('{{ __('Are you sure you want to delete this review?') }}')" class="flex-1 flex">
 @csrf
 @method('DELETE')
-<button type="submit" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-error text-error font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-error/5">
+<button type="submit" class="flex-1 w-full inline-flex items-center justify-center gap-1.5 px-md py-2.5 rounded-full border border-error text-error font-label-caps text-label-caps uppercase tracking-wider transition-colors hover:bg-error/5">
 <span class="material-symbols-outlined text-[18px]">delete</span>{{ __('Delete') }}</button>
 </form>
 </div>
@@ -347,16 +363,18 @@ $img = $prod?->images->first()?->file_gambar ?? '';
 $imgUrl = $img ? (photo_url($img)) : 'https://picsum.photos/seed/toreview-'.$item->order_item_id.'/900/1200';
 $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 @endphp
-<article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline flex items-center gap-sm md:gap-md">
+<article class="bg-surface border border-outline-variant rounded-2xl p-sm md:p-md relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline flex flex-col gap-sm md:gap-md">
+<div class="flex items-center gap-sm md:gap-md">
 <a href="{{ $link }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
 <img alt="{{ $prod?->nama_produk }}" class="w-full h-full object-cover " src="{{ $imgUrl }}"/>
 </a>
 <div class="flex-grow min-w-0">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $item->order?->store?->nama_toko ?? 'RALIVA' }}</span>
-<h3 class="font-title-sm text-title-md text-on-surface font-semibold truncate">{{ $item->nama_produk_snapshot }}</h3>
+<h3 class="font-title-sm text-title-md text-on-surface font-semibold break-words line-clamp-2">{{ $item->nama_produk_snapshot }}</h3>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Delivered') }} {{ $item->order?->created_at->format('M j, Y') }}</p>
 </div>
-<a href="{{ route('customer.reviews.create', ['order_item' => $item->order_item_id]) }}" class="btn-gold shrink-0 px-md py-2.5 rounded-full font-label-caps text-label-caps uppercase tracking-widest inline-flex items-center justify-center gap-1.5">
+</div>
+<a href="{{ route('customer.reviews.create', ['order_item' => $item->order_item_id]) }}" class="btn-gold w-full sm:w-auto sm:self-end px-md py-2.5 rounded-full font-label-caps text-label-caps uppercase tracking-widest inline-flex items-center justify-center gap-1.5">
 <span class="material-symbols-outlined text-[18px]">rate_review</span>{{ __('Write Review') }}</a>
 </article>
 @empty

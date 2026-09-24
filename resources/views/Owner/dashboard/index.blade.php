@@ -165,9 +165,9 @@
 
     {{-- Pesanan Terbaru --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
-        <div class="flex items-center justify-between gap-4 mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-6">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Pesanan Terbaru</h2>
-            <a href="{{ route('owner.pesanan') }}" class="text-sm font-semibold text-gold-accent hover:underline shrink-0">Lihat Semua</a>
+            <a href="{{ route('owner.pesanan') }}" class="text-sm font-semibold text-gold-accent hover:underline shrink-0 self-start sm:self-auto">Lihat Semua</a>
         </div>
         <div data-table-wrap class="overflow-x-auto">
             <table class="premium-table w-full min-w-[720px] font-body-md text-sm">
@@ -215,9 +215,9 @@
 
     {{-- Ulasan Terbaru --}}
     <section>
-        <div class="flex items-center justify-between gap-4 mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-6">
             <h2 data-reveal class="font-title-md text-title-md text-on-surface premium-heading">Ulasan Terbaru</h2>
-            <a data-reveal href="{{ route('owner.ulasan') }}" class="text-sm font-semibold text-gold-accent hover:underline shrink-0">Lihat Semua</a>
+            <a data-reveal href="{{ route('owner.ulasan') }}" class="text-sm font-semibold text-gold-accent hover:underline shrink-0 self-start sm:self-auto">Lihat Semua</a>
         </div>
         <div data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
             @forelse ($ulasanTerbaru as $review)

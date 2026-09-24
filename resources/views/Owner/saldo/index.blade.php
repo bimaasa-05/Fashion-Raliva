@@ -152,6 +152,7 @@
         {{-- Riwayat Perubahan Saldo --}}
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
             <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Riwayat Perubahan Saldo</h2>
+            <div class="hidden md:block">
             <div data-table-wrap class="overflow-x-auto">
                 <table class="premium-table w-full min-w-[820px] font-body-md text-sm">
                     <thead>
@@ -178,6 +179,24 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+            </div>
+            <div class="md:hidden space-y-3">
+                @forelse ($mutations as $row)
+                    @php $masuk = $isMasuk($row->jenis_transaksi); @endphp
+                    <article class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
+                        <div class="flex items-start justify-between gap-2">
+                            <p class="text-sm text-on-surface line-clamp-2 min-w-0">{{ $row->keterangan }}</p>
+                            <p class="font-bold whitespace-nowrap shrink-0 {{ $masuk ? 'text-secondary' : 'text-error' }}">{{ $masuk ? '+' : '−' }} {{ $fmt(abs($row->jumlah)) }}</p>
+                        </div>
+                        <div class="flex items-center justify-between mt-3 pt-3 border-t border-muted-border text-xs text-on-surface-variant">
+                            <span class="whitespace-nowrap">{{ $row->created_at->format('d M Y, H:i') }}</span>
+                            <span>Saldo <strong class="text-on-surface">{{ $fmt($row->saldo_sesudah) }}</strong></span>
+                        </div>
+                    </article>
+                @empty
+                    <p class="py-8 text-center text-on-surface-variant">Belum ada mutasi saldo.</p>
+                @endforelse
             </div>
             <div class="flex items-center justify-between pt-6 mt-2 border-t border-muted-border">
                 <p class="text-xs text-on-surface-variant">Menampilkan {{ $mutations->count() }} dari {{ $mutations->total() }} mutasi</p>
@@ -223,6 +242,7 @@
 
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
             <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Daftar Pengeluaran</h2>
+            <div class="hidden md:block">
             <div data-table-wrap class="overflow-x-auto">
                 <table class="premium-table w-full min-w-[720px] font-body-md text-sm">
                     <thead>
@@ -246,6 +266,22 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+            </div>
+            <div class="md:hidden space-y-3">
+                @forelse ($expenses as $ex)
+                    <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <p class="font-bold text-on-surface truncate">{{ $ex->nama }}</p>
+                                <p class="text-xs text-on-surface-variant mt-0.5">{{ $ex->kategori }} • {{ $ex->tanggal->format('d M Y') }}</p>
+                            </div>
+                            <p class="font-bold text-error whitespace-nowrap shrink-0">- {{ $fmt($ex->nominal) }}</p>
+                        </div>
+                    </article>
+                @empty
+                    <p class="py-8 text-center text-on-surface-variant">Belum ada pengeluaran tercatat.</p>
+                @endforelse
             </div>
         </section>
     </div>

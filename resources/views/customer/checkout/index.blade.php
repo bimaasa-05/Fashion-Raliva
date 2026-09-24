@@ -651,7 +651,7 @@
                         </button>
                         @endif
                     </div>
-                    <div id="co-rincian-grid" class="grid grid-cols-2 lg:grid-cols-3 gap-md">
+                    <div id="co-rincian-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-md">
                     @forelse ($items as $idx => $i)
                     @php
                         $pv = $i->productVariant;

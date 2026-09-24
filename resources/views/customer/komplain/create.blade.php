@@ -227,7 +227,7 @@
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[120px] lg:pl-72">
 <!-- TopAppBar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-<a href="{{ route('customer.komplain') }}" aria-label="{{ __('Go back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+<a href="{{ request()->query('order') ? route('customer.order-tracking', ['order' => request()->query('order')]) : route('customer.komplain') }}" aria-label="{{ __('Go back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('NEW COMPLAINT') }}</h1>
@@ -244,6 +244,16 @@
 <!-- Pesanan -->
 <section class="pt-lg mt-lg border-t border-outline-variant">
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Pesanan Terkait') }}</h3>
+@if (! empty($locked) && $order)
+<input type="hidden" name="order_id" value="{{ $order->order_id }}" />
+<div class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm flex items-center gap-sm">
+<span class="material-symbols-outlined text-[20px] text-secondary shrink-0">receipt_long</span>
+<div class="min-w-0">
+<p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">#{{ $order->nomor_order }} — {{ $order->store?->nama_toko }}</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Rp {{ number_format((float) $order->grand_total, 0, ',', '.') }}</p>
+</div>
+</div>
+@else
 <select name="order_id" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-secondary transition-colors {{ $errors->has('order_id') ? 'border-error' : '' }}">
 <option value="" {{ old('order_id', $order?->order_id ?? '') === '' ? 'selected' : '' }}>{{ __('Pilih pesanan yang bermasalah') }}</option>
 @foreach ($eligibleOrders as $o)
@@ -252,6 +262,7 @@
 </option>
 @endforeach
 </select>
+@endif
 @error('order_id')
 <p class="text-error text-label-sm mt-xs">{{ $message }}</p>
 @enderror

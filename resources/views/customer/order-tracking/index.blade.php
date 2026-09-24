@@ -368,7 +368,12 @@
     $shipment = $selected->shipments->first();
     $estDeliv = $shipment?->estimasi_tiba;
     $itemsCount = $selected->items->count();
-    $progressWidth = $isCancelled ? 0 : (($step - 1) / 3 * 100);
+    $progressWidth = 0;
+    $tlList = $timeline ?? [];
+    $doneCount = collect($tlList)->where('done', true)->count();
+    // Langkah aktif = langkah belum-done pertama (khusus aksi role, bukan status mentah).
+    $activeIndex = ($step > 0 && $doneCount < count($tlList)) ? $doneCount : null;
+    $progressWidth = $isCancelled ? 0 : ($doneCount / max(1, count($tlList)) * 100);
     $latestRefund = optional($selected->refunds)->sortByDesc('diajukan_pada')->first();
     $refundStatus = $latestRefund?->status;
     $refundPernahAda = $selected->refunds->isNotEmpty();
@@ -384,10 +389,15 @@
             \App\Models\Payment::STATUS_DITOLAK => [__('Bukti ditolak'), __('Bukti pembayaran Anda ditolak. Klik Unggah Ulang Bukti untuk mengunggah bukti yang benar.')],
             default => [__('Menunggu verifikasi'), __('Bukti pembayaran Anda sedang diverifikasi admin. Pesanan akan diproses setelah terverifikasi.')],
         },
-        'dibayar' => [__('Pembayaran diterima'), __('Pembayaran Anda telah kami terima. Pesanan sedang menunggu diproses.')],
-        'diproses' => [__('Sedang disiapkan'), __('Pesanan sedang diproses di gudang dan akan segera dikirim.')],
-        'dikirim' => [__('Sedang dalam perjalanan'), __('Pesanan sudah dikirim dan sedang dalam perjalanan menuju alamat Anda.')],
-        'selesai' => [__('Pesanan selesai'), __('Pesanan telah sampai dan selesai. Terima kasih sudah berbelanja di RALIVA.')],
+        'dibayar' => [__('Pembayaran diterima'), __('Pembayaran Anda telah kami terima. Pesanan menunggu disiapkan oleh tim produksi.')],
+        'menunggu_produksi' => [__('Sedang disiapkan'), __('Pesanan menunggu diproses oleh tim produksi.')],
+        'diproses' => [__('Sedang disiapkan'), __('Pesanan sedang disiapkan oleh tim produksi.')],
+        'menunggu_qc' => [__('Pemeriksaan kualitas'), __('Pesanan sedang dalam pemeriksaan kualitas oleh tim produksi.')],
+        'siap_kirim' => ! empty($hasResi ?? false)
+            ? [__('Resi diterbitkan'), __('Nomor resi sudah diterbitkan admin. Menunggu kurir mengambil paket Anda.')]
+            : [__('Sudah dikemas'), __('Pesanan sudah dikemas dan siap dikirim.')],
+        'dikirim' => [__('Sedang dalam perjalanan'), __('Pesanan sudah dikirim dan sedang dalam perjalanan menuju alamat Anda. Klik Konfirmasi Pesanan Diterima setelah paket sampai.')],
+        'selesai' => [__('Pesanan diterima'), __('Pesanan telah sampai dan dikonfirmasi. Terima kasih sudah berbelanja di RALIVA.')],
         'dibatalkan' => [__('Pesanan dibatalkan'), __('Pesanan ini telah dibatalkan. Hubungi layanan pelanggan jika ada pertanyaan.')],
         'refund' => match ($refundStatus) {
             \App\Models\Refund::STATUS_SELESAI => [__('Refund selesai'), __('Pengembalian dana untuk pesanan ini telah diselesaikan oleh toko.')],
@@ -420,7 +430,7 @@
 <div class="flex flex-wrap justify-between items-end gap-sm">
 <div>
 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-1">{{ __('Order ID') }}</p>
-<p class="font-title-md text-title-md md:text-headline-md font-semibold text-on-surface tracking-tight">#{{ $selected->nomor_order }}</p>
+<p class="font-title-md text-title-md md:text-headline-md font-semibold text-on-surface tracking-tight break-all">#{{ $selected->nomor_order }}</p>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">{{ $selected->created_at->format('M j, Y') }} • {{ $itemsCount }} {{ __('items') }}</p>
 </div>
 <div class="text-left md:text-right">
@@ -434,9 +444,9 @@
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ $estDeliv ? __('Est. delivery:').' '.$estDeliv->format('M j, Y') : __('Menunggu konfirmasi pengiriman') }}</p>
 @endif
 @if($shipment && $shipment->nomor_resi)
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ __('Resi') }}: <strong class="text-on-surface">{{ $shipment->nomor_resi }}</strong> @if($shipment->courier) • {{ $shipment->courier->nama_kurir }}@endif @if($shipment->shippingService) • {{ $shipment->shippingService->nama_layanan }}@endif</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right break-all">{{ __('Resi') }}: <strong class="text-on-surface">{{ $shipment->nomor_resi }}</strong> @if($shipment->courier) • {{ $shipment->courier->nama_kurir }}@endif @if($shipment->shippingService) • {{ $shipment->shippingService->nama_layanan }}@endif</p>
 @elseif($shipment)
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ __('Ekspedisi') }}: {{ $shipment->courier?->nama_kurir ?? '-' }} @if($shipment->shippingService) • {{ $shipment->shippingService->nama_layanan }}@endif • {{ __('Status pengiriman') }}: {{ $shipment->status }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right break-all">{{ __('Ekspedisi') }}: {{ $shipment->courier?->nama_kurir ?? '-' }} @if($shipment->shippingService) • {{ $shipment->shippingService->nama_layanan }}@endif • {{ __('Status pengiriman') }}: {{ $shipment->status }}</p>
 @endif
 </div>
 </div>
@@ -603,12 +613,22 @@ $buktiTokoNama = $latestRefund->file_bukti ? \Illuminate\Support\Str::afterLast(
 @else
 <div class="relative max-w-[480px] mx-auto">
 <div class="timeline-line"></div>
-<div class="timeline-progress" style="width: {{ $progressWidth }}%;"></div>
-<div class="flex justify-between gap-2 relative z-10">
-@foreach ([1 => __('Preparing'), 2 => __('Packed'), 3 => __('Shipped'), 4 => __('Delivered')] as $stepIndex => $stepLabel)
+<div class="timeline-progress" style="width: calc({{ $progressWidth }}% - {{ $progressWidth * 0.32 }}px);"></div>
+<div class="flex justify-between gap-1 sm:gap-2 relative z-10">
+@foreach (($timeline ?? [1 => [__('Disiapkan'), 'Produksi'], 2 => [__('Dikemas'), 'Produksi'], 3 => [__('Dikirim'), 'Admin'], 4 => [__('Diterima'), 'Customer']]) as $idx => $tl)
 @php
-$passed = ! $isCancelled && $step && $stepIndex < $step;
-$active = ! $isCancelled && $step && $stepIndex === $step;
+if (is_array($tl) && array_key_exists('done', $tl)) {
+    $stepLabel = $tl['label'];
+    $stepRole = $tl['role'];
+    $passed = ! $isCancelled && ! empty($tl['done']);
+    $active = ! $isCancelled && $idx === ($activeIndex ?? -1);
+} else {
+    $stepIndex = is_int($idx) ? $idx : 0;
+    $stepLabel = is_array($tl) ? $tl[0] : $tl;
+    $stepRole = is_array($tl) ? ($tl[1] ?? '') : '';
+    $passed = ! $isCancelled && $step && ($stepIndex < $step || ($stepIndex === $step && $step === 3));
+    $active = ! $isCancelled && $step && (($stepIndex === $step && $step !== 3) || ($stepIndex === 4 && $step === 3));
+}
 @endphp
 <div class="flex flex-col items-center gap-1 group cursor-pointer flex-1">
 @if ($passed)
@@ -616,15 +636,18 @@ $active = ! $isCancelled && $step && $stepIndex === $step;
 <span class="material-symbols-outlined text-[14px] text-white">check</span>
 </div>
 <span class="font-label-sm text-[10px] md:text-label-sm uppercase tracking-wider text-on-surface-variant text-center leading-tight">{{ $stepLabel }}</span>
+<span class="text-[9px] md:text-[10px] uppercase tracking-wider text-on-surface-variant/70 text-center leading-tight">{{ $stepRole }}</span>
 @elseif ($active)
 <div class="w-7 h-7 md:w-6 md:h-6 rounded-full flex items-center justify-center bg-surface transition-colors timeline-active-circle shrink-0" style="border: 2px solid var(--chrome-accent);">
 <div class="w-2.5 h-2.5 md:w-2 md:h-2 rounded-full timeline-active-dot" style="background-color: var(--chrome-accent);"></div>
 </div>
 <span class="font-label-sm text-[10px] md:text-label-sm uppercase tracking-wider text-on-surface text-center leading-tight timeline-active-label" style="color: var(--chrome-accent);">{{ $stepLabel }}</span>
+<span class="text-[9px] md:text-[10px] uppercase tracking-wider text-center leading-tight timeline-active-label" style="color: var(--chrome-accent);">{{ $stepRole }}</span>
 @else
 <div class="w-7 h-7 md:w-6 md:h-6 rounded-full bg-surface border border-outline-variant flex items-center justify-center shrink-0 transition-colors group-hover:border-outline">
 </div>
 <span class="font-label-sm text-[10px] md:text-label-sm uppercase tracking-wider text-on-surface-variant text-center leading-tight">{{ $stepLabel }}</span>
+<span class="text-[9px] md:text-[10px] uppercase tracking-wider text-on-surface-variant/70 text-center leading-tight">{{ $stepRole }}</span>
 @endif
 </div>
 @endforeach
@@ -645,9 +668,17 @@ $active = ! $isCancelled && $step && $stepIndex === $step;
 </button>
 </form>
 @endif
+@if ($selected->status === \App\Models\Order::STATUS_SELESAI)
+@if (! empty($existingComplaint ?? null))
+<a href="{{ route('customer.komplain', ['order' => $selected->order_id]) }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest border border-secondary/40 text-secondary hover:bg-secondary/5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">forum</span>{{ __('Lihat Komplain') }}
+</a>
+@else
 <a href="{{ route('customer.komplain.create', ['order' => $selected->order_id]) }}" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">
 <span class="material-symbols-outlined text-[18px]">report</span>{{ __('Ajukan Komplain') }}
 </a>
+@endif
+@endif
 @if ($refundPernahAda)
 <div class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-body-sm text-body-sm text-on-surface-variant bg-surface-container-low border border-outline-variant rounded-full px-lg py-3 text-center">
 <span class="material-symbols-outlined text-[18px] text-secondary">hourglass_top</span>
@@ -661,53 +692,13 @@ $active = ! $isCancelled && $step && $stepIndex === $step;
 {{ __('Pengajuan refund telah dilakukan.') }}
 @endif
 </div>
-@else
-<button type="button" onclick="openRefundModal()" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">
-<span class="material-symbols-outlined text-[18px]">assignment_return</span>{{ __('Ajukan Refund') }}
-</button>
 @endif
 </div>
 @if ($refundStatus === \App\Models\Refund::STATUS_DITOLAK)
 <div class="mt-lg text-center bg-error/10 border border-error/15 rounded-xl p-md">
-<p class="font-body-sm text-body-sm text-error">{{ __('Refund Anda ditolak') }}: {{ $latestRefund->alasan_penolakan ?: __('Tidak ada keterangan tambahan.') }} @if(! $refundAktif){{ __('Anda dapat mengajukan refund ulang.') }}@endif</p>
+<p class="font-body-sm text-body-sm text-error">{{ __('Refund Anda ditolak') }}: {{ $latestRefund->alasan_penolakan ?: __('Tidak ada keterangan tambahan.') }}</p>
 </div>
 @endif
-<div id="modal-refund" class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
-<div class="absolute inset-0 bg-black/50" onclick="closeRefundModal()"></div>
-<form method="POST" action="{{ route('customer.refund.store') }}" enctype="multipart/form-data" class="relative mx-auto w-full max-w-md bg-surface border border-outline-variant rounded-xl shadow-xl max-h-[85vh] overflow-y-auto p-6 space-y-4">
-@csrf
-<input type="hidden" name="order_id" value="{{ $selected->order_id }}" />
-<h3 class="font-title-md text-title-md text-on-surface">Ajukan Refund</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Pesanan {{ $selected->nomor_order }} • Total Rp {{ number_format((float) $selected->grand_total, 0, ',', '.') }}</p>
-<div>
-<label class="block font-label-sm text-label-sm mb-2">Jenis Refund</label>
-<select name="tipe_refund" required class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3">
-<option value="full">Penuh (full)</option>
-<option value="partial">Sebagian (partial)</option>
-</select>
-</div>
-<div>
-<label class="block font-label-sm text-label-sm mb-2">Nominal Diajukan (Rp)</label>
-<input name="jumlah" type="number" min="1" max="{{ (float) $selected->grand_total }}" value="{{ (float) $selected->grand_total }}" required class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3" />
-</div>
-<div>
-<label class="block font-label-sm text-label-sm mb-2">Alasan (min. 20 karakter)</label>
-<textarea name="alasan" rows="4" required minlength="20" maxlength="2000" class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3" placeholder="Jelaskan kondisi barang..."></textarea>
-</div>
-<div>
-<label class="block font-label-sm text-label-sm mb-2">Foto Bukti Barang (JPG/PNG, maks. 4 MB)</label>
-<input name="file_bukti_request" type="file" accept="image/jpeg,image/png,image/jpg" required class="w-full font-body-sm text-body-sm" />
-</div>
-<div>
-<label class="block font-label-sm text-label-sm mb-2">Keterangan Foto (opsional)</label>
-<input name="deskripsi_bukti_request" type="text" maxlength="1000" class="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3" placeholder="cth. Foto bagian sobek" />
-</div>
-<div class="flex gap-3">
-<button type="button" onclick="closeRefundModal()" class="flex-1 py-3 rounded-lg border border-outline-variant text-sm font-semibold">Batal</button>
-<button type="submit" class="btn-gold flex-1 py-3 rounded-lg text-sm font-semibold">Kirim Pengajuan</button>
-</div>
-</form>
-</div>
 @if($shipment)
 <div class="mt-lg grid grid-cols-1 md:grid-cols-3 gap-md text-left">
 <div class="border border-outline-variant rounded-lg p-md bg-surface-container-low">
@@ -868,16 +859,6 @@ $ukuran = $v?->ukuran;
         }, { threshold: 0.12 });
         els.forEach(function (e) { io.observe(e); });
     })();
-    function openRefundModal() {
-        var m = document.getElementById('modal-refund');
-        if (m) { m.classList.remove('hidden'); m.classList.add('flex'); document.body.style.overflow = 'hidden'; }
-    }
-    function closeRefundModal() {
-        var m = document.getElementById('modal-refund');
-        if (m) { m.classList.add('hidden'); m.classList.remove('flex'); document.body.style.overflow = ''; }
-    }
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeRefundModal(); });
-
     // === LIVE PRODUCTION TIMERS ===
     function customerDurFmt(totalSec) {
         if (totalSec === null || isNaN(totalSec) || totalSec < 0) totalSec = 0;

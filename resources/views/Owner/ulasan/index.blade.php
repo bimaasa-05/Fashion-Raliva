@@ -52,7 +52,7 @@
                     </li>
                 @endforeach
             </ul>
-            <div class="grid grid-cols-3 gap-gutter mt-7 pt-6 border-t border-muted-border">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter mt-7 pt-6 border-t border-muted-border">
                 @php
                     $positif = $total > 0 ? round((($distribution[4]['count'] ?? 0) + ($distribution[5]['count'] ?? 0)) / $total * 100) : 0;
                     $rendah = ($distribution[1]['count'] ?? 0) + ($distribution[2]['count'] ?? 0) + ($distribution[3]['count'] ?? 0);

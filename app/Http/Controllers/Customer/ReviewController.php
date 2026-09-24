@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ReviewController extends Controller
 {
@@ -27,7 +28,12 @@ class ReviewController extends Controller
         $toReviewItems = OrderItem::query()
             ->whereHas('order.checkout', fn ($q) => $q->where('user_id', $user->user_id))
             ->whereHas('order', fn ($q) => $q->where('status', Order::STATUS_SELESAI))
-            ->doesntHave('review')
+            ->whereDoesntHave('review')
+            ->whereHas('productVariant', function ($q) use ($user) {
+                $reviewed = Review::where('user_id', $user->user_id)->pluck('product_id')->all();
+
+                return $q->when(! empty($reviewed), fn ($qq) => $qq->whereNotIn('product_id', $reviewed));
+            })
             ->with(['order.store', 'productVariant.product.images'])
             ->latest('order_item_id')
             ->get();
@@ -72,7 +78,8 @@ class ReviewController extends Controller
             'store_id' => $orderItem->order?->store_id,
             'rating' => (int) $data['rating'],
             'ulasan' => $data['ulasan'],
-            'status' => Review::STATUS_DIMODERASI,
+            'foto' => $this->storeFoto($request, $orderItem->order_item_id),
+            'status' => Review::STATUS_AKTIF,
         ]);
 
         $store = $orderItem->order?->store;
@@ -89,8 +96,17 @@ class ReviewController extends Controller
             ]);
         }
 
-        return redirect()->route('customer.reviews')->with('toast', [
-            'message' => 'Review berhasil dikirim dan sedang menunggu moderasi.',
+        $productId = $orderItem->productVariant?->product_id;
+
+        if (! $productId) {
+            return redirect()->route('customer.reviews')->with('toast', [
+                'message' => 'Review berhasil dikirim dan langsung tampil di produk.',
+                'icon' => 'task_alt',
+            ]);
+        }
+
+        return redirect()->route('customer.shop.produk-riviews', $productId)->with('toast', [
+            'message' => 'Review berhasil dikirim dan langsung tampil di produk.',
             'icon' => 'task_alt',
         ]);
     }
@@ -116,10 +132,32 @@ class ReviewController extends Controller
 
         $data = $this->validateReview($request);
 
-        $review->update([
+        $payload = [
             'rating' => (int) $data['rating'],
             'ulasan' => $data['ulasan'],
-        ]);
+        ];
+
+        if ($request->hasFile('foto')) {
+            $this->deleteFoto($review->foto);
+            $payload['foto'] = $this->storeFoto($request, $review->order_item_id);
+        } elseif ($request->boolean('hapus_foto')) {
+            $this->deleteFoto($review->foto);
+            $payload['foto'] = null;
+        }
+
+        // Ulasan lama yang tertahan moderasi ikut tampil setelah diperbarui.
+        if ($review->status === Review::STATUS_DIMODERASI) {
+            $payload['status'] = Review::STATUS_AKTIF;
+        }
+
+        $review->update($payload);
+
+        if ($review->product_id) {
+            return redirect()->route('customer.shop.produk-riviews', $review->product_id)->with('toast', [
+                'message' => 'Review berhasil diperbarui.',
+                'icon' => 'task_alt',
+            ]);
+        }
 
         return redirect()->route('customer.reviews')->with('toast', [
             'message' => 'Review berhasil diperbarui.',
@@ -134,6 +172,7 @@ class ReviewController extends Controller
     {
         abort_if($review->user_id !== Auth::id(), 403);
 
+        $this->deleteFoto($review->foto);
         $review->delete();
 
         return redirect()->route('customer.reviews')->with('toast', [
@@ -151,6 +190,8 @@ class ReviewController extends Controller
             'order_item_id' => 'required|integer|exists:order_items,order_item_id',
             'rating' => 'required|integer|between:1,5',
             'ulasan' => 'required|string|min:20|max:2000',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'hapus_foto' => 'nullable|boolean',
         ], [
             'order_item_id.required' => 'Produk wajib dipilih.',
             'order_item_id.exists' => 'Produk tidak valid.',
@@ -159,7 +200,35 @@ class ReviewController extends Controller
             'ulasan.required' => 'Ulasan wajib diisi.',
             'ulasan.min' => 'Ulasan minimal 20 karakter.',
             'ulasan.max' => 'Ulasan maksimal 2000 karakter.',
+            'foto.image' => 'Foto harus berupa gambar.',
+            'foto.mimes' => 'Foto harus berformat JPG atau PNG.',
+            'foto.max' => 'Ukuran foto maksimal 2 MB.',
         ]);
+    }
+
+    /**
+     * Simpan file foto ulasan ke disk public, kembalikan path relatifnya.
+     */
+    protected function storeFoto(Request $request, int $orderItemId): ?string
+    {
+        if (! $request->hasFile('foto')) {
+            return null;
+        }
+
+        $file = $request->file('foto');
+        $name = 'review-' . $orderItemId . '-' . time() . '.' . $file->extension();
+
+        return $file->storeAs('review-photos', $name, 'public');
+    }
+
+    /**
+     * Hapus file foto ulasan dari disk public bila ada.
+     */
+    protected function deleteFoto(?string $path): void
+    {
+        if ($path) {
+            Storage::disk('public')->delete($path);
+        }
     }
 
     /**

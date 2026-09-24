@@ -422,7 +422,8 @@
         <div class="mx-auto max-w-[1400px] px-container-margin">
             <div class="lg:flex lg:items-start lg:gap-xl">
                 <!-- Product Gallery (left) -->
-                <section class="relative w-full aspect-[3/4] md:aspect-[4/5] lg:w-[42%] lg:shrink-0 lg:aspect-auto lg:h-[calc(100vh-8rem)] lg:sticky lg:top-24 lg:self-start bg-surface-variant overflow-hidden snap-x snap-mandatory flex overflow-x-auto hide-scrollbar">
+                <section class="relative w-full aspect-[3/4] md:aspect-[4/5] lg:w-[42%] lg:shrink-0 lg:aspect-auto lg:h-[calc(100vh-8rem)] lg:sticky lg:top-24 lg:self-start bg-surface-variant overflow-hidden">
+                    <div id="pd-gallery" class="flex h-full overflow-x-auto snap-x snap-mandatory hide-scrollbar">
 @forelse ($product->images as $img)
                     <div class="min-w-full snap-start relative">
                         <img class="w-full h-full object-cover" alt="{{ $product->nama_produk }}" src="{{ photo_url($img->file_gambar) }}"/>
@@ -432,11 +433,51 @@
                         <img class="w-full h-full object-cover" alt="{{ $product->nama_produk }}" src="https://picsum.photos/seed/product/900/1200"/>
                         </div>
 @endforelse
-                    <div class="absolute bottom-md left-1/2 -translate-x-1/2 flex gap-2 z-10">
-                        <div class="w-2 h-2 rounded-full bg-on-surface"></div>
-                        <div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+                    </div>
+                    @if ($product->images->count() > 1)
+                    <button type="button" id="pd-prev" aria-label="{{ __('Foto sebelumnya') }}" class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/40 text-white backdrop-blur-sm flex items-center justify-center hover:bg-black/60 transition disabled:opacity-30 disabled:pointer-events-none">
+                        <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+                    </button>
+                    <button type="button" id="pd-next" aria-label="{{ __('Foto berikutnya') }}" class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/40 text-white backdrop-blur-sm flex items-center justify-center hover:bg-black/60 transition disabled:opacity-30 disabled:pointer-events-none">
+                        <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+                    </button>
+                    @endif
+                    <div class="absolute bottom-md left-1/2 -translate-x-1/2 flex gap-2 z-10" id="pd-dots">
+                        @forelse ($product->images as $di)
+                        <span data-dot="{{ $loop->index }}" class="w-2 h-2 rounded-full {{ $loop->first ? 'bg-on-surface' : 'bg-outline-variant' }}"></span>
+                        @empty
+                        <span data-dot="0" class="w-2 h-2 rounded-full bg-on-surface"></span>
+                        @endforelse
                         </div>
                     </section>
+                    <script>
+                    (function () {
+                        var g = document.getElementById('pd-gallery');
+                        if (!g) return;
+                        var prev = document.getElementById('pd-prev');
+                        var next = document.getElementById('pd-next');
+                        function page() { return g.clientWidth || 1; }
+                        function maxScroll() { return g.scrollWidth - g.clientWidth; }
+                        function sync() {
+                            var x = g.scrollLeft, max = maxScroll();
+                            if (prev) prev.disabled = x <= 4;
+                            if (next) next.disabled = x >= max - 4;
+                            var dots = document.querySelectorAll('#pd-dots [data-dot]');
+                            var idx = max > 0 ? Math.round(x / page()) : 0;
+                            dots.forEach(function (d, i) {
+                                var on = i === Math.min(idx, dots.length - 1);
+                                d.classList.toggle('bg-on-surface', on);
+                                d.classList.toggle('bg-outline-variant', !on);
+                            });
+                        }
+                        if (prev) prev.addEventListener('click', function () { g.scrollBy({ left: -page(), behavior: 'smooth' }); });
+                        if (next) next.addEventListener('click', function () { g.scrollBy({ left: page(), behavior: 'smooth' }); });
+                        var tick = false;
+                        g.addEventListener('scroll', function () { if (!tick) { tick = true; requestAnimationFrame(function () { tick = false; sync(); }); } }, { passive: true });
+                        window.addEventListener('resize', sync);
+                        sync();
+                    })();
+                    </script>
                 <div class="lg:flex-1 lg:min-w-0">
                     <section class="py-xl reveal-up">
                         @php
@@ -510,7 +551,7 @@
 </button>
 @endforeach
                                     </div>
-                                <div id="size-guide" class="hidden mt-sm bg-surface-container-low border border-outline-variant rounded-lg p-md">
+                                <div id="size-guide" class="hidden mt-sm bg-surface-container-low border border-outline-variant rounded-lg p-md overflow-x-auto">
                                     <p class="font-label-caps text-label-caps text-on-surface mb-xs">{{ __('Ukuran (cm)') }} · <span class="font-label-sm text-label-sm text-on-surface-variant normal-case tracking-normal">{{ __('contoh untuk S/M/L') }}</span></p>
                                     <table class="w-full text-left text-sm">
                                         <thead>
@@ -580,6 +621,20 @@
                                     <h2 class="font-title-md text-title-md text-on-surface">{{ __('Buyer Reviews') }}</h2>
                                     <span class="font-label-sm text-label-sm text-on-surface-variant inline-flex items-center gap-xs">{{ number_format($averageRating ?: 0, 1) }} <span class="material-symbols-outlined text-[14px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span> ({{ $reviewCount }})</span>
                                     </div>
+                                    <div class="px-container-margin md:px-[64px] pb-sm">
+                                        <a href="{{ route('customer.shop.produk-riviews', $product->product_id) }}" class="inline-flex items-center gap-sm font-label-caps text-label-caps uppercase tracking-widest text-secondary hover:text-primary transition-colors">
+                                            <span>{{ __('Lihat semua ulasan') }}</span>
+                                            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                        </a>
+                                    </div>
+                                    @if (! empty($reviewableItem ?? null))
+                                    <div class="px-container-margin md:px-[64px] pb-sm">
+                                        <a href="{{ route('customer.reviews.create', ['order_item' => $reviewableItem->order_item_id]) }}" class="btn-gold w-full md:w-auto inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                                            <span class="material-symbols-outlined text-[20px]">rate_review</span>
+                                            <span>{{ __('Beri Nilai') }}</span>
+                                        </a>
+                                    </div>
+                                    @endif
 @forelse ($reviews as $ri => $review)
                                 <!-- Review -->
                                 <article class="px-container-margin md:px-[64px] py-md border-b border-outline-variant">
@@ -595,7 +650,7 @@
                                             <button aria-label="{{ __('More options') }}" class="w-8 h-8 rounded-full hover:bg-surface-container-high flex items-center justify-center transition-colors text-on-surface-variant" onclick="toggleReviewMenu(event, 'rv-menu-{{ $ri }}')" type="button">
                                                 <span class="material-symbols-outlined text-[18px]">more_vert</span>
                                                 </button>
-                                            <div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT shadow-xl overflow-hidden" id="rv-menu-{{ $ri }}">
+                                            <div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl overflow-hidden" id="rv-menu-{{ $ri }}">
                                                 <button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="toggleReviewMenu(event, 'rv-menu-{{ $ri }}')" type="button">
                                                     <span class="material-symbols-outlined text-[18px] text-on-surface-variant">translate</span>{{ __('Translate') }}
                                                     </button>
@@ -614,20 +669,15 @@
                                             </div>
                                         </div>
                                     <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm">{{ $review->ulasan }}</p>
+                                    @if ($review->foto)
+                                    <img src="{{ asset('storage/' . ltrim($review->foto, '/')) }}" alt="{{ __('Foto ulasan') }}" class="mt-sm w-24 h-24 object-cover rounded-xl border border-outline-variant" loading="lazy" />
+                                    @endif
                                     </article>
 @empty
                                 <article class="px-container-margin md:px-[64px] py-md text-center">
                                     <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No reviews yet. Be the first to review this product.') }}</p>
                                     </article>
 @endforelse
-                                @if ($reviewCount > 3)
-                                <div class="px-container-margin md:px-[64px] py-md flex justify-center">
-                                    <a href="{{ route('customer.shop.produk-riviews', $product->product_id) }}" class="inline-flex items-center gap-sm font-label-caps text-label-caps uppercase tracking-widest text-secondary hover:text-primary transition-colors">
-                                        <span>{{ __('Lihat selengkapnya') }}</span>
-                                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                                    </a>
-                                </div>
-                                @endif
                                 </section>
                             </div>
                         </section>
@@ -666,11 +716,11 @@
     <!-- Mobile Sticky Bottom Action Bar -->
     <div class="fixed bottom-0 left-0 right-0 lg:left-72 z-50 px-container-margin py-sm pb-safe">
         <div class="flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.18)]">
-            <button type="button" data-cart-add data-variant-id="" class="flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-widest transition-colors hover:bg-secondary/5">
+            <button type="button" data-cart-add data-variant-id="" class="flex-1 min-w-0 flex items-center justify-center gap-2 px-md lg:px-xl py-3 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-widest transition-colors hover:bg-secondary/5">
                 <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
                 <span class="truncate">{{ __('CART') }}</span>
                 </button>
-            <a href="{{ route('customer.checkout') }}" data-buy-now class="btn-gold flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+            <a href="{{ route('customer.checkout') }}" data-buy-now class="btn-gold flex-1 min-w-0 flex items-center justify-center gap-2 px-md lg:px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
                 <span class="material-symbols-outlined text-[20px]">attach_money</span>
                 <span class="truncate">{{ __('BUY') }}</span>
                 </a>
@@ -698,14 +748,14 @@
                     <span class="font-body-sm text-body-sm text-on-surface">{{ __('Irrelevant to the product') }}</span>
                     </label>
                 <div class="flex gap-gutter mt-lg">
-                    <button class="flex-1 h-12 border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-widest hover:bg-secondary/5 transition-colors" onclick="closeReport()" type="button">{{ __('Cancel') }}</button>
-                    <button class="flex-1 h-12 btn-gold font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center" type="submit">{{ __('Send report') }}</button>
+                    <button class="flex-1 h-12 border border-secondary rounded-xl text-secondary font-label-caps text-label-caps uppercase tracking-widest hover:bg-secondary/5 transition-colors" onclick="closeReport()" type="button">{{ __('Cancel') }}</button>
+                    <button class="flex-1 h-12 btn-gold rounded-xl font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center" type="submit">{{ __('Send report') }}</button>
                     </div>
                 </form>
             <div class="hidden text-center py-md" id="report-success">
                 <span class="material-symbols-outlined text-secondary text-[48px]">check_circle</span>
                 <p class="font-body-lg text-body-lg text-on-surface mt-sm mb-lg">{{ __('Thank you. Your report has been submitted.') }}</p>
-                <button class="w-full h-12 btn-gold font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center" onclick="closeReport()" type="button">{{ __('Close') }}</button>
+                <button class="w-full h-12 btn-gold rounded-xl font-label-caps text-label-caps uppercase tracking-widest flex items-center justify-center" onclick="closeReport()" type="button">{{ __('Close') }}</button>
                 </div>
             </div>
         </div>
@@ -861,13 +911,15 @@
         });
     </script>
     <script>
-        /* Arrow back = kembali ke halaman customer sebelumnya (kecuali dari checkout, agar tidak bolak-balik) */
+        /* Arrow back = kembali ke halaman customer sebelumnya (kecuali dari checkout/riviews/halaman sendiri, agar tidak bolak-balik) */
         document.addEventListener('click', function (e) {
             var back = e.target.closest('[data-go-back]');
             if (!back) return;
             e.preventDefault();
             var ref = document.referrer;
-            if (ref && ref.indexOf(window.location.origin) === 0 && ref.indexOf('/checkout') === -1) {
+            var selfUrl = window.location.href.split('?')[0].replace(/\/$/, '');
+            var refPath = ref ? ref.split('?')[0].replace(/\/$/, '') : '';
+            if (ref && ref.indexOf(window.location.origin) === 0 && ref.indexOf('/checkout') === -1 && ref.indexOf('/riviews') === -1 && refPath !== selfUrl) {
                 window.history.back();
             } else {
                 window.location.href = back.getAttribute('href');

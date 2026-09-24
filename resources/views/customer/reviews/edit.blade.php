@@ -243,7 +243,7 @@
 <div class="mx-auto max-w-[1600px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('REVIEWS') }}</p>
-<form id="review-form" method="POST" action="{{ route('customer.reviews.update', $review->review_id) }}">
+<form id="review-form" method="POST" action="{{ route('customer.reviews.update', $review->review_id) }}" enctype="multipart/form-data">
 @csrf
 @method('PUT')
 <!-- Product Summary -->
@@ -292,13 +292,58 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 <!-- Photos -->
 <section class="pt-lg mt-lg border-t border-outline-variant">
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Add Photos') }} <span class="normal-case tracking-normal text-on-surface-variant/70">{{ __('(optional)') }}</span></h3>
-<div class="flex gap-gutter">
-<span role="button" tabindex="0" class="w-20 h-20 border border-dashed border-outline rounded-xl flex flex-col items-center justify-center gap-xs cursor-pointer hover:border-secondary hover:text-secondary transition-colors text-on-surface-variant">
+<div class="flex gap-gutter items-start">
+<label for="review-foto" id="review-foto-label" class="w-20 h-20 border border-dashed border-outline rounded-xl flex-col items-center justify-center gap-xs cursor-pointer hover:border-secondary hover:text-secondary transition-colors text-on-surface-variant shrink-0 {{ $review->foto ? 'hidden' : 'flex' }}">
 <span class="material-symbols-outlined text-[24px]">add_a_photo</span>
 <span class="font-label-sm text-[10px]">{{ __('Add Photo') }}</span>
-</span>
+</label>
+<input id="review-foto" name="foto" type="file" accept="image/jpeg,image/png,image/jpg" class="sr-only" onchange="previewReviewFoto(this)" />
+<div id="review-foto-wrap" class="{{ $review->foto ? '' : 'hidden' }} relative w-20 h-20 shrink-0">
+<img id="preview-review-foto" src="{{ $review->foto ? asset('storage/' . ltrim($review->foto, '/')) : '' }}" alt="{{ __('Pratinjau foto') }}" class="w-20 h-20 object-cover rounded-xl border border-outline-variant" />
+<button type="button" onclick="document.getElementById('review-foto').click()" aria-label="{{ __('Ganti foto') }}" title="{{ __('Ganti foto') }}" class="absolute -bottom-2 -left-2 w-7 h-7 rounded-full bg-secondary text-white flex items-center justify-center shadow-lg hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-[14px]">swap_horiz</span>
+</button>
+<button type="button" onclick="clearReviewFoto()" aria-label="{{ __('Batalkan foto') }}" title="{{ __('Batalkan foto') }}" class="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-error text-white flex items-center justify-center shadow-lg hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-[14px]">close</span>
+</button>
 </div>
+</div>
+<input type="checkbox" name="hapus_foto" id="hapus-foto-flag" value="1" class="sr-only" />
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('JPG/PNG, maks 2 MB.') }}</p>
+@error('foto')
+<p class="text-error text-label-sm mt-xs">{{ $message }}</p>
+@enderror
 </section>
+<script>
+function previewReviewFoto(input) {
+    var wrap = document.getElementById('review-foto-wrap');
+    var label = document.getElementById('review-foto-label');
+    var preview = document.getElementById('preview-review-foto');
+    var flag = document.getElementById('hapus-foto-flag');
+    if (!wrap || !preview) return;
+    var file = input && input.files ? input.files[0] : null;
+    if (file) {
+        preview.src = URL.createObjectURL(file);
+        wrap.classList.remove('hidden');
+        if (label) { label.classList.add('hidden'); label.classList.remove('flex'); }
+        if (flag) flag.checked = false;
+    } else {
+        clearReviewFoto();
+    }
+}
+function clearReviewFoto() {
+    var input = document.getElementById('review-foto');
+    var wrap = document.getElementById('review-foto-wrap');
+    var label = document.getElementById('review-foto-label');
+    var preview = document.getElementById('preview-review-foto');
+    var flag = document.getElementById('hapus-foto-flag');
+    if (input) input.value = '';
+    if (preview) preview.removeAttribute('src');
+    if (wrap) wrap.classList.add('hidden');
+    if (label) { label.classList.remove('hidden'); label.classList.add('flex'); }
+    if (flag) flag.checked = true;
+}
+</script>
 </form>
 </div>
 </div>

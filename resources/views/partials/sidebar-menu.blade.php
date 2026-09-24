@@ -27,6 +27,7 @@
                 ['route' => 'superadmin.data-pesanan', 'icon' => 'shopping_cart', 'text' => 'Data Pesanan'],
                 ['route' => 'superadmin.data-pembayaran', 'icon' => 'payments', 'text' => 'Data Pembayaran'],
                 ['route' => 'superadmin.verifikasi-topup', 'icon' => 'account_balance_wallet', 'text' => 'Verifikasi Top Up', 'badge' => 'topup'],
+                ['route' => 'superadmin.verifikasi-penarikan-saldo', 'icon' => 'payments', 'text' => 'Penarikan Saldo', 'badge' => 'penarikan_saldo'],
                 ['route' => 'superadmin.pengembalian-dana', 'icon' => 'assignment_return', 'text' => 'Pengembalian Dana', 'badge' => 'refund'],
                 ['route' => 'superadmin.permintaan-penarikan', 'icon' => 'attach_money', 'text' => 'Pencairan Dana', 'badge' => 'penarikan'],
             ],

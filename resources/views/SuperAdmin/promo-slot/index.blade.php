@@ -205,7 +205,7 @@
                     <div class="relative" id="promoTipe-dd">
                         <button type="button" data-dd-trigger id="promoTipe-trigger" onclick="toggleDropdown('promoTipe')" aria-haspopup="listbox" aria-expanded="false"
                             class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
-                            <span id="promoTipe-label" class="truncate">-- Pilih Tipe --</span>
+                            <span id="promoTipe-label" data-dd-label class="truncate">-- Pilih Tipe --</span>
                             <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="promoTipe-chevron">expand_more</span>
                         </button>
                         <div id="promoTipe-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
@@ -217,7 +217,7 @@
                                 Nominal (Rp)<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
                             </button>
                         </div>
-                        <input type="hidden" name="tipe_diskon" id="tipe_diskon" value="" />
+                        <input type="hidden" name="tipe_diskon" id="tipe_diskon" data-dd-value value="" />
                     </div>
                     @error('tipe_diskon')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
@@ -253,7 +253,7 @@
                 <div class="relative" id="promoStatus-dd">
                     <button type="button" data-dd-trigger id="promoStatus-trigger" onclick="toggleDropdown('promoStatus')" aria-haspopup="listbox" aria-expanded="false"
                         class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
-                        <span id="promoStatus-label" class="truncate">Aktif</span>
+                        <span id="promoStatus-label" data-dd-label class="truncate">Aktif</span>
                         <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="promoStatus-chevron">expand_more</span>
                     </button>
                     <div id="promoStatus-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
@@ -265,7 +265,7 @@
                             Nonaktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
                         </button>
                     </div>
-                    <input type="hidden" name="status" id="promo_status" value="aktif" />
+                    <input type="hidden" name="status" id="promo_status" data-dd-value value="aktif" />
                 </div>
             </div>
             @slot('footer')
@@ -321,7 +321,8 @@
     function syncPromoTipe() {
         const labels = { persen: 'Persen (%)', nominal: 'Nominal (Rp)' };
         const v = document.getElementById('tipe_diskon').value;
-        ddSet('promoTipe', v, labels[v] ?? '-- Pilih Tipe --');
+        ddSet('promoTipe-dd', v, labels[v] ?? '-- Pilih Tipe --');
+        closeDropdown('promoTipe');
     }
     function selectPromoStatus(v) {
         document.getElementById('promo_status').value = v;
@@ -330,7 +331,8 @@
     function syncPromoStatus() {
         const labels = { aktif: 'Aktif', nonaktif: 'Nonaktif' };
         const v = document.getElementById('promo_status').value;
-        ddSet('promoStatus', v, labels[v] ?? 'Aktif');
+        ddSet('promoStatus-dd', v, labels[v] ?? 'Aktif');
+        closeDropdown('promoStatus');
     }
 
     function openPromoModal() {

@@ -9,17 +9,17 @@
 
         .sheet { max-width: 780px; margin: 0 auto; }
 
-        .head { border-bottom: 3px solid #C9A24D; padding-bottom: 14px; margin-bottom: 20px; }
+        .head { border-bottom: 3px solid #8B1E3F; padding-bottom: 14px; margin-bottom: 20px; }
         .head-row { display: table; width: 100%; }
         .head-left, .head-right { display: table-cell; vertical-align: top; }
-        .brand { font-size: 10px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; color: #C9A24D; }
+        .brand { font-size: 10px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; color: #8B1E3F; }
         h1 { font-size: 20px; color: #1B1C1C; margin: 4px 0 0; }
         .store { font-size: 12px; color: #5c5f5f; margin-top: 4px; }
         .meta { text-align: right; font-size: 10px; color: #5c5f5f; line-height: 1.7; }
         .meta strong { color: #1B1C1C; }
 
         .section-title { font-size: 13px; font-weight: bold; margin: 22px 0 10px; color: #1B1C1C; }
-        .section-title .bar { display: inline-block; width: 4px; height: 13px; background: #C9A24D; margin-right: 6px; vertical-align: -1px; }
+        .section-title .bar { display: inline-block; width: 4px; height: 13px; background: #8B1E3F; margin-right: 6px; vertical-align: -1px; }
         .section-title small { font-weight: normal; font-size: 9px; color: #5c5f5f; text-transform: uppercase; letter-spacing: 1px; }
 
         table { width: 100%; border-collapse: collapse; }

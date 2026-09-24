@@ -378,7 +378,7 @@
             const len = c * frac;
             const cir = document.createElementNS(NS, 'circle');
             cir.setAttribute('cx', size / 2); cir.setAttribute('cy', size / 2); cir.setAttribute('r', r);
-            cir.setAttribute('fill', 'none'); cir.setAttribute('stroke', s.color || '#C9A24D');
+            cir.setAttribute('fill', 'none'); cir.setAttribute('stroke', s.color || '#8B1E3F');
             cir.setAttribute('stroke-width', strokeW);
             cir.style.strokeDasharray = '0 ' + c.toFixed(2);
             cir.style.strokeDashoffset = (-acc).toFixed(2);
@@ -413,7 +413,7 @@
             const li = document.createElement('li');
             li.className = 'flex items-center justify-between gap-3 font-body-md text-sm';
             li.innerHTML =
-                '<span class="flex items-center gap-2 text-on-surface min-w-0"><i class="w-2.5 h-2.5 rounded-full shrink-0" style="background:' + (s.color || '#C9A24D') + '"></i><span class="truncate">' + (s.label || '-') + '</span></span>' +
+                '<span class="flex items-center gap-2 text-on-surface min-w-0"><i class="w-2.5 h-2.5 rounded-full shrink-0" style="background:' + (s.color || '#8B1E3F') + '"></i><span class="truncate">' + (s.label || '-') + '</span></span>' +
                 '<span class="shrink-0 text-on-surface"><b>' + val.toLocaleString('id-ID') + '</b> <span class="text-on-surface-variant text-xs">• ' + pct + '%</span></span>';
             leg.appendChild(li);
         });

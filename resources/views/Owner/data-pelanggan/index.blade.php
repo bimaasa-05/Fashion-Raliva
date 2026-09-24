@@ -136,6 +136,7 @@
             </div>
         </div>
 
+        <div class="hidden md:block">
         <div data-table-wrap class="overflow-x-auto">
             <table class="premium-table w-full min-w-[900px] font-body-md text-sm">
                 <thead>
@@ -192,6 +193,35 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        </div>
+        <div class="md:hidden space-y-3">
+            @forelse ($rows as $row)
+                <article data-table-row data-segment="{{ $row->segment }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0 font-title-md text-xs text-on-surface">{{ $row->initials }}</div>
+                        <div class="flex-grow min-w-0">
+                            <p class="font-bold text-on-surface truncate">{{ $row->name }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5 truncate">{{ $row->email }}</p>
+                        </div>
+                        @if ($row->segment === 'leader')
+                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gold-accent text-deep-onyx text-[10px] font-bold uppercase shrink-0"><span class="material-symbols-outlined text-[12px]">crown</span>Top</span>
+                        @elseif ($row->segment === 'setia')
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20 shrink-0">Setia</span>
+                        @else
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant shrink-0">Baru</span>
+                        @endif
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-muted-border text-sm text-center">
+                        <div><p class="text-[11px] text-on-surface-variant">Pesanan</p><p class="font-bold text-on-surface">{{ $row->jumlah_order }}</p></div>
+                        <div><p class="text-[11px] text-on-surface-variant">Total</p><p class="font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format($row->total_belanja, 0, ',', '.') }}</p></div>
+                        <div><p class="text-[11px] text-on-surface-variant">Terakhir</p><p class="font-semibold text-on-surface-variant whitespace-nowrap">{{ optional(\Carbon\Carbon::parse($row->last_order))->translatedFormat('d M Y') }}</p></div>
+                    </div>
+                    <button type="button" data-modal-open="modal-histori-{{ $row->id }}" class="mt-3 w-full py-2 rounded-lg border border-muted-border text-xs font-semibold text-gold-accent hover:border-gold-accent transition-colors">Lihat Riwayat</button>
+                </article>
+            @empty
+                <p class="py-6 text-center text-on-surface-variant">Belum ada pelanggan.</p>
+            @endforelse
         </div>
 
         <div data-empty-state class="hidden flex-col items-center py-12 text-center gap-3">

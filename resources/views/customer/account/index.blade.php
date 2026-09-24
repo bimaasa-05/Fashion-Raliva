@@ -271,7 +271,7 @@
 <div class="flex flex-col items-center md:items-start justify-center flex-grow text-center md:text-left">
 <h3 class="font-title-md text-title-md text-on-surface mb-1">{{ __('Welcome') }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mb-md max-w-xs">{{ __('Register to track your orders and save your wishlist.') }}</p>
-<a class="btn-gold w-full md:w-auto h-14 px-xl font-label-caps text-label-caps uppercase tracking-widest inline-flex items-center justify-center" href="{{ route('register') }}">
+<a class="btn-gold rounded-xl w-full md:w-auto h-14 px-xl font-label-caps text-label-caps uppercase tracking-widest inline-flex items-center justify-center" href="{{ route('register') }}">
 <span>{{ __('Register Now') }}</span>
 </a>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-md">
@@ -315,20 +315,6 @@
 <div class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors" data-icon="location_on">location_on</span>
 <span class="font-body-lg text-body-lg text-on-surface">{{ __('Addresses') }}</span>
-</div>
-<span class="material-symbols-outlined text-outline-variant group-hover:text-secondary transition-colors" data-icon="chevron_right">chevron_right</span>
-</a>
-<a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.reviews') }}">
-<div class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors" data-icon="star_border">star_border</span>
-<span class="font-body-lg text-body-lg text-on-surface">{{ __('My Reviews') }}</span>
-</div>
-<span class="material-symbols-outlined text-outline-variant group-hover:text-secondary transition-colors" data-icon="chevron_right">chevron_right</span>
-</a>
-<a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.komplain') }}">
-<div class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors" data-icon="report">report</span>
-<span class="font-body-lg text-body-lg text-on-surface">{{ __('My Complaints') }}</span>
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-secondary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>
