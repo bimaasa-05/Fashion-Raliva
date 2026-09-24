@@ -60,14 +60,18 @@ Scope: file Admin, ditambah pengecualian minimal berikut:
 - [x] Backfill hex untuk nama warna yang sudah dikenali palet resmi.
 - [x] Jangan mengubah nama custom yang tidak dikenal secara otomatis.
 
-## Paket 3 — Validasi warna Admin
+## Paket 3 — Warna opsional dan validasi warna Admin
 
+- [x] Warna boleh dikosongkan saat tambah produk.
+- [x] Produk tanpa warna disimpan dengan varian `warna = null`, bukan otomatis `Hitam`.
+- [x] Form tambah mendukung varian hanya ukuran beserta stoknya.
+- [x] Detail Customer menyembunyikan pemilih warna bila tidak ada warna.
 - [x] Warna preset tetap memakai nama dan hex resmi.
-- [x] Warna custom wajib memenuhi:
+- [x] Warna custom yang diisi wajib memenuhi:
   - [x] Nama minimal dua karakter dan bukan placeholder.
   - [x] Kode hex valid enam digit.
   - [x] Tidak ada nama kosong yang otomatis menjadi “Warna N”.
-- [x] Validasi nama dan hex di frontend dan backend.
+- [x] Validasi nama dan hex di frontend dan backend untuk warna yang dikirim.
 - [x] Jaga urutan `warna[]` dan `warna_hex[]` agar tidak tertukar.
 - [x] Simpan nama resmi sebagaimana dimasukkan Admin dan hex ternormalisasi.
 - [x] Tampilkan error yang menyebut warna bermasalah, bukan error umum.
@@ -108,7 +112,7 @@ Scope: file Admin, ditambah pengecualian minimal berikut:
 - [x] Paket 1 selesai di kode dan test: rendering checkout memakai `photo_url()`, fallback dipertahankan,
   dan `CheckoutPhotoTest` lulus untuk beli langsung, keranjang, URL absolut, serta tanpa foto.
 - [x] Paket 2 selesai di kode dan test: resolver warna terpusat, backfill hex, dan tampilan Customer/Admin.
-- [x] Paket 3 selesai di kode dan test: validasi nama dan hex warna custom di frontend dan backend.
+- [x] Paket 3 direvisi dan selesai di kode dan test: warna menjadi opsional; validasi nama dan hex tetap berlaku untuk warna custom yang dikirim.
 - [x] Paket 4 selesai di kode dan test: proposal terkunci, halaman review, persetujuan, penolakan, audit, dan notifikasi.
 - [ ] Verifikasi browser manual belum dilakukan.
 - [ ] Full suite menyisakan satu kegagalan lama di `DataPesananOrderStoreTest::test_online_order_cannot_be_finished_directly`
@@ -122,6 +126,7 @@ Scope: file Admin, ditambah pengecualian minimal berikut:
 - [x] Test otomatis untuk foto, warna, validasi, proposal, review, persetujuan, dan penolakan.
 - [ ] Verifikasi browser manual berikut:
   - [ ] Manual Admin:
+    - [ ] Tambah produk tanpa warna berhasil dan varian hanya ukuran.
     - [ ] Tambah warna custom tanpa nama ditolak.
     - [ ] Tambah warna custom tanpa hex valid ditolak.
     - [ ] Edit menampilkan warna tersimpan, bukan abu-abu.
@@ -129,6 +134,7 @@ Scope: file Admin, ditambah pengecualian minimal berikut:
   - [ ] Manual Customer:
     - [ ] Foto checkout tampil.
     - [ ] Warna Merah dan warna custom tampil benar.
+    - [ ] Produk tanpa warna menyembunyikan pemilih warna dan tetap bisa dibeli.
     - [ ] Tidak ada inisial warna sebagai tampilan utama.
   - [ ] Manual SuperAdmin:
     - [ ] Proposal terlihat lengkap.
