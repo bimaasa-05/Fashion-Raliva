@@ -7,7 +7,7 @@
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
-    <div class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         @for ($i = 0; $i < 4; $i++)
             <div class="h-28 bg-surface-container-high rounded-lg animate-pulse"></div>
         @endfor
@@ -30,7 +30,7 @@
         </div>
     @endif
     {{-- Ringkasan Periode — besarin & tebalkan icon (visible white/dark) --}}
-    <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         @foreach ([['Pendapatan Bersih', 'Rp '.number_format($pendapatan,0,',','.'), 'trending_up', 'secondary', 'total order selesai'], ['Pesanan Selesai', $pesananSelesai, 'shopping_bag', 'on-surface', 'akumulasi'], ['Nilai Refund', 'Rp '.number_format($refund,0,',','.'), 'money_off', 'error', 'refund selesai'], ['Dana Dicairkan', 'Rp '.number_format($dicairkan,0,',','.'), 'payments', 'on-surface', 'withdrawal selesai']] as $stat)
             <div data-reveal class="bg-surface-container-lowest p-6 md:p-8 border border-muted-border rounded-xl flex flex-col gap-1.5 relative overflow-hidden card-premium">
                 <span class="material-symbols-outlined absolute right-3 bottom-3 text-[84px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none fill" aria-hidden="true">{{ $stat[2] }}</span>
@@ -46,7 +46,7 @@
         <section data-reveal class="lg:col-span-3 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Pendapatan &amp; Refund</h2>
-                <div class="inline-flex self-start sm:self-auto bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
+                <div class="inline-flex flex-wrap self-start sm:self-auto bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1 max-w-full">
                     <button type="button" data-lr-range="30" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">30 Hari</button>
                     <button type="button" data-lr-range="90" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant">3 Bulan</button>
                     <button type="button" data-lr-range="365" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant">12 Bulan</button>
