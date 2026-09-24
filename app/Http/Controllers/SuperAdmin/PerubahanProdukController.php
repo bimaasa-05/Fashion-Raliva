@@ -147,8 +147,8 @@ class PerubahanProdukController extends Controller
             ['label' => 'Tipe produk', 'lama' => $beforeProduct['tipe_produk'] ?? '-', 'baru' => $after['tipe_produk'] ?? '-'],
             ['label' => 'Deskripsi', 'lama' => $beforeProduct['deskripsi'] ?? '-', 'baru' => $after['deskripsi'] ?? '-'],
             ['label' => 'Target produksi', 'lama' => $this->unit($recipes['before']['target']), 'baru' => $this->unit($recipes['after']['target'])],
-            ['label' => 'Biaya tambahan', 'lama' => $this->rupiahDecimal($recipes['before']['overhead']), 'baru' => $this->rupiahDecimal($recipes['after']['overhead'])],
-            ['label' => 'Modal per unit', 'lama' => $this->rupiahDecimal($recipes['before']['summary']['modal_per_unit'] ?? null), 'baru' => $this->rupiahDecimal($recipes['after']['summary']['modal_per_unit'] ?? null)],
+            ['label' => 'Biaya tambahan', 'lama' => $this->rupiah($recipes['before']['overhead']), 'baru' => $this->rupiah($recipes['after']['overhead'])],
+            ['label' => 'Modal per unit', 'lama' => $this->rupiah($recipes['before']['summary']['modal_per_unit'] ?? null), 'baru' => $this->rupiah($recipes['after']['summary']['modal_per_unit'] ?? null)],
             ['label' => 'Margin', 'lama' => $this->margin($recipes['before']['summary'] ?? []), 'baru' => $this->margin($recipes['after']['summary'] ?? [])],
         ];
 
@@ -179,7 +179,13 @@ class PerubahanProdukController extends Controller
             'biaya_per_unit' => (float) ($row['biaya_per_unit'] ?? 0),
         ])->values()->all();
         $beforeTarget = isset($before['product']['target_produksi']) ? (int) $before['product']['target_produksi'] : null;
-        $beforeOverhead = isset($before['product']['biaya_tambahan']) ? (float) $before['product']['biaya_tambahan'] : null;
+        $beforeOperasional = collect($before['operasional'] ?? [])->map(fn ($row) => [
+            'nama_biaya' => trim((string) ($row['nama_biaya'] ?? '')),
+            'nominal' => (float) ($row['nominal'] ?? 0),
+        ])->values()->all();
+        $beforeOverhead = $beforeOperasional !== []
+            ? array_sum(array_column($beforeOperasional, 'nominal'))
+            : (isset($before['product']['biaya_tambahan']) ? (float) $before['product']['biaya_tambahan'] : null);
         $changed = ! empty($after['resep_diubah']);
         $afterRows = $changed
             ? collect($after['resep'] ?? [])->map(function ($row) use ($permintaan) {
@@ -199,23 +205,32 @@ class PerubahanProdukController extends Controller
         $afterTarget = $changed && array_key_exists('target_produksi', $after) && $after['target_produksi'] !== null
             ? (int) $after['target_produksi']
             : $beforeTarget;
-        $afterOverhead = $changed && array_key_exists('biaya_tambahan', $after) && $after['biaya_tambahan'] !== null && $after['biaya_tambahan'] !== ''
-            ? (float) $after['biaya_tambahan']
+        $operasionalChanged = ! empty($after['operasional_diubah']);
+        $afterOperasional = $operasionalChanged
+            ? collect($after['operasional'] ?? [])->map(fn ($row) => [
+                'nama_biaya' => trim((string) ($row['nama_biaya'] ?? '')),
+                'nominal' => (float) ($row['nominal'] ?? 0),
+            ])->values()->all()
+            : $beforeOperasional;
+        $afterOverhead = $operasionalChanged || ($changed && array_key_exists('biaya_tambahan', $after) && $after['biaya_tambahan'] !== null && $after['biaya_tambahan'] !== '')
+            ? array_sum(array_column($afterOperasional, 'nominal')) + ($operasionalChanged ? 0.0 : (float) ($after['biaya_tambahan'] ?? 0))
             : $beforeOverhead;
 
         return [
-            'changed' => $changed,
+            'changed' => $changed || $operasionalChanged,
             'before' => [
                 'rows' => $beforeRows,
+                'operasional' => $beforeOperasional,
                 'target' => $beforeTarget,
                 'overhead' => $beforeOverhead,
-                'summary' => \App\Support\ProductCostCalculator::calculate($beforeRows, (float) ($beforeOverhead ?? 0), (int) ($beforeTarget ?? 0), (float) ($before['product']['harga_dasar'] ?? 0)),
+                'summary' => \App\Support\ProductCostCalculator::calculate($beforeRows, 0.0, (int) ($beforeTarget ?? 0), (float) ($before['product']['harga_dasar'] ?? 0), $beforeOperasional),
             ],
             'after' => [
                 'rows' => $afterRows,
+                'operasional' => $afterOperasional,
                 'target' => $afterTarget,
                 'overhead' => $afterOverhead,
-                'summary' => \App\Support\ProductCostCalculator::calculate($afterRows, (float) ($afterOverhead ?? 0), (int) ($afterTarget ?? 0), (float) ($after['harga_dasar'] ?? 0)),
+                'summary' => \App\Support\ProductCostCalculator::calculate($afterRows, 0.0, (int) ($afterTarget ?? 0), (float) ($after['harga_dasar'] ?? 0), $afterOperasional),
             ],
         ];
     }
@@ -262,15 +277,6 @@ class PerubahanProdukController extends Controller
         return 'Rp '.number_format((float) $value, 0, ',', '.');
     }
 
-    private function rupiahDecimal(mixed $value): string
-    {
-        if ($value === null || $value === '') {
-            return '-';
-        }
-
-        return 'Rp '.number_format((float) $value, 2, ',', '.');
-    }
-
     private function unit(mixed $value): string
     {
         if ($value === null || $value === '') {
@@ -287,7 +293,7 @@ class PerubahanProdukController extends Controller
         }
         $percent = $summary['margin_persen'];
 
-        return $this->rupiahDecimal($summary['margin_per_unit']).($percent === null ? '' : ' ('.number_format((float) $percent, 2, ',', '.').'%)');
+        return $this->rupiah($summary['margin_per_unit']).($percent === null ? '' : ' ('.number_format((float) $percent, 2, ',', '.').'%)');
     }
 
     private function notifyDecision(ProductUpdateRequest $permintaan, bool $approved, ?string $reason): void
