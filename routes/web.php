@@ -400,6 +400,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::get('/pengiriman', [PengirimanController::class, 'index'])->name('pengiriman');
     Route::post('/pengiriman/{pesanan}/resi', [PengirimanController::class, 'simpanResi'])->name('pengiriman.resi');
     Route::post('/pengiriman/{pengiriman}/kirim', [PengirimanController::class, 'kirim'])->name('pengiriman.kirim');
+    Route::get('/slot', [\App\Http\Controllers\Admin\SlotController::class, 'index'])->name('slot');
+    Route::post('/slot', [\App\Http\Controllers\Admin\SlotController::class, 'store'])->name('slot.request');
     Route::get('/kurir', [\App\Http\Controllers\Admin\KurirController::class, 'index'])->name('kurir');
     Route::post('/kurir', [\App\Http\Controllers\Admin\KurirController::class, 'sync'])->name('kurir.sync');
     Route::post('/kurir/courier', [\App\Http\Controllers\Admin\KurirController::class, 'storeCourier'])->name('kurir.courier.store');
