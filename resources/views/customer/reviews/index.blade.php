@@ -256,7 +256,18 @@
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0 lg:pl-72">
 <!-- TopAppBar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-<a aria-label="{{ __('Go back') }}" href="{{ route('customer.account') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+@php
+    $backUrl = route('customer.account');
+    $ref = request()->headers->get('referer');
+    if ($ref) {
+        $refParts = parse_url($ref);
+        $refPath = $refParts['path'] ?? '';
+        if (($refParts['host'] ?? '') === request()->getHost() && preg_match('#^/customer/shop/produk/\d+(/riviews)?$#', $refPath)) {
+            $backUrl = $ref;
+        }
+    }
+@endphp
+<a aria-label="{{ __('Go back') }}" href="{{ $backUrl }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('MY REVIEWS') }}</h1>
