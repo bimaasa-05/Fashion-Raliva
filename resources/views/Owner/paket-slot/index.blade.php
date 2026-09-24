@@ -61,7 +61,7 @@
                     <div class="progress-fill h-full rounded-full" data-progress-mode="quota" data-progress="{{ $active['progress'] }}"></div>
                 </div>
                 <div class="flex items-center justify-between mt-3">
-                    <p class="font-label-sm text-[11px] text-inverse-on-surface/60">{{ $active['sisa'] }} slot tersedia</p>
+                    <p class="font-label-sm text-[11px] text-inverse-on-surface/60">Sisa {{ $active['sisa'] }} dari Maksimal {{ $active['total'] }} ({{ $active['used'] }} terpakai, {{ $active['progress'] }}%)</p>
                     @if ($active['progress'] >= 80)
                         <span class="text-xs font-semibold text-secondary">Segera Upgrade</span>
                     @endif
