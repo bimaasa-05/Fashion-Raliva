@@ -110,6 +110,12 @@
         @keyframes tp-breathe { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .5; transform: scale(.9); } }
         @media (prefers-reduced-motion: reduce) { .tp-pulse, .tp-shake, .tp-breathe { animation: none; } }
         [data-bars] .raliva-bar { transition: height 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+        .scroll-x-visible { scrollbar-width: thin !important; scrollbar-color: rgba(139, 30, 63, .45) transparent !important; }
+        .scroll-x-visible::-webkit-scrollbar { display: block !important; height: 8px !important; width: 8px !important; }
+        .scroll-x-visible::-webkit-scrollbar-track { background: transparent !important; }
+        .scroll-x-visible::-webkit-scrollbar-thumb { background: rgba(139, 30, 63, .45) !important; border-radius: 9999px !important; }
+        html.theme-dark .scroll-x-visible { scrollbar-color: rgba(139, 30, 63, .6) transparent !important; }
+        html.theme-dark .scroll-x-visible::-webkit-scrollbar-thumb { background: rgba(139, 30, 63, .6) !important; }
         @media (prefers-reduced-motion: reduce) { [data-bars] .raliva-bar { transition: none; } }
     </style>
 </head>
@@ -329,12 +335,12 @@
                     <p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Belum ada transaksi saldo.') }}</p>
                 @else
                     <div class="flex flex-wrap gap-2 mb-md" id="trx-pills">
-                        <button type="button" data-trx-filter="semua" class="trx-pill px-3 py-1.5 rounded-full font-label-sm text-label-sm bg-secondary text-white border border-secondary transition-colors">{{ __('Semua') }}</button>
+                        <button type="button" data-trx-filter="semua" class="trx-pill px-3 py-1.5 rounded-full font-label-sm text-label-sm text-secondary border border-secondary bg-secondary/5 transition-colors">{{ __('Semua') }}</button>
                         <button type="button" data-trx-filter="masuk" class="trx-pill px-3 py-1.5 rounded-full font-label-sm text-label-sm text-on-surface-variant border border-outline-variant hover:border-secondary hover:text-secondary transition-colors">{{ __('Masuk') }}</button>
                         <button type="button" data-trx-filter="keluar" class="trx-pill px-3 py-1.5 rounded-full font-label-sm text-label-sm text-on-surface-variant border border-outline-variant hover:border-secondary hover:text-secondary transition-colors">{{ __('Keluar') }}</button>
                         <button type="button" data-trx-filter="topup" class="trx-pill px-3 py-1.5 rounded-full font-label-sm text-label-sm text-on-surface-variant border border-outline-variant hover:border-secondary hover:text-secondary transition-colors">{{ __('Topup') }}</button>
                     </div>
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto scroll-x-visible">
                         <table class="w-full text-left">
                             <thead>
                                 <tr class="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant border-b border-outline-variant">
@@ -718,9 +724,11 @@
                     trxActive = btn.getAttribute('data-trx-filter');
                     document.querySelectorAll('#trx-pills [data-trx-filter]').forEach(function(b) {
                         var on = b === btn;
-                        b.classList.toggle('bg-secondary', on);
-                        b.classList.toggle('text-white', on);
+                        b.classList.toggle('bg-secondary/5', on);
+                        b.classList.toggle('text-secondary', on);
                         b.classList.toggle('border-secondary', on);
+                        b.classList.toggle('text-white', false);
+                        b.classList.toggle('bg-secondary', false);
                         b.classList.toggle('text-on-surface-variant', !on);
                         b.classList.toggle('border-outline-variant', !on);
                     });
