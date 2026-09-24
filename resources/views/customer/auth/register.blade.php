@@ -135,7 +135,7 @@
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
     html.theme-dark .border-error { border-color: #ffb4ab !important; }
     html.theme-dark .bg-error-container { background-color: #3a1210 !important; }
-    html.theme-dark .focus\:border-primary:focus { border-color: #f2efec !important; }
+    html.theme-dark .focus\:border-secondary:focus { border-color: #A32626 !important; }
     /* ============ GOLD INNER GLOW FRAME ============ */
     .frame-gold {
         box-shadow:
@@ -377,13 +377,13 @@
 <!-- Full Name -->
 <div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="full-name">{{ __('Full Name') }}</label>
-<input name="nama_lengkap" value="{{ old('nama_lengkap') }}" autocomplete="name" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="full-name" placeholder="{{ __('Your full name') }}" type="text"/>
+<input name="nama_lengkap" value="{{ old('nama_lengkap') }}" autocomplete="name" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors" id="full-name" placeholder="{{ __('Your full name') }}" type="text"/>
 <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="name-error">{{ __('Full name is required.') }}</p>
 </div>
 <!-- Email -->
 <div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">{{ __('Email') }}</label>
-<input name="email" value="{{ old('email') }}" autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="email" placeholder="you@example.com" type="email"/>
+<input name="email" value="{{ old('email') }}" autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors" id="email" placeholder="you@example.com" type="email"/>
 <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-error">{{ __('Invalid email address.') }}</p>
 <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="email-taken-error">{{ __('Email is already registered.') }}</p>
 </div>
@@ -392,7 +392,7 @@
 <div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password">{{ __('Password') }}</label>
 <div class="relative">
-<input name="password" autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password" placeholder="{{ __('Minimum 8 characters') }}" type="password"/>
+<input name="password" autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-secondary transition-colors" id="password" placeholder="{{ __('Minimum 8 characters') }}" type="password"/>
 <button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="password-toggle" type="button">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </button>
@@ -413,7 +413,7 @@
 <div class="mb-sm">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="confirm-password">{{ __('Confirm Password') }}</label>
 <div class="relative">
-<input name="password_confirmation" autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="confirm-password" placeholder="{{ __('Re-enter your password') }}" type="password"/>
+<input name="password_confirmation" autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-secondary transition-colors" id="confirm-password" placeholder="{{ __('Re-enter your password') }}" type="password"/>
 <button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="confirm-toggle" type="button">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </button>
@@ -442,13 +442,13 @@
     <!-- Owner Full Name -->
     <div class="mb-sm">
         <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="owner-name">{{ __('Nama Lengkap Pemilik') }}</label>
-        <input name="nama_lengkap" value="{{ old('nama_lengkap') }}" autocomplete="name" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="owner-name" placeholder="{{ __('Your full name') }}" type="text"/>
+        <input name="nama_lengkap" value="{{ old('nama_lengkap') }}" autocomplete="name" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors" id="owner-name" placeholder="{{ __('Your full name') }}" type="text"/>
         <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="owner-name-error">{{ __('Nama lengkap wajib diisi.') }}</p>
     </div>
     <!-- Email -->
     <div class="mb-sm">
         <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="owner-email">{{ __('Email') }}</label>
-        <input name="email" value="{{ old('email') }}" autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors" id="owner-email" placeholder="you@example.com" type="email"/>
+        <input name="email" value="{{ old('email') }}" autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors" id="owner-email" placeholder="you@example.com" type="email"/>
         <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="owner-email-error">{{ __('Invalid email address.') }}</p>
         <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="owner-email-taken-error">{{ __('Email is already registered.') }}</p>
     </div>
@@ -456,10 +456,20 @@
     <div class="mb-sm">
         <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="owner-password">{{ __('Password') }}</label>
         <div class="relative">
-            <input name="password" autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="owner-password" placeholder="{{ __('Minimum 8 characters') }}" type="password"/>
+            <input name="password" autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-secondary transition-colors" id="owner-password" placeholder="{{ __('Minimum 8 characters') }}" type="password"/>
             <button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="owner-password-toggle" type="button">
                 <span class="material-symbols-outlined text-[20px]">visibility</span>
             </button>
+        </div>
+        <!-- Password Strength -->
+        <div class="hidden mt-xs" id="owner-pw-strength">
+            <div class="flex gap-xs">
+                <span class="h-1 flex-grow rounded-full bg-outline-variant transition-colors duration-300" id="owner-pw-seg-1"></span>
+                <span class="h-1 flex-grow rounded-full bg-outline-variant transition-colors duration-300" id="owner-pw-seg-2"></span>
+                <span class="h-1 flex-grow rounded-full bg-outline-variant transition-colors duration-300" id="owner-pw-seg-3"></span>
+                <span class="h-1 flex-grow rounded-full bg-outline-variant transition-colors duration-300" id="owner-pw-seg-4"></span>
+            </div>
+            <p class="font-label-sm text-label-sm mt-xs" id="owner-pw-strength-label">&nbsp;</p>
         </div>
         <p class="hidden font-label-sm text-label-sm text-error mt-xs" id="owner-password-error">{{ __('Password must be at least 8 characters.') }}</p>
     </div>
@@ -467,7 +477,7 @@
     <div class="mb-sm">
         <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="owner-confirm">{{ __('Confirm Password') }}</label>
         <div class="relative">
-            <input name="password_confirmation" autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="owner-confirm" placeholder="{{ __('Re-enter your password') }}" type="password"/>
+            <input name="password_confirmation" autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-secondary transition-colors" id="owner-confirm" placeholder="{{ __('Re-enter your password') }}" type="password"/>
             <button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="owner-confirm-toggle" type="button">
                 <span class="material-symbols-outlined text-[20px]">visibility</span>
             </button>
@@ -595,6 +605,42 @@
         }
 
         pwInput.addEventListener('input', pwUpdate);
+
+        var ownerPwInput = document.getElementById('owner-password');
+        var ownerPwStrengthWrap = document.getElementById('owner-pw-strength');
+        var ownerPwSegs = [document.getElementById('owner-pw-seg-1'), document.getElementById('owner-pw-seg-2'), document.getElementById('owner-pw-seg-3'), document.getElementById('owner-pw-seg-4')];
+        var ownerPwLabel = document.getElementById('owner-pw-strength-label');
+
+        function ownerPwUpdate() {
+            var v = ownerPwInput.value;
+            if (!v) {
+                ownerPwStrengthWrap.classList.add('hidden');
+                return;
+            }
+            ownerPwStrengthWrap.classList.remove('hidden');
+            var s = 0;
+            if (v.length >= 8) s++;
+            if (/[a-z]/.test(v) && /[A-Z]/.test(v)) s++;
+            if (/\d/.test(v)) s++;
+            if (/[^a-zA-Z0-9]/.test(v)) s++;
+            if (v.length >= 12) s++;
+            var filled, text, color;
+            if (v.length < 8 || s <= 1) {
+                filled = 1; text = 'Lemah'; color = '#ba1a1a';
+            } else if (s <= 3) {
+                filled = Math.min(s, 3); text = 'Bagus';
+                color = document.documentElement.classList.contains('theme-dark') ? '#f59e0b' : '#d97706';
+            } else {
+                filled = 4; text = 'Aman'; color = '#2e7d32';
+            }
+            ownerPwSegs.forEach(function (seg, i) {
+                seg.style.background = i < filled ? color : '';
+            });
+            ownerPwLabel.textContent = 'Password: ' + text;
+            ownerPwLabel.style.color = color;
+        }
+
+        ownerPwInput.addEventListener('input', ownerPwUpdate);
 
         function setError(id, show) {
             var el = document.getElementById(id);
