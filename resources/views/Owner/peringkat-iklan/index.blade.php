@@ -32,7 +32,7 @@
             @csrf
             <div>
                 <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Produk</label>
-                <select name="product_id" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent">
+                <select name="product_id" required class="raliva-input">
                     <option value="">Pilih Produk</option>
                     @foreach($products as $p)
                         <option value="{{ $p->product_id }}">{{ $p->nama_produk }}</option>
@@ -43,12 +43,15 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Nominal Bid (Rp)</label>
-                    <input type="number" name="nominal_bid" min="100000" step="50000" value="{{ old('nominal_bid', 500000) }}" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent" />
+                    <div class="flex items-stretch">
+                        <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
+                        <input type="text" name="nominal_bid" inputmode="numeric" data-rupiah value="{{ old('nominal_bid', '500.000') }}" required placeholder="500.000" class="raliva-input" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                    </div>
                     @error('nominal_bid')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Metode Pembayaran</label>
-                    <select name="metode_pembayaran" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent">
+                    <select name="metode_pembayaran" required class="raliva-input">
                         <option value="">Pilih metode</option>
                         @foreach($metode as $m)
                             <option value="{{ $m->payment_method_id }}">{{ $m->nama_metode }}</option>
@@ -59,7 +62,7 @@
             </div>
             <div>
                 <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Rekening Tujuan Transfer</label>
-                <select name="platform_bank_account_id" required class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-sm focus:outline-none focus:border-gold-accent">
+                <select name="platform_bank_account_id" required class="raliva-input">
                     <option value="">Pilih rekening tujuan</option>
                     @forelse($rekenings as $rek)
                         <option value="{{ $rek->platform_bank_account_id }}">{{ $rek->bank->nama_bank ?? '-' }} • {{ $rek->nomor_rekening }} a.n. {{ $rek->nama_pemilik }}</option>
@@ -69,12 +72,23 @@
                 </select>
                 @error('platform_bank_account_id')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
             </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Tanggal Mulai Tayang</label>
+                    <input type="date" name="tanggal_mulai" value="{{ old('tanggal_mulai', now()->format('Y-m-d')) }}" required class="raliva-input" />
+                    @error('tanggal_mulai')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Tanggal Selesai Tayang</label>
+                    <input type="date" name="tanggal_selesai" value="{{ old('tanggal_selesai') }}" required class="raliva-input" />
+                    @error('tanggal_selesai')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
+                </div>
+            </div>
             <div class="flex items-start gap-3 p-4 border border-gold-accent/30 bg-gold-accent/5 rounded-lg">
-                <span class="material-symbols-outlined text-gold-accent mt-0.5 text-[20px]">schedule</span>
+                <span class="material-symbols-outlined text-gold-accent mt-0.5 text-[20px]">campaign</span>
                 <div class="flex-1">
-                    <p class="font-label-sm text-label-sm text-on-surface uppercase">Durasi Otomatis (Fair)</p>
-                    <p class="text-sm text-on-surface-variant mt-1">Periode aktif dihitung <span class="font-bold text-on-surface">sejak disetujui Super Admin</span>, bukan sejak ajukan. <span id="ad-preview-hari" class="font-bold text-gold-accent">—</span></p>
-                    <p class="text-xs text-on-surface-variant/70 mt-1">Tier: 100k-499k → 7 hari, 500k-999k → 14 hari, 1jt-1,99jt → 30 hari, ≥2jt → 60 hari.</p>
+                    <p class="font-label-sm text-label-sm text-on-surface uppercase">Posisi Iklan</p>
+                    <p class="text-sm text-on-surface-variant mt-1">Setelah disetujui, iklan tayang <span class="font-bold text-on-surface">sesuai tanggal mulai selesai pilihanmu</span> dan tampil di katalog pelanggan — semakin besar nominal, semakin tinggi peringkat.</p>
                 </div>
             </div>
             <div>
@@ -91,7 +105,7 @@
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <h2 class="font-title-md text-title-md text-on-surface premium-heading mb-4">Riwayat Pengajuan Iklan</h2>
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto hidden md:block">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low/50 text-on-surface-variant text-xs uppercase">
@@ -110,9 +124,9 @@
                             <td class="p-3 text-sm font-mono">Rp {{ number_format((float) $s->nominal_bid, 0, ',', '.') }}</td>
                             <td class="p-3 text-xs">{{ $s->tanggal_mulai?->format('d M Y') }} - {{ $s->tanggal_selesai?->format('d M Y') }}</td>
                             <td class="p-3 text-xs">{{ $s->bankAccount?->bank->nama_bank ?? '-' }} {{ $s->bankAccount?->nomor_rekening ?? '' }}</td>
-                            <td class="p-3"><span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($s->status === 'ditunda' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : 'bg-error/10 text-error border-error/20') }}">{{ $s->status }}</span></td>
+                            <td class="p-3"><span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($s->status === 'terjadwal' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : ($s->status === 'ditunda' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : 'bg-error/10 text-error border-error/20')) }}">{{ $s->status === 'terjadwal' ? 'Menunggu Aktif' : $s->status }}</span></td>
                             <td class="p-3 text-xs">
-                                <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->payment_status === 'terverifikasi' ? 'bg-success/10 text-success' : ($s->payment_status === 'ditolak' ? 'bg-error/10 text-error' : 'bg-surface-container-high text-on-surface-variant') }}">{{ $s->payment_status }}</span>
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->payment_status === 'terverifikasi' ? 'bg-success/10 text-success border-success/20' : ($s->payment_status === 'ditolak' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }}">{{ $s->payment_status }}</span>
                                 @if($s->file_bukti)
                                     <a href="{{ asset('storage/' . $s->file_bukti) }}" target="_blank" class="ml-2 text-gold-accent hover:underline">Bukti</a>
                                 @endif
@@ -127,6 +141,43 @@
                 </tbody>
             </table>
         </div>
+        <div class="md:hidden grid grid-cols-1 gap-gutter mt-4">
+            @forelse($slots as $s)
+                <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-bold text-on-surface">{{ $s->product->nama_produk ?? '-' }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $s->tanggal_mulai?->format('d M Y') }} - {{ $s->tanggal_selesai?->format('d M Y') }}</p>
+                        </div>
+                        <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($s->status === 'terjadwal' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : ($s->status === 'ditunda' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : 'bg-error/10 text-error border-error/20')) }}">{{ $s->status === 'terjadwal' ? 'Menunggu Aktif' : $s->status }}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-muted-border">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Nominal</p>
+                            <p class="text-sm font-mono font-bold text-on-surface mt-0.5">Rp {{ number_format((float) $s->nominal_bid, 0, ',', '.') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Pembayaran</p>
+                            <p class="mt-0.5">
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->payment_status === 'terverifikasi' ? 'bg-success/10 text-success border-success/20' : ($s->payment_status === 'ditolak' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }}">{{ $s->payment_status }}</span>
+                                @if($s->file_bukti)
+                                    <a href="{{ asset('storage/' . $s->file_bukti) }}" target="_blank" class="ml-2 text-gold-accent hover:underline">Bukti</a>
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-muted-border">
+                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Rekening</p>
+                        <p class="text-sm text-on-surface-variant mt-0.5">{{ $s->bankAccount?->bank->nama_bank ?? '-' }} {{ $s->bankAccount?->nomor_rekening ?? '' }}</p>
+                        @if($s->alasan_penolakan)
+                            <div class="text-error text-[11px] mt-1">Tolak: {{ $s->alasan_penolakan }}</div>
+                        @endif
+                    </div>
+                </article>
+            @empty
+                <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada riwayat pengajuan iklan.</p>
+            @endforelse
+        </div>
         @if($slots instanceof \Illuminate\Pagination\AbstractPaginator && $slots->hasPages())
             <div class="mt-6 flex justify-center">{{ $slots->links() }}</div>
         @endif
@@ -137,6 +188,19 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('[data-rupiah]').forEach((el) => {
+            const fmt = () => {
+                const digits = el.value.replace(/\D/g, '').slice(0, 12).replace(/^0+(?=\d)/, '');
+                el.value = digits ? new Intl.NumberFormat('id-ID').format(digits) : '';
+            };
+            el.addEventListener('input', fmt);
+            if (el.value) fmt();
+        });
+        document.querySelectorAll('form').forEach((f) => {
+            f.addEventListener('submit', () => {
+                f.querySelectorAll('[data-rupiah]').forEach((el) => { el.value = el.value.replace(/\./g, ''); });
+            });
+        });
         // Check if no store banner exists (means no store)
         const noStore = document.querySelector('[data-no-store-banner]');
         if (noStore) {
@@ -145,30 +209,6 @@
                 el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
             });
         }
-    });
-    const peringkatTiers = @json($tiers ?? []);
-    function peringkatHari(nominal) {
-        nominal = parseInt(nominal) || 0;
-        for (const t of peringkatTiers) {
-            const min = parseInt(t.min) || 0;
-            const max = t.max === null || t.max === '' ? null : parseInt(t.max);
-            const hari = parseInt(t.hari) || 7;
-            if (nominal >= min && (max === null || nominal <= max)) return hari;
-        }
-        if (nominal >= 2000000) return 60;
-        if (nominal >= 1000000) return 30;
-        if (nominal >= 500000) return 14;
-        if (nominal >= 100000) return 7;
-        return 7;
-    }
-    document.addEventListener('DOMContentLoaded', () => {
-        const input = document.querySelector('input[name="nominal_bid"]');
-        const preview = document.getElementById('ad-preview-hari');
-        function updatePreview() {
-            const h = peringkatHari(input?.value);
-            if (preview) preview.textContent = h + ' hari';
-        }
-        if (input) { input.addEventListener('input', updatePreview); updatePreview(); }
     });
 </script>
 @endpush

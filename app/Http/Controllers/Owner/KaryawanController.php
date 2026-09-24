@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use App\Models\Role;
 use App\Models\StoreStaff;
 use App\Models\User;
 use App\Support\OwnerContext;
@@ -12,28 +13,38 @@ use Illuminate\Support\Facades\Hash;
 
 class KaryawanController extends Controller
 {
-    public const ROLE_MAP = [
-        3 => 'admin',
-        4 => 'produksi',
-        5 => 'gudang',
+    public const ROLE_KARYAWAN = ['admin', 'produksi', 'gudang'];
+
+    public const ROLE_NAMA = [
+        'admin' => Role::ADMIN,
+        'produksi' => Role::PRODUKSI,
+        'gudang' => Role::GUDANG,
     ];
+
+    public static function roleOf($staff): string
+    {
+        $nama = $staff->user?->role?->nama_role;
+        $key = array_search($nama, self::ROLE_NAMA, true);
+
+        return $key !== false ? $key : 'lainnya';
+    }
 
     public function index(Request $request)
     {
         $storeId = OwnerContext::firstStoreId();
 
-        $staff = StoreStaff::with('user')
+        $staff = StoreStaff::with('user.role')
             ->where('store_id', $storeId)
+            ->orderByDesc('created_at')
             ->orderByDesc('store_staff_id')
             ->paginate(15)
             ->withQueryString();
 
-        $all = StoreStaff::with('user')->where('store_id', $storeId)->get();
-        $roleOf = fn($s) => self::ROLE_MAP[$s->user?->role_id] ?? 'lainnya';
+        $all = StoreStaff::with('user.role')->where('store_id', $storeId)->get();
         $summary = [
             'total' => $all->count(),
-            'admin' => $all->filter(fn($s) => ($s->user?->role_id ?? 0) === 3)->count(),
-            'produksi_gudang' => $all->filter(fn($s) => in_array($s->user?->role_id, [4, 5]))->count(),
+            'admin' => $all->filter(fn($s) => static::roleOf($s) === 'admin')->count(),
+            'produksi_gudang' => $all->filter(fn($s) => in_array(static::roleOf($s), ['produksi', 'gudang'], true))->count(),
             'nonaktif' => $all->where('status', 'nonaktif')->count(),
         ];
 
@@ -54,18 +65,25 @@ class KaryawanController extends Controller
 
         $validated = $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:150'],
-            'email' => ['required', 'email', 'unique:users,email'],
+            'email' => ['required', 'email', 'max:150', 'unique:users,email'],
+            'nomor_telepon' => ['nullable', 'string', 'max:20'],
             'password' => ['required', 'string', 'min:8'],
             'role' => ['required', 'in:admin,produksi,gudang'],
         ]);
 
-        $roleId = array_search($validated['role'], self::ROLE_MAP);
+        $roleId = Role::where('nama_role', self::ROLE_NAMA[$validated['role']])->value('role_id');
+        if (! $roleId) {
+            return back()->with('error', 'Role karyawan tidak tersedia.')->withInput();
+        }
 
         $user = User::create([
             'nama_lengkap' => $validated['nama_lengkap'],
             'email' => $validated['email'],
+            'nomor_telepon' => $validated['nomor_telepon'] ?? null,
             'password' => Hash::make($validated['password']),
             'role_id' => $roleId,
+            'status' => User::STATUS_AKTIF,
+            'email_verified_at' => now(),
         ]);
 
         StoreStaff::create([
@@ -104,7 +122,10 @@ class KaryawanController extends Controller
             'status' => ['required', 'in:aktif,nonaktif'],
         ]);
 
-        $roleId = array_search($validated['role'], self::ROLE_MAP);
+        $roleId = Role::where('nama_role', self::ROLE_NAMA[$validated['role']])->value('role_id');
+        if (! $roleId) {
+            return back()->with('error', 'Role karyawan tidak tersedia.');
+        }
         if ($storeStaff->user) {
             $storeStaff->user->update(['role_id' => $roleId]);
         }

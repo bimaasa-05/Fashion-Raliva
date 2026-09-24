@@ -217,7 +217,7 @@
                                     @if ($item->status === 'kritis' || $item->status === 'habis')
                                         <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">{{ $item->status === 'habis' ? 'Habis' : 'Kritis' }}</span>
                                     @else
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Menipis</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Menipis</span>
                                     @endif
                                 </td>
                                 <td class="p-4 text-center">

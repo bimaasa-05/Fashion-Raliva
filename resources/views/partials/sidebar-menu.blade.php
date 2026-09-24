@@ -76,11 +76,16 @@
         @php
             $collapsible = count($group['items']) >= 3;
             $isActive = collect($group['items'])->contains(fn ($item) => request()->routeIs($item['route']));
+            $groupBadgeKeys = collect($group['items'])->filter(fn ($item) => ! empty($item['badge']))->pluck('badge')->values();
+            $groupHasBadges = $groupBadgeKeys->contains(fn ($key) => ($sidebarBadges[$key] ?? 0) > 0);
         @endphp
         <div class="space-y-1 {{ $loop->first ? '' : 'pt-4' }}">
             @if ($collapsible)
                 <button type="button" data-sidebar-group-button aria-expanded="{{ $isActive ? 'true' : 'false' }}" class="w-full flex items-center justify-between px-2 py-2 text-[10px] font-label-sm uppercase tracking-widest text-gold-accent/70 hover:text-gold-accent transition-colors">
-                    <span data-group-label>{{ $group['label'] }}</span>
+                <span class="flex items-center gap-2 min-w-0">
+                        <span data-group-label>{{ $group['label'] }}</span>
+                        <span data-sidebar-group-dot data-group-badges="{{ $groupBadgeKeys->implode(',') }}" class="w-2 h-2 rounded-full bg-error shrink-0 {{ $groupHasBadges ? '' : 'hidden' }}"></span>
+                    </span>
                     <span class="material-symbols-outlined text-[18px] transition-transform duration-200 {{ $isActive ? 'rotate-180' : '' }}">keyboard_arrow_down</span>
                 </button>
             @else
@@ -103,7 +108,7 @@
                         <span class="sidebar-tip">{{ $item['text'] }}</span>
                         <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate">{{ $item['text'] }}</span>
                         @if (! empty($item['badge']) && (($sidebarBadges[$item['badge']] ?? 0) > 0))
-                            <span data-sidebar-badge="{{ $item['badge'] }}" class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-gold-accent text-deep-onyx text-[10px] font-bold shrink-0">{{ min(99, $sidebarBadges[$item['badge']]) }}</span>
+                            <span data-sidebar-badge="{{ $item['badge'] }}" class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-gold-accent text-white text-[10px] font-bold shrink-0">{{ min(99, $sidebarBadges[$item['badge']]) }}</span>
                         @elseif (! empty($item['badge']))
                             <span data-sidebar-badge="{{ $item['badge'] }}" class="hidden"></span>
                         @endif
@@ -141,6 +146,11 @@
                 } else {
                     el.classList.add('hidden');
                 }
+            });
+            document.querySelectorAll('[data-sidebar-group-dot]').forEach((dot) => {
+                const keys = (dot.dataset.groupBadges || '').split(',').filter(Boolean);
+                const total = keys.reduce((sum, key) => sum + Number(data[key] || 0), 0);
+                dot.classList.toggle('hidden', total === 0);
             });
         } catch (e) { /* jangan ganggu polling berikutnya */ }
         busy = false;

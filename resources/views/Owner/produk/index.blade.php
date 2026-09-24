@@ -27,6 +27,19 @@
                 </div>
             </div>
         @endif
+    {{-- Banner kuota slot --}}
+    <section data-reveal class="bg-deep-onyx text-on-primary rounded-lg px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
+        <span class="material-symbols-outlined absolute -right-4 -bottom-5 text-[96px] text-on-primary/5 pointer-events-none select-none" aria-hidden="true">storage</span>
+        <div class="relative">
+            <p class="raliva-label text-gold-accent">Kuota Slot Produk</p>
+            <p class="font-body-md text-sm text-inverse-on-surface/70 mt-1">Sisa {{ $sisaSlot ?? 0 }} dari Maksimal {{ $totalSlot ?? 0 }} ({{ $usedSlot ?? 0 }} terpakai, {{ $pctSlot ?? 0 }}%)</p>
+            <div class="h-2 w-full max-w-xs bg-white/10 rounded-full overflow-hidden mt-3">
+                <div class="progress-fill h-full rounded-full" data-progress-mode="quota" data-progress="{{ $pctSlot ?? 0 }}"></div>
+            </div>
+        </div>
+        <a href="{{ route('owner.kelola-slot') }}" class="relative shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-gold-accent text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:brightness-110 transition">Tambah Slot</a>
+    </section>
+
     {{-- Ringkasan --}}
     <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
@@ -129,7 +142,7 @@
                                 @if (in_array($p->status, ['aktif', 'nonaktif', 'draft'], true))
                                     <form method="POST" action="{{ route('owner.produk.status', $p) }}" class="inline">
                                         @csrf
-                                        <select name="status" data-status-select data-current="{{ $p->status }}" title="Ubah status" class="cursor-pointer text-[10px] font-bold uppercase border rounded-full pl-2 pr-6 py-1 {{ $p->status === 'aktif' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : ($p->status === 'nonaktif' ? 'bg-surface-container-high text-on-surface-variant border-outline-variant' : 'bg-gold-accent/15 text-gold-accent border-gold-accent/30') }}">
+                                        <select name="status" data-status-select data-current="{{ $p->status }}" title="Ubah status" class="cursor-pointer text-[10px] font-bold uppercase border rounded-full pl-2 pr-6 py-1 {{ $p->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($p->status === 'nonaktif' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }}">
                                             @foreach (($statusOptions[$p->status] ?? [$p->status]) as $opt)
                                                 <option value="{{ $opt }}" @selected($opt === $p->status)>{{ ucfirst($opt) }}</option>
                                             @endforeach

@@ -6,6 +6,13 @@
 @section('header-subtitle', 'Kelola produk sesuai permission yang diberikan Owner.')
 
 @section('content')
+@include('partials.flash-toast')
+@if (session('success'))
+    <div class="bg-secondary-container/15 border border-secondary/30 text-secondary rounded-lg px-4 py-3 text-sm font-body-md">{{ session('success') }}</div>
+@endif
+@if (session('error'))
+    <div class="bg-error/10 border border-error/30 text-error rounded-lg px-4 py-3 text-sm font-body-md">{{ session('error') }}</div>
+@endif
 <div class="space-y-section-gap">
     <div class="flex items-start gap-3 p-4 border border-gold-accent/30 bg-gold-accent/10 rounded-lg">
         <span class="material-symbols-outlined text-gold-accent text-[20px] mt-0.5">lock</span>
@@ -85,11 +92,11 @@
                         @endif
                         <div class="absolute top-2 right-2">
                             @if ($statusA === 'aktif')
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[9px] font-bold uppercase border border-secondary/20">Disetujui</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20">Disetujui</span>
                             @elseif ($statusA === 'ditolak')
                                 <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20">Ditolak</span>
                             @else
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface/80 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">Menunggu</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">Menunggu</span>
                             @endif
                         </div>
                     </div>
@@ -106,11 +113,11 @@
                         <h3 class="font-bold text-on-surface leading-tight truncate">{{ $p->nama_produk }}</h3>
                         <p class="text-xs text-on-surface-variant">{{ $skuA }} &#8226; {{ $p->store?->nama_toko ?? '-' }}</p>
                         <p class="font-body-md text-gold-accent font-bold mt-1">Rp {{ number_format((float) $p->harga_dasar, 0, ',', '.') }}</p>
-                        <div class="flex items-center justify-between mt-3 pt-3 border-t border-muted-border gap-2 flex-wrap">
+                        <div class="flex flex-col gap-2 mt-3 pt-3 border-t border-muted-border sm:flex-row sm:items-center sm:justify-between sm:flex-wrap">
                             <span class="text-xs text-on-surface-variant truncate">{{ $p->category?->nama_kategori ?? '-' }}</span>
                             <div class="flex items-center gap-1.5">
                                 <button type="button" data-produk-detail class="inline-flex items-center gap-1 px-2.5 py-1 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">visibility</span>Detail</button>
-                                <button type="button" data-produk-edit data-action="{{ route('admin.produk.update', $p) }}" data-nama="{{ $p->nama_produk }}" data-kategori="{{ $p->category_id }}" data-harga="{{ $p->harga_dasar }}" data-tipe="{{ $p->tipe_produk }}" data-deskripsi="{{ $p->deskripsi }}" data-fotos="{{ $editFotosJson }}" data-varian="{{ $editVarianJson }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gold-accent/10 border border-gold-accent/30 rounded-lg text-xs font-semibold text-gold-accent hover:bg-gold-accent/20 transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">edit</span>Edit</button>
+                                <button type="button" data-produk-edit data-action="{{ route('admin.produk.update', $p) }}" data-nama="{{ $p->nama_produk }}" data-kategori="{{ $p->category_id }}" data-kategori-nama="{{ $p->category?->nama_kategori ?? '' }}" data-harga="{{ $p->harga_dasar }}" data-tipe="{{ $p->tipe_produk }}" data-deskripsi="{{ $p->deskripsi }}" data-fotos="{{ $editFotosJson }}" data-varian="{{ $editVarianJson }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gold-accent/10 border border-gold-accent/30 rounded-lg text-xs font-semibold text-gold-accent hover:bg-gold-accent/20 transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">edit</span>Edit</button>
                             </div>
                         </div>
                     </div>
@@ -182,8 +189,9 @@
                 <label class="block raliva-label mb-2">Foto Saat Ini <span class="normal-case font-normal">(centang untuk hapus)</span></label>
                 <div id="edit-foto-lama" class="grid grid-cols-4 gap-2"></div>
                 <p id="edit-foto-kosong" class="hidden text-xs text-on-surface-variant">Belum ada foto.</p>
-                <label class="block raliva-label mt-4 mb-2">Tambah Foto Baru <span class="normal-case font-normal">(maks. total 8)</span></label>
-                <input type="file" name="foto_produk[]" accept="image/*" multiple class="raliva-input w-full text-sm" />
+                <label class="block raliva-label mt-4 mb-2">Tambah Foto Baru <span class="normal-case font-normal">(maks. total 5)</span></label>
+                <div id="edit-foto-slot-grid" class="grid grid-cols-4 gap-2"></div>
+                <p class="text-xs text-on-surface-variant mt-2"><span id="edit-foto-count">0</span> foto lama + <span id="edit-foto-baru-count">0</span> baru (maks. total 5).</p>
             </div>
             <div class="space-y-4">
                 <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">Informasi Dasar</p>
@@ -193,17 +201,15 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Kategori</label>
-                        <select id="edit-category-id" name="category_id" class="raliva-select w-full">
-                            <option value="">-- Pilih Kategori --</option>
-                            @foreach ($categories as $cat)
-                                <option value="{{ $cat->category_id }}">{{ $cat->nama_kategori }}</option>
-                            @endforeach
-                        </select>
+                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Kategori <span class="text-error">*</span></label>
+                        @include('partials.kategori-combobox', ['prefix' => 'edit', 'categories' => $categories, 'selectedId' => '', 'selectedName' => ''])
                     </div>
                     <div>
                         <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Harga Dasar (Rp) *</label>
-                        <input type="number" id="edit-harga-dasar" name="harga_dasar" required min="0" step="500" class="raliva-input w-full" />
+                        <div class="flex items-stretch">
+                            <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
+                            <input type="text" id="edit-harga-dasar" name="harga_dasar" required inputmode="numeric" data-rupiah placeholder="949.000" class="raliva-input w-full" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -242,8 +248,12 @@
                         @endforeach
                     </div>
                     <div id="edit-warna-custom-chips" class="flex flex-wrap gap-2 mt-2"></div>
-                    <div class="flex items-center gap-2 mt-3">
-                        <input type="text" id="edit-warna-custom-name" placeholder="Warna baru (cth: Tosca)" maxlength="30" class="raliva-input text-sm flex-1" />
+                    <div class="flex items-center gap-2 mt-3 flex-wrap">
+                        <input type="text" id="edit-warna-custom-name" placeholder="Warna baru (cth: Tosca)" maxlength="30" class="raliva-input text-sm flex-1" style="min-width:10rem;" />
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <span class="text-on-surface-variant font-bold text-sm">#</span>
+                            <input type="text" id="edit-warna-custom-hex" placeholder="f4f4f4" maxlength="6" autocomplete="off" spellcheck="false" class="raliva-input text-sm font-mono uppercase" style="width: 7.5rem;" title="Ketik kode warna hex, cth: f4f4f4" />
+                        </div>
                         <input type="color" id="edit-warna-custom-color" value="#1c1b1b" class="w-10 h-10 rounded cursor-pointer shrink-0" title="Pilih warna" />
                         <button type="button" id="edit-warna-custom-add" class="px-4 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded shrink-0">Tambah</button>
                     </div>
@@ -380,14 +390,40 @@
         document.querySelectorAll('#edit-warna-presets input[name="warna[]"]').forEach(cb => {
             cb.addEventListener('change', editRenderVarian);
         });
+        const editHexInput = document.getElementById('edit-warna-custom-hex');
+        const editNormHex = (raw) => {
+            const h = String(raw || '').trim().replace(/^#/, '').toLowerCase();
+            return /^[0-9a-f]{6}$/.test(h) ? '#' + h : '';
+        };
+        document.getElementById('edit-warna-custom-color')?.addEventListener('input', (e) => {
+            if (editHexInput) { editHexInput.value = e.target.value.replace('#', ''); editHexInput.classList.remove('border-error'); }
+        });
+        editHexInput?.addEventListener('input', () => {
+            const valid = editNormHex(editHexInput.value);
+            const picker = document.getElementById('edit-warna-custom-color');
+            if (valid) {
+                if (picker) picker.value = valid;
+                editHexInput.classList.remove('border-error');
+            } else if (editHexInput.value.trim() !== '') {
+                editHexInput.classList.add('border-error');
+            } else {
+                editHexInput.classList.remove('border-error');
+            }
+        });
         document.getElementById('edit-warna-custom-add')?.addEventListener('click', () => {
             const nameInput = document.getElementById('edit-warna-custom-name');
             const colorInput = document.getElementById('edit-warna-custom-color');
             const nama = (nameInput.value || '').trim() || ('Warna ' + (document.querySelectorAll('#edit-warna-presets input[name="warna[]"], #edit-warna-custom-chips input[name="warna[]"]').length + 1));
+            if (editHexInput && editHexInput.value.trim() !== '' && !editNormHex(editHexInput.value)) {
+                window.showRalivaToast('Kode hex tidak valid. Contoh: f4f4f4.', 'gpp_bad');
+                editHexInput.focus();
+                return;
+            }
             window.__warnaCustomHex = window.__warnaCustomHex || {};
             window.__warnaCustomHex[nama] = colorInput.value;
             editEnsureWarnaChecked(nama);
             nameInput.value = '';
+            if (editHexInput) { editHexInput.value = colorInput.value.replace('#', ''); editHexInput.classList.remove('border-error'); }
             editRenderVarian();
         });
 
@@ -398,8 +434,9 @@
                 if (!form || !editModal) return;
                 form.action = btn.getAttribute('data-action') || '';
                 document.getElementById('edit-nama-produk').value = btn.getAttribute('data-nama') || '';
-                document.getElementById('edit-category-id').value = btn.getAttribute('data-kategori') || '';
+                window.setKategoriCombobox('edit', btn.getAttribute('data-kategori') || '', btn.getAttribute('data-kategori-nama') || '');
                 document.getElementById('edit-harga-dasar').value = btn.getAttribute('data-harga') || '0';
+                if (window.__fmtRpHarga) window.__fmtRpHarga(document.getElementById('edit-harga-dasar'));
                 document.getElementById('edit-tipe-produk').value = btn.getAttribute('data-tipe') || 'regular';
                 document.getElementById('edit-deskripsi').value = btn.getAttribute('data-deskripsi') || '';
 
@@ -426,6 +463,9 @@
                     });
                 }
 
+                document.getElementById('edit-foto-slot-grid').innerHTML = '';
+                _editUpdateFotoCountInit();
+
                 editUkuranSelected.clear();
                 document.querySelectorAll('#edit-ukuran-chips .edit-ukuran-chip').forEach(ch => {
                     ch.classList.remove('bg-gold-accent', 'text-white', 'border-gold-accent');
@@ -442,7 +482,57 @@
             });
         });
 
-        document.getElementById('form-edit-produk')?.addEventListener('submit', function () {
+        const editFotoCount = () => {
+            const lama = document.querySelectorAll('#edit-foto-lama label').length;
+            const hapus = document.querySelectorAll('#edit-foto-lama input[name="hapus_foto_ids[]"]:checked').length;
+            const baru = Array.from(document.querySelectorAll('#edit-foto-slot-grid [data-foto-input]')).filter(i => i.files && i.files.length > 0).length;
+            const c1 = document.getElementById('edit-foto-count');
+            const c2 = document.getElementById('edit-foto-baru-count');
+            if (c1) c1.textContent = lama - hapus;
+            if (c2) c2.textContent = baru;
+            return { kept: lama - hapus, baru };
+        };
+        const renderEditFotoSlots = () => {
+            const grid = document.getElementById('edit-foto-slot-grid');
+            if (!grid) return;
+            const { kept } = editFotoCount();
+            const kapasitas = Math.max(0, 5 - kept);
+            const terisi = Array.from(grid.querySelectorAll('[data-foto-input]')).filter(i => i.files && i.files.length > 0).length;
+            grid.querySelectorAll('[data-foto-slot]').forEach(slot => {
+                const input = slot.querySelector('[data-foto-input]');
+                if (!input || !(input.files && input.files.length > 0)) {
+                    const img = slot.querySelector('[data-foto-preview]');
+                    if (img?.dataset.url) { URL.revokeObjectURL(img.dataset.url); }
+                    slot.remove();
+                }
+            });
+            for (let i = terisi; i < kapasitas; i++) {
+                const lab = document.createElement('label');
+                lab.className = 'foto-slot aspect-[3/4] rounded-lg border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-gold-accent hover:bg-surface-container-low transition-colors group relative overflow-hidden';
+                lab.setAttribute('data-foto-slot', '');
+                lab.innerHTML = `
+                    <input type="file" name="foto_produk[]" accept="image/*" class="hidden" data-foto-input onchange="previewFotoSlot(this)" />
+                    <img alt="" class="hidden absolute inset-0 w-full h-full object-cover" data-foto-preview />
+                    <span class="material-symbols-outlined text-[22px] text-on-surface-variant/60 group-hover:text-gold-accent transition-colors animate-[spin_2.5s_linear_infinite] motion-reduce:animate-none" data-foto-icon>progress_activity</span>
+                    <span class="text-[10px] text-on-surface-variant" data-foto-label>Foto Baru</span>
+                    <span class="hidden absolute top-1 left-1 w-6 h-6 rounded-full bg-secondary text-white items-center justify-center" data-foto-check><span class="material-symbols-outlined text-[14px]">check_circle</span></span>
+                    <button type="button" class="hidden absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white items-center justify-center hover:bg-error transition-colors" data-foto-hapus title="Hapus foto" onclick="hapusFotoSlot(event, this)"><span class="material-symbols-outlined text-[14px]">close</span></button>
+                `;
+                grid.appendChild(lab);
+            }
+            editFotoCount();
+            window.__editFotoRefresh = renderEditFotoSlots;
+        };
+        document.getElementById('edit-foto-lama')?.addEventListener('change', renderEditFotoSlots);
+        const _editUpdateFotoCountInit = renderEditFotoSlots;
+
+        document.getElementById('form-edit-produk')?.addEventListener('submit', function (e) {
+            const { kept, baru } = editFotoCount();
+            if (kept + baru > 5) {
+                e.preventDefault();
+                window.showRalivaToast('Maksimal total 5 foto (sekarang ' + (kept + baru) + ').', 'gpp_bad');
+                return;
+            }
             this.querySelectorAll('input[name="warna_hex[]"]').forEach(h => h.remove());
             const hexOf = (name) => {
                 if (window.__warnaCustomHex && window.__warnaCustomHex[name]) return window.__warnaCustomHex[name];
@@ -627,16 +717,20 @@
     <div class="p-6 space-y-6">
         {{-- Foto --}}
         <div>
-            <label class="block raliva-label mb-2">Foto Produk (maks. 8 foto)</label>
-            <div class="grid grid-cols-4 gap-gutter">
-                @for ($i = 0; $i < 8; $i++)
-                    <label class="aspect-[3/4] rounded-lg border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-gold-accent hover:bg-surface-container-low transition-colors group">
-                        <input type="file" name="foto_produk[]" accept="image/*" class="hidden" onchange="if(this.files[0]){this.parentElement.querySelector('span').textContent='✓';}" />
-                        <span class="material-symbols-outlined text-[22px] text-on-surface-variant group-hover:text-gold-accent transition-colors">add_photo_alternate</span>
-                        <span class="text-[10px] text-on-surface-variant">Foto {{ $i + 1 }}</span>
+            <label class="block raliva-label mb-2">Foto Produk (maks. 5 foto) <span class="text-error">*</span></label>
+            <div class="grid grid-cols-4 gap-gutter" id="foto-slot-grid">
+                @for ($i = 0; $i < 5; $i++)
+                    <label class="foto-slot aspect-[3/4] rounded-lg border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-gold-accent hover:bg-surface-container-low transition-colors group relative overflow-hidden" data-foto-slot>
+                        <input type="file" name="foto_produk[]" accept="image/*" class="hidden" data-foto-input onchange="previewFotoSlot(this)" />
+                        <img alt="" class="hidden absolute inset-0 w-full h-full object-cover" data-foto-preview />
+                        <span class="material-symbols-outlined text-[22px] text-on-surface-variant/60 group-hover:text-gold-accent transition-colors animate-[spin_2.5s_linear_infinite] motion-reduce:animate-none" data-foto-icon>progress_activity</span>
+                        <span class="text-[10px] text-on-surface-variant" data-foto-label>Foto {{ $i + 1 }}</span>
+                        <span class="hidden absolute top-1 left-1 w-6 h-6 rounded-full bg-secondary text-white items-center justify-center" data-foto-check><span class="material-symbols-outlined text-[14px]">check_circle</span></span>
+                        <button type="button" class="hidden absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white items-center justify-center hover:bg-error transition-colors" data-foto-hapus title="Hapus foto" onclick="hapusFotoSlot(event, this)"><span class="material-symbols-outlined text-[14px]">close</span></button>
                     </label>
                 @endfor
             </div>
+            <p class="text-xs text-on-surface-variant mt-2"><span id="foto-count">0</span>/5 foto dipilih.</p>
         </div>
 
         {{-- Informasi Dasar --}}
@@ -647,8 +741,8 @@
                 <input id="fp-nama" name="nama_produk" type="text" placeholder="cth. Blazer Wool Premium" required class="raliva-input" />
             </div>
             <div>
-                <label for="fp-deskripsi" class="block raliva-label mb-2">Deskripsi</label>
-                <textarea id="fp-deskripsi" name="deskripsi" rows="3" placeholder="Bahan, potongan, keunggulan produk..." class="raliva-textarea"></textarea>
+                <label for="fp-deskripsi" class="block raliva-label mb-2">Deskripsi <span class="text-error">*</span></label>
+                <textarea id="fp-deskripsi" name="deskripsi" rows="3" required minlength="10" maxlength="2000" placeholder="Bahan, potongan, keunggulan produk... (min. 10 karakter)" class="raliva-textarea"></textarea>
             </div>
             <div>
                 <label for="fp-tipe" class="block raliva-label mb-2">Tipe Produk</label>
@@ -660,39 +754,15 @@
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
                 <div>
-                    <label for="kategori-combobox-btn" class="block raliva-label mb-2">Kategori</label>
-                    <div class="relative" id="kategori-combobox">
-                        <button type="button" id="kategori-combobox-btn" aria-haspopup="listbox" aria-expanded="false" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-3.5 pr-10 py-2.5 font-body-md text-sm text-on-surface text-left transition-colors focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10">
-                            <span id="kategori-combobox-label" class="truncate text-on-surface-variant">Cari atau ketik kategori...</span>
-                            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant pointer-events-none">expand_more</span>
-                        </button>
-                        <input type="hidden" name="category_id" id="fp-kategori" value="{{ old('category_id') }}" />
-                        <div id="kategori-combobox-menu" class="hidden absolute z-30 mt-1 w-full bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden">
-                            <div class="relative border-b border-muted-border p-2">
-                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant pointer-events-none">search</span>
-                                <input type="text" id="kategori-combobox-search" placeholder="Cari kategori..." autocomplete="off" class="raliva-input text-sm pl-9" />
-                            </div>
-                            <ul id="kategori-combobox-list" role="listbox" class="max-h-52 overflow-y-auto overscroll-contain py-1" style="overscroll-behavior: contain;">
-                                @foreach ($categories as $c)
-                                    <li role="option" data-category-id="{{ $c->category_id }}" data-category-name="{{ $c->nama_kategori }}" class="px-4 py-2.5 text-sm cursor-pointer hover:bg-surface-container-low transition-colors text-on-surface">{{ $c->nama_kategori }}</li>
-                                @endforeach
-                            </ul>
-                            <div id="kategori-combobox-inline" class="hidden border-t border-muted-border p-3 space-y-2">
-                                <input type="text" id="ktg-inline-nama" placeholder="Nama kategori baru (cth. Outerwear)" autocomplete="off" maxlength="100" class="raliva-input text-sm" />
-                                <div class="flex gap-2 justify-end">
-                                    <button type="button" id="ktg-inline-batal" class="px-3 py-1.5 border border-muted-border rounded-lg text-xs text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                                    <button type="button" id="ktg-inline-simpan" class="px-3 py-1.5 bg-deep-onyx text-on-primary text-xs rounded btn-premium">Simpan</button>
-                                </div>
-                            </div>
-                            <button type="button" id="kategori-combobox-add" class="w-full flex items-center gap-2 px-4 py-2.5 border-t border-muted-border text-gold-accent text-sm hover:bg-gold-accent/5 transition-colors">
-                                <span class="material-symbols-outlined text-[18px]">add</span> Buat kategori baru
-                            </button>
-                        </div>
-                    </div>
+                        <label class="block raliva-label mb-2">Kategori <span class="text-error">*</span></label>
+                    @include('partials.kategori-combobox', ['prefix' => 'fp', 'categories' => $categories, 'selectedId' => old('category_id', ''), 'selectedName' => ''])
                 </div>
                 <div>
-                    <label for="fp-harga" class="block raliva-label mb-2">Harga (Rp)</label>
-                    <input id="fp-harga" name="harga_dasar" type="number" placeholder="949000" required class="raliva-input" />
+                <label for="fp-harga" class="block raliva-label mb-2">Harga (Rp) <span class="text-error">*</span></label>
+                <div class="flex items-stretch">
+                            <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
+                            <input id="fp-harga" name="harga_dasar" type="text" inputmode="numeric" data-rupiah-harga placeholder="949.000" required class="raliva-input" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                        </div>
                 </div>
             </div>
         </div>
@@ -737,11 +807,15 @@
                         <span class="material-symbols-outlined text-[16px]">palette</span> + Warna Sendiri
                     </button>
                     <div id="warna-custom-fields" class="hidden mt-3 p-3 border border-muted-border rounded-lg bg-surface-container-low space-y-3">
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-3 flex-wrap">
                             <label title="Pilih warna" class="relative w-10 h-10 rounded-full border border-muted-border shadow-inner cursor-pointer overflow-hidden shrink-0" id="warna-custom-preview" style="background-color:#1c1b1b;">
                                 <input type="color" id="warna-custom-color" value="#1c1b1b" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" title="Pilih warna" />
                             </label>
-                            <input type="text" id="warna-custom-name" placeholder="Nama warna (opsional) — cth: Tosca" maxlength="30" class="raliva-input text-sm flex-1" style="width:auto;" />
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <span class="text-on-surface-variant font-bold text-sm">#</span>
+                                <input type="text" id="warna-custom-hex" placeholder="f4f4f4" maxlength="6" autocomplete="off" spellcheck="false" class="raliva-input text-sm font-mono uppercase" style="width: 7.5rem;" title="Ketik kode warna hex, cth: f4f4f4" />
+                            </div>
+                            <input type="text" id="warna-custom-name" placeholder="Nama warna (opsional) — cth: Tosca" maxlength="30" class="raliva-input text-sm flex-1" style="width:auto;min-width:10rem;" />
                             <button type="button" id="warna-custom-add" class="px-4 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium shrink-0">Tambah</button>
                         </div>
                         <div id="warna-custom-chips" class="flex flex-wrap gap-2"></div>
@@ -892,21 +966,22 @@ function addCustomSize() {
     document.querySelectorAll('[name^="custom_"]').forEach(i => i.value = '');
 }
 
-// --- Combobox Kategori (searchable + inline create) ---
-(function () {
-    const box = document.getElementById('kategori-combobox');
-    const btn = document.getElementById('kategori-combobox-btn');
-    const menu = document.getElementById('kategori-combobox-menu');
-    const label = document.getElementById('kategori-combobox-label');
-    const hidden = document.getElementById('fp-kategori');
-    const search = document.getElementById('kategori-combobox-search');
-    const list = document.getElementById('kategori-combobox-list');
-    const inline = document.getElementById('kategori-combobox-inline');
-    const inlineNama = document.getElementById('ktg-inline-nama');
-    const inlineSimpan = document.getElementById('ktg-inline-simpan');
-    const inlineBatal = document.getElementById('ktg-inline-batal');
-    const addBtn = document.getElementById('kategori-combobox-add');
-    if (!box || !btn || !menu || !hidden || !list) return;
+// --- Combobox Kategori (searchable + inline create), dipakai tambah (fp) & edit ---
+function initKategoriCombobox(prefix) {
+    const box = document.getElementById(prefix + '-kategori-box');
+    const btn = document.getElementById(prefix + '-kategori-btn');
+    const menu = document.getElementById(prefix + '-kategori-menu');
+    const label = document.getElementById(prefix + '-kategori-label');
+    const hidden = document.getElementById(prefix + '-kategori-hidden');
+    const search = document.getElementById(prefix + '-kategori-search');
+    const list = document.getElementById(prefix + '-kategori-list');
+    const inline = document.getElementById(prefix + '-kategori-inline');
+    const inlineNama = document.getElementById(prefix + '-kategori-inline-nama');
+    const inlineSimpan = document.getElementById(prefix + '-kategori-inline-simpan');
+    const inlineBatal = document.getElementById(prefix + '-kategori-inline-batal');
+    const addBtn = document.getElementById(prefix + '-kategori-add');
+    if (!box || !btn || !menu || !hidden || !list || box.dataset.ktgInit) return;
+    box.dataset.ktgInit = '1';
 
     const openMenu = () => {
         menu.classList.remove('hidden');
@@ -925,6 +1000,7 @@ function addCustomSize() {
         label.classList.add('text-on-surface');
         closeMenu();
     };
+    box._ktgSelect = selectCategory;
 
     const isOpen = () => !menu.classList.contains('hidden');
     btn.addEventListener('click', (e) => {
@@ -988,14 +1064,19 @@ function addCustomSize() {
         .then(r => r.json().then(j => ({ ok: r.ok, j })))
         .then(({ ok, j }) => {
             if (!ok || !j.success) throw new Error(j.message || 'Gagal menyimpan kategori.');
-            const li = document.createElement('li');
-            li.setAttribute('role', 'option');
-            li.dataset.categoryId = j.kategori.category_id;
-            li.dataset.categoryName = j.kategori.nama_kategori;
-            li.className = 'px-4 py-2.5 text-sm cursor-pointer hover:bg-surface-container-low transition-colors text-on-surface';
-            li.textContent = j.kategori.nama_kategori;
-            li.addEventListener('click', () => selectCategory(j.kategori.category_id, j.kategori.nama_kategori));
-            list.appendChild(li);
+            document.querySelectorAll('[data-ktg-list]').forEach((otherList) => {
+                const li = document.createElement('li');
+                li.setAttribute('role', 'option');
+                li.dataset.categoryId = j.kategori.category_id;
+                li.dataset.categoryName = j.kategori.nama_kategori;
+                li.className = 'px-4 py-2.5 text-sm cursor-pointer hover:bg-surface-container-low transition-colors text-on-surface';
+                li.textContent = j.kategori.nama_kategori;
+                li.addEventListener('click', () => {
+                    const otherBox = otherList.closest('[data-ktg-box]');
+                    if (otherBox && otherBox._ktgSelect) otherBox._ktgSelect(j.kategori.category_id, j.kategori.nama_kategori);
+                });
+                otherList.appendChild(li);
+            });
             selectCategory(j.kategori.category_id, j.kategori.nama_kategori);
             window.showRalivaToast('Kategori "' + j.kategori.nama_kategori + '" berhasil ditambahkan.', 'task_alt');
         })
@@ -1004,13 +1085,32 @@ function addCustomSize() {
     };
     inlineSimpan.addEventListener('click', saveCategory);
     inlineNama.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); saveCategory(); } });
-})();
+}
+
+window.setKategoriCombobox = (prefix, id, name) => {
+    const box = document.getElementById(prefix + '-kategori-box');
+    if (box && box._ktgSelect && id) box._ktgSelect(id, name || id);
+    else {
+        const hidden = document.getElementById(prefix + '-kategori-hidden');
+        const label = document.getElementById(prefix + '-kategori-label');
+        if (hidden) hidden.value = id || '';
+        if (label && name) {
+            label.textContent = name;
+            label.classList.remove('text-on-surface-variant');
+            label.classList.add('text-on-surface');
+        }
+    }
+};
+
+initKategoriCombobox('fp');
+initKategoriCombobox('edit');
 
 // --- Warna Custom (pilih visual, nama opsional) ---
 (function () {
     const toggleBtn = document.getElementById('warna-custom-toggle');
     const fields = document.getElementById('warna-custom-fields');
     const colorInput = document.getElementById('warna-custom-color');
+    const hexInput = document.getElementById('warna-custom-hex');
     const preview = document.getElementById('warna-custom-preview');
     const nameInput = document.getElementById('warna-custom-name');
     const addBtn = document.getElementById('warna-custom-add');
@@ -1019,6 +1119,11 @@ function addCustomSize() {
 
     window.__warnaCustomHex = window.__warnaCustomHex || {};
 
+    const normHex = (raw) => {
+        const h = String(raw || '').trim().replace(/^#/, '').toLowerCase();
+        return /^[0-9a-f]{6}$/.test(h) ? '#' + h : '';
+    };
+
     toggleBtn.addEventListener('click', () => {
         fields.classList.toggle('hidden');
         if (!fields.classList.contains('hidden')) requestAnimationFrame(() => colorInput.click());
@@ -1026,7 +1131,23 @@ function addCustomSize() {
 
     colorInput.addEventListener('input', () => {
         preview.style.background = colorInput.value;
+        if (hexInput) hexInput.value = colorInput.value.replace('#', '');
     });
+
+    hexInput?.addEventListener('input', () => {
+        const valid = normHex(hexInput.value);
+        if (valid) {
+            colorInput.value = valid;
+            preview.style.background = valid;
+            hexInput.classList.remove('border-error');
+        } else if (hexInput.value.trim() !== '') {
+            hexInput.classList.add('border-error');
+        } else {
+            hexInput.classList.remove('border-error');
+        }
+    });
+
+    if (hexInput && !hexInput.value) hexInput.value = colorInput.value.replace('#', '');
 
     const autoName = () => 'Warna ' + (document.querySelectorAll('[name="warna[]"]').length + 1);
 
@@ -1034,6 +1155,11 @@ function addCustomSize() {
         const nama = (nameInput.value || '').trim() || autoName();
         const exists = Array.from(document.querySelectorAll('[name="warna[]"]')).some((cb) => cb.value.toLowerCase() === nama.toLowerCase());
         if (exists) { window.showRalivaToast('Warna "' + nama + '" sudah ada.', 'gpp_bad'); return; }
+        if (hexInput && hexInput.value.trim() !== '' && !normHex(hexInput.value)) {
+            window.showRalivaToast('Kode hex tidak valid. Contoh: f4f4f4.', 'gpp_bad');
+            hexInput.focus();
+            return;
+        }
 
         window.__warnaCustomHex[nama] = colorInput.value;
 
@@ -1056,6 +1182,104 @@ function addCustomSize() {
 
     addBtn.addEventListener('click', addCustomWarna);
     nameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addCustomWarna(); } });
+})();
+
+// --- Preview foto instan + counter (maks 5) ---
+function previewFotoSlot(input) {
+    const slot = input.closest('[data-foto-slot]');
+    if (!slot) return;
+    const img = slot.querySelector('[data-foto-preview]');
+    const icon = slot.querySelector('[data-foto-icon]');
+    const label = slot.querySelector('[data-foto-label]');
+    const hapus = slot.querySelector('[data-foto-hapus]');
+    if (input.files && input.files[0]) {
+        if (img.dataset.url) URL.revokeObjectURL(img.dataset.url);
+        const url = URL.createObjectURL(input.files[0]);
+        img.dataset.url = url;
+        img.src = url;
+        img.classList.remove('hidden');
+        icon.classList.add('hidden');
+        label.classList.add('hidden');
+        hapus.classList.remove('hidden');
+        hapus.classList.add('flex');
+        const check = slot.querySelector('[data-foto-check]');
+        check?.classList.remove('hidden');
+        check?.classList.add('flex');
+        slot.classList.add('border-gold-accent');
+    }
+    updateFotoCount();
+    if (input.closest('#edit-foto-slot-grid') && typeof window.__editFotoRefresh === 'function') window.__editFotoRefresh();
+}
+
+function hapusFotoSlot(e, btn) {
+    e.preventDefault();
+    e.stopPropagation();
+    const slot = btn.closest('[data-foto-slot]');
+    if (!slot) return;
+    const input = slot.querySelector('[data-foto-input]');
+    const img = slot.querySelector('[data-foto-preview]');
+    if (img.dataset.url) { URL.revokeObjectURL(img.dataset.url); delete img.dataset.url; }
+    input.value = '';
+    img.removeAttribute('src');
+    img.classList.add('hidden');
+    slot.querySelector('[data-foto-icon]').classList.remove('hidden');
+    slot.querySelector('[data-foto-label]').classList.remove('hidden');
+    btn.classList.add('hidden');
+    btn.classList.remove('flex');
+    const check = slot.querySelector('[data-foto-check]');
+    check?.classList.add('hidden');
+    check?.classList.remove('flex');
+    slot.classList.remove('border-gold-accent');
+    updateFotoCount();
+    if (slot.closest('#edit-foto-slot-grid') && typeof window.__editFotoRefresh === 'function') window.__editFotoRefresh();
+}
+
+function updateFotoCount() {
+    const n = Array.from(document.querySelectorAll('#foto-slot-grid [data-foto-input]')).filter(i => i.files && i.files.length > 0).length;
+    const el = document.getElementById('foto-count');
+    if (el) el.textContent = n;
+}
+
+// --- Format Rp live (10rb -> 10.000) + strip saat submit ---
+(function () {
+    const fmtRp = (el) => {
+        const digits = el.value.replace(/\D/g, '').slice(0, 12).replace(/^0+(?=\d)/, '');
+        el.value = digits ? new Intl.NumberFormat('id-ID').format(digits) : '';
+    };
+    const stripRp = (el) => { el.value = el.value.replace(/\./g, ''); };
+    document.querySelectorAll('[data-rupiah-harga], #edit-harga-dasar').forEach((el) => {
+        el.addEventListener('input', () => fmtRp(el));
+    });
+    ['form-produk', 'form-edit-produk'].forEach((id) => {
+        document.getElementById(id)?.addEventListener('submit', function () {
+            this.querySelectorAll('[data-rupiah-harga], #edit-harga-dasar').forEach(stripRp);
+        });
+    });
+    window.__fmtRpHarga = fmtRp;
+})();
+
+// --- Validasi wajib-isi form tambah (semua harus diinput dulu) ---
+(function () {
+    const form = document.getElementById('form-produk');
+    if (!form) return;
+    form.addEventListener('submit', (e) => {
+        const fail = (msg, target) => {
+            e.preventDefault();
+            window.showRalivaToast(msg, 'gpp_bad');
+            target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+        const fotoTerisi = Array.from(form.querySelectorAll('input[name="foto_produk[]"]')).some(i => i.files && i.files.length > 0);
+        if (!fotoTerisi) return fail('Wajib: unggah minimal 1 foto produk.', form.querySelector('input[name="foto_produk[]"]'));
+        if (!document.getElementById('fp-kategori-hidden')?.value) return fail('Wajib: pilih kategori produk.', document.getElementById('fp-kategori-box'));
+        if (getSelectedUkuran().length === 0) return fail('Wajib: pilih minimal 1 ukuran.', document.getElementById('ukuran-chips'));
+        if (getSelectedWarna().length === 0) return fail('Wajib: pilih minimal 1 warna.', document.getElementById('warna-presets'));
+        const rows = Array.from(document.querySelectorAll('#varian-stok-grid [name$="[stok]"]'));
+        if (!rows.length) return fail('Wajib: isi stok tiap varian (pilih ukuran & warna dulu).', document.getElementById('varian-stok-empty'));
+        const kosong = rows.find(i => i.value === '' || parseInt(i.value, 10) < 1);
+        if (kosong) return fail('Wajib: stok tiap varian minimal 1.', kosong);
+        const minKosong = Array.from(document.querySelectorAll('#varian-stok-grid [name$="[stok_minimum]"]')).find(i => i.value === '');
+        if (minKosong) return fail('Wajib: ambang menipis tiap varian harus diisi.', minKosong);
+    });
 })();
 
 // --- Sinkronkan hex warna custom/preset ke hidden warna_hex[] saat submit ---

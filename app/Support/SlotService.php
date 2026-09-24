@@ -5,8 +5,6 @@ namespace App\Support;
 use App\Models\Product;
 use App\Models\Setting;
 use App\Models\SlotGrant;
-use App\Models\StoreSlotSubscription;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class SlotService
@@ -19,16 +17,8 @@ class SlotService
 
     public static function totalQuota(int $storeId): int
     {
-        $grants = (int) SlotGrant::where('store_id', $storeId)->sum('jumlah_slot');
-
-        $legacy = (int) StoreSlotSubscription::where('store_id', $storeId)
-            ->where('status', StoreSlotSubscription::STATUS_AKTIF)
-            ->where(function (Builder $q) {
-                $q->whereNull('tanggal_berakhir')->orWhere('tanggal_berakhir', '>=', now()->toDateTimeString());
-            })
-            ->sum('jumlah_slot');
-
-        return $grants + $legacy;
+        // Satu sumber kebenaran: hanya slot_grants (subscription = metadata).
+        return (int) SlotGrant::where('store_id', $storeId)->sum('jumlah_slot');
     }
 
     public static function usedSlots(int $storeId): int

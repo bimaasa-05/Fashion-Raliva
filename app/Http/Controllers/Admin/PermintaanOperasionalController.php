@@ -22,7 +22,6 @@ class PermintaanOperasionalController extends Controller
 
         $query = PermintaanOperasional::with(['store:store_id,nama_toko', 'pemohon:user_id,nama_lengkap,role_id', 'pemohon.role:role_id,nama_role', 'admin:user_id,nama_lengkap'])
             ->whereIn('store_id', $storeIds)
-            ->orderByRaw("CASE WHEN status = 'pending' THEN 0 ELSE 1 END")
             ->orderByDesc('created_at');
 
         if ($status !== 'semua' && in_array($status, ['pending', 'disetujui', 'ditolak'])) {
@@ -95,6 +94,8 @@ class PermintaanOperasionalController extends Controller
             'url' => route('admin.permintaan-operasional.show', $permintaan->permintaan_id),
         ]);
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Permintaan Disetujui', sprintf('Permintaan "%s" disetujui.', $permintaan->judul), route('admin.permintaan-operasional'));
+
         return back()->with('toast', ['message' => 'Permintaan disetujui.', 'icon' => 'task_alt']);
     }
 
@@ -141,6 +142,8 @@ class PermintaanOperasionalController extends Controller
             'pesan' => sprintf('Permintaan "%s" ditolak. Alasan: %s', $permintaan->judul, $data['alasan']),
             'url' => route('admin.permintaan-operasional.show', $permintaan->permintaan_id),
         ]);
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Permintaan Ditolak', sprintf('Permintaan "%s" ditolak.', $permintaan->judul), route('admin.permintaan-operasional'));
 
         return back()->with('toast', ['message' => 'Permintaan ditolak.', 'icon' => 'block']);
     }

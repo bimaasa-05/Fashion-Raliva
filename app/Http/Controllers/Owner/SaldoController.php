@@ -41,7 +41,6 @@ class SaldoController extends Controller
                 'expenses' => collect(),
                 'margin' => ['revenue' => 0, 'gross' => 0, 'ebitda' => 0, 'ebit' => 0, 'ebt' => 0, 'net' => 0],
                 'totalDicairkan' => 0,
-                'fmt' => fn ($v) => 'Rp '.number_format($v, 0, ',', '.'),
                 'period' => $period,
             ]);
         }
@@ -59,9 +58,21 @@ class SaldoController extends Controller
             ->where('status', Withdrawal::STATUS_DIBAYAR)
             ->sum('jumlah');
 
+        $filterKategori = trim((string) $request->input('kategori', ''));
+        $filterJenis = trim((string) $request->input('jenis', ''));
+
         $mutations = $wallet->transactions()
+            ->when($filterKategori !== '', fn ($q) => $q->where('kategori', $filterKategori))
+            ->when($filterJenis !== '', fn ($q) => $q->where('jenis_transaksi', $filterJenis))
             ->orderByDesc('created_at')
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
+
+        $kategoriList = $wallet->transactions()->select('kategori')->distinct()->pluck('kategori')->filter()->values()->all();
+        foreach (['Penjualan', 'Investor', 'Modal', 'Komisi', 'Lainnya'] as $wajib) {
+            if (! in_array($wajib, $kategoriList, true)) $kategoriList[] = $wajib;
+        }
+        $jenisList = $wallet->transactions()->select('jenis_transaksi')->distinct()->pluck('jenis_transaksi')->filter()->values()->all();
 
         $withdrawals = $wallet->withdrawals()
             ->with('bankAccount.bank')
@@ -75,10 +86,6 @@ class SaldoController extends Controller
             ->get();
 
         // Ringkasan per periode (7/30/90/365 hari)
-        $period = (int) $request->input('period', 30);
-        if (! in_array($period, [7, 30, 90, 365])) {
-            $period = 30;
-        }
         $start = Carbon::now()->subDays($period - 1)->startOfDay();
         $end = Carbon::now()->endOfDay();
         $monthTx = $wallet->transactions()
@@ -88,6 +95,7 @@ class SaldoController extends Controller
         $pemasukan = $monthTx->whereIn('jenis_transaksi', [
             WalletTransaction::JENIS_PENJUALAN_MASUK,
             WalletTransaction::JENIS_KOMISI_MASUK,
+            WalletTransaction::JENIS_PEMASUKAN,
         ])->sum('jumlah');
 
         $pengeluaran = $monthTx->whereNotIn('jenis_transaksi', [
@@ -104,23 +112,35 @@ class SaldoController extends Controller
             'bersih' => $pemasukan - $pengeluaran,
         ];
 
-        // Data tren 6 bulan terakhir (saldo tersedia di akhir tiap bulan).
-        $chart = collect(range(5, 0))->map(function ($i) use ($wallet) {
-            $month = Carbon::now()->subMonths($i);
+        // Data tren harian: 7 / 30 / 90 hari terakhir (saldo akhir hari).
+        $grafik = $request->input('grafik', '30hari');
+        if (! in_array($grafik, ['7hari', '30hari', '90hari'], true)) {
+            $grafik = '30hari';
+        }
+        $hariRange = ['7hari' => 7, '30hari' => 30, '90hari' => 90][$grafik];
+
+        $chart = collect(range($hariRange - 1, 0))->map(function ($i) use ($wallet) {
+            $hari = Carbon::now()->subDays($i);
             $saldoAkhir = (float) $wallet->transactions()
-                ->where('created_at', '<=', $month->copy()->endOfMonth())
+                ->where('created_at', '<=', $hari->copy()->endOfDay())
                 ->orderByDesc('created_at')
                 ->value('saldo_sesudah');
 
             return [
-                'label' => $month->translatedFormat('M'),
+                'label' => $hari->translatedFormat('d M'),
                 'saldo' => $saldoAkhir,
             ];
         });
 
+        $filterKatExp = trim((string) $request->input('kat_exp', ''));
+
         $expenses = StoreExpense::where('store_id', $store->store_id)
+            ->when($filterKatExp !== '', fn ($q) => $q->where('kategori', $filterKatExp))
             ->orderByDesc('tanggal')
             ->get();
+
+        $katExpList = StoreExpense::where('store_id', $store->store_id)
+            ->select('kategori')->distinct()->pluck('kategori')->filter()->values()->all();
 
         // Estimasi margin (asumsi HPP 60% revenue, pajak 25% laba, tanpa D&A/bunga).
         $revenue = $pemasukan;
@@ -141,12 +161,12 @@ class SaldoController extends Controller
             'net' => $netProfit,
         ];
 
-        $fmt = fn ($v) => 'Rp '.number_format($v, 0, ',', '.');
-
         return view('Owner.keuangan.index', compact(
             'wallet', 'bankAccounts', 'totalDicairkan',
             'mutations', 'withdrawals', 'refunds', 'summary', 'chart',
-            'expenses', 'margin', 'store', 'fmt', 'period'
+            'expenses', 'margin', 'store', 'period',
+            'kategoriList', 'jenisList', 'filterKategori', 'filterJenis',
+            'katExpList', 'filterKatExp', 'grafik'
         ));
     }
 
@@ -165,13 +185,33 @@ class SaldoController extends Controller
             'tanggal' => ['required', 'date', 'before_or_equal:today'],
         ]);
 
-        StoreExpense::create([
-            'store_id' => $store->store_id,
-            'nama' => $validated['nama'],
-            'kategori' => $validated['kategori'],
-            'nominal' => $validated['nominal'],
-            'tanggal' => $validated['tanggal'],
-        ]);
+        $wallet = $store->wallet;
+        if (! $wallet) {
+            $wallet = \App\Models\Wallet::create(['store_id' => $store->store_id, 'saldo_tersedia' => 0, 'saldo_tertahan' => 0]);
+        }
+
+        DB::transaction(function () use ($store, $wallet, $validated) {
+            StoreExpense::create([
+                'store_id' => $store->store_id,
+                'nama' => $validated['nama'],
+                'kategori' => $validated['kategori'],
+                'nominal' => $validated['nominal'],
+                'tanggal' => $validated['tanggal'],
+            ]);
+
+            $saldoSebelum = (float) $wallet->saldo_tersedia;
+            $wallet->decrement('saldo_tersedia', $validated['nominal']);
+
+            WalletTransaction::create([
+                'wallet_id' => $wallet->wallet_id,
+                'jenis_transaksi' => WalletTransaction::JENIS_PENGELUARAN,
+                'kategori' => $validated['kategori'],
+                'jumlah' => $validated['nominal'],
+                'saldo_sebelum' => $saldoSebelum,
+                'saldo_sesudah' => $saldoSebelum - (float) $validated['nominal'],
+                'keterangan' => 'Pengeluaran: '.$validated['nama'],
+            ]);
+        });
 
         Notification::fireSelf(Notification::TIPE_WALLET, 'Pengeluaran Dicatat', sprintf('Pengeluaran "%s" senilai Rp %s dicatat.', $validated['nama'], number_format((float) $validated['nominal'], 0, ',', '.')), route('owner.keuangan'));
 

@@ -37,13 +37,13 @@
                             <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
                             {{ $stats['semua'] }} Total
                         </span>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase tracking-wider border border-outline-variant">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase tracking-wider border border-gold-accent/20">
                             {{ $stats['pending'] }} Pending
                         </span>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-info/10 text-info text-[10px] font-bold uppercase tracking-wider border border-info/20">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase tracking-wider border border-amber-500/30">
                             {{ $stats['diproses'] }} Diproses
                         </span>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase tracking-wider border border-secondary/20">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/10 text-sky-600 text-[10px] font-bold uppercase tracking-wider border border-sky-500/30">
                             {{ $stats['dikirim'] }} Dikirim
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase tracking-wider border border-success/20">
@@ -123,7 +123,7 @@
                             @php
 $pelanggan = $s->order?->checkout?->user;
                                 $pelNama = $pelanggan?->nama_lengkap ?? $s->order?->checkout?->nama_penerima ?? '-';
-                                $statusClass = match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant' };
+                                $statusClass = match($s->status) { 'pending' => \App\Support\StatusStyle::textClass('pending').' border-gold-accent/30', 'diproses' => \App\Support\StatusStyle::textClass('diproses').' border-amber-500/30', 'dikirim' => \App\Support\StatusStyle::textClass('dikirim').' border-sky-500/30', 'diterima' => \App\Support\StatusStyle::textClass('diterima').' border-success/30', 'gagal' => \App\Support\StatusStyle::textClass('gagal').' border-error/30', default => 'text-on-surface-variant border-outline-variant' };
                             @endphp
                             <tr data-table-row
                                         data-status="{{ $s->status }}"
@@ -211,7 +211,7 @@ $pelanggan = $s->order?->checkout?->user;
                     @php
 $pelanggan = $s->order?->checkout?->user;
                         $pelNama = $pelanggan?->nama_lengkap ?? $s->order?->checkout?->nama_penerima ?? '-';
-                        $statusClass = match($s->status) { 'diterima' => 'text-success border-success/30', 'dikirim' => 'text-secondary border-secondary/30', 'diproses' => 'text-info border-info/30', 'gagal' => 'text-error border-error/30', default => 'text-on-surface-variant border-outline-variant' };
+                        $statusClass = match($s->status) { 'pending' => \App\Support\StatusStyle::textClass('pending').' border-gold-accent/30', 'diproses' => \App\Support\StatusStyle::textClass('diproses').' border-amber-500/30', 'dikirim' => \App\Support\StatusStyle::textClass('dikirim').' border-sky-500/30', 'diterima' => \App\Support\StatusStyle::textClass('diterima').' border-success/30', 'gagal' => \App\Support\StatusStyle::textClass('gagal').' border-error/30', default => 'text-on-surface-variant border-outline-variant' };
                     @endphp
                     <article data-table-row data-status="{{ $s->status }}" data-search="{{ strtolower(($s->order->nomor_order ?? '').' '.($s->order->store->nama_toko ?? '').' '.($s->courier->nama_kurir ?? '').' '.($s->nomor_resi ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
                     <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">local_shipping</span>
@@ -401,12 +401,12 @@ $pelanggan = $s->order?->checkout?->user;
             const matchSearch = !term || (el.getAttribute('data-search') || '').includes(term);
             const show = matchStatus && matchSearch;
             el.classList.toggle('hidden', !show);
-            if (show) visible++;
             return show;
         };
 
         document.querySelectorAll('#table-body tr[data-table-row]').forEach((row) => {
             if (each(row)) {
+                visible++;
                 const num = row.querySelector('.row-num');
                 if (num) num.textContent = visible;
             }
@@ -479,7 +479,7 @@ $pelanggan = $s->order?->checkout?->user;
         document.getElementById('d-diterima').textContent = d.diterima;
         const statusEl = document.getElementById('d-status');
         statusEl.textContent = d.status;
-        const statusColors = { 'Diterima': 'text-success', 'Dikirim': 'text-secondary', 'Diproses': 'text-info', 'Gagal': 'text-error', 'Pending': 'text-on-surface-variant' };
+        const statusColors = { 'Diterima': 'text-success', 'Dikirim': 'text-sky-600', 'Diproses': 'text-amber-600', 'Gagal': 'text-error', 'Pending': 'text-gold-accent' };
         statusEl.className = 'text-sm font-semibold ' + (statusColors[d.status] || 'text-on-surface');
         document.getElementById('detail-modal').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
@@ -493,10 +493,10 @@ $pelanggan = $s->order?->checkout?->user;
     const pengStatusLabels = { pending: 'Pending', diproses: 'Diproses', dikirim: 'Dikirim', diterima: 'Diterima', gagal: 'Gagal' };
     const pengStatusTokens = {
         diterima: ['text-success', 'border-success/30'],
-        dikirim: ['text-secondary', 'border-secondary/30'],
-        diproses: ['text-info', 'border-info/30'],
+        dikirim: ['text-sky-600', 'border-sky-500/30'],
+        diproses: ['text-amber-600', 'border-amber-500/30'],
         gagal: ['text-error', 'border-error/30'],
-        pending: ['text-on-surface-variant', 'border-outline-variant'],
+        pending: ['text-gold-accent', 'border-gold-accent/30'],
     };
     function applyPengStatusClass(suffix, id, status) {
         const trigger = document.getElementById(suffix + '-' + id + '-trigger');

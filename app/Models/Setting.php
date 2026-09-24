@@ -22,10 +22,6 @@ class Setting extends Model
 
     public const SLOT_HARGA_PER_SLOT = 'slot_harga_per_slot';
 
-    public const PERINGKAT_TIER = 'peringkat_tier';
-
-    public const PERINGKAT_HARI_DEFAULT = 'peringkat_hari_default';
-
     public const NAMA_PLATFORM = 'nama_platform';
 
     public const EMAIL_SUPPORT = 'email_support';

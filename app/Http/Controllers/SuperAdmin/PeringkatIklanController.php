@@ -7,11 +7,9 @@ use App\Models\AdSlot;
 use App\Models\Notification;
 use App\Models\PlatformBankAccount;
 use App\Models\Product;
-use App\Models\Setting;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Support\ActivityLogger;
-use App\Support\PeringkatService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -26,9 +24,11 @@ class PeringkatIklanController extends Controller
         $slotsQuery = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko'])
             ->orderByDesc('nominal_bid');
 
-        $totalPendapatan = (float) (clone $slotsQuery)->where('status', 'aktif')->sum('nominal_bid');
-        $slotAktif = (clone $slotsQuery)->where('status', 'aktif')->count();
-        $rataRataBid = $slotAktif > 0 ? $totalPendapatan / $slotAktif : 0;
+        $totalPendapatan = (float) (clone $slotsQuery)->whereIn('status', [AdSlot::STATUS_AKTIF, AdSlot::STATUS_TERJADWAL])->sum('nominal_bid');
+        $slotAktif = (clone $slotsQuery)->where('status', AdSlot::STATUS_AKTIF)->count();
+        $slotTerjadwal = (clone $slotsQuery)->where('status', AdSlot::STATUS_TERJADWAL)->count();
+        $slotBerjalan = $slotAktif + $slotTerjadwal;
+        $rataRataBid = $slotBerjalan > 0 ? $totalPendapatan / $slotBerjalan : 0;
 
         $top3 = (clone $slotsQuery)
             ->where('status', AdSlot::STATUS_AKTIF)
@@ -36,6 +36,7 @@ class PeringkatIklanController extends Controller
             ->whereNotNull('tanggal_selesai')
             ->whereDate('tanggal_mulai', '<=', now()->toDateString())
             ->whereDate('tanggal_selesai', '>=', now()->toDateString())
+            ->orderBy('ad_slot_id')
             ->limit(3)->get();
 
         $today = now()->toDateString();
@@ -46,11 +47,22 @@ class PeringkatIklanController extends Controller
                 ->paginate(20)->withQueryString();
         } elseif ($tab === 'daftar') {
             $slots = (clone $slotsQuery)
-                ->where('status', AdSlot::STATUS_AKTIF)
+                ->reorder()
+                ->where(function ($q) use ($today) {
+                    $q->where(function ($q2) use ($today) {
+                        $q2->where('status', AdSlot::STATUS_AKTIF)
+                            ->whereDate('tanggal_mulai', '<=', $today)
+                            ->whereDate('tanggal_selesai', '>=', $today);
+                    })->orWhere(function ($q2) use ($today) {
+                        $q2->where('status', AdSlot::STATUS_TERJADWAL)
+                            ->whereDate('tanggal_mulai', '>', $today);
+                    });
+                })
                 ->whereNotNull('tanggal_mulai')
                 ->whereNotNull('tanggal_selesai')
-                ->whereDate('tanggal_mulai', '<=', $today)
-                ->whereDate('tanggal_selesai', '>=', $today)
+                ->orderByRaw('CASE WHEN status = ? THEN 0 ELSE 1 END', [AdSlot::STATUS_AKTIF])
+                ->orderByDesc('nominal_bid')
+                ->orderBy('ad_slot_id')
                 ->paginate(20)->withQueryString();
         } else {
             $slots = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko', 'bankAccount.bank'])
@@ -70,25 +82,16 @@ class PeringkatIklanController extends Controller
 
         $rekenings = PlatformBankAccount::with('bank')->whereNotNull('bank_id')->where('status', PlatformBankAccount::STATUS_AKTIF)->orderBy('nomor_rekening')->get();
 
-        $tiers = PeringkatService::defaultTiers();
-        $raw = Setting::get(Setting::PERINGKAT_TIER, null);
-        if ($raw) {
-            $decoded = json_decode($raw, true);
-            if (is_array($decoded) && $decoded !== []) {
-                $tiers = $decoded;
-            }
-        }
-
         return view('SuperAdmin.peringkat.peringkat-iklan', [
             'slots' => $slots,
             'top3' => $top3,
             'tab' => $tab,
             'totalPendapatan' => $totalPendapatan,
             'slotAktif' => $slotAktif,
+            'slotTerjadwal' => $slotTerjadwal,
             'rataRataBid' => $rataRataBid,
             'products' => $products,
             'rekenings' => $rekenings,
-            'tiers' => $tiers,
         ]);
     }
 
@@ -97,47 +100,10 @@ class PeringkatIklanController extends Controller
         abort(403, 'Pendaftaran slot via Super Admin dinonaktifkan. Gunakan alur Owner (bank+file+bukti).');
     }
 
-    public function verifikasiPembayaran(Request $request, AdSlot $slot)
-    {
-        if ($slot->payment_status === AdSlot::PAYMENT_TERVERIFIKASI) {
-            return back()->with('toast', ['message' => 'Pembayaran sudah terverifikasi.', 'icon' => 'info']);
-        }
-
-        if ($slot->status !== AdSlot::STATUS_DITUNDA) {
-            return back()->with('toast', ['message' => 'Hanya slot menunggu yang dapat diverifikasi.', 'icon' => 'gpp_maybe']);
-        }
-
-        $slot->update([
-            'payment_status' => AdSlot::PAYMENT_TERVERIFIKASI,
-            'paid_at' => now(),
-            'handled_by' => ActivityLogger::resolveActorId(),
-        ]);
-
-        ActivityLogger::log('ad_slot.verify', AdSlot::class, $slot->ad_slot_id, ['payment_status' => AdSlot::PAYMENT_MENUNGGU], ['payment_status' => AdSlot::PAYMENT_TERVERIFIKASI], 'Verifikasi pembayaran iklan Rp '.number_format((float) $slot->nominal_bid, 0, ',', '.'));
-
-        $ownerId = $slot->store?->owner_id;
-        if ($ownerId) {
-            Notification::create([
-                'user_id' => $ownerId,
-                'aktor_id' => ActivityLogger::resolveActorId(),
-                'tipe' => Notification::TIPE_PROMO,
-                'judul' => 'Pembayaran Iklan Terverifikasi',
-                'pesan' => sprintf('Pembayaran iklan "%s" Rp %s terverifikasi. Menunggu persetujuan.', $slot->product->nama_produk ?? '-', number_format((float) $slot->nominal_bid, 0, ',', '.')),
-                'url' => route('owner.peringkat-iklan'),
-            ]);
-        }
-
-        return back()->with('toast', ['message' => 'Pembayaran iklan berhasil diverifikasi.', 'icon' => 'task_alt']);
-    }
-
     public function setujui(Request $request, AdSlot $slot)
     {
         if ($slot->status !== AdSlot::STATUS_DITUNDA) {
             return back()->with('toast', ['message' => 'Hanya slot menunggu yang dapat disetujui.', 'icon' => 'gpp_maybe']);
-        }
-
-        if ($slot->payment_status !== AdSlot::PAYMENT_TERVERIFIKASI) {
-            return back()->with('toast', ['message' => 'Verifikasi pembayaran terlebih dahulu sebelum menyetujui.', 'icon' => 'gpp_maybe']);
         }
 
         $slot->loadMissing(['store', 'product']);
@@ -146,7 +112,7 @@ class PeringkatIklanController extends Controller
             DB::transaction(function () use ($slot) {
                 $locked = AdSlot::whereKey($slot->ad_slot_id)->lockForUpdate()->first();
 
-                if (! $locked || $locked->status !== AdSlot::STATUS_DITUNDA || $locked->payment_status !== AdSlot::PAYMENT_TERVERIFIKASI) {
+                if (! $locked || $locked->status !== AdSlot::STATUS_DITUNDA) {
                     throw new \RuntimeException('Status slot sudah berubah oleh pihak lain.');
                 }
 
@@ -178,12 +144,15 @@ class PeringkatIklanController extends Controller
                     'keterangan' => sprintf('Biaya iklan peringkat "%s" Rp %s periode %s s/d %s.', $locked->product->nama_produk ?? '-', number_format((float) $locked->nominal_bid, 0, ',', '.'), $locked->tanggal_mulai ? \Illuminate\Support\Carbon::parse($locked->tanggal_mulai)->translatedFormat('d M Y') : '-', $locked->tanggal_selesai ? \Illuminate\Support\Carbon::parse($locked->tanggal_selesai)->translatedFormat('d M Y') : '-'),
                 ]);
 
-                $hari = PeringkatService::resolveHari((int) $locked->nominal_bid);
+                $today = now()->toDateString();
+                $mulai = $locked->tanggal_mulai ? \Illuminate\Support\Carbon::parse($locked->tanggal_mulai)->toDateString() : $today;
+                $selesai = $locked->tanggal_selesai ? \Illuminate\Support\Carbon::parse($locked->tanggal_selesai)->toDateString() : \Illuminate\Support\Carbon::parse($mulai)->addDays(7)->toDateString();
+                $statusBaru = $mulai <= $today ? AdSlot::STATUS_AKTIF : AdSlot::STATUS_TERJADWAL;
 
                 $locked->update([
-                    'status' => AdSlot::STATUS_AKTIF,
-                    'tanggal_mulai' => now()->toDateString(),
-                    'tanggal_selesai' => now()->addDays($hari)->toDateString(),
+                    'status' => $statusBaru,
+                    'payment_status' => AdSlot::PAYMENT_TERVERIFIKASI,
+                    'paid_at' => now(),
                     'handled_by' => ActivityLogger::resolveActorId(),
                 ]);
             });
@@ -193,21 +162,41 @@ class PeringkatIklanController extends Controller
 
         $slot->refresh();
 
-        ActivityLogger::log('ad_slot.approve', AdSlot::class, $slot->ad_slot_id, ['status' => AdSlot::STATUS_DITUNDA], ['status' => AdSlot::STATUS_AKTIF], 'Menyetujui iklan peringkat Rp '.number_format((float) $slot->nominal_bid, 0, ',', '.'));
+        ActivityLogger::log('ad_slot.approve', AdSlot::class, $slot->ad_slot_id, ['status' => AdSlot::STATUS_DITUNDA], ['status' => $slot->status], 'Menyetujui iklan peringkat Rp '.number_format((float) $slot->nominal_bid, 0, ',', '.'));
 
         $ownerId = $slot->store?->owner_id;
         if ($ownerId) {
+            if ($slot->status === AdSlot::STATUS_TERJADWAL) {
+                $judul = 'Iklan Disetujui & Terjadwal';
+                $pesan = sprintf('Iklan "%s" disetujui dan akan tayang otomatis mulai %s s/d %s.', $slot->product->nama_produk ?? '-', $slot->tanggal_mulai ? \Illuminate\Support\Carbon::parse($slot->tanggal_mulai)->translatedFormat('d M Y') : '-', $slot->tanggal_selesai ? \Illuminate\Support\Carbon::parse($slot->tanggal_selesai)->translatedFormat('d M Y') : '-');
+            } else {
+                $judul = 'Iklan Disetujui';
+                $pesan = sprintf('Iklan "%s" disetujui dan kini tayang peringkat %s s/d %s.', $slot->product->nama_produk ?? '-', $slot->tanggal_mulai ? \Illuminate\Support\Carbon::parse($slot->tanggal_mulai)->translatedFormat('d M Y') : '-', $slot->tanggal_selesai ? \Illuminate\Support\Carbon::parse($slot->tanggal_selesai)->translatedFormat('d M Y') : '-');
+            }
+
             Notification::create([
                 'user_id' => $ownerId,
                 'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => Notification::TIPE_PROMO,
-                'judul' => 'Iklan Disetujui',
-                'pesan' => sprintf('Iklan "%s" disetujui dan aktif peringkat %s s/d %s.', $slot->product->nama_produk ?? '-', $slot->tanggal_mulai ? \Illuminate\Support\Carbon::parse($slot->tanggal_mulai)->translatedFormat('d M Y') : '-', $slot->tanggal_selesai ? \Illuminate\Support\Carbon::parse($slot->tanggal_selesai)->translatedFormat('d M Y') : '-'),
+                'judul' => $judul,
+                'pesan' => $pesan,
                 'url' => route('owner.peringkat-iklan'),
+            ]);
+            Notification::create([
+                'user_id' => $ownerId,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => Notification::TIPE_WALLET,
+                'judul' => 'Saldo Terdebit Biaya Iklan',
+                'pesan' => sprintf('Saldo toko terdebit Rp %s untuk biaya iklan "%s".', number_format((float) $slot->nominal_bid, 0, ',', '.'), $slot->product->nama_produk ?? '-'),
+                'url' => route('owner.keuangan'),
             ]);
         }
 
-        return back()->with('toast', ['message' => 'Iklan disetujui dan aktif.', 'icon' => 'task_alt']);
+        $toast = $slot->status === AdSlot::STATUS_TERJADWAL
+            ? 'Iklan disetujui dan terjadwal menunggu tanggal mulai.'
+            : 'Iklan disetujui dan aktif.';
+
+        return back()->with('toast', ['message' => $toast, 'icon' => 'task_alt']);
     }
 
     public function tolak(Request $request, AdSlot $slot)

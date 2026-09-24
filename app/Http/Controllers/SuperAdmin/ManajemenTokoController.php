@@ -38,12 +38,17 @@ class ManajemenTokoController extends Controller
             ->withCount(['products', 'orders'])
             ->with('documents')
             ->when($status !== 'semua', fn ($query) => $query->where('status', $status))
-            ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'aktif' THEN 1 WHEN 'nonaktif' THEN 2 ELSE 3 END")
             ->orderByDesc('created_at');
 
         $paginated = $storesQuery->paginate(20)->withQueryString();
 
-        $stores = collect($paginated->items())->map(function (Store $store) use ($ratings) {
+        $pendingUpdates = \App\Models\StoreUpdateRequest::whereIn('store_id', collect($paginated->items())->pluck('store_id'))
+            ->where('status', \App\Models\StoreUpdateRequest::STATUS_PENDING)
+            ->orderByDesc('store_update_request_id')
+            ->get()
+            ->keyBy('store_id');
+
+        $stores = collect($paginated->items())->map(function (Store $store) use ($ratings, $pendingUpdates) {
             return (object) [
                 'model' => $store,
                 'initial' => static::initials($store->nama_toko),
@@ -56,6 +61,7 @@ class ManajemenTokoController extends Controller
                 'deskripsi' => $store->deskripsi,
                 'dokumen' => $store->documents,
                 'ditangguhkan_sampai' => $store->ditangguhkan_sampai?->translatedFormat('d F Y H:i'),
+                'update_request' => $pendingUpdates->get($store->store_id),
             ];
         });
 
@@ -79,10 +85,10 @@ class ManajemenTokoController extends Controller
             ]);
         }
 
-        $hasValidDoc = StoreDocument::where('store_id', $toko->store_id)->where('status', '!=', 'ditolak')->exists();
-        if (! $hasValidDoc) {
+        $dokumenValid = StoreDocument::where('store_id', $toko->store_id)->where('status', '!=', 'ditolak')->count();
+        if ($dokumenValid < 3) {
             return back()->with('toast', [
-                'message' => 'Minimal 1 dokumen valid diperlukan sebelum menyetujui toko.',
+                'message' => 'Minimal 3 dokumen valid diperlukan sebelum menyetujui toko (saat ini '.$dokumenValid.').',
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -461,6 +467,91 @@ class ManajemenTokoController extends Controller
             'message' => sprintf('Dokumen %s ditolak.', $this->jenisLabel($dokumen->jenis)),
             'icon' => 'block',
         ]);
+    }
+
+    public function setujuiUpdate(Request $request, Store $toko, \App\Models\StoreUpdateRequest $permintaan)
+    {
+        if ($permintaan->store_id !== $toko->store_id || $permintaan->status !== \App\Models\StoreUpdateRequest::STATUS_PENDING) {
+            return back()->with('toast', ['message' => 'Pengajuan tidak valid.', 'icon' => 'gpp_maybe']);
+        }
+
+        $lama = $toko->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon']);
+
+        DB::transaction(function () use ($toko, $permintaan) {
+            $toko->update([
+                'nama_toko' => $permintaan->nama_toko,
+                'kategori' => $permintaan->kategori,
+                'deskripsi' => $permintaan->deskripsi,
+                'alamat' => $permintaan->alamat,
+                'nomor_telepon' => $permintaan->nomor_telepon,
+            ]);
+
+            $permintaan->update([
+                'status' => \App\Models\StoreUpdateRequest::STATUS_DISETUJUI,
+                'reviewed_by' => ActivityLogger::resolveActorId(),
+            ]);
+
+            ActivityLogger::log(
+                'store.update.approve',
+                Store::class,
+                $toko->store_id,
+                $lama,
+                $permintaan->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon']),
+                sprintf('Menyetujui perubahan data toko "%s".', $toko->nama_toko)
+            );
+        });
+
+        Notification::create([
+            'user_id' => $toko->owner_id,
+            'aktor_id' => ActivityLogger::resolveActorId(),
+            'tipe' => Notification::TIPE_SISTEM,
+            'judul' => 'Perubahan Data Disetujui',
+            'pesan' => sprintf('Perubahan data toko "%s" disetujui dan sudah berlaku.', $toko->nama_toko),
+            'url' => route('owner.data-toko'),
+        ]);
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Perubahan Disetujui', sprintf('Perubahan data toko "%s" disetujui.', $toko->nama_toko), route('superadmin.manajemen-toko'));
+
+        return back()->with('toast', ['message' => 'Perubahan data toko disetujui.', 'icon' => 'task_alt']);
+    }
+
+    public function tolakUpdate(Request $request, Store $toko, \App\Models\StoreUpdateRequest $permintaan)
+    {
+        if ($permintaan->store_id !== $toko->store_id || $permintaan->status !== \App\Models\StoreUpdateRequest::STATUS_PENDING) {
+            return back()->with('toast', ['message' => 'Pengajuan tidak valid.', 'icon' => 'gpp_maybe']);
+        }
+
+        $data = $request->validate([
+            'alasan' => 'required|string|min:3|max:1000',
+        ], [
+            'alasan.required' => 'Alasan penolakan wajib diisi.',
+            'alasan.min' => 'Alasan penolakan minimal 3 karakter.',
+        ]);
+
+        $permintaan->update([
+            'status' => \App\Models\StoreUpdateRequest::STATUS_DITOLAK,
+            'alasan_penolakan' => $data['alasan'],
+            'reviewed_by' => ActivityLogger::resolveActorId(),
+        ]);
+
+        ActivityLogger::log(
+            'store.update.reject',
+            Store::class,
+            $toko->store_id,
+            ['status' => 'pending'],
+            ['status' => 'ditolak', 'alasan_penolakan' => $data['alasan']],
+            sprintf('Menolak perubahan data toko "%s": %s', $toko->nama_toko, $data['alasan'])
+        );
+
+        Notification::create([
+            'user_id' => $toko->owner_id,
+            'aktor_id' => ActivityLogger::resolveActorId(),
+            'tipe' => Notification::TIPE_SISTEM,
+            'judul' => 'Perubahan Data Ditolak',
+            'pesan' => sprintf('Perubahan data toko "%s" ditolak. Alasan: %s', $toko->nama_toko, $data['alasan']),
+            'url' => route('owner.data-toko'),
+        ]);
+
+        return back()->with('toast', ['message' => 'Perubahan data toko ditolak.', 'icon' => 'block']);
     }
 
     private static function jenisLabel(string $jenis): string

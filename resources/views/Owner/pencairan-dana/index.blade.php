@@ -46,7 +46,7 @@
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope id="riwayat">
         <h2 class="font-title-md text-title-md premium-heading">Riwayat Pencairan</h2>
-        <div data-table-wrap class="overflow-x-auto mt-6">
+        <div data-table-wrap class="overflow-x-auto hidden md:block mt-6">
             <table class="premium-table w-full min-w-[700px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
@@ -64,13 +64,33 @@
                             <td class="py-3.5 px-4">
                                 <p>{{ $w->tujuan_jenis_label }} • {{ $w->tujuan_penyedia }} • {{ $w->tujuan_nomor }}</p>
                             </td>
-                            <td class="py-3.5 px-4"><span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $w->status==='dibayar' ? 'bg-secondary-container/20 text-secondary border-secondary/20' : ($w->status==='pending' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-error/10 text-error border-error/20') }}">{{ $w->status }}</span></td>
+                            <td class="py-3.5 px-4"><span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $w->status==='dibayar' ? 'bg-amber-500/10 text-amber-600 border-amber-500/30' : ($w->status==='pending' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-error/10 text-error border-error/20') }}">{{ $w->status }}</span></td>
                         </tr>
                     @empty
                         <tr><td colspan="4" class="py-8 text-center text-on-surface-variant">Belum ada pencairan.</td></tr>
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <div class="md:hidden grid grid-cols-1 gap-gutter mt-6">
+            @forelse($withdrawals as $w)
+                <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="text-xs text-on-surface-variant">{{ $w->diajukan_pada?->translatedFormat('d M Y') ?? '-' }}</p>
+                            <p class="font-bold text-on-surface mt-0.5">Rp {{ number_format($w->jumlah,0,',','.') }}</p>
+                        </div>
+                        <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $w->status==='dibayar' ? 'bg-amber-500/10 text-amber-600 border-amber-500/30' : ($w->status==='pending' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-error/10 text-error border-error/20') }}">{{ $w->status }}</span>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-muted-border">
+                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Tujuan</p>
+                        <p class="text-sm text-on-surface mt-0.5">{{ $w->tujuan_jenis_label }} • {{ $w->tujuan_penyedia }} • {{ $w->tujuan_nomor }}</p>
+                    </div>
+                </article>
+            @empty
+                <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada pencairan.</p>
+            @endforelse
         </div>
         <div class="mt-6">
             @if($withdrawals instanceof \Illuminate\Pagination\AbstractPaginator)

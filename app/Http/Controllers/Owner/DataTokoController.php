@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\Review;
+use App\Models\Store;
 use App\Models\StoreCategory;
+use App\Models\User;
+use App\Support\ActivityLogger;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -16,9 +19,9 @@ class DataTokoController extends Controller
     {
         $store = OwnerContext::currentStore();
 
-        if (! $store) {
+        if (! $store || $store->status !== Store::STATUS_AKTIF) {
             return redirect()->route('owner.pengajuan-toko')
-                ->with('info', 'Silakan ajukan pembuatan toko terlebih dahulu.');
+                ->with('info', ! $store ? 'Silakan ajukan pembuatan toko terlebih dahulu.' : 'Data Toko terbuka setelah toko aktif. Pantau progres di Pengajuan Toko.');
         }
 
         $rating = $store ? (float) Review::where('store_id', $store->store_id)->avg('rating') : 0;
@@ -27,7 +30,12 @@ class DataTokoController extends Controller
             ->orderBy('nama_kategori')
             ->pluck('nama_kategori');
 
-        return view('Owner.data-toko.index', compact('store', 'rating', 'reviewCount', 'storeCategories'));
+        $updatePending = \App\Models\StoreUpdateRequest::where('store_id', $store->store_id)
+            ->where('status', \App\Models\StoreUpdateRequest::STATUS_PENDING)
+            ->latest('store_update_request_id')
+            ->first();
+
+        return view('Owner.data-toko.index', compact('store', 'rating', 'reviewCount', 'storeCategories', 'updatePending'));
     }
 
     public function update(Request $request)
@@ -35,6 +43,10 @@ class DataTokoController extends Controller
         $store = OwnerContext::currentStore();
         if (! $store) {
             return back()->with('error', 'Toko tidak ditemukan.');
+        }
+
+        if ($store->status !== Store::STATUS_AKTIF) {
+            return back()->with('error', 'Data Toko hanya dapat diubah setelah toko aktif.');
         }
 
         $validated = $request->validate([
@@ -46,23 +58,62 @@ class DataTokoController extends Controller
             'email' => ['required', 'email', 'max:150', Rule::unique('users', 'email')->ignore($request->user()->user_id ?? 0, 'user_id')],
         ]);
 
-        $store->update([
-            'nama_toko' => $validated['nama_toko'],
-            'kategori' => $validated['kategori'] ?? null,
-            'deskripsi' => $validated['deskripsi'],
-            'alamat' => $validated['alamat'],
-            'nomor_telepon' => $validated['nomor_telepon'],
-        ]);
-
-        // Email ada di tabel users, bukan stores.
+        // Email ada di tabel users, bukan stores — langsung disimpan.
         $user = $request->user();
         if ($user && $user->email !== $validated['email']) {
             $user->update(['email' => $validated['email']]);
         }
 
-        Notification::fireSelf(Notification::TIPE_SISTEM, 'Data Toko Diperbarui', sprintf('Data toko "%s" berhasil diperbarui.', $store->nama_toko), route('owner.data-toko'));
+        if (\App\Models\StoreUpdateRequest::where('store_id', $store->store_id)
+            ->where('status', \App\Models\StoreUpdateRequest::STATUS_PENDING)->exists()) {
+            return back()->with('error', 'Masih ada pengajuan perubahan yang menunggu verifikasi Super Admin.');
+        }
+
+        $sama = $store->nama_toko === $validated['nama_toko']
+            && ($store->kategori ?? null) === ($validated['kategori'] ?? null)
+            && ($store->deskripsi ?? null) === ($validated['deskripsi'] ?? null)
+            && $store->alamat === $validated['alamat']
+            && $store->nomor_telepon === $validated['nomor_telepon'];
+
+        if ($sama) {
+            return back()->with('info', 'Tidak ada perubahan data toko.');
+        }
+
+        $permintaan = \App\Models\StoreUpdateRequest::create([
+            'store_id' => $store->store_id,
+            'nama_toko' => $validated['nama_toko'],
+            'kategori' => $validated['kategori'] ?? null,
+            'deskripsi' => $validated['deskripsi'] ?? null,
+            'alamat' => $validated['alamat'],
+            'nomor_telepon' => $validated['nomor_telepon'],
+            'status' => \App\Models\StoreUpdateRequest::STATUS_PENDING,
+        ]);
+
+        \App\Support\ActivityLogger::log(
+            'toko.update.request',
+            Store::class,
+            $store->store_id,
+            $store->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon']),
+            $permintaan->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon']),
+            sprintf('Mengajukan perubahan data toko "%s".', $store->nama_toko)
+        );
+
+        $sa = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
+            ->where('status', User::STATUS_AKTIF)
+            ->first();
+        if ($sa) {
+            Notification::create([
+                'user_id' => $sa->user_id,
+                'aktor_id' => $user?->user_id,
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Pengajuan Perubahan Data Toko',
+                'pesan' => sprintf('Owner mengajukan perubahan data toko "%s" dan menunggu verifikasi.', $store->nama_toko),
+                'url' => route('superadmin.manajemen-toko'),
+            ]);
+        }
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Perubahan Diajukan', sprintf('Perubahan data toko "%s" dikirim dan menunggu verifikasi Super Admin.', $store->nama_toko), route('owner.data-toko'));
 
         return redirect()->route('owner.data-toko')
-            ->with('success', 'Data toko berhasil disimpan.');
+            ->with('success', 'Perubahan data toko dikirim dan menunggu verifikasi Super Admin.');
     }
 }

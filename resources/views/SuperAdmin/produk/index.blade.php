@@ -87,13 +87,13 @@
                 @forelse ($products as $produk)
                     @php
                         $statusLabel = match ($produk->status) {
-                            'aktif' => ['Disetujui', 'bg-secondary-container/20 text-secondary border-secondary/20'],
-                            'pending' => ['Menunggu', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                            'ditolak' => ['Ditolak', 'bg-error/10 text-error border-error/20'],
-                            'nonaktif' => ['Nonaktif', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                            'draft' => ['Draft', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                            'arsip' => ['Arsip', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                            default => [ucfirst($produk->status), 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                            'aktif' => ['Disetujui', \App\Support\StatusStyle::badgeClass('aktif')],
+                            'pending' => ['Menunggu', \App\Support\StatusStyle::badgeClass('pending')],
+                            'ditolak' => ['Ditolak', \App\Support\StatusStyle::badgeClass('ditolak')],
+                            'nonaktif' => ['Nonaktif', \App\Support\StatusStyle::badgeClass('nonaktif')],
+                            'draft' => ['Draft', \App\Support\StatusStyle::badgeClass('draft')],
+                            'arsip' => ['Arsip', \App\Support\StatusStyle::badgeClass('arsip')],
+                            default => [ucfirst($produk->status), \App\Support\StatusStyle::CLASS_NEUTRAL],
                         };
                         $normFoto = function ($raw) {
                             if (filter_var($raw, FILTER_VALIDATE_URL)) return $raw;
@@ -168,13 +168,13 @@
         @forelse ($products as $produk)
             @php
                 $statusLabel = match ($produk->status) {
-                    'aktif' => ['Disetujui', 'bg-secondary-container/20 text-secondary border-secondary/20'],
-                    'pending' => ['Menunggu', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                    'ditolak' => ['Ditolak', 'bg-error/10 text-error border-error/20'],
-                    'nonaktif' => ['Nonaktif', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                    'draft' => ['Draft', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                    'arsip' => ['Arsip', 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-                    default => [ucfirst($produk->status), 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                    'aktif' => ['Disetujui', \App\Support\StatusStyle::badgeClass('aktif')],
+                    'pending' => ['Menunggu', \App\Support\StatusStyle::badgeClass('pending')],
+                    'ditolak' => ['Ditolak', \App\Support\StatusStyle::badgeClass('ditolak')],
+                    'nonaktif' => ['Nonaktif', \App\Support\StatusStyle::badgeClass('nonaktif')],
+                    'draft' => ['Draft', \App\Support\StatusStyle::badgeClass('draft')],
+                    'arsip' => ['Arsip', \App\Support\StatusStyle::badgeClass('arsip')],
+                    default => [ucfirst($produk->status), \App\Support\StatusStyle::CLASS_NEUTRAL],
                 };
             @endphp
             <article data-table-row data-status="{{ $produk->status }}" data-iklan="{{ $produk->adSlot ? 1 : 0 }}" data-search="{{ strtolower($produk->nama_produk.' '.($produk->store->nama_toko ?? '').' '.($produk->category->nama_kategori ?? '')) }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
@@ -243,7 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const scope = document.querySelector('[data-table-scope]');
     if (!scope) return;
 
-    const rows = Array.from(scope.querySelectorAll('tr[data-table-row], article[data-table-row]'));
+    const rows = Array.from(scope.querySelectorAll('tr[data-table-row]'));
+    const cards = Array.from(scope.querySelectorAll('article[data-table-row]'));
     const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
     const searchInput = document.getElementById('produk-search');
     const clearBtn = document.getElementById('clear-search');
@@ -260,19 +261,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const term = searchInput.value.trim().toLowerCase();
         let visible = 0;
 
-        rows.forEach((row) => {
+        const each = (el) => {
             const matchStatus = activeStatus === 'semua' || activeStatus === 'iklan'
-                ? (activeStatus === 'iklan' ? row.getAttribute('data-iklan') === '1' : true)
-                : row.getAttribute('data-status') === activeStatus;
-            const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
+                ? (activeStatus === 'iklan' ? el.getAttribute('data-iklan') === '1' : true)
+                : el.getAttribute('data-status') === activeStatus;
+            const matchSearch = !term || (el.getAttribute('data-search') || '').includes(term);
             const show = matchStatus && matchSearch;
-            row.classList.toggle('hidden', !show);
-            if (show) {
+            el.classList.toggle('hidden', !show);
+            return show;
+        };
+
+        rows.forEach((row) => {
+            if (each(row)) {
                 visible++;
                 const num = row.querySelector('.row-num');
                 if (num) num.textContent = visible;
             }
         });
+        cards.forEach(each);
 
         countEl.textContent = visible;
         emptySearch.classList.toggle('hidden', visible > 0);

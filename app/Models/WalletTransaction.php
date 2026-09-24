@@ -21,6 +21,8 @@ class WalletTransaction extends Model
 
     public const JENIS_PEMASUKAN = 'pemasukan';
 
+    public const JENIS_PENGELUARAN = 'pengeluaran';
+
     public const JENIS_BIAYA_IKLAN = 'biaya_iklan';
 
     protected $fillable = [

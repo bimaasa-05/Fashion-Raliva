@@ -269,6 +269,8 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/manajemen-toko/{toko}/aktifkan', [ManajemenTokoController::class, 'aktifkan'])->name('manajemen-toko.aktifkan');
     Route::post('/manajemen-toko/{toko}/dokumen/{dokumen}/setujui', [ManajemenTokoController::class, 'verifikasiDokumen'])->name('manajemen-toko.dokumen.setujui');
     Route::post('/manajemen-toko/{toko}/dokumen/{dokumen}/tolak', [ManajemenTokoController::class, 'tolakDokumen'])->name('manajemen-toko.dokumen.tolak');
+    Route::post('/manajemen-toko/{toko}/perubahan/{permintaan}/setujui', [ManajemenTokoController::class, 'setujuiUpdate'])->name('manajemen-toko.perubahan.setujui');
+    Route::post('/manajemen-toko/{toko}/perubahan/{permintaan}/tolak', [ManajemenTokoController::class, 'tolakUpdate'])->name('manajemen-toko.perubahan.tolak');
     Route::get('/moderasi-produk', [ModerasiProdukController::class, 'index'])->name('moderasi-produk');
     Route::post('/moderasi-produk/{produk}/setujui', [ModerasiProdukController::class, 'setujui'])->name('moderasi-produk.setujui');
     Route::post('/moderasi-produk/{produk}/tolak', [ModerasiProdukController::class, 'tolak'])->name('moderasi-produk.tolak');
@@ -308,7 +310,6 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::delete('/promo-slot/{promo}', [SlotPromoController::class, 'destroy'])->name('promo-slot.destroy');
     Route::get('/peringkat-iklan', [PeringkatIklanController::class, 'index'])->name('peringkat-iklan');
     Route::post('/peringkat-iklan', [PeringkatIklanController::class, 'store'])->name('peringkat-iklan.store');
-    Route::post('/peringkat-iklan/{slot}/verifikasi', [PeringkatIklanController::class, 'verifikasiPembayaran'])->name('peringkat-iklan.verifikasi');
     Route::post('/peringkat-iklan/{slot}/setujui', [PeringkatIklanController::class, 'setujui'])->name('peringkat-iklan.setujui');
     Route::post('/peringkat-iklan/{slot}/tolak', [PeringkatIklanController::class, 'tolak'])->name('peringkat-iklan.tolak');
     Route::delete('/peringkat-iklan/{slot}', [PeringkatIklanController::class, 'destroy'])->name('peringkat-iklan.hapus');
@@ -346,10 +347,6 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/pengaturan-sistem/help/faq', [PengaturanSistemController::class, 'storeHelpFaq'])->name('pengaturan-sistem.help.faq.store');
     Route::put('/pengaturan-sistem/help/faq/{helpFaq}', [PengaturanSistemController::class, 'updateHelpFaq'])->name('pengaturan-sistem.help.faq.update');
     Route::delete('/pengaturan-sistem/help/faq/{helpFaq}', [PengaturanSistemController::class, 'destroyHelpFaq'])->name('pengaturan-sistem.help.faq.destroy');
-    Route::put('/pengaturan-sistem/tier', [PengaturanSistemController::class, 'updateTier'])->name('pengaturan-sistem.tier.update');
-    Route::post('/pengaturan-sistem/tier', [PengaturanSistemController::class, 'storeTier'])->name('pengaturan-sistem.tier.store');
-    Route::put('/pengaturan-sistem/tier/{index}', [PengaturanSistemController::class, 'updateSingleTier'])->whereNumber('index')->name('pengaturan-sistem.tier.singleUpdate');
-    Route::delete('/pengaturan-sistem/tier/{index}', [PengaturanSistemController::class, 'destroyTier'])->whereNumber('index')->name('pengaturan-sistem.tier.destroy');
     Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
     Route::match(['put', 'post'], '/profil', [ProfilController::class, 'updateProfile'])->name('profil.update');
     Route::match(['put', 'post'], '/profil/password', [ProfilController::class, 'updatePassword'])->name('profil.password');
@@ -414,6 +411,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::get('/pengiriman', [PengirimanController::class, 'index'])->name('pengiriman');
     Route::post('/pengiriman/{pesanan}/resi', [PengirimanController::class, 'simpanResi'])->name('pengiriman.resi');
     Route::post('/pengiriman/{pengiriman}/kirim', [PengirimanController::class, 'kirim'])->name('pengiriman.kirim');
+    Route::get('/slot', [\App\Http\Controllers\Admin\SlotController::class, 'index'])->name('slot');
+    Route::post('/slot', [\App\Http\Controllers\Admin\SlotController::class, 'store'])->name('slot.request');
     Route::get('/kurir', [\App\Http\Controllers\Admin\KurirController::class, 'index'])->name('kurir');
     Route::post('/kurir', [\App\Http\Controllers\Admin\KurirController::class, 'sync'])->name('kurir.sync');
     Route::post('/kurir/courier', [\App\Http\Controllers\Admin\KurirController::class, 'storeCourier'])->name('kurir.courier.store');
@@ -486,6 +485,7 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::put('/data-toko', [DataTokoController::class, 'update'])->name('data-toko.update');
     Route::get('/pengajuan-toko', [PengajuanTokoController::class, 'index'])->name('pengajuan-toko');
     Route::post('/pengajuan-toko', [PengajuanTokoController::class, 'store'])->name('pengajuan-toko.store');
+    Route::post('/pengajuan-toko/reupload', [PengajuanTokoController::class, 'reupload'])->name('pengajuan-toko.reupload');
     Route::get('/pengaturan-toko', [PengaturanTokoController::class, 'index'])->name('pengaturan-toko');
     Route::get('/produk', [OwnerProdukController::class, 'index'])->name('produk');
     Route::put('/produk/{product}', [OwnerProdukController::class, 'update'])->name('produk.update');

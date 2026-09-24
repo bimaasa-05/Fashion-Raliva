@@ -9,10 +9,10 @@
 
 @php
     $badgeMap = [
-        \App\Models\Store::STATUS_AKTIF => ['label' => 'Aktif', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        \App\Models\Store::STATUS_PENDING => ['label' => 'Menunggu', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
-        \App\Models\Store::STATUS_NONAKTIF => ['label' => 'Ditangguhkan', 'class' => 'bg-error/10 text-error border-error/20'],
-        \App\Models\Store::STATUS_DITOLAK => ['label' => 'Ditolak', 'class' => 'bg-error/10 text-error border-error/20'],
+        \App\Models\Store::STATUS_AKTIF => ['label' => 'Aktif', 'class' => \App\Support\StatusStyle::badgeClass('aktif')],
+        \App\Models\Store::STATUS_PENDING => ['label' => 'Menunggu', 'class' => \App\Support\StatusStyle::badgeClass('pending')],
+        \App\Models\Store::STATUS_NONAKTIF => ['label' => 'Ditangguhkan', 'class' => \App\Support\StatusStyle::badgeClass('nonaktif')],
+        \App\Models\Store::STATUS_DITOLAK => ['label' => 'Ditolak', 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
     ];
 
     $tabs = [
@@ -133,6 +133,11 @@
                             <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-0.5">Rating</span>
                         </div>
                     </div>
+                    @if ($item->update_request)
+                        <button type="button" onclick="event.stopPropagation()" data-modal-open="modal-perubahan-{{ $item->update_request->store_update_request_id }}" class="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gold-accent/10 border border-gold-accent/30 text-gold-accent font-label-sm text-[11px] uppercase tracking-widest hover:bg-gold-accent/20 transition-colors">
+                            <span class="material-symbols-outlined text-[16px]">edit_note</span>Perubahan Data Menunggu
+                        </button>
+                    @endif
                     <div class="flex items-center justify-between pt-4 border-t border-muted-border">
                         <span class="toko-detail-hint font-label-sm text-[11px] uppercase tracking-widest text-gold-accent inline-flex items-center gap-1">Lihat Detail <span class="material-symbols-outlined text-[14px]">arrow_forward</span></span>
                         <span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">place</span>{{ $item->location }}</span>
@@ -156,7 +161,7 @@
     const statusMeta = {
         aktif: {
             chipLabel: 'Aktif',
-            chipClass: 'inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-secondary-container/20 text-secondary border-secondary/20',
+            chipClass: 'inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-success/10 text-success border-success/20',
             verification: 'Terverifikasi'
         },
         pending: {
@@ -230,14 +235,15 @@
             mainForm.action = actionUrls.setujui(d.id);
             rejectBtn.classList.remove('hidden');
             document.getElementById('store-action-info')?.classList.remove('hidden');
+            document.getElementById('store-action-suspend')?.classList.add('hidden');
         } else if (d.status === 'aktif') {
             mainBtn.classList.add('hidden');
-            mainForm.action = actionUrls.tangguhkan(d.id);
             rejectBtn.classList.add('hidden');
             document.getElementById('store-action-info')?.classList.add('hidden');
-            closeStoreModal();
-            openSuspendModal(d.id, d.name);
-            return;
+            document.getElementById('store-action-suspend')?.classList.add('hidden');
+            const suspendBtn = document.getElementById('store-action-suspend');
+            suspendBtn.classList.remove('hidden');
+            suspendBtn.onclick = () => { closeStoreModal(); openSuspendModal(d.id, d.name); };
         } else if (d.status === 'nonaktif') {
             mainBtn.textContent = 'Aktifkan Kembali';
             mainBtn.dataset.confirm = 'false';
@@ -245,6 +251,7 @@
             mainForm.action = actionUrls.aktifkan(d.id);
             rejectBtn.classList.add('hidden');
             document.getElementById('store-action-info')?.classList.add('hidden');
+            document.getElementById('store-action-suspend')?.classList.add('hidden');
             meta.verification = d.sampai
                 ? 'Ditangguhkan sementara — aktif kembali ' + d.sampai
                 : 'Ditangguhkan oleh Admin tanpa batas waktu';
@@ -255,10 +262,12 @@
             mainForm.action = actionUrls.setujui(d.id);
             rejectBtn.classList.add('hidden');
             document.getElementById('store-action-info')?.classList.add('hidden');
+            document.getElementById('store-action-suspend')?.classList.add('hidden');
         } else {
             mainBtn.classList.add('hidden');
             rejectBtn.classList.add('hidden');
             document.getElementById('store-action-info')?.classList.add('hidden');
+            document.getElementById('store-action-suspend')?.classList.add('hidden');
         }
 
         document.getElementById('store-modal-scroll').scrollTop = 0;
@@ -277,9 +286,17 @@
 
     function confirmStoreAction() {
         if (document.getElementById('store-action-main').dataset.confirm === 'true') {
-            if (! confirm('Pulihkan dan setujui toko yang sebelumnya ditolak ini?')) {
-                return false;
-            }
+            pageConfirm('Pulihkan dan setujui toko yang sebelumnya ditolak ini?', {
+                title: 'Setujui Toko',
+                sub: 'Toko akan kembali aktif dan dapat menerima pesanan.',
+                accent: 'primary',
+                yesLabel: 'Ya, Setujui',
+                onConfirm: function () {
+                    closeStoreModal();
+                    document.getElementById('store-action-form').submit();
+                }
+            });
+            return false;
         }
         closeStoreModal();
         return true;
@@ -333,7 +350,7 @@
             const meta = docMeta[d.jenis] || { label: d.jenis, icon: 'description' };
             const verified = d.status === 'terverifikasi';
             const rejected = d.status === 'ditolak';
-            const badgeClass = verified ? 'bg-secondary-container/20 text-secondary border-secondary/20'
+            const badgeClass = verified ? 'bg-success/10 text-success border-success/20'
                 : (rejected ? 'bg-error/10 text-error border-error/20'
                    : 'bg-surface-container-high text-on-surface-variant border-outline-variant');
             const badgeIcon = verified ? 'check_circle' : (rejected ? 'cancel' : 'schedule');
@@ -376,7 +393,7 @@
             const meta = docMeta[d.jenis] || { label: d.jenis, icon: 'description' };
             const verified = d.status === 'terverifikasi';
             const rejected = d.status === 'ditolak';
-            const badgeClass = verified ? 'bg-secondary-container/20 text-secondary border-secondary/20'
+            const badgeClass = verified ? 'bg-success/10 text-success border-success/20'
                 : (rejected ? 'bg-error/10 text-error border-error/20'
                    : 'bg-surface-container-high text-on-surface-variant border-outline-variant');
             const badgeIcon = verified ? 'check_circle' : (rejected ? 'cancel' : 'schedule');
@@ -453,32 +470,89 @@
         modal.classList.remove('flex');
     }
 
+    let _confirmCb = null;
+
+    function pageConfirm(message, options) {
+        options = options || {};
+        document.getElementById('confirm-message').textContent = message;
+        document.getElementById('confirm-title').textContent = options.title || 'Konfirmasi';
+        document.getElementById('confirm-sub').textContent = options.sub || '';
+        const yes = document.getElementById('confirm-yes');
+        yes.className = 'btn-modal ' + (options.accent === 'primary' ? 'btn-modal-primary' : 'btn-modal-danger');
+        yes.textContent = options.yesLabel || 'Ya, Lanjutkan';
+        _confirmCb = options.onConfirm || (function () {});
+        const modal = document.getElementById('confirm-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        yes.focus();
+    }
+
+    function closeConfirmModal() {
+        _confirmCb = null;
+        const modal = document.getElementById('confirm-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function resetConfirmModal() {
+        _confirmCb = null;
+        const modal = document.getElementById('confirm-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    }
+
+    resetConfirmModal();
+
+    document.addEventListener('click', function (event) {
+        const yes = event.target && event.target.closest ? event.target.closest('#confirm-yes') : null;
+        if (! yes) return;
+        const cb = _confirmCb;
+        closeConfirmModal();
+        if (cb) cb();
+    });
+
     function confirmSuspend() {
         const isSementara = document.querySelector('input[name="tipe_suspend"][value="sementara"]').checked;
         if (isSementara) {
             const sampai = document.getElementById('sampai-input').value;
             if (! sampai) {
-                alert('Mohon pilih tanggal berakhirnya penangguhan.');
+                showRalivaToast('Mohon pilih tanggal berakhirnya penangguhan.', 'warning');
                 return false;
             }
             if (new Date(sampai) <= new Date()) {
-                alert('Batas waktu harus di masa depan.');
+                showRalivaToast('Batas waktu harus di masa depan.', 'warning');
                 return false;
             }
-            if (! confirm('Toko akan ditangguhkan sementara hingga ' + new Date(sampai).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}) + '. Lanjutkan?')) {
-                return false;
-            }
-        } else {
-            if (! confirm('Toko akan ditangguhkan secara permanen. Lanjutkan?')) {
-                return false;
-            }
+            const tanggal = new Date(sampai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            pageConfirm('Toko akan ditangguhkan sementara hingga ' + tanggal + '. Lanjutkan?', {
+                title: 'Konfirmasi Penangguhan',
+                sub: 'Toko aktif kembali otomatis saat melewati batas waktu tersebut.',
+                accent: 'danger',
+                yesLabel: 'Ya, Tangguhkan',
+                onConfirm: function () {
+                    closeSuspendModal();
+                    document.getElementById('suspend-form').submit();
+                }
+            });
+            return false;
         }
-        closeSuspendModal();
-        return true;
+        pageConfirm('Toko akan ditangguhkan secara permanen. Lanjutkan?', {
+            title: 'Konfirmasi Penangguhan',
+            sub: 'Hanya Super Admin yang dapat mengaktifkan kembali toko ini.',
+            accent: 'danger',
+            yesLabel: 'Ya, Tangguhkan',
+            onConfirm: function () {
+                closeSuspendModal();
+                document.getElementById('suspend-form').submit();
+            }
+        });
+        return false;
     }
 
     document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') { closeAllDocs(); closeStoreModal(); closeRejectModal(); closeDocRejectModal(); closeSuspendModal(); }
+        if (event.key === 'Escape') { closeAllDocs(); closeStoreModal(); closeRejectModal(); closeDocRejectModal(); closeSuspendModal(); closeConfirmModal(); }
     });
 </script>
 @endpush
@@ -633,6 +707,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p id="store-action-info" class="text-[11px] text-on-surface-variant hidden">Menyetujui akan otomatis verifikasi dokumen pending & beri 5 slot awal bila kosong.</p>
             </div>
             <div class="flex gap-3 w-full sm:w-auto">
+                <button id="store-action-suspend" type="button" class="hidden flex-1 sm:flex-none px-6 py-3 border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-wider rounded-lg hover:bg-error/10 transition-colors">Tangguhkan</button>
                 <button id="store-action-reject" type="button" onclick="openRejectModal()" class="flex-1 sm:flex-none px-6 py-3 border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-wider rounded-lg hover:bg-error/10 transition-colors">Tolak</button>
                 <form id="store-action-form" method="POST" action="" onsubmit="return confirmStoreAction()">
                     @csrf
@@ -747,4 +822,69 @@ document.addEventListener('DOMContentLoaded', () => {
         @endslot
     @endcomponent
 </form>
+
+@component('SuperAdmin.partials.premium-confirm', [
+    'id' => 'confirm-modal',
+    'icon' => 'help',
+    'iconBox' => 'bg-gold-accent/20 border-gold-accent/30',
+    'iconColor' => 'text-gold-accent',
+    'zIndex' => 110,
+    'close' => 'closeConfirmModal',
+    'dataModal' => true,
+])
+    <div class="p-6 text-center">
+        <h3 id="confirm-title" class="font-display-lg text-headline-lg-mobile text-on-surface">Konfirmasi</h3>
+        <p id="confirm-sub" class="text-xs text-on-surface-variant mt-1"></p>
+        <p id="confirm-message" class="text-sm text-on-surface font-semibold mt-4"></p>
+    </div>
+    @slot('footer')
+        <div class="flex justify-end gap-3">
+            <button type="button" class="btn-modal btn-modal-ghost" onclick="closeConfirmModal()">Batal</button>
+            <button type="button" id="confirm-yes" class="btn-modal btn-modal-danger">Ya, Lanjutkan</button>
+        </div>
+    @endslot
+@endcomponent
+
+{{-- Modal perubahan data toko (server-rendered per toko yang mengajukan) --}}
+@foreach ($stores as $item)
+    @if ($item->update_request)
+        @php $pr = $item->update_request; $st = $item->model; @endphp
+        <div id="modal-perubahan-{{ $pr->store_update_request_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+            <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+            <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
+                <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
+                    <div>
+                        <p class="raliva-label text-gold-accent">Perubahan Data Toko</p>
+                        <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $st->nama_toko }}</h3>
+                        <p class="text-on-surface-variant text-xs mt-1">Diajukan {{ $pr->created_at?->translatedFormat('d M Y H:i') ?? '-' }}</p>
+                    </div>
+                    <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors shrink-0"><span class="material-symbols-outlined">close</span></button>
+                </div>
+                <div class="p-6 space-y-3 text-sm">
+                    @foreach ([['Nama Toko', $st->nama_toko, $pr->nama_toko], ['Kategori', $st->kategori ?? '-', $pr->kategori ?? '-'], ['Alamat', $st->alamat, $pr->alamat], ['Telepon', $st->nomor_telepon, $pr->nomor_telepon]] as $row)
+                        <div class="grid grid-cols-2 gap-3 border border-muted-border rounded-lg p-3 {{ $row[1] != $row[2] ? 'border-gold-accent/40 bg-gold-accent/5' : '' }}">
+                            <div><p class="text-[10px] uppercase text-on-surface-variant">{{ $row[0] }} (lama)</p><p class="text-on-surface mt-0.5">{{ $row[1] }}</p></div>
+                            <div><p class="text-[10px] uppercase text-on-surface-variant">{{ $row[0] }} (baru)</p><p class="font-bold text-on-surface mt-0.5">{{ $row[2] }}</p></div>
+                        </div>
+                    @endforeach
+                    <div class="border border-muted-border rounded-lg p-3">
+                        <p class="text-[10px] uppercase text-on-surface-variant">Deskripsi (baru)</p>
+                        <p class="text-on-surface mt-0.5">{{ $pr->deskripsi ?? '-' }}</p>
+                    </div>
+                </div>
+                <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex gap-3">
+                    <form method="POST" action="{{ route('superadmin.manajemen-toko.perubahan.tolak', [$st->store_id, $pr->store_update_request_id]) }}" class="flex-1 flex gap-2">
+                        @csrf
+                        <input type="text" name="alasan" required minlength="3" maxlength="1000" placeholder="Alasan penolakan..." class="raliva-input flex-1 text-sm" />
+                        <button type="submit" class="px-5 py-2.5 bg-error/10 border border-error/20 text-error text-xs font-semibold rounded-lg hover:bg-error hover:text-white transition-colors shrink-0">Tolak</button>
+                    </form>
+                    <form method="POST" action="{{ route('superadmin.manajemen-toko.perubahan.setujui', [$st->store_id, $pr->store_update_request_id]) }}" class="shrink-0">
+                        @csrf
+                        <button type="submit" class="px-5 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded-lg btn-premium h-full">Setujui</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+@endforeach
 @endpush

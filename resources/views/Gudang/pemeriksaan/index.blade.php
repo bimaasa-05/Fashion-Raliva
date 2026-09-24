@@ -9,9 +9,9 @@
 @section('content')
 @php
     $badgeClass = [
-        'Sesuai' => 'bg-secondary-container/20 text-secondary border-secondary/20',
+        'Sesuai' => 'bg-success/10 text-success border-success/20',
         'Selisih' => 'bg-error/10 text-error border-error/20',
-        'Selesai' => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
+        'Selesai' => 'bg-success/10 text-success border-success/20',
     ];
 @endphp
 

@@ -52,7 +52,7 @@
                         <span class="inline-flex px-2 py-0.5 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">{{ $roleName }}</span>
                         <span class="inline-flex px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 text-[9px] font-bold uppercase">{{ $user->status ?? 'aktif' }}</span>
                     </div>
-                    <div class="grid grid-cols-3 gap-3 mt-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
                         <div class="profil-stat">
                             <span class="material-symbols-outlined">calendar_month</span>
                             <span class="lbl">Bergabung</span>
@@ -292,9 +292,9 @@
         @else
             @php
                 $storeBadgeMap = [
-                    \App\Models\Store::STATUS_AKTIF => ['label' => 'Aktif', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-                    \App\Models\Store::STATUS_PENDING => ['label' => 'Pending', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
-                    \App\Models\Store::STATUS_NONAKTIF => ['label' => 'Nonaktif', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+                    \App\Models\Store::STATUS_AKTIF => ['label' => 'Aktif', 'class' => \App\Support\StatusStyle::CLASS_SUCCESS],
+                    \App\Models\Store::STATUS_PENDING => ['label' => 'Pending', 'class' => \App\Support\StatusStyle::CLASS_ACCENT],
+                    \App\Models\Store::STATUS_NONAKTIF => ['label' => 'Nonaktif', 'class' => \App\Support\StatusStyle::CLASS_ERROR],
                     \App\Models\Store::STATUS_DITOLAK => ['label' => 'Ditolak', 'class' => 'bg-error/10 text-error border-error/20'],
                 ];
             @endphp

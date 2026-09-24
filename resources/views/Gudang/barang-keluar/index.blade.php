@@ -9,9 +9,9 @@
 @section('content')
 @php
     $badgeClass = [
-        'Diproses' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
-        'Dikirim' => 'bg-secondary-container/20 text-secondary border-secondary/20',
-        'Selesai' => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
+        'Diproses' => 'bg-amber-500/10 text-amber-600 border-amber-500/30',
+        'Dikirim' => 'bg-sky-500/10 text-sky-600 border-sky-500/30',
+        'Selesai' => 'bg-success/10 text-success border-success/20',
     ];
     $sumberLabel = [
         'order_item' => 'Pemenuhan Pesanan',

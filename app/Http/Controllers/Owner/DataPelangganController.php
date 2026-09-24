@@ -26,8 +26,9 @@ class DataPelangganController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        $ranked = collect($rows->items())->map(function ($c, $i) {
-            $c->rank = $i + 1;
+        $offsetRank = ($rows->currentPage() - 1) * $rows->perPage();
+        $ranked = collect($rows->items())->map(function ($c, $i) use ($offsetRank) {
+            $c->rank = $offsetRank + $i + 1;
             $c->segment = $c->rank <= 4 ? 'leader' : ($c->jumlah_order >= 2 ? 'setia' : 'baru');
             $c->initials = collect(explode(' ', $c->name))->map(fn($w) => mb_substr($w, 0, 1))->slice(0, 2)->implode('');
             return $c;
@@ -87,6 +88,14 @@ class DataPelangganController extends Controller
         $topLeader = $ranked->first();
         $top3 = $ranked->take(3)->values();
 
+        $agregatGlobal = DB::table('users')
+            ->join('checkouts', 'checkouts.user_id', '=', 'users.user_id')
+            ->join('orders', 'orders.checkout_id', '=', 'checkouts.checkout_id')
+            ->where('orders.store_id', $storeId)
+            ->selectRaw('users.user_id, SUM(orders.grand_total) as total_belanja, COUNT(orders.order_id) as jumlah_order')
+            ->groupBy('users.user_id')
+            ->get();
+
         $summary = [
             'total' => $rows->total(),
             'baru' => DB::table('users')
@@ -96,8 +105,8 @@ class DataPelangganController extends Controller
                 ->whereMonth('users.created_at', now()->month)
                 ->whereYear('users.created_at', now()->year)
                 ->distinct('users.user_id')->count('users.user_id'),
-            'repeat' => $ranked->where('jumlah_order', '>=', 2)->count(),
-            'rata' => $ranked->avg('total_belanja') ?? 0,
+            'repeat' => $agregatGlobal->where('jumlah_order', '>=', 2)->count(),
+            'rata' => $agregatGlobal->avg('total_belanja') ?? 0,
         ];
 
         return view('Owner.data-pelanggan.index', compact('rows', 'topLeader', 'top3', 'summary'));

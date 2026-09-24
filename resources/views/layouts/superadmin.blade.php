@@ -319,7 +319,7 @@
             <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Ini yang terjadi hari ini.')</p>
         </div>
 
-        <div class="page-enter px-container-margin pt-8 pb-section-gap flex flex-col gap-6 max-w-7xl mx-auto w-full">
+        <div class="page-enter px-container-margin pt-8 pb-section-gap flex flex-col gap-6 w-full">
             @yield('content')
         </div>
     </main>
@@ -338,6 +338,7 @@
     @include('partials.notification-popup')
     @include('partials.layout-scripts')
     @include('partials.ui-scripts')
+    @include('partials.custom-datepicker')
     <script>
         /* ===== Raliva Motion — reveal on scroll seragam untuk semua halaman Super Admin ===== */
         if (!window.matchReducedMotion) {

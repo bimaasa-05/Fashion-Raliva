@@ -8,10 +8,8 @@ use App\Models\Notification;
 use App\Models\PaymentMethod;
 use App\Models\PlatformBankAccount;
 use App\Models\Product;
-use App\Models\Setting;
 use App\Models\User;
 use App\Support\OwnerContext;
-use App\Support\PeringkatService;
 use Illuminate\Http\Request;
 
 class PeringkatIklanController extends Controller
@@ -40,16 +38,8 @@ class PeringkatIklanController extends Controller
 
         $rekenings = PlatformBankAccount::with('bank')->whereNotNull('bank_id')->where('status', PlatformBankAccount::STATUS_AKTIF)->orderBy('nomor_rekening')->get();
         $metode = PaymentMethod::where('status', PaymentMethod::STATUS_AKTIF)->orderBy('nama_metode')->get();
-        $tiers = PeringkatService::defaultTiers();
-        $raw = Setting::get(Setting::PERINGKAT_TIER, null);
-        if ($raw) {
-            $decoded = json_decode($raw, true);
-            if (is_array($decoded) && $decoded !== []) {
-                $tiers = $decoded;
-            }
-        }
 
-        return view('Owner.peringkat-iklan.index', compact('store', 'products', 'rekenings', 'metode', 'slots', 'tiers'));
+        return view('Owner.peringkat-iklan.index', compact('store', 'products', 'rekenings', 'metode', 'slots'));
     }
 
     public function store(Request $request)
@@ -59,15 +49,22 @@ class PeringkatIklanController extends Controller
             return back()->with('error', 'Anda belum memiliki toko.');
         }
 
+        $request->merge(['nominal_bid' => str_replace('.', '', (string) $request->input('nominal_bid', ''))]);
         $data = $request->validate([
             'product_id' => ['required', 'exists:products,product_id'],
             'nominal_bid' => ['required', 'numeric', 'min:100000'],
+            'tanggal_mulai' => ['required', 'date', 'after_or_equal:today'],
+            'tanggal_selesai' => ['required', 'date', 'after_or_equal:tanggal_mulai'],
             'platform_bank_account_id' => ['required', 'exists:platform_bank_accounts,platform_bank_account_id'],
             'metode_pembayaran' => ['required', 'integer', 'exists:payment_methods,payment_method_id'],
             'file_bukti' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
         ], [
             'product_id.required' => 'Produk wajib dipilih.',
             'nominal_bid.min' => 'Minimal Rp 100.000.',
+            'tanggal_mulai.required' => 'Tanggal mulai wajib diisi.',
+            'tanggal_mulai.after_or_equal' => 'Tanggal mulai tidak boleh sebelum hari ini.',
+            'tanggal_selesai.required' => 'Tanggal selesai wajib diisi.',
+            'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh sebelum tanggal mulai.',
             'platform_bank_account_id.required' => 'Pilih rekening tujuan transfer.',
             'metode_pembayaran.required' => 'Pilih metode pembayaran.',
             'file_bukti.required' => 'Bukti pembayaran wajib dilampirkan.',
@@ -83,9 +80,7 @@ class PeringkatIklanController extends Controller
         $metode = PaymentMethod::find($data['metode_pembayaran']);
         $path = $request->file('file_bukti')->store('bukti-iklan/'.$storeId, 'public');
 
-        $hari = PeringkatService::resolveHari((int) $data['nominal_bid']);
-
-        AdSlot::create([
+        $slot = AdSlot::create([
             'product_id' => $data['product_id'],
             'store_id' => $storeId,
             'nominal_bid' => $data['nominal_bid'],
@@ -93,10 +88,22 @@ class PeringkatIklanController extends Controller
             'metode_pembayaran' => $metode?->nama_metode,
             'platform_bank_account_id' => $data['platform_bank_account_id'],
             'file_bukti' => $path,
-            'tanggal_mulai' => null,
-            'tanggal_selesai' => null,
+            'tanggal_mulai' => $data['tanggal_mulai'],
+            'tanggal_selesai' => $data['tanggal_selesai'],
             'status' => AdSlot::STATUS_DITUNDA,
         ]);
+
+        $mulai = \Illuminate\Support\Carbon::parse($data['tanggal_mulai'])->translatedFormat('d M Y');
+        $selesai = \Illuminate\Support\Carbon::parse($data['tanggal_selesai'])->translatedFormat('d M Y');
+
+        \App\Support\ActivityLogger::log(
+            'iklan.request',
+            \App\Models\AdSlot::class,
+            $slot->ad_slot_id ?? $slot->getKey(),
+            [],
+            ['product_id' => $product->product_id, 'nominal_bid' => $data['nominal_bid'], 'tanggal_mulai' => $data['tanggal_mulai'], 'tanggal_selesai' => $data['tanggal_selesai']],
+            sprintf('Mengajukan iklan peringkat untuk produk "%s" (%s s/d %s).', $product->nama_produk, $mulai, $selesai)
+        );
 
         $sa = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
             ->where('status', User::STATUS_AKTIF)->first();
@@ -106,11 +113,12 @@ class PeringkatIklanController extends Controller
                 'aktor_id' => $request->user()->user_id,
                 'tipe' => Notification::TIPE_PROMO,
                 'judul' => 'Pengajuan Iklan Peringkat',
-                'pesan' => sprintf('Pengajuan iklan "%s" (Rp %s, %d hari) menunggu verifikasi.', $product->nama_produk, number_format((float) $data['nominal_bid'], 0, ',', '.'), $hari),
+                'pesan' => sprintf('Pengajuan iklan "%s" (Rp %s, %s s/d %s) menunggu persetujuan.', $product->nama_produk, number_format((float) $data['nominal_bid'], 0, ',', '.'), $mulai, $selesai),
                 'url' => route('superadmin.peringkat-iklan'),
             ]);
         }
+        Notification::fireSelf(Notification::TIPE_PROMO, 'Pengajuan Iklan Terkirim', sprintf('Pengajuan iklan "%s" (%s s/d %s) menunggu persetujuan Super Admin.', $product->nama_produk, $mulai, $selesai), route('owner.peringkat-iklan'));
 
-        return back()->with('success', 'Pengajuan iklan berhasil diajukan ('.$hari.' hari, periode aktif sejak disetujui). Menunggu verifikasi Super Admin.');
+        return back()->with('success', 'Pengajuan iklan berhasil diajukan ('.$mulai.' s/d '.$selesai.'). Menunggu persetujuan Super Admin.');
     }
 }

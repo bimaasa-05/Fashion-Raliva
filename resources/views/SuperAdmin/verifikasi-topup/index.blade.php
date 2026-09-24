@@ -9,11 +9,11 @@
 
 @php
     $badgeMap = [
-        'pending' => ['label' => 'Menunggu Bayar', 'class' => 'bg-surface-container-high text-on-surface border-outline-variant'],
-        'menunggu_verifikasi' => ['label' => 'Menunggu Verifikasi', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'terverifikasi' => ['label' => 'Terverifikasi', 'class' => 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'],
-        'ditolak' => ['label' => 'Ditolak', 'class' => 'bg-error/10 text-error border-error/20'],
-        'kadaluarsa' => ['label' => 'Kadaluarsa', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
+        'pending' => ['label' => 'Menunggu Bayar', 'class' => \App\Support\StatusStyle::badgeClass('pending')],
+        'menunggu_verifikasi' => ['label' => 'Menunggu Verifikasi', 'class' => \App\Support\StatusStyle::badgeClass('menunggu_verifikasi')],
+        'terverifikasi' => ['label' => 'Terverifikasi', 'class' => \App\Support\StatusStyle::badgeClass('terverifikasi')],
+        'ditolak' => ['label' => 'Ditolak', 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
+        'kadaluarsa' => ['label' => 'Kadaluarsa', 'class' => \App\Support\StatusStyle::badgeClass('kadaluarsa')],
     ];
 @endphp
 
@@ -330,7 +330,8 @@
         const scope = document.querySelector('[data-table-scope]');
         if (!scope) return;
 
-        const rows = Array.from(scope.querySelectorAll('tr[data-table-row], article[data-table-row]'));
+        const rows = Array.from(scope.querySelectorAll('tr[data-table-row]'));
+        const cards = Array.from(scope.querySelectorAll('article[data-table-row]'));
         const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
         const searchInput = document.getElementById('topup-search');
         const clearBtn = document.getElementById('clear-search');
@@ -344,17 +345,24 @@
         function applyFilter() {
             const term = searchInput.value.trim().toLowerCase();
             let visible = 0;
-            rows.forEach((row) => {
-                const matchStatus = activeStatus === 'semua' || row.getAttribute('data-status') === activeStatus;
-                const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
+
+            const each = (el) => {
+                const matchStatus = activeStatus === 'semua' || el.getAttribute('data-status') === activeStatus;
+                const matchSearch = !term || (el.getAttribute('data-search') || '').includes(term);
                 const show = matchStatus && matchSearch;
-                row.classList.toggle('hidden', !show);
-                if (show) {
+                el.classList.toggle('hidden', !show);
+                return show;
+            };
+
+            rows.forEach((row) => {
+                if (each(row)) {
                     visible++;
                     const num = row.querySelector('.row-num');
                     if (num) num.textContent = visible;
                 }
             });
+            cards.forEach(each);
+
             countEl.textContent = visible;
             emptySearch.classList.toggle('hidden', visible > 0);
         }

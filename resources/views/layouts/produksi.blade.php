@@ -6,6 +6,7 @@
     <meta name="user-id" content="{{ Auth::id() }}" />
     <title>RALIVA - @yield('title', 'Staf Produksi')</title>
     @include('partials.theme-head')
+    @include('partials.brand-status')
     <style>
         /* Produksi RALIVA burgundy — scoped only to this layout (hanya Produksi) — mirror Customer/Super Admin/Owner/Admin #8B1E3F */
         :root {

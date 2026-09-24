@@ -94,7 +94,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter items-start">
         <section class="lg:col-span-2 space-y-gutter">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Pendapatan per Metode Pembayaran</h2>
-            <div class="overflow-x-auto bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
+            <div class="overflow-x-auto hidden md:block bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
                 <table class="w-full min-w-[480px] premium-table">
                     <thead>
                         <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -115,6 +115,21 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+            <div class="md:hidden grid grid-cols-1 gap-gutter">
+                @forelse($perMetode ?? collect() as $m)
+                    <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <p class="font-bold text-on-surface">{{ $m->nama_metode }}</p>
+                                <p class="text-xs text-on-surface-variant mt-0.5">{{ $m->jumlah_transaksi }} transaksi</p>
+                            </div>
+                            <p class="shrink-0 font-bold text-secondary mt-0.5">Rp {{ number_format($m->total,0,',','.') }}</p>
+                        </div>
+                    </article>
+                @empty
+                    <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada pembayaran terverifikasi.</p>
+                @endforelse
             </div>
             <p class="text-xs text-on-surface-variant mt-2">Berdasarkan pembayaran berstatus terverifikasi pada toko yang ditugaskan kepada Anda.</p>
         </section>

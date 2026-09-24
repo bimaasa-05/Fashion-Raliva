@@ -20,7 +20,7 @@ class LaporanController extends Controller
         $storeId = OwnerContext::firstStoreId() ?? 0;
 
         $period = (int) $request->input('period', 30);
-        if (! in_array($period, [7, 30, 90, 365])) {
+        if (! in_array($period, [7, 30, 90, 365, 1825])) {
             $period = 30;
         }
 
@@ -49,6 +49,22 @@ class LaporanController extends Controller
                 }
                 return ['labels' => $labels, 'pendapatan' => $pend, 'refund' => $ref];
             }
+            if ($days >= 1825) {
+                $tahunIni = (int) now()->year;
+                $labels = []; $pendapatan = []; $refund = [];
+                for ($i = 4; $i >= 0; $i--) {
+                    $thn = $tahunIni - $i;
+                    $awal = \Carbon\Carbon::create($thn, 1, 1)->startOfDay();
+                    $akhir = \Carbon\Carbon::create($thn, 12, 31)->endOfDay();
+                    $labels[] = (string) $thn;
+                    $pendapatan[] = (float) Order::where('store_id', $storeId)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])
+                        ->whereBetween('created_at', [$awal, $akhir])->sum('grand_total');
+                    $refund[] = (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
+                        ->where('orders.store_id', $storeId)->where('refunds.status', 'selesai')
+                        ->whereBetween('refunds.diajukan_pada', [$awal, $akhir])->sum('refunds.jumlah');
+                }
+                return ['labels' => $labels, 'pendapatan' => $pendapatan, 'refund' => $refund];
+            }
             $agg = Order::where('store_id', $storeId)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])
                 ->where('created_at', '>=', $start)
                 ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as bln, SUM(grand_total) as pendapatan")
@@ -69,6 +85,7 @@ class LaporanController extends Controller
             '30' => $buildRange(30),
             '90' => $buildRange(90),
             '365' => $buildRange(365),
+            '1825' => $buildRange(1825),
         ];
 
         return view('Owner.laporan.index', array_merge($data, ['chartData' => $chartData, 'period' => $period]));
@@ -114,6 +131,11 @@ class LaporanController extends Controller
                 $s = $end->copy()->subDays(6)->startOfDay();
                 $report[] = $bucket($s, $end->copy()->endOfDay(), $s->translatedFormat('d') . ' — ' . $end->translatedFormat('d M'));
             }
+        } elseif ($period >= 1825) {
+            for ($i = 4; $i >= 0; $i--) {
+                $y = now()->subYears($i);
+                $report[] = $bucket($y->copy()->startOfYear(), $y->copy()->endOfYear(), (string) $y->year);
+            }
         } else {
             $months = $period <= 90 ? 3 : 12;
             for ($i = $months - 1; $i >= 0; $i--) {
@@ -156,7 +178,7 @@ class LaporanController extends Controller
         $storeId = OwnerContext::firstStoreId() ?? 0;
 
         $period = (int) $request->input('period', 30);
-        if (! in_array($period, [7, 30, 90, 365])) {
+        if (! in_array($period, [7, 30, 90, 365, 1825])) {
             $period = 30;
         }
 
@@ -179,7 +201,7 @@ class LaporanController extends Controller
         $storeId = OwnerContext::firstStoreId() ?? 0;
 
         $period = (int) $request->input('period', 30);
-        if (! in_array($period, [7, 30, 90, 365])) {
+        if (! in_array($period, [7, 30, 90, 365, 1825])) {
             $period = 30;
         }
 
@@ -204,7 +226,7 @@ class LaporanController extends Controller
         $storeId = OwnerContext::firstStoreId();
 
         $period = (int) $request->input('period', 30);
-        if (! in_array($period, [7, 30, 90, 365])) {
+        if (! in_array($period, [7, 30, 90, 365, 1825])) {
             $period = 30;
         }
 
@@ -274,7 +296,7 @@ class LaporanController extends Controller
         }
 
         $period = (int) $request->input('period', 30);
-        if (! in_array($period, [7, 30, 90, 365])) {
+        if (! in_array($period, [7, 30, 90, 365, 1825])) {
             $period = 30;
         }
 

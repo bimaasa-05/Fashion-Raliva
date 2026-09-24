@@ -82,13 +82,24 @@ class KurirController extends Controller
 
         $data = $request->validate([
             'nama_kurir' => 'required|string|max:100',
-            'kode_kurir' => 'nullable|string|max:30',
+            'kode_kurir' => 'nullable|string|max:30|unique:couriers,kode_kurir',
         ]);
+
+        $kode = trim((string) ($data['kode_kurir'] ?? ''));
+        if ($kode === '') {
+            $dasar = strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $data['nama_kurir']), 0, 3));
+            if ($dasar === '') $dasar = 'KR';
+            $kode = $dasar;
+            $i = 1;
+            while (Courier::where('kode_kurir', $kode)->exists()) {
+                $kode = $dasar.($i++);
+            }
+        }
 
         Courier::create([
             'store_id' => $storeId,
             'nama_kurir' => $data['nama_kurir'],
-            'kode_kurir' => $data['kode_kurir'] ?? null,
+            'kode_kurir' => $kode,
             'status' => Courier::STATUS_AKTIF,
         ]);
 
@@ -183,6 +194,8 @@ class KurirController extends Controller
 
         $layanan->update($data);
 
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Layanan Diperbarui', sprintf('Layanan "%s" diperbarui.', $layanan->nama_layanan), route('admin.kurir'));
+
         return back()->with('success', 'Layanan pengiriman berhasil diperbarui.');
     }
 
@@ -196,7 +209,10 @@ class KurirController extends Controller
             return back()->with('error', 'Layanan tidak dapat dihapus karena sudah dipakai pengiriman.');
         }
 
+        $nama = $layanan->nama_layanan;
         $layanan->delete();
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Layanan Dihapus', sprintf('Layanan "%s" dihapus.', $nama), route('admin.kurir'));
 
         return back()->with('success', 'Layanan pengiriman berhasil dihapus.');
     }

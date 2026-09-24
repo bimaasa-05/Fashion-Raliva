@@ -50,6 +50,7 @@
                     <button type="button" data-lr-range="30" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">30 Hari</button>
                     <button type="button" data-lr-range="90" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant">3 Bulan</button>
                     <button type="button" data-lr-range="365" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant">12 Bulan</button>
+                    <button type="button" data-lr-range="1825" class="lr-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant">5 Tahun</button>
                 </div>
             </div>
             <div id="chart-wrap" class="relative h-72 md:h-80"><canvas id="revenue-chart"></canvas></div>
@@ -74,6 +75,7 @@
                     <option value="30" @selected($period === 30)>30 Hari</option>
                     <option value="90" @selected($period === 90)>3 Bulan</option>
                     <option value="365" @selected($period === 365)>1 Tahun</option>
+                    <option value="1825" @selected($period === 1825)>5 Tahun</option>
                 </select>
                 @php $lapNoStore = ! \App\Support\OwnerContext::currentStore(); @endphp
                 <a href="{{ route('owner.laporan.export-excel', ['period' => $period]) }}" @if($lapNoStore) aria-disabled="true" tabindex="-1" title="Ajukan toko dulu" @endif class="flex items-center justify-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors shrink-0 {{ $lapNoStore ? 'opacity-60 pointer-events-none' : '' }}">
@@ -84,7 +86,7 @@
                 </a>
             </div>
         </div>
-        <div data-table-wrap class="overflow-x-auto">
+        <div data-table-wrap class="overflow-x-auto hidden md:block">
             <table class="premium-table w-full min-w-[820px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
@@ -121,6 +123,37 @@
                     </tr>
                 </tfoot>
             </table>
+        </div>
+        <div class="md:hidden grid grid-cols-1 gap-gutter mt-6">
+            @forelse ($report as $row)
+                <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <p class="font-bold text-on-surface">{{ $row['periode'] }}</p>
+                    <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-muted-border text-sm">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Pesanan</p>
+                            <p class="font-bold text-on-surface mt-0.5">{{ $row['pesanan'] }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Pendapatan</p>
+                            <p class="font-bold text-gold-accent mt-0.5">Rp {{ number_format($row['pendapatan'],0,',','.') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Refund</p>
+                            <p class="font-bold text-error mt-0.5">Rp {{ number_format($row['refund'],0,',','.') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Pencairan</p>
+                            <p class="font-bold text-on-surface-variant mt-0.5">Rp {{ number_format($row['pencairan'],0,',','.') }}</p>
+                        </div>
+                        <div class="col-span-2">
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Saldo Akhir</p>
+                            <p class="font-bold text-on-surface mt-0.5">Rp {{ number_format($row['pendapatan'] - $row['refund'] - $row['pencairan'],0,',','.') }}</p>
+                        </div>
+                    </div>
+                </article>
+            @empty
+                <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada data pada periode ini.</p>
+            @endforelse
         </div>
     </section>
 </div>

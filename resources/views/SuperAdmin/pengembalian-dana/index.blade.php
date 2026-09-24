@@ -9,12 +9,12 @@
 
 @php
     $badgeMap = [
-        'requested' => ['label' => 'Menunggu Keputusan', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-        'menunggu' => ['label' => 'Menunggu Keputusan', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-        'disetujui' => ['label' => 'Disetujui', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'selesai' => ['label' => 'Selesai', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'ditolak' => ['label' => 'Ditolak', 'class' => 'bg-error/10 text-error border-error/20'],
-        'escalated' => ['label' => 'Eskalasi', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
+        'requested' => ['label' => 'Menunggu Keputusan', 'class' => \App\Support\StatusStyle::badgeClass('requested')],
+        'menunggu' => ['label' => 'Menunggu Keputusan', 'class' => \App\Support\StatusStyle::badgeClass('menunggu')],
+        'disetujui' => ['label' => 'Disetujui', 'class' => \App\Support\StatusStyle::badgeClass('disetujui')],
+        'selesai' => ['label' => 'Selesai', 'class' => \App\Support\StatusStyle::badgeClass('selesai')],
+        'ditolak' => ['label' => 'Ditolak', 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
+        'escalated' => ['label' => 'Eskalasi', 'class' => \App\Support\StatusStyle::badgeClass('eskalasi')],
     ];
 @endphp
 
@@ -406,7 +406,8 @@
         const scope = document.querySelector('[data-table-scope]');
         if (!scope) return;
 
-        const rows = Array.from(scope.querySelectorAll('tr[data-table-row], article[data-table-row]'));
+        const rows = Array.from(scope.querySelectorAll('tr[data-table-row]'));
+        const cards = Array.from(scope.querySelectorAll('article[data-table-row]'));
         const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
         const searchInput = document.getElementById('refund-search');
         const clearBtn = document.getElementById('clear-search');
@@ -423,17 +424,22 @@
             const term = searchInput.value.trim().toLowerCase();
             let visible = 0;
 
-            rows.forEach((row) => {
-                const matchStatus = activeStatus === 'semua' || row.getAttribute('data-status') === activeStatus;
-                const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
+            const each = (el) => {
+                const matchStatus = activeStatus === 'semua' || el.getAttribute('data-status') === activeStatus;
+                const matchSearch = !term || (el.getAttribute('data-search') || '').includes(term);
                 const show = matchStatus && matchSearch;
-                row.classList.toggle('hidden', !show);
-                if (show) {
+                el.classList.toggle('hidden', !show);
+                return show;
+            };
+
+            rows.forEach((row) => {
+                if (each(row)) {
                     visible++;
                     const num = row.querySelector('.row-num');
                     if (num) num.textContent = visible;
                 }
             });
+            cards.forEach(each);
 
             countEl.textContent = visible;
             emptySearch.classList.toggle('hidden', visible > 0);

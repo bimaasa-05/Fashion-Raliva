@@ -3,7 +3,7 @@
 @section('title', 'Data Pelanggan')
 
 @section('header-title', 'Data Pelanggan')
-@section('header-badge', '1.284 Pelanggan')
+@section('header-badge', number_format($summary['total'] ?? 0, 0, ',', '.') . ' Pelanggan')
 @section('header-subtitle', 'Daftar pelanggan yang membeli di toko Anda — lihat riwayat dan Top Leader.')
 
 @section('content')
@@ -60,27 +60,11 @@
                     $frontBg = $isTop ? 'bg-[#821E36]' : ($isSecond ? 'bg-[#9CA3AF]' : 'bg-[#B45309]');
                 @endphp
                 <div class="flex-1 max-w-[150px] flex flex-col items-center {{ $isTop ? 'order-2' : ($isSecond ? 'order-1' : 'order-3') }}">
-                    <!-- Container Foto Profil -->
-                    <div class="relative flex flex-col justify-center items-center mt-5">
-                        @if ($isTop)
-                            <!-- Mahkota di BELAKANG -->
-                            <div class="absolute inset-x-0 -top-9 z-0 flex justify-center pointer-events-none" aria-hidden="true">
-                                <div class="crown-container overflow-hidden px-2 pb-3">
-                                    <span class="material-symbols-outlined crown-gold block text-[56px] md:text-[64px]" style="font-variation-settings: 'FILL' 1, 'wght' 700;">
-                                        crown
-                                    </span>
-                                    <div class="crown-sparkle"></div>
-                                </div>
-                            </div>
-                        @endif
-
-                        <!-- Avatar di DEPAN -->
-                        <div class="relative z-10 w-12 h-12 md:w-14 md:h-14 rounded-full {{ $isTop ? 'bg-[#821E36] text-white ring-4 ring-surface-container-lowest shadow-[0_4px_16px_rgba(130,30,54,0.4)]' : 'bg-surface-container-high border border-outline-variant text-on-surface' }} flex items-center justify-center font-bold text-sm">
-                            {{ $c->initials }}
-                        </div>
-                    </div>
-
-                    <p class="font-bold text-xs md:text-sm mt-3 truncate w-full max-w-[110px] text-center">{{ $c->name }}</p>
+                    @if ($isTop)
+                        <span class="crown-container mb-1"><span class="crown-gold material-symbols-outlined text-[28px] md:text-[34px]">crown</span><span class="crown-sparkle"></span></span>
+                    @endif
+                    <div class="w-10 h-10 md:w-14 md:h-14 rounded-full {{ $isTop ? 'bg-gold-accent text-white ring-4 ring-gold-accent/20' : 'bg-surface-container-high border border-outline-variant text-on-surface' }} flex items-center justify-center font-bold text-xs md:text-sm shadow-md">{{ $c->initials }}</div>
+                    <p class="font-bold text-[11px] md:text-sm mt-2 truncate max-w-[90px] md:max-w-[110px] text-center">{{ $c->name }}</p>
                     <p class="text-[10px] text-on-surface-variant">{{ $c->jumlah_order }} pesanan</p>
                     <p class="font-bold text-[11px] text-[#821E36] mt-1">Rp {{ number_format($c->total_belanja,0,',','.') }}</p>
                     <div class="podium w-full {{ $h }} mt-3 {{ $frontBg }} text-white rounded-xl flex flex-col items-center justify-center ring-2 {{ $isTop ? 'ring-[#821E36]/30' : 'ring-black/5' }} shadow-lg">
@@ -107,7 +91,7 @@
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">groups</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pelanggan Baru (Agu)</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pelanggan Baru ({{ now()->translatedFormat('M') }})</span>
             <span class="raliva-figure text-[26px] text-secondary">{{ $summary['baru'] }}</span>
             <span class="font-label-sm text-[11px] text-secondary">bulan ini</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">person_add</span>
@@ -192,7 +176,7 @@
                             <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ optional(\Carbon\Carbon::parse($row->last_order))->translatedFormat('d M Y') }}</td>
                             <td class="py-3.5 px-4 text-center">
                                 @if ($row->segment === 'leader')
-                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gold-accent text-deep-onyx text-[10px] font-bold uppercase"><span class="material-symbols-outlined text-[12px]">military_tech</span>Top Leader</span>
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gold-accent text-deep-onyx text-[10px] font-bold uppercase"><span class="material-symbols-outlined text-[12px]">crown</span>Top Leader</span>
                                 @elseif ($row->segment === 'setia')
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Setia</span>
                                 @else
@@ -245,7 +229,7 @@
             <div class="border border-muted-border rounded-lg p-4 bg-surface-container-low">
                 <div class="flex items-center justify-between gap-3">
                     <span class="font-mono text-sm text-on-surface">{{ $ord->nomor_order }}</span>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase">{{ $ord->status }}</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full border {{ \App\Support\StatusStyle::badgeClass($ord->status) }} text-[10px] font-bold uppercase">{{ $ord->status }}</span>
                 </div>
                 <p class="text-xs text-on-surface-variant mt-1">{{ \Carbon\Carbon::parse($ord->created_at)->translatedFormat('d M Y') }}</p>
                 <ul class="mt-2 space-y-0.5 text-sm text-on-surface">

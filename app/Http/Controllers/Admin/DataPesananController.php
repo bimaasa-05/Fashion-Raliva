@@ -119,6 +119,8 @@ class DataPesananController extends Controller
 
         $this->notifyCustomer($pesanan, 'Pesanan Diproses', sprintf('Pesanan %s sedang diproses oleh toko.', $pesanan->nomor_order));
 
+        Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Diproses', sprintf('Pesanan %s diteruskan ke produksi.', $pesanan->nomor_order), route('admin.pesanan'));
+
         NotificationService::sendToRole(
             Role::PRODUKSI,
             Notification::TIPE_SISTEM,
@@ -427,6 +429,8 @@ class DataPesananController extends Controller
         );
 
         $this->notifyCustomer($pesanan, 'Pesanan Dibatalkan', sprintf('Pesanan %s dibatalkan. Alasan: %s', $pesanan->nomor_order, $data['alasan']));
+
+        Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Dibatalkan', sprintf('Pesanan %s dibatalkan.', $pesanan->nomor_order), route('admin.pesanan'));
 
         if ($isSaldoRefund && $pesanan->checkout?->user) {
             Notification::create([

@@ -9,10 +9,10 @@
 
 @php
     $badgeMap = [
-        'pending' => ['label' => 'Menunggu', 'class' => 'bg-surface-container-high text-on-surface border-outline-variant'],
-        'disetujui' => ['label' => 'Disetujui', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'dibayar' => ['label' => 'Dibayar', 'class' => 'bg-secondary-container/20 text-secondary border-secondary/20'],
-        'ditolak' => ['label' => 'Ditolak', 'class' => 'bg-error/10 text-error border-error/20'],
+        'pending' => ['label' => 'Menunggu', 'class' => \App\Support\StatusStyle::badgeClass('pending')],
+        'disetujui' => ['label' => 'Disetujui', 'class' => \App\Support\StatusStyle::badgeClass('disetujui')],
+        'dibayar' => ['label' => 'Dibayar', 'class' => \App\Support\StatusStyle::badgeClass('dibayar')],
+        'ditolak' => ['label' => 'Ditolak', 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
     ];
 @endphp
 
@@ -413,7 +413,8 @@
         const scope = document.querySelector('[data-table-scope]');
         if (!scope) return;
 
-        const rows = Array.from(scope.querySelectorAll('tr[data-table-row], article[data-table-row]'));
+        const rows = Array.from(scope.querySelectorAll('tr[data-table-row]'));
+        const cards = Array.from(scope.querySelectorAll('article[data-table-row]'));
         const chipBtns = document.querySelectorAll('#chip-group .chip-btn');
         const searchInput = document.getElementById('penarikan-search');
         const clearBtn = document.getElementById('clear-search');
@@ -430,17 +431,22 @@
             const term = searchInput.value.trim().toLowerCase();
             let visible = 0;
 
-            rows.forEach((row) => {
-                const matchStatus = activeStatus === 'semua' || row.getAttribute('data-status') === activeStatus;
-                const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
+            const each = (el) => {
+                const matchStatus = activeStatus === 'semua' || el.getAttribute('data-status') === activeStatus;
+                const matchSearch = !term || (el.getAttribute('data-search') || '').includes(term);
                 const show = matchStatus && matchSearch;
-                row.classList.toggle('hidden', !show);
-                if (show) {
+                el.classList.toggle('hidden', !show);
+                return show;
+            };
+
+            rows.forEach((row) => {
+                if (each(row)) {
                     visible++;
                     const num = row.querySelector('.row-num');
                     if (num) num.textContent = visible;
                 }
             });
+            cards.forEach(each);
 
             countEl.textContent = visible;
             emptySearch.classList.toggle('hidden', visible > 0);

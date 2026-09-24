@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\AdSlot;
 use App\Models\Product;
 use App\Models\Store;
-use App\Support\PeringkatService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -46,7 +45,7 @@ class PeringkatIklanSeeder extends Seeder
                     'payment_status' => AdSlot::PAYMENT_TERVERIFIKASI,
                     'paid_at' => now(),
                     'tanggal_mulai' => $today,
-                    'tanggal_selesai' => now()->addDays(PeringkatService::resolveHari($nominal))->toDateString(),
+                    'tanggal_selesai' => now()->addDays(14)->toDateString(),
                     'status' => AdSlot::STATUS_AKTIF,
                 ]);
 

@@ -41,7 +41,7 @@
         </div>
 
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Daftar Stok Produk</h2>
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto hidden md:block">
             <table class="w-full min-w-[600px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -65,9 +65,9 @@
                             <td class="p-4 text-center font-bold {{ $low ? 'text-error' : 'text-on-surface' }}">{{ $ws->jumlah_stok }}</td>
                             <td class="p-4 text-center">
                                 @if ($low)
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Menipis</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Menipis</span>
                                 @else
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-green-100 text-green-700 text-[10px] font-bold uppercase border border-green-200">Aman</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20">Aman</span>
                                 @endif
                             </td>
                         </tr>
@@ -77,7 +77,39 @@
                 </tbody>
             </table>
         </div>
-        <div class="mt-4">{{ $stocks->links() }}</div>
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse ($stocks as $ws)
+                @php
+                    $low = $ws->jumlah_stok <= ($ws->stok_minimum ?: 5);
+                @endphp
+                <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="text-on-surface font-bold">{{ $ws->productVariant?->product?->nama_produk ?? '-' }}</p>
+                            <p class="text-on-surface-variant text-xs mt-0.5">{{ $ws->productVariant?->sku ?? '' }}</p>
+                        </div>
+                        @if ($low)
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Menipis</span>
+                        @else
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20">Aman</span>
+                        @endif
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-muted-border">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Gudang</p>
+                            <p class="text-sm text-on-surface mt-0.5">{{ $ws->warehouse?->nama_gudang ?? '-' }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Stok</p>
+                            <p class="font-bold {{ $low ? 'text-error' : 'text-on-surface' }} mt-0.5">{{ $ws->jumlah_stok }}</p>
+                        </div>
+                    </div>
+                </article>
+            @empty
+                <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada data stok.</p>
+            @endforelse
+        </div>
+        <div class="md:hidden mt-4">{{ $stocks->links() }}</div>
     </section>
 </div>
 @endsection

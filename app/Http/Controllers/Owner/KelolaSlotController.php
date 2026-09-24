@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 class KelolaSlotController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $storeId = OwnerContext::firstStoreId();
         $store = OwnerContext::currentStore();
@@ -25,6 +25,7 @@ class KelolaSlotController extends Controller
         $sisa = max(0, $total - $used);
         $pct = $total > 0 ? round($used / $total * 100) : 0;
 
+        // Satu timeline: permintaan + grant + langganan paket, berlabel sumber.
         $beli = SlotPurchaseRequest::where('store_id', $storeId)
             ->select('created_at', 'jumlah_slot', 'status', 'payment_status', 'total_harga', 'alasan', 'slot_purchase_id')
             ->get()
@@ -32,6 +33,7 @@ class KelolaSlotController extends Controller
                 'tanggal' => $r->created_at,
                 'jumlah_slot' => $r->jumlah_slot,
                 'tipe' => 'permintaan',
+                'sumber' => 'Beli Fleksibel',
                 'catatan' => $r->alasan,
                 'status' => $r->status === SlotPurchaseRequest::STATUS_PENDING ? 'pending' : $r->status,
                 'payment_status' => $r->payment_status,
@@ -49,6 +51,11 @@ class KelolaSlotController extends Controller
                 'tanggal' => $g->created_at,
                 'jumlah_slot' => $g->jumlah_slot,
                 'tipe' => $g->tipe,
+                'sumber' => match ($g->tipe) {
+                    SlotGrant::TIPE_GRATIS => 'Gratis Bawaan',
+                    SlotGrant::TIPE_MANUAL => 'Grant SuperAdmin',
+                    default => 'Pembelian',
+                },
                 'catatan' => $g->keterangan,
                 'status' => 'aktif',
                 'payment_status' => null,
@@ -56,7 +63,31 @@ class KelolaSlotController extends Controller
                 'ref' => $g->slot_grant_id,
             ]);
 
-        $riwayat = $grants->concat($beli)->sortByDesc('tanggal')->take(15)->values();
+        $langganan = \App\Models\StoreSlotSubscription::where('store_id', $storeId)
+            ->select('created_at', 'jumlah_slot', 'status', 'slot_subscription_id')
+            ->get()
+            ->map(fn ($s) => [
+                'tanggal' => $s->created_at,
+                'jumlah_slot' => $s->jumlah_slot,
+                'tipe' => 'langganan',
+                'sumber' => 'Paket Berlangganan',
+                'catatan' => null,
+                'status' => $s->status,
+                'payment_status' => null,
+                'total_harga' => null,
+                'ref' => $s->slot_subscription_id,
+            ]);
+
+        $semua = $grants->concat($beli)->concat($langganan)->sortByDesc('tanggal')->values();
+        $halaman = max(1, (int) $request->input('page', 1));
+        $perHalaman = 15;
+        $riwayat = new \Illuminate\Pagination\LengthAwarePaginator(
+            $semua->forPage($halaman, $perHalaman)->values(),
+            $semua->count(),
+            $perHalaman,
+            $halaman,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         $metode = PaymentMethod::where('status', PaymentMethod::STATUS_AKTIF)->orderBy('nama_metode')->get();
         $hargaPerSlot = SlotService::hargaPerSlot();

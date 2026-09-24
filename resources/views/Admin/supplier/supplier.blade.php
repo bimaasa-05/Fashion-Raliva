@@ -8,6 +8,13 @@
 @section('header-subtitle', 'Kelola daftar supplier bahan & produk untuk kebutuhan produksi.')
 
 @section('content')
+@include('partials.flash-toast')
+@if (session('success'))
+    <div class="bg-secondary-container/15 border border-secondary/30 text-secondary rounded-lg px-4 py-3 text-sm font-body-md mb-4">{{ session('success') }}</div>
+@endif
+@if (session('error'))
+    <div class="bg-error/10 border border-error/30 text-error rounded-lg px-4 py-3 text-sm font-body-md mb-4">{{ session('error') }}</div>
+@endif
 <div class="space-y-6">
     <!-- Statistik Ringkas -->
     <div class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
@@ -60,6 +67,10 @@
                         <option value="kemasan">Kemasan</option>
                         <option value="jadi">Produk Jadi</option>
                     </select>
+                    <select onchange="window.location.href='?sort='+this.value" aria-label="Urutkan" class="bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
+                        <option value="nama" @selected(($sort ?? 'nama') === 'nama')>A–Z</option>
+                        <option value="terbaru" @selected(($sort ?? '') === 'terbaru')>Terbaru</option>
+                    </select>
                     <select data-table-filter="status" aria-label="Filter status" class="bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
                         <option value="semua">Semua Status</option>
                         <option value="aktif">Aktif</option>
@@ -99,7 +110,7 @@
                         <td class="p-4 text-center text-on-surface font-mono">{{ $s->bahans->sum('jumlah') }}</td>
                         <td class="p-4 text-center">
                             @if($s->status === 'aktif')
-                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aktif</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20">Aktif</span>
                             @else
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/25">Non-aktif</span>
                             @endif
@@ -173,9 +184,9 @@
                 <label class="raliva-label" for="supplierCatatan">Catatan</label>
                 <textarea class="raliva-textarea" id="supplierCatatan" name="catatan" rows="3" placeholder="Syarat pembayaran, minimal order, dsb."></textarea>
             </div>
-            <div class="sticky bottom-0 -mx-6 px-6 py-4 bg-surface-container-lowest border-t border-muted-border flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
-                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                <button type="submit" id="supplier-submit-btn" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Simpan Supplier</button>
+            <div class="sticky bottom-0 -mx-6 -mb-6 px-6 py-4 sm:py-2.5 bg-surface-container-lowest border-t border-muted-border flex flex-col-reverse sm:flex-row sm:justify-end sm:items-center gap-3 sm:gap-2.5 rounded-b-lg overflow-hidden">
+                <button type="button" data-modal-close class="py-3 sm:py-2 px-6 sm:px-5 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="submit" id="supplier-submit-btn" class="py-3 sm:py-2 px-6 sm:px-5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Simpan Supplier</button>
             </div>
         </form>
     </div>
@@ -257,7 +268,9 @@
                                     </select>
                                 </div>
                             </div>
-                            <button type="button" onclick="removeSupplierBahanRow(this)" class="text-xs text-error hover:underline">Hapus bahan ini</button>
+                            <div class="flex justify-end">
+                                <button type="button" onclick="removeSupplierBahanRow(this)" title="Hapus bahan ini" class="w-8 h-8 rounded-lg bg-error/10 border border-error/20 text-error flex items-center justify-center hover:bg-error hover:text-white transition-colors"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                            </div>
                         </div>
                     @endforeach
                 </div>
@@ -320,7 +333,9 @@
                     <select name="bahan[${idx}][satuan]" required class="raliva-select w-full">${supplierSatuanOptions}</select>
                 </div>
             </div>
-            <button type="button" onclick="removeSupplierBahanRow(this)" class="text-xs text-error hover:underline">Hapus bahan ini</button>
+            <div class="flex justify-end">
+                <button type="button" onclick="removeSupplierBahanRow(this)" title="Hapus bahan ini" class="w-8 h-8 rounded-lg bg-error/10 border border-error/20 text-error flex items-center justify-center hover:bg-error hover:text-white transition-colors"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+            </div>
         `;
         container.appendChild(row);
     }
@@ -328,6 +343,16 @@
     function removeSupplierBahanRow(btn) {
         btn.closest('[data-bahan-row]')?.remove();
     }
+
+    // Auto-buka 1 baris bahan saat modal tambah dibuka
+    document.querySelectorAll('[data-modal-open="modal-form-supplier"]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const container = document.getElementById('supplier-bahan-container');
+            if (container && container.querySelectorAll('[data-bahan-row]').length === 0) {
+                addSupplierBahanRow('supplier-bahan-container');
+            }
+        });
+    });
 </script>
 @endpush
 @endsection

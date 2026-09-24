@@ -6,10 +6,9 @@
 @section('header-subtitle', 'Semua pemberitahuan penting untuk toko Anda.')
 
 @section('content')
-<div data-skeleton class="space-y-gutter">
-    @for ($i = 0; $i < 5; $i++)
-        <div class="h-24 bg-surface-container-high rounded-lg animate-pulse"></div>
-    @endfor
+<div data-skeleton class="space-y-section-gap">
+    <div class="h-14 bg-surface-container-high rounded-lg animate-pulse"></div>
+    <div class="h-[480px] bg-surface-container-high rounded-lg animate-pulse"></div>
 </div>
 
 <div data-real class="hidden space-y-section-gap">
@@ -22,84 +21,73 @@
             </div>
         </div>
     @endif
-    <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-4 flex items-center justify-between gap-4 card-premium">
-        <div class="flex items-center gap-3">
-            <span class="relative flex w-2.5 h-2.5">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-accent opacity-60"></span>
-                <span class="relative inline-flex rounded-full w-2.5 h-2.5 bg-gold-accent"></span>
-            </span>
-            <p class="font-title-md text-sm text-on-surface"><span>{{ $unread }}</span> notifikasi belum dibaca</p>
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 md:p-6 card-premium">
+        <div class="flex items-center justify-between gap-4 pb-4 mb-2 border-b border-muted-border">
+            <p class="font-label-sm text-xs text-on-surface-variant"><span class="font-bold text-gold-accent">{{ $notifications->whereNull('dibaca_pada')->count() }} notifikasi belum dibaca</span></p>
+            <button type="button" id="mark-all-read" class="font-label-sm text-[10px] text-gold-accent uppercase tracking-widest hover:underline shrink-0">Tandai Semua Dibaca</button>
         </div>
-        <button type="button" onclick="showRalivaToast('Semua notifikasi ditandai sudah dibaca.', 'mark_email_read')" class="text-xs font-semibold text-gold-accent hover:underline shrink-0">Tandai Semua Dibaca</button>
-    </section>
 
-    {{-- Hari Ini --}}
-    <section>
-        <h2 data-reveal class="text-xs font-medium text-on-surface-variant mb-gutter px-1">Hari Ini</h2>
-        <div data-reveal-group class="space-y-gutter">
-            @forelse ($today as $n)
-                <article data-reveal class="bg-surface-container-lowest border {{ !$n->is_read ? 'border-l-[3px] border-l-gold-accent border-muted-border' : 'border-muted-border' }} rounded-lg px-5 py-4 flex items-start gap-4 card-premium hover:border-gold-accent/40 transition-colors">
-                    <div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-[20px] text-gold-accent">notifications</span>
-                    </div>
-                    <p class="flex-1 font-body-md text-sm text-on-surface leading-relaxed">{{ $n->pesan }}</p>
-                    <span class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant whitespace-nowrap mt-1">{{ $n->created_at?->translatedFormat('H:i') }}</span>
-                </article>
+        <ul id="notif-list" class="divide-y divide-muted-border">
+            @forelse ($notifications as $item)
+                @include('partials.notifikasi-item', ['item' => $item, 'showActor' => true])
             @empty
-                <p class="text-on-surface-variant text-sm py-4 text-center">Tidak ada notifikasi hari ini.</p>
+                <li class="py-10 text-center text-on-surface-variant">Belum ada notifikasi.</li>
             @endforelse
-        </div>
-    </section>
+        </ul>
 
-    {{-- Sebelumnya --}}
-    <section>
-        <h2 data-reveal class="text-xs font-medium text-on-surface-variant mb-gutter px-1">Sebelumnya</h2>
-        <div data-reveal-group class="space-y-gutter">
-            @forelse ($earlier as $n)
-                <article data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg px-5 py-4 flex items-start gap-4 card-premium hover:border-gold-accent/40 transition-colors">
-                    <div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-[20px] text-on-surface-variant">notifications</span>
-                    </div>
-                    <p class="flex-1 font-body-md text-sm text-on-surface-variant leading-relaxed">{{ $n->pesan }}</p>
-                    <span class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant whitespace-nowrap mt-1">{{ $n->created_at?->translatedFormat('d M Y, H:i') }}</span>
-                </article>
-            @empty
-                <p class="text-on-surface-variant text-sm py-4 text-center">Tidak ada notifikasi sebelumnya.</p>
-            @endforelse
-        </div>
+        @if ($notifications->hasPages())
+            <div class="flex flex-wrap items-center justify-between gap-4 mt-8 pt-6 border-t border-muted-border">
+                <p class="font-label-sm text-xs text-on-surface-variant">Menampilkan {{ $notifications->firstItem() }}–{{ $notifications->lastItem() }} dari {{ $notifications->total() }} notifikasi</p>
+                <div class="flex items-center gap-1">{{ $notifications->withQueryString()->links() }}</div>
+            </div>
+        @endif
     </section>
-
-    <div data-reveal class="flex justify-center pt-2">
-        <button type="button" onclick="showRalivaToast('Memuat notifikasi lama.', 'history')" class="px-8 py-3 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Muat Lebih Banyak</button>
-    </div>
 </div>
+@endsection
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function(){
-  if (!document.querySelector('[data-real]')) return;
-  // Check if no store banner exists (means no store)
-  const noStore = document.querySelector('[data-no-store-banner]');
-  if (!noStore) return;
-  // Disable all primary action buttons except Ajukan Toko
-  document.querySelectorAll('[data-modal-open], button[type="submit"], a[href*="pengajuan-toko"]:not([href*="ajukan"])').forEach(el=>{
-    // Keep Ajukan Toko enabled
-    if (el.textContent.includes('Ajukan Toko') || el.getAttribute('data-modal-open')?.includes('modal-tambah')) {
-      // For tambah buttons, disable if no store
-      el.setAttribute('disabled','');
-      el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
-      el.title = 'Ajukan toko dulu';
-    }
-  });
-  // More generic: disable all buttons in data-real except those inside pengajuan
-  document.querySelectorAll('[data-real] button, [data-real] a.btn-premium').forEach(el=>{
-    if (el.closest('[data-modal]')) return;
-    if (el.textContent.trim().includes('Ajukan')) return;
-    el.setAttribute('disabled','');
-    el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
-  });
-});
+    (function () {
+        const csrf = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        const readUrlTemplate = '{{ route("notifikasi.read", ":id") }}';
+
+        document.querySelectorAll('.notif-item').forEach((item) => {
+            item.addEventListener('click', () => {
+                const id = item.getAttribute('data-notif-id');
+                const target = item.getAttribute('data-notif-target') || '#';
+                if (id) {
+                    fetch(readUrlTemplate.replace(':id', id), {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: { 'X-CSRF-TOKEN': csrf(), 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    }).then((res) => res.json()).then((data) => {
+                        window.updateNotifBadge?.();
+                        const dest = (data && data.target) || target;
+                        if (dest && dest !== '#') window.location.href = dest;
+                    }).catch(() => {
+                        if (target && target !== '#') window.location.href = target;
+                    });
+                } else if (target && target !== '#') {
+                    window.location.href = target;
+                }
+            });
+        });
+
+        document.getElementById('mark-all-read')?.addEventListener('click', () => {
+            fetch('{{ route("notifikasi.mark-all-read") }}', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'X-CSRF-TOKEN': csrf(), 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            }).then((res) => res.json()).then(() => {
+                document.querySelectorAll('.notif-dot').forEach((dot) => dot.remove());
+                document.querySelectorAll('.notif-item').forEach((item) => {
+                    item.classList.add('opacity-80');
+                    item.querySelector('.notif-text')?.classList.remove('font-semibold');
+                });
+                if (window.showRalivaToast) showRalivaToast('Semua notifikasi ditandai sudah dibaca.', 'done_all');
+                if (window.updateNotifBadge) window.updateNotifBadge();
+            });
+        });
+    })();
 </script>
 @endpush
-
-@endsection

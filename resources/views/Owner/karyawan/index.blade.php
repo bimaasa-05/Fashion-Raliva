@@ -91,7 +91,7 @@
                             $u = $s->user;
                             $nm = $u?->nama_lengkap ?? '-';
                             $initial = collect(explode(' ', $nm))->map(fn($w)=>mb_substr($w,0,1))->slice(0,2)->implode('');
-                            $rkey = \App\Http\Controllers\Owner\KaryawanController::ROLE_MAP[$u?->role_id] ?? 'lainnya';
+                            $rkey = \App\Http\Controllers\Owner\KaryawanController::roleOf($s);
                             $rlabel = $roleLabel[$rkey] ?? ucfirst($rkey);
                         @endphp
                         <tr data-table-row data-role="{{ $rkey }}" data-status="{{ $s->status }}" class="border-b border-muted-border last:border-0">
@@ -115,7 +115,7 @@
                             <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ optional(\Carbon\Carbon::parse($s->tanggal_penugasan))->translatedFormat('M Y') }}</td>
                             <td class="py-3.5 px-4 text-center">
                                 @if ($s->status === 'aktif')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Aktif</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20">Aktif</span>
                                 @else
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Nonaktif</span>
                                 @endif
@@ -182,7 +182,7 @@
                 <div>
                     <label class="block raliva-label mb-2">Role</label>
                     <select name="role" class="raliva-select">
-                        @php $curRole = \App\Http\Controllers\Owner\KaryawanController::ROLE_MAP[$s->user?->role_id] ?? 'lainnya'; @endphp
+                        @php $curRole = \App\Http\Controllers\Owner\KaryawanController::roleOf($s); @endphp
                         <option value="admin" {{ $curRole === 'admin' ? 'selected' : '' }}>Admin Toko</option>
                         <option value="produksi" {{ $curRole === 'produksi' ? 'selected' : '' }}>Staf Produksi</option>
                         <option value="gudang" {{ $curRole === 'gudang' ? 'selected' : '' }}>Staf Gudang</option>
@@ -247,6 +247,12 @@
                 <label class="block raliva-label mb-2">Email</label>
                 <input name="email" type="email" required value="{{ old('email') }}" placeholder="budi@raliva.com" class="raliva-input" />
                 @error('email') <p class="text-xs text-error mt-1">{{ $message }}</p> @enderror
+                <p class="text-[11px] text-on-surface-variant mt-1">Setiap karyawan wajib memakai email yang berbeda.</p>
+            </div>
+            <div>
+                <label class="block raliva-label mb-2">No. Telepon (opsional)</label>
+                <input name="nomor_telepon" type="text" value="{{ old('nomor_telepon') }}" maxlength="20" placeholder="08xxxxxxxxxx" class="raliva-input" />
+                @error('nomor_telepon') <p class="text-xs text-error mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block raliva-label mb-2">Password Sementara</label>

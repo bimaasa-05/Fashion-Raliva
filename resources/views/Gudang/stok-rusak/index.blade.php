@@ -10,8 +10,8 @@
 @php
     $badgeClass = [
         'Dilaporkan' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
-        'Diverifikasi' => 'bg-secondary-container/20 text-secondary border-secondary/20',
-        'Selesai' => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
+        'Diverifikasi' => 'bg-success/10 text-success border-success/20',
+        'Selesai' => 'bg-success/10 text-success border-success/20',
     ];
 @endphp
 

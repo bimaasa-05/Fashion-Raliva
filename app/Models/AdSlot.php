@@ -17,6 +17,8 @@ class AdSlot extends Model
 
     public const STATUS_DITUNDA = 'ditunda';
 
+    public const STATUS_TERJADWAL = 'terjadwal';
+
     public const PAYMENT_MENUNGGU = 'menunggu_verifikasi';
 
     public const PAYMENT_TERVERIFIKASI = 'terverifikasi';

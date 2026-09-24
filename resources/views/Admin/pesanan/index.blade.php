@@ -7,12 +7,12 @@
 
 @php
     $badgeMap = [
-        \App\Models\Order::STATUS_PENDING_PAYMENT => ['label' => 'Menunggu Bayar', 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'],
-        \App\Models\Order::STATUS_MENUNGGU_PRODUKSI => ['label' => 'Menunggu Produksi', 'class' => 'bg-indigo-500/10 text-indigo-600 border-indigo-500/30'],
-        \App\Models\Order::STATUS_DIBAYAR => ['label' => 'Baru', 'class' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30'],
-        \App\Models\Order::STATUS_DIPROSES => ['label' => 'Diproses', 'class' => 'bg-amber-500/10 text-amber-600 border-amber-500/30'],
-        \App\Models\Order::STATUS_DIKIRIM => ['label' => 'Dikirim', 'class' => 'bg-sky-500/10 text-sky-600 border-sky-500/30'],
-        \App\Models\Order::STATUS_SELESAI => ['label' => 'Selesai', 'class' => 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30'],
+        \App\Models\Order::STATUS_PENDING_PAYMENT => ['label' => 'Menunggu Bayar', 'class' => \App\Support\StatusStyle::CLASS_ACCENT],
+        \App\Models\Order::STATUS_MENUNGGU_PRODUKSI => ['label' => 'Menunggu Produksi', 'class' => \App\Support\StatusStyle::CLASS_AMBER],
+        \App\Models\Order::STATUS_DIBAYAR => ['label' => 'Baru', 'class' => \App\Support\StatusStyle::CLASS_AMBER],
+        \App\Models\Order::STATUS_DIPROSES => ['label' => 'Diproses', 'class' => \App\Support\StatusStyle::CLASS_AMBER],
+        \App\Models\Order::STATUS_DIKIRIM => ['label' => 'Dikirim', 'class' => \App\Support\StatusStyle::CLASS_SKY],
+        \App\Models\Order::STATUS_SELESAI => ['label' => 'Selesai', 'class' => \App\Support\StatusStyle::CLASS_SUCCESS],
         \App\Models\Order::STATUS_DIBATALKAN => ['label' => 'Dibatalkan', 'class' => 'bg-error/10 text-error border-error/20'],
         \App\Models\Order::STATUS_REFUND => ['label' => 'Refund', 'class' => 'bg-error/10 text-error border-error/20'],
     ];
@@ -68,7 +68,7 @@
         </div>
     </div>
 
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto hidden md:block">
         <table class="w-full min-w-[900px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
@@ -148,6 +148,85 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
+    <div class="md:hidden grid grid-cols-1 gap-gutter">
+        @forelse ($orders as $pesanan)
+            @php
+                $badge = $badgeMap[$pesanan->status] ?? ['label' => ucfirst($pesanan->status), 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'];
+                $custName = $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-';
+                $custId = $pesanan->checkout?->user_id;
+                $waRaw = $pesanan->checkout?->nomor_telepon ?? $pesanan->checkout?->user?->nomor_telepon ?? '';
+                $waNum = preg_replace('/\D+/', '', (string) $waRaw);
+                if ($waNum !== '' && str_starts_with($waNum, '0')) $waNum = '62'.substr($waNum, 1);
+                $waTexts = [
+                    \App\Models\Order::STATUS_PENDING_PAYMENT => 'Halo {nama}, pesanan {nomor} Anda menunggu pembayaran. Segera selesaikan ya!',
+                    \App\Models\Order::STATUS_DIBAYAR => 'Halo {nama}, pembayaran pesanan {nomor} sudah kami terima. Pesanan segera diproses!',
+                    \App\Models\Order::STATUS_MENUNGGU_PRODUKSI => 'Halo {nama}, pesanan {nomor} masuk antrean produksi.',
+                    \App\Models\Order::STATUS_DIPROSES => 'Halo {nama}, pesanan {nomor} sedang diproduksi.',
+                    \App\Models\Order::STATUS_SIAP_KIRIM => 'Halo {nama}, pesanan {nomor} siap kirim/diambil!',
+                    \App\Models\Order::STATUS_DIKIRIM => 'Halo {nama}, pesanan {nomor} sudah dikirim. Mohon konfirmasi saat barang diterima ya!',
+                    \App\Models\Order::STATUS_SELESAI => 'Halo {nama}, terima kasih! Pesanan {nomor} selesai. Jangan lupa beri ulasan ya!',
+                    \App\Models\Order::STATUS_DIBATALKAN => 'Halo {nama}, pesanan {nomor} dibatalkan. Hubungi kami untuk info lebih lanjut.',
+                    \App\Models\Order::STATUS_REFUND => 'Halo {nama}, pengembalian dana pesanan {nomor} sedang diproses.',
+                ];
+                $waMsg = str_replace(['{nama}', '{nomor}'], [$custName, $pesanan->nomor_order ?? ('#'.$pesanan->order_id)], $waTexts[$pesanan->status] ?? 'Halo {nama}, ada info mengenai pesanan {nomor} Anda.');
+                $waLink = $waNum !== '' ? 'https://wa.me/'.$waNum.'?text='.rawurlencode($waMsg) : null;
+            @endphp
+            <article data-table-row
+                data-id="{{ $pesanan->order_id }}"
+                data-nomor="{{ $pesanan->nomor_order ?? ('#'.$pesanan->order_id) }}"
+                data-cust="{{ $custName }}"
+                data-custid="{{ $custId }}"
+                class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="font-mono font-bold text-on-surface">{{ $pesanan->nomor_order ?? ('#'.$pesanan->order_id) }}</p>
+                        <p class="text-xs text-on-surface-variant mt-0.5">{{ $custName }}</p>
+                        <p class="text-xs text-on-surface-variant">{{ $pesanan->store?->nama_toko }}</p>
+                    </div>
+                    <div class="shrink-0">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $badge['class'] }}">{{ $badge['label'] }}</span>
+                        @if ($pesanan->isOffline())
+                            <span class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-gold-accent/10 border-gold-accent/25 text-gold-accent">Offline</span>
+                        @endif
+                        @if ($pesanan->checkout?->payment?->status === \App\Models\Payment::STATUS_DITOLAK)
+                            <span class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-error/10 border-error/20 text-error">Bayar Ditolak</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-muted-border">
+                    <div>
+                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Produk</p>
+                        <p class="text-sm text-on-surface mt-0.5">{{ $pesanan->items->count() }} produk &#8226; {{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->first(), 24) }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Total</p>
+                        <p class="font-bold text-gold-accent mt-0.5">Rp {{ number_format((float) ($pesanan->grand_total ?? 0), 0, ',', '.') }}</p>
+                    </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-muted-border flex justify-end gap-1.5 flex-wrap">
+                    @if (in_array($pesanan->status, [\App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIBAYAR], true))
+                        <button type="button" data-modal-open="modal-proses-{{ $pesanan->order_id }}" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Proses</button>
+                    @endif
+                    @if (in_array($pesanan->status, [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIPROSES], true))
+                        <button type="button" data-modal-open="modal-batalkan-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Batalkan</button>
+                    @endif
+                    @if (in_array($pesanan->status, [\App\Models\Order::STATUS_DIBAYAR, \App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIPROSES, \App\Models\Order::STATUS_SIAP_KIRIM, \App\Models\Order::STATUS_DIKIRIM], true))
+                        <button type="button" data-modal-open="modal-selesai-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-[10px] uppercase rounded hover:bg-secondary-container/30 transition-colors">Selesai</button>
+                    @endif
+                    @if ($waLink)
+                        <a href="{{ $waLink }}" target="_blank" title="Chat WhatsApp customer" class="inline-flex items-center justify-center w-8 h-8 ml-1 rounded-lg bg-[#25D366]/10 border border-[#25D366]/30 text-[#1da851] hover:bg-[#25D366]/20 transition-colors align-middle">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.5.1-.7l.4-.5c.1-.2.1-.4 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.2-.7.5-.9 1-.4 2.7 1.4 4.5 1.7 1.7 3.5 2.4 4.9 2.1.6-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2 0-.1-.2-.1-.4-.2z"/></svg>
+                        </a>
+                    @endif
+                    <a href="{{ route('admin.pesanan.invoice', $pesanan->order_id) }}" target="_blank" class="inline-block px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">Invoice</a>
+                    <button type="button" data-modal-open="modal-detail-{{ $pesanan->order_id }}" class="px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
+                    <button type="button" onclick="openDetailProduksi('{{ $pesanan->order_id }}')" class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">Produksi</button>
+                </div>
+            </article>
+        @empty
+            <p class="text-on-surface-variant text-sm py-6 text-center">Tidak ada pesanan pada filter ini.</p>
+        @endforelse
     </div>
 </section>
 

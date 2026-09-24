@@ -114,13 +114,13 @@
                     @forelse ($payments as $pay)
                         @php
                             $statusMap = [
-                                'pending' => ['Pending', 'bg-surface-container-high text-on-surface'],
-                                'menunggu_verifikasi' => ['Menunggu Verifikasi', 'bg-surface-container-high text-on-surface'],
-                                'terverifikasi' => ['Terverifikasi', 'bg-success/10 text-success'],
-                                'ditolak' => ['Ditolak', 'bg-error/10 text-error'],
-                                'kadaluarsa' => ['Kadaluarsa', 'bg-error/10 text-error'],
+                                'pending' => ['Pending', \App\Support\StatusStyle::badgeClass('pending')],
+                                'menunggu_verifikasi' => ['Menunggu Verifikasi', \App\Support\StatusStyle::badgeClass('menunggu_verifikasi')],
+                                'terverifikasi' => ['Terverifikasi', \App\Support\StatusStyle::badgeClass('terverifikasi')],
+                                'ditolak' => ['Ditolak', \App\Support\StatusStyle::badgeClass('ditolak')],
+                                'kadaluarsa' => ['Kadaluarsa', \App\Support\StatusStyle::badgeClass('kadaluarsa')],
                             ];
-                            $st = $statusMap[$pay->status] ?? [ucfirst($pay->status), 'bg-surface-container-high text-on-surface'];
+                            $st = $statusMap[$pay->status] ?? [ucfirst($pay->status), \App\Support\StatusStyle::CLASS_NEUTRAL];
                             $cust = $pay->checkout?->user;
                             $tanggal = $pay->created_at ? Illuminate\Support\Carbon::parse($pay->created_at)->locale('id')->translatedFormat('d M Y • H.i') : '-';
                         @endphp
@@ -164,13 +164,13 @@
             @forelse ($payments as $pay)
                 @php
                     $statusMap = [
-                        'pending' => ['Pending', 'bg-surface-container-high text-on-surface'],
-                        'menunggu_verifikasi' => ['Menunggu Verifikasi', 'bg-surface-container-high text-on-surface'],
-                        'terverifikasi' => ['Terverifikasi', 'bg-success/10 text-success'],
-                        'ditolak' => ['Ditolak', 'bg-error/10 text-error'],
-                        'kadaluarsa' => ['Kadaluarsa', 'bg-error/10 text-error'],
+                        'pending' => ['Pending', \App\Support\StatusStyle::badgeClass('pending')],
+                        'menunggu_verifikasi' => ['Menunggu Verifikasi', \App\Support\StatusStyle::badgeClass('menunggu_verifikasi')],
+                        'terverifikasi' => ['Terverifikasi', \App\Support\StatusStyle::badgeClass('terverifikasi')],
+                        'ditolak' => ['Ditolak', \App\Support\StatusStyle::badgeClass('ditolak')],
+                        'kadaluarsa' => ['Kadaluarsa', \App\Support\StatusStyle::badgeClass('kadaluarsa')],
                     ];
-                    $st = $statusMap[$pay->status] ?? [ucfirst($pay->status), 'bg-surface-container-high text-on-surface'];
+                    $st = $statusMap[$pay->status] ?? [ucfirst($pay->status), \App\Support\StatusStyle::CLASS_NEUTRAL];
                     $cust = $pay->checkout?->user;
                     $tanggal = $pay->created_at ? Illuminate\Support\Carbon::parse($pay->created_at)->locale('id')->translatedFormat('d M Y • H.i') : '-';
                 @endphp
@@ -271,12 +271,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchSearch = !term || (el.getAttribute('data-search') || '').includes(term);
             const show = matchStatus && matchSearch;
             el.classList.toggle('hidden', !show);
-            if (show) visible++;
             return show;
         };
 
         rows.forEach((row) => {
             if (each(row)) {
+                visible++;
                 const num = row.querySelector('.row-num');
                 if (num) num.textContent = visible;
             }
