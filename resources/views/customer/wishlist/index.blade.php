@@ -395,12 +395,12 @@
     $defaultVariant = $activeVariants->sortBy('harga')->first();
 @endphp
 @if ($defaultVariant)
-<button type="button" data-cart-add data-variant-id="{{ $defaultVariant->product_variant_id }}" class="btn-gold mt-sm font-label-caps text-label-caps px-xs py-xs lg:px-md uppercase tracking-widest transition-colors flex items-center justify-center gap-xs w-full">
+<button type="button" data-cart-add data-variant-id="{{ $defaultVariant->product_variant_id }}" class="btn-gold rounded-xl mt-sm font-label-caps text-label-caps px-xs py-xs lg:px-md uppercase tracking-widest transition-colors flex items-center justify-center gap-xs w-full">
 <span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
 {{ __('ADD TO CART') }}
 </button>
 @else
-<a href="{{ $p ? route('customer.shop.produk-detail', $p->product_id) : '#' }}" class="btn-gold mt-sm font-label-caps text-label-caps px-xs py-xs lg:px-md uppercase tracking-widest transition-colors flex items-center justify-center gap-xs w-full">
+<a href="{{ $p ? route('customer.shop.produk-detail', $p->product_id) : '#' }}" class="btn-gold rounded-xl mt-sm font-label-caps text-label-caps px-xs py-xs lg:px-md uppercase tracking-widest transition-colors flex items-center justify-center gap-xs w-full">
 <span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
 {{ __('ADD TO CART') }}
 </a>
@@ -410,7 +410,7 @@
 <div class="col-span-full flex flex-col items-center justify-center text-center py-2xl gap-md">
 <span class="material-symbols-outlined text-[72px] text-on-surface-variant/40" data-icon="favorite_border">favorite_border</span>
 <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('Wishlist Anda masih kosong.') }}</p>
-<a href="{{ route('customer.shop') }}" class="btn-gold mt-sm font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest transition-colors">{{ __('EXPLORE PRODUCTS') }}</a>
+<a href="{{ route('customer.shop') }}" class="btn-gold rounded-xl mt-sm font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest transition-colors">{{ __('EXPLORE PRODUCTS') }}</a>
 </div>
 @endforelse
 </div>
