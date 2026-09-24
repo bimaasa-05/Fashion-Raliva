@@ -58,9 +58,21 @@ class SaldoController extends Controller
             ->where('status', Withdrawal::STATUS_DIBAYAR)
             ->sum('jumlah');
 
+        $filterKategori = trim((string) $request->input('kategori', ''));
+        $filterJenis = trim((string) $request->input('jenis', ''));
+
         $mutations = $wallet->transactions()
+            ->when($filterKategori !== '', fn ($q) => $q->where('kategori', $filterKategori))
+            ->when($filterJenis !== '', fn ($q) => $q->where('jenis_transaksi', $filterJenis))
             ->orderByDesc('created_at')
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
+
+        $kategoriList = $wallet->transactions()->select('kategori')->distinct()->pluck('kategori')->filter()->values()->all();
+        foreach (['Penjualan', 'Investor', 'Modal', 'Komisi', 'Lainnya'] as $wajib) {
+            if (! in_array($wajib, $kategoriList, true)) $kategoriList[] = $wajib;
+        }
+        $jenisList = $wallet->transactions()->select('jenis_transaksi')->distinct()->pluck('jenis_transaksi')->filter()->values()->all();
 
         $withdrawals = $wallet->withdrawals()
             ->with('bankAccount.bank')
@@ -100,23 +112,35 @@ class SaldoController extends Controller
             'bersih' => $pemasukan - $pengeluaran,
         ];
 
-        // Data tren 6 bulan terakhir (saldo tersedia di akhir tiap bulan).
-        $chart = collect(range(5, 0))->map(function ($i) use ($wallet) {
-            $month = Carbon::now()->subMonths($i);
+        // Data tren harian: 7 / 30 / 90 hari terakhir (saldo akhir hari).
+        $grafik = $request->input('grafik', '30hari');
+        if (! in_array($grafik, ['7hari', '30hari', '90hari'], true)) {
+            $grafik = '30hari';
+        }
+        $hariRange = ['7hari' => 7, '30hari' => 30, '90hari' => 90][$grafik];
+
+        $chart = collect(range($hariRange - 1, 0))->map(function ($i) use ($wallet) {
+            $hari = Carbon::now()->subDays($i);
             $saldoAkhir = (float) $wallet->transactions()
-                ->where('created_at', '<=', $month->copy()->endOfMonth())
+                ->where('created_at', '<=', $hari->copy()->endOfDay())
                 ->orderByDesc('created_at')
                 ->value('saldo_sesudah');
 
             return [
-                'label' => $month->translatedFormat('M'),
+                'label' => $hari->translatedFormat('d M'),
                 'saldo' => $saldoAkhir,
             ];
         });
 
+        $filterKatExp = trim((string) $request->input('kat_exp', ''));
+
         $expenses = StoreExpense::where('store_id', $store->store_id)
+            ->when($filterKatExp !== '', fn ($q) => $q->where('kategori', $filterKatExp))
             ->orderByDesc('tanggal')
             ->get();
+
+        $katExpList = StoreExpense::where('store_id', $store->store_id)
+            ->select('kategori')->distinct()->pluck('kategori')->filter()->values()->all();
 
         // Estimasi margin (asumsi HPP 60% revenue, pajak 25% laba, tanpa D&A/bunga).
         $revenue = $pemasukan;
@@ -140,7 +164,9 @@ class SaldoController extends Controller
         return view('Owner.keuangan.index', compact(
             'wallet', 'bankAccounts', 'totalDicairkan',
             'mutations', 'withdrawals', 'refunds', 'summary', 'chart',
-            'expenses', 'margin', 'store', 'period'
+            'expenses', 'margin', 'store', 'period',
+            'kategoriList', 'jenisList', 'filterKategori', 'filterJenis',
+            'katExpList', 'filterKatExp', 'grafik'
         ));
     }
 
