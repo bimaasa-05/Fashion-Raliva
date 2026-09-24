@@ -55,8 +55,21 @@
     function stepCol(kind, label) {
         var col = newEl('div', 'flex-1 flex flex-col items-center gap-1');
         var up = stepBtn(kind, 1, 'expand_less', 'Naik ' + label);
-        var val = newEl('span', 'rdp-val text-lg font-bold text-on-surface', '00');
+        var val = document.createElement('input');
+        val.type = 'text';
+        val.inputMode = 'numeric';
+        val.maxLength = 2;
+        val.className = 'rdp-val w-14 h-10 text-center text-lg font-bold text-on-surface rounded-lg border border-muted-border bg-surface-container-low focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent';
         val.dataset.kind = kind;
+        val.setAttribute('aria-label', 'Masukkan ' + label.toLowerCase());
+        val.addEventListener('input', function () {
+            var clean = this.value.replace(/\D/g, '').slice(0, 2);
+            if (this.value !== clean) this.value = clean;
+        });
+        val.addEventListener('blur', function () { clampTyped(kind); });
+        val.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') { e.preventDefault(); clampTyped(kind); }
+        });
         var down = stepBtn(kind, -1, 'expand_more', 'Turun ' + label);
         col.appendChild(up);
         col.appendChild(val);
@@ -65,9 +78,26 @@
         return col;
     }
 
+    function clampTyped(kind) {
+        if (!panel) return;
+        var el = panel.querySelector('.rdp-val[data-kind="' + kind + '"]');
+        if (!el) return;
+        var max = kind === 'h' ? 23 : 59;
+        var n = parseInt(el.value, 10);
+        if (isNaN(n)) n = 0;
+        if (n > max) n = max;
+        el.value = pad(n);
+        if (active) {
+            if (kind === 'h') active.timeH = pad(n);
+            else active.timeM = pad(n);
+        }
+    }
+
     function stepTime(kind, dir) {
         if (!active) return;
-        var i = parseInt(kind === 'h' ? active.timeH : active.timeM, 10) || 0;
+        var el = panel ? panel.querySelector('.rdp-val[data-kind="' + kind + '"]') : null;
+        var cur = el ? el.value : (kind === 'h' ? active.timeH : active.timeM);
+        var i = parseInt(cur, 10) || 0;
         i += dir;
         if (kind === 'h') {
             if (i < 0) i = 23;
@@ -83,8 +113,8 @@
 
     function updateTimeUI() {
         if (!panel || !active) return;
-        panel.querySelectorAll('.rdp-val[data-kind="h"]').forEach(function (el) { el.textContent = active.timeH; });
-        panel.querySelectorAll('.rdp-val[data-kind="m"]').forEach(function (el) { el.textContent = active.timeM; });
+        panel.querySelectorAll('.rdp-val[data-kind="h"]').forEach(function (el) { el.value = active.timeH; });
+        panel.querySelectorAll('.rdp-val[data-kind="m"]').forEach(function (el) { el.value = active.timeM; });
         var st = panel.querySelector('.rdp-date-status');
         if (st) st.textContent = active.pendingDate ? 'Dipilih: ' + fmtDisplay(active.pendingDate) : '';
     }
@@ -235,9 +265,9 @@
 
     function applyDateTime() {
         if (!active || !active.pendingDate) return;
-        var h = active.timeH;
-        var m = active.timeM;
-        setValue(active, active.pendingDate + 'T' + h + ':' + m);
+        clampTyped('h');
+        clampTyped('m');
+        setValue(active, active.pendingDate + 'T' + active.timeH + ':' + active.timeM);
         closePanel();
     }
 
