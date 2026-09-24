@@ -149,6 +149,11 @@
                 <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="min_pencairan" name="min_pencairan" type="number" min="0" value="{{ $settings['min_pencairan'] }}" required />
                 <p class="font-body-md text-xs text-on-surface-variant mt-2">Batas minimal saldo Owner untuk mengajukan pencairan dana.</p>
             </div>
+            <div>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="biaya_penarikan_saldo">Biaya Penarikan Saldo Customer (Rp, flat)</label>
+                <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="biaya_penarikan_saldo" name="biaya_penarikan_saldo" type="number" min="0" value="{{ $settings['biaya_penarikan_saldo'] ?? 0 }}" required />
+                <p class="font-body-md text-xs text-on-surface-variant mt-2">Fee flat per penarikan saldo customer; diterima bersih = nominal − fee.</p>
+            </div>
             <div class="flex justify-end pt-gutter border-t border-muted-border">
                 <button type="submit" data-save-button class="px-8 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Simpan Pengaturan Keuangan</button>
             </div>
