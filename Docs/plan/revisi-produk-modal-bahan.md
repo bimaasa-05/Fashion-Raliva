@@ -92,9 +92,30 @@ margin_persen = margin_per_unit / harga_dasar x 100%
 - [x] Normalisasi format sebelum validasi backend.
 - [x] Tambahkan regression test urutan form dan normalisasi angka.
 
+## Paket 6 — Penjelasan gabungan dan Rupiah bulat
+
+- [x] Gabungkan lima penjelasan paket menjadi `Docs/penjelasan/revisi-produk-modal-bahan.md`.
+- [x] Hapus lima file penjelasan per paket setelah digabung.
+- [x] Gantikan dokumen gabungan tersebut dengan penjelasan komprehensif `Docs/penjelasan/revisi-admin-produk.md`, lalu hapus file gabungan lama agar tidak duplikat.
+- [x] Tampilkan semua nominal Rupiah Admin dan SuperAdmin tanpa `,00`.
+- [x] Pertahankan desimal yang berarti untuk jumlah bahan dan persen margin.
+- [x] Tambahkan regression test untuk ringkasan dan review Rupiah bulat.
+
+## Paket 7 — Biaya Operasional per baris
+
+- [x] Ganti input tunggal `biaya_tambahan` dengan section **Biaya Operasional** berisi baris dinamis Nama biaya + Harga per unit.
+- [x] Buat migrasi `product_operational_costs` + model `ProductOperationalCost` + relasi `Product::operationalCosts()`.
+- [x] Migrasi memecah nilai `biaya_tambahan` lama menjadi satu baris `Biaya operasional`; rollback mengembalikannya.
+- [x] `ProductCostCalculator::calculate()` menerima daftar operasional dan mengembalikan `biaya_operasional`.
+- [x] Kolom `products.biaya_tambahan` dipertahankan sebagai total cache.
+- [x] Simpan produk, resep, dan operasional dalam transaksi yang sama.
+- [x] Proposal dan review SuperAdmin membandingkan rincian operasional sebelum/sesudah.
+- [x] Detail produk Admin menampilkan tabel rincian operasional.
+- [x] Tambahkan regression test untuk simpan, proposal, approve, dan review operasional.
+
 ## Status eksekusi (2026-09-24)
 
-- [x] Paket 1 sampai Paket 5 selesai di kode dan test otomatis.
+- [x] Paket 1 sampai Paket 7 selesai di kode dan test otomatis.
 - [ ] Verifikasi browser manual belum dilakukan.
 
 ## Verifikasi
@@ -102,7 +123,7 @@ margin_persen = margin_per_unit / harga_dasar x 100%
 - [x] `php -l` untuk controller yang diubah.
 - [x] Migrasi naik dan rollback.
 - [x] `php artisan view:cache` lalu `view:clear`.
-- [x] Test otomatis untuk skema, rumus, validasi, detail, proposal, review resep, urutan form, dan normalisasi angka.
+- [x] Test otomatis untuk skema, rumus, validasi, detail, proposal, review resep, urutan form, normalisasi angka, Rupiah bulat, dan biaya operasional.
 - [ ] Verifikasi browser manual berikut:
   - [ ] Manual:
     - [ ] Produk tanpa bahan ditolak.
