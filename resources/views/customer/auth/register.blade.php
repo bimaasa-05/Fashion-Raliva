@@ -354,14 +354,16 @@
 <div id="register-section" class="border-2 border-secondary rounded-lg p-lg lg:p-xl frame-gold">
 <!-- Heading -->
 <div class="mb-sm">
-<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">{{ __('Raliva Account') }}</p>
+<div class="flex items-center justify-between gap-sm mb-xs">
+<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Raliva Account') }}</p>
+<!-- Account Type -->
+<div id="role-switch" class="flex shrink-0 items-center gap-1 rounded-full border-2 border-secondary p-1 frame-gold" data-initial-role="{{ old('role', 'owner') }}">
+    <button type="button" id="pill-customer" data-role="customer" class="role-pill cursor-pointer rounded-full px-3 py-1 font-label-caps text-label-caps uppercase tracking-wider text-on-surface transition-all{{ old('role', 'owner') === 'customer' ? ' active' : '' }}">Pelanggan</button>
+    <button type="button" id="pill-owner" data-role="owner" class="role-pill cursor-pointer rounded-full px-3 py-1 font-label-caps text-label-caps uppercase tracking-wider text-on-surface transition-all{{ old('role', 'owner') === 'owner' ? ' active' : '' }}">Pemilik Brand</button>
+</div>
+</div>
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Create Your Account') }}</h2>
 
-</div>
-<!-- Account Type -->
-<div id="role-switch" class="flex items-center gap-1 rounded-full border-2 border-secondary p-1 mb-md frame-gold" data-initial-role="{{ old('role', 'owner') }}">
-    <button type="button" id="pill-customer" data-role="customer" class="role-pill flex-1 cursor-pointer rounded-full px-4 py-1.5 text-center font-label-caps text-label-caps uppercase tracking-wider text-on-surface transition-all{{ old('role', 'owner') === 'customer' ? ' active' : '' }}">Pelanggan</button>
-    <button type="button" id="pill-owner" data-role="owner" class="role-pill flex-1 cursor-pointer rounded-full px-4 py-1.5 text-center font-label-caps text-label-caps uppercase tracking-wider text-on-surface transition-all{{ old('role', 'owner') === 'owner' ? ' active' : '' }}">Pemilik Brand</button>
 </div>
 @if($errors->any())
 <div class="mb-md rounded-xl border border-error bg-error-container px-md py-sm font-body-sm text-body-sm text-error">
