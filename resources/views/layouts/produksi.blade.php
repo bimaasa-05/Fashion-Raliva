@@ -136,6 +136,8 @@
             #sidebar nav a, #sidebar nav .group.cursor-not-allowed { padding-top: .8rem !important; padding-bottom: .8rem !important; }
             #sidebar .material-symbols-outlined.text-\[20px\] { font-size: 22px !important; }
         }
+        /* Produksi: samakan fokus input/dropdown/textarea/search ke maroon (menutup celah class raliva-*) */
+        main .raliva-input:focus, main .raliva-textarea:focus, main .raliva-search:focus, main .raliva-select:focus { border-color: #8B1E3F !important; --tw-ring-color: rgba(139,30,63,0.1) !important; }
     </style>
     <style>
         [data-reveal] { opacity: 0; transform: translateY(12px); transition: opacity 0.45s ease-out, transform 0.45s ease-out; transition-delay: var(--reveal-delay, 0ms); }
