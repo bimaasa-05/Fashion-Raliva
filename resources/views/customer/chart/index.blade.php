@@ -325,6 +325,7 @@
 </div>
 </div>
 </div>
+<div class="h-28 lg:hidden" aria-hidden="true"></div>
 </main>
 <!-- Sticky Bottom Toolbar: Order Summary + Checkout -->
 <div id="cart-footer" class="{{ $items->count() ? '' : 'hidden' }} fixed bottom-0 inset-x-0 lg:left-72 z-50 px-container-margin py-sm pb-safe">
