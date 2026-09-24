@@ -342,7 +342,7 @@
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">
             {{ session('status') }}
         </p>
-<a class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('login') }}">
+<a class="w-full h-14 btn-gold rounded-xl font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('login') }}">
             {{ __('BACK TO LOGIN') }}
         </a>
 </div>
@@ -358,13 +358,13 @@
 <!-- Email -->
 <div class="mb-md">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="email">{{ __('Email') }}</label>
-<input autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-DEFAULT px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors @error('email') border-error @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" type="email" required autofocus/>
+<input autocomplete="email" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors @error('email') border-error @enderror" id="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" type="email" required autofocus/>
 @error('email')
 <p class="font-label-sm text-label-sm text-error mt-xs">{{ $message }}</p>
 @enderror
 </div>
 <!-- Submit -->
-<button class="w-full h-14 btn-gold font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="forgot-btn" type="submit">
+<button class="w-full h-14 btn-gold rounded-xl font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="forgot-btn" type="submit">
 <span id="forgot-btn-text">{{ __('SEND RESET LINK') }}</span>
 <span class="material-symbols-outlined text-[20px] animate-spin hidden" id="forgot-spinner">progress_activity</span>
 </button>
