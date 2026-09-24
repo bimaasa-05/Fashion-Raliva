@@ -109,13 +109,8 @@
         .tp-breathe { animation: tp-breathe 2.4s ease-in-out infinite; }
         @keyframes tp-breathe { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .5; transform: scale(.9); } }
         @media (prefers-reduced-motion: reduce) { .tp-pulse, .tp-shake, .tp-breathe { animation: none; } }
-        .raliva-bar { transition: height 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
-        @media (prefers-reduced-motion: reduce) { .raliva-bar { transition: none; } }
-        [data-bars] { opacity: 1; transform: translateY(0); transition: opacity .55s cubic-bezier(0.22, 1, 0.36, 1), transform .55s cubic-bezier(0.22, 1, 0.36, 1); }
-        [data-bars].chart-hide { opacity: 0; transform: translateY(12px); }
-        .col-enter { animation: colFadeUp .6s cubic-bezier(0.22, 1, 0.36, 1) both; }
-        @keyframes colFadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-        @media (prefers-reduced-motion: reduce) { .col-enter { animation: none; } [data-bars] { transition: none; } }
+        [data-bars] .raliva-bar { transition: height 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+        @media (prefers-reduced-motion: reduce) { [data-bars] .raliva-bar { transition: none; } }
     </style>
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] lg:pl-72">
@@ -459,15 +454,14 @@
                 }
                 el.classList.add('flex', 'items-end', 'gap-2', 'md:gap-3');
                 var barCls = mode === 'in'
-                    ? 'w-full max-w-[36px] rounded-t-md raliva-bar bg-gradient-to-t from-emerald-500/45 to-emerald-500 hover:from-emerald-500/70 hover:shadow-[0_0_12px_rgba(16,185,129,0.35)] transition-shadow'
-                    : 'w-full max-w-[36px] rounded-t-md raliva-bar bg-gradient-to-t from-[#BA1A1A]/45 to-[#BA1A1A] hover:from-[#BA1A1A]/70 hover:shadow-[0_0_12px_rgba(186,26,26,0.35)] transition-shadow';
+                    ? 'w-full max-w-[36px] rounded-t-md raliva-bar bg-gradient-to-t from-emerald-500/45 to-emerald-500 hover:from-emerald-500/70 hover:shadow-[0_0_12px_rgba(16,185,129,0.35)]'
+                    : 'w-full max-w-[36px] rounded-t-md raliva-bar bg-gradient-to-t from-[#BA1A1A]/45 to-[#BA1A1A] hover:from-[#BA1A1A]/70 hover:shadow-[0_0_12px_rgba(186,26,26,0.35)]';
                 var max = Math.max.apply(null, data.map(function(s) { return s.value || 0; })) || 1;
 
                 data.forEach(function(s, i) {
                     var pct = Math.round(((s.value || 0) / max) * 100);
                     var col = document.createElement('div');
-                    col.className = 'flex-1 min-w-0 flex flex-col items-center justify-end gap-2 h-full col-enter';
-                    col.style.animationDelay = (i * 80) + 'ms';
+                    col.className = 'flex-1 min-w-0 flex flex-col items-center justify-end gap-2 h-full';
 
                     var val = document.createElement('span');
                     val.className = 'text-[10px] font-bold text-on-surface leading-none';
@@ -487,7 +481,7 @@
 
                     col.appendChild(val); col.appendChild(barZone); col.appendChild(lab);
                     el.appendChild(col);
-                    setTimeout(function() { bar.style.height = Math.max(pct, 4) + '%'; }, 140 + i * 90);
+                    setTimeout(function() { bar.style.height = Math.max(pct, 4) + '%'; }, 120 + i * 70);
                 });
             }
 
@@ -501,13 +495,10 @@
 
             function refreshChart() {
                 clearTimeout(renderTimer);
-                el.classList.add('chart-hide');
                 renderTimer = setTimeout(function() {
                     updateSubline();
                     renderBars();
-                    void el.offsetWidth;
-                    el.classList.remove('chart-hide');
-                }, 260);
+                }, 120);
             }
 
             function switchMode(m) {
@@ -588,10 +579,7 @@
             window.selectRange = selectRange;
 
             setActiveMode('in');
-            el.classList.add('chart-hide');
             renderBars();
-            void el.offsetWidth;
-            requestAnimationFrame(function() { el.classList.remove('chart-hide'); });
         });
     </script>
 </body>
