@@ -135,7 +135,7 @@
     html.theme-dark .border-outline { border-color: #4a4844 !important; }
     html.theme-dark .border-error { border-color: #ffb4ab !important; }
     html.theme-dark .bg-error-container { background-color: #3a1210 !important; }
-    html.theme-dark .focus\:border-primary:focus { border-color: #f2efec !important; }
+    html.theme-dark .focus\:border-secondary:focus { border-color: #A32626 !important; }
 </style>
 <style>
     /* ============ GOLD BUTTON + LIGHT FLASH ============ */
@@ -200,7 +200,7 @@
 <div class="mb-md">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password">{{ __('New Password') }}</label>
 <div class="relative">
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors @error('password') border-error @enderror" id="password" name="password" placeholder="{{ __('Minimum 8 characters') }}" type="password" required autofocus/>
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-secondary transition-colors @error('password') border-error @enderror" id="password" name="password" placeholder="{{ __('Minimum 8 characters') }}" type="password" required autofocus/>
 <button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="password-toggle" type="button">
 <span class="material-symbols-outlined text-[20px]">visibility</span>
 </button>
@@ -212,7 +212,7 @@
 <!-- Confirm New Password -->
 <div class="mb-md">
 <label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password_confirmation">{{ __('Confirm New Password') }}</label>
-<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-primary transition-colors" id="password_confirmation" name="password_confirmation" placeholder="{{ __('Re-enter your new password') }}" type="password" required/>
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface focus:outline-none focus:border-secondary transition-colors" id="password_confirmation" name="password_confirmation" placeholder="{{ __('Re-enter your new password') }}" type="password" required/>
 </div>
 <!-- Submit -->
 <button class="w-full h-14 btn-gold rounded-xl font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="reset-btn" type="submit">
