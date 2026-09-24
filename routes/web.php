@@ -115,6 +115,7 @@ use App\Http\Controllers\SuperAdmin\StoreStaffController;
 use App\Http\Controllers\SuperAdmin\SupplierController as SaSupplierController;
 use App\Http\Controllers\SuperAdmin\UlasanProdukTokoController;
 use App\Http\Controllers\SuperAdmin\VerifikasiTopupController;
+use App\Http\Controllers\SuperAdmin\VerifikasiPenarikanSaldoController;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -187,6 +188,12 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::post('/saldo/topup/{topup}/batal', [App\Http\Controllers\Customer\SaldoController::class, 'batalkan'])->name('saldo.topup.batal');
         Route::get('/saldo/topup/{topup}/payment/status', [App\Http\Controllers\Customer\SaldoController::class, 'paymentStatus'])->name('saldo.topup.payment.status');
         Route::get('/saldo/topup/{topup}/selesai', [App\Http\Controllers\Customer\SaldoController::class, 'selesai'])->name('saldo.topup.selesai');
+
+        Route::get('/saldo/tarik', [App\Http\Controllers\Customer\SaldoController::class, 'tarik'])->name('saldo.tarik');
+        Route::post('/saldo/tarik', [App\Http\Controllers\Customer\SaldoController::class, 'storeTarik'])->name('saldo.tarik.store');
+        Route::get('/saldo/tarik/{penarikan}', [App\Http\Controllers\Customer\SaldoController::class, 'penarikan'])->name('saldo.tarik.show');
+        Route::get('/saldo/tarik/{penarikan}/status', [App\Http\Controllers\Customer\SaldoController::class, 'penarikanStatus'])->name('saldo.tarik.status');
+        Route::post('/saldo/tarik/{penarikan}/batal', [App\Http\Controllers\Customer\SaldoController::class, 'batalkanTarik'])->name('saldo.tarik.batal');
 
         Route::post('/checkout/{checkout}/payment/saldo', [CheckoutController::class, 'payWithSaldo'])->name('checkout.payment.saldo');
 
@@ -278,6 +285,10 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/verifikasi-topup', [VerifikasiTopupController::class, 'index'])->name('verifikasi-topup');
     Route::post('/verifikasi-topup/{topup}/setujui', [VerifikasiTopupController::class, 'setujui'])->name('verifikasi-topup.setujui');
     Route::post('/verifikasi-topup/{topup}/tolak', [VerifikasiTopupController::class, 'tolak'])->name('verifikasi-topup.tolak');
+    Route::get('/verifikasi-penarikan-saldo', [VerifikasiPenarikanSaldoController::class, 'index'])->name('verifikasi-penarikan-saldo');
+    Route::post('/verifikasi-penarikan-saldo/{penarikan}/setujui', [VerifikasiPenarikanSaldoController::class, 'setujui'])->name('verifikasi-penarikan-saldo.setujui');
+    Route::post('/verifikasi-penarikan-saldo/{penarikan}/tolak', [VerifikasiPenarikanSaldoController::class, 'tolak'])->name('verifikasi-penarikan-saldo.tolak');
+    Route::post('/verifikasi-penarikan-saldo/{penarikan}/tandai-dibayar', [VerifikasiPenarikanSaldoController::class, 'tandaiDibayar'])->name('verifikasi-penarikan-saldo.tandai-dibayar');
     Route::get('/pengembalian-dana', [PengembalianDanaController::class, 'index'])->name('pengembalian-dana');
     Route::post('/pengembalian-dana/{refund}/setujui', [PengembalianDanaController::class, 'setujui'])->name('pengembalian-dana.setujui');
     Route::post('/pengembalian-dana/{refund}/tolak', [PengembalianDanaController::class, 'tolak'])->name('pengembalian-dana.tolak');
