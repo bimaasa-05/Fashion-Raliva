@@ -877,6 +877,11 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             gap: .5rem .75rem;
         }
 
+        @media (max-width: 639px) {
+            .pay-grid-split { grid-template-columns: 1fr; }
+            .detail-row { flex-wrap: wrap; overflow-wrap: anywhere; }
+        }
+
         .split-method.selected {
             border-color: #8B1E3F;
             background: rgba(139, 30, 63, .08);
