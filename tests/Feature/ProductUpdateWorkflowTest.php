@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Product;
 use App\Models\ProductMaterialRequirement;
+use App\Models\ProductOperationalCost;
 use App\Models\ProductUpdateRequest;
 use App\Models\Role;
 use App\Models\StoreStaff;
@@ -103,6 +104,9 @@ class ProductUpdateWorkflowTest extends TestCase
                 'resep' => [
                     ['material_id' => null, 'nama_bahan' => 'Kain Lama', 'satuan' => 'meter', 'jumlah_per_unit' => 1, 'biaya_per_unit' => 1000],
                 ],
+                'operasional' => [
+                    ['nama_biaya' => 'Biaya Lama', 'nominal' => 500],
+                ],
             ],
             'after_payload' => [
                 'nama_produk' => $product->nama_produk.' Review',
@@ -112,6 +116,10 @@ class ProductUpdateWorkflowTest extends TestCase
                 'biaya_tambahan' => 0,
                 'resep' => [
                     ['material_id' => null, 'nama_bahan' => 'Kain Baru', 'satuan' => 'meter', 'jumlah_per_unit' => 2, 'biaya_per_unit' => 1000],
+                ],
+                'operasional_diubah' => true,
+                'operasional' => [
+                    ['nama_biaya' => 'Ongkos jahit', 'nominal' => 1500],
                 ],
             ],
         ]);
@@ -123,6 +131,10 @@ class ProductUpdateWorkflowTest extends TestCase
         $response->assertSee('Kain Lama', false);
         $response->assertSee('Kain Baru', false);
         $response->assertSee('2 unit', false);
+        $response->assertSee('Rp 16.500', false);
+        $response->assertDontSee('16.500,00', false);
+        $response->assertSee('Biaya Lama', false);
+        $response->assertSee('Ongkos jahit', false);
         $response->assertSee('Setujui', false);
     }
 
@@ -209,6 +221,57 @@ class ProductUpdateWorkflowTest extends TestCase
         ]);
     }
 
+    public function test_superadmin_approve_applies_operational_changes(): void
+    {
+        [$admin, $storeId] = $this->admin();
+        $product = Product::where('store_id', $storeId)->firstOrFail();
+        ProductOperationalCost::create([
+            'product_id' => $product->product_id,
+            'nama_biaya' => 'Biaya Lama',
+            'nominal' => 500,
+        ]);
+        $request = ProductUpdateRequest::create([
+            'product_id' => $product->product_id,
+            'store_id' => $storeId,
+            'requested_by' => $admin->user_id,
+            'status' => ProductUpdateRequest::STATUS_PENDING,
+            'before_snapshot' => [],
+            'after_payload' => [
+                'nama_produk' => $product->nama_produk,
+                'harga_dasar' => 20000,
+                'category_id' => $product->category_id,
+                'tipe_produk' => $product->tipe_produk,
+                'deskripsi' => $product->deskripsi,
+                'resep_diubah' => true,
+                'target_produksi' => 5,
+                'resep' => [
+                    ['material_id' => null, 'nama_bahan' => 'Kain Baru', 'satuan' => 'meter', 'jumlah_per_unit' => 2, 'biaya_per_unit' => 5000],
+                ],
+                'operasional_diubah' => true,
+                'operasional' => [
+                    ['nama_biaya' => 'Ongkos jahit', 'nominal' => 3000],
+                    ['nama_biaya' => 'Kemasan', 'nominal' => 2000],
+                ],
+            ],
+        ]);
+
+        $response = $this->actingAs($this->superAdmin())->post(route('superadmin.perubahan-produk.setujui', [$product, $request]));
+
+        $response->assertStatus(302);
+        $fresh = $product->fresh();
+        $this->assertSame(15000.0, $fresh->modal_produksi);
+        $this->assertSame(5000.0, $fresh->biaya_tambahan);
+        $this->assertDatabaseHas('product_operational_costs', [
+            'product_id' => $product->product_id,
+            'nama_biaya' => 'Ongkos jahit',
+            'nominal' => 3000,
+        ]);
+        $this->assertDatabaseMissing('product_operational_costs', [
+            'product_id' => $product->product_id,
+            'nama_biaya' => 'Biaya Lama',
+        ]);
+    }
+
     public function test_superadmin_reject_removes_staged_files(): void
     {
         Storage::fake('public');
@@ -263,6 +326,7 @@ class ProductUpdateWorkflowTest extends TestCase
     private function updatableProduct(int $storeId): Product
     {
         $page = Product::where('store_id', $storeId)
+            ->whereDoesntHave('updateRequests', fn ($query) => $query->where('status', ProductUpdateRequest::STATUS_PENDING))
             ->withCount('images')
             ->orderByDesc('created_at')
             ->orderByDesc('product_id')
