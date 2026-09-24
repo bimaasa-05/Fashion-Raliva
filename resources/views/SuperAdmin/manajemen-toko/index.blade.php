@@ -119,6 +119,18 @@
                         </div>
                         <span data-badge class="inline-flex items-center px-2.5 py-1 text-[10px] font-bold tracking-widest uppercase border rounded-full shrink-0 {{ $badge['class'] }}">{{ $badge['label'] }}</span>
                     </div>
+                    @if ($isSuspended)
+                        <div class="flex items-start gap-2 mb-4 rounded-lg px-3 py-2 bg-error/5 border border-error/20 text-error">
+                            <span class="material-symbols-outlined text-[16px] mt-0.5 shrink-0">{{ $item->ditangguhkan_sampai ? 'schedule' : 'block' }}</span>
+                            <p class="text-[11px] font-label-sm leading-snug">
+                                @if ($item->ditangguhkan_sampai)
+                                    Ditangguhkan sementara · aktif kembali <span class="font-bold">{{ $item->ditangguhkan_sampai }}</span>
+                                @else
+                                    Ditangguhkan tanpa batas waktu
+                                @endif
+                            </p>
+                        </div>
+                    @endif
                     <div class="grid grid-cols-3 gap-3 mb-5">
                         <div class="bg-surface-container-low rounded-lg py-3 text-center">
                             <span class="block font-title-md {{ $isSuspended ? 'text-on-surface-variant' : 'text-on-surface' }}">{{ $item->products_count }}</span>
