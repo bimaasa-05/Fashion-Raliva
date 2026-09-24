@@ -1243,7 +1243,7 @@ function updateFotoCount() {
 // --- Format Rp live (10rb -> 10.000) + strip saat submit ---
 (function () {
     const fmtRp = (el) => {
-        const digits = el.value.replace(/\D/g, '').slice(0, 15).replace(/^0+(?=\d)/, '');
+        const digits = el.value.replace(/\D/g, '').slice(0, 12).replace(/^0+(?=\d)/, '');
         el.value = digits ? new Intl.NumberFormat('id-ID').format(digits) : '';
     };
     const stripRp = (el) => { el.value = el.value.replace(/\./g, ''); };
