@@ -24,19 +24,19 @@ Gudang, atau Customer dalam paket ini.
 
 ## Paket 1 — Skema resep dan modal
 
-- [ ] Buat migrasi `product_material_requirements` berisi:
-  - [ ] `product_id`.
-  - [ ] `material_id` opsional ke katalog bahan.
-  - [ ] Snapshot `nama_bahan`.
-  - [ ] `satuan`.
-  - [ ] `jumlah_per_unit`.
-  - [ ] `biaya_per_unit`.
-- [ ] Tambahkan profil produksi pada produk:
-  - [ ] `target_produksi`.
-  - [ ] `modal_produksi`.
-  - [ ] Biaya tambahan per unit bila diperlukan.
-- [ ] Gunakan kembali daftar satuan `ProductionOrderBahan::SATUAN`.
-- [ ] Hitung ulang modal di server, jangan hanya mengandalkan perhitungan JavaScript.
+- [x] Buat migrasi `product_material_requirements` berisi:
+  - [x] `product_id`.
+  - [x] `material_id` opsional ke katalog bahan.
+  - [x] Snapshot `nama_bahan`.
+  - [x] `satuan`.
+  - [x] `jumlah_per_unit`.
+  - [x] `biaya_per_unit`.
+- [x] Tambahkan profil produksi pada produk:
+  - [x] `target_produksi`.
+  - [x] `modal_produksi`.
+  - [x] Biaya tambahan per unit bila diperlukan.
+- [x] Gunakan kembali daftar satuan `ProductionOrderBahan::SATUAN`.
+- [x] Hitung ulang modal di server, jangan hanya mengandalkan perhitungan JavaScript.
 
 ## Paket 2 — Rumus yang dipakai
 
@@ -53,48 +53,64 @@ margin_per_unit = harga_dasar - modal_per_unit
 margin_persen = margin_per_unit / harga_dasar x 100%
 ```
 
-- [ ] `target_produksi` minimal 1.
-- [ ] Setiap bahan wajib memiliki nama, satuan, jumlah, dan biaya.
-- [ ] Setiap produk wajib memiliki minimal satu bahan.
-- [ ] Jaga pembulatan desimal untuk qty dan Rupiah.
-- [ ] Tolak pembagi nol pada perhitungan margin persen.
+- [x] `target_produksi` minimal 1.
+- [x] Setiap bahan wajib memiliki nama, satuan, jumlah, dan biaya.
+- [x] Setiap produk wajib memiliki minimal satu bahan.
+- [x] Jaga pembulatan desimal untuk qty dan Rupiah.
+- [x] Tolak pembagi nol pada perhitungan margin persen.
 
 ## Paket 3 — Form tambah produk
 
-- [ ] Tambahkan section “Rencana Produksi” pada modal tambah produk Admin.
-- [ ] Sediakan input target produksi dan biaya tambahan.
-- [ ] Sediakan baris bahan dinamis:
-  - [ ] Pilihan bahan dari katalog.
-  - [ ] Nama bahan manual.
-  - [ ] Jumlah per unit.
-  - [ ] Satuan.
-  - [ ] Biaya per unit.
-- [ ] Tampilkan ringkasan live:
-  - [ ] Modal per unit.
-  - [ ] Modal batch.
-  - [ ] Harga jual.
-  - [ ] Margin dan persentase.
-- [ ] Simpan resep dan profil produksi dalam transaksi yang sama dengan produk.
+- [x] Tambahkan section “Rencana Produksi” pada modal tambah produk Admin.
+- [x] Sediakan input target produksi dan biaya tambahan.
+- [x] Sediakan baris bahan dinamis:
+  - [x] Pilihan bahan dari katalog.
+  - [x] Nama bahan manual.
+  - [x] Jumlah per unit.
+  - [x] Satuan.
+  - [x] Biaya per unit.
+- [x] Tampilkan ringkasan live:
+  - [x] Modal per unit.
+  - [x] Modal batch.
+  - [x] Harga jual.
+  - [x] Margin dan persentase.
+- [x] Simpan resep dan profil produksi dalam transaksi yang sama dengan produk.
 
 ## Paket 4 — Tampilan dan proposal perubahan
 
-- [ ] Tampilkan tabel bahan dan ringkasan modal pada detail produk Admin.
-- [ ] Sertakan resep dan profil produksi dalam snapshot “Ajukan Perubahan”.
-- [ ] Tampilkan perbedaan resep lama dan baru pada review SuperAdmin.
-- [ ] Jangan menghapus resep lama sebelum proposal disetujui.
+- [x] Tampilkan tabel bahan dan ringkasan modal pada detail produk Admin.
+- [x] Sertakan resep dan profil produksi dalam snapshot “Ajukan Perubahan”.
+- [x] Tampilkan perbedaan resep lama dan baru pada review SuperAdmin.
+- [x] Jangan menghapus resep lama sebelum proposal disetujui.
+
+## Paket 5 — Urutan form dan format angka
+
+- [x] Susun ulang form tambah dan edit menjadi Foto, Informasi Dasar, Rencana Produksi, Variasi & Stok.
+- [x] Susun Informasi Dasar menjadi Nama, Kategori + Tipe, Harga, lalu Deskripsi.
+- [x] Pakai prefix `Rp` untuk semua input Rupiah mengikuti pola Harga.
+- [x] Tampilkan format ribuan `10.000` untuk angka dan Rupiah bulat.
+- [x] Normalisasi format sebelum validasi backend.
+- [x] Tambahkan regression test urutan form dan normalisasi angka.
+
+## Status eksekusi (2026-09-24)
+
+- [x] Paket 1 sampai Paket 5 selesai di kode dan test otomatis.
+- [ ] Verifikasi browser manual belum dilakukan.
 
 ## Verifikasi
 
-- [ ] `php -l` untuk controller yang diubah.
-- [ ] Migrasi naik dan rollback.
-- [ ] `php artisan view:cache` lalu `view:clear`.
-- [ ] Manual:
-  - [ ] Produk tanpa bahan ditolak.
-  - [ ] Target nol ditolak.
-  - [ ] Biaya bahan kosong ditolak.
-  - [ ] Perhitungan server sama dengan ringkasan di layar.
-  - [ ] Produk menampilkan bahan, modal batch, harga jual, dan margin.
-  - [ ] Perubahan resep produk aktif masuk antrean SuperAdmin.
+- [x] `php -l` untuk controller yang diubah.
+- [x] Migrasi naik dan rollback.
+- [x] `php artisan view:cache` lalu `view:clear`.
+- [x] Test otomatis untuk skema, rumus, validasi, detail, proposal, review resep, urutan form, dan normalisasi angka.
+- [ ] Verifikasi browser manual berikut:
+  - [ ] Manual:
+    - [ ] Produk tanpa bahan ditolak.
+    - [ ] Target nol ditolak.
+    - [ ] Biaya bahan kosong ditolak.
+    - [ ] Perhitungan server sama dengan ringkasan di layar.
+    - [ ] Produk menampilkan bahan, modal batch, harga jual, dan margin.
+    - [ ] Perubahan resep produk aktif masuk antrean SuperAdmin.
 
 ## Risiko
 
