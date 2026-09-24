@@ -66,7 +66,7 @@ class ProductRecipeTest extends TestCase
         $payload['category_id'] = Category::where('status', 'aktif')->value('category_id');
 
         $this->actingAs($admin)->post(route('admin.produk.store'), $payload)->assertSessionHasNoErrors();
-        $this->assertDatabaseHas('products', ['nama_produk' => 'Produk Uji Ringkasan Resep', 'modal_produksi' => 10000]);
+        $this->assertDatabaseHas('products', ['nama_produk' => 'Produk Uji Ringkasan Resep', 'modal_produksi' => 15000]);
 
         $response = $this->actingAs($admin)->get(route('admin.produk'));
 
@@ -74,7 +74,8 @@ class ProductRecipeTest extends TestCase
         $response->assertSee('Produk Uji Ringkasan Resep', false);
         $response->assertSee('Kain Katun', false);
         $response->assertSee('Target 10 unit', false);
-        $response->assertSee('Modal Rp 10.000,00/unit', false);
+        $response->assertSee('Modal Rp 15.000/unit', false);
+        $response->assertDontSee('10.000,00', false);
         $response->assertSee('data-resep-rows', false);
         $response->assertSee('Kain Katun', false);
     }
@@ -98,7 +99,49 @@ class ProductRecipeTest extends TestCase
             'resep' => [
                 ['material_id' => null, 'nama_bahan' => 'Kain Katun', 'satuan' => 'meter', 'jumlah_per_unit' => 2, 'biaya_per_unit' => '5000'],
             ],
+            'operasional' => [
+                ['nama_biaya' => 'Ongkos jahit', 'nominal' => '3.000'],
+                ['nama_biaya' => 'Kemasan', 'nominal' => '2000'],
+            ],
         ];
+    }
+
+    public function test_product_saves_operational_rows_and_total(): void
+    {
+        Storage::fake('public');
+        $admin = User::whereHas('role', fn ($query) => $query->where('nama_role', Role::ADMIN))
+            ->whereHas('storeAssignments', fn ($query) => $query->where('status', 'aktif'))
+            ->firstOrFail();
+        $storeId = StoreStaff::where('user_id', $admin->user_id)->where('status', 'aktif')->value('store_id');
+        SlotGrant::create([
+            'store_id' => $storeId,
+            'jumlah_slot' => 5,
+            'tipe' => SlotGrant::TIPE_MANUAL,
+            'keterangan' => 'Slot uji biaya operasional.',
+            'created_by' => $admin->user_id,
+        ]);
+        $payload = $this->payload();
+        $payload['nama_produk'] = 'Produk Uji Operasional';
+        $payload['category_id'] = Category::where('status', 'aktif')->value('category_id');
+
+        $this->actingAs($admin)->post(route('admin.produk.store'), $payload)->assertSessionHasNoErrors();
+        $product = Product::where('nama_produk', 'Produk Uji Operasional')->firstOrFail();
+        $this->assertSame(15000.0, $product->modal_produksi);
+        $this->assertSame(5000.0, $product->biaya_tambahan);
+        $this->assertDatabaseHas('product_operational_costs', [
+            'product_id' => $product->product_id,
+            'nama_biaya' => 'Ongkos jahit',
+            'nominal' => 3000,
+        ]);
+        $this->assertDatabaseHas('product_operational_costs', [
+            'product_id' => $product->product_id,
+            'nama_biaya' => 'Kemasan',
+            'nominal' => 2000,
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.produk'));
+        $response->assertOk();
+        $response->assertSee('Ongkos jahit', false);
     }
 
     private function postProduct(array $payload)
