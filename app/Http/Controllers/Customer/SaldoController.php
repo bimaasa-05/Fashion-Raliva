@@ -336,11 +336,11 @@ class SaldoController extends Controller
     {
         $user = Auth::user();
         $saldo = CustomerWalletService::balance($user);
-        $fee = (float) Setting::get(Setting::BIAYA_PENARIKAN_SALDO, '0');
+        $feePersen = min(100, max(0, (float) Setting::get(Setting::BIAYA_PENARIKAN_SALDO, '0')));
         $minTarik = static::MIN_TARIK;
         $banks = Bank::where('status', 'aktif')->orderBy('nama_bank')->get();
 
-        return view('customer.saldo.tarik', compact('saldo', 'fee', 'minTarik', 'banks'));
+        return view('customer.saldo.tarik', compact('saldo', 'feePersen', 'minTarik', 'banks'));
     }
 
     /**
@@ -370,12 +370,13 @@ class SaldoController extends Controller
 
         $user = Auth::user();
         $jumlah = (float) $validated['nominal'];
-        $fee = (float) Setting::get(Setting::BIAYA_PENARIKAN_SALDO, '0');
+        $feePersen = min(100, max(0, (float) Setting::get(Setting::BIAYA_PENARIKAN_SALDO, '0')));
+        $fee = (float) round($jumlah * $feePersen / 100);
         $bersih = $jumlah - $fee;
 
         if ($bersih <= 0) {
             return back()
-                ->with('toast', ['message' => 'Nominal harus lebih besar dari biaya platform Rp ' . number_format($fee, 0, ',', '.') . '.', 'icon' => 'gpp_maybe'])
+                ->with('toast', ['message' => 'Nominal harus lebih besar dari biaya platform ' . rtrim(rtrim(number_format($feePersen, 2, ',', '.'), '0'), ',') . '%.', 'icon' => 'gpp_maybe'])
                 ->withInput();
         }
 
