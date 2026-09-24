@@ -16,7 +16,7 @@ class DataProdukController extends Controller
     public function index(Request $request)
     {
         $q = $request->input('q');
-        $products = Product::with(['category', 'store', 'variants.warehouseStocks', 'materialRequirements.material', 'images' => fn ($qq) => $qq->orderBy('urutan')])
+        $products = Product::with(['category', 'store', 'variants.warehouseStocks', 'materialRequirements.material', 'operationalCosts', 'images' => fn ($qq) => $qq->orderBy('urutan')])
             ->when($q, fn ($query) => $query->where('nama_produk', 'like', "%{$q}%"))
             ->orderByDesc('created_at')
             ->orderByDesc('product_id')
@@ -76,6 +76,11 @@ class DataProdukController extends Controller
                     'biaya_per_unit' => \App\Support\NumberParser::decimalInput($row['biaya_per_unit'] ?? ''),
                 ])
                 : $row)->all(),
+            'operasional' => collect($request->input('operasional', []))->map(fn ($row) => is_array($row)
+                ? array_merge($row, [
+                    'nominal' => \App\Support\NumberParser::decimalInput($row['nominal'] ?? ''),
+                ])
+                : $row)->all(),
         ]);
         $data = $request->validate([
             'nama_produk' => 'required|string|max:255',
@@ -101,6 +106,9 @@ class DataProdukController extends Controller
             'resep.*.satuan' => ['required', 'string', Rule::in(\App\Models\ProductionOrderBahan::SATUAN)],
             'resep.*.jumlah_per_unit' => 'required|numeric|min:0.001|max:1000000',
             'resep.*.biaya_per_unit' => 'required|numeric|min:0|max:999999999999',
+            'operasional' => 'nullable|array|max:20',
+            'operasional.*.nama_biaya' => 'required|string|max:100',
+            'operasional.*.nominal' => 'required|numeric|min:0|max:999999999999',
         ], [
             'nama_produk.required' => 'Nama produk wajib diisi.',
             'harga_dasar.required' => 'Harga dasar wajib diisi.',
@@ -156,14 +164,19 @@ class DataProdukController extends Controller
                 'biaya_per_unit' => (float) $row['biaya_per_unit'],
             ];
         })->all();
+        $operasional = collect($data['operasional'] ?? [])->map(fn ($row) => [
+            'nama_biaya' => trim((string) ($row['nama_biaya'] ?? '')),
+            'nominal' => (float) ($row['nominal'] ?? 0),
+        ])->all();
         $cost = \App\Support\ProductCostCalculator::calculate(
             $requirements,
             (float) ($data['biaya_tambahan'] ?? 0),
             (int) $data['target_produksi'],
-            (float) $data['harga_dasar']
+            (float) $data['harga_dasar'],
+            $operasional
         );
 
-        $product = \Illuminate\Support\Facades\DB::transaction(function () use ($storeId, $data, $requirements, $cost) {
+        $product = \Illuminate\Support\Facades\DB::transaction(function () use ($storeId, $data, $requirements, $operasional, $cost) {
             $product = Product::create([
                 'store_id' => $storeId,
                 'category_id' => $data['category_id'] ?? null,
@@ -172,12 +185,13 @@ class DataProdukController extends Controller
                 'harga_dasar' => $data['harga_dasar'],
                 'target_produksi' => $data['target_produksi'],
                 'modal_produksi' => $cost['modal_per_unit'],
-                'biaya_tambahan' => (float) ($data['biaya_tambahan'] ?? 0),
+                'biaya_tambahan' => $cost['biaya_operasional'],
                 'tipe_produk' => $data['tipe_produk'] ?? Product::TIPE_REGULAR,
                 'status' => Product::STATUS_PENDING,
                 'alasan_penolakan' => 'Menunggu moderasi Super Admin.',
             ]);
             $product->materialRequirements()->createMany($requirements);
+            $product->operationalCosts()->createMany($operasional);
 
             return $product;
         });
@@ -296,10 +310,21 @@ class DataProdukController extends Controller
             ]))
             ->values()
             ->all();
+        $filteredOperasional = collect($request->input('operasional', []))
+            ->filter(fn ($row) => is_array($row) && (
+                trim((string) ($row['nama_biaya'] ?? '')) !== ''
+                || trim((string) ($row['nominal'] ?? '')) !== ''
+            ))
+            ->map(fn ($row) => array_merge($row, [
+                'nominal' => \App\Support\NumberParser::decimalInput($row['nominal'] ?? ''),
+            ]))
+            ->values()
+            ->all();
         $request->merge([
             'harga_dasar' => str_replace('.', '', (string) $request->input('harga_dasar', '')),
             'target_produksi' => \App\Support\NumberParser::integerInput($request->input('target_produksi', '')),
             'biaya_tambahan' => \App\Support\NumberParser::decimalInput($request->input('biaya_tambahan', '')),
+            'operasional_kosong' => $request->boolean('operasional_kosong'),
             'varian_stok' => collect($request->input('varian_stok', []))->map(fn ($row) => is_array($row)
                 ? array_merge($row, [
                     'stok' => \App\Support\NumberParser::integerInput($row['stok'] ?? ''),
@@ -307,6 +332,7 @@ class DataProdukController extends Controller
                 ])
                 : $row)->all(),
             'resep' => $filteredResep,
+            'operasional' => $filteredOperasional,
         ]);
 
         $data = $request->validate([
@@ -334,6 +360,9 @@ class DataProdukController extends Controller
             'resep.*.satuan' => ['required', 'string', Rule::in(\App\Models\ProductionOrderBahan::SATUAN)],
             'resep.*.jumlah_per_unit' => 'required|numeric|min:0.001|max:1000000',
             'resep.*.biaya_per_unit' => 'required|numeric|min:0|max:999999999999',
+            'operasional' => 'nullable|array|max:20',
+            'operasional.*.nama_biaya' => 'required|string|max:100',
+            'operasional.*.nominal' => 'required|numeric|min:0|max:999999999999',
         ], [
             'nama_produk.required' => 'Nama produk wajib diisi.',
             'harga_dasar.required' => 'Harga dasar wajib diisi.',
@@ -366,7 +395,7 @@ class DataProdukController extends Controller
             return back()->with('error', 'Maksimal total 5 foto. Hapus foto lama dulu sebelum menambah foto baru.');
         }
 
-        $product->load(['category', 'materialRequirements.material', 'images' => fn ($query) => $query->orderBy('urutan'), 'variants.warehouseStocks']);
+        $product->load(['category', 'materialRequirements.material', 'operationalCosts', 'images' => fn ($query) => $query->orderBy('urutan'), 'variants.warehouseStocks']);
         $before = [
             'product' => array_merge(
                 $product->only(['nama_produk', 'harga_dasar', 'target_produksi', 'modal_produksi', 'biaya_tambahan', 'category_id', 'tipe_produk', 'deskripsi', 'status']),
@@ -378,6 +407,10 @@ class DataProdukController extends Controller
                 'satuan' => $row->satuan,
                 'jumlah_per_unit' => (float) $row->jumlah_per_unit,
                 'biaya_per_unit' => (float) $row->biaya_per_unit,
+            ])->all(),
+            'operasional' => $product->operationalCosts->map(fn ($row) => [
+                'nama_biaya' => $row->nama_biaya,
+                'nominal' => (float) $row->nominal,
             ])->all(),
             'images' => $existingImages->map(fn ($image) => $image->only(['product_image_id', 'file_gambar', 'urutan']))->all(),
             'variants' => $product->variants->map(fn ($variant) => [
@@ -415,6 +448,8 @@ class DataProdukController extends Controller
             'target_produksi' => $data['target_produksi'] ?? null,
             'biaya_tambahan' => $data['biaya_tambahan'] ?? null,
             'resep' => $data['resep'] ?? [],
+            'operasional_diubah' => $request->boolean('operasional_kosong') || $filteredOperasional !== [],
+            'operasional' => $data['operasional'] ?? [],
             'hapus_foto_ids' => $removeIds,
             'staged_images' => $stagedPaths,
         ];
