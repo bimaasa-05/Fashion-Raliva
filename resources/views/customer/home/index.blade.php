@@ -358,7 +358,7 @@
 <span class="hero-reveal font-label-caps text-label-caps uppercase tracking-[0.22em] text-white/90 mb-sm">{{ __('NEW COLLECTION') }}</span>
 <h2 class="hero-reveal font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-white mb-xs max-w-xl">{{ __('The Art of Everyday Dressing') }}</h2>
 <p class="hero-reveal font-body-lg text-body-lg text-white/85 mb-md max-w-md">{{ __('Timeless looks, made for you.') }}</p>
-<a href="{{ route('customer.shop') }}" class="hero-reveal btn-gold font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest inline-block">{{ __('SHOP COLLECTION') }}</a>
+<a href="{{ route('customer.shop') }}" class="hero-reveal btn-gold rounded-xl font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest inline-block">{{ __('SHOP COLLECTION') }}</a>
 </div>
 </section>
 <!-- Categories -->
@@ -466,7 +466,7 @@
 </div>
 <p id="new-arrivals-empty" class="hidden text-center text-on-surface-variant font-body-lg py-md">{{ __('No products in this category.') }}</p>
 <div class="mt-md flex justify-center">
-<a href="{{ route('customer.shop') }}" class="border border-secondary text-secondary bg-transparent font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:bg-secondary/5 transition-colors inline-block">{{ __('VIEW ALL NEW ARRIVALS') }}</a>
+<a href="{{ route('customer.shop') }}" class="border border-secondary rounded-xl text-secondary bg-transparent font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:bg-secondary/5 transition-colors inline-block">{{ __('VIEW ALL NEW ARRIVALS') }}</a>
 </div>
 </div>
 </div>
