@@ -280,7 +280,7 @@
 <p class="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto mb-lg">
                 {{ $store->deskripsi }}
             </p>
-<button class="btn-gold font-label-caps text-label-caps px-xl py-sm rounded-none tracking-widest font-label-caps text-label-caps uppercase tracking-widest w-full md:w-auto min-w-[200px] mx-auto">
+<button class="btn-gold font-label-caps text-label-caps px-xl py-sm rounded-xl tracking-widest font-label-caps text-label-caps uppercase tracking-widest w-full md:w-auto min-w-[200px] mx-auto">
                 {{ __('FOLLOW STORE') }}
             </button>
 </div>
