@@ -362,7 +362,10 @@
 @else
 @php
     $step = $selectedStep;
+    $isPickup = $isPickup ?? false;
     $statusLabel = \App\Http\Controllers\Customer\OrderTrackingController::STATUS_LABELS[$selected->status] ?? ucfirst(str_replace('_', ' ', $selected->status));
+    if ($isPickup && $selected->status === \App\Models\Order::STATUS_SIAP_KIRIM) $statusLabel = __('Siap Diambil');
+    if ($isPickup && $selected->status === \App\Models\Order::STATUS_SELESAI) $statusLabel = __('Selesai Diambil');
     $isCancelled = $step === null;
     $isRefund = $selected->status === \App\Models\Order::STATUS_REFUND;
     $shipment = $selected->shipments->first();
@@ -393,11 +396,17 @@
         'menunggu_produksi' => [__('Sedang disiapkan'), __('Pesanan menunggu diproses oleh tim produksi.')],
         'diproses' => [__('Sedang disiapkan'), __('Pesanan sedang disiapkan oleh tim produksi.')],
         'menunggu_qc' => [__('Pemeriksaan kualitas'), __('Pesanan sedang dalam pemeriksaan kualitas oleh tim produksi.')],
-        'siap_kirim' => ! empty($hasResi ?? false)
-            ? [__('Resi diterbitkan'), __('Nomor resi sudah diterbitkan admin. Menunggu kurir mengambil paket Anda.')]
-            : [__('Sudah dikemas'), __('Pesanan sudah dikemas dan siap dikirim.')],
-        'dikirim' => [__('Sedang dalam perjalanan'), __('Pesanan sudah dikirim dan sedang dalam perjalanan menuju alamat Anda. Klik Konfirmasi Pesanan Diterima setelah paket sampai.')],
-        'selesai' => [__('Pesanan diterima'), __('Pesanan telah sampai dan dikonfirmasi. Terima kasih sudah berbelanja di RALIVA.')],
+        'siap_kirim' => $isPickup
+            ? [__('Siap diambil'), __('Pesanan Anda sudah siap. Silakan ambil di toko sesuai info pengambilan di bawah.')]
+            : (! empty($hasResi ?? false)
+                ? [__('Resi diterbitkan'), __('Nomor resi sudah diterbitkan admin. Menunggu kurir mengambil paket Anda.')]
+                : [__('Sudah dikemas'), __('Pesanan sudah dikemas dan siap dikirim.')]),
+        'dikirim' => $isPickup
+            ? [__('Siap diambil'), __('Pesanan Anda sudah siap. Silakan ambil di toko sesuai info pengambilan di bawah.')]
+            : [__('Sedang dalam perjalanan'), __('Pesanan sudah dikirim dan sedang dalam perjalanan menuju alamat Anda. Klik Konfirmasi Pesanan Diterima setelah paket sampai.')],
+        'selesai' => $isPickup
+            ? [__('Selesai diambil'), __('Pesanan telah diambil dan selesai. Terima kasih sudah berbelanja di RALIVA.')]
+            : [__('Pesanan diterima'), __('Pesanan telah sampai dan dikonfirmasi. Terima kasih sudah berbelanja di RALIVA.')],
         'dibatalkan' => [__('Pesanan dibatalkan'), __('Pesanan ini telah dibatalkan. Hubungi layanan pelanggan jika ada pertanyaan.')],
         'refund' => match ($refundStatus) {
             \App\Models\Refund::STATUS_SELESAI => [__('Refund selesai'), __('Pengembalian dana untuk pesanan ini telah diselesaikan oleh toko.')],
@@ -443,10 +452,15 @@
 @else
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ $estDeliv ? __('Est. delivery:').' '.$estDeliv->format('M j, Y') : __('Menunggu konfirmasi pengiriman') }}</p>
 @endif
-@if($shipment && $shipment->nomor_resi)
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right break-all">{{ __('Resi') }}: <strong class="text-on-surface">{{ $shipment->nomor_resi }}</strong> @if($shipment->courier) • {{ $shipment->courier->nama_kurir }}@endif @if($shipment->shippingService) • {{ $shipment->shippingService->nama_layanan }}@endif</p>
+@if($isPickup && in_array($selected->status, [\App\Models\Order::STATUS_SIAP_KIRIM, \App\Models\Order::STATUS_DIKIRIM, \App\Models\Order::STATUS_SELESAI], true))
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ __('Ambil di') }}: <strong class="text-on-surface">{{ $selected->store?->nama_toko ?? __('Toko') }}</strong>@if($selected->store?->alamat) • {{ $selected->store->alamat }}@endif</p>
+@if($selected->status === \App\Models\Order::STATUS_SELESAI && $selected->diambil_pada)
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ __('Diambil pada') }}: {{ $selected->diambil_pada->translatedFormat('d M Y, H:i') }}</p>
+@endif
+@elseif($shipment && $shipment->nomor_resi)
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right break-all">{{ __('Resi') }}: <strong class="text-on-surface">{{ $shipment->nomor_resi }}</strong> @if($shipment->courier) • {{ $shipment->courier?->nama_kurir }}@endif @if($shipment->shippingService) • {{ $shipment->shippingService?->nama_layanan }}@endif</p>
 @elseif($shipment)
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right break-all">{{ __('Ekspedisi') }}: {{ $shipment->courier?->nama_kurir ?? '-' }} @if($shipment->shippingService) • {{ $shipment->shippingService->nama_layanan }}@endif • {{ __('Status pengiriman') }}: {{ $shipment->status }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right break-all">{{ __('Ekspedisi') }}: {{ $shipment->courier?->nama_kurir ?? '-' }} @if($shipment->shippingService) • {{ $shipment->shippingService?->nama_layanan }}@endif • {{ __('Status pengiriman') }}: {{ $shipment->status }}</p>
 @endif
 </div>
 </div>
@@ -664,7 +678,7 @@ if (is_array($tl) && array_key_exists('done', $tl)) {
 <form method="POST" action="{{ route('customer.order-tracking.confirm', $selected->order_id) }}" class="flex-1 sm:flex-none">
 @csrf
 <button type="submit" class="btn-gold w-full sm:w-auto flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest">
-<span class="material-symbols-outlined text-[18px]">local_shipping</span>{{ __('Konfirmasi Pesanan Diterima') }}
+<span class="material-symbols-outlined text-[18px]">{{ $isPickup ? 'storefront' : 'local_shipping' }}</span>{{ $isPickup ? __('Konfirmasi Sudah Diambil') : __('Konfirmasi Pesanan Diterima') }}
 </button>
 </form>
 @endif
