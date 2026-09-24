@@ -122,7 +122,6 @@ class SaldoController extends Controller
         $riwayatTarik = CustomerWithdrawal::where('user_id', $user->user_id)
             ->with('bank')
             ->orderByDesc('customer_withdrawal_id')
-            ->limit(10)
             ->get();
 
         return view('customer.saldo.index', compact('saldo', 'totalTopup', 'totalBelanja', 'transactions', 'activeTopups', 'ranges', 'riwayatTarik'));
