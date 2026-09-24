@@ -203,8 +203,8 @@
 
                     <div class="rounded-xl border border-outline-variant bg-surface-container-low px-md py-sm space-y-xs">
                         <div class="flex items-center justify-between gap-sm font-body-sm text-body-sm text-on-surface-variant">
-                            <span>{{ __('Biaya platform') }}</span>
-                            <strong class="text-on-surface">Rp {{ number_format((float) $fee, 0, ',', '.') }}</strong>
+                            <span>{{ __('Biaya platform') }} ({{ rtrim(rtrim(number_format((float) $feePersen, 2, ',', '.'), '0'), ',') }}%)</span>
+                            <strong class="text-on-surface" id="ringkas-fee">Rp 0</strong>
                         </div>
                         <div class="flex items-center justify-between gap-sm font-body-sm text-body-sm">
                             <span class="text-on-surface-variant">{{ __('Diterima bersih') }}</span>
@@ -231,7 +231,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             var input = document.getElementById('input-nominal');
             var form = document.getElementById('form-tarik-saldo');
-            var fee = parseFloat('{{ (float) $fee }}') || 0;
+            var feePersen = parseFloat('{{ (float) $feePersen }}') || 0;
+            var feeEl = document.getElementById('ringkas-fee');
             var bersihEl = document.getElementById('ringkas-bersih');
             var tipeInput = document.getElementById('tujuan-tipe');
             var segBtns = document.querySelectorAll('[data-tujuan]');
@@ -247,7 +248,9 @@
             var syncBersih = function() {
                 if (!bersihEl) return;
                 var nominal = parseFloat(digitsOnly(input ? input.value : '') || '0');
+                var fee = Math.round(nominal * feePersen / 100);
                 var bersih = Math.max(0, nominal - fee);
+                if (feeEl) feeEl.textContent = 'Rp ' + fee.toLocaleString('id-ID');
                 bersihEl.textContent = 'Rp ' + bersih.toLocaleString('id-ID');
             };
             var syncTujuan = function() {
