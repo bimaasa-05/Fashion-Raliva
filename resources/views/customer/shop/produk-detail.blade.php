@@ -713,11 +713,11 @@
     <!-- Mobile Sticky Bottom Action Bar -->
     <div class="fixed bottom-0 left-0 right-0 lg:left-72 z-50 px-container-margin py-sm pb-safe">
         <div class="flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.18)]">
-            <button type="button" data-cart-add data-variant-id="" class="flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-widest transition-colors hover:bg-secondary/5">
+            <button type="button" data-cart-add data-variant-id="" class="flex-1 min-w-0 flex items-center justify-center gap-2 px-md lg:px-xl py-3 rounded-full border border-secondary text-secondary font-label-caps text-label-caps uppercase tracking-widest transition-colors hover:bg-secondary/5">
                 <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
                 <span class="truncate">{{ __('CART') }}</span>
                 </button>
-            <a href="{{ route('customer.checkout') }}" data-buy-now class="btn-gold flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+            <a href="{{ route('customer.checkout') }}" data-buy-now class="btn-gold flex-1 min-w-0 flex items-center justify-center gap-2 px-md lg:px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
                 <span class="material-symbols-outlined text-[20px]">attach_money</span>
                 <span class="truncate">{{ __('BUY') }}</span>
                 </a>
