@@ -290,7 +290,7 @@
             <span class="material-symbols-outlined text-[22px]">{{ $done ? 'task_alt' : 'support_agent' }}</span>
         </div>
         <div class="flex-grow min-w-0">
-            <p class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant">{{ $c->complaint_id }} • {{ $c->order_id ? $c->order_id : '-' }}</p>
+            <p class="font-label-caps text-label-caps uppercase tracking-wider text-on-surface-variant truncate">{{ $c->complaint_id }} • {{ $c->order_id ? $c->order_id : '-' }}</p>
             <p class="font-title-md text-title-md text-on-surface mt-1 truncate">{{ $c->subjek }}</p>
             <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">{{ $c->deskripsi }}</p>
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-xs text-on-surface-variant">
