@@ -121,6 +121,37 @@
 
     var panel = null;
     var active = null;
+    var mirrorId = null;
+
+    function modalAnchor() {
+        if (!active || !active.display) return null;
+        var n = active.display.closest('.card-premium');
+        return n || null;
+    }
+
+    function startMirror() {
+        stopMirror();
+        if (!modalAnchor()) return;
+        function tick() {
+            var a = modalAnchor();
+            if (!active || !panel || panel.classList.contains('hidden') || !a) {
+                panel.style.transform = '';
+                mirrorId = null;
+                return;
+            }
+            panel.style.transform = getComputedStyle(a).transform;
+            mirrorId = requestAnimationFrame(tick);
+        }
+        mirrorId = requestAnimationFrame(tick);
+    }
+
+    function stopMirror() {
+        if (mirrorId) {
+            cancelAnimationFrame(mirrorId);
+            mirrorId = null;
+        }
+        if (panel) panel.style.transform = '';
+    }
 
     var valueDesc = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
 
@@ -324,9 +355,11 @@
         var r = a.display.getBoundingClientRect();
         panel.classList.remove('hidden');
         positionPanel(r);
+        startMirror();
     }
 
     function closePanel() {
+        stopMirror();
         if (panel) {
             panel.classList.add('hidden');
             panel.querySelector('.rdp-time').classList.add('hidden');
