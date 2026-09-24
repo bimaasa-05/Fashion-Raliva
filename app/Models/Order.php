@@ -85,6 +85,24 @@ class Order extends Model
         return $this->tipe_pesanan === self::TIPE_PESANAN_OFFLINE;
     }
 
+    /**
+     * Prioritas urutan daftar pesanan: menunggu produksi selalu paling atas,
+     * status lain mengikuti urutan pembaruan terbaru.
+     */
+    public function scopePrioritasStatus($query)
+    {
+        return $query->orderByRaw('CASE WHEN status = ? THEN 0 ELSE 1 END', [self::STATUS_MENUNGGU_PRODUKSI]);
+    }
+
+    /**
+     * True bila pembayaran checkout sudah terverifikasi (termasuk tunai offline
+     * yang langsung tercatat terverifikasi saat dibuat).
+     */
+    public function isPaymentVerified(): bool
+    {
+        return $this->checkout?->payment?->status === Payment::STATUS_TERVERIFIKASI;
+    }
+
     public function isCustom(): bool
     {
         return $this->tipe_order === self::TIPE_CUSTOM;
