@@ -207,7 +207,7 @@
                 @elseif($isRejected)
                     {{ __('Pembayaran belum berhasil') }}
                 @else
-                    {{ __('Pesanan Berhasil!') }}
+                    {{ __('Sedang diverifikasi…') }}
                 @endif
             </h2>
             <p id="pay-desc" class="font-body-sm text-body-sm text-on-surface-variant mt-sm max-w-xl mx-auto">
@@ -216,7 +216,7 @@
                 @elseif($isRejected)
                     {{ __('Pembayaranmu ditolak atau melewati batas waktu. Silakan lakukan pembayaran ulang sebelum pesanan dibatalkan.') }}
                 @else
-                    {{ __('Terima kasih. Pesananmu telah kami terima dan bukti pembayaran sedang diverifikasi admin.') }}
+                    {{ __('Tunggu sebentar, pesanan Anda sedang diverifikasi.') }}
                 @endif
             </p>
             @if($isRejected)
