@@ -59,6 +59,26 @@ class WarnaPalet
      * @param mixed $hexes
      * @return array{names: string[], hexes: string[]}
      */
+    public static function normalizeOptionalSubmissionOrFail(mixed $names, mixed $hexes): array
+    {
+        if (! is_array($names)) {
+            return ['names' => [], 'hexes' => []];
+        }
+
+        $values = array_values($names);
+        $filled = array_values(array_filter(array_map(fn ($value) => trim((string) $value), $values), fn ($value) => $value !== ''));
+        if ($filled === []) {
+            return ['names' => [], 'hexes' => []];
+        }
+
+        return self::normalizeSubmissionOrFail($values, $hexes);
+    }
+
+    /**
+     * @param mixed $names
+     * @param mixed $hexes
+     * @return array{names: string[], hexes: string[]}
+     */
     public static function normalizeSubmissionOrFail(mixed $names, mixed $hexes): array
     {
         if (! is_array($names) || $names === []) {
