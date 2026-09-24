@@ -163,12 +163,12 @@
                     <div class="border-t lg:border-t-0 lg:border-l border-[var(--border-soft)] pt-lg lg:pt-0 lg:pl-lg">
                         <div class="grid grid-cols-2 gap-gutter mb-md">
                             <button type="button" data-chart-mode="in"
-                                class="flex items-center justify-center gap-xs py-sm border-2 rounded-DEFAULT bg-surface-container-low cursor-pointer hover:border-emerald-500 transition-colors font-body-sm text-body-sm">
+                                class="flex items-center justify-center gap-xs py-sm border-2 rounded-xl bg-surface-container-low cursor-pointer hover:border-emerald-500 transition-colors font-body-sm text-body-sm">
                                 <span class="material-symbols-outlined text-[20px]">trending_up</span>
                                 <span>{{ __('Pemasukan') }}</span>
                             </button>
                             <button type="button" data-chart-mode="out"
-                                class="flex items-center justify-center gap-xs py-sm border-2 rounded-DEFAULT bg-surface-container-low cursor-pointer hover:border-secondary transition-colors font-body-sm text-body-sm">
+                                class="flex items-center justify-center gap-xs py-sm border-2 rounded-xl bg-surface-container-low cursor-pointer hover:border-secondary transition-colors font-body-sm text-body-sm">
                                 <span class="material-symbols-outlined text-[20px]">trending_down</span>
                                 <span>{{ __('Pengeluaran') }}</span>
                             </button>
@@ -177,7 +177,7 @@
                             <h3 class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)]">{{ __('Aktivitas Saldo') }}</h3>
                             <div class="relative" id="range-menu-container">
                                 <button type="button" onclick="toggleRangeMenu()"
-                                    class="inline-flex items-center justify-center gap-1 min-h-8 rounded-DEFAULT border border-outline-variant px-3 py-1.5 font-label-sm text-label-sm text-on-surface hover:text-secondary hover:border-secondary transition-colors">
+                                    class="inline-flex items-center justify-center gap-1 min-h-8 rounded-xl border border-outline-variant px-3 py-1.5 font-label-sm text-label-sm text-on-surface hover:text-secondary hover:border-secondary transition-colors">
                                     <span id="range-label">{{ __('6 Bulan') }}</span>
                                     <span class="material-symbols-outlined text-[16px] transition-transform duration-200" id="range-chevron">expand_more</span>
                                 </button>
