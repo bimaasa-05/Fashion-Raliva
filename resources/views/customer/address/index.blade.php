@@ -365,7 +365,7 @@
 @else
 <div class="flex flex-col gap-sm">
 @foreach($addresses as $address)
-<article class="bg-surface border border-outline-variant rounded-DEFAULT p-sm relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline" data-address-id="{{ $address->address_id }}">
+<article class="bg-surface border border-outline-variant rounded-xl p-sm relative group overflow-hidden transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-outline" data-address-id="{{ $address->address_id }}">
 <div class="flex justify-between items-start mb-base">
 <div class="flex items-center gap-xs">
 @if($address->label === 'Home')
