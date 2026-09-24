@@ -80,6 +80,16 @@ class Product extends Model
         return $this->hasMany(ProductMaterialRequirement::class, 'product_id', 'product_id');
     }
 
+    public function operationalCosts(): HasMany
+    {
+        return $this->hasMany(ProductOperationalCost::class, 'product_id', 'product_id');
+    }
+
+    public function updateRequests(): HasMany
+    {
+        return $this->hasMany(ProductUpdateRequest::class, 'product_id', 'product_id');
+    }
+
     public function productionSummary(): array
     {
         $materials = $this->materialRequirements->map(fn ($requirement) => [
