@@ -69,6 +69,7 @@ class OrderTrackingController extends Controller
                 'orders' => collect(),
                 'selected' => null,
                 'selectedStep' => 0,
+                'isPickup' => false,
             ]);
         }
 
@@ -89,9 +90,12 @@ class OrderTrackingController extends Controller
         // Timeline ceklis berbasis aksi role:
         // Disiapkan ✓ saat Produksi klik Selesai (menunggu_qc),
         // Dikemas ✓ saat Produksi klik Selesai QC+PACKING (siap_kirim),
-        // Dikirim ✓ saat Admin klik Tandai Dikirim (dikirim),
-        // Diterima ✓ saat Customer klik Konfirmasi (selesai).
-        $hasResi = $selected->shipments->contains(fn ($s) => ! empty($s->nomor_resi));
+        // Dikirim ✓ saat Admin klik Tandai Dikirim (dikirim);
+        // Siap Diambil ✓ saat pesanan offline mencapai siap_kirim;
+        // Diterima / Selesai Diambil ✓ saat Customer klik Konfirmasi atau Admin tandai Selesai (selesai).
+        // Pesanan offline (ambil di toko) memakai cabang pickup: tanpa resi/kurir.
+        $isPickup = $selected->isOffline();
+        $hasResi = ! $isPickup && $selected->shipments->contains(fn ($s) => ! empty($s->nomor_resi));
         $timelineStatus = $selected->status;
         $timeline = [
             [
@@ -105,12 +109,14 @@ class OrderTrackingController extends Controller
                 'done' => in_array($timelineStatus, [Order::STATUS_SIAP_KIRIM, Order::STATUS_DIKIRIM, Order::STATUS_SELESAI], true),
             ],
             [
-                'label' => __('Dikirim'),
+                'label' => $isPickup ? __('Siap Diambil') : __('Dikirim'),
                 'role' => 'Admin',
-                'done' => in_array($timelineStatus, [Order::STATUS_DIKIRIM, Order::STATUS_SELESAI], true),
+                'done' => $isPickup
+                    ? in_array($timelineStatus, [Order::STATUS_SIAP_KIRIM, Order::STATUS_DIKIRIM, Order::STATUS_SELESAI], true)
+                    : in_array($timelineStatus, [Order::STATUS_DIKIRIM, Order::STATUS_SELESAI], true),
             ],
             [
-                'label' => __('Diterima'),
+                'label' => $isPickup ? __('Selesai Diambil') : __('Diterima'),
                 'role' => 'Customer',
                 'done' => $timelineStatus === Order::STATUS_SELESAI,
             ],
@@ -126,6 +132,7 @@ class OrderTrackingController extends Controller
             'alasanPembatalan' => $alasanPembatalan,
             'timeline' => $timeline,
             'hasResi' => $hasResi,
+            'isPickup' => $isPickup,
             'existingComplaint' => $existingComplaint,
         ]);
     }
@@ -179,69 +186,4 @@ class OrderTrackingController extends Controller
             ->with('toast', ['message' => 'Pesanan dikonfirmasi diterima. Terima kasih!', 'icon' => 'task_alt']);
     }
 
-    /**
-     * Pengajuan refund oleh customer beserta foto bukti barang.
-     */
-    public function storeRefund(Request $request)
-    {
-        $order = Auth::user()->orders()->with('checkout.payment')->findOrFail((int) $request->input('order_id'));
-
-        if (! in_array($order->status, [Order::STATUS_DIKIRIM, Order::STATUS_SELESAI], true)) {
-            return back()->with('toast', ['message' => 'Refund hanya dapat diajukan untuk pesanan yang sudah dikirim atau selesai.', 'icon' => 'info']);
-        }
-
-        if (\App\Models\Refund::where('order_id', $order->order_id)->exists()) {
-            return back()->with('toast', ['message' => 'Pengajuan refund untuk pesanan ini hanya dapat dilakukan 1 kali.', 'icon' => 'info']);
-        }
-
-        $data = $request->validate([
-            'tipe_refund' => ['required', 'in:full,partial'],
-            'jumlah' => ['required', 'numeric', 'min:1', 'max:' . (float) $order->grand_total],
-            'alasan' => ['required', 'string', 'min:20', 'max:2000'],
-            'file_bukti_request' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:4096'],
-            'deskripsi_bukti_request' => ['nullable', 'string', 'max:1000'],
-            'complaint_id' => ['nullable', 'integer', 'exists:complaints,complaint_id'],
-        ]);
-
-        if (! empty($data['complaint_id'])) {
-            $complaint = \App\Models\Complaint::where('complaint_id', $data['complaint_id'])
-                ->where('user_id', Auth::id())
-                ->where('order_id', $order->order_id)
-                ->first();
-
-            if (! $complaint) {
-                return back()->with('toast', ['message' => 'Komplain tidak valid untuk pesanan ini.', 'icon' => 'info']);
-            }
-        }
-
-        $path = $request->file('file_bukti_request')->store('bukti-refund-request/' . $order->order_id, 'public');
-
-        $refund = \App\Models\Refund::create([
-            'order_id' => $order->order_id,
-            'complaint_id' => $data['complaint_id'] ?? null,
-            'payment_id' => $order->checkout?->payment?->payment_id,
-            'requested_by' => Auth::id(),
-            'tipe_refund' => $data['tipe_refund'],
-            'alasan' => $data['alasan'],
-            'jumlah' => $data['jumlah'],
-            'status' => \App\Models\Refund::STATUS_REQUESTED,
-            'diajukan_pada' => now(),
-            'file_bukti_request' => $path,
-            'deskripsi_bukti_request' => $data['deskripsi_bukti_request'] ?? null,
-            'bukti_request_diupload_pada' => now(),
-        ]);
-
-        if ($order->store?->owner_id) {
-            Notification::create([
-                'user_id' => $order->store->owner_id,
-                'tipe' => Notification::TIPE_ORDER,
-                'judul' => 'Pengajuan Refund Baru',
-                'pesan' => sprintf('Customer mengajukan refund %s untuk pesanan %s.', $refund->kode, $order->nomor_order),
-                'url' => route('owner.pengembalian-dana'),
-            ]);
-        }
-
-        return redirect()->route('customer.order-tracking', ['order' => $order->order_id])
-            ->with('toast', ['message' => 'Pengajuan refund terkirim, menunggu diproses toko.', 'icon' => 'task_alt']);
-    }
 }
