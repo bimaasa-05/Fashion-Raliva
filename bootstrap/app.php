@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\SetLocale::class,
             \Illuminate\Session\Middleware\AuthenticateSession::class,
             \App\Http\Middleware\ReactivateExpiredStores::class,
+            \App\Http\Middleware\ProcessExpiredAdSlots::class,
         ]);
         $middleware->alias([
             'auth' => \Illuminate\Auth\Middleware\Authenticate::class,

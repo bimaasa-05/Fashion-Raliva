@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Product;
 use App\Models\Store;
+use App\Support\ActivityLogger;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -69,6 +70,74 @@ class AdSlot extends Model
     public function handler(): BelongsTo
     {
         return $this->belongsTo(User::class, 'handled_by', 'user_id');
+    }
+
+    /**
+     * Aktifkan iklan terjadwal saat tanggal mulai tiba dan nonaktifkan iklan yang melewati tanggal selesai.
+     */
+    public static function autoProcess(): int
+    {
+        $today = now()->toDateString();
+        $changed = 0;
+
+        $mulaiTayang = self::query()
+            ->where('status', self::STATUS_TERJADWAL)
+            ->whereNotNull('tanggal_mulai')
+            ->whereNotNull('tanggal_selesai')
+            ->whereDate('tanggal_mulai', '<=', $today)
+            ->whereDate('tanggal_selesai', '>=', $today)
+            ->get();
+
+        foreach ($mulaiTayang as $slot) {
+            $slot->loadMissing(['store', 'product']);
+
+            $slot->update(['status' => self::STATUS_AKTIF]);
+            $changed++;
+
+            ActivityLogger::log(
+                'ad_slot.auto_activate',
+                self::class,
+                $slot->ad_slot_id,
+                ['status' => self::STATUS_TERJADWAL],
+                ['status' => self::STATUS_AKTIF],
+                'Iklan peringkat otomatis aktif (tanggal mulai tiba).'
+            );
+
+            $ownerId = $slot->store?->owner_id;
+            if ($ownerId) {
+                Notification::create([
+                    'user_id' => $ownerId,
+                    'aktor_id' => null,
+                    'tipe' => Notification::TIPE_PROMO,
+                    'judul' => 'Iklan Mulai Tayang',
+                    'pesan' => sprintf('Iklan "%s" periode %s s/d %s mulai tayang.', $slot->product->nama_produk ?? '-', $slot->tanggal_mulai?->translatedFormat('d M Y') ?? '-', $slot->tanggal_selesai?->translatedFormat('d M Y') ?? '-'),
+                    'url' => route('owner.peringkat-iklan'),
+                ]);
+            }
+        }
+
+        $melewatiSelesai = self::query()
+            ->whereIn('status', [self::STATUS_AKTIF, self::STATUS_TERJADWAL])
+            ->whereNotNull('tanggal_selesai')
+            ->whereDate('tanggal_selesai', '<', $today)
+            ->get();
+
+        foreach ($melewatiSelesai as $slot) {
+            $lama = $slot->status;
+            $slot->update(['status' => self::STATUS_NONAKTIF]);
+            $changed++;
+
+            ActivityLogger::log(
+                'ad_slot.auto_expire',
+                self::class,
+                $slot->ad_slot_id,
+                ['status' => $lama],
+                ['status' => self::STATUS_NONAKTIF],
+                'Iklan peringkat otomatis nonaktif (periode berakhir).'
+            );
+        }
+
+        return $changed;
     }
 
     /**
