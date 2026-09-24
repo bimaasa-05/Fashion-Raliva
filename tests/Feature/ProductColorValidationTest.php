@@ -77,12 +77,24 @@ class ProductColorValidationTest extends TestCase
             'varian_stok' => [
                 ['ukuran' => 'M', 'warna' => '', 'stok' => 1, 'stok_minimum' => 0],
             ],
+            'target_produksi' => 10,
+            'biaya_tambahan' => '0',
+            'resep' => [
+                ['material_id' => null, 'nama_bahan' => 'Kain Katun', 'satuan' => 'meter', 'jumlah_per_unit' => 2, 'biaya_per_unit' => '5000'],
+            ],
         ]);
 
         $response->assertStatus(302);
         $response->assertSessionHasNoErrors();
         $product = Product::where('nama_produk', $name)->firstOrFail();
         $this->assertTrue(ProductVariant::where('product_id', $product->product_id)->whereNull('warna')->exists());
+        $this->assertSame(10, $product->target_produksi);
+        $this->assertSame(10000.0, $product->modal_produksi);
+        $this->assertDatabaseHas('product_material_requirements', [
+            'product_id' => $product->product_id,
+            'nama_bahan' => 'Kain Katun',
+            'satuan' => 'meter',
+        ]);
     }
 
     private function postProduct(array $colors)
@@ -104,6 +116,11 @@ class ProductColorValidationTest extends TestCase
             'ukuran_terpilih' => 'M',
             'varian_stok' => [
                 ['ukuran' => 'M', 'warna' => 'Tosca Elektrik', 'stok' => 1, 'stok_minimum' => 0],
+            ],
+            'target_produksi' => 10,
+            'biaya_tambahan' => '0',
+            'resep' => [
+                ['material_id' => null, 'nama_bahan' => 'Kain Katun', 'satuan' => 'meter', 'jumlah_per_unit' => 2, 'biaya_per_unit' => '5000'],
             ],
         ], $colors));
     }
