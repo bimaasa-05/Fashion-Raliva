@@ -27,6 +27,7 @@
             'label' => 'Katalog',
             'items' => [
                 ['route' => 'admin.produk', 'icon' => 'checkroom', 'text' => 'Data Produk'],
+                ['route' => 'admin.slot', 'icon' => 'storage', 'text' => 'Beli Slot'],
                 ['route' => 'admin.stok', 'icon' => 'inventory_2', 'text' => 'Stok'],
                 ['route' => 'admin.promo', 'icon' => 'local_offer', 'text' => 'Promo'],
             ],
