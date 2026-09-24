@@ -90,7 +90,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-gutter pt-4 border-t border-muted-border text-center">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter pt-4 border-t border-muted-border text-center">
                         <div>
                             <p class="font-title-md text-base text-on-surface">{{ number_format($summary['unit'], 0, ',', '.') }}</p>
                             <p class="text-[11px] text-on-surface-variant mt-0.5">Unit Stok</p>
