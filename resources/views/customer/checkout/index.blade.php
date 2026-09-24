@@ -657,7 +657,7 @@
                         $pv = $i->productVariant;
                         $pr = $pv?->product;
                         $img = $pr?->images->first()?->file_gambar ?? '';
-                        $imgUrl = $img ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : asset($img)) : 'https://picsum.photos/seed/checkout/600/800';
+                        $imgUrl = $img ? photo_url($img) : 'https://picsum.photos/seed/checkout/600/800';
                         $isWrapped = $idx >= 2;
                         $isThird = $idx === 2;
                     @endphp
