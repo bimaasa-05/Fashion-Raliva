@@ -12,3 +12,4 @@ Schedule::command('payment:expire')->everyMinute()->withoutOverlapping();
 Schedule::command('store:auto-reactivate')->everyMinute()->withoutOverlapping();
 Schedule::command('order:auto-complete')->everyMinute()->withoutOverlapping();
 Schedule::command('ad:auto-process')->everyMinute()->withoutOverlapping();
+Schedule::command('qc:remind')->dailyAt('09:00')->withoutOverlapping();
