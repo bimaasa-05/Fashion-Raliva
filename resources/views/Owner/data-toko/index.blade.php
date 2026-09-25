@@ -109,6 +109,11 @@
                         <label for="alamat-toko" class="block raliva-label mb-2">Alamat Lengkap</label>
                         <textarea id="alamat-toko" name="alamat" rows="3" required class="raliva-textarea">{{ old('alamat', $store?->alamat ?? '') }}</textarea>
                     </div>
+                    <div>
+                        <label class="block raliva-label mb-2">Kota</label>
+                        @include('partials.kota-combobox', ['prefix' => 'toko', 'cities' => $cities ?? [], 'selectedName' => old('kota', $store?->kota ?? ''), 'fieldName' => 'kota', 'placeholder' => 'Cari kota toko...'])
+                        @error('kota') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
                 </div>
             </section>
         </div>
