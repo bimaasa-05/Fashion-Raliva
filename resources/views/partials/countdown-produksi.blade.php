@@ -4,16 +4,16 @@
 <script>
     function countdownProduksiFmt(seconds) {
         const abs = Math.abs(seconds);
-        const d = Math.floor(abs / 86400);
-        const h = Math.floor((abs % 86400) / 3600);
-        const m = Math.floor((abs % 3600) / 60);
-        const s = abs % 60;
+        const hari = Math.floor(abs / 86400);
+        const jam = Math.floor((abs % 86400) / 3600);
+        const mnt = Math.floor((abs % 3600) / 60);
+        const dtk = abs % 60;
         const parts = [];
-        if (d > 0) parts.push(d + 'j');
-        parts.push(h + 'j');
-        parts.push(m + 'm');
-        parts.push(s + 'd');
-        return parts.join(' ');
+        if (hari > 0) parts.push(hari + 'h');
+        if (jam > 0) parts.push(jam + 'j');
+        if (mnt > 0) parts.push(mnt + 'm');
+        if (dtk > 0) parts.push(dtk + 'd');
+        return parts.length ? parts.join(' ') : '0d';
     }
 
     function updateCountdownsProduksi() {

@@ -1,3 +1,4 @@
+@include('partials.produksi-durasi')
 @php
     $cMulai = $produksiOrder->tgl_mulai_produksi;
     $cSelesai = $produksiOrder->tgl_berakhir_produksi;
@@ -21,7 +22,7 @@
             @if ($cSelesaiTepat)
                 <p class="[font-variant-numeric:tabular-nums] mt-1.5 text-xs text-on-surface-variant">Selesai tepat waktu</p>
             @else
-                <p class="[font-variant-numeric:tabular-nums] mt-1.5 text-xs text-error font-bold">Terlambat</p>
+                <p class="[font-variant-numeric:tabular-nums] mt-1.5 text-xs text-error font-bold">Terlambat {{ produksiFmtDetik((int) $cSelesaiAktual->timestamp - (int) $cSelesai->timestamp) }}</p>
             @endif
         @else
             <p class="[font-variant-numeric:tabular-nums] mt-1.5 text-xs {{ $cBelum ? 'text-secondary' : ($cLambat ? 'text-error font-bold' : 'text-on-surface-variant') }}" data-countdown-start="{{ $cStartTs }}" data-countdown-end="{{ $cEndTs }}" data-countdown-progress="{{ $cPct }}">{{ $cBelum ? 'Mulai dalam...' : ($cLambat ? 'Terlambat...' : 'Memuat...') }}</p>

@@ -490,7 +490,7 @@ class ManajemenTokoController extends Controller
 
         $lama = $toko->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon']);
 
-        DB::transaction(function () use ($toko, $permintaan) {
+        DB::transaction(function () use ($toko, $permintaan, $lama) {
             $toko->update([
                 'nama_toko' => $permintaan->nama_toko,
                 'kategori' => $permintaan->kategori,

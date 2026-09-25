@@ -16,6 +16,7 @@
 
 @section('content')
 @include('partials.flash-toast')
+@include('partials.produksi-durasi')
 
 <div class="space-y-section-gap">
     {{-- Stats --}}
@@ -157,7 +158,7 @@
                                         @if ($selesaiTepat)
                                             <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
                                         @elseif ($o->produksi_selesai_pada)
-                                            <p class="text-xs mt-1 countdown-badge text-error font-bold">Terlambat</p>
+                                            <p class="text-xs mt-1 countdown-badge text-error font-bold">Terlambat {{ produksiFmtDetik((int) $o->produksi_selesai_pada->timestamp - (int) $o->tgl_berakhir_produksi->timestamp) }}</p>
                                         @else
                                             <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai</p>
                                         @endif
@@ -286,7 +287,7 @@
                                 @if ($selesaiTepat)
                                     <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
                                 @elseif ($o->produksi_selesai_pada)
-                                    <p class="text-xs mt-1 countdown-badge text-error font-bold">Terlambat</p>
+                                    <p class="text-xs mt-1 countdown-badge text-error font-bold">Terlambat {{ produksiFmtDetik((int) $o->produksi_selesai_pada->timestamp - (int) $o->tgl_berakhir_produksi->timestamp) }}</p>
                                 @else
                                     <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai</p>
                                 @endif
