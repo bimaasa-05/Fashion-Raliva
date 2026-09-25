@@ -614,11 +614,11 @@
                             <input name="provinsi" value="{{ $prefill['provinsi'] }}" required maxlength="100" class="co-input @error('provinsi') is-error @enderror" placeholder="{{ __('Provinsi') }}"/>
                             @error('provinsi')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
                         </label>
-                        <label class="flex flex-col gap-1.5 lg:col-span-2">
+                        <div class="flex flex-col gap-1.5 lg:col-span-2">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Kota') }} <span class="text-error">*</span></span>
                             @include('partials.kota-combobox', ['prefix' => 'co', 'cities' => $cities ?? [], 'selectedName' => $prefill['kota'], 'fieldName' => 'kota', 'placeholder' => __('Cari kota...')])
                             @error('kota')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
-                        </label>
+                        </div>
                         <label class="flex flex-col gap-1.5 md:col-span-2 lg:col-span-2">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Kode Pos') }} <span class="text-error">*</span></span>
                             <input name="kode_pos" value="{{ $prefill['kode_pos'] }}" required maxlength="20" class="co-input @error('kode_pos') is-error @enderror" placeholder="12345"/>
