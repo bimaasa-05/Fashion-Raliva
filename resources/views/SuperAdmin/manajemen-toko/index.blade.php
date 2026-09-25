@@ -883,6 +883,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p class="text-[10px] uppercase text-on-surface-variant">Deskripsi (baru)</p>
                         <p class="text-on-surface mt-0.5">{{ $pr->deskripsi ?? '-' }}</p>
                     </div>
+                    @if(!empty($pr->logo))
+                    <div class="grid grid-cols-2 gap-3 border border-gold-accent/40 bg-gold-accent/5 rounded-lg p-3">
+                        <div>
+                            <p class="text-[10px] uppercase text-on-surface-variant">Logo (lama)</p>
+                            @if(!empty($st->logo))
+                                <img src="{{ photo_url($st->logo) }}" alt="Logo lama" class="mt-1 w-20 h-20 rounded-lg object-cover border border-muted-border" />
+                            @else
+                                <p class="text-on-surface mt-0.5">-</p>
+                            @endif
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase text-on-surface-variant">Logo (baru)</p>
+                            <img src="{{ photo_url($pr->logo) }}" alt="Logo baru" class="mt-1 w-20 h-20 rounded-lg object-cover border border-gold-accent/40" />
+                        </div>
+                    </div>
+                    @endif
                 </div>
                 <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex gap-3">
                     <form method="POST" action="{{ route('superadmin.manajemen-toko.perubahan.tolak', [$st->store_id, $pr->store_update_request_id]) }}" class="flex-1 flex gap-2">
