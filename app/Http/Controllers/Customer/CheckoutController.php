@@ -231,6 +231,9 @@ class CheckoutController extends Controller
         $submitToken = (string) Str::uuid();
         session()->put('checkout_submit_token', $submitToken);
 
+        $cities = \App\Models\City::orderBy('city_id')->get()->groupBy('pulau')
+            ->map(fn ($g) => $g->pluck('nama_kota')->values()->all())->all();
+
         return view('customer.checkout.index', compact(
             'address',
             'items',
@@ -244,7 +247,8 @@ class CheckoutController extends Controller
             'paymentMethods',
             'buyId',
             'backProductId',
-            'submitToken'
+            'submitToken',
+            'cities'
         ));
     }
 
@@ -265,7 +269,7 @@ class CheckoutController extends Controller
             'nomor_telepon' => 'required|string|max:30',
             'email_pelanggan' => 'required|email|max:150',
             'alamat' => 'required|string|max:500',
-            'kota' => 'required|string|max:100',
+            'kota' => 'required|string|max:100|exists:cities,nama_kota',
             'provinsi' => 'required|string|max:100',
             'kode_pos' => 'required|string|max:20',
             'catatan' => 'nullable|string|max:1000',
@@ -277,6 +281,7 @@ class CheckoutController extends Controller
             'email_pelanggan.required' => 'Email wajib diisi.',
             'alamat.required' => 'Alamat wajib diisi.',
             'kota.required' => 'Kota wajib diisi.',
+            'kota.exists' => 'Pilih kota dari daftar yang tersedia.',
             'provinsi.required' => 'Provinsi wajib diisi.',
             'kode_pos.required' => 'Kode pos wajib diisi.',
             'shipping.required' => 'Pilih metode pengiriman terlebih dahulu.',
