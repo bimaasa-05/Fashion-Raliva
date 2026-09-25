@@ -25,8 +25,8 @@ class CitySeeder extends Seeder
             ],
             'Jawa' => [
                 'Jakarta Pusat', 'Jakarta Utara', 'Jakarta Barat', 'Jakarta Selatan',
-                'Jakarta Timur', 'Bogor', 'Sukabumi', 'Bandung', 'Cirebon',
-                'Bekasi', 'Depok', 'Cimahi', 'Tasikmalaya', 'Banjar', 'Magelang',
+                'Jakarta Timur', 'Bogor', 'Sukabumi', 'Bandung', 'Cirebon', 'Indramayu',
+                'Bekasi', 'Depok', 'Cimahi', 'Cianjur', 'Tasikmalaya', 'Banjar', 'Magelang',
                 'Surakarta (Solo)', 'Salatiga', 'Semarang', 'Pekalongan', 'Tegal',
                 'Yogyakarta', 'Kediri', 'Blitar', 'Malang', 'Probolinggo',
                 'Pasuruan', 'Mojokerto', 'Madiun', 'Surabaya', 'Batu',
