@@ -30,11 +30,16 @@
         <div class="flex flex-col sm:flex-row items-center gap-6">
             <div class="relative shrink-0">
                 <div class="w-24 h-24 rounded-xl overflow-hidden border border-outline-variant bg-surface-container-high flex items-center justify-center">
-                    <img src="{{ asset('images/logo.svg') }}" alt="Logo Toko" class="w-full h-full object-cover" />
+                    @php $logoUrl = $store?->logo ? photo_url($store->logo) : asset('images/logo.svg'); @endphp
+                    <img src="{{ $logoUrl }}" alt="Logo Toko" class="w-full h-full object-cover" id="store-logo-preview" />
                 </div>
-                <button type="button" onclick="showRalivaToast('Silakan pilih logo baru.', 'image')" class="absolute -bottom-2 -right-2 w-9 h-9 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center btn-premium shadow-md" aria-label="Ubah Logo">
-                    <span class="material-symbols-outlined text-[18px]">photo_camera</span>
-                </button>
+                <input type="file" name="logo" id="store-logo-input" accept=".jpg,.jpeg,.png,.webp" class="hidden" form="form-data-toko" @if(!empty($updatePending)) disabled @endif />
+                    <label for="store-logo-input" @if(!empty($updatePending)) aria-disabled="true" title="Terkunci — menunggu verifikasi" @else title="Ubah Logo (JPG/PNG/WebP, maks 2 MB). Berlaku setelah diverifikasi Super Admin." @endif class="absolute -bottom-2 -right-2 w-9 h-9 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center btn-premium shadow-md @if(empty($updatePending)) cursor-pointer @else opacity-60 cursor-not-allowed @endif" aria-label="Ubah Logo">
+                        <span class="material-symbols-outlined text-[18px]">photo_camera</span>
+                    </label>
+                    @if(!empty($updatePending) && !empty($updatePending->logo))
+                        <span class="absolute -top-2 -left-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold-accent/15 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30 whitespace-nowrap" title="Logo baru menunggu verifikasi Super Admin">Logo pending</span>
+                    @endif
             </div>
             <div class="flex-1 text-center sm:text-left">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3 justify-center sm:justify-start">
@@ -55,7 +60,7 @@
         </div>
     </section>
 
-    <form method="POST" action="{{ route('owner.data-toko.update') }}" id="form-data-toko" class="space-y-section-gap" @if(!empty($updatePending)) data-locked @endif>
+    <form method="POST" action="{{ route('owner.data-toko.update') }}" id="form-data-toko" enctype="multipart/form-data" class="space-y-section-gap" @if(!empty($updatePending)) data-locked @endif>
         @csrf
         @method('PUT')
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-section-gap">
@@ -175,6 +180,23 @@ document.addEventListener('DOMContentLoaded', function(){
     el.setAttribute('disabled','');
     el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
   });
+
+  // Logo toko: preview langsung; ikut terkirim bersama form data (perlu verifikasi SA).
+  var logoInput = document.getElementById('store-logo-input');
+  if (logoInput) {
+    logoInput.addEventListener('change', function () {
+      var file = this.files && this.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) {
+        showRalivaToast('Ukuran logo maksimal 2 MB.', 'error');
+        this.value = '';
+        return;
+      }
+      var preview = document.getElementById('store-logo-preview');
+      if (preview) preview.src = URL.createObjectURL(file);
+      showRalivaToast('Logo dipilih. Simpan perubahan agar diajukan verifikasi.', 'image');
+    });
+  }
 });
 </script>
 @endpush
