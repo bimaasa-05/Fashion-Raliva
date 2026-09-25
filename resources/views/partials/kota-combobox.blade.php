@@ -1,4 +1,9 @@
 {{-- Combobox kota searchable per pulau (tanpa tambah baru). Params: $prefix, $cities (pulau => [nama]), $selectedName='', $fieldName='kota', $placeholder='Cari kota...' --}}
+<style>
+    /* Fokus maroon (timpa sisa biru forms-plugin) */
+    [data-kota-box] input[type="text"]:focus { border-color: #8B1E3F !important; --tw-ring-color: rgba(139,30,63,.22) !important; }
+    [data-kota-box] button:focus { --tw-ring-color: rgba(139,30,63,.22) !important; }
+</style>
 <div class="relative" id="{{ $prefix }}-kota-box" data-kota-box="{{ $prefix }}">
     <button type="button" id="{{ $prefix }}-kota-btn" aria-haspopup="listbox" aria-expanded="false" class="w-full bg-surface border border-outline-variant rounded-lg pl-3.5 pr-10 py-2.5 font-body-md text-sm text-on-surface text-left transition-colors focus:outline-none focus:border-secondary focus:ring-4 focus:ring-secondary/10">
         <span id="{{ $prefix }}-kota-label" class="truncate {{ $selectedName ? 'text-on-surface' : 'text-on-surface-variant' }}">{{ $selectedName ?: ($placeholder ?? 'Cari kota...') }}</span>
@@ -78,7 +83,8 @@
     });
     if (search) search.addEventListener('input', function () { filter(search.value); });
     list.querySelectorAll('[data-kota]').forEach(function (li) {
-        li.addEventListener('click', function () {
+        li.addEventListener('click', function (e) {
+            e.stopPropagation();
             hidden.value = li.getAttribute('data-kota-nama');
             label.textContent = li.getAttribute('data-kota-nama');
             label.classList.remove('text-on-surface-variant');
