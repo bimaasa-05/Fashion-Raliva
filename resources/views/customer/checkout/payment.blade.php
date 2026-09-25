@@ -1118,7 +1118,8 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                             <div
                                                                 class="flex flex-col sm:flex-row sm:items-center gap-md">
                                                                 @if ($qr->file_gambar)
-                                                                    <img src="{{ asset('storage/' . ltrim($qr->file_gambar, '/')) }}"
+                                                                    <img src="{{ photo_url($qr->file_gambar) }}"
+                                                                        onerror="this.style.display='none'"
                                                                         alt="{{ $qr->nama }}"
                                                                         class="w-44 h-44 object-contain rounded-lg border border-outline-variant bg-white mx-auto sm:mx-0" />
                                                                 @endif
