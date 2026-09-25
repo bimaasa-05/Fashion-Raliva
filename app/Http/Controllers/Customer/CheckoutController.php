@@ -44,10 +44,11 @@ class CheckoutController extends Controller
 
     /**
      * Susun opsi pengiriman dari layanan aktif toko (SA kelola kurir, Admin kelola layanan+tarif).
-     * Efektif: ongkir_override/estimasi_override per toko, fallback tarif/estimasi bawaan layanan.
+     * Bertingkat: kota customer == kota toko → tarif sekota (default gratis), selain itu tarif beda kota.
+     * Efektif per toko: ongkir_override (beda kota) / tarif bawaan; sekota selalu tarif_sekota bawaan.
      * Gabung per nama layanan (tarif = maks, estimasi = rentang), urut termurah. Fallback konstanta bila kosong.
      */
-    protected static function shippingOptionsFor(array $storeIds): array
+    protected static function shippingOptionsFor(array $storeIds, ?string $kotaCustomer = null): array
     {
         $storeIds = array_values(array_unique(array_filter(array_map('intval', $storeIds))));
         $services = collect();
@@ -61,6 +62,8 @@ class CheckoutController extends Controller
             return self::SHIPPING_OPTIONS;
         }
 
+        $kotaCustomer = mb_strtolower(trim((string) $kotaCustomer));
+        $kotaToko = Store::whereIn('store_id', $storeIds)->pluck('kota', 'store_id');
         $settings = StoreCourierSetting::whereIn('store_id', $storeIds)->get();
         $grouped = [];
         foreach ($services as $svc) {
@@ -71,7 +74,11 @@ class CheckoutController extends Controller
                 continue;
             }
             $row = $rows->firstWhere('is_aktif', true) ?? $rows->first();
-            $ongkir = $row?->ongkir_override ?? $svc->tarif ?? 0;
+            $kotaTokoNorm = mb_strtolower(trim((string) ($kotaToko[$svc->store_id] ?? '')));
+            $sekota = $kotaCustomer !== '' && $kotaTokoNorm !== '' && $kotaCustomer === $kotaTokoNorm;
+            $ongkir = $sekota
+                ? ($svc->tarif_sekota ?? 0)
+                : ($row?->ongkir_override ?? $svc->tarif ?? 0);
             $est = $row?->estimasi_override ?? $svc->estimasi_hari ?? 1;
             $key = mb_strtolower(trim((string) $svc->nama_layanan));
             if (! isset($grouped[$key])) {
@@ -210,7 +217,7 @@ class CheckoutController extends Controller
         $subtotal = $items->sum(fn ($i) => $i->quantity * $i->harga_snapshot);
 
         $storeIds = $items->map(fn ($i) => $i->productVariant?->product?->store_id)->filter()->unique()->values()->all();
-        $shippingOptions = self::shippingOptionsFor($storeIds);
+        $shippingOptions = self::shippingOptionsFor($storeIds, $address?->kota);
         $shipping = (int) min(array_column($shippingOptions, 'ongkir'));
         $tax = \App\Support\PricingService::taxFor($subtotal);
         $biayaLayanan = (int) round(\App\Support\PricingService::serviceFee());
@@ -247,7 +254,10 @@ class CheckoutController extends Controller
     public function store(Request $request)
     {
         $allowedOngkir = array_column(
-            self::shippingOptionsFor($this->checkoutStoreIds((int) $request->input('buy', 0))),
+            self::shippingOptionsFor(
+                $this->checkoutStoreIds((int) $request->input('buy', 0)),
+                $request->input('kota')
+            ),
             'ongkir'
         );
         $validated = $request->validate([
