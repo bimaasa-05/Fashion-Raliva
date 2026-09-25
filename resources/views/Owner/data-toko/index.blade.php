@@ -111,7 +111,14 @@
                     </div>
                     <div>
                         <label class="block raliva-label mb-2">Kota</label>
-                        @include('partials.kota-combobox', ['prefix' => 'toko', 'cities' => $cities ?? [], 'selectedName' => old('kota', $store?->kota ?? ''), 'fieldName' => 'kota', 'placeholder' => 'Cari kota toko...'])
+                        <div class="flex items-center gap-2">
+                            <div class="flex-grow min-w-0">
+                                @include('partials.kota-combobox', ['prefix' => 'toko', 'cities' => $cities ?? [], 'selectedName' => old('kota', $store?->kota ?? ''), 'fieldName' => 'kota', 'placeholder' => 'Cari kota toko...'])
+                            </div>
+                            @if(!empty($updatePending) && !empty($updatePending->kota) && $updatePending->kota !== ($store?->kota ?? null))
+                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30 whitespace-nowrap shrink-0" title="Perubahan kota menunggu persetujuan Super Admin"><span class="material-symbols-outlined text-[12px]">schedule</span>Menunggu persetujuan</span>
+                            @endif
+                        </div>
                         @error('kota') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
