@@ -452,6 +452,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::get('/permintaan-operasional/{permintaan}', [AdminPermintaanOperasionalController::class, 'show'])->name('permintaan-operasional.show');
     Route::post('/permintaan-operasional/{permintaan}/setujui', [AdminPermintaanOperasionalController::class, 'setujui'])->name('permintaan-operasional.setujui');
     Route::post('/permintaan-operasional/{permintaan}/tolak', [AdminPermintaanOperasionalController::class, 'tolak'])->name('permintaan-operasional.tolak');
+    Route::get('/sidebar-badges', [\App\Http\Controllers\Admin\SidebarBadgeController::class, 'index'])->name('sidebar-badges');
 });
 
 Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang', 'store-active'])->group(function () {
@@ -480,6 +481,7 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang', 'st
     // Permintaan Operasional (ajukan ke Admin)
     Route::get('/permintaan', [PermintaanOperasionalController::class, 'index'])->name('permintaan')->middleware('permission:warehouse.permintaan');
     Route::post('/permintaan', [PermintaanOperasionalController::class, 'store'])->name('permintaan.store')->middleware('permission:warehouse.permintaan');
+    Route::get('/sidebar-badges', [\App\Http\Controllers\Gudang\SidebarBadgeController::class, 'index'])->name('sidebar-badges');
 });
 
 // Role Route Owner Lengkap
@@ -554,6 +556,7 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::put('/profil/password', [OwnerProfilController::class, 'updatePassword'])->name('profil.password');
     Route::post('/profil/foto', [OwnerProfilController::class, 'updatePhoto'])->name('profil.foto');
     Route::put('/pengaturan-toko', [DataTokoController::class, 'update'])->name('pengaturan-toko.update');
+    Route::get('/sidebar-badges', [\App\Http\Controllers\Owner\SidebarBadgeController::class, 'index'])->name('sidebar-badges');
 });
 
 Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi', 'store-active'])->group(function () {
@@ -579,6 +582,7 @@ Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi
     // Permintaan Operasional (ajukan ke Admin)
     Route::get('/permintaan', [PermintaanOperasionalController::class, 'index'])->name('permintaan');
     Route::post('/permintaan', [PermintaanOperasionalController::class, 'store'])->name('permintaan.store');
+    Route::get('/sidebar-badges', [\App\Http\Controllers\Produksi\SidebarBadgeController::class, 'index'])->name('sidebar-badges');
 });
 
 /* ===== Notifikasi Global (semua role) ===== */
