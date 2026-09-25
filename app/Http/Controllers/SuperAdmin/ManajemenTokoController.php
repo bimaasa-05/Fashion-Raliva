@@ -476,7 +476,7 @@ class ManajemenTokoController extends Controller
             return back()->with('toast', ['message' => 'Pengajuan tidak valid.', 'icon' => 'gpp_maybe']);
         }
 
-        $lama = $toko->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon', 'logo']);
+        $lama = $toko->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'kota', 'nomor_telepon', 'logo']);
 
         DB::transaction(function () use ($toko, $permintaan, $lama) {
             $toko->update([
@@ -484,6 +484,7 @@ class ManajemenTokoController extends Controller
                 'kategori' => $permintaan->kategori,
                 'deskripsi' => $permintaan->deskripsi,
                 'alamat' => $permintaan->alamat,
+                'kota' => $permintaan->kota,
                 'nomor_telepon' => $permintaan->nomor_telepon,
             ]);
 
@@ -505,7 +506,7 @@ class ManajemenTokoController extends Controller
                 Store::class,
                 $toko->store_id,
                 $lama,
-                $permintaan->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon', 'logo']),
+                $permintaan->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'kota', 'nomor_telepon', 'logo']),
                 sprintf('Menyetujui perubahan data toko "%s".', $toko->nama_toko)
             );
         });
