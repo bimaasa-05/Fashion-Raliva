@@ -20,11 +20,13 @@ class ShippingService extends Model
         'nama_layanan',
         'estimasi_hari',
         'tarif',
+        'tarif_sekota',
         'status',
     ];
 
     protected $casts = [
         'tarif' => 'float',
+        'tarif_sekota' => 'float',
     ];
 
     public function store(): BelongsTo
