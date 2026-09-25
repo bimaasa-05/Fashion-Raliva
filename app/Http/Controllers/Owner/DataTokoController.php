@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Support\ActivityLogger;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class DataTokoController extends Controller
@@ -93,6 +94,18 @@ class DataTokoController extends Controller
         $logoPath = null;
         if ($request->hasFile('logo')) {
             $logoPath = $request->file('logo')->store('store-logos/'.$store->store_id.'/pending', 'public');
+            // Bersihkan file pending yatim (tak terikat request mana pun), kecuali file baru & logo aktif.
+            $terpakai = \App\Models\StoreUpdateRequest::where('store_id', $store->store_id)
+                ->whereNotNull('logo')->pluck('logo')->all();
+            $terpakai[] = $logoPath;
+            if ($store->logo) {
+                $terpakai[] = $store->logo;
+            }
+            foreach (Storage::disk('public')->files('store-logos/'.$store->store_id.'/pending') as $f) {
+                if (! in_array($f, $terpakai, true)) {
+                    Storage::disk('public')->delete($f);
+                }
+            }
         }
 
         $permintaan = \App\Models\StoreUpdateRequest::create([
