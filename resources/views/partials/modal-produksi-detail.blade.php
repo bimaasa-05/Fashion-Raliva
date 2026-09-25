@@ -137,7 +137,7 @@
                                     <p class="text-xs text-on-surface-variant mt-1">Produksi selesai · Menunggu QC</p>
                                 @endif
                             @else
-                                <p class="text-xs text-on-surface-variant mt-1 countdown-badge" data-live-countdown-end="{{ $stepJadwalAkhir->timestamp }}">Sisa...</p>
+                                <p class="text-xs text-on-surface-variant mt-1 countdown-badge" data-live-countdown-end="{{ $stepJadwalAkhir->timestamp }}" data-live-countdown-start="{{ $stepJadwalAwal?->timestamp }}">Memuat...</p>
                             @endif
                         @endif
                     </div>
@@ -286,15 +286,23 @@
             // Countdown target (admin)
             document.querySelectorAll('[data-live-countdown-end]').forEach(function (el) {
                 const end = parseInt(el.dataset.liveCountdownEnd, 10) * 1000;
+                const startRaw = el.dataset.liveCountdownStart;
+                const start = startRaw ? parseInt(startRaw, 10) * 1000 : null;
+                if (start && now < start) {
+                    el.textContent = 'Mulai dalam ' + liveDurFmt(Math.floor((start - now) / 1000));
+                    el.classList.add('text-secondary');
+                    el.classList.remove('text-error', 'font-bold', 'text-on-surface-variant');
+                    return;
+                }
                 const diff = Math.floor((end - now) / 1000);
                 if (diff < 0) {
                     el.textContent = 'Terlambat ' + liveDurFmt(Math.abs(diff));
                     el.classList.add('text-error', 'font-bold');
-                    el.classList.remove('text-on-surface-variant');
+                    el.classList.remove('text-on-surface-variant', 'text-secondary');
                 } else {
                     el.textContent = 'Sisa ' + liveDurFmt(diff);
                     el.classList.add('text-on-surface-variant');
-                    el.classList.remove('text-error', 'font-bold');
+                    el.classList.remove('text-error', 'font-bold', 'text-secondary');
                 }
             });
 
