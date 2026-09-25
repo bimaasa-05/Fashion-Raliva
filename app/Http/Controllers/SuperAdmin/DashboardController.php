@@ -8,12 +8,11 @@ use App\Models\AdSlot;
 use App\Models\Commission;
 use App\Models\Complaint;
 use App\Models\Order;
-use App\Models\Product;
-use App\Models\Refund;
 use App\Models\Store;
 use App\Models\User;
 use App\Models\Payment;
 use App\Models\Review;
+use App\Support\SuperAdminBadgeCounter;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -21,36 +20,32 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // KPI ringkasan platform (hak Super Admin = global)
-        $totalPengguna = User::count();
+        // KPI ringkasan platform (hak Super Admin = pemilik aplikasi)
+        $totalPelanggan = User::whereHas('role', fn ($q) => $q->where('nama_role', \App\Models\Role::CUSTOMER))->count();
+        $totalAkunInternal = User::whereHas('role', fn ($q) => $q->where('nama_role', '!=', \App\Models\Role::CUSTOMER))->count();
         $totalToko = Store::count();
         $totalPesanan = Order::count();
-        $totalProduk = Product::count();
+        $pesananProses = Order::whereIn('status', Order::STATUS_PENDAPATAN)->count();
+        $pesananBatal = Order::whereIn('status', [Order::STATUS_DIBATALKAN, Order::STATUS_REFUND])->count();
 
-        $nilaiTransaksi = (float) Order::whereIn('status', [
-            Order::STATUS_DIBAYAR,
-            Order::STATUS_DIPROSES,
-            Order::STATUS_DIKIRIM,
-            Order::STATUS_SELESAI,
-        ])->sum('grand_total');
+        // Hitung seluruh produk terdaftar (termasuk menunggu moderasi)
+        $totalProduk = \App\Models\Product::count();
 
-        $totalPajak = (float) Order::whereIn('status', [
-            Order::STATUS_DIBAYAR,
-            Order::STATUS_DIPROSES,
-            Order::STATUS_DIKIRIM,
-            Order::STATUS_SELESAI,
-        ])->sum('total_pajak');
+        $nilaiTransaksi = (float) Order::whereIn('status', Order::STATUS_PENDAPATAN)->sum('grand_total');
+
+        $totalPajak = (float) Order::whereIn('status', Order::STATUS_PENDAPATAN)->sum('total_pajak');
 
         $komisiRaliva = (float) Commission::sum('jumlah_komisi');
 
-        // Tugas yang perlu perhatian
-        $tokoMenunggu = Store::where('status', Store::STATUS_PENDING)->count();
-        $produkDitandai = Product::where('status', Product::STATUS_PENDING)->count();
-        $refundMenunggu = Refund::where('status', Refund::STATUS_REQUESTED)->count();
+        // Aset monetisasi platform: iklan slot (aktif + terjadwal)
+        $iklanAktif = AdSlot::whereIn('status', [AdSlot::STATUS_AKTIF, AdSlot::STATUS_TERJADWAL])->count();
+        $pendapatanIklan = (float) AdSlot::whereIn('status', [AdSlot::STATUS_AKTIF, AdSlot::STATUS_TERJADWAL])->sum('nominal_bid');
+
+        // Tugas yang perlu perhatian (satu sumber kebenaran = badge counter)
+        $perhatian = SuperAdminBadgeCounter::counts();
 
         // Komposisi toko berdasarkan status
         $tokoAktif = Store::where('status', Store::STATUS_AKTIF)->count();
-        $tokoMenungguStatus = Store::where('status', Store::STATUS_PENDING)->count();
         $tokoNonaktif = Store::where('status', Store::STATUS_NONAKTIF)->count();
         $tokoDitolak = Store::where('status', Store::STATUS_DITOLAK)->count();
 
@@ -75,9 +70,10 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Data grafik: pesanan per 6 bulan terakhir (dibagi per bulan)
+        // Data grafik: pesanan per 6 bulan terakhir (dibagi per bulan) — hanya status pendapatan
         $chart = Order::query()
             ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as bulan, COUNT(*) as jumlah, SUM(grand_total) as omzet')
+            ->whereIn('status', Order::STATUS_PENDAPATAN)
             ->where('created_at', '>=', now()->subMonths(6)->startOfMonth())
             ->groupBy('bulan')
             ->orderBy('bulan')
@@ -105,18 +101,10 @@ class DashboardController extends Controller
         ];
 
         // Target omzet: omzet bulan berjalan vs bulan lalu
-        $omzetBulanIni = (float) Order::whereIn('status', [
-            Order::STATUS_DIBAYAR,
-            Order::STATUS_DIPROSES,
-            Order::STATUS_DIKIRIM,
-            Order::STATUS_SELESAI,
-        ])->where('created_at', '>=', now()->startOfMonth())->sum('grand_total');
-        $omzetBulanLalu = (float) Order::whereIn('status', [
-            Order::STATUS_DIBAYAR,
-            Order::STATUS_DIPROSES,
-            Order::STATUS_DIKIRIM,
-            Order::STATUS_SELESAI,
-        ])->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->startOfMonth()])->sum('grand_total');
+        $omzetBulanIni = (float) Order::whereIn('status', Order::STATUS_PENDAPATAN)
+            ->where('created_at', '>=', now()->startOfMonth())->sum('grand_total');
+        $omzetBulanLalu = (float) Order::whereIn('status', Order::STATUS_PENDAPATAN)
+            ->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->startOfMonth()])->sum('grand_total');
         $targetOmzetPct = (int) round(($omzetBulanLalu > 0 ? $omzetBulanIni / $omzetBulanLalu : ($omzetBulanIni > 0 ? 1 : 0)) * 100);
 
         // Kepuasan pelanggan dari review aktif
@@ -158,28 +146,29 @@ class DashboardController extends Controller
 
         return view('SuperAdmin.dashboard', [
             'kpi' => [
-                'pengguna' => $totalPengguna,
+                'pelanggan' => $totalPelanggan,
+                'akun_internal' => $totalAkunInternal,
                 'toko' => $totalToko,
                 'pesanan' => $totalPesanan,
+                'pesanan_proses' => $pesananProses,
+                'pesanan_batal' => $pesananBatal,
                 'produk' => $totalProduk,
                 'nilai_transaksi' => $nilaiTransaksi,
                 'komisi' => $komisiRaliva,
                 'pajak' => $totalPajak,
+                'iklan_aktif' => $iklanAktif,
+                'pendapatan_iklan' => $pendapatanIklan,
             ],
-            'perhatian' => [
-                'toko' => $tokoMenunggu,
-                'produk' => $produkDitandai,
-                'refund' => $refundMenunggu,
-            ],
+            'perhatian' => $perhatian,
             'komposisiToko' => [
                 'aktif' => $tokoAktif,
-                'menunggu' => $tokoMenungguStatus,
+                'menunggu' => $perhatian['toko'],
                 'nonaktif' => $tokoNonaktif,
                 'ditolak' => $tokoDitolak,
             ],
             'komposisiTokoDonut' => [
                 ['value' => (int) $tokoAktif, 'color' => '#8B1E3F', 'label' => 'Aktif'],
-                ['value' => (int) $tokoMenungguStatus, 'color' => '#c03a5a', 'label' => 'Menunggu'],
+                ['value' => (int) $perhatian['toko'], 'color' => '#c03a5a', 'label' => 'Menunggu'],
                 ['value' => (int) $tokoNonaktif + (int) $tokoDitolak, 'color' => '#BA1A26', 'label' => 'Nonaktif/Ditolak'],
             ],
             'topToko' => $topToko,
@@ -219,6 +208,7 @@ class DashboardController extends Controller
             $labels = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
             $rows = Order::query()
                 ->selectRaw('DAYOFWEEK(created_at) as hari, COUNT(*) as jumlah, SUM(grand_total) as omzet')
+                ->whereIn('status', Order::STATUS_PENDAPATAN)
                 ->where('created_at', '>=', now()->subDays(7))
                 ->groupBy('hari')
                 ->get();
@@ -233,6 +223,7 @@ class DashboardController extends Controller
             $group = $days <= 30 ? 'Minggu' : 'Bulan';
             $rows = Order::query()
                 ->selectRaw('FLOOR(DATEDIFF(created_at, ?) / ?) as grp, COUNT(*) as jumlah, SUM(grand_total) as omzet', [now()->subDays($days)->toDateString(), $days <= 30 ? 7 : 30])
+                ->whereIn('status', Order::STATUS_PENDAPATAN)
                 ->where('created_at', '>=', now()->subDays($days))
                 ->groupBy('grp')
                 ->orderBy('grp')
@@ -261,7 +252,7 @@ class DashboardController extends Controller
             ->selectRaw('SUM(orders.grand_total) as total_omzet')
             ->selectRaw('COUNT(*) as jumlah_pesanan')
             ->join('stores', 'stores.store_id', '=', 'orders.store_id')
-            ->whereIn('orders.status', [Order::STATUS_DIBAYAR, Order::STATUS_DIPROSES, Order::STATUS_DIKIRIM, Order::STATUS_SELESAI])
+            ->whereIn('orders.status', Order::STATUS_PENDAPATAN)
             ->groupBy('stores.store_id', 'stores.nama_toko')
             ->orderByDesc('total_omzet')
             ->limit(5)
@@ -286,7 +277,7 @@ class DashboardController extends Controller
             ->join('product_variants', 'product_variants.product_variant_id', '=', 'order_items.product_variant_id')
             ->join('products', 'products.product_id', '=', 'product_variants.product_id')
             ->join('categories', 'categories.category_id', '=', 'products.category_id')
-            ->whereIn('orders.status', [Order::STATUS_DIBAYAR, Order::STATUS_DIPROSES, Order::STATUS_DIKIRIM, Order::STATUS_SELESAI])
+            ->whereIn('orders.status', Order::STATUS_PENDAPATAN)
             ->groupBy('categories.category_id', 'categories.nama_kategori')
             ->selectRaw('categories.nama_kategori')
             ->selectRaw('SUM(order_items.quantity) as total_terjual')
@@ -312,7 +303,7 @@ class DashboardController extends Controller
         $rows = DB::table('orders')
             ->join('checkouts', 'checkouts.checkout_id', '=', 'orders.checkout_id')
             ->join('users', 'users.user_id', '=', 'checkouts.user_id')
-            ->whereIn('orders.status', [Order::STATUS_DIBAYAR, Order::STATUS_DIPROSES, Order::STATUS_DIKIRIM, Order::STATUS_SELESAI])
+            ->whereIn('orders.status', Order::STATUS_PENDAPATAN)
             ->groupBy('users.user_id', 'users.nama_lengkap')
             ->selectRaw('users.nama_lengkap')
             ->selectRaw('SUM(orders.grand_total) as total_belanja')
@@ -340,7 +331,7 @@ class DashboardController extends Controller
             ->join('orders', 'orders.order_id', '=', 'order_items.order_id')
             ->join('product_variants', 'product_variants.product_variant_id', '=', 'order_items.product_variant_id')
             ->join('products', 'products.product_id', '=', 'product_variants.product_id')
-            ->whereIn('orders.status', [Order::STATUS_DIBAYAR, Order::STATUS_DIPROSES, Order::STATUS_DIKIRIM, Order::STATUS_SELESAI])
+            ->whereIn('orders.status', Order::STATUS_PENDAPATAN)
             ->groupBy('products.product_id', 'products.nama_produk')
             ->selectRaw('products.nama_produk')
             ->selectRaw('SUM(order_items.quantity) as total_terjual')
