@@ -75,6 +75,7 @@
                     <th class="p-4 text-left">ID Pesanan</th>
                     <th class="p-4 text-left">Pelanggan</th>
                     <th class="p-4 text-left">Produk</th>
+                    <th class="p-4 text-left">Produksi</th>
                     <th class="p-4 text-right">Total</th>
                     <th class="p-4 text-center">Status</th>
                     <th class="p-4 text-right">Aksi</th>
@@ -114,6 +115,7 @@
                             <p class="text-on-surface-variant text-xs">{{ $pesanan->store?->nama_toko }}</p>
                         </td>
                         <td class="p-4 text-on-surface" title="{{ $pesanan->items->pluck('nama_produk_snapshot')->implode(', ') }}">{{ $pesanan->items->count() }} produk &#8226; {{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->first(), 28) }}</td>
+                        <td class="p-4">@include('partials.produksi-waktu', ['produksiOrder' => $pesanan])</td>
                         <td class="p-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format((float) ($pesanan->grand_total ?? 0), 0, ',', '.') }}</td>
                         <td class="p-4 text-center">
                             <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $badge['class'] }}">{{ $badge['label'] }}</span>
@@ -147,7 +149,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6" class="py-12 text-center text-on-surface-variant">Tidak ada pesanan pada filter ini.</td></tr>
+                    <tr><td colspan="7" class="py-12 text-center text-on-surface-variant">Tidak ada pesanan pada filter ini.</td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -207,6 +209,12 @@
                         <p class="font-bold text-gold-accent mt-0.5">Rp {{ number_format((float) ($pesanan->grand_total ?? 0), 0, ',', '.') }}</p>
                     </div>
                 </div>
+                @if ($pesanan->tgl_mulai_produksi && $pesanan->tgl_berakhir_produksi)
+                    <div class="mt-3 pt-3 border-t border-muted-border">
+                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium mb-1.5">Produksi</p>
+                        @include('partials.produksi-waktu', ['produksiOrder' => $pesanan])
+                    </div>
+                @endif
                 <div class="mt-3 pt-3 border-t border-muted-border flex justify-end gap-1.5 flex-wrap">
                     @if (in_array($pesanan->status, [\App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIBAYAR], true))
                         <button type="button" data-modal-open="modal-proses-{{ $pesanan->order_id }}" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Proses</button>
@@ -253,7 +261,14 @@
             <div class="flex justify-between gap-4 pb-3 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Toko</dt><dd class="text-on-surface text-right">{{ $pesanan->store?->nama_toko ?? '-' }}</dd></div>
             <div class="flex justify-between gap-4 pb-3 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Tanggal Pesanan</dt><dd class="text-on-surface text-right">{{ $pesanan->created_at?->translatedFormat('d M Y H:i') ?? '-' }}</dd></div>
             @if($pesanan->tgl_mulai_produksi || $pesanan->tgl_berakhir_produksi)
-                <div class="flex justify-between gap-4 pb-3 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Jadwal Produksi</dt><dd class="text-on-surface text-right">{{ $pesanan->tgl_mulai_produksi?->translatedFormat('d M Y H:i') ?? '-' }} &rarr; {{ $pesanan->tgl_berakhir_produksi?->translatedFormat('d M Y H:i') ?? '-' }}</dd></div>
+                @if($pesanan->tgl_mulai_produksi && $pesanan->tgl_berakhir_produksi)
+                    <div class="pb-3 border-b border-muted-border">
+                        <div class="flex justify-between gap-4"><dt class="text-on-surface-variant shrink-0">Jadwal Produksi</dt><dd class="text-on-surface text-right whitespace-nowrap">{{ $pesanan->tgl_mulai_produksi->translatedFormat('d M H:i') }} &rarr; {{ $pesanan->tgl_berakhir_produksi->translatedFormat('d M H:i') }}</dd></div>
+                        <div class="mt-2">@include('partials.produksi-waktu', ['produksiOrder' => $pesanan])</div>
+                    </div>
+                @else
+                    <div class="flex justify-between gap-4 pb-3 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Jadwal Produksi</dt><dd class="text-on-surface text-right">{{ $pesanan->tgl_mulai_produksi?->translatedFormat('d M Y H:i') ?? '-' }} &rarr; {{ $pesanan->tgl_berakhir_produksi?->translatedFormat('d M Y H:i') ?? '-' }}</dd></div>
+                @endif
             @endif
             @if($pesanan->catatan)
                 <div class="pb-3 border-b border-muted-border"><dt class="text-on-surface-variant mb-1">Catatan Pelanggan</dt><dd class="text-on-surface">{{ $pesanan->catatan }}</dd></div>
@@ -549,6 +564,7 @@
         }, 50);
     });
 </script>
+@include('partials.countdown-produksi')
 @endpush
 
 @push('scripts')

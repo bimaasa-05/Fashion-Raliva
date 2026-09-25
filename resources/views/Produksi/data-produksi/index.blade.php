@@ -507,48 +507,7 @@
         });
     });
     // === COUNTDOWN TIMER REAL-TIME ===
-    function formatCountdown(seconds) {
-        const abs = Math.abs(seconds);
-        const d = Math.floor(abs / 86400);
-        const h = Math.floor((abs % 86400) / 3600);
-        const m = Math.floor((abs % 3600) / 60);
-        const s = abs % 60;
-        let parts = [];
-        if (d > 0) parts.push(d + 'j');
-        parts.push(h + 'j');
-        parts.push(m + 'm');
-        parts.push(s + 'd');
-        return parts.join(' ');
-    }
-
-    function updateCountdowns() {
-        document.querySelectorAll('[data-countdown-end]').forEach(el => {
-            const end = parseInt(el.dataset.countdownEnd, 10) * 1000;
-            const startRaw = el.dataset.countdownStart;
-            const start = startRaw ? parseInt(startRaw, 10) * 1000 : null;
-            const progress = el.dataset.countdownProgress || '0';
-            const now = Date.now();
-            if (start && now < start) {
-                const wait = Math.floor((start - now) / 1000);
-                el.textContent = 'Mulai dalam ' + formatCountdown(wait);
-                el.classList.add('text-secondary');
-                el.classList.remove('text-error', 'font-bold', 'text-on-surface-variant');
-                return;
-            }
-            const diff = Math.floor((end - now) / 1000);
-            if (diff < 0) {
-                el.textContent = 'Terlambat ' + formatCountdown(diff);
-                el.classList.add('text-error', 'font-bold');
-                el.classList.remove('text-on-surface-variant', 'text-secondary');
-            } else {
-                el.textContent = 'Sisa ' + formatCountdown(diff) + ' (' + progress + '%)';
-                el.classList.add('text-on-surface-variant');
-                el.classList.remove('text-error', 'font-bold', 'text-secondary');
-            }
-        });
-    }
-    setInterval(updateCountdowns, 1000);
-    updateCountdowns();
+    @include('partials.countdown-produksi')
 </script>
 @endpush
 @endsection
