@@ -19,7 +19,12 @@ class ShippingService extends Model
         'courier_id',
         'nama_layanan',
         'estimasi_hari',
+        'tarif',
         'status',
+    ];
+
+    protected $casts = [
+        'tarif' => 'float',
     ];
 
     public function store(): BelongsTo
