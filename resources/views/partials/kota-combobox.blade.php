@@ -1,15 +1,15 @@
 {{-- Combobox kota searchable per pulau (tanpa tambah baru). Params: $prefix, $cities (pulau => [nama]), $selectedName='', $fieldName='kota', $placeholder='Cari kota...' --}}
 <div class="relative" id="{{ $prefix }}-kota-box" data-kota-box="{{ $prefix }}">
-    <button type="button" id="{{ $prefix }}-kota-btn" aria-haspopup="listbox" aria-expanded="false" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-3.5 pr-10 py-2.5 font-body-md text-sm text-on-surface text-left transition-colors focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10">
+    <button type="button" id="{{ $prefix }}-kota-btn" aria-haspopup="listbox" aria-expanded="false" class="w-full bg-surface border border-outline-variant rounded-lg pl-3.5 pr-10 py-2.5 font-body-md text-sm text-on-surface text-left transition-colors focus:outline-none focus:border-secondary focus:ring-4 focus:ring-secondary/10">
         <span id="{{ $prefix }}-kota-label" class="truncate {{ $selectedName ? 'text-on-surface' : 'text-on-surface-variant' }}">{{ $selectedName ?: ($placeholder ?? 'Cari kota...') }}</span>
         <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant pointer-events-none">expand_more</span>
     </button>
     <input type="hidden" name="{{ $fieldName ?? 'kota' }}" id="{{ $prefix }}-kota-hidden" value="{{ $selectedName }}" />
-    <div id="{{ $prefix }}-kota-menu" class="hidden absolute z-30 bottom-full mb-2 w-full bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden">
-        <div class="border-b border-muted-border p-2">
+    <div id="{{ $prefix }}-kota-menu" class="hidden absolute z-30 bottom-full mb-2 w-full bg-surface-container-lowest border border-outline-variant rounded-lg shadow-xl overflow-hidden">
+        <div class="border-b border-outline-variant p-2">
             <div class="flex items-stretch">
-                <span class="inline-flex items-center px-3 text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none"><span class="material-symbols-outlined text-[18px]">search</span></span>
-                <input type="text" id="{{ $prefix }}-kota-search" placeholder="Ketik kota atau pulau..." autocomplete="off" class="raliva-input text-sm" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                <span class="inline-flex items-center px-3 text-on-surface-variant bg-surface-container-low border border-outline-variant rounded-l-lg border-r-0 select-none"><span class="material-symbols-outlined text-[18px]">search</span></span>
+                <input type="text" id="{{ $prefix }}-kota-search" placeholder="Ketik kota atau pulau..." autocomplete="off" class="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-secondary" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
             </div>
         </div>
         <ul id="{{ $prefix }}-kota-list" role="listbox" class="max-h-52 overflow-y-auto overscroll-contain py-1" style="overscroll-behavior: contain;">
