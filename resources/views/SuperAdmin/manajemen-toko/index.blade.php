@@ -45,9 +45,9 @@
     </div>
     <div id="toko-tabs" class="flex flex-wrap gap-2.5">
         @foreach ($tabs as $key => $label)
-            <button type="button" data-status="{{ $key }}" class="toko-filter-btn px-4 py-2 rounded-lg border font-label-sm uppercase tracking-wider {{ $activeStatus === $key
-                ? 'bg-deep-onyx text-on-primary border-deep-onyx'
-                : 'bg-surface-container-low text-on-surface-variant border-muted-border' }}">
+            <button type="button" data-status="{{ $key }}" class="toko-filter-btn px-4 py-2 rounded-lg border font-label-sm uppercase tracking-wider transition-colors {{ $activeStatus === $key
+                ? 'bg-deep-onyx text-on-primary border-deep-onyx hover:bg-deep-onyx/90'
+                : 'bg-surface-container-low text-on-surface-variant border-muted-border hover:bg-surface-container-high hover:text-on-surface hover:border-gold-accent' }}">
                 {{ $label }} <span class="opacity-60">({{ $stats[$key] ?? 0 }})</span>
             </button>
         @endforeach
