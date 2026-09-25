@@ -62,7 +62,7 @@ class DataBankSeeder extends Seeder
                 'deskripsi' => 'Scan kode QR dengan aplikasi apa pun (GoPay, OVO, Dana, ShopeePay, m-Banking).',
                 'nomor_rekening' => null,
                 'nama_pemilik' => 'RALIVA Fashion',
-                'file_gambar' => 'payment_methods/qris-raliva.png',
+                'file_gambar' => null,
                 'urutan' => 1,
                 'status' => PlatformBankAccount::STATUS_AKTIF,
             ]
@@ -70,12 +70,12 @@ class DataBankSeeder extends Seeder
 
         // ── 4. E-Wallet accounts ─────────────────────────────────────
         $ewallets = [
-            ['nama' => 'DANA',       'kode' => 'dana',       'nomor_rekening' => '081234567890', 'file_gambar' => 'payment_methods/dana.png',      'urutan' => 1],
-            ['nama' => 'GoPay',     'kode' => 'gopay',      'nomor_rekening' => '081234567891', 'file_gambar' => 'payment_methods/gopay.png',    'urutan' => 2],
-            ['nama' => 'OVO',       'kode' => 'ovo',        'nomor_rekening' => '081234567892', 'file_gambar' => 'payment_methods/ovo.png',      'urutan' => 3],
-            ['nama' => 'ShopeePay', 'kode' => 'shopeepay',  'nomor_rekening' => '081234567893', 'file_gambar' => 'payment_methods/shopeepay.png','urutan' => 4],
-            ['nama' => 'LinkAja',   'kode' => 'linkaja',    'nomor_rekening' => '081234567894', 'file_gambar' => 'payment_methods/linkaja.png',  'urutan' => 5],
-            ['nama' => 'Jenius',    'kode' => 'jenius',     'nomor_rekening' => '081234567895', 'file_gambar' => 'payment_methods/jenius.png',   'urutan' => 6],
+            ['nama' => 'DANA',       'kode' => 'dana',       'nomor_rekening' => '081234567890', 'file_gambar' => 'images/E-Wallet/dana.png',      'urutan' => 1],
+            ['nama' => 'GoPay',     'kode' => 'gopay',      'nomor_rekening' => '081234567891', 'file_gambar' => 'images/E-Wallet/gopay.jpg',     'urutan' => 2],
+            ['nama' => 'OVO',       'kode' => 'ovo',        'nomor_rekening' => '081234567892', 'file_gambar' => 'images/E-Wallet/ovo.png',       'urutan' => 3],
+            ['nama' => 'ShopeePay', 'kode' => 'shopeepay',  'nomor_rekening' => '081234567893', 'file_gambar' => 'images/E-Wallet/shoopepay.jfif','urutan' => 4],
+            ['nama' => 'LinkAja',   'kode' => 'linkaja',    'nomor_rekening' => '081234567894', 'file_gambar' => null, 'urutan' => 5],
+            ['nama' => 'Jenius',    'kode' => 'jenius',     'nomor_rekening' => '081234567895', 'file_gambar' => null, 'urutan' => 6],
         ];
 
         foreach ($ewallets as $wallet) {
@@ -105,7 +105,7 @@ class DataBankSeeder extends Seeder
                     'deskripsi' => 'Transfer ke rekening Bank '.strtoupper($bank['kode_bank']).' di bawah ini, lalu unggah buktinya.',
                     'nomor_rekening' => $bank['rekening'],
                     'nama_pemilik' => $bank['pemilik'],
-                    'file_gambar' => 'payment_methods/'.$bank['kode_bank'].'.png',
+                    'file_gambar' => in_array($bank['kode_bank'], ['bca', 'bri', 'mandiri', 'bni'], true) ? 'images/Bank/'.$bank['kode_bank'].'.png' : null,
                     'urutan' => $urutan++,
                     'status' => PlatformBankAccount::STATUS_AKTIF,
                 ]
