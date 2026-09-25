@@ -616,7 +616,7 @@
                         </label>
                         <label class="flex flex-col gap-1.5 lg:col-span-2">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Kota') }} <span class="text-error">*</span></span>
-                            <input name="kota" value="{{ $prefill['kota'] }}" required maxlength="100" class="co-input @error('kota') is-error @enderror" placeholder="{{ __('Kota') }}"/>
+                            @include('partials.kota-combobox', ['prefix' => 'co', 'cities' => $cities ?? [], 'selectedName' => $prefill['kota'], 'fieldName' => 'kota', 'placeholder' => __('Cari kota...')])
                             @error('kota')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
                         </label>
                         <label class="flex flex-col gap-1.5 md:col-span-2 lg:col-span-2">
