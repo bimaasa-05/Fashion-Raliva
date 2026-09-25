@@ -54,6 +54,7 @@
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Jumlah</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tujuan</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Status</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Bukti</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -65,9 +66,33 @@
                                 <p>{{ $w->tujuan_jenis_label }} • {{ $w->tujuan_penyedia }} • {{ $w->tujuan_nomor }}</p>
                             </td>
                             <td class="py-3.5 px-4"><span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $w->status==='dibayar' ? 'bg-amber-500/10 text-amber-600 border-amber-500/30' : ($w->status==='pending' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-error/10 text-error border-error/20') }}">{{ $w->status }}</span></td>
+                            <td class="py-3.5 px-4">
+                                @if ($w->status === 'dibayar' && $w->file_bukti)
+                                    @php
+                                        $buktiUrl = asset('storage/' . ltrim($w->file_bukti, '/'));
+                                        $buktiExt = strtolower(pathinfo($w->file_bukti, PATHINFO_EXTENSION));
+                                        $buktiNama = \Illuminate\Support\Str::afterLast($w->file_bukti, '/');
+                                    @endphp
+                                    @if (in_array($buktiExt, ['jpg', 'jpeg', 'png'], true))
+                                        <a href="{{ $buktiUrl }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-gold-accent hover:underline">
+                                            <img src="{{ $buktiUrl }}" alt="{{ $buktiNama }}" class="w-8 h-8 object-cover rounded" loading="lazy" />
+                                            <span class="text-xs font-semibold">Bukti</span>
+                                        </a>
+                                    @else
+                                        <a href="{{ $buktiUrl }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-semibold text-gold-accent hover:underline">
+                                            <span class="material-symbols-outlined text-[14px]">description</span>Bukti
+                                        </a>
+                                    @endif
+                                    @if ($w->deskripsi_bukti)
+                                        <p class="text-xs text-on-surface-variant mt-1">{{ $w->deskripsi_bukti }}</p>
+                                    @endif
+                                @else
+                                    <span class="text-on-surface-variant text-xs">-</span>
+                                @endif
+                            </td>
                         </tr>
                     @empty
-                        <tr><td colspan="4" class="py-8 text-center text-on-surface-variant">Belum ada pencairan.</td></tr>
+                        <tr><td colspan="5" class="py-8 text-center text-on-surface-variant">Belum ada pencairan.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -87,6 +112,29 @@
                         <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Tujuan</p>
                         <p class="text-sm text-on-surface mt-0.5">{{ $w->tujuan_jenis_label }} • {{ $w->tujuan_penyedia }} • {{ $w->tujuan_nomor }}</p>
                     </div>
+                    @if ($w->status === 'dibayar' && $w->file_bukti)
+                        @php
+                            $buktiMUrl = asset('storage/' . ltrim($w->file_bukti, '/'));
+                            $buktiMExt = strtolower(pathinfo($w->file_bukti, PATHINFO_EXTENSION));
+                        @endphp
+                        <div class="mt-3 pt-3 border-t border-muted-border">
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Bukti transfer</p>
+                            @if (in_array($buktiMExt, ['jpg', 'jpeg', 'png'], true))
+                                <a href="{{ $buktiMUrl }}" target="_blank" rel="noopener" class="block mt-2 hover:opacity-90 transition-opacity">
+                                    <img src="{{ $buktiMUrl }}" alt="bukti transfer" class="w-full max-h-48 h-auto object-contain rounded-lg" loading="lazy" />
+                                </a>
+                            @else
+                                <a href="{{ $buktiMUrl }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gold-accent hover:underline mt-2">
+                                    <span class="material-symbols-outlined text-[14px]">description</span>
+                                    <span class="truncate">{{ \Illuminate\Support\Str::afterLast($w->file_bukti, '/') }}</span>
+                                    <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                                </a>
+                            @endif
+                            @if ($w->deskripsi_bukti)
+                                <p class="text-xs text-on-surface-variant mt-1.5">{{ $w->deskripsi_bukti }}</p>
+                            @endif
+                        </div>
+                    @endif
                 </article>
             @empty
                 <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada pencairan.</p>

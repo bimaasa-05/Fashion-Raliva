@@ -1,5 +1,6 @@
 @php
     $storeLocked = \App\Support\StoreGate::isLocked();
+    $sidebarBadges = \App\Support\GudangBadgeCounter::counts();
     $menuGroups = [
         [
             'label' => 'Utama',
@@ -13,8 +14,8 @@
                 ['route' => 'gudang.stok', 'icon' => 'inventory_2', 'text' => 'Data Stok'],
                 ['route' => 'gudang.barang-masuk', 'icon' => 'archive', 'text' => 'Barang Masuk'],
                 ['route' => 'gudang.barang-keluar', 'icon' => 'unarchive', 'text' => 'Barang Keluar'],
-                ['route' => 'gudang.pemindahan', 'icon' => 'swap_horiz', 'text' => 'Pemindahan Stok'],
-                ['route' => 'gudang.pemeriksaan', 'icon' => 'fact_check', 'text' => 'Pemeriksaan Stok'],
+                ['route' => 'gudang.pemindahan', 'icon' => 'swap_horiz', 'text' => 'Pemindahan Stok', 'badge' => 'pemindahan'],
+                ['route' => 'gudang.pemeriksaan', 'icon' => 'fact_check', 'text' => 'Pemeriksaan Stok', 'badge' => 'stok_menipis'],
                 ['route' => 'gudang.stok-rusak', 'icon' => 'report', 'text' => 'Stok Rusak'],
                 ['route' => 'gudang.riwayat-stok', 'icon' => 'history', 'text' => 'Riwayat Stok'],
                 ['route' => 'gudang.kekurangan', 'icon' => 'assignment', 'text' => 'Kekurangan'],
@@ -23,8 +24,8 @@
         [
             'label' => 'Operasional',
             'items' => [
-                ['route' => 'gudang.permintaan', 'icon' => 'send', 'text' => 'Permintaan'],
-                ['route' => 'gudang.notifikasi', 'icon' => 'notifications', 'text' => 'Notifikasi'],
+                ['route' => 'gudang.permintaan', 'icon' => 'send', 'text' => 'Permintaan', 'badge' => 'permintaan'],
+                ['route' => 'gudang.notifikasi', 'icon' => 'notifications', 'text' => 'Notifikasi', 'badge' => 'notifikasi'],
             ],
         ],
         [
@@ -40,11 +41,16 @@
         @php
             $collapsible = count($group['items']) >= 3;
             $isActive = collect($group['items'])->contains(fn ($item) => request()->routeIs($item['route']));
+            $groupBadgeKeys = collect($group['items'])->filter(fn ($item) => ! empty($item['badge']))->pluck('badge')->values();
+            $groupHasBadges = $groupBadgeKeys->contains(fn ($key) => ($sidebarBadges[$key] ?? 0) > 0);
         @endphp
         <div class="space-y-1 {{ $loop->first ? '' : 'pt-4' }}">
             @if ($collapsible)
                 <button type="button" data-sidebar-group-button aria-expanded="{{ $isActive ? 'true' : 'false' }}" class="w-full flex items-center justify-between px-2 py-2 text-[10px] font-label-sm uppercase tracking-widest text-gold-accent/70 hover:text-gold-accent transition-colors">
-                    <span data-group-label>{{ $group['label'] }}</span>
+                    <span class="flex items-center gap-2 min-w-0">
+                        <span data-group-label>{{ $group['label'] }}</span>
+                        <span data-sidebar-group-dot data-group-badges="{{ $groupBadgeKeys->implode(',') }}" class="w-2 h-2 rounded-full bg-error shrink-0 {{ $groupHasBadges ? '' : 'hidden' }}"></span>
+                    </span>
                     <span class="material-symbols-outlined text-[18px] transition-transform duration-200 {{ $isActive ? 'rotate-180' : '' }}">keyboard_arrow_down</span>
                 </button>
             @else
@@ -77,6 +83,11 @@
                         </span>
                         <span class="sidebar-tip">{{ $item['text'] }}</span>
                         <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate">{{ $item['text'] }}</span>
+                        @if (! empty($item['badge']) && (($sidebarBadges[$item['badge']] ?? 0) > 0))
+                            <span data-sidebar-badge="{{ $item['badge'] }}" class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-gold-accent text-white text-[10px] font-bold shrink-0">{{ min(99, $sidebarBadges[$item['badge']]) }}</span>
+                        @elseif (! empty($item['badge']))
+                            <span data-sidebar-badge="{{ $item['badge'] }}" class="hidden"></span>
+                        @endif
                     </a>
                     @endif
                 @endforeach
@@ -86,3 +97,43 @@
         </div>
     @endforeach
 </div>
+
+<script>
+(function () {
+    if (window.__ralivaSidebarBadgesGudang) return;
+    window.__ralivaSidebarBadgesGudang = true;
+
+    const els = Array.from(document.querySelectorAll('[data-sidebar-badge]'));
+    if (!els.length) return;
+
+    let busy = false;
+    async function refresh() {
+        if (busy) return;
+        busy = true;
+        try {
+            const res = await fetch('{{ route('gudang.sidebar-badges') }}', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            });
+            const data = await res.json();
+            els.forEach((el) => {
+                const val = Number(data[el.dataset.sidebarBadge] || 0);
+                if (val > 0) {
+                    el.textContent = Math.min(99, val);
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+            document.querySelectorAll('[data-sidebar-group-dot]').forEach((dot) => {
+                const keys = (dot.dataset.groupBadges || '').split(',').filter(Boolean);
+                const total = keys.reduce((sum, key) => sum + Number(data[key] || 0), 0);
+                dot.classList.toggle('hidden', total === 0);
+            });
+        } catch (e) { /* jangan ganggu polling berikutnya */ }
+        busy = false;
+    }
+
+    refresh();
+    setInterval(refresh, 30000);
+})();
+</script>

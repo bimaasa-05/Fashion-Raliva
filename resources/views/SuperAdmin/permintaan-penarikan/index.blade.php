@@ -123,10 +123,14 @@
                             $badge = $badgeMap[$w->status] ?? $badgeMap['pending'];
                             $initialStore = $w->store?->nama_toko;
                             $initial = strtoupper(substr(collect(preg_split('/\s+/', trim($initialStore ?? '')))->map(fn ($k) => mb_substr($k, 0, 1))->implode(''), 0, 2)) ?: '?';
+                            $tujuanMetode = $w->tujuan_penyedia ?? '-';
+                            $tujuanNomor = $w->tujuan_nomor ?? '';
+                            $tujuanPemilik = $w->bankAccount?->nama_pemilik ?? '';
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors group"
                             data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store?->nama_toko ?? '').' '.($w->store?->owner?->nama_lengkap ?? '').' '.($w->tujuan_penyedia)) }}"
-                            data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store?->nama_toko ?? '-' }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}">
+                            data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store?->nama_toko ?? '-' }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}"
+                            data-metode="{{ $tujuanMetode }}" data-tujuan="{{ $tujuanNomor }}" data-pemilik="{{ $tujuanPemilik }}">
                             <td class="p-6 text-center text-on-surface-variant font-mono row-num"></td>
                             <td class="p-6">
                                 <div class="flex items-center gap-3">
@@ -208,8 +212,12 @@
                     $badge = $badgeMap[$w->status] ?? $badgeMap['pending'];
                     $initialStore = $w->store?->nama_toko;
                     $initial = strtoupper(substr(collect(preg_split('/\s+/', trim($initialStore ?? '')))->map(fn ($k) => mb_substr($k, 0, 1))->implode(''), 0, 2)) ?: '?';
+                    $tujuanMetode = $w->tujuan_penyedia ?? '-';
+                    $tujuanNomor = $w->tujuan_nomor ?? '';
+                    $tujuanPemilik = $w->bankAccount?->nama_pemilik ?? '';
                 @endphp
-                <article data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store?->nama_toko ?? '').' '.($w->store?->owner?->nama_lengkap ?? '').' '.($w->tujuan_penyedia)) }}" data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store?->nama_toko ?? '-' }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                <article data-table-row data-status="{{ $w->status }}" data-search="{{ strtolower(($w->store?->nama_toko ?? '').' '.($w->store?->owner?->nama_lengkap ?? '').' '.($w->tujuan_penyedia)) }}" data-id="{{ $w->withdrawal_id }}" data-nama="{{ $w->store?->nama_toko ?? '-' }}" data-jumlah="{{ number_format((float) $w->jumlah, 0, ',', '.') }}"
+                    data-metode="{{ $tujuanMetode }}" data-tujuan="{{ $tujuanNomor }}" data-pemilik="{{ $tujuanPemilik }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
                     <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="flex items-center gap-3 min-w-0">
@@ -319,17 +327,48 @@
     'iconBox' => 'bg-gold-accent/20 border-gold-accent/30',
     'iconColor' => 'text-gold-accent',
 ])
-    <form method="POST" action="" id="approve-form" onsubmit="hideDialog('approve-dialog')">
+    <form method="POST" action="" id="approve-form" enctype="multipart/form-data" onsubmit="hideDialog('approve-dialog')">
         @csrf
         <div class="p-6">
             <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Konfirmasi Pencairan</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant mb-6 text-center">Anda akan menyetujui pencairan sebesar <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> ke <span id="approve-toko" class="font-bold text-on-surface">-</span>. Saldo toko akan dikunci untuk proses pembayaran.</p>
-    </div>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-5 text-center">Anda akan menyetujui pencairan sebesar <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> ke <span id="approve-toko" class="font-bold text-on-surface">-</span>. Saldo toko akan langsung dipotong.
+            <div class="space-y-3 rounded-xl border border-muted-border bg-surface-container-low p-4">
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Detail Transfer</p>
+                <div class="flex items-start gap-2.5">
+                    <span class="material-symbols-outlined text-on-surface-variant text-[18px] mt-0.5">account_balance_wallet</span>
+                    <div class="min-w-0">
+                        <p class="text-on-surface-variant text-xs">Metode Tujuan</p>
+                        <p id="approve-metode" class="font-bold text-on-surface break-words">-</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-2.5">
+                    <span class="material-symbols-outlined text-on-surface-variant text-[18px] mt-0.5">payments</span>
+                    <div class="min-w-0">
+                        <p class="text-on-surface-variant text-xs">Nomor Tujuan</p>
+                        <p id="approve-tujuan" class="font-bold text-on-surface break-words font-mono">-</p>
+                        <p id="approve-pemilik" class="text-on-surface-variant text-xs"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5 space-y-4">
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Bukti Transfer <span class="text-error">*</span></label>
+                    <input type="file" name="file_bukti" id="approve-file" required accept=".jpg,.jpeg,.png,.pdf"
+                        class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
+                    <p class="text-on-surface-variant text-[11px] mt-2 inline-flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">info</span>Wajib dilampirkan sebagai bukti transparansi (JPG, PNG, atau PDF, maks 5MB).</p>
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Deskripsi / No. Referensi (opsional)</label>
+                    <input type="text" name="deskripsi_bukti" id="approve-deskripsi" maxlength="1000" placeholder="Contoh: Transfer BCA dari rekening platform Raliva"
+                        class="w-full border border-muted-border bg-surface-container-low p-3 font-body-md text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
+                </div>
+            </div>
+        </div>
     </form>
     @slot('footer')
         <div class="flex justify-end gap-4">
             <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
-            <button type="submit" form="approve-form" class="btn-modal btn-modal-success flex-1"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Konfirmasi Persetujuan</button>
+            <button type="submit" form="approve-form" id="approve-submit" disabled class="btn-modal btn-modal-success flex-1 disabled:opacity-40 disabled:cursor-not-allowed"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Setujui &amp; Bayar</button>
         </div>
     @endslot
 @endcomponent
@@ -381,8 +420,19 @@
         document.getElementById('approve-toko').textContent = row.dataset.nama;
         document.getElementById('approve-nominal').textContent = 'Rp ' + row.dataset.jumlah;
         document.getElementById('approve-form').action = withdrawalUrls.setujui(row.dataset.id);
+        document.getElementById('approve-metode').textContent = row.dataset.metode || '-';
+        document.getElementById('approve-tujuan').textContent = row.dataset.tujuan || '-';
+        document.getElementById('approve-pemilik').textContent = row.dataset.pemilik ? 'a.n. ' + row.dataset.pemilik : '';
+        document.getElementById('approve-file').value = '';
+        document.getElementById('approve-deskripsi').value = '';
+        document.getElementById('approve-submit').disabled = true;
         showDialog('approve-dialog');
     }
+
+    document.getElementById('approve-file')?.addEventListener('change', function () {
+        const submit = document.getElementById('approve-submit');
+        if (submit) submit.disabled = !this.files.length;
+    });
 
     function openRejectDialog(row) {
         document.getElementById('reject-toko').textContent = row.dataset.nama;

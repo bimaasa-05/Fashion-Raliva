@@ -121,11 +121,15 @@
                             $badge = $badgeMap[$wd->status] ?? $badgeMap['pending'];
                             $initial = strtoupper(substr($wd->user?->nama_lengkap ?? ($wd->user?->email ?? '?'), 0, 2));
                             $tujuan = $wd->tipe_tujuan === 'bank' ? (($wd->bank?->nama_bank ?? 'Bank') . ' • ' . $wd->nomor_tujuan) : (($wd->penyedia ?? 'E-Wallet') . ' • ' . $wd->nomor_tujuan);
+                            $tujuanMetode = $wd->tipe_tujuan === 'bank' ? ($wd->bank?->nama_bank ?? 'Bank') : ($wd->penyedia ?? 'E-Wallet');
+                            $tujuanNomor = $wd->nomor_tujuan ?? '';
+                            $tujuanPemilik = $wd->nama_pemilik ?? '';
                             $searchData = strtolower(($wd->user?->nama_lengkap ?? '').' '.($wd->user?->email ?? '').' '.$wd->customer_withdrawal_id);
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors group"
                             data-table-row data-status="{{ $wd->status }}" data-search="{{ $searchData }}"
-                            data-id="{{ $wd->customer_withdrawal_id }}" data-customer="{{ $wd->user?->nama_lengkap ?? $wd->user?->email ?? '-' }}" data-nominal="{{ number_format((float) $wd->jumlah_bersih, 0, ',', '.') }}">
+                            data-id="{{ $wd->customer_withdrawal_id }}" data-customer="{{ $wd->user?->nama_lengkap ?? $wd->user?->email ?? '-' }}" data-nominal="{{ number_format((float) $wd->jumlah_bersih, 0, ',', '.') }}"
+                            data-metode="{{ $tujuanMetode }}" data-tujuan="{{ $tujuanNomor }}" data-pemilik="{{ $tujuanPemilik }}">
                             <td class="p-6 text-center text-on-surface-variant font-mono row-num"></td>
                             <td class="p-6">
                                 <div class="flex items-center gap-3">
@@ -144,6 +148,12 @@
                             <td class="p-6">
                                 <p class="text-primary">{{ $tujuan }}</p>
                                 <p class="text-on-surface-variant">{{ $wd->nama_pemilik ?? '' }}</p>
+                                @if ($wd->file_bukti)
+                                    <a href="{{ asset('storage/' . ltrim($wd->file_bukti, '/')) }}" target="_blank" rel="noopener"
+                                        class="mt-1 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600 hover:underline">
+                                        <span class="material-symbols-outlined text-[13px]">receipt_long</span>Bukti Transfer
+                                    </a>
+                                @endif
                             </td>
                             <td class="p-6 text-center">
                                 <span class="inline-flex items-center px-2 py-1 rounded {{ $badge['class'] }} text-xs uppercase">{{ $badge['label'] }}</span>
@@ -195,9 +205,13 @@
                     $badge = $badgeMap[$wd->status] ?? $badgeMap['pending'];
                     $initial = strtoupper(substr($wd->user?->nama_lengkap ?? ($wd->user?->email ?? '?'), 0, 2));
                     $tujuan = $wd->tipe_tujuan === 'bank' ? (($wd->bank?->nama_bank ?? 'Bank') . ' • ' . $wd->nomor_tujuan) : (($wd->penyedia ?? 'E-Wallet') . ' • ' . $wd->nomor_tujuan);
+                    $tujuanMetode = $wd->tipe_tujuan === 'bank' ? ($wd->bank?->nama_bank ?? 'Bank') : ($wd->penyedia ?? 'E-Wallet');
+                    $tujuanNomor = $wd->nomor_tujuan ?? '';
+                    $tujuanPemilik = $wd->nama_pemilik ?? '';
                 @endphp
                 <article data-table-row data-status="{{ $wd->status }}" data-search="{{ strtolower(($wd->user?->nama_lengkap ?? '').' '.($wd->user?->email ?? '').' '.$wd->customer_withdrawal_id) }}"
-                    data-id="{{ $wd->customer_withdrawal_id }}" data-customer="{{ $wd->user?->nama_lengkap ?? $wd->user?->email ?? '-' }}" data-nominal="{{ number_format((float) $wd->jumlah_bersih, 0, ',', '.') }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    data-id="{{ $wd->customer_withdrawal_id }}" data-customer="{{ $wd->user?->nama_lengkap ?? $wd->user?->email ?? '-' }}" data-nominal="{{ number_format((float) $wd->jumlah_bersih, 0, ',', '.') }}"
+                    data-metode="{{ $tujuanMetode }}" data-tujuan="{{ $tujuanNomor }}" data-pemilik="{{ $tujuanPemilik }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
                     <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="flex items-center gap-3 min-w-0">
@@ -210,10 +224,16 @@
                         <span class="inline-flex items-center px-2 py-1 rounded {{ $badge['class'] }} text-xs uppercase shrink-0">{{ $badge['label'] }}</span>
                     </div>
                     <div class="flex items-center justify-between gap-3">
-                        <div>
-                            <p class="font-title-md text-title-md text-gold-accent">Rp {{ number_format((float) $wd->jumlah_bersih, 0, ',', '.') }}</p>
-                            <p class="text-on-surface-variant text-xs">#{{ $wd->customer_withdrawal_id }} • {{ $tujuan }}</p>
-                        </div>
+<div>
+                                    <p class="font-title-md text-title-md text-gold-accent">Rp {{ number_format((float) $wd->jumlah_bersih, 0, ',', '.') }}</p>
+                                    <p class="text-on-surface-variant text-xs">#{{ $wd->customer_withdrawal_id }} • {{ $tujuan }}</p>
+                                    @if ($wd->file_bukti)
+                                        <a href="{{ asset('storage/' . ltrim($wd->file_bukti, '/')) }}" target="_blank" rel="noopener"
+                                            class="mt-1 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600 hover:underline">
+                                            <span class="material-symbols-outlined text-[13px]">receipt_long</span>Bukti Transfer
+                                        </a>
+                                    @endif
+                                </div>
                         <div class="text-right">
                             @if ($wd->status === 'pending')
                                 <div class="flex gap-2">
@@ -243,26 +263,57 @@
 </div>
 
 <!-- Approve Dialog -->
-<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="approve-dialog">
-    <form method="POST" action="" id="approve-form" onsubmit="hideDialog('approve-dialog')">
+<div class="hidden fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto p-4 bg-black/50 backdrop-blur-sm" id="approve-dialog">
+    <form method="POST" action="" id="approve-form" enctype="multipart/form-data" onsubmit="hideDialog('approve-dialog')" class="my-auto w-full max-w-md">
         @csrf
         <div class="bg-surface-container-lowest border border-gold-accent/25 p-6 max-w-md w-full shadow-2xl rounded-xl">
             <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-4">
                 <span class="material-symbols-outlined text-gold-accent text-[28px]">task_alt</span>
             </div>
             <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4 text-center">Konfirmasi Persetujuan Penarikan</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant mb-8 text-center">Penarikan sebesar <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> untuk <span id="approve-customer" class="font-bold text-on-surface">-</span> akan disetujui. Transfer manual, lalu tandai dibayar.</p>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-5 text-center">Penarikan sebesar <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> untuk <span id="approve-customer" class="font-bold text-on-surface">-</span> akan disetujui dan ditandai dibayar.</p>
+            <div class="mb-6 space-y-3 rounded-xl border border-muted-border bg-surface-container-low p-4">
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Detail Transfer</p>
+                <div class="flex items-start gap-2.5">
+                    <span class="material-symbols-outlined text-on-surface-variant text-[18px] mt-0.5">account_balance_wallet</span>
+                    <div class="min-w-0">
+                        <p class="text-on-surface-variant text-xs">Metode Tujuan</p>
+                        <p id="approve-metode" class="font-bold text-on-surface break-words">-</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-2.5">
+                    <span class="material-symbols-outlined text-on-surface-variant text-[18px] mt-0.5">payments</span>
+                    <div class="min-w-0">
+                        <p class="text-on-surface-variant text-xs">Nomor Tujuan</p>
+                        <p id="approve-tujuan" class="font-bold text-on-surface break-words font-mono">-</p>
+                        <p id="approve-pemilik" class="text-on-surface-variant text-xs"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-6 space-y-4">
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Bukti Transfer <span class="text-error">*</span></label>
+                    <input type="file" name="file_bukti" id="approve-file" required accept=".jpg,.jpeg,.png,.pdf"
+                        class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:font-label-sm file:uppercase file:tracking-widest file:cursor-pointer border border-muted-border rounded-lg p-1 focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent" />
+                    <p class="text-on-surface-variant text-[11px] mt-2 inline-flex items-center gap-1"><span class="material-symbols-outlined text-[13px]">info</span>Wajib dilampirkan sebagai bukti transparansi (JPG, PNG, atau PDF, maks 5MB).</p>
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Deskripsi / No. Referensi (opsional)</label>
+                    <input type="text" name="deskripsi_bukti" id="approve-deskripsi" maxlength="1000" placeholder="Contoh: Transfer BCA dari rekening platform Raliva"
+                        class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent placeholder-on-surface-variant/50" />
+                </div>
+            </div>
             <div class="flex justify-end gap-4">
                 <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('approve-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
-                <button type="submit" class="inline-flex items-center gap-1.5 bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Setujui</button>
+                <button type="submit" id="approve-submit" disabled class="inline-flex items-center gap-1.5 bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:bg-deep-onyx"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Setujui &amp; Bayar</button>
             </div>
         </div>
     </form>
 </div>
 
 <!-- Reject Dialog -->
-<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="reject-dialog">
-    <form method="POST" action="" id="reject-form" onsubmit="hideDialog('reject-dialog')" class="w-full max-w-md">
+<div class="hidden fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto p-4 bg-black/50 backdrop-blur-sm" id="reject-dialog">
+    <form method="POST" action="" id="reject-form" onsubmit="hideDialog('reject-dialog')" class="my-auto w-full max-w-md">
         @csrf
         <div class="bg-surface-container-lowest border border-error/25 p-6 max-w-md w-full shadow-2xl rounded-xl">
             <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-4">
@@ -285,8 +336,8 @@
 </div>
 
 <!-- Paid Dialog -->
-<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="paid-dialog">
-    <form method="POST" action="" id="paid-form" onsubmit="hideDialog('paid-dialog')">
+<div class="hidden fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto p-4 bg-black/50 backdrop-blur-sm" id="paid-dialog">
+    <form method="POST" action="" id="paid-form" onsubmit="hideDialog('paid-dialog')" class="my-auto">
         @csrf
         <div class="bg-surface-container-lowest border border-gold-accent/25 p-6 max-w-md w-full shadow-2xl rounded-xl">
             <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-4">
@@ -315,8 +366,19 @@
         document.getElementById('approve-customer').textContent = row.getAttribute('data-customer') || '-';
         document.getElementById('approve-nominal').textContent = 'Rp ' + (row.getAttribute('data-nominal') || '-');
         document.getElementById('approve-form').action = penarikanUrls.setujui(row.getAttribute('data-id'));
+        document.getElementById('approve-metode').textContent = row.getAttribute('data-metode') || '-';
+        document.getElementById('approve-tujuan').textContent = row.getAttribute('data-tujuan') || '-';
+        document.getElementById('approve-pemilik').textContent = row.getAttribute('data-pemilik') ? 'a.n. ' + row.getAttribute('data-pemilik') : '';
+        document.getElementById('approve-file').value = '';
+        document.getElementById('approve-deskripsi').value = '';
+        document.getElementById('approve-submit').disabled = true;
         showDialog('approve-dialog');
     }
+
+    document.getElementById('approve-file')?.addEventListener('change', function () {
+        const submit = document.getElementById('approve-submit');
+        if (submit) submit.disabled = !this.files.length;
+    });
 
     function openRejectDialog(row) {
         document.getElementById('reject-customer').textContent = row.getAttribute('data-customer') || '-';

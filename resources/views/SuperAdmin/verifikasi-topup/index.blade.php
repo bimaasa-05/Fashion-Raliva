@@ -117,10 +117,21 @@
                             $initial = strtoupper(substr($tp->user?->nama_lengkap ?? ($tp->user?->email ?? '?'), 0, 2));
                             $proof = $tp->payment?->proofs->last();
                             $searchData = strtolower(($tp->user?->nama_lengkap ?? '').' '.($tp->user?->email ?? '').' '.$tp->customer_topup_id);
+                            $akunTujuan = $tp->payment?->account;
+$metodeTujuan = $tp->payment?->paymentMethod?->nama_metode ?? '-';
+                            $metodeTujuan = $akunTujuan?->nama ? $metodeTujuan . ' — ' . $akunTujuan->nama : $metodeTujuan;
+                            $rekBank = $akunTujuan?->bank?->nama_bank ?? '';
+                            $rekNomor = $akunTujuan?->nomor_rekening ?? '';
+                            $rekPemilik = $akunTujuan?->nama_pemilik ?? '';
+                            $proofFile = $proof?->file_bukti ?? '';
+                            $proofUrl = $proofFile ? asset('storage/' . ltrim($proofFile, '/')) : '';
+                            $proofIsImage = $proofFile ? in_array(strtolower(pathinfo($proofFile, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp'], true) : false;
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors group"
                             data-table-row data-status="{{ $tp->status }}" data-search="{{ $searchData }}"
-                            data-id="{{ $tp->customer_topup_id }}" data-customer="{{ $tp->user?->nama_lengkap ?? $tp->user?->email ?? '-' }}" data-nominal="{{ number_format((float) $tp->jumlah, 0, ',', '.') }}">
+                            data-id="{{ $tp->customer_topup_id }}" data-customer="{{ $tp->user?->nama_lengkap ?? $tp->user?->email ?? '-' }}" data-nominal="{{ number_format((float) $tp->jumlah, 0, ',', '.') }}"
+                            data-metode="{{ $metodeTujuan }}" data-rek-bank="{{ $rekBank }}" data-rek-nomor="{{ $rekNomor }}" data-rek-pemilik="{{ $rekPemilik }}"
+                            data-bukti-url="{{ $proofUrl }}" data-bukti-is-image="{{ $proofIsImage ? 1 : 0 }}">
                             <td class="p-6 text-center text-on-surface-variant font-mono row-num"></td>
                             <td class="p-6">
                                 <div class="flex items-center gap-3">
@@ -196,9 +207,20 @@
                     $badge = $badgeMap[$tp->status] ?? $badgeMap['pending'];
                     $initial = strtoupper(substr($tp->user?->nama_lengkap ?? ($tp->user?->email ?? '?'), 0, 2));
                     $proof = $tp->payment?->proofs->last();
+                    $akunTujuan = $tp->payment?->account;
+$metodeTujuan = $tp->payment?->paymentMethod?->nama_metode ?? '-';
+                    $metodeTujuan = $akunTujuan?->nama ? $metodeTujuan . ' — ' . $akunTujuan->nama : $metodeTujuan;
+                    $rekBank = $akunTujuan?->bank?->nama_bank ?? '';
+                    $rekNomor = $akunTujuan?->nomor_rekening ?? '';
+                    $rekPemilik = $akunTujuan?->nama_pemilik ?? '';
+                    $proofFile = $proof?->file_bukti ?? '';
+                    $proofUrl = $proofFile ? asset('storage/' . ltrim($proofFile, '/')) : '';
+                    $proofIsImage = $proofFile ? in_array(strtolower(pathinfo($proofFile, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp'], true) : false;
                 @endphp
                 <article data-table-row data-status="{{ $tp->status }}" data-search="{{ strtolower(($tp->user?->nama_lengkap ?? '').' '.($tp->user?->email ?? '').' '.$tp->customer_topup_id) }}"
-                    data-id="{{ $tp->customer_topup_id }}" data-customer="{{ $tp->user?->nama_lengkap ?? $tp->user?->email ?? '-' }}" data-nominal="{{ number_format((float) $tp->jumlah, 0, ',', '.') }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
+                    data-id="{{ $tp->customer_topup_id }}" data-customer="{{ $tp->user?->nama_lengkap ?? $tp->user?->email ?? '-' }}" data-nominal="{{ number_format((float) $tp->jumlah, 0, ',', '.') }}"
+                    data-metode="{{ $metodeTujuan }}" data-rek-bank="{{ $rekBank }}" data-rek-nomor="{{ $rekNomor }}" data-rek-pemilik="{{ $rekPemilik }}"
+                    data-bukti-url="{{ $proofUrl }}" data-bukti-is-image="{{ $proofIsImage ? 1 : 0 }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
                     <span class="material-symbols-outlined absolute right-1 bottom-1 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="flex items-center gap-3 min-w-0">
@@ -245,26 +267,64 @@
 </div>
 
 <!-- Approve Dialog -->
-<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="approve-dialog">
-    <form method="POST" action="" id="approve-form" onsubmit="hideDialog('approve-dialog')">
+<div class="hidden fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto p-4 bg-black/50 backdrop-blur-sm" id="approve-dialog">
+    <form method="POST" action="" id="approve-form" onsubmit="hideDialog('approve-dialog')" class="my-auto w-full max-w-md">
         @csrf
         <div class="bg-surface-container-lowest border border-gold-accent/25 p-6 max-w-md w-full shadow-2xl rounded-xl">
             <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-4">
                 <span class="material-symbols-outlined text-gold-accent text-[28px]">task_alt</span>
             </div>
             <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4 text-center">Konfirmasi Persetujuan Top Up</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant mb-8 text-center">Saldo sebesar <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> akan diterbitkan ke wallet <span id="approve-customer" class="font-bold text-on-surface">-</span>.</p>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-5 text-center">Saldo sebesar <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> akan diterbitkan ke wallet <span id="approve-customer" class="font-bold text-on-surface">-</span>.</p>
+            <div class="mb-6 space-y-3 rounded-xl border border-muted-border bg-surface-container-low p-4">
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Detail Transfer</p>
+                <div class="flex items-start gap-2.5">
+                    <span class="material-symbols-outlined text-on-surface-variant text-[18px] mt-0.5">account_balance_wallet</span>
+                    <div class="min-w-0">
+                        <p class="text-on-surface-variant text-xs">Metode Pembayaran</p>
+                        <p id="approve-metode" class="font-bold text-on-surface break-words">-</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-2.5">
+                    <span class="material-symbols-outlined text-on-surface-variant text-[18px] mt-0.5">payments</span>
+                    <div class="min-w-0">
+                        <p class="text-on-surface-variant text-xs">Tujuan Transfer Customer</p>
+                        <p id="approve-rekening" class="font-bold text-on-surface break-words font-mono">-</p>
+                        <p id="approve-pemilik" class="text-on-surface-variant text-xs"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-6">
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Bukti Transfer Customer</p>
+                <img id="approve-bukti-img" src="" alt="Bukti transfer customer" class="hidden w-full max-h-72 object-contain rounded-lg border border-muted-border bg-black/5 cursor-zoom-in" onclick="openBuktiLightbox()" />
+                <p id="approve-bukti-pdf" class="hidden flex-col items-center justify-center gap-2 rounded-lg border border-muted-border bg-surface-container-low p-6 text-center text-on-surface-variant text-xs">
+                    <span class="material-symbols-outlined text-[28px] leading-none">picture_as_pdf</span>
+                    Bukti berupa PDF &mdash; file tidak dipratinjau.
+                </p>
+                <p id="approve-bukti-empty" class="hidden flex-col items-center justify-center gap-2 rounded-lg border border-muted-border bg-surface-container-low p-6 text-center text-on-surface-variant text-xs">
+                    <span class="material-symbols-outlined text-[28px] leading-none">image_not_supported</span>
+                    Customer belum mengunggah bukti transfer.
+                </p>
+            </div>
             <div class="flex justify-end gap-4">
                 <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('approve-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
-                <button type="submit" class="inline-flex items-center gap-1.5 bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Terbitkan Saldo</button>
+                <button type="submit" id="approve-submit" class="inline-flex items-center gap-1.5 bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Terbitkan Saldo</button>
             </div>
         </div>
     </form>
 </div>
 
+<!-- Bukti Lightbox -->
+<div class="hidden fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm" id="bukti-lightbox" onclick="if(event.target===this){closeBuktiLightbox();}">
+    <button type="button" title="Tutup" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-colors" onclick="event.stopPropagation(); closeBuktiLightbox();">
+        <span class="material-symbols-outlined text-[24px]">close</span>
+    </button>
+    <img id="bukti-lightbox-img" src="" alt="Bukti transfer customer" class="max-h-[85vh] max-w-full object-contain rounded-lg shadow-2xl" onclick="event.stopPropagation()" />
+</div>
+
 <!-- Reject Dialog -->
-<div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" id="reject-dialog">
-    <form method="POST" action="" id="reject-form" onsubmit="hideDialog('reject-dialog')" class="w-full max-w-md">
+<div class="hidden fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto p-4 bg-black/50 backdrop-blur-sm" id="reject-dialog">
+    <form method="POST" action="" id="reject-form" onsubmit="hideDialog('reject-dialog')" class="my-auto w-full max-w-md">
         @csrf
         <div class="bg-surface-container-lowest border border-error/25 p-6 max-w-md w-full shadow-2xl rounded-xl">
             <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-4">
@@ -298,6 +358,28 @@
         document.getElementById('approve-customer').textContent = row.getAttribute('data-customer') || '-';
         document.getElementById('approve-nominal').textContent = 'Rp ' + (row.getAttribute('data-nominal') || '-');
         document.getElementById('approve-form').action = topupUrls.setujui(row.getAttribute('data-id'));
+        document.getElementById('approve-metode').textContent = row.getAttribute('data-metode') || '-';
+        const rekBank = row.getAttribute('data-rek-bank') || '';
+        const rekNomor = row.getAttribute('data-rek-nomor') || '';
+        document.getElementById('approve-rekening').textContent = [rekBank, rekNomor].filter(Boolean).join(' ') || '-';
+        const rekPemilik = row.getAttribute('data-rek-pemilik') || '';
+        document.getElementById('approve-pemilik').textContent = rekPemilik ? 'a.n. ' + rekPemilik : '';
+        const img = document.getElementById('approve-bukti-img');
+        const pdf = document.getElementById('approve-bukti-pdf');
+        const empty = document.getElementById('approve-bukti-empty');
+        img.classList.add('hidden');
+        pdf.classList.add('hidden');
+        empty.classList.add('hidden');
+        const buktiUrl = row.getAttribute('data-bukti-url') || '';
+        const buktiIsImage = row.getAttribute('data-bukti-is-image') === '1';
+        if (buktiUrl && buktiIsImage) {
+            img.src = buktiUrl;
+            img.classList.remove('hidden');
+        } else if (buktiUrl) {
+            pdf.classList.remove('hidden');
+        } else {
+            empty.classList.remove('hidden');
+        }
         showDialog('approve-dialog');
     }
 
@@ -322,8 +404,25 @@
         document.body.style.overflow = '';
     }
 
+    function openBuktiLightbox() {
+        const src = document.getElementById('approve-bukti-img')?.src;
+        if (!src) return;
+        const lb = document.getElementById('bukti-lightbox');
+        const lbImg = document.getElementById('bukti-lightbox-img');
+        lbImg.src = src;
+        lb.classList.remove('hidden');
+        lb.classList.add('flex');
+    }
+
+    function closeBuktiLightbox() {
+        const lb = document.getElementById('bukti-lightbox');
+        lb.classList.add('hidden');
+        lb.classList.remove('flex');
+        document.getElementById('bukti-lightbox-img').src = '';
+    }
+
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') { hideDialog('approve-dialog'); hideDialog('reject-dialog'); }
+        if (e.key === 'Escape') { closeBuktiLightbox(); hideDialog('approve-dialog'); hideDialog('reject-dialog'); }
     });
 
     document.addEventListener('DOMContentLoaded', () => {
