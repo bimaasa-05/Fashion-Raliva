@@ -30,7 +30,7 @@
 @include('partials.flash-toast')
 
 <div class="px-container-margin pb-element-gap">
-    <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+    <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4">
         <div class="flex items-center gap-2 mb-3">
             <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
             <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Moderasi</span>
