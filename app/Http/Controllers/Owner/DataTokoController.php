@@ -56,6 +56,11 @@ class DataTokoController extends Controller
             'alamat' => ['required', 'string', 'max:500'],
             'nomor_telepon' => ['required', 'string', 'max:20'],
             'email' => ['required', 'email', 'max:150', Rule::unique('users', 'email')->ignore($request->user()->user_id ?? 0, 'user_id')],
+            'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ], [
+            'logo.image' => 'File harus berupa gambar.',
+            'logo.mimes' => 'Logo harus berformat JPG, JPEG, PNG, atau WebP.',
+            'logo.max' => 'Ukuran logo maksimal 2 MB.',
         ]);
 
         // Email ada di tabel users, bukan stores — langsung disimpan.
@@ -73,10 +78,16 @@ class DataTokoController extends Controller
             && ($store->kategori ?? null) === ($validated['kategori'] ?? null)
             && ($store->deskripsi ?? null) === ($validated['deskripsi'] ?? null)
             && $store->alamat === $validated['alamat']
-            && $store->nomor_telepon === $validated['nomor_telepon'];
+            && $store->nomor_telepon === $validated['nomor_telepon']
+            && ! $request->hasFile('logo');
 
         if ($sama) {
             return back()->with('info', 'Tidak ada perubahan data toko.');
+        }
+
+        $logoPath = null;
+        if ($request->hasFile('logo')) {
+            $logoPath = $request->file('logo')->store('store-logos/'.$store->store_id.'/pending', 'public');
         }
 
         $permintaan = \App\Models\StoreUpdateRequest::create([
@@ -86,6 +97,7 @@ class DataTokoController extends Controller
             'deskripsi' => $validated['deskripsi'] ?? null,
             'alamat' => $validated['alamat'],
             'nomor_telepon' => $validated['nomor_telepon'],
+            'logo' => $logoPath,
             'status' => \App\Models\StoreUpdateRequest::STATUS_PENDING,
         ]);
 
@@ -93,8 +105,8 @@ class DataTokoController extends Controller
             'toko.update.request',
             Store::class,
             $store->store_id,
-            $store->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon']),
-            $permintaan->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon']),
+            $store->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon', 'logo']),
+            $permintaan->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon', 'logo']),
             sprintf('Mengajukan perubahan data toko "%s".', $store->nama_toko)
         );
 
