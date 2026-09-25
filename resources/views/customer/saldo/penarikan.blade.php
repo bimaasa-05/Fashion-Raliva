@@ -217,6 +217,34 @@
                 @endif
             </div>
 
+            @if ($st === 'dibayar' && $penarikan->file_bukti)
+                @php
+                    $buktiSAUrl = asset('storage/' . ltrim($penarikan->file_bukti, '/'));
+                    $buktiSAExt = strtolower(pathinfo($penarikan->file_bukti, PATHINFO_EXTENSION));
+                    $buktiSANama = \Illuminate\Support\Str::afterLast($penarikan->file_bukti, '/');
+                @endphp
+                <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
+                    <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('BUKTI TRANSFER SUPER ADMIN') }}</p>
+                    <div class="rounded-xl border border-emerald-300/40 bg-emerald-50 p-2">
+                        @if (in_array($buktiSAExt, ['jpg', 'jpeg', 'png'], true))
+                            <a href="{{ $buktiSAUrl }}" target="_blank" rel="noopener" class="block hover:opacity-90 transition-opacity">
+                                <img src="{{ $buktiSAUrl }}" alt="{{ $buktiSANama }}" class="w-full max-h-64 h-auto object-contain rounded-lg" loading="lazy" />
+                                <p class="font-body-sm text-body-sm text-on-surface-variant mt-2 flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[16px]">visibility</span>{{ __('Perbesar foto') }}</p>
+                            </a>
+                        @else
+                            <a href="{{ $buktiSAUrl }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-lg px-3 py-3">
+                                <span class="material-symbols-outlined text-[18px]">description</span>
+                                <span class="font-body-sm text-body-sm text-on-surface truncate">{{ $buktiSANama }}</span>
+                                <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                            </a>
+                        @endif
+                        @if ($penarikan->deskripsi_bukti)
+                            <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">{{ $penarikan->deskripsi_bukti }}</p>
+                        @endif
+                    </div>
+                </div>
+            @endif
+
         </div>
     </main>
 
