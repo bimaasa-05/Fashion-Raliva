@@ -94,6 +94,7 @@
                                 $totalSeconds = max(1, $end - $start);
                                 $elapsedSeconds = max(0, min($totalSeconds, $now - $start));
                                 $progressPct = min(100, round(($elapsedSeconds / $totalSeconds) * 100));
+                                $isBelumMulai = $now < $start;
                                 $isTerlambat = $now > $end;
                                 $daysLeft = (int) round(($end - $now) / 86400);
                             }
@@ -140,15 +141,16 @@
                                 @if ($hasDates)
                                     <p class="text-xs text-on-surface-variant">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
                                     <div class="progress-track mt-1.5">
-                                        <div class="progress-bar-fill {{ $isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent') }}" style="width: {{ $progressPct }}%"></div>
+                                        <div class="progress-bar-fill {{ $isBelumMulai ? 'bg-surface-container-high' : ($isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent')) }}" style="width: {{ $progressPct }}%"></div>
                                     </div>
                                     @if ($progressPct >= 100)
                                         <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
                                     @else
-                                        <p class="text-xs mt-1 countdown-badge {{ $isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant' }}"
-                                           data-countdown-deadline="{{ $o->tgl_berakhir_produksi->timestamp }}"
+                                        <p class="text-xs mt-1 countdown-badge {{ $isBelumMulai ? 'text-secondary' : ($isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant') }}"
+                                           data-countdown-start="{{ $o->tgl_mulai_produksi->timestamp }}"
+                                           data-countdown-end="{{ $o->tgl_berakhir_produksi->timestamp }}"
                                            data-countdown-progress="{{ $progressPct }}">
-                                            Memuat...
+                                            {{ $isBelumMulai ? 'Mulai dalam...' : 'Memuat...' }}
                                         </p>
                                     @endif
                                 @else
@@ -215,6 +217,7 @@
                         $totalSeconds = max(1, $end - $start);
                         $elapsedSeconds = max(0, min($totalSeconds, $now - $start));
                         $progressPct = min(100, round(($elapsedSeconds / $totalSeconds) * 100));
+                        $isBelumMulai = $now < $start;
                         $isTerlambat = $now > $end;
                     }
                     $accepted = (bool) $o->produksi_dimulai_pada;
@@ -251,14 +254,15 @@
                         <div class="mt-3">
                             <p class="text-xs text-on-surface-variant">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
                             <div class="progress-track mt-1.5">
-                                <div class="progress-bar-fill {{ $isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent') }}" style="width: {{ $progressPct }}%"></div>
+                                <div class="progress-bar-fill {{ $isBelumMulai ? 'bg-surface-container-high' : ($isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent')) }}" style="width: {{ $progressPct }}%"></div>
                             </div>
                             @if ($progressPct >= 100)
                                 <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
                             @else
-                                <p class="text-xs mt-1 countdown-badge {{ $isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant' }}"
-                                   data-countdown-deadline="{{ $o->tgl_berakhir_produksi->timestamp }}"
-                                   data-countdown-progress="{{ $progressPct }}">Memuat...</p>
+                                <p class="text-xs mt-1 countdown-badge {{ $isBelumMulai ? 'text-secondary' : ($isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant') }}"
+                                   data-countdown-start="{{ $o->tgl_mulai_produksi->timestamp }}"
+                                   data-countdown-end="{{ $o->tgl_berakhir_produksi->timestamp }}"
+                                   data-countdown-progress="{{ $progressPct }}">{{ $isBelumMulai ? 'Mulai dalam...' : 'Memuat...' }}</p>
                             @endif
                         </div>
                     @endif
@@ -503,37 +507,7 @@
         });
     });
     // === COUNTDOWN TIMER REAL-TIME ===
-    function formatCountdown(seconds) {
-        const abs = Math.abs(seconds);
-        const d = Math.floor(abs / 86400);
-        const h = Math.floor((abs % 86400) / 3600);
-        const m = Math.floor((abs % 3600) / 60);
-        const s = abs % 60;
-        let parts = [];
-        if (d > 0) parts.push(d + 'j');
-        parts.push(h + 'j');
-        parts.push(m + 'm');
-        parts.push(s + 'd');
-        return parts.join(' ');
-    }
-
-    function updateCountdowns() {
-        document.querySelectorAll('[data-countdown-deadline]').forEach(el => {
-            const deadline = parseInt(el.dataset.countdownDeadline) * 1000;
-            const progress = el.dataset.countdownProgress || '0';
-            const now = Date.now();
-            const diff = Math.floor((deadline - now) / 1000);
-            if (diff < 0) {
-                el.textContent = 'Terlambat ' + formatCountdown(diff);
-                el.classList.add('text-error', 'font-bold');
-                el.classList.remove('text-on-surface-variant');
-            } else {
-                el.textContent = 'Sisa ' + formatCountdown(diff) + ' (' + progress + '%)';
-            }
-        });
-    }
-    setInterval(updateCountdowns, 1000);
-    updateCountdowns();
+    @include('partials.countdown-produksi')
 </script>
 @endpush
 @endsection

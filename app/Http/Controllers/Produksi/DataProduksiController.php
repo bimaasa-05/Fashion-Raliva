@@ -40,6 +40,7 @@ class DataProduksiController extends Controller
             'terlambat' => Order::whereIn('store_id', $storeIds)
                 ->where('status', Order::STATUS_DIPROSES)
                 ->whereNotNull('tgl_berakhir_produksi')
+                ->where('tgl_mulai_produksi', '<=', now())
                 ->where('tgl_berakhir_produksi', '<', now())
                 ->count(),
         ];

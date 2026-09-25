@@ -21,7 +21,7 @@ class PeringkatIklanController extends Controller
         $tab = $request->query('tab', 'daftar');
         if (! in_array($tab, ['daftar', 'riwayat', 'pengajuan'], true)) $tab = 'daftar';
 
-        $slotsQuery = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko'])
+        $slotsQuery = AdSlot::with(['product:product_id,nama_produk', 'product.images', 'store:store_id,nama_toko'])
             ->orderByDesc('nominal_bid');
 
         $totalPendapatan = (float) (clone $slotsQuery)->whereIn('status', [AdSlot::STATUS_AKTIF, AdSlot::STATUS_TERJADWAL])->sum('nominal_bid');
@@ -41,7 +41,7 @@ class PeringkatIklanController extends Controller
 
         $today = now()->toDateString();
 
-        $pengajuanSlots = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko', 'bankAccount.bank'])
+        $pengajuanSlots = AdSlot::with(['product:product_id,nama_produk', 'product.images', 'store:store_id,nama_toko', 'bankAccount.bank'])
             ->where('status', AdSlot::STATUS_DITUNDA)
             ->orderByDesc('created_at')
             ->paginate(20)->withQueryString();
@@ -65,7 +65,7 @@ class PeringkatIklanController extends Controller
             ->orderBy('ad_slot_id')
             ->paginate(20)->withQueryString();
 
-        $riwayatSlots = AdSlot::with(['product:product_id,nama_produk', 'store:store_id,nama_toko', 'bankAccount.bank'])
+        $riwayatSlots = AdSlot::with(['product:product_id,nama_produk', 'product.images', 'store:store_id,nama_toko', 'bankAccount.bank'])
             ->where(function ($q) use ($today) {
                 $q->where('status', AdSlot::STATUS_NONAKTIF)
                     ->orWhere(function ($q2) use ($today) {
