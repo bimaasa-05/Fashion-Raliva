@@ -78,6 +78,10 @@
                             <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Tarif (Rp)</label>
                             <input type="number" name="tarif" min="0" max="999999999" value="0" placeholder="0 = gratis" class="raliva-input w-full text-sm" />
                         </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Tarif Sekota (Rp)</label>
+                            <input type="number" name="tarif_sekota" min="0" max="999999999" value="0" placeholder="0 = gratis" class="raliva-input w-full text-sm" />
+                        </div>
                     </div>
                     <button type="submit" class="mt-4 px-5 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium">Tambah Layanan</button>
                 </form>
@@ -227,6 +231,10 @@
                     <div>
                         <label class="block raliva-label mb-2">Tarif (Rp)</label>
                         <input type="number" name="tarif" value="{{ $service->tarif ?? 0 }}" min="0" max="999999999" placeholder="0 = gratis" class="raliva-input w-full" />
+                    </div>
+                    <div>
+                        <label class="block raliva-label mb-2">Tarif Sekota (Rp)</label>
+                        <input type="number" name="tarif_sekota" value="{{ $service->tarif_sekota ?? 0 }}" min="0" max="999999999" placeholder="0 = gratis" class="raliva-input w-full" />
                     </div>
                     <div>
                         <label class="block raliva-label mb-2">Status *</label>
