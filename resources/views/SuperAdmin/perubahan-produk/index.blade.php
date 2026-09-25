@@ -19,7 +19,7 @@
 @endphp
 
 <div class="space-y-section-gap">
-    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+    <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6">
         <div class="flex flex-wrap gap-2">
             @foreach ($tabs as $key => $label)
                 <a href="{{ route('superadmin.perubahan-produk', ['status' => $key]) }}" class="px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-widest border transition-colors {{ $activeStatus === $key ? 'bg-deep-onyx text-on-primary border-deep-onyx' : 'border-muted-border text-on-surface-variant hover:border-gold-accent hover:text-on-surface' }}">
