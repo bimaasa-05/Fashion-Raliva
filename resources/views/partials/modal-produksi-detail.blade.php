@@ -88,10 +88,22 @@
                         </ul>
                     </div>
                 @endif
+                @if ($o->catatan)
+                    <div class="pt-2 border-t border-muted-border">
+                        <p class="text-on-surface-variant mb-1">Catatan Customer</p>
+                        <p class="text-on-surface italic">“{{ $o->catatan }}”</p>
+                    </div>
+                @endif
                 @if ($qcRow)
                     <div class="flex justify-between gap-4 pt-2 border-t border-muted-border">
                         <span class="text-on-surface-variant">Hasil QC</span>
                         <span class="text-on-surface text-right"><span class="text-secondary font-bold">{{ $qcRow->jumlah_lulus }}</span> lulus • <span class="text-error">{{ $qcRow->jumlah_gagal }}</span> gagal</span>
+                    </div>
+                @endif
+                @if (($o->kekurangan_gudang ?? 0) > 0)
+                    <div class="flex justify-between gap-4 pt-2 border-t border-muted-border">
+                        <span class="text-on-surface-variant">Kekurangan Gudang</span>
+                        <span class="text-gold-accent text-right font-bold">{{ $o->kekurangan_gudang }} pcs dari stok gudang</span>
                     </div>
                 @endif
             </div>

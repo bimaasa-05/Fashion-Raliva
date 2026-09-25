@@ -27,8 +27,12 @@ class OrderPriorityCancelTest extends TestCase
         $html = $response->getContent();
 
         $response->assertOk();
+        // Ukur urutan baris tabel (data-nomor), bukan posisi mentah di HTML:
+        // dropdown notifikasi header juga memuat nomor pesanan terbaru.
+        $posLama = strpos($html, 'data-nomor="' . $lama->nomor_order . '"');
+        $posBaru = strpos($html, 'data-nomor="' . $baru->nomor_order . '"');
         $this->assertTrue(
-            strpos($html, (string) $lama->nomor_order) < strpos($html, (string) $baru->nomor_order),
+            $posLama !== false && $posBaru !== false && $posLama < $posBaru,
             'Pesanan menunggu produksi harus tampil di atas pesanan yang lebih baru diupdate.'
         );
     }

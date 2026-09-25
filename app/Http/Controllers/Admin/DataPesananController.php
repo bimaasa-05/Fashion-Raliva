@@ -33,6 +33,7 @@ class DataPesananController extends Controller
             Order::STATUS_DIBAYAR => 'Baru',
             Order::STATUS_MENUNGGU_PRODUKSI => 'Menunggu Produksi',
             Order::STATUS_DIPROSES => 'Diproses',
+            Order::STATUS_MENUNGGU_QC => 'Menunggu QC',
             Order::STATUS_SIAP_KIRIM => 'Siap Kirim',
             Order::STATUS_DIKIRIM => 'Dikirim',
             Order::STATUS_SELESAI => 'Selesai',
@@ -636,6 +637,75 @@ class DataPesananController extends Controller
             'message' => $target === Order::TIPE_PESANAN_OFFLINE
                 ? "Pesanan {$pesanan->nomor_order} dialihkan ke ambil di toko."
                 : "Pesanan {$pesanan->nomor_order} dialihkan ke kirim kurir.",
+            'icon' => 'task_alt',
+        ]);
+    }
+
+    public function qcTanggapan(Request $request, Order $pesanan)
+    {
+        if (! AdminContext::canAccessStore($pesanan->store_id)) {
+            return back()->with('toast', [
+                'message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.',
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
+        if (! $pesanan->qc_perlu_admin_pada || $pesanan->status !== Order::STATUS_MENUNGGU_QC) {
+            return back()->with('toast', [
+                'message' => 'Pesanan ini tidak dalam antrian QC Gagal.',
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
+        $data = $request->validate([
+            'aksi' => ['required', 'in:rework,lanjut'],
+            'catatan' => ['nullable', 'string', 'max:500'],
+        ], [
+            'aksi.required' => 'Pilih tanggapan QC.',
+            'aksi.in' => 'Tanggapan QC tidak valid.',
+        ]);
+
+        $rework = $data['aksi'] === 'rework';
+        $catatanProduksi = $pesanan->qc_perlu_admin_catatan;
+        $lama = $pesanan->only(['status', 'qc_perlu_admin_pada', 'qc_perlu_admin_catatan']);
+
+        $pesanan->update([
+            'status' => $rework ? Order::STATUS_MENUNGGU_PRODUKSI : Order::STATUS_MENUNGGU_QC,
+            'qc_perlu_admin_pada' => null,
+            'qc_perlu_admin_catatan' => null,
+        ]);
+
+        $pesanLog = $rework
+            ? sprintf('QC Gagal: pesanan %s dikirim ulang ke Produksi (rework).', $pesanan->nomor_order)
+            : sprintf('QC Gagal: pesanan %s dilanjutkan ke QC ulang oleh Admin.', $pesanan->nomor_order);
+        if (! empty($data['catatan'])) {
+            $pesanLog .= ' Catatan Admin: ' . $data['catatan'];
+        }
+
+        ActivityLogger::log('admin.order.qc-tanggapan', Order::class, $pesanan->order_id, $lama,
+            [
+                'aksi' => $data['aksi'],
+                'status' => $pesanan->status,
+                'qc_perlu_admin_pada' => null,
+                'catatan' => $data['catatan'] ?? null,
+            ],
+            $pesanLog);
+
+        $subjek = $rework ? 'QC Gagal — Produksi Ulang' : 'QC Gagal — Silakan QC Ulang';
+        $isi = $rework
+            ? sprintf('Pesanan %s gagal QC. Produksi ulang: %s', $pesanan->nomor_order, $catatanProduksi ?: '—')
+            : sprintf('Pesanan %s dilanjutkan ke QC ulang. Silakan periksa kembali.', $pesanan->nomor_order);
+        if (! empty($data['catatan'])) {
+            $isi .= ' Catatan Admin: ' . $data['catatan'];
+        }
+
+        NotificationService::sendToRoleInStores(Role::PRODUKSI, [$pesanan->store_id], Notification::TIPE_SISTEM,
+            $subjek, $isi, ActivityLogger::resolveActorId(), route('admin.pesanan', ['status' => Order::STATUS_MENUNGGU_QC]));
+
+        return back()->with('toast', [
+            'message' => $rework
+                ? "Pesanan {$pesanan->nomor_order} dikirim ulang ke Produksi."
+                : "Pesanan {$pesanan->nomor_order} dilanjutkan ke QC ulang.",
             'icon' => 'task_alt',
         ]);
     }

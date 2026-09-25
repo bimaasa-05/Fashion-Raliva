@@ -71,6 +71,9 @@ class Order extends Model
         'produksi_catatan_tolak',
         'jumlah_berhasil',
         'jumlah_gagal',
+        'kekurangan_gudang',
+        'qc_perlu_admin_pada',
+        'qc_perlu_admin_catatan',
         'tanggal_qc',
         'tanggal_packing',
         'tipe_order',
@@ -91,6 +94,7 @@ class Order extends Model
             'tanggal_qc' => 'datetime',
             'tanggal_packing' => 'datetime',
             'diambil_pada' => 'datetime',
+            'qc_perlu_admin_pada' => 'datetime',
         ];
     }
 

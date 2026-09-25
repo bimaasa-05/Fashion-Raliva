@@ -43,6 +43,29 @@ class NotificationService
         return count($userIds);
     }
 
+    public static function sendToRoleInStores(
+        string $roleName,
+        array $storeIds,
+        string $tipe,
+        string $judul,
+        string $pesan,
+        ?int $aktorId = null,
+        ?string $url = null,
+    ): int {
+        $userIds = User::query()
+            ->whereHas('role', fn ($q) => $q->where('nama_role', $roleName))
+            ->where('status', User::STATUS_AKTIF)
+            ->whereHas('storeAssignments', fn ($q) => $q->whereIn('store_id', $storeIds)->where('status', 'aktif'))
+            ->pluck('user_id')
+            ->all();
+
+        foreach ($userIds as $userId) {
+            static::fire($userId, $tipe, $judul, $pesan, $aktorId, $url);
+        }
+
+        return count($userIds);
+    }
+
     public static function unreadCount(int $userId): int
     {
         return Notification::forUser($userId)->unread()->count();

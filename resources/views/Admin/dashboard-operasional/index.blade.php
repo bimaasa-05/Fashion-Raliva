@@ -56,6 +56,26 @@
     </div>
 </section>
 
+@if (($stats['qc_perlu_admin'] ?? 0) > 0)
+    <a href="{{ route('admin.pesanan', ['status' => \App\Models\Order::STATUS_MENUNGGU_QC]) }}"
+        class="group flex items-center justify-between gap-4 bg-error/10 border border-error/25 rounded-lg px-5 py-4 hover:bg-error/15 transition-colors">
+        <div class="flex items-center gap-3 min-w-0">
+            <span
+                class="w-10 h-10 rounded-full bg-error/15 border border-error/25 flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-error">report</span>
+            </span>
+            <div class="min-w-0">
+                <p class="font-title-md text-sm text-on-surface">QC Menunggu Tanggapan:
+                    {{ $stats['qc_perlu_admin'] }}</p>
+                <p class="text-xs text-on-surface-variant">Pesanan gagal QC menunggu pilihan Rework Produksi atau
+                    Lanjut QC.</p>
+            </div>
+        </div>
+        <span
+            class="material-symbols-outlined text-error group-hover:translate-x-0.5 transition-all shrink-0">chevron_right</span>
+    </a>
+@endif
+
 <section>
     <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Hari Ini</h2>
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
@@ -94,6 +114,14 @@
                 ['icon' => 'fact_check', 'label' => 'Verifikasi Pembayaran', 'sub' => $stats['menunggu_verifikasi'] . ' bukti menunggu tinjauan', 'pct' => min(100, $stats['menunggu_verifikasi'] * 20), 'href' => route('admin.verifikasi-pembayaran'), 'error' => false],
                 ['icon' => 'local_shipping', 'label' => 'Input Resi Pengiriman', 'sub' => $stats['siap_dikirim'] . ' paket belum beresi &#8226; ' . $stats['sedang_dikirim'] . ' sedang dikirim', 'pct' => min(100, $stats['siap_dikirim'] * 15), 'href' => route('admin.pengiriman'), 'error' => false],
                 ['icon' => 'support_agent', 'label' => 'Tangani Komplain', 'sub' => $stats['komplain_terbuka'] . ' komplain aktif', 'pct' => min(100, $stats['komplain_terbuka'] * 25), 'href' => route('admin.komplain'), 'error' => true],
+                ...(($stats['qc_perlu_admin'] ?? 0) > 0 ? [[
+                    'icon' => 'report',
+                    'label' => 'Tanggapi QC Gagal',
+                    'sub' => $stats['qc_perlu_admin'] . ' pesanan menunggu pilihan rework / lanjut QC',
+                    'pct' => min(100, $stats['qc_perlu_admin'] * 25),
+                    'href' => route('admin.pesanan', ['status' => \App\Models\Order::STATUS_MENUNGGU_QC]),
+                    'error' => true,
+                ]] : []),
             ];
         @endphp
         @foreach ($pekerjaan as $tugas)

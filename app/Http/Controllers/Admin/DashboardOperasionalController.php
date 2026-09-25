@@ -31,6 +31,10 @@ class DashboardOperasionalController extends Controller
             'komplain_terbuka' => Complaint::whereIn('store_id', $storeIds)
                 ->whereIn('status', [Complaint::STATUS_OPEN, Complaint::STATUS_DIPROSES])
                 ->count(),
+            'qc_perlu_admin' => Order::whereIn('store_id', $storeIds)
+                ->where('status', Order::STATUS_MENUNGGU_QC)
+                ->whereNotNull('qc_perlu_admin_pada')
+                ->count(),
         ];
 
         $pesananTerbaru = Order::query()
