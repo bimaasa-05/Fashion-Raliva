@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             DataBankSeeder::class,
             CourierSeeder::class,
+            CitySeeder::class,
             CategorySeeder::class,
             StoreCategorySeeder::class,
             StoreCategorySizeSeeder::class,

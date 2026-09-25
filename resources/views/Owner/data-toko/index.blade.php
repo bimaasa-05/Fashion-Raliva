@@ -30,11 +30,16 @@
         <div class="flex flex-col sm:flex-row items-center gap-6">
             <div class="relative shrink-0">
                 <div class="w-24 h-24 rounded-xl overflow-hidden border border-outline-variant bg-surface-container-high flex items-center justify-center">
-                    <img src="{{ asset('images/logo.svg') }}" alt="Logo Toko" class="w-full h-full object-cover" />
+                    @php $logoUrl = $store?->logo ? photo_url($store->logo) : asset('images/logo.svg'); @endphp
+                    <img src="{{ $logoUrl }}" alt="Logo Toko" class="w-full h-full object-cover" id="store-logo-preview" />
                 </div>
-                <button type="button" onclick="showRalivaToast('Silakan pilih logo baru.', 'image')" class="absolute -bottom-2 -right-2 w-9 h-9 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center btn-premium shadow-md" aria-label="Ubah Logo">
-                    <span class="material-symbols-outlined text-[18px]">photo_camera</span>
-                </button>
+                <input type="file" name="logo" id="store-logo-input" accept=".jpg,.jpeg,.png,.webp" class="hidden" form="form-data-toko" @if(!empty($updatePending)) disabled @endif />
+                    <label for="store-logo-input" @if(!empty($updatePending)) aria-disabled="true" title="Terkunci — menunggu verifikasi" @else title="Ubah Logo (JPG/PNG/WebP, maks 2 MB). Berlaku setelah diverifikasi Super Admin." @endif class="absolute -bottom-2 -right-2 w-9 h-9 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center btn-premium shadow-md @if(empty($updatePending)) cursor-pointer @else opacity-60 cursor-not-allowed @endif" aria-label="Ubah Logo">
+                        <span class="material-symbols-outlined text-[18px]">photo_camera</span>
+                    </label>
+                    @if(!empty($updatePending) && !empty($updatePending->logo))
+                        <span class="absolute -top-2 -left-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold-accent/15 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30 whitespace-nowrap" title="Logo baru menunggu verifikasi Super Admin">Logo pending</span>
+                    @endif
             </div>
             <div class="flex-1 text-center sm:text-left">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3 justify-center sm:justify-start">
@@ -55,7 +60,7 @@
         </div>
     </section>
 
-    <form method="POST" action="{{ route('owner.data-toko.update') }}" id="form-data-toko" class="space-y-section-gap" @if(!empty($updatePending)) data-locked @endif>
+    <form method="POST" action="{{ route('owner.data-toko.update') }}" id="form-data-toko" enctype="multipart/form-data" class="space-y-section-gap" @if(!empty($updatePending)) data-locked @endif>
         @csrf
         @method('PUT')
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-section-gap">
@@ -104,6 +109,18 @@
                         <label for="alamat-toko" class="block raliva-label mb-2">Alamat Lengkap</label>
                         <textarea id="alamat-toko" name="alamat" rows="3" required class="raliva-textarea">{{ old('alamat', $store?->alamat ?? '') }}</textarea>
                     </div>
+                    <div>
+                        <label class="block raliva-label mb-2">Kota</label>
+                        <div class="flex items-center gap-2">
+                            <div class="flex-grow min-w-0">
+                                @include('partials.kota-combobox', ['prefix' => 'toko', 'cities' => $cities ?? [], 'selectedName' => old('kota', $store?->kota ?? ''), 'fieldName' => 'kota', 'placeholder' => 'Cari kota toko...'])
+                            </div>
+                            @if(!empty($updatePending) && !empty($updatePending->kota) && $updatePending->kota !== ($store?->kota ?? null))
+                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30 whitespace-nowrap shrink-0" title="Perubahan kota menunggu persetujuan Super Admin"><span class="material-symbols-outlined text-[12px]">schedule</span>Menunggu persetujuan</span>
+                            @endif
+                        </div>
+                        @error('kota') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
                 </div>
             </section>
         </div>
@@ -119,6 +136,16 @@
                 Toko buka 24 jam — siapa pun boleh memesan kapan pun. Setiap perubahan data akan menunggu verifikasi Super Admin sebelum berlaku.
             </p>
         @endif
+
+        @error('logo') <p class="text-error text-xs flex items-start gap-2"><span class="material-symbols-outlined text-[16px] mt-0.5">error</span>{{ $message }}</p> @enderror
+        <p id="store-logo-chip" class="hidden items-center gap-2 text-xs text-on-surface-variant">
+            <span class="material-symbols-outlined text-[16px] text-gold-accent">image</span>
+            <span>Logo baru: <strong id="store-logo-name" class="text-on-surface"></strong> (<span id="store-logo-size"></span>) — ikut diajukan saat klik Ajukan Perubahan.</span>
+        </p>
+        <p id="store-logo-chip-error" class="hidden items-center gap-2 text-xs text-error">
+            <span class="material-symbols-outlined text-[16px]">error</span>
+            <span id="store-logo-error-text">Logo melebihi 2 MB — pilih file lain agar ikut terkirim.</span>
+        </p>
 
         <div data-reveal class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter sticky bottom-20 md:bottom-4 z-30">
             <button type="button" data-modal-open="modal-atur-ulang" @if(!empty($updatePending)) disabled title="Terkunci — menunggu verifikasi" @endif class="py-3 px-6 bg-surface-container-lowest border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">Atur Ulang</button>
@@ -175,6 +202,50 @@ document.addEventListener('DOMContentLoaded', function(){
     el.setAttribute('disabled','');
     el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
   });
+
+  // Logo toko: preview + chip persisten; ikut terkirim bersama form data (perlu verifikasi SA).
+  var logoInput = document.getElementById('store-logo-input');
+  var logoChip = document.getElementById('store-logo-chip');
+  var logoChipErr = document.getElementById('store-logo-chip-error');
+  function showChip(el, show) {
+    if (!el) return;
+    el.classList.toggle('hidden', !show);
+    el.classList.toggle('flex', show);
+  }
+  if (logoInput) {
+    logoInput.addEventListener('change', function () {
+      var file = this.files && this.files[0];
+      if (!file) return;
+      logoInput.dataset.picked = '1';
+      if (file.size > 2 * 1024 * 1024) {
+        this.value = '';
+        showChip(logoChip, false);
+        showChip(logoChipErr, true);
+        showRalivaToast('Ukuran logo maksimal 2 MB.', 'error');
+        return;
+      }
+      showChip(logoChipErr, false);
+      var preview = document.getElementById('store-logo-preview');
+      if (preview) preview.src = URL.createObjectURL(file);
+      var nm = document.getElementById('store-logo-name');
+      var sz = document.getElementById('store-logo-size');
+      if (nm) nm.textContent = file.name;
+      if (sz) sz.textContent = (file.size / 1024).toFixed(0) + ' KB';
+      showChip(logoChip, true);
+    });
+    var mainForm = document.getElementById('form-data-toko');
+    if (mainForm) {
+      mainForm.addEventListener('submit', function (e) {
+        if (logoInput.dataset.picked === '1' && (!logoInput.files || logoInput.files.length === 0)) {
+          e.preventDefault();
+          showChip(logoChip, false);
+          showChip(logoChipErr, true);
+          showRalivaToast('File logo tidak terbawa. Pilih ulang logo lalu ajukan kembali.', 'error');
+          logoInput.focus();
+        }
+      });
+    }
+  }
 });
 </script>
 @endpush

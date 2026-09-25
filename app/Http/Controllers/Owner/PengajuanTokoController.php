@@ -24,8 +24,10 @@ class PengajuanTokoController extends Controller
         $storeCategories = StoreCategory::where('status', StoreCategory::STATUS_AKTIF)
             ->orderBy('nama_kategori')
             ->pluck('nama_kategori');
+        $cities = \App\Models\City::orderBy('city_id')->get()->groupBy('pulau')
+            ->map(fn ($g) => $g->pluck('nama_kota')->values()->all())->all();
 
-        return view('Owner.pengajuan-toko.index', compact('store', 'documents', 'storeCategories'));
+        return view('Owner.pengajuan-toko.index', compact('store', 'documents', 'storeCategories', 'cities'));
     }
 
     public function store(Request $request)
@@ -80,6 +82,7 @@ class PengajuanTokoController extends Controller
                 'nama_toko' => ['required', 'string', 'max:150'],
                 'kategori' => ['nullable', 'string', 'max:100', Rule::exists('store_categories', 'nama_kategori')->where('status', StoreCategory::STATUS_AKTIF)],
                 'alamat' => ['required', 'string', 'max:500'],
+                'kota' => ['required', 'string', 'max:100', Rule::exists('cities', 'nama_kota')],
                 'nomor_telepon' => ['required', 'string', 'max:20'],
                 'deskripsi' => ['nullable', 'string', 'max:1000'],
             ]);
@@ -88,6 +91,7 @@ class PengajuanTokoController extends Controller
                 'nama_toko' => ['sometimes', 'string', 'max:150'],
                 'kategori' => ['nullable', 'string', 'max:100', Rule::exists('store_categories', 'nama_kategori')->where('status', StoreCategory::STATUS_AKTIF)],
                 'alamat' => ['sometimes', 'string', 'max:500'],
+                'kota' => ['sometimes', 'string', 'max:100', Rule::exists('cities', 'nama_kota')],
                 'nomor_telepon' => ['sometimes', 'string', 'max:20'],
                 'deskripsi' => ['nullable', 'string', 'max:1000'],
             ]);
@@ -100,6 +104,7 @@ class PengajuanTokoController extends Controller
                     'nama_toko' => $storeFields['nama_toko'],
                     'kategori' => $storeFields['kategori'] ?? null,
                     'alamat' => $storeFields['alamat'],
+                    'kota' => $storeFields['kota'] ?? null,
                     'nomor_telepon' => $storeFields['nomor_telepon'],
                     'deskripsi' => $storeFields['deskripsi'] ?? null,
                     'status' => Store::STATUS_PENDING,

@@ -22,6 +22,8 @@ class StoreUpdateRequest extends Model
         'deskripsi',
         'alamat',
         'nomor_telepon',
+        'kota',
+        'logo',
         'status',
         'alasan_penolakan',
         'reviewed_by',
