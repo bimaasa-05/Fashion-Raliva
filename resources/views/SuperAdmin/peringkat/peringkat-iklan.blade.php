@@ -53,7 +53,15 @@
 
     <!-- Podium Top 3 -->
     @php // $top3 sudah difilter di controller: hanya aktif + periode berlaku
-         $top3 = $top3 ?? collect(); @endphp
+         $top3 = $top3 ?? collect();
+         $fotoUtama = function ($product) {
+             if (!$product) return null;
+             $raw = $product->images->first()?->file_gambar;
+             if (!$raw) return null;
+             if (filter_var($raw, FILTER_VALIDATE_URL)) return $raw;
+             $raw = ltrim($raw, '/');
+             return str_starts_with($raw, 'assets/') ? asset($raw) : asset('storage/' . $raw);
+         }; @endphp
     @if($top3->count() >= 1)
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Podium Peringkat Saat Ini</h2>
@@ -62,6 +70,14 @@
             <div class="md:order-2 border-2 border-amber-400 rounded-xl p-6 flex flex-col items-center text-center gap-3 relative overflow-hidden bg-gradient-to-b from-amber-400/20 via-amber-400/5 to-transparent">
                 <span class="absolute top-3 right-3 material-symbols-outlined text-amber-400 fill text-[28px]">workspace_premium</span>
                 <span class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 text-white flex items-center justify-center font-title-md text-title-md font-bold shadow-lg">1</span>
+                @php $foto = $fotoUtama($top3[0]->product); @endphp
+                @if($foto)
+                    <img src="{{ $foto }}" alt="{{ $top3[0]->product->nama_produk ?? 'Produk' }}" loading="lazy" class="w-20 h-20 rounded-xl object-cover border-2 border-amber-400 shadow-lg">
+                @else
+                    <div class="w-20 h-20 rounded-xl border-2 border-amber-400/40 bg-surface-container-high flex items-center justify-center">
+                        <span class="material-symbols-outlined text-on-surface-variant text-[28px]">checkroom</span>
+                    </div>
+                @endif
                 <div>
                     <p class="font-title-md text-title-md text-on-surface leading-snug">{{ $top3[0]->product->nama_produk ?? '-' }}</p>
                     <p class="text-on-surface-variant text-xs mt-0.5">{{ $top3[0]->store->nama_toko ?? '-' }}</p>
@@ -73,6 +89,14 @@
             @if(isset($top3[1]))
             <div class="md:order-1 bg-surface-container-low bg-gradient-to-b from-slate-400/30 via-slate-400/10 to-transparent border border-slate-400/60 rounded-xl p-6 flex flex-col items-center text-center gap-3">
                 <span class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-400 via-slate-500 to-slate-700 text-white flex items-center justify-center font-title-md font-bold shadow-lg">2</span>
+                @php $foto = $fotoUtama($top3[1]->product); @endphp
+                @if($foto)
+                    <img src="{{ $foto }}" alt="{{ $top3[1]->product->nama_produk ?? 'Produk' }}" loading="lazy" class="w-20 h-20 rounded-xl object-cover border-2 border-slate-400/60 shadow-lg">
+                @else
+                    <div class="w-20 h-20 rounded-xl border-2 border-slate-400/40 bg-surface-container-high flex items-center justify-center">
+                        <span class="material-symbols-outlined text-on-surface-variant text-[28px]">checkroom</span>
+                    </div>
+                @endif
                 <div>
                     <p class="font-title-md text-sm text-on-surface leading-snug">{{ $top3[1]->product->nama_produk ?? '-' }}</p>
                     <p class="text-on-surface-variant text-xs mt-0.5">{{ $top3[1]->store->nama_toko ?? '-' }}</p>
@@ -84,6 +108,14 @@
             @if(isset($top3[2]))
             <div class="md:order-3 bg-surface-container-low bg-gradient-to-b from-amber-500/10 to-transparent border border-muted-border rounded-xl p-6 flex flex-col items-center text-center gap-3">
                 <span class="w-10 h-10 rounded-full bg-amber-600 text-white flex items-center justify-center font-title-md font-bold">3</span>
+                @php $foto = $fotoUtama($top3[2]->product); @endphp
+                @if($foto)
+                    <img src="{{ $foto }}" alt="{{ $top3[2]->product->nama_produk ?? 'Produk' }}" loading="lazy" class="w-20 h-20 rounded-xl object-cover border-2 border-amber-500/30 shadow-lg">
+                @else
+                    <div class="w-20 h-20 rounded-xl border-2 border-amber-500/30 bg-surface-container-high flex items-center justify-center">
+                        <span class="material-symbols-outlined text-on-surface-variant text-[28px]">checkroom</span>
+                    </div>
+                @endif
                 <div>
                     <p class="font-title-md text-sm text-on-surface leading-snug">{{ $top3[2]->product->nama_produk ?? '-' }}</p>
                     <p class="text-on-surface-variant text-xs mt-0.5">{{ $top3[2]->store->nama_toko ?? '-' }}</p>

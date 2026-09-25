@@ -1,4 +1,14 @@
-@php $showAksi = $showAksi ?? false; @endphp
+@php
+    $showAksi = $showAksi ?? false;
+    $fotoUtama = function ($product) {
+        if (!$product) return null;
+        $raw = $product->images->first()?->file_gambar;
+        if (!$raw) return null;
+        if (filter_var($raw, FILTER_VALIDATE_URL)) return $raw;
+        $raw = ltrim($raw, '/');
+        return str_starts_with($raw, 'assets/') ? asset($raw) : asset('storage/' . $raw);
+    };
+@endphp
 <div class="overflow-x-auto hidden md:block">
     <table class="w-full min-w-[900px] premium-table">
         <thead>
@@ -38,7 +48,19 @@
                     <td class="p-4">
                         <span class="inline-flex w-8 h-8 rounded-full {{ $posCls }} items-center justify-center font-bold{{ $rank > 3 ? ' text-sm' : '' }}">{{ $rank }}</span>
                     </td>
-                    <td class="p-4 font-medium text-on-surface">{{ $slot->product->nama_produk ?? '-' }}</td>
+                    <td class="p-4">
+                        <div class="flex items-center gap-3 min-w-0">
+                            @php $foto = $fotoUtama($slot->product); @endphp
+                            @if($foto)
+                                <img src="{{ $foto }}" alt="{{ $slot->product->nama_produk ?? 'Produk' }}" loading="lazy" class="w-10 h-10 rounded-lg object-cover border border-muted-border shrink-0">
+                            @else
+                                <div class="w-10 h-10 rounded-lg bg-surface-container-high border border-muted-border flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-on-surface-variant text-[18px]">checkroom</span>
+                                </div>
+                            @endif
+                            <span class="font-medium text-on-surface truncate">{{ $slot->product->nama_produk ?? '-' }}</span>
+                        </div>
+                    </td>
                     <td class="p-4 text-on-surface-variant">{{ $slot->store->nama_toko ?? '-' }}</td>
                     <td class="p-4 text-right font-title-md text-sm {{ $rank === 1 ? 'text-gold-accent' : 'text-on-surface' }} font-bold">Rp {{ number_format((float)$slot->nominal_bid, 0, ',', '.') }}</td>
                     <td class="p-4 text-center text-on-surface-variant whitespace-nowrap">{{ $slot->tanggal_mulai ? \Carbon\Carbon::parse($slot->tanggal_mulai)->locale('id')->translatedFormat('d M') : '-' }} – {{ $slot->tanggal_selesai ? \Carbon\Carbon::parse($slot->tanggal_selesai)->locale('id')->translatedFormat('d M Y') : 'Menunggu' }}</td>
@@ -95,6 +117,14 @@
             <div class="flex items-center justify-between gap-3 mb-3">
                 <div class="flex items-center gap-3">
                     <span class="inline-flex w-9 h-9 rounded-full {{ $posCls }} items-center justify-center font-bold shrink-0">{{ $rank }}</span>
+                    @php $foto = $fotoUtama($slot->product); @endphp
+                    @if($foto)
+                        <img src="{{ $foto }}" alt="{{ $slot->product->nama_produk ?? 'Produk' }}" loading="lazy" class="w-10 h-10 rounded-lg object-cover border border-muted-border shrink-0">
+                    @else
+                        <div class="w-10 h-10 rounded-lg bg-surface-container-high border border-muted-border flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-on-surface-variant text-[18px]">checkroom</span>
+                        </div>
+                    @endif
                     <div class="min-w-0">
                         <p class="font-title-md text-title-md text-on-surface truncate">{{ $slot->product->nama_produk ?? '-' }}</p>
                         <p class="text-on-surface-variant text-xs truncate">{{ $slot->store->nama_toko ?? '-' }}</p>
