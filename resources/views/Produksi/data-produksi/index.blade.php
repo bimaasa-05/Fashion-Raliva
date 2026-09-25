@@ -59,6 +59,7 @@
                     <option value="menunggu_produksi">Menunggu Produksi</option>
                     <option value="diproses">Diproses</option>
                     <option value="menunggu_qc">Menunggu QC</option>
+                    <option value="siap_kirim">Siap Kirim</option>
                 </select>
             </div>
         </div>
@@ -105,6 +106,9 @@
                                 <p class="font-bold text-on-surface">{{ $o->nomor_order }}</p>
                                 <p class="text-xs text-on-surface mt-0.5">{{ $o->checkout?->nama_penerima ?? $o->checkout?->user?->nama_lengkap ?? '-' }}</p>
                                 <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->created_at?->translatedFormat('d M Y') ?? '-' }}</p>
+                                @if ($o->catatan)
+                                    <p class="text-xs text-on-surface mt-1 italic" title="{{ $o->catatan }}">“{{ \Illuminate\Support\Str::limit($o->catatan, 60) }}”</p>
+                                @endif
                                 @if ($rejectedNote)
                                     <p class="text-xs text-error mt-1" title="{{ $rejectedNote }}">⚠ Ditolak: {{ \Illuminate\Support\Str::limit($rejectedNote, 30) }}</p>
                                 @endif
@@ -138,14 +142,14 @@
                             </td>
                             <td class="py-3.5 px-4">
                                 @if ($hasDates)
-                                    <p class="text-xs text-on-surface-variant">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
+                                    <p class="text-xs font-bold text-on-surface">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
                                     <div class="progress-track mt-1.5">
                                         <div class="progress-bar-fill {{ $isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent') }}" style="width: {{ $progressPct }}%"></div>
                                     </div>
                                     @if ($progressPct >= 100)
-                                        <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
+                                        <p class="text-xs font-bold mt-1 countdown-badge text-on-surface">Selesai tepat waktu</p>
                                     @else
-                                        <p class="text-xs mt-1 countdown-badge {{ $isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant' }}"
+                                        <p class="text-xs font-bold mt-1 countdown-badge {{ $isTerlambat ? 'text-error' : 'text-on-surface' }}"
                                            data-countdown-deadline="{{ $o->tgl_berakhir_produksi->timestamp }}"
                                            data-countdown-progress="{{ $progressPct }}">
                                             Memuat...
@@ -166,6 +170,8 @@
                                     @endif
                                 @elseif ($o->status === \App\Models\Order::STATUS_MENUNGGU_QC)
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Menunggu QC</span>
+                                @elseif ($o->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary/10 text-secondary text-[10px] font-bold uppercase border border-secondary/30">Siap Kirim</span>
                                 @endif
                             </td>
                             <td class="py-3.5 px-4 text-right">
@@ -187,6 +193,8 @@
                                             <button type="button" onclick="openModalSelesai('{{ $o->order_id }}')" class="px-2.5 py-1.5 bg-deep-onyx text-on-primary text-[10px] font-bold uppercase rounded hover:opacity-90 transition-opacity">Selesai</button>
                                         </div>
                                     @endif
+                                @elseif ($o->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+                                    <span class="text-on-surface-variant text-xs">Siap kirim — lihat timeline</span>
                                 @else
                                     <span class="text-on-surface-variant text-xs">Menunggu Admin proses</span>
                                 @endif
@@ -237,8 +245,13 @@
                             @endif
                         @elseif ($o->status === \App\Models\Order::STATUS_MENUNGGU_QC)
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30 shrink-0">QC</span>
+                        @elseif ($o->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary/10 text-secondary text-[10px] font-bold uppercase border border-secondary/30 shrink-0">Siap Kirim</span>
                         @endif
                     </div>
+                    @if ($o->catatan)
+                        <p class="text-xs text-on-surface mt-2 italic">“{{ \Illuminate\Support\Str::limit($o->catatan, 80) }}”</p>
+                    @endif
                     @if ($rejectedNote)
                         <p class="text-xs text-error mt-2">⚠ Ditolak: {{ \Illuminate\Support\Str::limit($rejectedNote, 40) }}</p>
                     @endif
@@ -249,14 +262,14 @@
                     </div>
                     @if ($hasDates)
                         <div class="mt-3">
-                            <p class="text-xs text-on-surface-variant">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
+                            <p class="text-xs font-bold text-on-surface">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
                             <div class="progress-track mt-1.5">
                                 <div class="progress-bar-fill {{ $isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent') }}" style="width: {{ $progressPct }}%"></div>
                             </div>
                             @if ($progressPct >= 100)
-                                <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
+                                <p class="text-xs font-bold mt-1 countdown-badge text-on-surface">Selesai tepat waktu</p>
                             @else
-                                <p class="text-xs mt-1 countdown-badge {{ $isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant' }}"
+                                <p class="text-xs font-bold mt-1 countdown-badge {{ $isTerlambat ? 'text-error' : 'text-on-surface' }}"
                                    data-countdown-deadline="{{ $o->tgl_berakhir_produksi->timestamp }}"
                                    data-countdown-progress="{{ $progressPct }}">Memuat...</p>
                             @endif
@@ -277,6 +290,8 @@
                                 <button type="button" onclick="openModalBahan('{{ $o->order_id }}')" class="px-2.5 py-2 border border-gold-accent/40 text-gold-accent text-[10px] font-bold uppercase rounded hover:bg-gold-accent/10 transition-colors">+ Bahan</button>
                                 <button type="button" onclick="openModalSelesai('{{ $o->order_id }}')" class="px-2.5 py-2 bg-deep-onyx text-on-primary text-[10px] font-bold uppercase rounded hover:opacity-90 transition-opacity">Selesai</button>
                             @endif
+                        @elseif ($o->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+                            <span class="text-on-surface-variant text-xs">Siap kirim — lihat timeline</span>
                         @else
                             <span class="text-on-surface-variant text-xs">Menunggu Admin proses</span>
                         @endif
@@ -360,11 +375,8 @@
                 <p class="text-xs text-on-surface-variant">Input hasil produksi. Pesanan akan masuk ke tahap QC.</p>
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Jumlah Berhasil *</label>
-                    <input type="number" name="jumlah_berhasil" required min="0" class="raliva-input w-full" placeholder="0" />
-                </div>
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Jumlah Gagal</label>
-                    <input type="number" name="jumlah_gagal" min="0" value="0" class="raliva-input w-full" />
+                    <input type="number" name="jumlah_berhasil" required min="0" max="{{ $o->items->sum('quantity') }}" class="raliva-input w-full" placeholder="0" />
+                    <p class="text-[11px] text-on-surface-variant mt-1">Total pesanan: <b>{{ $o->items->sum('quantity') }} pcs</b>. Jumlah gagal dihitung otomatis (total − berhasil).</p>
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Catatan (opsional)</label>
