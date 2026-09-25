@@ -18,72 +18,16 @@ class ProductUpdateApplier
         $resetStatus = $product->status === Product::STATUS_DITOLAK;
 
         DB::transaction(function () use ($product, $payload, $resetStatus) {
-            $recipeChanged = ! empty($payload['resep_diubah']);
-            $requirements = $recipeChanged
-                ? collect($payload['resep'] ?? [])->map(function ($row) use ($product) {
-                    $material = ! empty($row['material_id'])
-                        ? \App\Models\BahanProduksi::where('bahan_id', $row['material_id'])->where('store_id', $product->store_id)->first()
-                        : null;
-
-                    return [
-                        'material_id' => $material?->bahan_id,
-                        'nama_bahan' => trim((string) ($row['nama_bahan'] ?? '')),
-                        'satuan' => $row['satuan'],
-                        'jumlah_per_unit' => (float) ($row['jumlah_per_unit'] ?? 0),
-                        'biaya_per_unit' => (float) ($row['biaya_per_unit'] ?? 0),
-                    ];
-                })->all()
-                : $product->materialRequirements()->get()->map(fn ($row) => [
-                    'material_id' => $row->material_id,
-                    'nama_bahan' => $row->nama_bahan,
-                    'satuan' => $row->satuan,
-                    'jumlah_per_unit' => (float) $row->jumlah_per_unit,
-                    'biaya_per_unit' => (float) $row->biaya_per_unit,
-                ])->all();
-            $operasionalChanged = ! empty($payload['operasional_diubah']);
-            $operasional = $operasionalChanged
-                ? collect($payload['operasional'] ?? [])->map(fn ($row) => [
-                    'nama_biaya' => trim((string) ($row['nama_biaya'] ?? '')),
-                    'nominal' => (float) ($row['nominal'] ?? 0),
-                ])->all()
-                : $product->operationalCosts()->get()->map(fn ($row) => [
-                    'nama_biaya' => $row->nama_biaya,
-                    'nominal' => (float) $row->nominal,
-                ])->all();
-            $target = array_key_exists('target_produksi', $payload) && $payload['target_produksi'] !== null
-                ? (int) $payload['target_produksi']
-                : (int) ($product->target_produksi ?? 0);
-            $legacyOverhead = array_key_exists('biaya_tambahan', $payload) && $payload['biaya_tambahan'] !== null && $payload['biaya_tambahan'] !== '' && $operasional === []
-                ? (float) $payload['biaya_tambahan']
-                : 0.0;
-            $cost = ProductCostCalculator::calculate($requirements, $legacyOverhead, $target, (float) $payload['harga_dasar'], $operasional);
-            $profileChanged = $recipeChanged || $operasionalChanged
-                || (array_key_exists('target_produksi', $payload) && $payload['target_produksi'] !== null)
-                || $legacyOverhead > 0;
-
-            $product->update(array_merge([
+            $product->update([
                 'nama_produk' => $payload['nama_produk'],
                 'harga_dasar' => $payload['harga_dasar'],
+                'modal_produksi' => (float) ($payload['hpp'] ?? $product->modal_produksi ?? 0),
                 'category_id' => $payload['category_id'] ?? null,
                 'tipe_produk' => $payload['tipe_produk'] ?? $product->tipe_produk,
                 'deskripsi' => $payload['deskripsi'] ?? null,
                 'status' => $resetStatus ? Product::STATUS_PENDING : $product->status,
                 'alasan_penolakan' => $resetStatus ? 'Diajukan ulang setelah revisi oleh Admin.' : $product->alasan_penolakan,
-            ], $profileChanged ? [
-                'target_produksi' => $target > 0 ? $target : null,
-                'modal_produksi' => $cost['modal_per_unit'],
-                'biaya_tambahan' => $cost['biaya_operasional'],
-            ] : []));
-
-            if ($recipeChanged) {
-                $product->materialRequirements()->delete();
-                $product->materialRequirements()->createMany($requirements);
-            }
-
-            if ($operasionalChanged) {
-                $product->operationalCosts()->delete();
-                $product->operationalCosts()->createMany($operasional);
-            }
+            ]);
 
             $hapusIds = collect($payload['hapus_foto_ids'] ?? [])
                 ->map(fn ($value) => (int) $value)

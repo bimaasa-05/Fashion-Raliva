@@ -40,3 +40,11 @@ Scope: role Admin (pesanan, dashboard) + scheduler + notifikasi toko. Produksi/G
 - [x] Prasyarat scheduler (`schedule:run`) dicatat di penjelasan.
 - [ ] Manual: badge, filter, rework/lanjut, dashboard kartu.
 - [x] Penjelasan: `Docs/penjelasan/revisi-qc-gagal-tanggapan-admin.md`.
+
+## Perbaikan merge 0056e303 (2026-09-25, pasca-pull)
+
+- Merge commit `0056e303` menggabungkan `Admin/pesanan/index.blade.php` secara rusak: blok remote (tanpa logic QC) terselip di dalam form modal-Proses versi kita → duplikat tabel/modal + 1 `@if` dan 1 `@foreach` tak tertutup → `ParseError: unexpected end of file` di Data Pesanan Admin.
+- Perbaikan: kembalikan file ke versi kita (`d467ef50`, terbukti hijau, UTF-8), lalu graft tambahan asli remote: tombol **Selesai** (siap_kirim, desktop + mobile) + kolom **Produksi** (`partials.produksi-waktu`, colspan 6 → 7). Kondisi Batalkan remote identik dengan aturan kita.
+- Verifikasi: direktif seimbang, `view:cache/clear`, `git diff --check`, render OK (AdminQcTanggapan 8/8, Fulfillment 6/6, PriorityCancel 3/3).
+- Catatan: klaim "remote UTF-16" tidak terbukti — itu artefak redirect PowerShell `>` (bawaan UTF-16). Blob asli UTF-8; file akhir UTF-8 tanpa null bytes.
+- Sisa data: DB tampaknya di-reseed (tinggal 1 toko, 18 order, 25 user) → 2 test `OrderTrackingPickupTest` gagal + 1 skip QcTab butuh fixture toko kedua. Bukan regresi kode.

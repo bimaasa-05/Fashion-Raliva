@@ -5,8 +5,6 @@ namespace Tests\Feature;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Role;
-use App\Models\SlotGrant;
-use App\Models\StoreStaff;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
@@ -17,76 +15,106 @@ class ProductRecipeTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_product_requires_recipe(): void
+    public function test_master_requires_hpp(): void
     {
-        $payload = $this->payload();
-        unset($payload['resep']);
+        $payload = $this->masterPayload();
+        unset($payload['hpp']);
 
-        $response = $this->postProduct($payload);
+        $response = $this->postMaster($payload);
 
         $response->assertStatus(302);
-        $response->assertSessionHasErrors('resep');
+        $response->assertSessionHasErrors('hpp');
     }
 
-    public function test_product_rejects_invalid_target(): void
+    public function test_master_stores_hpp_without_bahan(): void
     {
-        $response = $this->postProduct(array_merge($this->payload(), ['target_produksi' => 0]));
+        [$admin, $product] = $this->createMaster('Produk Uji HPP');
 
-        $response->assertStatus(302);
-        $response->assertSessionHasErrors('target_produksi');
+        $this->assertSame(65000.0, (float) $product->fresh()->modal_produksi);
+
+        $response = $this->actingAs($admin)->get(route('admin.produk'));
+
+        $response->assertOk();
+        $response->assertSee('Produk Uji HPP', false);
+        $response->assertSee('Belum ada bahan produksi.', false);
     }
 
-    public function test_product_rejects_invalid_unit(): void
+    public function test_detail_shows_hpp_margin_with_bahan(): void
     {
-        $payload = $this->payload();
-        $payload['resep'][0]['satuan'] = 'ons';
+        [$admin, $product] = $this->createMaster('Produk Uji Margin');
+        \App\Models\ProductMaterialRequirement::create([
+            'product_id' => $product->product_id,
+            'material_id' => null,
+            'nama_bahan' => 'Kancing',
+            'satuan' => 'pcs',
+            'jumlah_per_unit' => 4,
+            'biaya_per_unit' => 0,
+        ]);
+        \App\Models\ProductMaterialRequirement::create([
+            'product_id' => $product->product_id,
+            'material_id' => null,
+            'nama_bahan' => 'Kain Katun',
+            'satuan' => 'meter',
+            'jumlah_per_unit' => 2,
+            'biaya_per_unit' => 0,
+        ]);
 
-        $response = $this->postProduct($payload);
+        $response = $this->actingAs($admin)->get(route('admin.produk'));
 
-        $response->assertStatus(302);
-        $response->assertSessionHasErrors('resep.0.satuan');
+        $response->assertOk();
+        $response->assertSee('2 bahan', false);
+        $response->assertSee('HPP Rp 65.000', false);
+        $response->assertSee('Margin Rp 85.000 (56,67%)', false);
+        $response->assertSee('Kancing', false);
     }
 
-    public function test_admin_detail_shows_recipe_summary(): void
+    private function actingAsFresh(User $user): static
+    {
+        $this->flushSession();
+
+        return $this->actingAs($user);
+    }
+
+    /**
+     * @return array{0: User, 1: Product}
+     */
+    private function createMaster(?string $name = null): array
     {
         Storage::fake('public');
         $admin = User::whereHas('role', fn ($query) => $query->where('nama_role', Role::ADMIN))
             ->whereHas('storeAssignments', fn ($query) => $query->where('status', 'aktif'))
             ->firstOrFail();
-        $storeId = StoreStaff::where('user_id', $admin->user_id)->where('status', 'aktif')->value('store_id');
-        SlotGrant::create([
-            'store_id' => $storeId,
-            'jumlah_slot' => 5,
-            'tipe' => SlotGrant::TIPE_MANUAL,
-            'keterangan' => 'Slot uji ringkasan resep.',
-            'created_by' => $admin->user_id,
-        ]);
-        $payload = $this->payload();
-        $payload['nama_produk'] = 'Produk Uji Ringkasan Resep';
-        $payload['category_id'] = Category::where('status', 'aktif')->value('category_id');
 
-        $this->actingAs($admin)->post(route('admin.produk.store'), $payload)->assertSessionHasNoErrors();
-        $this->assertDatabaseHas('products', ['nama_produk' => 'Produk Uji Ringkasan Resep', 'modal_produksi' => 15000]);
+        $payload = $this->masterPayload($name);
 
-        $response = $this->actingAs($admin)->get(route('admin.produk'));
+        $this->actingAsFresh($admin)->post(route('admin.produk.store'), $payload)->assertSessionHasNoErrors();
 
-        $response->assertOk();
-        $response->assertSee('Produk Uji Ringkasan Resep', false);
-        $response->assertSee('Kain Katun', false);
-        $response->assertSee('Target 10 unit', false);
-        $response->assertSee('Modal Rp 15.000/unit', false);
-        $response->assertDontSee('10.000,00', false);
-        $response->assertSee('data-resep-rows', false);
-        $response->assertSee('Kain Katun', false);
+        return [$admin, Product::where('nama_produk', $payload['nama_produk'])->firstOrFail()];
     }
 
-    private function payload(): array
+    private function postMaster(array $payload)
+    {
+        Storage::fake('public');
+
+        return $this->actingAs($this->adminUser())->post(route('admin.produk.store'), $payload);
+    }
+
+    private function adminUser(): User
+    {
+        return User::whereHas('role', fn ($query) => $query->where('nama_role', Role::ADMIN))
+            ->whereHas('storeAssignments', fn ($query) => $query->where('status', 'aktif'))
+            ->firstOrFail();
+    }
+
+    private function masterPayload(?string $name = null): array
     {
         return [
-            'nama_produk' => 'Produk Uji Resep Regression',
+            'nama_produk' => $name ?? 'Produk Uji HPP Regression',
             'harga_dasar' => '150000',
+            'hpp' => '65.000',
+            'category_id' => Category::where('status', 'aktif')->value('category_id'),
             'tipe_produk' => 'regular',
-            'deskripsi' => 'Deskripsi produk uji resep minimal sepuluh karakter.',
+            'deskripsi' => 'Deskripsi produk uji HPP minimal sepuluh karakter.',
             'foto_produk' => [UploadedFile::fake()->image('produk.jpg', 600, 800)],
             'ukuran_terpilih' => 'M',
             'warna' => ['Merah'],
@@ -94,65 +122,6 @@ class ProductRecipeTest extends TestCase
             'varian_stok' => [
                 ['ukuran' => 'M', 'warna' => 'Merah', 'stok' => 1, 'stok_minimum' => 0],
             ],
-            'target_produksi' => 10,
-            'biaya_tambahan' => '0',
-            'resep' => [
-                ['material_id' => null, 'nama_bahan' => 'Kain Katun', 'satuan' => 'meter', 'jumlah_per_unit' => 2, 'biaya_per_unit' => '5000'],
-            ],
-            'operasional' => [
-                ['nama_biaya' => 'Ongkos jahit', 'nominal' => '3.000'],
-                ['nama_biaya' => 'Kemasan', 'nominal' => '2000'],
-            ],
         ];
-    }
-
-    public function test_product_saves_operational_rows_and_total(): void
-    {
-        Storage::fake('public');
-        $admin = User::whereHas('role', fn ($query) => $query->where('nama_role', Role::ADMIN))
-            ->whereHas('storeAssignments', fn ($query) => $query->where('status', 'aktif'))
-            ->firstOrFail();
-        $storeId = StoreStaff::where('user_id', $admin->user_id)->where('status', 'aktif')->value('store_id');
-        SlotGrant::create([
-            'store_id' => $storeId,
-            'jumlah_slot' => 5,
-            'tipe' => SlotGrant::TIPE_MANUAL,
-            'keterangan' => 'Slot uji biaya operasional.',
-            'created_by' => $admin->user_id,
-        ]);
-        $payload = $this->payload();
-        $payload['nama_produk'] = 'Produk Uji Operasional';
-        $payload['category_id'] = Category::where('status', 'aktif')->value('category_id');
-
-        $this->actingAs($admin)->post(route('admin.produk.store'), $payload)->assertSessionHasNoErrors();
-        $product = Product::where('nama_produk', 'Produk Uji Operasional')->firstOrFail();
-        $this->assertSame(15000.0, $product->modal_produksi);
-        $this->assertSame(5000.0, $product->biaya_tambahan);
-        $this->assertDatabaseHas('product_operational_costs', [
-            'product_id' => $product->product_id,
-            'nama_biaya' => 'Ongkos jahit',
-            'nominal' => 3000,
-        ]);
-        $this->assertDatabaseHas('product_operational_costs', [
-            'product_id' => $product->product_id,
-            'nama_biaya' => 'Kemasan',
-            'nominal' => 2000,
-        ]);
-
-        $response = $this->actingAs($admin)->get(route('admin.produk'));
-        $response->assertOk();
-        $response->assertSee('Ongkos jahit', false);
-    }
-
-    private function postProduct(array $payload)
-    {
-        Storage::fake('public');
-        $admin = User::whereHas('role', fn ($query) => $query->where('nama_role', Role::ADMIN))
-            ->whereHas('storeAssignments', fn ($query) => $query->where('status', 'aktif'))
-            ->firstOrFail();
-        StoreStaff::where('user_id', $admin->user_id)->where('status', 'aktif')->firstOrFail();
-        $payload['category_id'] = Category::where('status', 'aktif')->value('category_id');
-
-        return $this->actingAs($admin)->post(route('admin.produk.store'), $payload);
     }
 }

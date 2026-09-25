@@ -64,7 +64,31 @@ class DataProduksiController extends Controller
         }
 
         $lama = $order->only(['status', 'produksi_dimulai_pada']);
-        $order->update(['produksi_dimulai_pada' => now()]);
+
+        DB::transaction(function () use ($order) {
+            $order->update(['produksi_dimulai_pada' => now()]);
+
+            // Salin resep produk (diisi Gudang) menjadi bahan order (idempoten).
+            if (! $order->bahanList()->where('sumber', ProductionOrderBahan::SUMBER_ADMIN)->exists()) {
+                $order->loadMissing(['items.productVariant.product.materialRequirements']);
+                foreach ($order->items as $item) {
+                    $recipe = $item->productVariant?->product?->materialRequirements ?? collect();
+                    foreach ($recipe as $row) {
+                        ProductionOrderBahan::create([
+                            'order_id' => $order->order_id,
+                            'bahan_id' => $row->material_id,
+                            'nama_bahan' => $row->nama_bahan,
+                            'jumlah' => (float) $row->jumlah_per_unit * (int) $item->quantity,
+                            'satuan' => $row->satuan,
+                            'catatan' => null,
+                            'sumber' => ProductionOrderBahan::SUMBER_ADMIN,
+                            'dibuat_oleh_role' => 'Sistem',
+                            'created_by' => ActivityLogger::resolveActorId(),
+                        ]);
+                    }
+                }
+            }
+        });
 
         ActivityLogger::log('produksi.order.accept', Order::class, $order->order_id, $lama,
             ['produksi_dimulai_pada' => now()],

@@ -69,6 +69,7 @@ class ProductColorValidationTest extends TestCase
         $response = $this->actingAs($admin)->post(route('admin.produk.store'), [
             'nama_produk' => $name,
             'harga_dasar' => '150000',
+            'hpp' => '65000',
             'category_id' => $category->category_id,
             'tipe_produk' => 'regular',
             'deskripsi' => 'Deskripsi produk uji tanpa warna minimal sepuluh karakter.',
@@ -77,24 +78,13 @@ class ProductColorValidationTest extends TestCase
             'varian_stok' => [
                 ['ukuran' => 'M', 'warna' => '', 'stok' => 1, 'stok_minimum' => 0],
             ],
-            'target_produksi' => 10,
-            'biaya_tambahan' => '0',
-            'resep' => [
-                ['material_id' => null, 'nama_bahan' => 'Kain Katun', 'satuan' => 'meter', 'jumlah_per_unit' => 2, 'biaya_per_unit' => '5000'],
-            ],
         ]);
 
         $response->assertStatus(302);
         $response->assertSessionHasNoErrors();
         $product = Product::where('nama_produk', $name)->firstOrFail();
         $this->assertTrue(ProductVariant::where('product_id', $product->product_id)->whereNull('warna')->exists());
-        $this->assertSame(10, $product->target_produksi);
-        $this->assertSame(10000.0, $product->modal_produksi);
-        $this->assertDatabaseHas('product_material_requirements', [
-            'product_id' => $product->product_id,
-            'nama_bahan' => 'Kain Katun',
-            'satuan' => 'meter',
-        ]);
+        $this->assertSame(65000.0, (float) $product->modal_produksi);
     }
 
     private function postProduct(array $colors)
@@ -109,6 +99,7 @@ class ProductColorValidationTest extends TestCase
         return $this->actingAs($admin)->post(route('admin.produk.store'), array_merge([
             'nama_produk' => 'Produk Uji Warna Regression',
             'harga_dasar' => '150000',
+            'hpp' => '65000',
             'category_id' => $category->category_id,
             'tipe_produk' => 'regular',
             'deskripsi' => 'Deskripsi produk uji warna minimal sepuluh karakter.',
@@ -116,11 +107,6 @@ class ProductColorValidationTest extends TestCase
             'ukuran_terpilih' => 'M',
             'varian_stok' => [
                 ['ukuran' => 'M', 'warna' => 'Tosca Elektrik', 'stok' => 1, 'stok_minimum' => 0],
-            ],
-            'target_produksi' => 10,
-            'biaya_tambahan' => '0',
-            'resep' => [
-                ['material_id' => null, 'nama_bahan' => 'Kain Katun', 'satuan' => 'meter', 'jumlah_per_unit' => 2, 'biaya_per_unit' => '5000'],
             ],
         ], $colors));
     }
