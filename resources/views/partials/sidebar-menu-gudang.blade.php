@@ -18,6 +18,7 @@
                 ['route' => 'gudang.pemeriksaan', 'icon' => 'fact_check', 'text' => 'Pemeriksaan Stok', 'badge' => 'stok_menipis'],
                 ['route' => 'gudang.stok-rusak', 'icon' => 'report', 'text' => 'Stok Rusak'],
                 ['route' => 'gudang.riwayat-stok', 'icon' => 'history', 'text' => 'Riwayat Stok'],
+                ['route' => 'gudang.kekurangan', 'icon' => 'assignment', 'text' => 'Kekurangan'],
             ],
         ],
         [

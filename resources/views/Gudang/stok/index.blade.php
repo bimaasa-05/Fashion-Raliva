@@ -310,6 +310,80 @@
                         </div>
                     </div>
 
+                    {{-- Rincian bahan (resep yang diinput Admin saat menambah produk) --}}
+                    <div class="bg-surface-container-low border border-muted-border rounded-lg overflow-hidden">
+                        <div class="px-4 py-3 border-b border-muted-border flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[16px] text-gold-accent">category</span>
+                            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant font-semibold">Rincian Bahan</p>
+                        </div>
+                        @if ($row->resep->isNotEmpty())
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="border-b border-muted-border bg-surface-container-high/50">
+                                            <th class="p-3 text-left font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Bahan</th>
+                                            <th class="p-3 text-right font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Jumlah / Unit</th>
+                                            <th class="p-3 text-center font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Satuan</th>
+                                            <th class="p-3 text-right font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Biaya / Unit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-muted-border">
+                                        @foreach ($row->resep as $bahan)
+                                            <tr class="hover:bg-surface-container-low/50 transition-colors">
+                                                <td class="p-3 text-on-surface font-medium">{{ $bahan->nama_bahan }}</td>
+                                                <td class="p-3 text-right text-on-surface">{{ rtrim(rtrim(number_format((float) $bahan->jumlah_per_unit, 3, ',', '.'), '0'), ',') }}</td>
+                                                <td class="p-3 text-center text-on-surface-variant">{{ $bahan->satuan }}</td>
+                                                <td class="p-3 text-right text-on-surface whitespace-nowrap">Rp {{ number_format((float) $bahan->biaya_per_unit, 0, ',', '.') }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <p class="p-4 text-sm text-on-surface-variant">Belum ada resep bahan untuk produk ini (dinput
+                                Admin saat menambahkan produk).</p>
+                        @endif
+                    </div>
+
+                    {{-- Riwayat keluar-masuk produk pada gudang ini --}}
+                    <div class="bg-surface-container-low border border-muted-border rounded-lg overflow-hidden">
+                        <div class="px-4 py-3 border-b border-muted-border flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[16px] text-gold-accent">history</span>
+                            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant font-semibold">Riwayat Stok (10 Terakhir)</p>
+                        </div>
+                        <ul class="divide-y divide-muted-border">
+                            @forelse ($row->riwayat as $m)
+                                @php
+                                    $labelTipe = [
+                                        'masuk' => 'Barang Masuk',
+                                        'keluar' => 'Barang Keluar',
+                                        'mutasi_masuk' => 'Mutasi Masuk',
+                                        'mutasi_keluar' => 'Mutasi Keluar',
+                                        'penyesuaian' => 'Penyesuaian',
+                                    ][$m->tipe_pergerakan] ?? ucfirst($m->tipe_pergerakan);
+                                    $isKeluar = in_array($m->tipe_pergerakan, ['keluar', 'mutasi_keluar']);
+                                    $warna = $isKeluar ? 'text-error' : ($m->tipe_pergerakan === 'penyesuaian' ? 'text-gold-accent' : 'text-secondary');
+                                @endphp
+                                <li class="p-3 flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <p class="text-sm text-on-surface">{{ $labelTipe }}
+                                            @if ($m->alasan)
+                                                <span class="text-on-surface-variant">— {{ \Illuminate\Support\Str::limit($m->alasan, 40) }}</span>
+                                            @endif
+                                        </p>
+                                        <p class="text-xs text-on-surface-variant mt-0.5">
+                                            {{ $m->created_at?->format('d M Y • H:i') ?? '-' }}
+                                            • {{ $m->creator->nama_lengkap ?? '-' }}</p>
+                                    </div>
+                                    <span class="text-sm font-bold {{ $warna }} shrink-0">{{ $m->jumlah > 0 ? '+' . $m->jumlah : $m->jumlah }}</span>
+                                </li>
+                            @empty
+                                <li class="p-4 text-sm text-on-surface-variant text-center">Belum ada pergerakan stok
+                                    produk ini.</li>
+                            @endforelse
+                        </ul>
+                    </div>
+
                     <dl class="space-y-4 font-body-md text-sm">
                         <div class="flex justify-between gap-4 pb-4 border-b border-muted-border">
                             <dt class="text-on-surface-variant">Status</dt>
