@@ -292,6 +292,7 @@
         $kodeRefund = 'REF-' . str_pad((string) $refund->refund_id, 10, '0', STR_PAD_LEFT);
         $isSaldoAkunRefund = optional($refund->order?->checkout?->payment?->paymentMethod?->kode_metode) === \App\Models\PaymentMethod::KODE_SALDO_AKUN;
         $metodeAsalRefund = $refund->order?->checkout?->payment?->paymentMethod?->nama_metode ?? '-';
+        $namaPelangganRefund = $refund->requester?->nama_lengkap ?? $refund->requester?->email ?? '-';
     @endphp
     @if ($refund->status === 'requested')
     @component('SuperAdmin.partials.premium-confirm', [
@@ -310,13 +311,15 @@
             @if ($isSaldoAkunRefund)
                 <div class="rounded-xl border border-emerald-500/25 bg-emerald-500/10 p-4">
                     <p class="font-label-sm text-[10px] uppercase tracking-widest text-emerald-600">Detail Pengembalian</p>
-                    <p class="text-sm text-on-surface mt-2">Metode asal: <span class="font-bold text-on-surface">Saldo Akun</span></p>
+                    <p class="text-sm text-on-surface mt-2">Nama Pelanggan: <span class="font-bold text-on-surface">{{ $namaPelangganRefund }}</span></p>
+                    <p class="text-sm text-on-surface mt-1">Nama Bank / Metode Tujuan: <span class="font-bold text-on-surface">Saldo Akun</span></p>
                     <p class="text-xs text-on-surface-variant mt-1 inline-flex items-start gap-1"><span class="material-symbols-outlined text-[14px] shrink-0">verified_user</span>Dana dikembalikan otomatis ke saldo akun customer — bukti transfer tidak wajib.</p>
                 </div>
             @else
                 <div class="rounded-xl border border-muted-border bg-surface-container-low p-4">
                     <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Detail Pengembalian</p>
-                    <p class="text-sm text-on-surface mt-2">Metode asal: <span class="font-bold text-on-surface">{{ $metodeAsalRefund }}</span></p>
+                    <p class="text-sm text-on-surface mt-2">Nama Pelanggan: <span class="font-bold text-on-surface">{{ $namaPelangganRefund }}</span></p>
+                    <p class="text-sm text-on-surface mt-1">Nama Bank / Metode Tujuan: <span class="font-bold text-on-surface">{{ $metodeAsalRefund }}</span></p>
                     <p class="text-xs text-on-surface-variant mt-1 inline-flex items-start gap-1"><span class="material-symbols-outlined text-[14px] shrink-0">info</span>Kembalikan dana via metode pembayaran asal. Koordinasi dengan customer untuk nomor tujuan.</p>
                 </div>
             @endif
