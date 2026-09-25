@@ -351,6 +351,8 @@
     .co-ship-option.selected p:first-of-type {
         color: #8B1E3F;
     }
+    .co-ship-option .ship-dot { display: none; }
+    .co-ship-option.selected .ship-dot { display: block; }
     .co-ship-option + .co-ship-option {
         margin-top: 0.5rem;
     }
@@ -746,7 +748,7 @@
                     <div class="co-ship-option{{ $selectedShip ? ' selected' : '' }}" data-shipping-ongkir="{{ $opt['ongkir'] }}">
                         <div class="flex items-center gap-sm">
                             <div class="w-4 h-4 rounded-full border-2 border-secondary flex items-center justify-center">
-                                @if($selectedShip)<div class="w-2 h-2 rounded-full bg-secondary"></div>@endif
+                                <div class="ship-dot w-2 h-2 rounded-full bg-secondary"></div>
                             </div>
                             <div>
                                 <p class="font-body-sm text-body-sm font-semibold">{{ __($opt['nama']) }}</p>
@@ -814,7 +816,7 @@
                             <div class="co-ship-option{{ $isSel ? ' selected' : '' }}" data-shipping-ongkir="{{ $opt['ongkir'] }}">
                                 <div class="flex items-center gap-sm">
                                     <div class="w-4 h-4 rounded-full border-2 border-primary-dim flex items-center justify-center">
-                                        @if($isSel)<div class="w-2 h-2 rounded-full bg-primary"></div>@endif
+                                        <div class="ship-dot w-2 h-2 rounded-full bg-secondary"></div>
                                     </div>
                                     <div>
                                         <p class="font-body-sm text-body-sm font-semibold">{{ __($opt['nama']) }}</p>
