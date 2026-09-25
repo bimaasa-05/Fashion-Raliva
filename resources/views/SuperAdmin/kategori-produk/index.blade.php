@@ -72,7 +72,7 @@
             </div>
         </div>
 
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 space-y-4 card-premium">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 space-y-4">
             <div class="flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
                 <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Kategori</span>
@@ -295,7 +295,7 @@
             </div>
         </div>
 
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 space-y-4 card-premium">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 space-y-4">
             <div class="flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
                 <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Kategori Toko</span>
