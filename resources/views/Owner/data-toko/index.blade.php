@@ -137,6 +137,16 @@
             </p>
         @endif
 
+        @error('logo') <p class="text-error text-xs flex items-start gap-2"><span class="material-symbols-outlined text-[16px] mt-0.5">error</span>{{ $message }}</p> @enderror
+        <p id="store-logo-chip" class="hidden items-center gap-2 text-xs text-on-surface-variant">
+            <span class="material-symbols-outlined text-[16px] text-gold-accent">image</span>
+            <span>Logo baru: <strong id="store-logo-name" class="text-on-surface"></strong> (<span id="store-logo-size"></span>) — ikut diajukan saat klik Ajukan Perubahan.</span>
+        </p>
+        <p id="store-logo-chip-error" class="hidden items-center gap-2 text-xs text-error">
+            <span class="material-symbols-outlined text-[16px]">error</span>
+            <span id="store-logo-error-text">Logo melebihi 2 MB — pilih file lain agar ikut terkirim.</span>
+        </p>
+
         <div data-reveal class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter sticky bottom-20 md:bottom-4 z-30">
             <button type="button" data-modal-open="modal-atur-ulang" @if(!empty($updatePending)) disabled title="Terkunci — menunggu verifikasi" @endif class="py-3 px-6 bg-surface-container-lowest border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">Atur Ulang</button>
             <button type="submit" @if(!empty($updatePending)) disabled title="Terkunci — menunggu verifikasi" @endif class="py-3 px-8 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -193,21 +203,48 @@ document.addEventListener('DOMContentLoaded', function(){
     el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
   });
 
-  // Logo toko: preview langsung; ikut terkirim bersama form data (perlu verifikasi SA).
+  // Logo toko: preview + chip persisten; ikut terkirim bersama form data (perlu verifikasi SA).
   var logoInput = document.getElementById('store-logo-input');
+  var logoChip = document.getElementById('store-logo-chip');
+  var logoChipErr = document.getElementById('store-logo-chip-error');
+  function showChip(el, show) {
+    if (!el) return;
+    el.classList.toggle('hidden', !show);
+    el.classList.toggle('flex', show);
+  }
   if (logoInput) {
     logoInput.addEventListener('change', function () {
       var file = this.files && this.files[0];
       if (!file) return;
+      logoInput.dataset.picked = '1';
       if (file.size > 2 * 1024 * 1024) {
-        showRalivaToast('Ukuran logo maksimal 2 MB.', 'error');
         this.value = '';
+        showChip(logoChip, false);
+        showChip(logoChipErr, true);
+        showRalivaToast('Ukuran logo maksimal 2 MB.', 'error');
         return;
       }
+      showChip(logoChipErr, false);
       var preview = document.getElementById('store-logo-preview');
       if (preview) preview.src = URL.createObjectURL(file);
-      showRalivaToast('Logo dipilih. Simpan perubahan agar diajukan verifikasi.', 'image');
+      var nm = document.getElementById('store-logo-name');
+      var sz = document.getElementById('store-logo-size');
+      if (nm) nm.textContent = file.name;
+      if (sz) sz.textContent = (file.size / 1024).toFixed(0) + ' KB';
+      showChip(logoChip, true);
     });
+    var mainForm = document.getElementById('form-data-toko');
+    if (mainForm) {
+      mainForm.addEventListener('submit', function (e) {
+        if (logoInput.dataset.picked === '1' && (!logoInput.files || logoInput.files.length === 0)) {
+          e.preventDefault();
+          showChip(logoChip, false);
+          showChip(logoChipErr, true);
+          showRalivaToast('File logo tidak terbawa. Pilih ulang logo lalu ajukan kembali.', 'error');
+          logoInput.focus();
+        }
+      });
+    }
   }
 });
 </script>
