@@ -102,6 +102,7 @@ class DataProduksiController extends Controller
             'status' => Order::STATUS_MENUNGGU_PRODUKSI,
             'produksi_catatan_tolak' => $data['catatan'],
             'produksi_dimulai_pada' => null,
+            'produksi_selesai_pada' => null,
         ]);
 
         ActivityLogger::log('produksi.order.reject', Order::class, $order->order_id, $lama,
@@ -202,6 +203,7 @@ class DataProduksiController extends Controller
             'status' => Order::STATUS_MENUNGGU_QC,
             'jumlah_berhasil' => $data['jumlah_berhasil'],
             'jumlah_gagal' => $data['jumlah_gagal'] ?? 0,
+            'produksi_selesai_pada' => now(),
         ]);
 
         ActivityLogger::log('produksi.order.complete', Order::class, $order->order_id, $lama,

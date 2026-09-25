@@ -27,7 +27,7 @@
     if ($stepJadwalAwal && $stepJadwalAkhir) {
         $durTarget = (int) $stepJadwalAwal->diffInMinutes($stepJadwalAkhir);
     }
-    $endActual = $stepQc ?: null;
+    $endActual = $o->produksi_selesai_pada ?: ($stepQc ?: null);
     if (! $endActual && $stepDiterima && $o->status === \App\Models\Order::STATUS_DIPROSES) {
         $endActual = now();
     }
@@ -120,9 +120,10 @@
                         <p class="text-on-surface font-bold mt-1">{{ $durTarget !== null ? $fmtDur($durTarget) : '-' }}</p>
                         @if ($stepJadwalAkhir)
                             @if ($produksiSelesai)
-                                @if ($stepQc)
+                                @if ($stepQc || $o->produksi_selesai_pada)
                                     @php
-                                        $selisih = (int) round(($stepQc->timestamp - $stepJadwalAkhir->timestamp) / 60);
+                                        $selesaiWall = $o->produksi_selesai_pada ?: $stepQc;
+                                        $selisih = (int) round(($selesaiWall->timestamp - $stepJadwalAkhir->timestamp) / 60);
                                     @endphp
                                     <p class="text-xs mt-1 {{ $selisih <= 0 ? 'text-secondary' : 'text-error' }}">
                                         @if ($selisih === 0)
@@ -151,11 +152,11 @@
                         >{{ $durActual !== null ? $fmtDur($durActual) : '-' }}</p>
                     </div>
                 </div>
-                @if ($stepDiterima && $durTarget !== null && ($stepQc || $o->status === \App\Models\Order::STATUS_DIPROSES))
+                @if ($stepDiterima && $durTarget !== null && ($o->produksi_selesai_pada || $stepQc))
                     <div class="mt-3 flex items-center gap-2 rounded-lg border px-3 py-2.5 {{ $durDiff !== null && $durDiff <= 0 ? 'border-secondary/25 bg-secondary-container/10' : 'border-error/25 bg-error/10' }}"
                          data-live-diff
                          data-diff-start="{{ $stepDiterima->timestamp }}"
-                         data-diff-end="{{ $stepQc?->timestamp ?? '' }}"
+                         data-diff-end="{{ $o->produksi_selesai_pada?->timestamp ?? $stepQc?->timestamp ?? '' }}"
                          data-diff-target-sec="{{ $durTarget !== null ? $durTarget * 60 : 0 }}">
                         <span class="material-symbols-outlined text-[18px] {{ $durDiff !== null && $durDiff <= 0 ? 'text-secondary' : 'text-error' }}">{{ $durDiff !== null && $durDiff <= 0 ? 'check_circle' : 'error' }}</span>
                         <span class="text-xs {{ $durDiff !== null && $durDiff <= 0 ? 'text-secondary' : 'text-error' }}">
@@ -205,6 +206,14 @@
                         @if ($o->produksi_catatan_tolak)
                             <p class="text-xs text-error mt-1">⚠ Ditolak: {{ $o->produksi_catatan_tolak }}</p>
                         @endif
+                    </li>
+                    @endif
+
+                    @if ($o->produksi_selesai_pada)
+                    <li class="pl-6 relative">
+                        <span class="absolute -left-[22px] top-0"><span class="w-9 h-9 rounded-full border border-secondary/25 bg-secondary-container/20 flex items-center justify-center"><span class="material-symbols-outlined text-[18px] text-secondary">handyman</span></span></span>
+                        <p class="text-on-surface font-bold">Produksi Selesai</p>
+                        <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->produksi_selesai_pada->translatedFormat('d M Y H:i') }}</p>
                     </li>
                     @endif
 
