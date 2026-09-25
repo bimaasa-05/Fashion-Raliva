@@ -8,6 +8,7 @@ use App\Models\Complaint;
 use App\Models\CustomerTopup;
 use App\Models\CustomerWithdrawal;
 use App\Models\Product;
+use App\Models\ProductUpdateRequest;
 use App\Models\Refund;
 use App\Models\Role;
 use App\Models\SlotPurchaseRequest;
@@ -25,6 +26,7 @@ class SuperAdminBadgeCounter
         return [
             'toko' => Store::where('status', Store::STATUS_PENDING)->count(),
             'produk' => Product::where('status', Product::STATUS_PENDING)->count(),
+            'perubahan_produk' => ProductUpdateRequest::where('status', ProductUpdateRequest::STATUS_PENDING)->count(),
             'slot' => SlotPurchaseRequest::where('status', SlotPurchaseRequest::STATUS_PENDING)->count(),
             'komplain' => Complaint::whereIn('status', [Complaint::STATUS_OPEN, Complaint::STATUS_DIPROSES, Complaint::STATUS_ESKALASI])->count(),
             'iklan' => AdSlot::where('status', AdSlot::STATUS_DITUNDA)->count(),

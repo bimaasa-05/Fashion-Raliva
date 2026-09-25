@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\ProductCostCalculator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -36,6 +37,9 @@ class Product extends Model
         'nama_produk',
         'deskripsi',
         'harga_dasar',
+        'target_produksi',
+        'modal_produksi',
+        'biaya_tambahan',
         'tipe_produk',
         'status',
         'alasan_penolakan',
@@ -43,7 +47,12 @@ class Product extends Model
 
     protected function casts(): array
     {
-        return [];
+        return [
+            'harga_dasar' => 'float',
+            'target_produksi' => 'integer',
+            'modal_produksi' => 'float',
+            'biaya_tambahan' => 'float',
+        ];
     }
 
     public function store(): BelongsTo
@@ -64,6 +73,36 @@ class Product extends Model
     public function images(): HasMany
     {
         return $this->hasMany(ProductImage::class, 'product_id', 'product_id')->orderBy('urutan');
+    }
+
+    public function materialRequirements(): HasMany
+    {
+        return $this->hasMany(ProductMaterialRequirement::class, 'product_id', 'product_id');
+    }
+
+    public function operationalCosts(): HasMany
+    {
+        return $this->hasMany(ProductOperationalCost::class, 'product_id', 'product_id');
+    }
+
+    public function updateRequests(): HasMany
+    {
+        return $this->hasMany(ProductUpdateRequest::class, 'product_id', 'product_id');
+    }
+
+    public function productionSummary(): array
+    {
+        $materials = $this->materialRequirements->map(fn ($requirement) => [
+            'jumlah_per_unit' => (float) $requirement->jumlah_per_unit,
+            'biaya_per_unit' => (float) $requirement->biaya_per_unit,
+        ])->all();
+
+        return ProductCostCalculator::calculate(
+            $materials,
+            (float) ($this->biaya_tambahan ?? 0),
+            (int) ($this->target_produksi ?? 0),
+            (float) ($this->harga_dasar ?? 0)
+        );
     }
 
     public function wishlistItems(): HasMany

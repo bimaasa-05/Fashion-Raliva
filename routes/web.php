@@ -101,6 +101,7 @@ use App\Http\Controllers\SuperAdmin\PengirimanController as SaPengirimanControll
 use App\Http\Controllers\SuperAdmin\PeringkatController;
 use App\Http\Controllers\SuperAdmin\PeringkatIklanController;
 use App\Http\Controllers\SuperAdmin\PermintaanPenarikanController;
+use App\Http\Controllers\SuperAdmin\PerubahanProdukController;
 use App\Http\Controllers\SuperAdmin\ProdukController;
 use App\Http\Controllers\SuperAdmin\ProduksiController;
 use App\Http\Controllers\SuperAdmin\ProfilController;
@@ -198,7 +199,6 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::post('/checkout/{checkout}/payment/saldo', [CheckoutController::class, 'payWithSaldo'])->name('checkout.payment.saldo');
 
         Route::post('/order-tracking/{order}/confirm', [OrderTrackingController::class, 'confirm'])->name('order-tracking.confirm');
-        Route::post('/refund', [OrderTrackingController::class, 'storeRefund'])->name('refund.store');
 
         Route::get('/komplain', [App\Http\Controllers\Customer\KomplainController::class, 'index'])->name('komplain');
         Route::get('/komplain/create', [App\Http\Controllers\Customer\KomplainController::class, 'create'])->name('komplain.create');
@@ -274,6 +274,9 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::get('/moderasi-produk', [ModerasiProdukController::class, 'index'])->name('moderasi-produk');
     Route::post('/moderasi-produk/{produk}/setujui', [ModerasiProdukController::class, 'setujui'])->name('moderasi-produk.setujui');
     Route::post('/moderasi-produk/{produk}/tolak', [ModerasiProdukController::class, 'tolak'])->name('moderasi-produk.tolak');
+    Route::get('/perubahan-produk', [PerubahanProdukController::class, 'index'])->name('perubahan-produk');
+    Route::post('/perubahan-produk/{produk}/{permintaan}/setujui', [PerubahanProdukController::class, 'approve'])->name('perubahan-produk.setujui');
+    Route::post('/perubahan-produk/{produk}/{permintaan}/tolak', [PerubahanProdukController::class, 'reject'])->name('perubahan-produk.tolak');
     Route::get('/kategori', [KategoriProdukController::class, 'index'])->name('kategori');
     Route::post('/kategori', [KategoriProdukController::class, 'store'])->name('kategori.store');
     Route::post('/kategori/{kategori}/update', [KategoriProdukController::class, 'update'])->name('kategori.update');
@@ -389,6 +392,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::post('/pesanan/{pesanan}/proses', [AdminDataPesananController::class, 'proses'])->name('pesanan.proses');
     Route::post('/pesanan/{pesanan}/batalkan', [AdminDataPesananController::class, 'batalkan'])->name('pesanan.batalkan');
     Route::post('/pesanan/{pesanan}/selesai', [AdminDataPesananController::class, 'selesai'])->name('pesanan.selesai');
+    Route::post('/pesanan/{pesanan}/alih-fulfillment', [AdminDataPesananController::class, 'alihFulfillment'])->name('pesanan.alihFulfillment');
     Route::put('/pesanan/{pesanan}/items', [AdminDataPesananController::class, 'updateItems'])->name('pesanan.items.update');
     Route::get('/pesanan/{pesanan}/invoice', [AdminDataPesananController::class, 'invoice'])->name('pesanan.invoice');
     Route::get('/verifikasi-pembayaran', [VerifikasiPembayaranController::class, 'index'])->name('verifikasi-pembayaran');

@@ -14,6 +14,7 @@
                 ['route' => 'superadmin.manajemen-pengguna', 'icon' => 'group', 'text' => 'Data Pengguna'],
                 ['route' => 'superadmin.manajemen-toko', 'icon' => 'storefront', 'text' => 'Data Toko', 'badge' => 'toko'],
                 ['route' => 'superadmin.moderasi-produk', 'icon' => 'inventory_2', 'text' => 'Moderasi Produk', 'badge' => 'produk'],
+                ['route' => 'superadmin.perubahan-produk', 'icon' => 'edit_note', 'text' => 'Perubahan Produk', 'badge' => 'perubahan_produk'],
                 ['route' => 'superadmin.kategori', 'icon' => 'category', 'text' => 'Kategori'],
                 ['route' => 'superadmin.produk', 'icon' => 'checkroom', 'text' => 'Data Produk'],
                 ['route' => 'superadmin.slot-produk', 'icon' => 'grid_view', 'text' => 'Slot Produk', 'badge' => 'slot'],

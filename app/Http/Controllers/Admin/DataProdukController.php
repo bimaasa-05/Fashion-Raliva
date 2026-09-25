@@ -6,14 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Support\ActivityLogger;
 use App\Support\AdminContext;
+use App\Support\WarnaPalet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class DataProdukController extends Controller
 {
     public function index(Request $request)
     {
         $q = $request->input('q');
-        $products = Product::with(['category', 'store', 'variants.warehouseStocks', 'images' => fn ($qq) => $qq->orderBy('urutan')])
+        $products = Product::with(['category', 'store', 'variants.warehouseStocks', 'materialRequirements.material', 'operationalCosts', 'images' => fn ($qq) => $qq->orderBy('urutan')])
             ->when($q, fn ($query) => $query->where('nama_produk', 'like', "%{$q}%"))
             ->orderByDesc('created_at')
             ->orderByDesc('product_id')
@@ -39,13 +42,46 @@ class DataProdukController extends Controller
             'pending' => Product::where('status', 'pending')->count(),
             'ditolak' => Product::where('status', 'ditolak')->count(),
         ];
+        $pendingUpdateIds = \App\Models\ProductUpdateRequest::where('status', \App\Models\ProductUpdateRequest::STATUS_PENDING)
+            ->pluck('product_id')
+            ->all();
+        $bahanOptions = \App\Models\BahanProduksi::whereIn('store_id', AdminContext::assignedStoreIds())
+            ->where('status', \App\Models\BahanProduksi::STATUS_AKTIF)
+            ->orderBy('nama_bahan')
+            ->get(['bahan_id', 'nama_bahan', 'satuan']);
 
-        return view('Admin.produk.index', compact('products', 'categories', 'stats', 'ukuranOptions', 'tokoKategori'));
+        return view('Admin.produk.index', compact('products', 'categories', 'stats', 'ukuranOptions', 'tokoKategori', 'pendingUpdateIds', 'bahanOptions'));
     }
 
     public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
-        $request->merge(['harga_dasar' => str_replace('.', '', (string) $request->input('harga_dasar', ''))]);
+        $storeId = AdminContext::assignedStoreIds()[0] ?? null;
+        if (! $storeId) {
+            return back()->with('error', 'Admin belum ditugaskan ke toko mana pun.');
+        }
+
+        $request->merge([
+            'harga_dasar' => str_replace('.', '', (string) $request->input('harga_dasar', '')),
+            'target_produksi' => \App\Support\NumberParser::integerInput($request->input('target_produksi', '')),
+            'biaya_tambahan' => \App\Support\NumberParser::decimalInput($request->input('biaya_tambahan', '')),
+            'varian_stok' => collect($request->input('varian_stok', []))->map(fn ($row) => is_array($row)
+                ? array_merge($row, [
+                    'stok' => \App\Support\NumberParser::integerInput($row['stok'] ?? ''),
+                    'stok_minimum' => \App\Support\NumberParser::integerInput($row['stok_minimum'] ?? ''),
+                ])
+                : $row)->all(),
+            'resep' => collect($request->input('resep', []))->map(fn ($row) => is_array($row)
+                ? array_merge($row, [
+                    'jumlah_per_unit' => \App\Support\NumberParser::decimalInput($row['jumlah_per_unit'] ?? ''),
+                    'biaya_per_unit' => \App\Support\NumberParser::decimalInput($row['biaya_per_unit'] ?? ''),
+                ])
+                : $row)->all(),
+            'operasional' => collect($request->input('operasional', []))->map(fn ($row) => is_array($row)
+                ? array_merge($row, [
+                    'nominal' => \App\Support\NumberParser::decimalInput($row['nominal'] ?? ''),
+                ])
+                : $row)->all(),
+        ]);
         $data = $request->validate([
             'nama_produk' => 'required|string|max:255',
             'harga_dasar' => 'required|numeric|min:1|max:999999999999',
@@ -57,15 +93,22 @@ class DataProdukController extends Controller
             'stok_awal' => 'nullable|integer|min:0',
             'stok_minimum' => 'nullable|integer|min:0',
             'ukuran_terpilih' => 'required|string|max:1000',
-            'warna' => 'required|array|min:1',
-            'warna.*' => 'string|max:30',
-            'warna_hex' => 'nullable|array',
-            'warna_hex.*' => 'nullable|string|regex:/^#([0-9a-fA-F]{6})$/i',
             'varian_stok' => 'required|array|min:1',
             'varian_stok.*.ukuran' => 'required|string|max:255',
-            'varian_stok.*.warna' => 'required|string|max:100',
+            'varian_stok.*.warna' => 'nullable|string|max:100',
             'varian_stok.*.stok' => 'required|integer|min:1',
             'varian_stok.*.stok_minimum' => 'required|integer|min:0',
+            'target_produksi' => 'required|integer|min:1|max:1000000',
+            'biaya_tambahan' => 'nullable|numeric|min:0|max:999999999999',
+            'resep' => 'required|array|min:1|max:50',
+            'resep.*.material_id' => ['nullable', 'integer', Rule::exists('bahan_produksi', 'bahan_id')->where(fn ($query) => $query->where('store_id', $storeId)->where('status', \App\Models\BahanProduksi::STATUS_AKTIF))],
+            'resep.*.nama_bahan' => 'required|string|max:150',
+            'resep.*.satuan' => ['required', 'string', Rule::in(\App\Models\ProductionOrderBahan::SATUAN)],
+            'resep.*.jumlah_per_unit' => 'required|numeric|min:0.001|max:1000000',
+            'resep.*.biaya_per_unit' => 'required|numeric|min:0|max:999999999999',
+            'operasional' => 'nullable|array|max:20',
+            'operasional.*.nama_biaya' => 'required|string|max:100',
+            'operasional.*.nominal' => 'required|numeric|min:0|max:999999999999',
         ], [
             'nama_produk.required' => 'Nama produk wajib diisi.',
             'harga_dasar.required' => 'Harga dasar wajib diisi.',
@@ -79,19 +122,28 @@ class DataProdukController extends Controller
             'foto_produk.required' => 'Minimal 1 foto produk wajib diunggah.',
             'foto_produk.min' => 'Minimal 1 foto produk wajib diunggah.',
             'ukuran_terpilih.required' => 'Pilih minimal 1 ukuran.',
-            'warna.required' => 'Pilih minimal 1 warna.',
-            'warna.min' => 'Pilih minimal 1 warna.',
             'varian_stok.required' => 'Isi stok untuk setiap varian.',
             'varian_stok.min' => 'Isi stok untuk setiap varian.',
             'varian_stok.*.stok.required' => 'Stok tiap varian wajib diisi.',
             'varian_stok.*.stok.min' => 'Stok tiap varian minimal 1.',
             'varian_stok.*.stok_minimum.required' => 'Ambang menipis tiap varian wajib diisi.',
+            'target_produksi.required' => 'Target produksi wajib diisi.',
+            'target_produksi.min' => 'Target produksi minimal 1.',
+            'resep.required' => 'Isi minimal 1 bahan produksi.',
+            'resep.min' => 'Isi minimal 1 bahan produksi.',
+            'resep.*.nama_bahan.required' => 'Nama bahan wajib diisi.',
+            'resep.*.satuan.required' => 'Satuan bahan wajib dipilih.',
+            'resep.*.jumlah_per_unit.required' => 'Jumlah bahan per unit wajib diisi.',
+            'resep.*.jumlah_per_unit.min' => 'Jumlah bahan per unit minimal 0,001.',
+            'resep.*.biaya_per_unit.required' => 'Biaya bahan per unit wajib diisi.',
         ]);
 
-        $storeId = AdminContext::assignedStoreIds()[0] ?? null;
-        if (! $storeId) {
-            return back()->with('error', 'Admin belum ditugaskan ke toko mana pun.');
-        }
+        $warnaInput = $request->input('warna', []);
+        $warnaHexInput = $request->input('warna_hex', []);
+        $warna = WarnaPalet::normalizeOptionalSubmissionOrFail($warnaInput, $warnaHexInput);
+        $data['warna'] = $warna['names'];
+        $data['warna_hex'] = $warna['hexes'];
+
         if (! \App\Support\SlotService::canAdd((int) $storeId)) {
             $total = \App\Support\SlotService::totalQuota((int) $storeId);
             $used = \App\Support\SlotService::usedSlots((int) $storeId);
@@ -99,16 +151,50 @@ class DataProdukController extends Controller
             return back()->with('error', sprintf('Kuota slot produk penuh (%d/%d). Ajukan pembelian slot di menu Beli Slot terlebih dahulu.', $used, $total));
         }
 
-        $product = Product::create([
-            'store_id' => $storeId,
-            'category_id' => $data['category_id'] ?? null,
-            'nama_produk' => $data['nama_produk'],
-            'deskripsi' => $data['deskripsi'] ?? null,
-            'harga_dasar' => $data['harga_dasar'],
-            'tipe_produk' => $data['tipe_produk'] ?? Product::TIPE_REGULAR,
-            'status' => Product::STATUS_PENDING,
-            'alasan_penolakan' => 'Menunggu moderasi Super Admin.',
-        ]);
+        $requirements = collect($data['resep'])->map(function ($row) use ($storeId) {
+            $material = ! empty($row['material_id'])
+                ? \App\Models\BahanProduksi::where('bahan_id', $row['material_id'])->where('store_id', $storeId)->first()
+                : null;
+
+            return [
+                'material_id' => $material?->bahan_id,
+                'nama_bahan' => trim((string) $row['nama_bahan']),
+                'satuan' => $row['satuan'],
+                'jumlah_per_unit' => (float) $row['jumlah_per_unit'],
+                'biaya_per_unit' => (float) $row['biaya_per_unit'],
+            ];
+        })->all();
+        $operasional = collect($data['operasional'] ?? [])->map(fn ($row) => [
+            'nama_biaya' => trim((string) ($row['nama_biaya'] ?? '')),
+            'nominal' => (float) ($row['nominal'] ?? 0),
+        ])->all();
+        $cost = \App\Support\ProductCostCalculator::calculate(
+            $requirements,
+            (float) ($data['biaya_tambahan'] ?? 0),
+            (int) $data['target_produksi'],
+            (float) $data['harga_dasar'],
+            $operasional
+        );
+
+        $product = \Illuminate\Support\Facades\DB::transaction(function () use ($storeId, $data, $requirements, $operasional, $cost) {
+            $product = Product::create([
+                'store_id' => $storeId,
+                'category_id' => $data['category_id'] ?? null,
+                'nama_produk' => $data['nama_produk'],
+                'deskripsi' => $data['deskripsi'] ?? null,
+                'harga_dasar' => $data['harga_dasar'],
+                'target_produksi' => $data['target_produksi'],
+                'modal_produksi' => $cost['modal_per_unit'],
+                'biaya_tambahan' => $cost['biaya_operasional'],
+                'tipe_produk' => $data['tipe_produk'] ?? Product::TIPE_REGULAR,
+                'status' => Product::STATUS_PENDING,
+                'alasan_penolakan' => 'Menunggu moderasi Super Admin.',
+            ]);
+            $product->materialRequirements()->createMany($requirements);
+            $product->operationalCosts()->createMany($operasional);
+
+            return $product;
+        });
 
         $sa = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))->first();
         if ($sa) {
@@ -144,20 +230,21 @@ class DataProdukController extends Controller
 
         // Handle variasi
         $ukuranList = $data['ukuran_terpilih'] ? explode(',', $data['ukuran_terpilih']) : ['All Size'];
-        $warnaList = $data['warna'] ?? ['Hitam'];
+        $warnaList = ($data['warna'] ?? []) !== [] ? $data['warna'] : [null];
 
         $warnaHexMap = collect($warnaList)->values()->mapWithKeys(function ($warna, $i) use ($data) {
-            $name = trim($warna);
+            if ($warna === null) {
+                return [];
+            }
+            $name = trim((string) $warna);
             $hex = trim((string) ($data['warna_hex'][$i] ?? ''));
-            $resolved = ($hex && preg_match('/^#[0-9a-fA-F]{6}$/', $hex))
-                ? $hex
-                : (\App\Support\WarnaPalet::hex($name) ?? '');
+            $resolved = \App\Support\WarnaPalet::resolve($hex, $name) ?? '';
 
             return [$name => $resolved];
         })->all();
 
         $perVarian = collect($data['varian_stok'] ?? [])->keyBy(function ($v) {
-            return trim($v['ukuran']) . '|' . trim($v['warna']);
+            return trim((string) ($v['ukuran'] ?? '')) . '|' . trim((string) ($v['warna'] ?? ''));
         });
 
         $warehouse = \App\Models\Warehouse::where('store_id', $storeId)->where('status', \App\Models\Warehouse::STATUS_AKTIF)->first();
@@ -171,15 +258,16 @@ class DataProdukController extends Controller
 
         foreach ($ukuranList as $uk) {
             foreach ($warnaList as $wr) {
-                $key = trim($uk) . '|' . trim($wr);
+                $color = $wr === null ? null : trim((string) $wr);
+                $key = trim((string) $uk) . '|' . trim((string) $color);
                 $detail = $perVarian->get($key);
 
                 $variant = \App\Models\ProductVariant::create([
                     'product_id' => $product->product_id,
-                    'sku' => strtoupper(substr($product->nama_produk, 0, 3)).'-'.str_pad($product->product_id, 4, '0').'-'.strtoupper(substr($uk,0,1)).substr($wr,0,1).rand(10,99),
+                    'sku' => strtoupper(substr($product->nama_produk, 0, 3)).'-'.str_pad($product->product_id, 4, '0').'-'.strtoupper(substr($uk,0,1)).($color === null ? '' : substr($color,0,1)).rand(10,99),
                     'ukuran' => trim($uk),
-                    'warna' => trim($wr),
-                    'warna_hex' => $warnaHexMap[trim($wr)] ?? (\App\Support\WarnaPalet::hex(trim($wr)) ?? null),
+                    'warna' => $color,
+                    'warna_hex' => $color === null ? null : ($warnaHexMap[$color] ?? \App\Support\WarnaPalet::resolve(null, $color)),
                     'harga' => $data['harga_dasar'],
                     'status' => 'aktif',
                 ]);
@@ -208,7 +296,44 @@ class DataProdukController extends Controller
             return back()->with('error', 'Anda tidak memiliki akses untuk mengubah produk toko ini.');
         }
 
-        $request->merge(['harga_dasar' => str_replace('.', '', (string) $request->input('harga_dasar', ''))]);
+        $filteredResep = collect($request->input('resep', []))
+            ->filter(fn ($row) => is_array($row) && (
+                trim((string) ($row['material_id'] ?? '')) !== ''
+                || trim((string) ($row['nama_bahan'] ?? '')) !== ''
+                || trim((string) ($row['satuan'] ?? '')) !== ''
+                || trim((string) ($row['jumlah_per_unit'] ?? '')) !== ''
+                || trim((string) ($row['biaya_per_unit'] ?? '')) !== ''
+            ))
+            ->map(fn ($row) => array_merge($row, [
+                'jumlah_per_unit' => \App\Support\NumberParser::decimalInput($row['jumlah_per_unit'] ?? ''),
+                'biaya_per_unit' => \App\Support\NumberParser::decimalInput($row['biaya_per_unit'] ?? ''),
+            ]))
+            ->values()
+            ->all();
+        $filteredOperasional = collect($request->input('operasional', []))
+            ->filter(fn ($row) => is_array($row) && (
+                trim((string) ($row['nama_biaya'] ?? '')) !== ''
+                || trim((string) ($row['nominal'] ?? '')) !== ''
+            ))
+            ->map(fn ($row) => array_merge($row, [
+                'nominal' => \App\Support\NumberParser::decimalInput($row['nominal'] ?? ''),
+            ]))
+            ->values()
+            ->all();
+        $request->merge([
+            'harga_dasar' => str_replace('.', '', (string) $request->input('harga_dasar', '')),
+            'target_produksi' => \App\Support\NumberParser::integerInput($request->input('target_produksi', '')),
+            'biaya_tambahan' => \App\Support\NumberParser::decimalInput($request->input('biaya_tambahan', '')),
+            'operasional_kosong' => $request->boolean('operasional_kosong'),
+            'varian_stok' => collect($request->input('varian_stok', []))->map(fn ($row) => is_array($row)
+                ? array_merge($row, [
+                    'stok' => \App\Support\NumberParser::integerInput($row['stok'] ?? ''),
+                    'stok_minimum' => \App\Support\NumberParser::integerInput($row['stok_minimum'] ?? ''),
+                ])
+                : $row)->all(),
+            'resep' => $filteredResep,
+            'operasional' => $filteredOperasional,
+        ]);
 
         $data = $request->validate([
             'nama_produk' => 'required|string|max:255',
@@ -221,16 +346,23 @@ class DataProdukController extends Controller
             'hapus_foto_ids' => 'nullable|array',
             'hapus_foto_ids.*' => 'integer|exists:product_images,product_image_id',
             'ukuran_terpilih' => 'nullable|string|max:1000',
-            'warna' => 'nullable|array',
-            'warna.*' => 'string|max:30',
-            'warna_hex' => 'nullable|array',
-            'warna_hex.*' => 'nullable|string|regex:/^#([0-9a-fA-F]{6})$/i',
             'varian_stok' => 'nullable|array',
             'varian_stok.*.variant_id' => 'nullable|integer|exists:product_variants,product_variant_id',
             'varian_stok.*.ukuran' => 'required|string|max:255',
-            'varian_stok.*.warna' => 'required|string|max:100',
+            'varian_stok.*.warna' => 'nullable|string|max:100',
             'varian_stok.*.stok' => 'nullable|integer|min:0',
             'varian_stok.*.stok_minimum' => 'nullable|integer|min:0',
+            'target_produksi' => 'nullable|integer|min:1|max:1000000',
+            'biaya_tambahan' => 'nullable|numeric|min:0|max:999999999999',
+            'resep' => 'nullable|array|max:50',
+            'resep.*.material_id' => ['nullable', 'integer', Rule::exists('bahan_produksi', 'bahan_id')->where(fn ($query) => $query->where('store_id', $product->store_id)->where('status', \App\Models\BahanProduksi::STATUS_AKTIF))],
+            'resep.*.nama_bahan' => 'required|string|max:150',
+            'resep.*.satuan' => ['required', 'string', Rule::in(\App\Models\ProductionOrderBahan::SATUAN)],
+            'resep.*.jumlah_per_unit' => 'required|numeric|min:0.001|max:1000000',
+            'resep.*.biaya_per_unit' => 'required|numeric|min:0|max:999999999999',
+            'operasional' => 'nullable|array|max:20',
+            'operasional.*.nama_biaya' => 'required|string|max:100',
+            'operasional.*.nominal' => 'required|numeric|min:0|max:999999999999',
         ], [
             'nama_produk.required' => 'Nama produk wajib diisi.',
             'harga_dasar.required' => 'Harga dasar wajib diisi.',
@@ -238,102 +370,138 @@ class DataProdukController extends Controller
             'harga_dasar.max' => 'Harga maksimal Rp 999.999.999.999.',
         ]);
 
-        $resetStatus = ($product->status === Product::STATUS_DITOLAK);
+        if ($request->has('warna') || $request->has('warna_hex')) {
+            $warna = WarnaPalet::normalizeOptionalSubmissionOrFail($request->input('warna'), $request->input('warna_hex'));
+            $data['warna'] = $warna['names'];
+            $data['warna_hex'] = $warna['hexes'];
+        }
 
-        \Illuminate\Support\Facades\DB::transaction(function () use ($request, $product, $data, $resetStatus) {
-            $product->update([
-                'nama_produk' => $data['nama_produk'],
-                'harga_dasar' => $data['harga_dasar'],
-                'category_id' => $data['category_id'] ?? null,
-                'tipe_produk' => $data['tipe_produk'] ?? $product->tipe_produk,
-                'deskripsi' => $data['deskripsi'] ?? null,
-                'status' => $resetStatus ? Product::STATUS_PENDING : $product->status,
-                'alasan_penolakan' => $resetStatus ? 'Diajukan ulang setelah revisi oleh Admin.' : $product->alasan_penolakan,
+        if (\App\Models\ProductUpdateRequest::where('product_id', $product->product_id)
+            ->where('status', \App\Models\ProductUpdateRequest::STATUS_PENDING)
+            ->exists()
+        ) {
+            return back()->with('error', 'Produk ini sudah mempunyai pengajuan perubahan yang menunggu keputusan Super Admin.');
+        }
+
+        $existingImages = \App\Models\ProductImage::where('product_id', $product->product_id)
+            ->orderBy('urutan')
+            ->get();
+        $removeIds = $existingImages->pluck('product_image_id')
+            ->intersect(collect($data['hapus_foto_ids'] ?? [])->map(fn ($v) => (int) $v))
+            ->values()
+            ->all();
+        $newFiles = collect($request->file('foto_produk', []))->filter(fn ($file) => $file && $file->isValid())->values();
+        if (($existingImages->count() - count($removeIds) + $newFiles->count()) > 5) {
+            return back()->with('error', 'Maksimal total 5 foto. Hapus foto lama dulu sebelum menambah foto baru.');
+        }
+
+        $product->load(['category', 'materialRequirements.material', 'operationalCosts', 'images' => fn ($query) => $query->orderBy('urutan'), 'variants.warehouseStocks']);
+        $before = [
+            'product' => array_merge(
+                $product->only(['nama_produk', 'harga_dasar', 'target_produksi', 'modal_produksi', 'biaya_tambahan', 'category_id', 'tipe_produk', 'deskripsi', 'status']),
+                ['kategori' => $product->category?->nama_kategori]
+            ),
+            'resep' => $product->materialRequirements->map(fn ($row) => [
+                'material_id' => $row->material_id,
+                'nama_bahan' => $row->nama_bahan,
+                'satuan' => $row->satuan,
+                'jumlah_per_unit' => (float) $row->jumlah_per_unit,
+                'biaya_per_unit' => (float) $row->biaya_per_unit,
+            ])->all(),
+            'operasional' => $product->operationalCosts->map(fn ($row) => [
+                'nama_biaya' => $row->nama_biaya,
+                'nominal' => (float) $row->nominal,
+            ])->all(),
+            'images' => $existingImages->map(fn ($image) => $image->only(['product_image_id', 'file_gambar', 'urutan']))->all(),
+            'variants' => $product->variants->map(fn ($variant) => [
+                'product_variant_id' => $variant->product_variant_id,
+                'ukuran' => $variant->ukuran,
+                'warna' => $variant->warna,
+                'warna_hex' => $variant->warna_hex,
+                'harga' => $variant->harga,
+                'stok' => (int) $variant->warehouseStocks->sum('jumlah_stok'),
+                'stok_minimum' => (int) ($variant->warehouseStocks->min('stok_minimum') ?? 0),
+            ])->all(),
+        ];
+
+        $stagingToken = (string) Str::uuid();
+        $stagedPaths = [];
+        foreach ($newFiles as $file) {
+            $stagedPaths[] = $file->storeAs(
+                'pending-product-updates/'.$stagingToken,
+                Str::uuid().'.'.$file->extension(),
+                'public'
+            );
+        }
+
+        $after = [
+            'nama_produk' => $data['nama_produk'],
+            'harga_dasar' => $data['harga_dasar'],
+            'category_id' => $data['category_id'] ?? null,
+            'tipe_produk' => $data['tipe_produk'] ?? $product->tipe_produk,
+            'deskripsi' => $data['deskripsi'] ?? null,
+            'ukuran_terpilih' => $data['ukuran_terpilih'] ?? '',
+            'warna' => $data['warna'] ?? [],
+            'warna_hex' => $data['warna_hex'] ?? [],
+            'varian_stok' => $data['varian_stok'] ?? [],
+            'resep_diubah' => trim((string) $request->input('target_produksi', '')) !== '' || trim((string) $request->input('biaya_tambahan', '')) !== '' || $filteredResep !== [],
+            'target_produksi' => $data['target_produksi'] ?? null,
+            'biaya_tambahan' => $data['biaya_tambahan'] ?? null,
+            'resep' => $data['resep'] ?? [],
+            'operasional_diubah' => $request->boolean('operasional_kosong') || $filteredOperasional !== [],
+            'operasional' => $data['operasional'] ?? [],
+            'hapus_foto_ids' => $removeIds,
+            'staged_images' => $stagedPaths,
+        ];
+
+        $permintaan = \App\Models\ProductUpdateRequest::create([
+            'product_id' => $product->product_id,
+            'store_id' => $product->store_id,
+            'requested_by' => ActivityLogger::resolveActorId(),
+            'status' => \App\Models\ProductUpdateRequest::STATUS_PENDING,
+            'before_snapshot' => $before,
+            'after_payload' => $after,
+            'remove_image_ids' => $removeIds,
+            'staged_images' => $stagedPaths,
+        ]);
+
+        ActivityLogger::log(
+            'produk.update.propose',
+            Product::class,
+            $product->product_id,
+            ['status' => 'aktif'],
+            ['status' => 'pengajuan_pending', 'product_update_request_id' => $permintaan->product_update_request_id],
+            sprintf('Admin mengajukan perubahan produk "%s" untuk keputusan Super Admin.', $product->nama_produk)
+        );
+
+        $sa = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))->first();
+        if ($sa) {
+            \App\Models\Notification::create([
+                'user_id' => $sa->user_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => \App\Models\Notification::TIPE_SISTEM,
+                'judul' => 'Pengajuan Perubahan Produk',
+                'pesan' => sprintf('Perubahan produk "%s" menunggu keputusan Super Admin.', $product->nama_produk),
+                'url' => route('superadmin.perubahan-produk'),
             ]);
+        }
+        if ($product->store?->owner_id) {
+            \App\Models\Notification::create([
+                'user_id' => $product->store->owner_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => \App\Models\Notification::TIPE_SISTEM,
+                'judul' => 'Perubahan Produk Diajukan',
+                'pesan' => sprintf('Admin mengajukan perubahan produk "%s". Berlaku setelah disetujui Super Admin.', $product->nama_produk),
+                'url' => route('owner.produk'),
+            ]);
+        }
+        \App\Models\Notification::fireSelf(
+            \App\Models\Notification::TIPE_SISTEM,
+            'Perubahan Produk Diajukan',
+            sprintf('Perubahan produk "%s" menunggu keputusan Super Admin.', $product->nama_produk),
+            route('admin.produk')
+        );
 
-            // Hapus foto terpilih (milik produk ini saja)
-            $hapusIds = collect($data['hapus_foto_ids'] ?? [])->map(fn ($v) => (int) $v)->all();
-            if ($hapusIds) {
-                $fotos = \App\Models\ProductImage::where('product_id', $product->product_id)
-                    ->whereIn('product_image_id', $hapusIds)->get();
-                foreach ($fotos as $f) {
-                    try { \Illuminate\Support\Facades\Storage::disk('public')->delete($f->file_gambar); } catch (\Throwable $e) {}
-                    $f->delete();
-                }
-            }
-
-            // Tambah foto baru (total maksimal 5)
-            $sisaSlot = 5 - \App\Models\ProductImage::where('product_id', $product->product_id)->count();
-            if ($request->hasFile('foto_produk') && $sisaSlot > 0) {
-                $urutan = (int) (\App\Models\ProductImage::where('product_id', $product->product_id)->max('urutan') ?? -1) + 1;
-                foreach ($request->file('foto_produk') as $file) {
-                    if ($sisaSlot <= 0) break;
-                    if ($file && $file->isValid()) {
-                        $path = $file->store('products', 'public');
-                        \App\Models\ProductImage::create([
-                            'product_id' => $product->product_id,
-                            'file_gambar' => $path,
-                            'urutan' => $urutan++,
-                        ]);
-                        $sisaSlot--;
-                    }
-                }
-            }
-
-            // Sinkron varian + stok (tambah-bukan-hapus; varian ber-order tidak dihapus)
-            $ukuranList = isset($data['ukuran_terpilih']) && $data['ukuran_terpilih'] !== ''
-                ? array_values(array_filter(array_map('trim', explode(',', $data['ukuran_terpilih']))))
-                : [];
-            $warnaList = array_values(array_filter(array_map('trim', $data['warna'] ?? [])));
-            if ($ukuranList && $warnaList) {
-                $warnaHexMap = collect($warnaList)->values()->mapWithKeys(function ($warna, $i) use ($data) {
-                    $hex = trim((string) ($data['warna_hex'][$i] ?? ''));
-                    return [$warna => ($hex && preg_match('/^#[0-9a-fA-F]{6}$/', $hex)) ? $hex : (\App\Support\WarnaPalet::hex($warna) ?? '')];
-                })->all();
-
-                $perVarian = collect($data['varian_stok'] ?? [])->keyBy(fn ($v) => trim($v['ukuran']).'|'.trim($v['warna']));
-                $warehouse = \App\Models\Warehouse::where('store_id', $product->store_id)
-                    ->where('status', \App\Models\Warehouse::STATUS_AKTIF)->first();
-                $existing = \App\Models\ProductVariant::where('product_id', $product->product_id)->get()
-                    ->keyBy(fn ($v) => trim($v->ukuran).'|'.trim($v->warna));
-
-                foreach ($ukuranList as $uk) {
-                    foreach ($warnaList as $wr) {
-                        $key = trim($uk).'|'.trim($wr);
-                        $detail = $perVarian->get($key);
-                        $variant = $existing->get($key);
-                        if (! $variant) {
-                            $variant = \App\Models\ProductVariant::create([
-                                'product_id' => $product->product_id,
-                                'sku' => strtoupper(substr($product->nama_produk, 0, 3)).'-'.str_pad($product->product_id, 4, '0').'-'.strtoupper(substr($uk, 0, 1)).substr($wr, 0, 1).rand(10, 99),
-                                'ukuran' => trim($uk),
-                                'warna' => trim($wr),
-                                'warna_hex' => $warnaHexMap[trim($wr)] ?? (\App\Support\WarnaPalet::hex(trim($wr)) ?? null),
-                                'harga' => $data['harga_dasar'],
-                                'status' => 'aktif',
-                            ]);
-                            $existing[$key] = $variant;
-                        } else {
-                            $variant->update([
-                                'warna_hex' => $warnaHexMap[trim($wr)] ?? $variant->warna_hex,
-                                'harga' => $data['harga_dasar'],
-                            ]);
-                        }
-                        if ($warehouse) {
-                            \App\Models\WarehouseStock::updateOrCreate(
-                                ['warehouse_id' => $warehouse->warehouse_id, 'product_variant_id' => $variant->product_variant_id],
-                                ['jumlah_stok' => (int) ($detail['stok'] ?? 0), 'jumlah_direservasi' => 0, 'stok_minimum' => (int) ($detail['stok_minimum'] ?? 0)]
-                            );
-                        }
-                    }
-                }
-            }
-        });
-
-        ActivityLogger::log('produk.update', Product::class, $product->product_id, [], $data, 'Admin memperbarui data produk (teks, foto, varian, stok)');
-
-        \App\Models\Notification::fireSelf(\App\Models\Notification::TIPE_SISTEM, 'Produk Diperbarui', sprintf('Produk "%s" berhasil diperbarui.', $product->nama_produk), route('admin.produk'));
-
-        return back()->with('success', 'Data produk berhasil diperbarui (teks, foto, varian, stok).');
+        return back()->with('success', 'Perubahan produk diajukan. Berlaku setelah disetujui Super Admin.');
     }
 }

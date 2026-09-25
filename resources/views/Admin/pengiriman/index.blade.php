@@ -61,20 +61,6 @@
                             <button type="button" data-modal-open="modal-selesai-ambil-{{ $pesanan->order_id }}" class="px-5 py-2.5 bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-xs uppercase tracking-widest rounded hover:bg-secondary-container/30 transition-colors btn-premium whitespace-nowrap">Selesai (Diambil)</button>
                         </div>
                     </div>
-                    <div id="modal-selesai-ambil-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
-                        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-                        <form method="POST" action="{{ route('admin.pesanan.selesai', $pesanan->order_id) }}" class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
-                            @csrf
-                            <p class="raliva-label text-secondary">Selesai — Diambil</p>
-                            <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $pesanan->nomor_order }}</h3>
-                            <p class="text-sm text-on-surface-variant mt-3">Konfirmasi pesanan selesai & diambil customer? Dana penjualan masuk ke saldo toko.</p>
-                            <input name="catatan" maxlength="500" placeholder="Catatan pengambilan (opsional)" class="raliva-input w-full text-sm mt-4" type="text" />
-                            <div class="flex gap-3 mt-6">
-                                <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
-                                <button type="submit" class="flex-1 py-2.5 bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-secondary-container/30 transition-colors btn-premium">Ya, Selesai</button>
-                            </div>
-                        </form>
-                    </div>
                     @else
                     <form id="form-resi-{{ $pesanan->order_id }}" method="POST" action="{{ route('admin.pengiriman.resi', $pesanan->order_id) }}">
                         @csrf
@@ -109,18 +95,6 @@
                             </div>
                         </div>
                     </form>
-                    <div id="modal-confirm-resi-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
-                        <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-                        <div class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
-                            <p class="raliva-label text-gold-accent">Simpan Resi</p>
-                            <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $pesanan->nomor_order }}</h3>
-                            <p class="text-sm text-on-surface-variant mt-3">Simpan resi pengiriman pesanan ini?</p>
-                            <div class="flex gap-3 mt-6">
-                                <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
-                                <button type="button" onclick="document.getElementById('form-resi-{{ $pesanan->order_id }}').requestSubmit()" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded btn-premium">Ya, Simpan</button>
-                            </div>
-                        </div>
-                    </div>
                     @endif
                 </div>
             @empty
@@ -173,19 +147,6 @@
                                     @endif
                                     @if (in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true) && $shipment->nomor_resi)
                                         <button type="button" data-modal-open="modal-kirim-{{ $shipment->shipment_id }}" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Tandai Dikirim</button>
-                                        <div id="modal-kirim-{{ $shipment->shipment_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
-                                            <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-                                            <form method="POST" action="{{ route('admin.pengiriman.kirim', $shipment->shipment_id) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
-                                                @csrf
-                                                <p class="raliva-label text-gold-accent">Tandai Dikirim</p>
-                                                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $shipment->order?->nomor_order }}</h3>
-                                                <p class="text-sm text-on-surface-variant mt-3">Tandai sudah dikirim dengan resi <span class="font-mono font-bold text-on-surface">{{ $shipment->nomor_resi }}</span>?</p>
-                                                <div class="flex gap-3 mt-6">
-                                                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
-                                                    <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded btn-premium">Ya, Kirim</button>
-                                                </div>
-                                            </form>
-                                        </div>
                                     @elseif ($shipment->status === \App\Models\Shipment::STATUS_DIKIRIM && ! $shipment->nomor_resi)
                                         <span class="text-error text-[10px] uppercase">Resi belum diisi</span>
                                     @elseif (! in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true))
@@ -235,10 +196,7 @@
                             <button type="button" data-modal-open="modal-edit-resi-{{ $shipment->shipment_id }}" class="px-3 py-1.5 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">Edit Resi</button>
                         @endif
                         @if (in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true) && $shipment->nomor_resi)
-                            <form method="POST" action="{{ route('admin.pengiriman.kirim', $shipment->shipment_id) }}" onsubmit="return confirm('Tandai pesanan {{ $shipment->order?->nomor_order }} sudah dikirim dengan resi {{ $shipment->nomor_resi }}?');">
-                                @csrf
-                                <button type="submit" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Tandai Dikirim</button>
-                            </form>
+                            <button type="button" data-modal-open="modal-kirim-{{ $shipment->shipment_id }}" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Tandai Dikirim</button>
                         @elseif ($shipment->status === \App\Models\Shipment::STATUS_DIKIRIM && ! $shipment->nomor_resi)
                             <span class="text-error text-[10px] uppercase">Resi belum diisi</span>
                         @elseif (! in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true))
@@ -307,6 +265,59 @@
                 <div class="flex gap-3 mt-6">
                     <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
                     <button type="button" onclick="document.getElementById('modal-edit-resi-{{ $shipment->shipment_id }}').querySelector('form').requestSubmit()" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded btn-premium">Ya, Simpan</button>
+                </div>
+            </div>
+        </div>
+    @endif
+@endforeach
+
+{{-- Modal Tandai Dikirim per shipment (di luar tabel agar tidak terpotong overflow) --}}
+@foreach ($shipments as $shipment)
+    @if (in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true) && $shipment->nomor_resi)
+        <div id="modal-kirim-{{ $shipment->shipment_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+            <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+            <form method="POST" action="{{ route('admin.pengiriman.kirim', $shipment->shipment_id) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+                @csrf
+                <p class="raliva-label text-gold-accent">Tandai Dikirim</p>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $shipment->order?->nomor_order }}</h3>
+                <p class="text-sm text-on-surface-variant mt-3">Tandai sudah dikirim dengan resi <span class="font-mono font-bold text-on-surface">{{ $shipment->nomor_resi }}</span>?</p>
+                <div class="flex gap-3 mt-6">
+                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded btn-premium">Ya, Kirim</button>
+                </div>
+            </form>
+        </div>
+    @endif
+@endforeach
+
+{{-- Modal antrean penyerahan (di luar kontainer antrean) --}}
+@foreach ($antrian as $item)
+    @php $pesanan = $item['order']; @endphp
+    @if ($item['tipe'] === 'offline')
+        <div id="modal-selesai-ambil-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+            <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+            <form method="POST" action="{{ route('admin.pesanan.selesai', $pesanan->order_id) }}" class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+                @csrf
+                <p class="raliva-label text-secondary">Selesai — Diambil</p>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $pesanan->nomor_order }}</h3>
+                <p class="text-sm text-on-surface-variant mt-3">Konfirmasi pesanan selesai & diambil customer? Dana penjualan masuk ke saldo toko.</p>
+                <input name="catatan" maxlength="500" placeholder="Catatan pengambilan (opsional)" class="raliva-input w-full text-sm mt-4" type="text" />
+                <div class="flex gap-3 mt-6">
+                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-secondary-container/30 transition-colors btn-premium">Ya, Selesai</button>
+                </div>
+            </form>
+        </div>
+    @else
+        <div id="modal-confirm-resi-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+            <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+            <div class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
+                <p class="raliva-label text-gold-accent">Simpan Resi</p>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $pesanan->nomor_order }}</h3>
+                <p class="text-sm text-on-surface-variant mt-3">Simpan resi pengiriman pesanan ini?</p>
+                <div class="flex gap-3 mt-6">
+                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
+                    <button type="button" onclick="document.getElementById('form-resi-{{ $pesanan->order_id }}').requestSubmit()" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded btn-premium">Ya, Simpan</button>
                 </div>
             </div>
         </div>

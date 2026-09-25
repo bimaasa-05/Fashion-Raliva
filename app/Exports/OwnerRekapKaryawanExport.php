@@ -16,45 +16,35 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
     use SheetRaliva;
 
     /**
-     * @param  array<int, array<string, int|float|string>>  $rows
+     * @param  array<int, array<string, int|float|string|null>>  $rows
+     * @param  array<string, int|float|string|null>  $totals
      */
     public function __construct(
         protected array $rows,
         protected string $storeName,
+        protected string $role = 'semua',
+        protected array $totals = [],
     ) {
-        $this->judulSheet = 'REKAP KARYAWAN';
-        $this->subtitleSheet = 'Pendapatan & Pengeluaran per Karyawan — ' . $this->storeName;
+        $judul = match ($this->role) {
+            'admin' => 'REKAP KARYAWAN — ADMIN',
+            'produksi' => 'REKAP KARYAWAN — PRODUKSI',
+            default => 'REKAP KARYAWAN — GUDANG',
+        };
+        $this->judulSheet = $judul;
+        $this->subtitleSheet = 'Peran & KPI per Karyawan — ' . $this->storeName;
         $this->barisHeaderSheet = 3;
-        $this->lebarKolomSheet = [8, 26, 30, 14, 14, 14, 14, 14];
-        $this->kolomUangSheet = [6, 7, 8];
+        $this->lebarKolomSheet = [8, 26, 30, 14, 14, 14, 14];
+        $this->kolomUangSheet = $this->role === 'admin' ? [5] : [];
     }
 
     public function collection(): Collection
     {
         $result = [];
         foreach ($this->rows as $r) {
-            $result[] = [
-                'no' => count($result) + 1,
-                'nama' => $r['nama'],
-                'email' => $r['email'],
-                'role' => $r['role'],
-                'pesanan' => $r['pesanan'],
-                'pendapatan' => $r['pendapatan'],
-                'pengeluaran' => $r['pengeluaran'],
-                'bersih' => $r['bersih'],
-            ];
+            $result[] = array_merge(['no' => count($result) + 1], $this->petakanBaris($r));
         }
 
-        $result[] = [
-            'no' => '',
-            'nama' => 'Total Semua Karyawan',
-            'email' => '',
-            'role' => '',
-            'pesanan' => array_sum(array_column($this->rows, 'pesanan')),
-            'pendapatan' => array_sum(array_column($this->rows, 'pendapatan')),
-            'pengeluaran' => array_sum(array_column($this->rows, 'pengeluaran')),
-            'bersih' => array_sum(array_column($this->rows, 'bersih')),
-        ];
+        $result[] = array_merge(['no' => ''], $this->petakanTotal());
 
         return collect($result);
     }
@@ -64,12 +54,16 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
      */
     public function headings(): array
     {
-        return ['No.', 'Nama', 'Email', 'Role', 'Pesanan', 'Pendapatan', 'Pengeluaran', 'Bersih'];
+        return match ($this->role) {
+            'admin' => ['No.', 'Nama', 'Email', 'CR (%)', 'AOV', 'Rating', 'Pesanan'],
+            'produksi' => ['No.', 'Nama', 'Email', 'Ditugaskan', 'Rata2 Unit', 'Rata2 Durasi (jam)', 'Berhasil (%)'],
+            default => ['No.', 'Nama', 'Email', 'Transfer', 'Rata2 Putaran (jam)', 'Akurasi (%)', 'Rusak (qty)'],
+        };
     }
 
     /**
-     * @param  array{no:int|string, nama:string, email:string, role:string, pesanan:int, pendapatan:float, pengeluaran:float, bersih:float}  $row
-     * @return (int|string|float)[]
+     * @param  array<string, int|float|string|null>  $row
+     * @return (int|string|float|null)[]
      */
     public function map($row): array
     {
@@ -77,16 +71,84 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
             $row['no'],
             $row['nama'],
             $row['email'],
-            $row['role'],
-            $row['pesanan'],
-            $row['pendapatan'],
-            $row['pengeluaran'],
-            $row['bersih'],
+            $row['kolom1'],
+            $row['kolom2'],
+            $row['kolom3'],
+            $row['kolom4'],
         ];
     }
 
     public function title(): string
     {
         return 'Rekap Karyawan';
+    }
+
+    /**
+     * @param  array<string, int|float|string|null>  $r
+     * @return array<string, int|float|string|null>
+     */
+    private function petakanBaris(array $r): array
+    {
+        return match ($this->role) {
+            'admin' => [
+                'nama' => $r['nama'],
+                'email' => $r['email'],
+                'kolom1' => $r['cr'],
+                'kolom2' => $r['aov'],
+                'kolom3' => $r['rating'],
+                'kolom4' => $r['pesanan'],
+            ],
+            'produksi' => [
+                'nama' => $r['nama'],
+                'email' => $r['email'],
+                'kolom1' => $r['ditugaskan'],
+                'kolom2' => $r['rata_unit_diminta'],
+                'kolom3' => $r['rata_durasi_jam'],
+                'kolom4' => $r['sukses_persen'],
+            ],
+            default => [
+                'nama' => $r['nama'],
+                'email' => $r['email'],
+                'kolom1' => $r['transfer_diminta'],
+                'kolom2' => $r['rata_putaran_jam'],
+                'kolom3' => $r['akurasi_persen'],
+                'kolom4' => $r['kerusakan_qty'],
+            ],
+        };
+    }
+
+    /**
+     * @return array<string, int|float|string|null>
+     */
+    private function petakanTotal(): array
+    {
+        $t = $this->totals;
+
+        return match ($this->role) {
+            'admin' => [
+                'nama' => 'Total',
+                'email' => '',
+                'kolom1' => $t['cr'] ?? null,
+                'kolom2' => $t['aov'] ?? null,
+                'kolom3' => $t['rating'] ?? null,
+                'kolom4' => $t['pesanan'] ?? 0,
+            ],
+            'produksi' => [
+                'nama' => 'Total',
+                'email' => '',
+                'kolom1' => $t['ditugaskan'] ?? 0,
+                'kolom2' => null,
+                'kolom3' => null,
+                'kolom4' => $t['sukses_persen'] ?? null,
+            ],
+            default => [
+                'nama' => 'Total',
+                'email' => '',
+                'kolom1' => $t['transfer_diminta'] ?? 0,
+                'kolom2' => null,
+                'kolom3' => $t['akurasi_persen'] ?? null,
+                'kolom4' => $t['kerusakan_qty'] ?? 0,
+            ],
+        };
     }
 }

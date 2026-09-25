@@ -482,15 +482,16 @@
                     <section class="py-xl reveal-up">
                         @php
                         $allVariants = $product->variants;
-                        $colors = $allVariants->pluck('warna')->unique()->values();
+                        $colors = $allVariants->pluck('warna')->filter(fn ($warna) => trim((string) $warna) !== '')->unique()->values();
+                        $hasColors = $colors->isNotEmpty();
                         $sizes = $allVariants->pluck('ukuran')->unique()->values();
                         $colorHexMap = $allVariants
-                            ->groupBy('warna')
-                            ->map(fn ($vs) => $vs->first()->warna_hex ?: (\App\Support\WarnaPalet::hex($vs->first()->warna) ?? ''))
+                            ->groupBy(fn ($v) => mb_strtolower(trim((string) $v->warna)))
+                            ->map(fn ($vs) => \App\Support\WarnaPalet::resolve($vs->first()->warna_hex, $vs->first()->warna) ?? '')
                             ->all();
                         $produkSku = $allVariants->first()?->sku ?? '';
                     @endphp
-                        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium" data-variants="{{ $allVariants->map(fn($v) => ['id' => $v->product_variant_id, 'warna' => $v->warna, 'ukuran' => $v->ukuran, 'harga' => (float)$v->harga, 'stok' => (int) $v->warehouseStocks->sum('jumlah_stok'), 'hex' => ($v->warna_hex ?: (\App\Support\WarnaPalet::hex($v->warna) ?? ''))])->toJson(JSON_UNESCAPED_UNICODE) }}">
+                        <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium" data-variants="{{ $allVariants->map(fn($v) => ['id' => $v->product_variant_id, 'warna' => $v->warna, 'ukuran' => $v->ukuran, 'harga' => (float)$v->harga, 'stok' => (int) $v->warehouseStocks->sum('jumlah_stok'), 'hex' => (\App\Support\WarnaPalet::resolve($v->warna_hex, $v->warna) ?? '')])->toJson(JSON_UNESCAPED_UNICODE) }}">
                             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('PRODUCT DETAILS') }}</p>
                             <nav class="flex items-center gap-1.5 flex-wrap mb-xs font-label-sm text-label-sm text-on-surface-variant">
                                 <a href="{{ route('customer.shop') }}" class="hover:text-[var(--chrome-accent)] transition-colors">Shop</a>
@@ -517,16 +518,18 @@
                             @endif
                             <p id="pd-price" class="font-title-md text-title-md text-on-surface mb-xs">Rp {{ number_format($product->variants->min('harga') ?? $product->harga_dasar, 0, ',', '.') }}</p>
                             <p id="pd-stock" class="font-label-sm text-label-sm text-on-surface-variant mb-lg"></p>
+                            @if ($hasColors)
                             <!-- Color Selection -->
                             <div class="mb-lg">
-                                <p class="font-label-caps text-label-caps text-on-surface mb-sm">{{ __('COLOR') }}: <span id="pd-color-label">{{ strtoupper($colors->first() ?? __('N/A')) }}</span></p>
+                                <p class="font-label-caps text-label-caps text-on-surface mb-sm">{{ __('COLOR') }}: <span id="pd-color-label">{{ strtoupper($colors->first()) }}</span></p>
                                 <div class="flex flex-wrap items-center gap-md">
 @foreach ($colors as $color)
-@php $hex = $colorHexMap[strtolower($color)] ?? ''; @endphp
-<button type="button" data-color-btn data-color="{{ $color }}" aria-label="{{ $color }}" title="{{ $color }}" class="swatch{{ $loop->first ? ' swatch-selected' : '' }}" style="{{ $hex ? 'background-color:' . $hex . ';' : 'background-color:var(--surface-container-high);' }}">{{ $hex ? '' : mb_substr($color, 0, 1) }}</button>
+@php $hex = $colorHexMap[mb_strtolower(trim((string) $color))] ?? ''; @endphp
+<button type="button" data-color-btn data-color="{{ $color }}" aria-label="{{ $color }}" title="{{ $color }}" class="swatch{{ $loop->first ? ' swatch-selected' : '' }}" style="{{ $hex ? 'background-color:' . $hex . ';' : 'background-color:var(--surface-container-high);' }}">@if(!$hex)<span class="sr-only">{{ $color }}</span>@endif</button>
 @endforeach
                                     </div>
                                 </div>
+                            @endif
                             <!-- Size Selection -->
                             <div class="mb-lg">
                                 <div class="flex justify-between items-center mb-sm">

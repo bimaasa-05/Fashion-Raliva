@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\ActivityLogger;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -120,5 +121,50 @@ class Store extends Model
         return [
             'ditangguhkan_sampai' => 'datetime',
         ];
+    }
+
+    /**
+     * Aktifkan kembali toko yang ditangguhkan sementara setelah batas waktunya lewat.
+     */
+    public static function autoReactivateExpired(): int
+    {
+        $stores = self::query()
+            ->where('status', self::STATUS_NONAKTIF)
+            ->whereNotNull('ditangguhkan_sampai')
+            ->where('ditangguhkan_sampai', '<=', now())
+            ->get();
+
+        $count = 0;
+
+        foreach ($stores as $store) {
+            $lama = $store->only(['status']);
+
+            $store->update([
+                'status' => self::STATUS_AKTIF,
+                'ditangguhkan_sampai' => null,
+            ]);
+
+            ActivityLogger::log(
+                'store.reactivate_auto',
+                self::class,
+                $store->store_id,
+                $lama,
+                ['status' => self::STATUS_AKTIF],
+                sprintf('Toko "%s" diaktifkan kembali otomatis karena batas waktu penangguhan telah terlewati.', $store->nama_toko)
+            );
+
+            Notification::create([
+                'user_id' => $store->owner_id,
+                'aktor_id' => null,
+                'tipe' => Notification::TIPE_SISTEM,
+                'judul' => 'Toko Diaktifkan Kembali',
+                'pesan' => sprintf('Toko "%s" telah diaktifkan kembali dan dapat beroperasi normal.', $store->nama_toko),
+                'url' => route('owner.data-toko'),
+            ]);
+
+            $count++;
+        }
+
+        return $count;
     }
 }
