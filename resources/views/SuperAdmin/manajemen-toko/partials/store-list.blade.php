@@ -88,7 +88,7 @@
                     </div>
                 </div>
                 @if ($item->update_request)
-                    <button type="button" onclick="event.stopPropagation()" data-modal-open="modal-perubahan-{{ $item->update_request->store_update_request_id }}" class="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gold-accent/10 border border-gold-accent/30 text-gold-accent font-label-sm text-[11px] uppercase tracking-widest hover:bg-gold-accent/20 transition-colors">
+                    <button type="button" onclick="event.stopPropagation()" data-modal-open="modal-perubahan-{{ $item->update_request->store_update_request_id }}" class="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gold-accent text-white font-label-sm text-[11px] uppercase tracking-widest hover:brightness-110 transition btn-premium shadow-sm">
                         <span class="material-symbols-outlined text-[16px]">edit_note</span>Perubahan Data Menunggu
                     </button>
                 @endif
@@ -159,7 +159,7 @@
                                     <p class="font-title-md text-title-md text-on-surface truncate max-w-[240px] {{ $isSuspended ? 'line-through decoration-on-surface-variant' : '' }}">{{ $store->nama_toko }}</p>
                                     <p class="text-[10px] font-label-sm text-on-surface-variant uppercase tracking-wider mt-0.5">{{ $item->owner_nama }}</p>
                                     @if ($item->update_request)
-                                        <button type="button" onclick="event.stopPropagation()" data-modal-open="modal-perubahan-{{ $item->update_request->store_update_request_id }}" class="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gold-accent/10 border border-gold-accent/30 text-gold-accent text-[9px] font-bold uppercase tracking-widest hover:bg-gold-accent/20 transition-colors">
+                                        <button type="button" onclick="event.stopPropagation()" data-modal-open="modal-perubahan-{{ $item->update_request->store_update_request_id }}" class="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gold-accent text-white text-[9px] font-bold uppercase tracking-widest hover:brightness-110 transition">
                                             <span class="material-symbols-outlined text-[12px]">edit_note</span>Perubahan menunggu
                                         </button>
                                     @endif
