@@ -28,6 +28,7 @@ class Store extends Model
         'logo',
         'deskripsi',
         'alamat',
+        'kota',
         'nomor_telepon',
         'status',
         'alasan_penolakan',
