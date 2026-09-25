@@ -873,7 +873,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors shrink-0"><span class="material-symbols-outlined">close</span></button>
                 </div>
                 <div class="p-6 space-y-3 text-sm">
-                    @foreach ([['Nama Toko', $st->nama_toko, $pr->nama_toko], ['Kategori', $st->kategori ?? '-', $pr->kategori ?? '-'], ['Alamat', $st->alamat, $pr->alamat], ['Telepon', $st->nomor_telepon, $pr->nomor_telepon]] as $row)
+                    @foreach ([['Nama Toko', $st->nama_toko, $pr->nama_toko], ['Kategori', $st->kategori ?? '-', $pr->kategori ?? '-'], ['Alamat', $st->alamat, $pr->alamat], ['Kota', $st->kota ?? '-', $pr->kota ?? '-'], ['Telepon', $st->nomor_telepon, $pr->nomor_telepon]] as $row)
                         <div class="grid grid-cols-2 gap-3 border border-muted-border rounded-lg p-3 {{ $row[1] != $row[2] ? 'border-gold-accent/40 bg-gold-accent/5' : '' }}">
                             <div><p class="text-[10px] uppercase text-on-surface-variant">{{ $row[0] }} (lama)</p><p class="text-on-surface mt-0.5">{{ $row[1] }}</p></div>
                             <div><p class="text-[10px] uppercase text-on-surface-variant">{{ $row[0] }} (baru)</p><p class="font-bold text-on-surface mt-0.5">{{ $row[2] }}</p></div>
