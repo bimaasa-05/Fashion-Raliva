@@ -35,7 +35,10 @@ class DataTokoController extends Controller
             ->latest('store_update_request_id')
             ->first();
 
-        return view('Owner.data-toko.index', compact('store', 'rating', 'reviewCount', 'storeCategories', 'updatePending'));
+        $cities = \App\Models\City::orderBy('city_id')->get()->groupBy('pulau')
+            ->map(fn ($g) => $g->pluck('nama_kota')->values()->all())->all();
+
+        return view('Owner.data-toko.index', compact('store', 'rating', 'reviewCount', 'storeCategories', 'updatePending', 'cities'));
     }
 
     public function update(Request $request)
@@ -54,6 +57,7 @@ class DataTokoController extends Controller
             'kategori' => ['nullable', 'string', 'max:100', Rule::exists('store_categories', 'nama_kategori')->where('status', StoreCategory::STATUS_AKTIF)],
             'deskripsi' => ['nullable', 'string', 'max:1000'],
             'alamat' => ['required', 'string', 'max:500'],
+            'kota' => ['nullable', 'string', 'max:100', Rule::exists('cities', 'nama_kota')],
             'nomor_telepon' => ['required', 'string', 'max:20'],
             'email' => ['required', 'email', 'max:150', Rule::unique('users', 'email')->ignore($request->user()->user_id ?? 0, 'user_id')],
             'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
@@ -78,6 +82,7 @@ class DataTokoController extends Controller
             && ($store->kategori ?? null) === ($validated['kategori'] ?? null)
             && ($store->deskripsi ?? null) === ($validated['deskripsi'] ?? null)
             && $store->alamat === $validated['alamat']
+            && ($store->kota ?? null) === ($validated['kota'] ?? null)
             && $store->nomor_telepon === $validated['nomor_telepon']
             && ! $request->hasFile('logo');
 
@@ -96,6 +101,7 @@ class DataTokoController extends Controller
             'kategori' => $validated['kategori'] ?? null,
             'deskripsi' => $validated['deskripsi'] ?? null,
             'alamat' => $validated['alamat'],
+            'kota' => $validated['kota'] ?? null,
             'nomor_telepon' => $validated['nomor_telepon'],
             'logo' => $logoPath,
             'status' => \App\Models\StoreUpdateRequest::STATUS_PENDING,
@@ -105,8 +111,8 @@ class DataTokoController extends Controller
             'toko.update.request',
             Store::class,
             $store->store_id,
-            $store->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon', 'logo']),
-            $permintaan->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon', 'logo']),
+            $store->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'kota', 'nomor_telepon', 'logo']),
+            $permintaan->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'kota', 'nomor_telepon', 'logo']),
             sprintf('Mengajukan perubahan data toko "%s".', $store->nama_toko)
         );
 
