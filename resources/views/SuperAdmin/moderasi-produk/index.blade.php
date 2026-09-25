@@ -9,13 +9,8 @@
 
 @php
     $tabs = [
-        \App\Models\Product::STATUS_PENDING => ['label' => 'Menunggu', 'icon' => 'pending'],
-        \App\Models\Product::STATUS_DITOLAK => ['label' => 'Ditolak', 'icon' => 'block'],
-    ];
-
-    $statusIconMap = [
-        \App\Models\Product::STATUS_PENDING => 'pending',
-        \App\Models\Product::STATUS_DITOLAK => 'gpp_bad',
+        \App\Models\Product::STATUS_PENDING => 'Menunggu',
+        \App\Models\Product::STATUS_DITOLAK => 'Ditolak',
     ];
 @endphp
 
@@ -30,23 +25,22 @@
 @include('partials.flash-toast')
 
 <div class="px-container-margin pb-element-gap">
-    <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
+    <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4">
         <div class="flex items-center gap-2 mb-3">
             <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
             <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Moderasi</span>
         </div>
-        <div class="flex items-center justify-center space-x-gutter overflow-x-auto no-scrollbar py-2">
-            @foreach ($tabs as $key => $tab)
-                <a href="{{ route('superadmin.moderasi-produk', ['status' => $key]) }}"
-                    class="font-label-sm text-label-sm px-4 py-2 border-b-2 transition-colors whitespace-nowrap {{ $activeStatus === $key
-                        ? 'border-primary text-primary'
-                        : 'border-transparent text-on-surface-variant hover:text-on-surface' }}">
-                    {{ strtoupper($tab['label']) }} ({{ $stats[$key] ?? 0 }})
-                </a>
+        <div id="moderasi-tabs" class="flex flex-wrap items-center gap-2.5 justify-center py-2">
+            @foreach ($tabs as $key => $label)
+                <button type="button" data-status="{{ $key }}" class="moderasi-filter-btn px-4 py-2 rounded-lg border font-label-sm uppercase tracking-wider transition-colors {{ $activeStatus === $key
+                    ? 'bg-deep-onyx text-on-primary border-deep-onyx hover:bg-deep-onyx/90'
+                    : 'bg-surface-container-low text-on-surface-variant border-muted-border hover:bg-surface-container-high hover:text-on-surface hover:border-gold-accent' }}">
+                    {{ strtoupper($label) }} ({{ $stats[$key] ?? 0 }})
+                </button>
             @endforeach
         </div>
-        <div class="flex justify-center pt-1">
-            <a href="{{ route('superadmin.produk') }}" class="text-xs text-gold-accent hover:underline inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> Lihat produk disetujui di Data Produk</a>
+        <div class="flex justify-center pt-2">
+            <a href="{{ route('superadmin.produk') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-gold-accent/40 bg-gold-accent/5 text-gold-accent font-label-sm text-label-sm uppercase tracking-wider hover:bg-gold-accent/15"><span class="material-symbols-outlined text-[16px]">visibility</span> Lihat produk disetujui di Data Produk</a>
         </div>
 
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 pt-4">
@@ -65,78 +59,9 @@
 </div>
 
 <div data-table-scope class="px-container-margin flex-grow">
-    <div id="moderasi-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-gutter gap-y-container-margin">
-        @forelse ($products as $product)
-            @php
-                $normFoto = function ($raw) {
-                    if (filter_var($raw, FILTER_VALIDATE_URL)) return $raw;
-                    $raw = ltrim($raw, '/');
-                    if (str_starts_with($raw, 'assets/')) return asset($raw);
-                    return asset('storage/' . $raw);
-                };
-                $fotos = $product->images->map(fn ($img) => $normFoto($img->file_gambar))->values()->all();
-            @endphp
-            <div class="group cursor-pointer bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium flex flex-col"
-                onclick="openDetailModal(this)"
-                data-table-row
-                data-search="{{ strtolower($product->nama_produk.' '.($product->store->nama_toko ?? '').' '.($product->category->nama_kategori ?? '').' '.$product->tipe_produk.' '.$product->deskripsi) }}"
-                data-id="{{ $product->product_id }}"
-                data-name="{{ $product->nama_produk }}"
-                data-store="{{ $product->store->nama_toko ?? '-' }}"
-                data-price="Rp {{ number_format($product->harga_dasar, 0, ',', '.') }}"
-                data-category="{{ ($product->category->nama_kategori ?? '-') }}"
-                data-desc="{{ $product->deskripsi }}"
-                data-status="{{ $product->status }}"
-                data-reason="{{ $product->alasan_penolakan }}"
-                data-tipe="{{ ucfirst($product->tipe_produk) }}"
-                data-variants="{{ $product->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}"
-                data-images='{{ json_encode($product->images->pluck('file_gambar')->values(), JSON_UNESCAPED_SLASHES) }}'
-                data-produk-images='@json($fotos)'
-                data-slot-total="{{ $product->slot_total }}"
-                data-slot-used="{{ $product->slot_used }}"
-                data-slot-available="{{ $product->slot_available }}"
-                data-slot-full="{{ $product->slot_full ? '1' : '0' }}">
-                <div class="relative w-full aspect-[4/3] bg-surface-container-low overflow-hidden rounded-lg isolate" data-produk-gallery>
-                    @if (count($fotos))
-                        <div class="block w-full h-full" data-produk-main>
-                            <img src="{{ $fotos[0] }}" alt="{{ $product->nama_produk }}" data-produk-main-img class="w-full h-full object-cover transition-opacity duration-300" loading="lazy" />
-                        </div>
-                    @else
-                        <div class="w-full h-full flex items-center justify-center bg-surface-container-high">
-                            <span class="material-symbols-outlined text-[42px] text-on-surface-variant/40">checkroom</span>
-                        </div>
-                    @endif
-                    <div class="absolute top-2 right-2 p-1 bg-surface/80 rounded"><span class="material-symbols-outlined text-[18px] text-on-surface">{{ $statusIconMap[$product->status] ?? 'pending' }}</span></div>
-                    @if ($product->status === \App\Models\Product::STATUS_DITOLAK)
-                        <div class="absolute bottom-2 left-2 right-2 px-2 py-1 bg-error/90 text-on-error text-[9px] font-bold uppercase tracking-widest rounded text-center">Ditolak • Lihat Alasan</div>
-                    @endif
-                </div>
-                @if (count($fotos) > 1)
-                    <div class="flex gap-2 px-4 pt-3 overflow-x-auto" data-produk-strip>
-                        @foreach ($fotos as $i => $f)
-                            <button type="button" data-produk-pin="{{ $i }}" aria-label="Tampilkan foto {{ $i + 1 }} dari {{ $product->nama_produk }}" aria-pressed="{{ $i === 0 ? 'true' : 'false' }}" class="h-14 w-16 shrink-0 rounded-md overflow-hidden border transition-colors {{ $i === 0 ? 'border-gold-accent ring-2 ring-gold-accent/30' : 'border-outline-variant hover:border-gold-accent' }}">
-                                <img src="{{ $f }}" alt="" class="w-full h-full object-cover" loading="lazy" />
-                            </button>
-                        @endforeach
-                    </div>
-                @endif
-                <div class="flex flex-col flex-grow px-4 pb-4 pt-2 gap-1">
-                    <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">{{ strtoupper($product->store->nama_toko ?? '-') }}</span>
-                    <h3 class="font-body-md text-body-md font-semibold text-on-surface leading-tight truncate">{{ $product->nama_produk }}</h3>
-                    <div class="font-body-md text-body-md font-bold text-gold-accent mt-0.5">Rp {{ number_format($product->harga_dasar, 0, ',', '.') }}</div>
-                    <div class="flex items-center gap-1.5 flex-wrap mt-2 pt-2 border-t border-muted-border">
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ ucfirst($product->tipe_produk) }}</span>
-                        @if ($product->status === \App\Models\Product::STATUS_PENDING)
-                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ $product->slot_full ? 'bg-error/10 text-error border-error/30' : 'bg-success/10 text-success border-success/20' }}">{{ $product->slot_full ? 'Kuota Penuh' : 'Slot ' . $product->slot_used . '/' . $product->slot_total }}</span>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        @empty
-            <p id="moderasi-kosong" class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-16">Belum ada produk pada status ini.</p>
-        @endforelse
+    <div id="moderasi-list-holder">
+        @include('SuperAdmin.moderasi-produk.partials.produk-list')
     </div>
-    <p id="moderasi-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-16">Tidak ada produk yang cocok.</p>
 </div>
 @endsection
 
@@ -306,11 +231,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const scope = document.querySelector('[data-table-scope]');
     if (!scope) return;
 
-    const rows = Array.from(scope.querySelectorAll('[data-table-row]'));
+    const holder = document.getElementById('moderasi-list-holder');
     const searchInput = document.getElementById('moderasi-search');
     const clearBtn = document.getElementById('moderasi-clear-search');
     const countEl = document.getElementById('moderasi-result-count');
-    const emptySearch = document.getElementById('moderasi-empty-search');
+    const modBaseUrl = '{{ route('superadmin.moderasi-produk') }}';
+
+    function rowsNow() {
+        return Array.from(scope.querySelectorAll('[data-table-row]'));
+    }
 
     // === Galeri kartu: pilih foto via thumbnail & cycle saat hover (seperti Owner) ===
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -341,52 +270,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    rows.forEach((card) => {
-        let urls = [];
-        try { urls = JSON.parse(card.dataset.produkImages || '[]'); } catch (e) { urls = []; }
-        if (urls.length <= 1) return;
-        card._galleryUrls = urls;
-        card._galleryPinned = 0;
-        card._galleryShown = 0;
-        card.querySelectorAll('[data-produk-pin]').forEach((th) => {
-            th.addEventListener('click', (event) => {
-                event.stopPropagation();
-                card._galleryPinned = parseInt(th.dataset.produkPin || '0', 10);
+    function initCardGalleries() {
+        rowsNow().forEach((card) => {
+            let urls = [];
+            try { urls = JSON.parse(card.dataset.produkImages || '[]'); } catch (e) { urls = []; }
+            if (urls.length <= 1) return;
+            card._galleryUrls = urls;
+            card._galleryPinned = 0;
+            card._galleryShown = 0;
+            card.querySelectorAll('[data-produk-pin]').forEach((th) => {
+                th.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    card._galleryPinned = parseInt(th.dataset.produkPin || '0', 10);
+                    stopCardCycle(card);
+                    paintCardPhoto(card, card._galleryPinned);
+                });
+            });
+            if (reduceMotion) return;
+            const gallery = card.querySelector('[data-produk-gallery]');
+            if (!gallery) return;
+            gallery.addEventListener('mouseenter', () => {
+                stopCardCycle(card);
+                let i = card._galleryPinned;
+                cardTimers.set(card, setInterval(() => {
+                    if (!card.isConnected || card.classList.contains('hidden')) return;
+                    i = (i + 1) % urls.length;
+                    paintCardPhoto(card, i);
+                }, 1200));
+            });
+            gallery.addEventListener('mouseleave', () => {
                 stopCardCycle(card);
                 paintCardPhoto(card, card._galleryPinned);
             });
         });
-        if (reduceMotion) return;
-        const gallery = card.querySelector('[data-produk-gallery]');
-        if (!gallery) return;
-        gallery.addEventListener('mouseenter', () => {
-            stopCardCycle(card);
-            let i = card._galleryPinned;
-            cardTimers.set(card, setInterval(() => {
-                if (card.classList.contains('hidden')) return;
-                i = (i + 1) % urls.length;
-                paintCardPhoto(card, i);
-            }, 1200));
-        });
-        gallery.addEventListener('mouseleave', () => {
-            stopCardCycle(card);
-            paintCardPhoto(card, card._galleryPinned);
-        });
-    });
+    }
 
-    function applyFilter() {
+    function applyModerasiFilter() {
         const term = searchInput.value.trim().toLowerCase();
+        const rows = rowsNow();
+        const totalEl = holder.querySelector('[data-moderasi-total]');
+        const total = Number(totalEl ? totalEl.getAttribute('data-moderasi-total') : rows.length);
+        const emptySearch = holder.querySelector('#moderasi-empty-search');
         let visible = 0;
 
         rows.forEach((row) => {
-            const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
-            const show = matchSearch;
+            const show = !term || (row.getAttribute('data-search') || '').includes(term);
             row.classList.toggle('hidden', !show);
             if (show) visible++;
         });
 
-        countEl.textContent = visible;
-        emptySearch.classList.toggle('hidden', visible > 0 || rows.length === 0);
+        countEl.textContent = term ? visible : total;
+        if (emptySearch) emptySearch.classList.toggle('hidden', visible > 0 || rows.length === 0);
         stopAllCardCycles();
     }
 
@@ -394,16 +328,56 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.addEventListener('input', () => {
         clearBtn.classList.toggle('opacity-0', !searchInput.value);
         clearTimeout(debounce);
-        debounce = setTimeout(applyFilter, 200);
+        debounce = setTimeout(applyModerasiFilter, 200);
     });
 
     clearBtn.addEventListener('click', () => {
         searchInput.value = '';
         clearBtn.classList.add('opacity-0');
-        applyFilter();
+        applyModerasiFilter();
     });
 
-    applyFilter();
+    // === Filter status via AJAX (tanpa refresh) ===
+    let currentModerasiStatus = '{{ $activeStatus }}';
+
+    function setModerasiFilterButtonState() {
+        document.querySelectorAll('.moderasi-filter-btn').forEach((b) => {
+            const active = b.getAttribute('data-status') === currentModerasiStatus;
+            b.classList.toggle('bg-deep-onyx', active);
+            b.classList.toggle('text-on-primary', active);
+            b.classList.toggle('border-deep-onyx', active);
+            b.classList.toggle('bg-surface-container-low', !active);
+            b.classList.toggle('text-on-surface-variant', !active);
+            b.classList.toggle('border-muted-border', !active);
+        });
+    }
+
+    async function loadModerasiList(url) {
+        stopAllCardCycles();
+        const u = new URL(url, window.location.origin);
+        u.searchParams.set('partial', '1');
+        try {
+            const res = await fetch(u.toString(), { headers: { 'Accept': 'text/html' } });
+            if (!res.ok) throw new Error(res.status);
+            holder.innerHTML = await res.text();
+            initCardGalleries();
+            applyModerasiFilter();
+        } catch (err) {
+            if (window.showRalivaToast) showRalivaToast('Gagal memuat daftar produk. Silakan coba lagi.', 'error');
+        }
+    }
+
+    document.querySelectorAll('.moderasi-filter-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            currentModerasiStatus = btn.getAttribute('data-status');
+            setModerasiFilterButtonState();
+            loadModerasiList(modBaseUrl + '?status=' + encodeURIComponent(currentModerasiStatus));
+        });
+    });
+
+    setModerasiFilterButtonState();
+    initCardGalleries();
+    applyModerasiFilter();
 });
 </script>
 @endpush

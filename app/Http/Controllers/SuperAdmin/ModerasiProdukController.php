@@ -16,11 +16,30 @@ class ModerasiProdukController extends Controller
     {
         $status = $request->query('status', Product::STATUS_PENDING);
 
+        $validStatus = in_array($status, [Product::STATUS_PENDING, Product::STATUS_DITOLAK], true)
+            ? $status
+            : Product::STATUS_PENDING;
+
         $stats = [
             Product::STATUS_PENDING => Product::where('status', Product::STATUS_PENDING)->count(),
             Product::STATUS_DITOLAK => Product::where('status', Product::STATUS_DITOLAK)->count(),
         ];
 
+        if ($request->boolean('partial')) {
+            return view('SuperAdmin.moderasi-produk.partials.produk-list', [
+                'products' => $this->produkList($validStatus),
+            ]);
+        }
+
+        return view('SuperAdmin.moderasi-produk.index', [
+            'products' => $this->produkList($validStatus),
+            'stats' => $stats,
+            'activeStatus' => $validStatus,
+        ]);
+    }
+
+    private function produkList(string $status)
+    {
         $products = Product::query()
             ->with(['store:owner_id,store_id,nama_toko', 'category', 'images', 'variants'])
             ->whereIn('status', [Product::STATUS_PENDING, Product::STATUS_DITOLAK])
@@ -60,11 +79,7 @@ class ModerasiProdukController extends Controller
             $produk->slot_full = $produk->slot_available < 1;
         });
 
-        return view('SuperAdmin.moderasi-produk.index', [
-            'products' => $products,
-            'stats' => $stats,
-            'activeStatus' => $status,
-        ]);
+        return $products;
     }
 
     public function setujui(Request $request, Product $produk)

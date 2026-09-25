@@ -24,7 +24,7 @@ class DataProduksiController extends Controller
             ->all();
 
         $orders = Order::whereIn('store_id', $storeIds)
-            ->whereIn('status', [Order::STATUS_MENUNGGU_PRODUKSI, Order::STATUS_DIPROSES, Order::STATUS_MENUNGGU_QC])
+            ->whereIn('status', [Order::STATUS_MENUNGGU_PRODUKSI, Order::STATUS_DIPROSES, Order::STATUS_MENUNGGU_QC, Order::STATUS_SIAP_KIRIM])
             ->with(['items.productVariant.product', 'bahanList.bahan', 'bahanList.creator', 'checkout', 'store', 'qualityChecks', 'shipments'])
             ->orderByDesc('created_at')
             ->paginate(15);
@@ -40,6 +40,7 @@ class DataProduksiController extends Controller
             'terlambat' => Order::whereIn('store_id', $storeIds)
                 ->where('status', Order::STATUS_DIPROSES)
                 ->whereNotNull('tgl_berakhir_produksi')
+                ->where('tgl_mulai_produksi', '<=', now())
                 ->where('tgl_berakhir_produksi', '<', now())
                 ->count(),
         ];
@@ -101,6 +102,7 @@ class DataProduksiController extends Controller
             'status' => Order::STATUS_MENUNGGU_PRODUKSI,
             'produksi_catatan_tolak' => $data['catatan'],
             'produksi_dimulai_pada' => null,
+            'produksi_selesai_pada' => null,
         ]);
 
         ActivityLogger::log('produksi.order.reject', Order::class, $order->order_id, $lama,
@@ -181,7 +183,6 @@ class DataProduksiController extends Controller
 
         $data = $request->validate([
             'jumlah_berhasil' => 'required|integer|min:0',
-            'jumlah_gagal' => 'nullable|integer|min:0',
             'catatan' => 'nullable|string|max:500',
         ], [
             'jumlah_berhasil.required' => 'Jumlah berhasil wajib diisi.',
@@ -196,16 +197,25 @@ class DataProduksiController extends Controller
             return back()->with('toast', ['message' => 'Anda belum accept produksi ini.', 'icon' => 'gpp_maybe']);
         }
 
+        $totalQty = (int) $order->items()->sum('quantity');
+        if ($data['jumlah_berhasil'] > $totalQty) {
+            return back()->with('toast', ['message' => "Jumlah berhasil melebihi total pesanan ({$totalQty} pcs).", 'icon' => 'gpp_maybe']);
+        }
+
+        // Gagal dihitung otomatis: selisih total pesanan vs yang berhasil.
+        $gagal = max(0, $totalQty - (int) $data['jumlah_berhasil']);
+
         $lama = $order->only(['status']);
         $order->update([
             'status' => Order::STATUS_MENUNGGU_QC,
             'jumlah_berhasil' => $data['jumlah_berhasil'],
             'jumlah_gagal' => $data['jumlah_gagal'] ?? 0,
+            'produksi_selesai_pada' => now(),
         ]);
 
         ActivityLogger::log('produksi.order.complete', Order::class, $order->order_id, $lama,
-            ['status' => Order::STATUS_MENUNGGU_QC, 'jumlah_berhasil' => $data['jumlah_berhasil'], 'jumlah_gagal' => $data['jumlah_gagal'] ?? 0],
-            sprintf('Produksi selesai untuk pesanan %s. Berhasil: %d, Gagal: %d.', $order->nomor_order, $data['jumlah_berhasil'], $data['jumlah_gagal'] ?? 0));
+            ['status' => Order::STATUS_MENUNGGU_QC, 'jumlah_berhasil' => $data['jumlah_berhasil'], 'jumlah_gagal' => $gagal, 'catatan' => $data['catatan'] ?? null],
+            sprintf('Produksi selesai untuk pesanan %s. Berhasil: %d, Gagal (otomatis): %d.', $order->nomor_order, $data['jumlah_berhasil'], $gagal));
 
         NotificationService::sendToRole(Role::ADMIN, Notification::TIPE_SISTEM,
             'Produksi Selesai — Menunggu QC',

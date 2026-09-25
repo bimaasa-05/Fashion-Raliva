@@ -16,6 +16,7 @@
 
 @section('content')
 @include('partials.flash-toast')
+@include('partials.produksi-durasi')
 
 <div class="space-y-section-gap">
     {{-- Stats --}}
@@ -59,6 +60,7 @@
                     <option value="menunggu_produksi">Menunggu Produksi</option>
                     <option value="diproses">Diproses</option>
                     <option value="menunggu_qc">Menunggu QC</option>
+                    <option value="siap_kirim">Siap Kirim</option>
                 </select>
             </div>
         </div>
@@ -94,17 +96,31 @@
                                 $totalSeconds = max(1, $end - $start);
                                 $elapsedSeconds = max(0, min($totalSeconds, $now - $start));
                                 $progressPct = min(100, round(($elapsedSeconds / $totalSeconds) * 100));
+                                $isBelumMulai = $now < $start;
                                 $isTerlambat = $now > $end;
                                 $daysLeft = (int) round(($end - $now) / 86400);
                             }
                             $accepted = (bool) $o->produksi_dimulai_pada;
                             $rejectedNote = $o->produksi_catatan_tolak;
+                            $isProduksiSelesai = in_array($o->status, [
+                                \App\Models\Order::STATUS_MENUNGGU_QC,
+                                \App\Models\Order::STATUS_SIAP_KIRIM,
+                                \App\Models\Order::STATUS_DIKIRIM,
+                                \App\Models\Order::STATUS_SELESAI,
+                            ], true);
+                            $selesaiTepat = $isProduksiSelesai && $accepted
+                                && $o->produksi_selesai_pada
+                                && $o->tgl_berakhir_produksi
+                                && $o->produksi_selesai_pada->lessThanOrEqualTo($o->tgl_berakhir_produksi);
                         @endphp
                         <tr data-table-row data-status-produksi="{{ $o->status }}" class="border-b border-muted-border last:border-0 align-top">
                             <td class="py-3.5 px-4">
                                 <p class="font-bold text-on-surface">{{ $o->nomor_order }}</p>
                                 <p class="text-xs text-on-surface mt-0.5">{{ $o->checkout?->nama_penerima ?? $o->checkout?->user?->nama_lengkap ?? '-' }}</p>
                                 <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->created_at?->translatedFormat('d M Y') ?? '-' }}</p>
+                                @if ($o->catatan)
+                                    <p class="text-xs text-on-surface mt-1 italic" title="{{ $o->catatan }}">“{{ \Illuminate\Support\Str::limit($o->catatan, 60) }}”</p>
+                                @endif
                                 @if ($rejectedNote)
                                     <p class="text-xs text-error mt-1" title="{{ $rejectedNote }}">⚠ Ditolak: {{ \Illuminate\Support\Str::limit($rejectedNote, 30) }}</p>
                                 @endif
@@ -138,17 +154,24 @@
                             </td>
                             <td class="py-3.5 px-4">
                                 @if ($hasDates)
-                                    <p class="text-xs text-on-surface-variant">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
+                                    <p class="text-xs font-bold text-on-surface">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
                                     <div class="progress-track mt-1.5">
-                                        <div class="progress-bar-fill {{ $isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent') }}" style="width: {{ $progressPct }}%"></div>
+                                        <div class="progress-bar-fill {{ $isBelumMulai ? 'bg-surface-container-high' : ($isProduksiSelesai ? ($selesaiTepat ? 'bg-secondary' : 'bg-error') : ($isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent'))) }}" style="width: {{ $progressPct }}%"></div>
                                     </div>
-                                    @if ($progressPct >= 100)
-                                        <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
+                                    @if ($isProduksiSelesai)
+                                        @if ($selesaiTepat)
+                                            <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
+                                        @elseif ($o->produksi_selesai_pada)
+                                            <p class="text-xs mt-1 countdown-badge text-error font-bold">Terlambat {{ produksiFmtDetik((int) $o->produksi_selesai_pada->timestamp - (int) $o->tgl_berakhir_produksi->timestamp) }}</p>
+                                        @else
+                                            <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai</p>
+                                        @endif
                                     @else
-                                        <p class="text-xs mt-1 countdown-badge {{ $isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant' }}"
-                                           data-countdown-deadline="{{ $o->tgl_berakhir_produksi->timestamp }}"
+                                        <p class="text-xs mt-1 countdown-badge {{ $isBelumMulai ? 'text-secondary' : ($isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant') }}"
+                                           data-countdown-start="{{ $o->tgl_mulai_produksi->timestamp }}"
+                                           data-countdown-end="{{ $o->tgl_berakhir_produksi->timestamp }}"
                                            data-countdown-progress="{{ $progressPct }}">
-                                            Memuat...
+                                            {{ $isBelumMulai ? 'Mulai dalam...' : 'Memuat...' }}
                                         </p>
                                     @endif
                                 @else
@@ -166,6 +189,8 @@
                                     @endif
                                 @elseif ($o->status === \App\Models\Order::STATUS_MENUNGGU_QC)
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Menunggu QC</span>
+                                @elseif ($o->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary/10 text-secondary text-[10px] font-bold uppercase border border-secondary/30">Siap Kirim</span>
                                 @endif
                             </td>
                             <td class="py-3.5 px-4 text-right">
@@ -187,6 +212,8 @@
                                             <button type="button" onclick="openModalSelesai('{{ $o->order_id }}')" class="px-2.5 py-1.5 bg-deep-onyx text-on-primary text-[10px] font-bold uppercase rounded hover:opacity-90 transition-opacity">Selesai</button>
                                         </div>
                                     @endif
+                                @elseif ($o->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+                                    <span class="text-on-surface-variant text-xs">Siap kirim — lihat timeline</span>
                                 @else
                                     <span class="text-on-surface-variant text-xs">Menunggu Admin proses</span>
                                 @endif
@@ -215,10 +242,21 @@
                         $totalSeconds = max(1, $end - $start);
                         $elapsedSeconds = max(0, min($totalSeconds, $now - $start));
                         $progressPct = min(100, round(($elapsedSeconds / $totalSeconds) * 100));
+                        $isBelumMulai = $now < $start;
                         $isTerlambat = $now > $end;
                     }
                     $accepted = (bool) $o->produksi_dimulai_pada;
                     $rejectedNote = $o->produksi_catatan_tolak;
+                    $isProduksiSelesai = in_array($o->status, [
+                        \App\Models\Order::STATUS_MENUNGGU_QC,
+                        \App\Models\Order::STATUS_SIAP_KIRIM,
+                        \App\Models\Order::STATUS_DIKIRIM,
+                        \App\Models\Order::STATUS_SELESAI,
+                    ], true);
+                    $selesaiTepat = $isProduksiSelesai && $accepted
+                        && $o->produksi_selesai_pada
+                        && $o->tgl_berakhir_produksi
+                        && $o->produksi_selesai_pada->lessThanOrEqualTo($o->tgl_berakhir_produksi);
                 @endphp
                 <article data-table-row data-status-produksi="{{ $o->status }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
                     <div class="flex items-start justify-between gap-2">
@@ -237,8 +275,13 @@
                             @endif
                         @elseif ($o->status === \App\Models\Order::STATUS_MENUNGGU_QC)
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30 shrink-0">QC</span>
+                        @elseif ($o->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary/10 text-secondary text-[10px] font-bold uppercase border border-secondary/30 shrink-0">Siap Kirim</span>
                         @endif
                     </div>
+                    @if ($o->catatan)
+                        <p class="text-xs text-on-surface mt-2 italic">“{{ \Illuminate\Support\Str::limit($o->catatan, 80) }}”</p>
+                    @endif
                     @if ($rejectedNote)
                         <p class="text-xs text-error mt-2">⚠ Ditolak: {{ \Illuminate\Support\Str::limit($rejectedNote, 40) }}</p>
                     @endif
@@ -249,16 +292,23 @@
                     </div>
                     @if ($hasDates)
                         <div class="mt-3">
-                            <p class="text-xs text-on-surface-variant">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
+                            <p class="text-xs font-bold text-on-surface">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
                             <div class="progress-track mt-1.5">
-                                <div class="progress-bar-fill {{ $isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent') }}" style="width: {{ $progressPct }}%"></div>
+                                <div class="progress-bar-fill {{ $isBelumMulai ? 'bg-surface-container-high' : ($isProduksiSelesai ? ($selesaiTepat ? 'bg-secondary' : 'bg-error') : ($isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent'))) }}" style="width: {{ $progressPct }}%"></div>
                             </div>
-                            @if ($progressPct >= 100)
-                                <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
+                            @if ($isProduksiSelesai)
+                                @if ($selesaiTepat)
+                                    <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
+                                @elseif ($o->produksi_selesai_pada)
+                                    <p class="text-xs mt-1 countdown-badge text-error font-bold">Terlambat {{ produksiFmtDetik((int) $o->produksi_selesai_pada->timestamp - (int) $o->tgl_berakhir_produksi->timestamp) }}</p>
+                                @else
+                                    <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai</p>
+                                @endif
                             @else
-                                <p class="text-xs mt-1 countdown-badge {{ $isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant' }}"
-                                   data-countdown-deadline="{{ $o->tgl_berakhir_produksi->timestamp }}"
-                                   data-countdown-progress="{{ $progressPct }}">Memuat...</p>
+                                <p class="text-xs mt-1 countdown-badge {{ $isBelumMulai ? 'text-secondary' : ($isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant') }}"
+                                   data-countdown-start="{{ $o->tgl_mulai_produksi->timestamp }}"
+                                   data-countdown-end="{{ $o->tgl_berakhir_produksi->timestamp }}"
+                                   data-countdown-progress="{{ $progressPct }}">{{ $isBelumMulai ? 'Mulai dalam...' : 'Memuat...' }}</p>
                             @endif
                         </div>
                     @endif
@@ -277,6 +327,8 @@
                                 <button type="button" onclick="openModalBahan('{{ $o->order_id }}')" class="px-2.5 py-2 border border-gold-accent/40 text-gold-accent text-[10px] font-bold uppercase rounded hover:bg-gold-accent/10 transition-colors">+ Bahan</button>
                                 <button type="button" onclick="openModalSelesai('{{ $o->order_id }}')" class="px-2.5 py-2 bg-deep-onyx text-on-primary text-[10px] font-bold uppercase rounded hover:opacity-90 transition-opacity">Selesai</button>
                             @endif
+                        @elseif ($o->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+                            <span class="text-on-surface-variant text-xs">Siap kirim — lihat timeline</span>
                         @else
                             <span class="text-on-surface-variant text-xs">Menunggu Admin proses</span>
                         @endif
@@ -360,11 +412,8 @@
                 <p class="text-xs text-on-surface-variant">Input hasil produksi. Pesanan akan masuk ke tahap QC.</p>
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Jumlah Berhasil *</label>
-                    <input type="number" name="jumlah_berhasil" required min="0" class="raliva-input w-full" placeholder="0" />
-                </div>
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Jumlah Gagal</label>
-                    <input type="number" name="jumlah_gagal" min="0" value="0" class="raliva-input w-full" />
+                    <input type="number" name="jumlah_berhasil" required min="0" max="{{ $o->items->sum('quantity') }}" class="raliva-input w-full" placeholder="0" />
+                    <p class="text-[11px] text-on-surface-variant mt-1">Total pesanan: <b>{{ $o->items->sum('quantity') }} pcs</b>. Jumlah gagal dihitung otomatis (total − berhasil).</p>
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Catatan (opsional)</label>
@@ -502,38 +551,7 @@
             if (searchInput) searchInput.dispatchEvent(new Event('input'));
         });
     });
-    // === COUNTDOWN TIMER REAL-TIME ===
-    function formatCountdown(seconds) {
-        const abs = Math.abs(seconds);
-        const d = Math.floor(abs / 86400);
-        const h = Math.floor((abs % 86400) / 3600);
-        const m = Math.floor((abs % 3600) / 60);
-        const s = abs % 60;
-        let parts = [];
-        if (d > 0) parts.push(d + 'j');
-        parts.push(h + 'j');
-        parts.push(m + 'm');
-        parts.push(s + 'd');
-        return parts.join(' ');
-    }
-
-    function updateCountdowns() {
-        document.querySelectorAll('[data-countdown-deadline]').forEach(el => {
-            const deadline = parseInt(el.dataset.countdownDeadline) * 1000;
-            const progress = el.dataset.countdownProgress || '0';
-            const now = Date.now();
-            const diff = Math.floor((deadline - now) / 1000);
-            if (diff < 0) {
-                el.textContent = 'Terlambat ' + formatCountdown(diff);
-                el.classList.add('text-error', 'font-bold');
-                el.classList.remove('text-on-surface-variant');
-            } else {
-                el.textContent = 'Sisa ' + formatCountdown(diff) + ' (' + progress + '%)';
-            }
-        });
-    }
-    setInterval(updateCountdowns, 1000);
-    updateCountdowns();
 </script>
+@include('partials.countdown-produksi')
 @endpush
 @endsection

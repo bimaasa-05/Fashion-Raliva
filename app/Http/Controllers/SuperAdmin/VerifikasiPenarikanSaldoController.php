@@ -9,6 +9,7 @@ use App\Support\ActivityLogger;
 use App\Support\CustomerWalletService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class VerifikasiPenarikanSaldoController extends Controller
 {
@@ -45,34 +46,61 @@ class VerifikasiPenarikanSaldoController extends Controller
             ]);
         }
 
-        $lama = $penarikan->only(['status']);
-
-        $penarikan->update([
-            'status' => CustomerWithdrawal::STATUS_DISETUJUI,
-            'diproses_pada' => now(),
+        $data = $request->validate([
+            'file_bukti' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+            'deskripsi_bukti' => ['nullable', 'string', 'max:1000'],
+        ], [
+            'file_bukti.required' => 'Bukti transfer wajib dilampirkan.',
+            'file_bukti.mimes' => 'Bukti transfer harus berupa JPG, PNG, atau PDF.',
+            'file_bukti.max' => 'Ukuran bukti transfer maksimal 5 MB.',
+            'deskripsi_bukti.max' => 'Deskripsi bukti maksimal 1000 karakter.',
         ]);
+
+        $path = $request->file('file_bukti')->store('bukti-penarikan-saldo/'.$penarikan->customer_withdrawal_id, 'public');
+
+        $lama = $penarikan->only(['status']);
+        $previousFile = $penarikan->file_bukti;
+
+        try {
+            DB::transaction(function () use ($penarikan, $path, $data) {
+                $penarikan->update([
+                    'status' => CustomerWithdrawal::STATUS_DIBAYAR,
+                    'diproses_pada' => now(),
+                    'file_bukti' => $path,
+                    'deskripsi_bukti' => $data['deskripsi_bukti'] ?? null,
+                    'bukti_diupload_pada' => now(),
+                ]);
+            });
+        } catch (\Throwable $e) {
+            Storage::disk('public')->delete($path);
+            throw $e;
+        }
+
+        if ($previousFile && $previousFile !== $path) {
+            Storage::disk('public')->delete($previousFile);
+        }
 
         ActivityLogger::log(
             'customer-withdrawal.approve',
             CustomerWithdrawal::class,
             $penarikan->customer_withdrawal_id,
             $lama,
-            ['status' => CustomerWithdrawal::STATUS_DISETUJUI],
-            sprintf('Menyetujui penarikan saldo Rp %s (bersih Rp %s) milik %s.', number_format((float) $penarikan->jumlah, 0, ',', '.'), number_format((float) $penarikan->jumlah_bersih, 0, ',', '.'), $penarikan->user?->nama_lengkap ?? '-')
+            ['status' => CustomerWithdrawal::STATUS_DIBAYAR, 'file_bukti' => $path],
+            sprintf('Menyetujui penarikan saldo Rp %s (bersih Rp %s) milik %s dan ditandai dibayar.', number_format((float) $penarikan->jumlah, 0, ',', '.'), number_format((float) $penarikan->jumlah_bersih, 0, ',', '.'), $penarikan->user?->nama_lengkap ?? '-')
         );
 
         Notification::create([
             'user_id' => $penarikan->user_id,
             'aktor_id' => ActivityLogger::resolveActorId(),
             'tipe' => Notification::TIPE_WALLET,
-            'judul' => 'Penarikan Disetujui',
-            'pesan' => sprintf('Penarikan saldo sebesar Rp %s telah disetujui dan segera ditransfer.', number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')),
+            'judul' => 'Penarikan Dibayar',
+            'pesan' => sprintf('Dana penarikan sebesar Rp %s telah ditransfer ke tujuan Anda.', number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')),
             'url' => route('customer.saldo.tarik.show', $penarikan->customer_withdrawal_id),
         ]);
-        Notification::fireSelf(Notification::TIPE_WALLET, 'Penarikan Saldo Disetujui', sprintf('Penarikan saldo Rp %s disetujui.', number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')), route('superadmin.verifikasi-penarikan-saldo'));
+        Notification::fireSelf(Notification::TIPE_WALLET, 'Penarikan Saldo Dibayar', sprintf('Penarikan saldo Rp %s disetujui dan ditandai dibayar.', number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')), route('superadmin.verifikasi-penarikan-saldo'));
 
         return back()->with('toast', [
-            'message' => sprintf('Penarikan Rp %s disetujui, lanjutkan transfer manual lalu tandai dibayar.', number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')),
+            'message' => sprintf('Penarikan Rp %s disetujui dan ditandai sudah dibayar.', number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')),
             'icon' => 'task_alt',
         ]);
     }

@@ -40,6 +40,7 @@ class StokController extends Controller
 
         $query = Product::with([
             'category',
+            'materialRequirements',
             'variants' => function ($vq) use ($variantIds, $warehouseId) {
                 $vq->whereIn('product_variant_id', $variantIds)
                     ->with(['warehouseStocks' => function ($sq) use ($warehouseId) {
@@ -61,8 +62,26 @@ class StokController extends Controller
 
         $products = $query->get();
 
+        // Riwayat 10 pergerakan terakhir (gudang aktif) untuk tiap produk di halaman ini.
+        $variantIdsByProduct = $products->mapWithKeys(fn ($p) => [
+            $p->product_id => $p->variants->pluck('product_variant_id')->all(),
+        ]);
+        $semuaVariantIds = $variantIdsByProduct->flatten()->values()->all();
+        $movementsPerVariant = [];
+        if ($semuaVariantIds) {
+            $movements = \App\Models\StockMovement::with('creator')
+                ->where('warehouse_id', $warehouseId)
+                ->whereIn('product_variant_id', $semuaVariantIds)
+                ->orderByDesc('created_at')
+                ->limit(300)
+                ->get();
+            foreach ($movements as $movement) {
+                $movementsPerVariant[$movement->product_variant_id][] = $movement;
+            }
+        }
+
         // Hitung stok agregat & status per produk, lalu filter status & sort.
-        $products = $products->map(function ($product) {
+        $products = $products->map(function ($product) use ($variantIdsByProduct, $movementsPerVariant) {
             $total = $product->variants->sum(fn ($v) => $v->warehouseStocks->sum('jumlah_stok'));
             $min = $product->variants->min(fn ($v) => $v->warehouseStocks->min('stok_minimum')) ?? 0;
             $status = $this->productStatus($total, $min);
@@ -77,6 +96,12 @@ class StokController extends Controller
                 'harga_jual' => $product->harga_dasar,
                 'variasi' => $product->variants->map(fn ($v) => trim(($v->warna ?? '').' '.($v->ukuran ?? '')))->filter()->implode(', '),
                 'updated_at' => $product->variants->max(fn ($v) => $v->warehouseStocks->max('updated_at')),
+                'resep' => $product->materialRequirements->values(),
+                'riwayat' => collect($variantIdsByProduct[$product->product_id] ?? [])
+                    ->flatMap(fn ($vid) => $movementsPerVariant[$vid] ?? [])
+                    ->sortByDesc('created_at')
+                    ->take(10)
+                    ->values(),
             ];
         });
 

@@ -31,6 +31,18 @@ class Order extends Model
 
     public const STATUS_SIAP_KIRIM = 'siap_kirim';
 
+    // Status pesanan berbayar yang menyumbang pendapatan (GMV/omzet/pajak).
+    // Dipakai dashboard SA & Peringkat; exclude dibatalkan, refund, pending_payment.
+    public const STATUS_PENDAPATAN = [
+        self::STATUS_DIBAYAR,
+        self::STATUS_MENUNGGU_PRODUKSI,
+        self::STATUS_MENUNGGU_QC,
+        self::STATUS_DIPROSES,
+        self::STATUS_SIAP_KIRIM,
+        self::STATUS_DIKIRIM,
+        self::STATUS_SELESAI,
+    ];
+
     public const TIPE_PRODUK_TETAP = 'produk_tetap';
 
     public const TIPE_CUSTOM = 'custom';
@@ -55,9 +67,13 @@ class Order extends Model
         'tgl_mulai_produksi',
         'tgl_berakhir_produksi',
         'produksi_dimulai_pada',
+        'produksi_selesai_pada',
         'produksi_catatan_tolak',
         'jumlah_berhasil',
         'jumlah_gagal',
+        'kekurangan_gudang',
+        'qc_perlu_admin_pada',
+        'qc_perlu_admin_catatan',
         'tanggal_qc',
         'tanggal_packing',
         'tipe_order',
@@ -74,9 +90,11 @@ class Order extends Model
             'tgl_mulai_produksi' => 'datetime',
             'tgl_berakhir_produksi' => 'datetime',
             'produksi_dimulai_pada' => 'datetime',
+            'produksi_selesai_pada' => 'datetime',
             'tanggal_qc' => 'datetime',
             'tanggal_packing' => 'datetime',
             'diambil_pada' => 'datetime',
+            'qc_perlu_admin_pada' => 'datetime',
         ];
     }
 

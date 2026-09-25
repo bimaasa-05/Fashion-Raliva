@@ -122,6 +122,9 @@
                             <td class="py-3.5 px-4 text-center">
                                 <p class="text-secondary font-bold">{{ number_format($berhasil, 0, ',', '.') }} berhasil</p>
                                 <p class="text-error">{{ number_format($gagal, 0, ',', '.') }} gagal</p>
+                                @if (($o->kekurangan_gudang ?? 0) > 0)
+                                    <p class="text-gold-accent text-xs">+{{ $o->kekurangan_gudang }} dari Gudang</p>
+                                @endif
                             </td>
                             <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $o->tanggal_qc?->translatedFormat('d M Y H:i') ?? '-' }}</td>
                             <td class="py-3.5 px-4 text-center">

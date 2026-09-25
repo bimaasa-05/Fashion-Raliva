@@ -77,6 +77,7 @@
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Pesanan</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Customer</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Item</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Produksi</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Total</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Pembayaran</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
@@ -115,6 +116,7 @@
                             </td>
                             <td class="py-3.5 px-4 text-on-surface">{{ $customer?->nama_lengkap ?? 'Customer' }}</td>
                             <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $itemCount }} produk</td>
+                            <td class="py-3.5 px-4">@include('partials.produksi-waktu', ['produksiOrder' => $o])</td>
                             <td class="py-3.5 px-4 font-bold text-gold-accent whitespace-nowrap">{{ 'Rp ' . number_format($o->grand_total, 0, ',', '.') }}</td>
                             <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $o->checkout?->payment?->paymentMethod?->nama_metode ?? '-' }}</td>
                             <td class="py-3.5 px-4 text-center">
@@ -125,7 +127,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="py-6 text-center text-on-surface-variant">Belum ada pesanan.</td></tr>
+                        <tr><td colspan="8" class="py-6 text-center text-on-surface-variant">Belum ada pesanan.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -153,6 +155,12 @@
                         </div>
                         <span class="inline-flex items-center px-2 py-1 rounded-full {{ $statusPill[$key] }} text-[10px] font-bold uppercase shrink-0">{{ $o->status }}</span>
                     </div>
+                    @if ($o->tgl_mulai_produksi && $o->tgl_berakhir_produksi)
+                        <div class="mt-3 pt-3 border-t border-muted-border">
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium mb-1.5">Produksi</p>
+                            @include('partials.produksi-waktu', ['produksiOrder' => $o])
+                        </div>
+                    @endif
                     <div class="flex items-center justify-between mt-3 pt-3 border-t border-muted-border">
                         <div class="min-w-0">
                             <p class="font-bold text-gold-accent">{{ 'Rp ' . number_format($o->grand_total, 0, ',', '.') }}</p>
@@ -233,6 +241,13 @@
                 @endforeach
             </ol>
         </section>
+
+        @if ($o->tgl_mulai_produksi && $o->tgl_berakhir_produksi)
+            <section>
+                <p class="text-xs font-medium text-gold-accent mb-4">Jadwal Produksi</p>
+                @include('partials.produksi-waktu', ['produksiOrder' => $o])
+            </section>
+        @endif
 
         <section>
             <p class="text-xs font-medium text-gold-accent mb-4">Produk Dipesan</p>
@@ -346,6 +361,7 @@ document.addEventListener('DOMContentLoaded', function(){
   });
 });
 </script>
+@include('partials.countdown-produksi')
 @endpush
 
 @endsection

@@ -8,13 +8,6 @@
 @section('header-subtitle', 'Verifikasi, tolak, tangguhkan, dan aktifkan kembali toko penjual.')
 
 @php
-    $badgeMap = [
-        \App\Models\Store::STATUS_AKTIF => ['label' => 'Aktif', 'class' => \App\Support\StatusStyle::badgeClass('aktif')],
-        \App\Models\Store::STATUS_PENDING => ['label' => 'Menunggu', 'class' => \App\Support\StatusStyle::badgeClass('pending')],
-        \App\Models\Store::STATUS_NONAKTIF => ['label' => 'Ditangguhkan', 'class' => \App\Support\StatusStyle::badgeClass('nonaktif')],
-        \App\Models\Store::STATUS_DITOLAK => ['label' => 'Ditolak', 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
-    ];
-
     $tabs = [
         'semua' => 'Semua',
         \App\Models\Store::STATUS_PENDING => 'Menunggu',
@@ -38,19 +31,25 @@
 @section('content')
 @include('partials.flash-toast')
 
-<div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium mb-6">
-    <div class="flex items-center gap-2 mb-3">
+<div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 mb-6">
+    <div class="flex items-center gap-2 mb-3 flex-wrap">
         <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
         <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status Toko</span>
+        <span class="ml-auto flex items-center gap-2">
+            <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Tampilan</span>
+            <div class="inline-flex bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
+                <button type="button" data-view="kartu" class="view-mode-btn px-3 py-1.5 rounded-md text-xs font-medium text-on-surface-variant">Kartu</button>
+                <button type="button" data-view="tabel" class="view-mode-btn px-3 py-1.5 rounded-md text-xs font-medium text-on-surface-variant">Tabel</button>
+            </div>
+        </span>
     </div>
-    <div id="toko-tabs" class="flex flex-wrap gap-3 border-b border-muted-border pb-4">
+    <div id="toko-tabs" class="flex flex-wrap gap-2.5">
         @foreach ($tabs as $key => $label)
-            <a href="{{ route('superadmin.manajemen-toko', $key === 'semua' ? [] : ['status' => $key]) }}"
-                class="px-4 py-2 border-b-2 font-label-sm uppercase tracking-wider transition-colors {{ $activeStatus === $key
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-on-surface-variant hover:text-primary' }}">
+            <button type="button" data-status="{{ $key }}" class="toko-filter-btn px-4 py-2 rounded-lg border font-label-sm uppercase tracking-wider transition-colors {{ $activeStatus === $key
+                ? 'bg-deep-onyx text-on-primary border-deep-onyx hover:bg-deep-onyx/90'
+                : 'bg-surface-container-low text-on-surface-variant border-muted-border hover:bg-surface-container-high hover:text-on-surface hover:border-gold-accent' }}">
                 {{ $label }} <span class="opacity-60">({{ $stats[$key] ?? 0 }})</span>
-            </a>
+            </button>
         @endforeach
     </div>
 
@@ -575,41 +574,170 @@ document.addEventListener('DOMContentLoaded', () => {
     const scope = document.querySelector('[data-table-scope]');
     if (!scope) return;
 
-    const rows = Array.from(scope.querySelectorAll('[data-table-row]'));
     const searchInput = document.getElementById('toko-search');
     const clearBtn = document.getElementById('clear-search');
     const countEl = document.getElementById('result-count');
-    const emptySearch = document.getElementById('toko-empty-search');
+    const holder = document.getElementById('store-list-holder');
 
-    function applyFilter() {
+    const tokoBaseUrl = '{{ route('superadmin.manajemen-toko') }}';
+
+    function rowsNow() {
+        return Array.from(scope.querySelectorAll('[data-table-row]'));
+    }
+
+    function activeViewContainer() {
+        return document.getElementById(storeViewMode === 'tabel' ? 'store-table-view' : 'store-cards-view');
+    }
+
+    function visibleStoreCount() {
+        const c = activeViewContainer();
+        return c ? c.querySelectorAll('[data-table-row]:not(.hidden)').length : 0;
+    }
+
+    function applyStoreFilter() {
         const term = searchInput.value.trim().toLowerCase();
-        let visible = 0;
+        const rows = rowsNow();
+        const totalEl = holder.querySelector('[data-store-total]');
+        const total = Number(totalEl ? totalEl.getAttribute('data-store-total') : rows.length);
+        const emptySearch = holder.querySelector('#toko-empty-search');
+        const vis = visibleStoreCount();
 
         rows.forEach((row) => {
-            const matchSearch = !term || (row.getAttribute('data-search') || '').includes(term);
-            const show = matchSearch;
+            const show = !term || (row.getAttribute('data-search') || '').includes(term);
             row.classList.toggle('hidden', !show);
-            if (show) visible++;
         });
 
-        countEl.textContent = visible;
-        emptySearch.classList.toggle('hidden', visible > 0 || rows.length === 0);
+        countEl.textContent = term ? visibleStoreCount() : total;
+        if (emptySearch) emptySearch.classList.toggle('hidden', (term ? visibleStoreCount() : vis) > 0 || rows.length === 0);
     }
 
     let debounce;
     searchInput.addEventListener('input', () => {
         clearBtn.classList.toggle('opacity-0', !searchInput.value);
         clearTimeout(debounce);
-        debounce = setTimeout(applyFilter, 200);
+        debounce = setTimeout(applyStoreFilter, 200);
     });
 
     clearBtn.addEventListener('click', () => {
         searchInput.value = '';
         clearBtn.classList.add('opacity-0');
-        applyFilter();
+        applyStoreFilter();
     });
 
-    applyFilter();
+    // ---- Tampilan Kartu / Tabel ----
+    let storeViewMode = localStorage.getItem('sa_toko_view') || 'kartu';
+
+    function syncStoreViews() {
+        const cards = document.getElementById('store-cards-view');
+        const table = document.getElementById('store-table-view');
+        const kosong = document.getElementById('toko-kosong');
+        const hasAny = rowsNow().length > 0;
+
+        if (!hasAny) {
+            if (kosong) kosong.classList.remove('hidden');
+            if (cards) cards.classList.remove('hidden');
+            if (table) table.classList.add('hidden');
+            return;
+        }
+        if (kosong) kosong.classList.add('hidden');
+        if (cards) cards.classList.toggle('hidden', storeViewMode !== 'kartu');
+        if (table) table.classList.toggle('hidden', storeViewMode !== 'tabel');
+    }
+
+    function setViewButtonState() {
+        document.querySelectorAll('.view-mode-btn').forEach((b) => {
+            const active = b.getAttribute('data-view') === storeViewMode;
+            b.classList.toggle('bg-deep-onyx', active);
+            b.classList.toggle('text-on-primary', active);
+            b.classList.toggle('text-on-surface-variant', !active);
+        });
+    }
+
+    document.querySelectorAll('.view-mode-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            storeViewMode = btn.getAttribute('data-view');
+            localStorage.setItem('sa_toko_view', storeViewMode);
+            setViewButtonState();
+            syncStoreViews();
+        });
+    });
+
+    // ---- Filter status via AJAX (tanpa refresh) ----
+    let currentStoreStatus = '{{ $activeStatus }}';
+
+    function setFilterButtonState() {
+        document.querySelectorAll('.toko-filter-btn').forEach((b) => {
+            const active = b.getAttribute('data-status') === currentStoreStatus;
+            b.classList.toggle('bg-deep-onyx', active);
+            b.classList.toggle('text-on-primary', active);
+            b.classList.toggle('border-deep-onyx', active);
+            b.classList.toggle('bg-surface-container-low', !active);
+            b.classList.toggle('text-on-surface-variant', !active);
+            b.classList.toggle('border-muted-border', !active);
+        });
+    }
+
+    async function loadStoreList(url) {
+        const u = new URL(url, window.location.origin);
+        u.searchParams.set('partial', '1');
+        try {
+            const res = await fetch(u.toString(), { headers: { 'Accept': 'text/html' } });
+            if (!res.ok) throw new Error(res.status);
+            holder.innerHTML = await res.text();
+            bindStoreListFresh();
+            applyStoreFilter();
+            syncStoreViews();
+        } catch (err) {
+            if (window.showRalivaToast) showRalivaToast('Gagal memuat data toko. Silakan coba lagi.', 'error');
+        }
+    }
+
+    function bindStoreListFresh() {
+        holder.querySelectorAll('[data-modal-open]').forEach((btn) => {
+            if (btn.dataset.modalBound) return;
+            btn.dataset.modalBound = '1';
+            btn.addEventListener('click', () => {
+                const modal = document.getElementById(btn.getAttribute('data-modal-open'));
+                if (modal && window.ralivaOpenModal) window.ralivaOpenModal(modal);
+            });
+        });
+        holder.querySelectorAll('[data-modal]').forEach((m) => {
+            if (m.dataset.modalBound) return;
+            m.dataset.modalBound = '1';
+            m.addEventListener('mousedown', (e) => {
+                if (e.target === m && window.ralivaCloseModal) window.ralivaCloseModal(m);
+            });
+            m.querySelectorAll('[data-modal-close]').forEach((el) => {
+                el.addEventListener('click', () => {
+                    if (window.ralivaCloseModal) window.ralivaCloseModal(m);
+                });
+            });
+        });
+    }
+
+    document.querySelectorAll('.toko-filter-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            currentStoreStatus = btn.getAttribute('data-status');
+            setFilterButtonState();
+            const url = currentStoreStatus === 'semua'
+                ? tokoBaseUrl
+                : tokoBaseUrl + '?status=' + encodeURIComponent(currentStoreStatus);
+            loadStoreList(url);
+        });
+    });
+
+    // Pagination: klik halaman berikutnya tidak merefresh halaman
+    scope.addEventListener('click', (e) => {
+        const a = e.target.closest('nav[role="navigation"] a[href]');
+        if (!a || e.target.closest.bind ? a.getAttribute('target') === '_blank' : false) return;
+        e.preventDefault();
+        loadStoreList(a.href);
+    });
+
+    setFilterButtonState();
+    setViewButtonState();
+    syncStoreViews();
+    applyStoreFilter();
 });
 </script>
 @endpush

@@ -40,6 +40,7 @@ use App\Http\Controllers\Gudang\BarangKeluarController as GudangBarangKeluarCont
 use App\Http\Controllers\Gudang\BarangMasukController as GudangBarangMasukController;
 use App\Http\Controllers\Gudang\DashboardController as GudangDashboardController;
 use App\Http\Controllers\Gudang\GantiGudangController;
+use App\Http\Controllers\Gudang\KekuranganController as GudangKekuranganController;
 use App\Http\Controllers\Gudang\NotifikasiController as GudangNotifikasiController;
 use App\Http\Controllers\Gudang\PemeriksaanStokController as GudangPemeriksaanStokController;
 use App\Http\Controllers\Gudang\PemindahanStokController as GudangPemindahanStokController;
@@ -393,6 +394,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::post('/pesanan/{pesanan}/batalkan', [AdminDataPesananController::class, 'batalkan'])->name('pesanan.batalkan');
     Route::post('/pesanan/{pesanan}/selesai', [AdminDataPesananController::class, 'selesai'])->name('pesanan.selesai');
     Route::post('/pesanan/{pesanan}/alih-fulfillment', [AdminDataPesananController::class, 'alihFulfillment'])->name('pesanan.alihFulfillment');
+    Route::post('/pesanan/{pesanan}/qc-tanggapan', [AdminDataPesananController::class, 'qcTanggapan'])->name('pesanan.qcTanggapan');
     Route::put('/pesanan/{pesanan}/items', [AdminDataPesananController::class, 'updateItems'])->name('pesanan.items.update');
     Route::get('/pesanan/{pesanan}/invoice', [AdminDataPesananController::class, 'invoice'])->name('pesanan.invoice');
     Route::get('/verifikasi-pembayaran', [VerifikasiPembayaranController::class, 'index'])->name('verifikasi-pembayaran');
@@ -452,6 +454,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::get('/permintaan-operasional/{permintaan}', [AdminPermintaanOperasionalController::class, 'show'])->name('permintaan-operasional.show');
     Route::post('/permintaan-operasional/{permintaan}/setujui', [AdminPermintaanOperasionalController::class, 'setujui'])->name('permintaan-operasional.setujui');
     Route::post('/permintaan-operasional/{permintaan}/tolak', [AdminPermintaanOperasionalController::class, 'tolak'])->name('permintaan-operasional.tolak');
+    Route::get('/sidebar-badges', [\App\Http\Controllers\Admin\SidebarBadgeController::class, 'index'])->name('sidebar-badges');
 });
 
 Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang', 'store-active'])->group(function () {
@@ -463,6 +466,8 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang', 'st
     Route::get('/pemeriksaan', [GudangPemeriksaanStokController::class, 'index'])->name('pemeriksaan');
     Route::get('/stok-rusak', [GudangStokRusakController::class, 'index'])->name('stok-rusak');
     Route::get('/riwayat-stok', [GudangRiwayatStokController::class, 'index'])->name('riwayat-stok');
+    Route::get('/kekurangan', [GudangKekuranganController::class, 'index'])->name('kekurangan');
+    Route::post('/kekurangan/{order}/siapkan', [GudangKekuranganController::class, 'siapkan'])->name('kekurangan.siapkan');
     Route::get('/notifikasi', [GudangNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [GudangProfilController::class, 'index'])->name('profil');
     Route::post('/profil', [GudangProfilController::class, 'updateProfile'])->name('profil.update');
@@ -480,6 +485,7 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang', 'st
     // Permintaan Operasional (ajukan ke Admin)
     Route::get('/permintaan', [PermintaanOperasionalController::class, 'index'])->name('permintaan')->middleware('permission:warehouse.permintaan');
     Route::post('/permintaan', [PermintaanOperasionalController::class, 'store'])->name('permintaan.store')->middleware('permission:warehouse.permintaan');
+    Route::get('/sidebar-badges', [\App\Http\Controllers\Gudang\SidebarBadgeController::class, 'index'])->name('sidebar-badges');
 });
 
 // Role Route Owner Lengkap
@@ -554,6 +560,7 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::put('/profil/password', [OwnerProfilController::class, 'updatePassword'])->name('profil.password');
     Route::post('/profil/foto', [OwnerProfilController::class, 'updatePhoto'])->name('profil.foto');
     Route::put('/pengaturan-toko', [DataTokoController::class, 'update'])->name('pengaturan-toko.update');
+    Route::get('/sidebar-badges', [\App\Http\Controllers\Owner\SidebarBadgeController::class, 'index'])->name('sidebar-badges');
 });
 
 Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi', 'store-active'])->group(function () {
@@ -565,6 +572,7 @@ Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi
     Route::post('/data-produksi/{order}/status', [ProduksiDataController::class, 'updateStatus'])->name('data-produksi.status');
     Route::get('/pemeriksaan-kualitas', [ProduksiPemeriksaanController::class, 'index'])->name('pemeriksaan-kualitas');
     Route::post('/pemeriksaan-kualitas/{order}/qc', [ProduksiPemeriksaanController::class, 'store'])->name('pemeriksaan-kualitas.store');
+    Route::post('/pemeriksaan-kualitas/{order}/gagal', [ProduksiPemeriksaanController::class, 'tandaiGagal'])->name('pemeriksaan-kualitas.gagal');
     Route::get('/pelaporan-produksi', [ProduksiPelaporanController::class, 'index'])->name('pelaporan-produksi');
     Route::get('/produk-selesai', [ProduksiProdukSelesaiController::class, 'index'])->name('produk-selesai');
     // Nonaktif sementara: controller + view belum ada
@@ -579,6 +587,7 @@ Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi
     // Permintaan Operasional (ajukan ke Admin)
     Route::get('/permintaan', [PermintaanOperasionalController::class, 'index'])->name('permintaan');
     Route::post('/permintaan', [PermintaanOperasionalController::class, 'store'])->name('permintaan.store');
+    Route::get('/sidebar-badges', [\App\Http\Controllers\Produksi\SidebarBadgeController::class, 'index'])->name('sidebar-badges');
 });
 
 /* ===== Notifikasi Global (semua role) ===== */

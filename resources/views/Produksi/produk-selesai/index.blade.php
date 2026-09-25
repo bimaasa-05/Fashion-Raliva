@@ -55,7 +55,11 @@
                                     <p class="text-on-surface">{{ $item->nama_produk_snapshot }} <span class="text-on-surface-variant">× {{ $item->quantity }}</span></p>
                                 @endforeach
                             </td>
-                            <td class="py-3.5 px-4 text-center font-bold text-green-600">{{ $qc?->jumlah_lulus ?? $o->jumlah_berhasil ?? 0 }}</td>
+                            <td class="py-3.5 px-4 text-center font-bold text-green-600">{{ $qc?->jumlah_lulus ?? $o->jumlah_berhasil ?? 0 }}
+                                @if (($o->kekurangan_gudang ?? 0) > 0)
+                                    <span class="block text-[10px] font-normal text-gold-accent">+{{ $o->kekurangan_gudang }} dari Gudang</span>
+                                @endif
+                            </td>
                             <td class="py-3.5 px-4 text-center text-error">{{ $qc?->jumlah_gagal ?? $o->jumlah_gagal ?? 0 }}</td>
                             <td class="py-3.5 px-4 text-on-surface-variant">{{ $o->tanggal_qc?->translatedFormat('d M Y H:i') ?? '-' }}</td>
                             <td class="py-3.5 px-4 text-center">

@@ -16,7 +16,7 @@ class PengembalianDanaController extends Controller
     public function index(Request $request)
     {
         $query = Refund::query()
-            ->with(['order.store', 'payment', 'requester'])
+            ->with(['order.store', 'order.checkout.payment.paymentMethod', 'payment', 'requester'])
             ->orderByDesc('diajukan_pada');
 
         $stats = [
@@ -46,27 +46,70 @@ class PengembalianDanaController extends Controller
             ]);
         }
 
+        $refund->loadMissing('order.checkout.payment.paymentMethod');
+
+        $payment = $refund->order?->checkout?->payment;
+        $isSaldoAkun = $payment && $payment->paymentMethod?->kode_metode === PaymentMethod::KODE_SALDO_AKUN;
+
+        $data = $request->validate([
+            'file_bukti' => [($isSaldoAkun ? 'nullable' : 'required'), 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+            'deskripsi_bukti' => ['nullable', 'string', 'max:1000'],
+        ], [
+            'file_bukti.required' => 'Bukti transfer wajib dilampirkan.',
+            'file_bukti.mimes' => 'Bukti transfer harus berupa JPG, PNG, atau PDF.',
+            'file_bukti.max' => 'Ukuran bukti transfer maksimal 5 MB.',
+            'deskripsi_bukti.max' => 'Deskripsi bukti maksimal 1000 karakter.',
+        ]);
+
+        $path = $request->hasFile('file_bukti')
+            ? $request->file('file_bukti')->store('bukti-refund/'.$refund->refund_id, 'public')
+            : null;
+
         $lama = $refund->only(['status', 'reviewed_by']);
 
-        $refund->update([
-            'status' => Refund::STATUS_DISETUJUI,
-            'reviewed_by' => ActivityLogger::resolveActorId(),
-        ]);
+        try {
+            $refund->update([
+                'status' => Refund::STATUS_DISETUJUI,
+                'reviewed_by' => ActivityLogger::resolveActorId(),
+            ]);
+
+            RefundCompletionService::complete($refund, $path, $data['deskripsi_bukti'] ?? null);
+        } catch (\Throwable $e) {
+            if (str_contains($e->getMessage(), 'Saldo toko tidak cukup')) {
+                return back()->with('toast', [
+                    'message' => 'Saldo toko tidak cukup untuk menyelesaikan refund ini.',
+                    'icon' => 'gpp_maybe',
+                ]);
+            }
+
+            if (
+                str_contains($e->getMessage(), 'tidak terhubung ke toko')
+                || str_contains($e->getMessage(), 'Wallet toko tidak ditemukan')
+                || str_contains($e->getMessage(), 'sudah berubah')
+            ) {
+                return back()->with('toast', [
+                    'message' => 'Refund tidak dapat diselesaikan: '.$e->getMessage(),
+                    'icon' => 'gpp_maybe',
+                ]);
+            }
+
+            throw $e;
+        }
 
         ActivityLogger::log(
             'refund.approve',
             Refund::class,
             $refund->refund_id,
             $lama,
-            ['status' => Refund::STATUS_DISETUJUI],
-            sprintf('Menyetujui refund %s sebesar Rp %s untuk pesanan %s.', $refund->tipe_refund, number_format((float) $refund->jumlah, 0, ',', '.'), $refund->order->nomor_order ?? '-')
+            ['status' => Refund::STATUS_SELESAI, 'file_bukti' => $path],
+            sprintf('Menyetujui dan menyelesaikan refund %s sebesar Rp %s untuk pesanan %s (bukti terlampir).', $refund->tipe_refund, number_format((float) $refund->jumlah, 0, ',', '.'), $refund->order->nomor_order ?? '-')
         );
 
-        $this->notifyPihak($refund, 'Refund Disetujui', sprintf('Pengajuan refund Anda (%s) sebesar Rp %s telah disetujui dan sedang diproses.', $refund->tipe_refund === Refund::TIPE_FULL ? 'penuh' : 'parsial', number_format((float) $refund->jumlah, 0, ',', '.')));
-        Notification::fireSelf(Notification::TIPE_PEMBAYARAN, 'Refund Disetujui', sprintf('Refund Rp %s disetujui.', number_format((float) $refund->jumlah, 0, ',', '.')), route('superadmin.pengembalian-dana'));
+        $this->notifyPihak($refund, 'Refund Selesai', sprintf('Dana refund sebesar Rp %s telah dikirim ke akun Anda.', number_format((float) $refund->jumlah, 0, ',', '.')));
+        Notification::fireSelf(Notification::TIPE_PEMBAYARAN, 'Refund Disetujui dan Selesai', sprintf('Refund Rp %s disetujui dan ditandai selesai.', number_format((float) $refund->jumlah, 0, ',', '.')), route('superadmin.pengembalian-dana'));
 
         return back()->with('toast', [
-            'message' => sprintf('Refund Rp %s disetujui dan diproses.', number_format((float) $refund->jumlah, 0, ',', '.')),
+            'message' => sprintf('Refund Rp %s disetujui dan ditandai selesai.', number_format((float) $refund->jumlah, 0, ',', '.')),
             'icon' => 'task_alt',
         ]);
     }
