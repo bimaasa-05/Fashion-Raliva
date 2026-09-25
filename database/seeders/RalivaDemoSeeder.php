@@ -328,8 +328,23 @@ class RalivaDemoSeeder extends Seeder
             $products[] = $product;
 
             // Foto produk dari aset lokal (2 foto beda per produk untuk hover-cycle di card).
-            $imgA = 'assets/seeders/'.(($idx % 16) + 1).'.jfif';
-            $imgB = 'assets/seeders/'.((($idx + 8) % 16) + 1).'.jfif';
+            // Trench=1,2 · Oversized=3,4 · Wide leg=5,6 · Basic T=7,8 · Midi=9,10
+            // Knit=11,12 · Blazer=13,14 · Scarf=15,16 · Pleated berbagi 9,10 · Belt berbagi 15,16.
+            $imagePairs = [
+                'Trench Coat Signature' => [1, 2],
+                'Oversized Linen Shirt' => [3, 4],
+                'Wide Leg Trousers' => [5, 6],
+                'Basic T-Shirt Cotton' => [7, 8],
+                'Midi Dress Linen' => [9, 10],
+                'Knit Cardigan Rajut' => [11, 12],
+                'Relaxed Blazer' => [13, 14],
+                'Silk Scarf Premium' => [15, 16],
+                'Pleated Skirt' => [9, 10],
+                'Leather Belt' => [15, 16],
+            ];
+            $pair = $imagePairs[$nama] ?? [1, 2];
+            $imgA = 'assets/seeders/'.$pair[0].'.jfif';
+            $imgB = 'assets/seeders/'.$pair[1].'.jfif';
             foreach ([$imgA, $imgB] as $order => $path) {
                 ProductImage::updateOrCreate(
                     ['product_id' => $product->product_id, 'urutan' => $order + 1],

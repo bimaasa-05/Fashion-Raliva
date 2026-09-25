@@ -132,7 +132,7 @@
 
     <!-- Filters -->
     <section class="rise rise-d1">
-        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium space-y-5">
+        <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 space-y-5">
             <div class="flex flex-col sm:flex-row gap-4">
                 <div class="flex-1 relative">
                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>

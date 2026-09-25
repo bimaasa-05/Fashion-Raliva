@@ -31,6 +31,18 @@ class Order extends Model
 
     public const STATUS_SIAP_KIRIM = 'siap_kirim';
 
+    // Status pesanan berbayar yang menyumbang pendapatan (GMV/omzet/pajak).
+    // Dipakai dashboard SA & Peringkat; exclude dibatalkan, refund, pending_payment.
+    public const STATUS_PENDAPATAN = [
+        self::STATUS_DIBAYAR,
+        self::STATUS_MENUNGGU_PRODUKSI,
+        self::STATUS_MENUNGGU_QC,
+        self::STATUS_DIPROSES,
+        self::STATUS_SIAP_KIRIM,
+        self::STATUS_DIKIRIM,
+        self::STATUS_SELESAI,
+    ];
+
     public const TIPE_PRODUK_TETAP = 'produk_tetap';
 
     public const TIPE_CUSTOM = 'custom';

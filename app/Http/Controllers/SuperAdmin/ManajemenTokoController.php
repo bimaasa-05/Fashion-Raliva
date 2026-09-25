@@ -19,11 +19,9 @@ class ManajemenTokoController extends Controller
     {
         $status = $request->query('status', 'semua');
 
-        $ratings = Review::query()
-            ->selectRaw('store_id, ROUND(AVG(rating), 1) as rating_rata')
-            ->where('status', Review::STATUS_AKTIF)
-            ->groupBy('store_id')
-            ->pluck('rating_rata', 'store_id');
+        $validStatus = in_array($status, ['semua', Store::STATUS_PENDING, Store::STATUS_AKTIF, Store::STATUS_NONAKTIF, Store::STATUS_DITOLAK], true)
+            ? $status
+            : 'semua';
 
         $stats = [
             'semua' => Store::count(),
@@ -32,6 +30,27 @@ class ManajemenTokoController extends Controller
             Store::STATUS_NONAKTIF => Store::where('status', Store::STATUS_NONAKTIF)->count(),
             Store::STATUS_DITOLAK => Store::where('status', Store::STATUS_DITOLAK)->count(),
         ];
+
+        if ($request->boolean('partial')) {
+            return view('SuperAdmin.manajemen-toko.partials.store-list', [
+                'stores' => $this->paginatedStores($validStatus, $request),
+            ]);
+        }
+
+        return view('SuperAdmin.manajemen-toko.index', [
+            'stores' => $this->paginatedStores($validStatus, $request),
+            'stats' => $stats,
+            'activeStatus' => $validStatus,
+        ]);
+    }
+
+    private function paginatedStores(string $status, Request $request)
+    {
+        $ratings = Review::query()
+            ->selectRaw('store_id, ROUND(AVG(rating), 1) as rating_rata')
+            ->where('status', Review::STATUS_AKTIF)
+            ->groupBy('store_id')
+            ->pluck('rating_rata', 'store_id');
 
         $storesQuery = Store::query()
             ->with('owner:user_id,nama_lengkap,email')
@@ -67,13 +86,7 @@ class ManajemenTokoController extends Controller
 
         $paginated->setCollection($stores);
 
-        return view('SuperAdmin.manajemen-toko.index', [
-            'stores' => $paginated,
-            'stats' => $stats,
-            'activeStatus' => in_array($status, ['semua', Store::STATUS_PENDING, Store::STATUS_AKTIF, Store::STATUS_NONAKTIF, Store::STATUS_DITOLAK], true)
-                ? $status
-                : 'semua',
-        ]);
+        return $paginated;
     }
 
     public function setujui(Request $request, Store $toko)
