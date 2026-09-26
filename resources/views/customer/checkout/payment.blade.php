@@ -1073,8 +1073,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                             data-account-id="">
                                             <span
                                                 class="material-symbols-outlined text-[28px]">account_balance_wallet</span>
-                                            <span class="text-center leading-tight text-sm">Saldo
-                                                Akun</span>
+                                            <span class="text-center leading-tight text-sm">{{ __('Saldo Akun') }}</span>
                                         </div>
                                         @foreach ($rightMethods as $pm)
                                             @php
@@ -1605,6 +1604,24 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
         });
     </script>
     <script>
+    @php
+    $i18nPay = [
+        'Klik lagi untuk mengganti metode pembayaran.' => __('Klik lagi untuk mengganti metode pembayaran.'),
+        'Metode terpilih: ' => __('Metode terpilih: '),
+        'Rekening/Nomor: ' => __('Rekening/Nomor: '),
+        'Atas nama: ' => __('Atas nama: '),
+        'Pilih metode pembayaran terlebih dahulu.' => __('Pilih metode pembayaran terlebih dahulu.'),
+        'Pilih akun/tujuan pembayaran terlebih dahulu.' => __('Pilih akun/tujuan pembayaran terlebih dahulu.'),
+        'Saldo Akun' => __('Saldo Akun'),
+        'E-Wallet' => __('E-Wallet'),
+        'Bank Transfer' => __('Bank Transfer'),
+        'QRIS' => __('QRIS'),
+    ];
+    @endphp
+    window.RALIVA_I18N = Object.assign(window.RALIVA_I18N || {}, @json($i18nPay));
+    window.ralivaT = window.ralivaT || function (s) { var m = window.RALIVA_I18N || {}; return m[s] || s; };
+    </script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             var grid = document.getElementById('pay-grid');
             var input = document.getElementById('input-payment-method');
@@ -1716,9 +1733,9 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                 var rekEl = document.getElementById('account-detail-rekening-' + panelKode);
                 var pemEl = document.getElementById('account-detail-pemilik-' + panelKode);
                 var wrap = document.getElementById('account-detail-' + panelKode);
-                if (namaEl) namaEl.textContent = opt.getAttribute('data-nama') || '';
-                if (rekEl) rekEl.textContent = 'Rekening/Nomor: ' + (opt.getAttribute('data-rekening') || '-');
-                if (pemEl) pemEl.textContent = 'Atas nama: ' + (opt.getAttribute('data-pemilik') || '-');
+                if (namaEl) namaEl.textContent = window.ralivaT(opt.getAttribute('data-nama')) || '';
+                if (rekEl) rekEl.textContent = window.ralivaT('Rekening/Nomor: ') + (opt.getAttribute('data-rekening') || '-');
+                if (pemEl) pemEl.textContent = window.ralivaT('Atas nama: ') + (opt.getAttribute('data-pemilik') || '-');
                 if (wrap) wrap.classList.remove('hidden');
             };
 
@@ -1765,7 +1782,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
         syncBukti();
         if (kodeMet && !toastShown[kodeMet]) {
             toastShown[kodeMet] = true;
-            showToast('Klik lagi untuk mengganti metode pembayaran.', 5000);
+            showToast(window.ralivaT('Klik lagi untuk mengganti metode pembayaran.'), 5000);
         }
         return;
                 } else {
@@ -1775,7 +1792,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                     opt.classList.add('border-secondary', 'bg-secondary/5', 'ring-1', 'ring-secondary/20');
                 }
                 if (accountInput) accountInput.value = opt.getAttribute('data-account-id');
-                if (rincianAkun) rincianAkun.textContent = opt.getAttribute('data-nama') || '';
+                if (rincianAkun) rincianAkun.textContent = window.ralivaT(opt.getAttribute('data-nama')) || '';
                 updateAccountDetail(opt);
                 syncBukti();
             };
@@ -1788,8 +1805,8 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                     el.classList.add('selected');
                 }
                 if (input) input.value = el.getAttribute('data-id');
-                if (rincian) rincian.textContent = el.getAttribute('data-nama') || '—';
-                if (hint) hint.textContent = 'Metode terpilih: ' + (el.getAttribute('data-nama') || '');
+                if (rincian) rincian.textContent = window.ralivaT(el.getAttribute('data-nama')) || '—';
+                if (hint) hint.textContent = window.ralivaT('Metode terpilih: ') + (window.ralivaT(el.getAttribute('data-nama')) || '');
                 var kode = el.getAttribute('data-kode');
                 if (kode) {
                     showPanel(kode);
@@ -1917,7 +1934,7 @@ var btnActions = document.getElementById('btn-actions');
                     var v = input ? input.value : '';
                     if (!v) {
                         e.preventDefault();
-                        alert('Pilih metode pembayaran terlebih dahulu.');
+                        alert(window.ralivaT('Pilih metode pembayaran terlebih dahulu.'));
                         if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         return;
                     }
@@ -1926,7 +1943,7 @@ var btnActions = document.getElementById('btn-actions');
                         var kodeM = selM.getAttribute('data-kode');
                         if ((kodeM === 'ewallet' || kodeM === 'bank_transfer') && accountInput && !accountInput.value) {
                             e.preventDefault();
-                            alert('Pilih akun/tujuan pembayaran terlebih dahulu.');
+                            alert(window.ralivaT('Pilih akun/tujuan pembayaran terlebih dahulu.'));
                             return;
                         }
                     }
