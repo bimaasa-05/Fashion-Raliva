@@ -388,6 +388,14 @@
             els.forEach(function (e) { io.observe(e); });
         });
         (function () {
+            @php
+            $i18nMore = [
+                'Loading' => __('Loading'),
+                'LOAD MORE' => __('LOAD MORE'),
+            ];
+            @endphp
+            window.RALIVA_I18N = Object.assign(window.RALIVA_I18N || {}, @json($i18nMore));
+            window.ralivaT = window.ralivaT || function (s) { var m = window.RALIVA_I18N || {}; return m[s] || s; };
             var PAGE = 6;
             var revealedCount = PAGE;
             var grid = document.getElementById('product-grid');
@@ -438,11 +446,11 @@
                 var spinner = btn.querySelector('.spinner');
                 var txt = document.getElementById('load-more-txt');
                 if (spinner) spinner.style.display = 'inline-block';
-                if (txt) txt.textContent = 'Loading';
+                if (txt) txt.textContent = window.ralivaT('Loading');
                 setTimeout(function () {
                     revealedCount += PAGE;
                     if (spinner) spinner.style.display = 'none';
-                    if (txt) txt.textContent = 'LOAD MORE';
+                    if (txt) txt.textContent = window.ralivaT('LOAD MORE');
                     btn.removeAttribute('disabled');
                     refresh();
                 }, 650);
