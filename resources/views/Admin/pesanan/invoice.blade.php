@@ -65,7 +65,7 @@
             <h4>Pembayaran & Pengiriman</h4>
             <p>{{ $pesanan->checkout?->payment?->paymentMethod?->nama_metode ?? 'Tunai' }} — {{ ucfirst($pesanan->checkout?->payment?->status ?? '-') }}</p>
             @php $ship = $pesanan->shipments->first(); @endphp
-            <p>{{ $ship ? ($ship->courier?->nama_kurir ?? 'Kurir').' • Resi '.$ship->nomor_resi : ($pesanan->isOffline() ? 'Ambil di toko' : 'Belum dikirim') }}</p>
+            <p>{{ $ship ? ($ship->courier?->nama_kurir ?? 'Kurir').' • Resi '.$ship->nomor_resi : ($pesanan->isAmbil() ? 'Ambil di toko' : 'Belum dikirim') }}</p>
             <p>{{ $pesanan->isOffline() ? 'Offline' : 'Online' }}@if($pesanan->catatan) • Catatan: {{ $pesanan->catatan }}@endif</p>
         </div>
     </div>
