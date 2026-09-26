@@ -195,7 +195,7 @@
                         <div class="relative">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 font-body-sm text-body-sm font-semibold text-secondary pointer-events-none">Rp</span>
                             <input type="text" inputmode="numeric" autocomplete="off" name="nominal" id="input-nominal"
-                                placeholder="Min {{ number_format($minTarik, 0, ',', '.') }}"
+                                placeholder="{{ __('Min :min', ['min' => number_format($minTarik, 0, ',', '.')]) }}"
                                 class="w-full border border-outline-variant rounded-xl pl-11 pr-md py-3 bg-surface-container-low text-on-surface outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/30 transition-colors"
                                 value="{{ old('nominal') ? number_format((int) preg_replace('/\D/', '', (string) old('nominal')), 0, ',', '.') : '' }}" />
                         </div>
