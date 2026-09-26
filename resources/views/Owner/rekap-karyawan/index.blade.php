@@ -29,8 +29,8 @@
     <section data-reveal class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
         <span class="material-symbols-outlined text-gold-accent mt-0.5">info</span>
         <div class="text-sm text-on-surface">
-            <p class="font-bold">Tabel berubah mengikuti filter role: Admin (CR/AOV/rating), Produksi (unit/durasi/keberhasilan), Gudang (transfer/stok).</p>
-            <p class="text-on-surface-variant text-xs mt-1">Closing Rate = pembayaran sukses yang ditangani / seluruh pembayaran yang ditangani. Rating Admin adalah proxy dari ulasan pada order yang pembayarannya diverifikasi karyawan tersebut. ROI = laba bersih / total investasi (kategori Modal, Investor, dan biaya iklan).</p>
+            <p class="font-bold">Tabel berubah mengikuti filter role: Owner (ROI), Admin (CR/AOV/LTV/rating), Produksi (unit/durasi/keberhasilan), Gudang (transfer/stok).</p>
+            <p class="text-on-surface-variant text-xs mt-1">Closing Rate = pesanan selesai / seluruh order yang pernah ditangani karyawan. LTV = pendapatan / customer unik yang ditangani. Rating Admin adalah proxy dari ulasan pada order yang pembayarannya diverifikasi karyawan tersebut. ROI = laba bersih / total investasi (kategori Modal, Investor, dan biaya iklan).</p>
         </div>
     </section>
 
@@ -64,6 +64,7 @@
             </div>
             <div class="flex items-center gap-2 flex-wrap">
                 <select data-role-filter class="raliva-select">
+                    <option value="owner" @selected($roleFilter === 'owner')>Owner</option>
                     <option value="admin" @selected($roleFilter === 'admin')>Admin Toko</option>
                     <option value="produksi" @selected($roleFilter === 'produksi')>Produksi</option>
                     <option value="gudang" @selected($roleFilter === 'gudang')>Gudang</option>
@@ -107,9 +108,15 @@
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Karyawan</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Role</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
-                        @if ($roleFilter === 'admin')
+                        @if ($roleFilter === 'owner')
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">ROI</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Pendapatan</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Investasi</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Bersih</th>
+                        @elseif ($roleFilter === 'admin')
                             <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">CR</th>
                             <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">AOV</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">LTV</th>
                             <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Rating</th>
                             <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Pesanan</th>
                         @elseif ($roleFilter === 'produksi')
@@ -152,9 +159,15 @@
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Nonaktif</span>
                                 @endif
                             </td>
-                            @if ($roleFilter === 'admin')
+                        @if ($roleFilter === 'owner')
+                            <td class="py-3.5 px-4 text-right font-bold text-secondary">{{ $r['roi'] !== null ? number_format($r['roi'], 2, ',', '.').'%' : '—' }}</td>
+                            <td class="py-3.5 px-4 text-right text-on-surface">Rp {{ number_format($r['pendapatan'] ?? 0, 0, ',', '.') }}</td>
+                            <td class="py-3.5 px-4 text-right text-on-surface">Rp {{ number_format($r['investasi'] ?? 0, 0, ',', '.') }}</td>
+                            <td class="py-3.5 px-4 text-right text-on-surface">Rp {{ number_format($r['bersih'] ?? 0, 0, ',', '.') }}</td>
+                        @elseif ($roleFilter === 'admin')
                                 <td class="py-3.5 px-4 text-right text-on-surface">{{ $r['cr'] !== null ? number_format($r['cr'], 2, ',', '.').'%' : '—' }}</td>
                                 <td class="py-3.5 px-4 text-right text-secondary">{{ $r['aov'] !== null ? 'Rp '.number_format($r['aov'], 0, ',', '.') : '—' }}</td>
+                                <td class="py-3.5 px-4 text-right text-secondary">{{ $r['ltv'] !== null ? 'Rp '.number_format($r['ltv'], 0, ',', '.') : '—' }}</td>
                                 <td class="py-3.5 px-4 text-right text-on-surface">{{ $r['rating'] !== null ? number_format($r['rating'], 1).' ★ ('.$r['rating_count'].')' : '—' }}</td>
                                 <td class="py-3.5 px-4 text-right text-on-surface">{{ number_format($r['pesanan'],0,',','.') }}</td>
                             @elseif ($roleFilter === 'produksi')
@@ -174,13 +187,24 @@
                     @endforelse
                 </tbody>
                 <tfoot>
-                    @if ($roleFilter === 'admin')
+                    @if ($roleFilter === 'owner')
+                        <tr class="border-t-2 border-gold-accent/40 bg-gold-accent/5">
+                            <td class="py-3.5 px-4 font-bold text-on-surface">Total ({{ $totals['karyawan'] }} owner)</td>
+                            <td class="py-3.5 px-4"></td>
+                            <td class="py-3.5 px-4"></td>
+                            <td class="py-3.5 px-4 text-right font-bold text-secondary">{{ $totals['roi'] !== null ? number_format($totals['roi'], 2, ',', '.').'%' : '—' }}</td>
+                            <td class="py-3.5 px-4 text-right font-bold text-on-surface">Rp {{ number_format($totals['pendapatan'], 0, ',', '.') }}</td>
+                            <td class="py-3.5 px-4 text-right font-bold text-on-surface">Rp {{ number_format($totals['investasi'], 0, ',', '.') }}</td>
+                            <td class="py-3.5 px-4 text-right font-bold text-on-surface">Rp {{ number_format($totals['bersih'], 0, ',', '.') }}</td>
+                        </tr>
+                    @elseif ($roleFilter === 'admin')
                         <tr class="border-t-2 border-gold-accent/40 bg-gold-accent/5">
                             <td class="py-3.5 px-4 font-bold text-on-surface">Total ({{ $totals['karyawan'] }} admin)</td>
                             <td class="py-3.5 px-4"></td>
                             <td class="py-3.5 px-4"></td>
                             <td class="py-3.5 px-4 text-right font-bold text-on-surface">{{ $totals['cr'] !== null ? number_format($totals['cr'], 2, ',', '.').'%' : '—' }}</td>
                             <td class="py-3.5 px-4 text-right font-bold text-secondary">{{ $totals['aov'] !== null ? 'Rp '.number_format($totals['aov'], 0, ',', '.') : '—' }}</td>
+                            <td class="py-3.5 px-4 text-right font-bold text-secondary">{{ $totals['ltv'] !== null ? 'Rp '.number_format($totals['ltv'], 0, ',', '.') : '—' }}</td>
                             <td class="py-3.5 px-4 text-right font-bold text-on-surface">{{ $totals['rating'] !== null ? number_format($totals['rating'], 1).' ★ ('.$totals['rating_count'].')' : '—' }}</td>
                             <td class="py-3.5 px-4 text-right font-bold text-on-surface">{{ number_format($totals['pesanan'],0,',','.') }}</td>
                         </tr>
@@ -229,12 +253,20 @@
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20 shrink-0">Nonaktif</span>
                         @endif
                     </div>
-                    @if ($roleFilter === 'admin')
+                    @if ($roleFilter === 'owner')
+                    <div class="grid grid-cols-2 gap-2 mt-3 text-sm border-t border-muted-border pt-3">
+                        <div><p class="text-[11px] text-on-surface-variant">ROI</p><p class="font-semibold text-secondary">{{ $r['roi'] !== null ? number_format($r['roi'], 2, ',', '.').'%' : '—' }}</p></div>
+                        <div class="text-right"><p class="text-[11px] text-on-surface-variant">Pendapatan</p><p class="font-semibold text-on-surface">Rp {{ number_format($r['pendapatan'] ?? 0, 0, ',', '.') }}</p></div>
+                        <div><p class="text-[11px] text-on-surface-variant">Investasi</p><p class="font-semibold text-on-surface">Rp {{ number_format($r['investasi'] ?? 0, 0, ',', '.') }}</p></div>
+                        <div class="text-right"><p class="text-[11px] text-on-surface-variant">Bersih</p><p class="font-semibold text-on-surface">Rp {{ number_format($r['bersih'] ?? 0, 0, ',', '.') }}</p></div>
+                    </div>
+                    @elseif ($roleFilter === 'admin')
                     <div class="grid grid-cols-2 gap-2 mt-3 text-sm border-t border-muted-border pt-3">
                         <div><p class="text-[11px] text-on-surface-variant">Closing Rate</p><p class="font-semibold text-on-surface">{{ $r['cr'] !== null ? number_format($r['cr'], 2, ',', '.').'%' : '—' }}</p></div>
                         <div class="text-right"><p class="text-[11px] text-on-surface-variant">AOV</p><p class="font-semibold text-secondary">{{ $r['aov'] !== null ? 'Rp '.number_format($r['aov'], 0, ',', '.') : '—' }}</p></div>
-                        <div><p class="text-[11px] text-on-surface-variant">Rating</p><p class="font-semibold text-on-surface">{{ $r['rating'] !== null ? number_format($r['rating'], 1).' ★' : '—' }}</p></div>
-                        <div class="text-right"><p class="text-[11px] text-on-surface-variant">Pesanan</p><p class="font-semibold text-on-surface">{{ number_format($r['pesanan'],0,',','.') }}</p></div>
+                        <div><p class="text-[11px] text-on-surface-variant">LTV</p><p class="font-semibold text-secondary">{{ $r['ltv'] !== null ? 'Rp '.number_format($r['ltv'], 0, ',', '.') : '—' }}</p></div>
+                        <div class="text-right"><p class="text-[11px] text-on-surface-variant">Rating</p><p class="font-semibold text-on-surface">{{ $r['rating'] !== null ? number_format($r['rating'], 1).' ★' : '—' }}</p></div>
+                        <div><p class="text-[11px] text-on-surface-variant">Pesanan</p><p class="font-semibold text-on-surface">{{ number_format($r['pesanan'],0,',','.') }}</p></div>
                     </div>
                     @elseif ($roleFilter === 'produksi')
                     <div class="grid grid-cols-2 gap-2 mt-3 text-sm border-t border-muted-border pt-3">
@@ -267,8 +299,10 @@
 
         <p class="text-xs text-on-surface-variant mt-6 pt-5 border-t border-muted-border flex items-start gap-2">
             <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 shrink-0">info</span>
-            @if ($roleFilter === 'admin')
-                CR = pembayaran diterima / seluruh pembayaran yang ditangani karyawan. Rating adalah proxy dari ulasan pada order yang pembayarannya diverifikasi karyawan tersebut, bukan bukti pelayanan langsung.{{ !empty($dari) || !empty($sampai) ? ' Periode: '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang').'.' : '' }}
+            @if ($roleFilter === 'owner')
+                ROI = laba bersih / total investasi (kategori Modal, Investor, dan biaya iklan) per pemilik toko.{{ !empty($dari) || !empty($sampai) ? ' Periode: '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang').'.' : '' }}
+            @elseif ($roleFilter === 'admin')
+                CR = pesanan selesai / seluruh order yang pernah ditangani karyawan. LTV = pendapatan / customer unik yang ditangani. Rating adalah proxy dari ulasan pada order yang pembayarannya diverifikasi karyawan tersebut, bukan bukti pelayanan langsung.{{ !empty($dari) || !empty($sampai) ? ' Periode: '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang').'.' : '' }}
             @elseif ($roleFilter === 'produksi')
                 Metrik dihitung dari production order yang ditugaskan ke karyawan (assigned_to). Durasi hanya dari order selesai yang memiliki tanggal mulai dan selesai valid.{{ !empty($dari) || !empty($sampai) ? ' Periode: '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang').'.' : '' }}
             @else
