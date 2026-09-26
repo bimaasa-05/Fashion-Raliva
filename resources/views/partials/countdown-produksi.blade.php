@@ -1,7 +1,7 @@
 @once
 {{-- Countdown live produksi: "Mulai dalam" → "Sisa" → "Terlambat".
      Elemen target memakai data-countdown-start / data-countdown-end / data-countdown-progress,
-     dan progress bar memakai data-countdown-bar + data-countdown-start / data-countdown-end. --}}
+     dan progress bar memakai data-countdown-bar + data-countdown-bar-start / data-countdown-bar-end. --}}
 <script>
     function countdownProduksiFmt(seconds) {
         const abs = Math.abs(seconds);
@@ -20,6 +20,18 @@
     function countdownProduksiLive(el) {
         const endTs = parseInt(el.dataset.countdownEnd, 10);
         const startRaw = el.dataset.countdownStart;
+        const startTs = startRaw ? parseInt(startRaw, 10) : null;
+        if (!startTs || isNaN(endTs)) return null;
+        const now = Date.now() / 1000;
+        const total = Math.max(1, endTs - startTs);
+        if (now < startTs) return { state: 'belum', pct: 0 };
+        if (now > endTs) return { state: 'lambat', pct: 100 };
+        return { state: 'jalan', pct: Math.min(100, Math.round(((now - startTs) / total) * 100)) };
+    }
+
+    function countdownProduksiBarLive(el) {
+        const endTs = parseInt(el.dataset.countdownBarEnd, 10);
+        const startRaw = el.dataset.countdownBarStart;
         const startTs = startRaw ? parseInt(startRaw, 10) : null;
         if (!startTs || isNaN(endTs)) return null;
         const now = Date.now() / 1000;
@@ -55,7 +67,7 @@
             }
         });
         document.querySelectorAll('[data-countdown-bar]').forEach(el => {
-            const live = countdownProduksiLive(el);
+            const live = countdownProduksiBarLive(el);
             if (!live) return;
             el.style.width = live.pct + '%';
             if (live.state === 'belum') {
