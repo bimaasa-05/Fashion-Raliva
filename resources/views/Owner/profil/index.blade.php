@@ -12,7 +12,7 @@
 
 <div data-skeleton class="space-y-section-gap">
     <div class="h-48 bg-surface-container-high rounded-xl animate-pulse"></div>
-    <div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+    <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
         <div class="lg:col-span-5 h-72 bg-surface-container-high rounded-xl animate-pulse"></div>
         <div class="lg:col-span-7 h-96 bg-surface-container-high rounded-xl animate-pulse"></div>
     </div>
@@ -39,7 +39,7 @@
         </div>
     @endif
 
-    <div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+    <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
 
         <!-- Kolom kiri: Hero Profil & Toko Dimiliki -->
         <div class="lg:col-span-5 space-y-8">
