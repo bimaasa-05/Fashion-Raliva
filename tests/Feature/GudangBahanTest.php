@@ -20,6 +20,22 @@ class GudangBahanTest extends TestCase
 {
     use DatabaseTransactions;
 
+    public function test_bahan_page_lists_newest_first(): void
+    {
+        [$gudang, $lama] = $this->productWithGudang('Produk Bahan Lama');
+        [$gudang2, $baru] = $this->productWithGudang('Produk Bahan Baru');
+
+        $response = $this->actingAsFresh($gudang)->get(route('gudang.bahan-produk'));
+        $html = $response->getContent();
+
+        $response->assertOk();
+        // Ukur urutan baris tabel (tombol per produk), bukan posisi mentah:
+        // header notifikasi juga memuat nama produk (tie created_at presisi detik).
+        $posLama = strpos($html, "openModalBahan('{$lama->product_id}')");
+        $posBaru = strpos($html, "openModalBahan('{$baru->product_id}')");
+        $this->assertTrue($posLama !== false && $posBaru !== false && $posBaru < $posLama);
+    }
+
     public function test_bahan_page_lists_products_needing_bahan(): void
     {
         [$gudang, $product] = $this->productWithGudang('Produk Butuh Bahan');
@@ -313,7 +329,7 @@ class GudangBahanTest extends TestCase
             'foto_produk' => [UploadedFile::fake()->image('produk.jpg', 600, 800)],
             'ukuran_terpilih' => 'M',
             'varian_stok' => [
-                ['ukuran' => 'M', 'warna' => '', 'stok' => 5, 'stok_minimum' => 0],
+                ['ukuran' => 'M', 'warna' => '', 'stok' => 10],
             ],
         ];
 
@@ -332,7 +348,6 @@ class GudangBahanTest extends TestCase
 
         $this->actingAsFresh($admin)->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'offline',
-            'fulfillment' => 'ambil',
             'nama_penerima' => 'Budi Bahan',
             'nomor_telepon' => '081234567890',
             'email_pelanggan' => $email,
