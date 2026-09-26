@@ -115,6 +115,8 @@ class SaldoController extends Controller
                 CustomerTopup::STATUS_PENDING,
                 CustomerTopup::STATUS_MENUNGGU_VERIFIKASI,
                 CustomerTopup::STATUS_DITOLAK,
+                CustomerTopup::STATUS_KADALUARSA,
+                CustomerTopup::STATUS_DIBATALKAN,
             ])
             ->orderByDesc('customer_topup_id')
             ->get();
