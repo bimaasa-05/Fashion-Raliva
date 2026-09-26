@@ -140,6 +140,11 @@
             #sidebar nav a, #sidebar nav .group.cursor-not-allowed { padding-top: .8rem !important; padding-bottom: .8rem !important; }
             #sidebar .material-symbols-outlined.text-\[20px\] { font-size: 22px !important; }
         }
+        /* Picker kalender/jam bawaan browser selalu terlihat (light & dark). */
+        input[type="datetime-local"], input[type="date"], input[type="time"] { color-scheme: light dark; }
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator { opacity: 1 !important; cursor: pointer; }
     </style>
 </head>
 <body class="text-on-background font-body-md antialiased min-h-screen flex flex-col">
