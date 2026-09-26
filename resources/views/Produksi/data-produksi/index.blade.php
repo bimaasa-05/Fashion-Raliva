@@ -1,3 +1,4 @@
+@include('partials.produksi-durasi')
 @extends('layouts.produksi')
 
 @section('title', 'Data Produksi')
@@ -16,7 +17,6 @@
 
 @section('content')
 @include('partials.flash-toast')
-@include('partials.produksi-durasi')
 
 <div class="space-y-section-gap">
     {{-- Stats --}}
@@ -62,6 +62,12 @@
                     <option value="menunggu_qc">Menunggu QC</option>
                     <option value="siap_kirim">Siap Kirim</option>
                 </select>
+                @if ($perluBackfill ?? false)
+                    <form method="POST" action="{{ route('produksi.data-produksi.backfill-bahan') }}" onsubmit="return confirm('Salin bahan Gudang ke semua pesanan yang belum ada bahannya?');">
+                        @csrf
+                        <button type="submit" class="px-4 py-2.5 rounded-lg bg-gold-accent/10 border border-gold-accent/40 text-gold-accent text-xs font-bold uppercase hover:bg-gold-accent/20 transition-colors whitespace-nowrap">Lengkapi Bahan</button>
+                    </form>
+                @endif
             </div>
         </div>
 
@@ -102,16 +108,8 @@
                             }
                             $accepted = (bool) $o->produksi_dimulai_pada;
                             $rejectedNote = $o->produksi_catatan_tolak;
-                            $isProduksiSelesai = in_array($o->status, [
-                                \App\Models\Order::STATUS_MENUNGGU_QC,
-                                \App\Models\Order::STATUS_SIAP_KIRIM,
-                                \App\Models\Order::STATUS_DIKIRIM,
-                                \App\Models\Order::STATUS_SELESAI,
-                            ], true);
-                            $selesaiTepat = $isProduksiSelesai && $accepted
-                                && $o->produksi_selesai_pada
-                                && $o->tgl_berakhir_produksi
-                                && $o->produksi_selesai_pada->lessThanOrEqualTo($o->tgl_berakhir_produksi);
+                            $selesaiP = $o->produksi_selesai_pada;
+                            $selesaiTepat = (bool) ($selesaiP && $selesaiP->lte($o->tgl_berakhir_produksi));
                         @endphp
                         <tr data-table-row data-status-produksi="{{ $o->status }}" class="border-b border-muted-border last:border-0 align-top">
                             <td class="py-3.5 px-4">
@@ -156,22 +154,18 @@
                                 @if ($hasDates)
                                     <p class="text-xs font-bold text-on-surface">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
                                     <div class="progress-track mt-1.5">
-                                        <div class="progress-bar-fill {{ $isBelumMulai ? 'bg-surface-container-high' : ($isProduksiSelesai ? ($selesaiTepat ? 'bg-secondary' : 'bg-error') : ($isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent'))) }}" style="width: {{ $progressPct }}%"></div>
+                                        <div class="progress-bar-fill {{ $selesaiTepat ? 'bg-secondary' : ($selesaiP ? 'bg-error' : ($isBelumMulai ? 'bg-surface-container-high' : ($isTerlambat ? 'bg-error' : 'bg-gold-accent'))) }}" style="width: {{ $progressPct }}%"></div>
                                     </div>
-                                    @if ($isProduksiSelesai)
-                                        @if ($selesaiTepat)
-                                            <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
-                                        @elseif ($o->produksi_selesai_pada)
-                                            <p class="text-xs mt-1 countdown-badge text-error font-bold">Terlambat {{ produksiFmtDetik((int) $o->produksi_selesai_pada->timestamp - (int) $o->tgl_berakhir_produksi->timestamp) }}</p>
-                                        @else
-                                            <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai</p>
-                                        @endif
+                                    @if ($selesaiTepat)
+                                        <p class="text-xs font-bold mt-1 countdown-badge text-on-surface">Selesai tepat waktu</p>
+                                    @elseif ($selesaiP)
+                                        <p class="text-xs font-bold mt-1 countdown-badge text-error">Terlambat {{ produksiFmtDetik((int) $selesaiP->timestamp - (int) $o->tgl_berakhir_produksi->timestamp) }}</p>
                                     @else
                                         <p class="text-xs mt-1 countdown-badge {{ $isBelumMulai ? 'text-secondary' : ($isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant') }}"
                                            data-countdown-start="{{ $o->tgl_mulai_produksi->timestamp }}"
                                            data-countdown-end="{{ $o->tgl_berakhir_produksi->timestamp }}"
                                            data-countdown-progress="{{ $progressPct }}">
-                                            {{ $isBelumMulai ? 'Mulai dalam...' : 'Memuat...' }}
+                                            {{ $isBelumMulai ? 'Mulai dalam...' : ($isTerlambat ? 'Terlambat...' : 'Memuat...') }}
                                         </p>
                                     @endif
                                 @else
@@ -247,16 +241,8 @@
                     }
                     $accepted = (bool) $o->produksi_dimulai_pada;
                     $rejectedNote = $o->produksi_catatan_tolak;
-                    $isProduksiSelesai = in_array($o->status, [
-                        \App\Models\Order::STATUS_MENUNGGU_QC,
-                        \App\Models\Order::STATUS_SIAP_KIRIM,
-                        \App\Models\Order::STATUS_DIKIRIM,
-                        \App\Models\Order::STATUS_SELESAI,
-                    ], true);
-                    $selesaiTepat = $isProduksiSelesai && $accepted
-                        && $o->produksi_selesai_pada
-                        && $o->tgl_berakhir_produksi
-                        && $o->produksi_selesai_pada->lessThanOrEqualTo($o->tgl_berakhir_produksi);
+                    $selesaiP = $o->produksi_selesai_pada;
+                    $selesaiTepat = (bool) ($selesaiP && $selesaiP->lte($o->tgl_berakhir_produksi));
                 @endphp
                 <article data-table-row data-status-produksi="{{ $o->status }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
                     <div class="flex items-start justify-between gap-2">
@@ -294,21 +280,17 @@
                         <div class="mt-3">
                             <p class="text-xs font-bold text-on-surface">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
                             <div class="progress-track mt-1.5">
-                                <div class="progress-bar-fill {{ $isBelumMulai ? 'bg-surface-container-high' : ($isProduksiSelesai ? ($selesaiTepat ? 'bg-secondary' : 'bg-error') : ($isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent'))) }}" style="width: {{ $progressPct }}%"></div>
+                                <div class="progress-bar-fill {{ $selesaiTepat ? 'bg-secondary' : ($selesaiP ? 'bg-error' : ($isBelumMulai ? 'bg-surface-container-high' : ($isTerlambat ? 'bg-error' : 'bg-gold-accent'))) }}" style="width: {{ $progressPct }}%"></div>
                             </div>
-                            @if ($isProduksiSelesai)
-                                @if ($selesaiTepat)
-                                    <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
-                                @elseif ($o->produksi_selesai_pada)
-                                    <p class="text-xs mt-1 countdown-badge text-error font-bold">Terlambat {{ produksiFmtDetik((int) $o->produksi_selesai_pada->timestamp - (int) $o->tgl_berakhir_produksi->timestamp) }}</p>
-                                @else
-                                    <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai</p>
-                                @endif
+                            @if ($selesaiTepat)
+                                <p class="text-xs font-bold mt-1 countdown-badge text-on-surface">Selesai tepat waktu</p>
+                            @elseif ($selesaiP)
+                                <p class="text-xs font-bold mt-1 countdown-badge text-error">Terlambat {{ produksiFmtDetik((int) $selesaiP->timestamp - (int) $o->tgl_berakhir_produksi->timestamp) }}</p>
                             @else
                                 <p class="text-xs mt-1 countdown-badge {{ $isBelumMulai ? 'text-secondary' : ($isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant') }}"
                                    data-countdown-start="{{ $o->tgl_mulai_produksi->timestamp }}"
                                    data-countdown-end="{{ $o->tgl_berakhir_produksi->timestamp }}"
-                                   data-countdown-progress="{{ $progressPct }}">{{ $isBelumMulai ? 'Mulai dalam...' : 'Memuat...' }}</p>
+                                   data-countdown-progress="{{ $progressPct }}">{{ $isBelumMulai ? 'Mulai dalam...' : ($isTerlambat ? 'Terlambat...' : 'Memuat...') }}</p>
                             @endif
                         </div>
                     @endif
@@ -381,6 +363,15 @@
                 <button type="button" onclick="closeModalBahan('{{ $o->order_id }}')" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
             </div>
             <div class="p-6 space-y-3">
+                @php $bahanButuh = $o->bahanList->reject(fn ($b) => $b->isDariProduksi())->values(); @endphp
+                <div class="rounded-lg border border-gold-accent/25 bg-gold-accent/5 p-3">
+                    <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold mb-1.5">Bahan dibutuhkan (dari Gudang)</p>
+                    @forelse ($bahanButuh as $butuh)
+                        <p class="text-xs text-on-surface">{{ $butuh->nama_bahan }}: <b>{{ $butuh->jumlah }} {{ $butuh->satuan }}</b></p>
+                    @empty
+                        <p class="text-xs text-on-surface-variant">Belum ada bahan dari Gudang — tambah manual di bawah.</p>
+                    @endforelse
+                </div>
                 <p class="text-xs text-on-surface-variant">Tambah bahan yang belum diinput Admin. Pilih dari katalog atau ketik manual.</p>
                 <div id="bahan-container-produksi-{{ $o->order_id }}" class="space-y-3"></div>
                 <button type="button" onclick="addBahanProduksiRow('{{ $o->order_id }}')" class="w-full py-2.5 border border-dashed border-outline-variant rounded-lg text-xs font-semibold text-on-surface-variant hover:border-gold-accent hover:text-gold-accent transition-colors flex items-center justify-center gap-1.5">
@@ -412,7 +403,7 @@
                 <p class="text-xs text-on-surface-variant">Input hasil produksi. Pesanan akan masuk ke tahap QC.</p>
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Jumlah Berhasil *</label>
-                    <input type="number" name="jumlah_berhasil" required min="0" max="{{ $o->items->sum('quantity') }}" class="raliva-input w-full" placeholder="0" />
+                    <input type="number" name="jumlah_berhasil" required min="0" max="{{ $o->items->sum('quantity') }}" value="{{ $o->items->sum('quantity') }}" class="raliva-input w-full" placeholder="0" />
                     <p class="text-[11px] text-on-surface-variant mt-1">Total pesanan: <b>{{ $o->items->sum('quantity') }} pcs</b>. Jumlah gagal dihitung otomatis (total − berhasil).</p>
                 </div>
                 <div>
@@ -525,7 +516,8 @@
         const row = select.closest('[data-bahan-row]');
         if (!row) return;
         if (opt.value) {
-            row.querySelector('input[name*="[nama_bahan]"]').value = opt.dataset.nama;
+            const namaInput = row.querySelector('input[name*="[nama_bahan]"]');
+            if (namaInput) namaInput.value = opt.dataset.nama;
             const sat = row.querySelector('[name*="[satuan]"]');
             if (sat && sat.querySelector(`option[value="${opt.dataset.satuan}"]`)) sat.value = opt.dataset.satuan;
         }
@@ -551,6 +543,7 @@
             if (searchInput) searchInput.dispatchEvent(new Event('input'));
         });
     });
+    // === COUNTDOWN TIMER REAL-TIME (kode di partial terpisah, di luar blok script) ===
 </script>
 @include('partials.countdown-produksi')
 @endpush

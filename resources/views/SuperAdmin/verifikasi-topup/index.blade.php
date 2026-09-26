@@ -13,6 +13,7 @@
         'menunggu_verifikasi' => ['label' => 'Menunggu Verifikasi', 'class' => \App\Support\StatusStyle::badgeClass('menunggu_verifikasi')],
         'terverifikasi' => ['label' => 'Terverifikasi', 'class' => \App\Support\StatusStyle::badgeClass('terverifikasi')],
         'ditolak' => ['label' => 'Ditolak', 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
+        'dibatalkan' => ['label' => 'Dibatalkan', 'class' => \App\Support\StatusStyle::badgeClass('dibatalkan')],
         'kadaluarsa' => ['label' => 'Kadaluarsa', 'class' => \App\Support\StatusStyle::badgeClass('kadaluarsa')],
     ];
 @endphp
@@ -79,6 +80,8 @@
                 <button type="button" data-chip="pending" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Belum Bayar ({{ $stats['pending'] }})</button>
                 <button type="button" data-chip="terverifikasi" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Terverifikasi ({{ $stats['terverifikasi'] }})</button>
                 <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditolak ({{ $stats['ditolak'] }})</button>
+                <button type="button" data-chip="dibatalkan" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Dibatalkan ({{ $stats['dibatalkan'] }})</button>
+                <button type="button" data-chip="kadaluarsa" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kadaluarsa ({{ $stats['kadaluarsa'] }})</button>
             </div>
         </div>
 

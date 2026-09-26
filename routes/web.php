@@ -38,6 +38,7 @@ use App\Http\Controllers\Customer\ShopController;
 use App\Http\Controllers\Customer\WishlistController;
 use App\Http\Controllers\Gudang\BarangKeluarController as GudangBarangKeluarController;
 use App\Http\Controllers\Gudang\BarangMasukController as GudangBarangMasukController;
+use App\Http\Controllers\Gudang\BahanProdukController as GudangBahanProdukController;
 use App\Http\Controllers\Gudang\DashboardController as GudangDashboardController;
 use App\Http\Controllers\Gudang\GantiGudangController;
 use App\Http\Controllers\Gudang\KekuranganController as GudangKekuranganController;
@@ -419,6 +420,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::post('/pengiriman/{pengiriman}/kirim', [PengirimanController::class, 'kirim'])->name('pengiriman.kirim');
     Route::get('/slot', [\App\Http\Controllers\Admin\SlotController::class, 'index'])->name('slot');
     Route::post('/slot', [\App\Http\Controllers\Admin\SlotController::class, 'store'])->name('slot.request');
+    Route::post('/slot/paket/{paket}', [\App\Http\Controllers\Admin\SlotController::class, 'beliPaket'])->name('slot.paket.beli');
     Route::get('/kurir', [\App\Http\Controllers\Admin\KurirController::class, 'index'])->name('kurir');
     Route::post('/kurir', [\App\Http\Controllers\Admin\KurirController::class, 'sync'])->name('kurir.sync');
     Route::post('/kurir/courier', [\App\Http\Controllers\Admin\KurirController::class, 'storeCourier'])->name('kurir.courier.store');
@@ -468,6 +470,8 @@ Route::prefix('gudang')->name('gudang.')->middleware(['auth', 'role:Gudang', 'st
     Route::get('/riwayat-stok', [GudangRiwayatStokController::class, 'index'])->name('riwayat-stok');
     Route::get('/kekurangan', [GudangKekuranganController::class, 'index'])->name('kekurangan');
     Route::post('/kekurangan/{order}/siapkan', [GudangKekuranganController::class, 'siapkan'])->name('kekurangan.siapkan');
+    Route::get('/bahan-produk', [GudangBahanProdukController::class, 'index'])->name('bahan-produk');
+    Route::post('/bahan-produk/{product}', [GudangBahanProdukController::class, 'store'])->name('bahan-produk.store');
     Route::get('/notifikasi', [GudangNotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/profil', [GudangProfilController::class, 'index'])->name('profil');
     Route::post('/profil', [GudangProfilController::class, 'updateProfile'])->name('profil.update');
@@ -569,6 +573,7 @@ Route::prefix('produksi')->name('produksi.')->middleware(['auth', 'role:Produksi
     Route::post('/data-produksi/{order}/accept', [ProduksiDataController::class, 'accept'])->name('data-produksi.accept');
     Route::post('/data-produksi/{order}/reject', [ProduksiDataController::class, 'reject'])->name('data-produksi.reject');
     Route::post('/data-produksi/{order}/bahan', [ProduksiDataController::class, 'storeBahan'])->name('data-produksi.bahan');
+    Route::post('/data-produksi/backfill-bahan', [ProduksiDataController::class, 'backfillBahan'])->name('data-produksi.backfill-bahan');
     Route::post('/data-produksi/{order}/status', [ProduksiDataController::class, 'updateStatus'])->name('data-produksi.status');
     Route::get('/pemeriksaan-kualitas', [ProduksiPemeriksaanController::class, 'index'])->name('pemeriksaan-kualitas');
     Route::post('/pemeriksaan-kualitas/{order}/qc', [ProduksiPemeriksaanController::class, 'store'])->name('pemeriksaan-kualitas.store');

@@ -291,7 +291,7 @@
                 <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Nama</dt><dd class="text-on-surface text-right">{{ $o->checkout?->nama_penerima ?? $oCustomer?->nama_lengkap ?? '-' }}</dd></div>
                 <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Telepon</dt><dd class="text-on-surface text-right">{{ $o->checkout?->nomor_telepon ?? '-' }}</dd></div>
                 <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Alamat</dt><dd class="text-on-surface text-right">{{ $o->checkout?->alamat ?? '-' }}{{ $o->checkout?->kota ? ', '.$o->checkout->kota : '' }}{{ $o->checkout?->provinsi ? ' '.$o->checkout->provinsi : '' }} {{ $o->checkout?->kode_pos ?? '' }}</dd></div>
-                <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Tipe</dt><dd class="text-on-surface text-right">{{ $o->isOffline() ? 'Offline (ambil di toko)' : 'Online (kurir)' }}</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Tipe</dt><dd class="text-on-surface text-right">{{ $o->isOffline() ? 'Offline' : 'Online' }} • {{ $o->isAmbil() ? 'Ambil di toko' : 'Diantar kurir' }}</dd></div>
                 @if ($o->catatan)
                     <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Catatan</dt><dd class="text-on-surface text-right">{{ $o->catatan }}</dd></div>
                 @endif

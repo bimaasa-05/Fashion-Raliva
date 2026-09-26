@@ -16,7 +16,7 @@ class AdminFulfillmentSwitchTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_online_order_switched_to_pickup_voids_shipping_fee(): void
+    public function test_diantar_order_switched_to_pickup_voids_shipping_fee(): void
     {
         [$admin] = $this->admin();
         $order = $this->createOnlineOrder($admin);
@@ -24,18 +24,18 @@ class AdminFulfillmentSwitchTest extends TestCase
         $checkout = $order->checkout;
         $ongkir = 50000;
         $oldGrand = (float) $order->grand_total + $ongkir;
-        $order->update(['total_ongkir' => $ongkir, 'grand_total' => $oldGrand]);
+        $order->update(['metode_fulfillment' => Order::FULFILLMENT_DIANTAR, 'total_ongkir' => $ongkir, 'grand_total' => $oldGrand]);
         $checkout->update(['total_ongkir' => $ongkir, 'grand_total' => (float) $checkout->grand_total + $ongkir]);
 
         $this->actingAs($admin)->post(
             route('admin.pesanan.alihFulfillment', ['pesanan' => $order->order_id]),
-            ['tipe' => Order::TIPE_PESANAN_OFFLINE]
+            ['fulfillment' => Order::FULFILLMENT_AMBIL]
         )->assertSessionHasNoErrors();
 
         $order->refresh();
         $checkout->refresh();
 
-        $this->assertSame(Order::TIPE_PESANAN_OFFLINE, $order->tipe_pesanan);
+        $this->assertSame(Order::FULFILLMENT_AMBIL, $order->metode_fulfillment);
         $this->assertSame(0, (int) $order->total_ongkir);
         $this->assertSame((int) ($oldGrand - $ongkir), (int) $order->grand_total);
         $this->assertSame(0, (int) $checkout->total_ongkir);
@@ -51,17 +51,40 @@ class AdminFulfillmentSwitchTest extends TestCase
     {
         [$admin] = $this->admin();
         $order = $this->createOfflineOrder($admin, 'alih-off-'.Str::random(8).'@example.com');
+        $order->update(['metode_fulfillment' => Order::FULFILLMENT_AMBIL]);
         $oldGrand = (int) $order->grand_total;
 
         $this->actingAs($admin)->post(
             route('admin.pesanan.alihFulfillment', ['pesanan' => $order->order_id]),
-            ['tipe' => Order::TIPE_PESANAN_ONLINE]
+            ['fulfillment' => Order::FULFILLMENT_DIANTAR]
         )->assertSessionHasNoErrors();
 
         $order->refresh();
-        $this->assertSame(Order::TIPE_PESANAN_ONLINE, $order->tipe_pesanan);
+        $this->assertSame(Order::FULFILLMENT_DIANTAR, $order->metode_fulfillment);
         $this->assertSame(0, (int) $order->total_ongkir);
         $this->assertSame($oldGrand, (int) $order->grand_total);
+    }
+
+    public function test_offline_customer_defaults_to_pickup(): void
+    {
+        [$admin] = $this->admin();
+        $order = $this->createOfflineOrder($admin, 'alih-mix-'.Str::random(8).'@example.com');
+
+        $this->assertSame(Order::TIPE_PESANAN_OFFLINE, $order->tipe_pesanan);
+        $this->assertSame(Order::FULFILLMENT_AMBIL, $order->metode_fulfillment);
+        $this->assertTrue($order->isOffline());
+        $this->assertTrue($order->isAmbil());
+    }
+
+    public function test_online_customer_defaults_to_delivery(): void
+    {
+        [$admin] = $this->admin();
+        $order = $this->createOnlineOrder($admin);
+
+        $this->assertSame(Order::TIPE_PESANAN_ONLINE, $order->tipe_pesanan);
+        $this->assertSame(Order::FULFILLMENT_DIANTAR, $order->metode_fulfillment);
+        $this->assertFalse($order->isOffline());
+        $this->assertTrue($order->isDiantar());
     }
 
     public function test_switch_rejected_for_dispatched_and_completed_orders(): void
@@ -69,14 +92,14 @@ class AdminFulfillmentSwitchTest extends TestCase
         foreach ([Order::STATUS_DIKIRIM, Order::STATUS_SELESAI, Order::STATUS_DIBATALKAN] as $status) {
             [$admin] = $this->admin();
             $order = $this->createOfflineOrder($admin, 'alih-blok-'.Str::random(8).'@example.com');
-            $order->update(['status' => $status]);
+            $order->update(['status' => $status, 'metode_fulfillment' => Order::FULFILLMENT_AMBIL]);
 
             $this->actingAs($admin)->post(
                 route('admin.pesanan.alihFulfillment', ['pesanan' => $order->order_id]),
-                ['tipe' => Order::TIPE_PESANAN_ONLINE]
+                ['fulfillment' => Order::FULFILLMENT_DIANTAR]
             )->assertStatus(302);
 
-            $this->assertSame(Order::TIPE_PESANAN_OFFLINE, $order->fresh()->tipe_pesanan, "Status {$status} harus menolak pengalihan.");
+            $this->assertSame(Order::FULFILLMENT_AMBIL, $order->fresh()->metode_fulfillment, "Status {$status} harus menolak pengalihan.");
         }
     }
 
@@ -84,7 +107,7 @@ class AdminFulfillmentSwitchTest extends TestCase
     {
         [$admin] = $this->admin();
         $order = $this->createOnlineOrder($admin);
-        $order->update(['status' => Order::STATUS_SIAP_KIRIM]);
+        $order->update(['status' => Order::STATUS_SIAP_KIRIM, 'metode_fulfillment' => Order::FULFILLMENT_DIANTAR]);
         Shipment::create([
             'order_id' => $order->order_id,
             'nomor_resi' => 'RESI-'.Str::upper(Str::random(6)),
@@ -94,10 +117,10 @@ class AdminFulfillmentSwitchTest extends TestCase
 
         $this->actingAs($admin)->post(
             route('admin.pesanan.alihFulfillment', ['pesanan' => $order->order_id]),
-            ['tipe' => Order::TIPE_PESANAN_OFFLINE]
+            ['fulfillment' => Order::FULFILLMENT_AMBIL]
         )->assertStatus(302);
 
-        $this->assertSame(Order::TIPE_PESANAN_ONLINE, $order->fresh()->tipe_pesanan);
+        $this->assertSame(Order::FULFILLMENT_DIANTAR, $order->fresh()->metode_fulfillment);
     }
 
     public function test_invalid_target_rejected(): void
@@ -107,10 +130,10 @@ class AdminFulfillmentSwitchTest extends TestCase
 
         $this->actingAs($admin)->post(
             route('admin.pesanan.alihFulfillment', ['pesanan' => $order->order_id]),
-            ['tipe' => 'kurir']
-        )->assertSessionHasErrors('tipe');
+            ['fulfillment' => 'kurir']
+        )->assertSessionHasErrors('fulfillment');
 
-        $this->assertSame(Order::TIPE_PESANAN_OFFLINE, $order->fresh()->tipe_pesanan);
+        $this->assertSame(Order::FULFILLMENT_AMBIL, $order->fresh()->metode_fulfillment);
     }
 
     public function test_alihkan_button_and_modal_render_for_eligible_order(): void

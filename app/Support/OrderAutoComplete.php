@@ -92,7 +92,7 @@ class OrderAutoComplete
         return DB::transaction(function () use ($order) {
             $locked = Order::whereKey($order->order_id)->lockForUpdate()->first();
 
-            if (! $locked || ! $locked->isOffline() || $locked->status !== Order::STATUS_SIAP_KIRIM) {
+            if (! $locked || ! $locked->isAmbil() || $locked->status !== Order::STATUS_SIAP_KIRIM) {
                 return 0;
             }
 

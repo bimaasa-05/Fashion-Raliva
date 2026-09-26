@@ -28,6 +28,7 @@ class ProductFormPolishTest extends TestCase
         $response = $this->actingAs($admin)->post(route('admin.produk.store'), [
             'nama_produk' => $name,
             'harga_dasar' => '150.000',
+            'hpp' => '65.000',
             'category_id' => $categoryId,
             'tipe_produk' => 'regular',
             'deskripsi' => 'Deskripsi produk uji format ribuan minimal sepuluh karakter.',
@@ -36,19 +37,12 @@ class ProductFormPolishTest extends TestCase
             'varian_stok' => [
                 ['ukuran' => 'M', 'warna' => '', 'stok' => '1.000', 'stok_minimum' => '10.000'],
             ],
-            'target_produksi' => '10.000',
-            'biaya_tambahan' => '10.000',
-            'resep' => [
-                ['material_id' => null, 'nama_bahan' => 'Kain Katun', 'satuan' => 'meter', 'jumlah_per_unit' => 2, 'biaya_per_unit' => '5.000'],
-            ],
         ]);
 
         $response->assertStatus(302);
         $response->assertSessionHasNoErrors();
         $product = Product::where('nama_produk', $name)->firstOrFail();
-        $this->assertSame(150000.0, $product->harga_dasar);
-        $this->assertSame(10000, $product->target_produksi);
-        $this->assertSame(20000.0, $product->modal_produksi);
+        $this->assertSame(150000.0, (float) $product->harga_dasar);
         $variant = ProductVariant::where('product_id', $product->product_id)->firstOrFail();
         $this->assertSame(1000, (int) $variant->warehouseStocks->sum('jumlah_stok'));
     }
@@ -63,7 +57,9 @@ class ProductFormPolishTest extends TestCase
         $response->assertOk();
         $html = substr($html, strpos($html, 'id="modal-form-produk"'));
         $this->assertTrue(strpos($html, 'Foto Produk') < strpos($html, 'Informasi Dasar'));
-        $this->assertTrue(strpos($html, 'Rencana Produksi') < strpos($html, 'Variasi &amp; Stok'));
+        $this->assertTrue(strpos($html, 'Informasi Dasar') < strpos($html, 'Variasi &amp; Stok'));
+        $this->assertTrue(strpos($html, 'id="fp-hpp"') < strpos($html, 'id="fp-harga"'));
+        $this->assertFalse(strpos($html, 'id="modal-rencana-produk"'));
         $this->assertTrue(strpos($html, 'id="fp-nama"') < strpos($html, 'id="fp-tipe"'));
         $this->assertTrue(strpos($html, 'id="fp-tipe"') < strpos($html, 'id="fp-harga"'));
         $this->assertTrue(strpos($html, 'id="fp-harga"') < strpos($html, 'id="fp-deskripsi"'));
@@ -80,10 +76,10 @@ class ProductFormPolishTest extends TestCase
         $html = substr($response->getContent(), strpos($response->getContent(), 'id="modal-edit-produk"'));
 
         $response->assertOk();
-        $this->assertTrue(strpos($html, 'Rencana Produksi') < strpos($html, 'Variasi &amp; Stok'));
         $this->assertTrue(strpos($html, 'id="edit-nama-produk"') < strpos($html, 'id="edit-kategori-hidden"'));
         $this->assertTrue(strpos($html, 'id="edit-kategori-hidden"') < strpos($html, 'id="edit-tipe-produk"'));
-        $this->assertTrue(strpos($html, 'id="edit-tipe-produk"') < strpos($html, 'id="edit-harga-dasar"'));
+        $this->assertTrue(strpos($html, 'id="edit-tipe-produk"') < strpos($html, 'id="edit-hpp"'));
+        $this->assertTrue(strpos($html, 'id="edit-hpp"') < strpos($html, 'id="edit-harga-dasar"'));
         $this->assertTrue(strpos($html, 'id="edit-harga-dasar"') < strpos($html, 'id="edit-deskripsi"'));
         $this->assertStringContainsString('data-ribuan-int', $html);
         $this->assertStringContainsString('data-rupiah', $html);

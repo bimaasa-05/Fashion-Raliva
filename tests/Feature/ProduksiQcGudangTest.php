@@ -177,6 +177,24 @@ class ProduksiQcGudangTest extends TestCase
         $response->assertSee(route('produksi.pemeriksaan-kualitas.gagal', ['order' => $order->order_id]), false);
     }
 
+    public function test_selesai_and_qc_inputs_default_to_ordered_quantity(): void
+    {
+        [$produksi, $storeId] = $this->produksi();
+        $order = $this->orderMenungguQc($storeId, 7);
+        $total = (int) $order->items()->sum('quantity');
+        $this->assertSame(7, $total);
+
+        $order->update(['status' => Order::STATUS_DIPROSES]);
+        $selesai = $this->actingAsFresh($produksi)->get(route('produksi.data-produksi'));
+        $selesai->assertOk();
+        $selesai->assertSee('name="jumlah_berhasil" required min="0" max="7" value="7"', false);
+
+        $order->update(['status' => Order::STATUS_MENUNGGU_QC]);
+        $qc = $this->actingAsFresh($produksi)->get(route('produksi.pemeriksaan-kualitas'));
+        $qc->assertOk();
+        $qc->assertSee('name="jumlah_lulus" required min="0" max="7" value="7"', false);
+    }
+
     private function actingAsFresh(User $user): static
     {
         $this->flushSession();

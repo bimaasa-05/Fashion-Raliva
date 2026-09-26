@@ -28,6 +28,7 @@ class ProductUpdateWorkflowTest extends TestCase
         $response = $this->actingAs($admin)->put(route('admin.produk.update', $product), [
             'nama_produk' => $oldName.' Revisi',
             'harga_dasar' => (string) $product->harga_dasar,
+            'hpp' => (string) ($product->modal_produksi ?? $product->harga_dasar),
             'category_id' => $product->category_id,
             'tipe_produk' => $product->tipe_produk,
             'deskripsi' => $product->deskripsi,
@@ -53,6 +54,7 @@ class ProductUpdateWorkflowTest extends TestCase
         $payload = [
             'nama_produk' => $product->nama_produk.' Revisi',
             'harga_dasar' => (string) $product->harga_dasar,
+            'hpp' => (string) ($product->modal_produksi ?? $product->harga_dasar),
             'category_id' => $product->category_id,
             'tipe_produk' => $product->tipe_produk,
             'deskripsi' => $product->deskripsi,
@@ -100,27 +102,12 @@ class ProductUpdateWorkflowTest extends TestCase
             'requested_by' => $admin->user_id,
             'status' => ProductUpdateRequest::STATUS_PENDING,
             'before_snapshot' => [
-                'product' => ['nama_produk' => $product->nama_produk, 'harga_dasar' => 20000, 'target_produksi' => 1, 'biaya_tambahan' => 0],
-                'resep' => [
-                    ['material_id' => null, 'nama_bahan' => 'Kain Lama', 'satuan' => 'meter', 'jumlah_per_unit' => 1, 'biaya_per_unit' => 1000],
-                ],
-                'operasional' => [
-                    ['nama_biaya' => 'Biaya Lama', 'nominal' => 500],
-                ],
+                'product' => ['nama_produk' => $product->nama_produk, 'harga_dasar' => 20000, 'modal_produksi' => 15000],
             ],
             'after_payload' => [
                 'nama_produk' => $product->nama_produk.' Review',
                 'harga_dasar' => 20000,
-                'resep_diubah' => true,
-                'target_produksi' => 2,
-                'biaya_tambahan' => 0,
-                'resep' => [
-                    ['material_id' => null, 'nama_bahan' => 'Kain Baru', 'satuan' => 'meter', 'jumlah_per_unit' => 2, 'biaya_per_unit' => 1000],
-                ],
-                'operasional_diubah' => true,
-                'operasional' => [
-                    ['nama_biaya' => 'Ongkos jahit', 'nominal' => 1500],
-                ],
+                'hpp' => 12000,
             ],
         ]);
 
@@ -128,14 +115,12 @@ class ProductUpdateWorkflowTest extends TestCase
 
         $response->assertOk();
         $response->assertSee($product->nama_produk, false);
-        $response->assertSee('Kain Lama', false);
-        $response->assertSee('Kain Baru', false);
-        $response->assertSee('2 unit', false);
-        $response->assertSee('Rp 16.500', false);
-        $response->assertDontSee('16.500,00', false);
-        $response->assertSee('Biaya Lama', false);
-        $response->assertSee('Ongkos jahit', false);
+        $response->assertSee('HPP / Modal', false);
+        $response->assertSee('Rp 12.000', false);
+        $response->assertSee('Rp 8.000 (40,00%)', false);
         $response->assertSee('Setujui', false);
+        $response->assertDontSee('Perbandingan resep dan modal', false);
+        $response->assertDontSee('Perbandingan biaya operasional', false);
     }
 
     public function test_superadmin_approve_applies_request(): void
@@ -172,18 +157,10 @@ class ProductUpdateWorkflowTest extends TestCase
         $this->assertSame(ProductUpdateRequest::STATUS_DISETUJUI, $request->fresh()->status);
     }
 
-    public function test_superadmin_approve_applies_recipe_changes(): void
+    public function test_superadmin_approve_applies_hpp_change(): void
     {
         [$admin, $storeId] = $this->admin();
         $product = Product::where('store_id', $storeId)->firstOrFail();
-        ProductMaterialRequirement::create([
-            'product_id' => $product->product_id,
-            'material_id' => null,
-            'nama_bahan' => 'Kain Lama',
-            'satuan' => 'meter',
-            'jumlah_per_unit' => 1,
-            'biaya_per_unit' => 1000,
-        ]);
         $request = ProductUpdateRequest::create([
             'product_id' => $product->product_id,
             'store_id' => $storeId,
@@ -193,38 +170,31 @@ class ProductUpdateWorkflowTest extends TestCase
             'after_payload' => [
                 'nama_produk' => $product->nama_produk,
                 'harga_dasar' => 20000,
+                'hpp' => 12000,
                 'category_id' => $product->category_id,
                 'tipe_produk' => $product->tipe_produk,
                 'deskripsi' => $product->deskripsi,
-                'resep_diubah' => true,
-                'target_produksi' => 5,
-                'biaya_tambahan' => 1000,
-                'resep' => [
-                    ['material_id' => null, 'nama_bahan' => 'Kain Baru', 'satuan' => 'meter', 'jumlah_per_unit' => 2, 'biaya_per_unit' => 5000],
-                ],
             ],
         ]);
 
         $response = $this->actingAs($this->superAdmin())->post(route('superadmin.perubahan-produk.setujui', [$product, $request]));
 
         $response->assertStatus(302);
-        $fresh = $product->fresh();
-        $this->assertSame(5, $fresh->target_produksi);
-        $this->assertSame(11000.0, $fresh->modal_produksi);
-        $this->assertDatabaseHas('product_material_requirements', [
-            'product_id' => $product->product_id,
-            'nama_bahan' => 'Kain Baru',
-        ]);
-        $this->assertDatabaseMissing('product_material_requirements', [
-            'product_id' => $product->product_id,
-            'nama_bahan' => 'Kain Lama',
-        ]);
+        $this->assertSame(12000.0, (float) $product->fresh()->modal_produksi);
     }
 
-    public function test_superadmin_approve_applies_operational_changes(): void
+    public function test_superadmin_approve_keeps_gudang_bahan_intact(): void
     {
         [$admin, $storeId] = $this->admin();
         $product = Product::where('store_id', $storeId)->firstOrFail();
+        ProductMaterialRequirement::create([
+            'product_id' => $product->product_id,
+            'material_id' => null,
+            'nama_bahan' => 'Kain Gudang',
+            'satuan' => 'meter',
+            'jumlah_per_unit' => 2,
+            'biaya_per_unit' => 0,
+        ]);
         ProductOperationalCost::create([
             'product_id' => $product->product_id,
             'nama_biaya' => 'Biaya Lama',
@@ -237,36 +207,24 @@ class ProductUpdateWorkflowTest extends TestCase
             'status' => ProductUpdateRequest::STATUS_PENDING,
             'before_snapshot' => [],
             'after_payload' => [
-                'nama_produk' => $product->nama_produk,
+                'nama_produk' => $product->nama_produk.' Revisi',
                 'harga_dasar' => 20000,
+                'hpp' => 12000,
                 'category_id' => $product->category_id,
                 'tipe_produk' => $product->tipe_produk,
                 'deskripsi' => $product->deskripsi,
-                'resep_diubah' => true,
-                'target_produksi' => 5,
-                'resep' => [
-                    ['material_id' => null, 'nama_bahan' => 'Kain Baru', 'satuan' => 'meter', 'jumlah_per_unit' => 2, 'biaya_per_unit' => 5000],
-                ],
-                'operasional_diubah' => true,
-                'operasional' => [
-                    ['nama_biaya' => 'Ongkos jahit', 'nominal' => 3000],
-                    ['nama_biaya' => 'Kemasan', 'nominal' => 2000],
-                ],
             ],
         ]);
 
         $response = $this->actingAs($this->superAdmin())->post(route('superadmin.perubahan-produk.setujui', [$product, $request]));
 
         $response->assertStatus(302);
-        $fresh = $product->fresh();
-        $this->assertSame(15000.0, $fresh->modal_produksi);
-        $this->assertSame(5000.0, $fresh->biaya_tambahan);
-        $this->assertDatabaseHas('product_operational_costs', [
+        $this->assertSame($product->nama_produk.' Revisi', $product->fresh()->nama_produk);
+        $this->assertDatabaseHas('product_material_requirements', [
             'product_id' => $product->product_id,
-            'nama_biaya' => 'Ongkos jahit',
-            'nominal' => 3000,
+            'nama_bahan' => 'Kain Gudang',
         ]);
-        $this->assertDatabaseMissing('product_operational_costs', [
+        $this->assertDatabaseHas('product_operational_costs', [
             'product_id' => $product->product_id,
             'nama_biaya' => 'Biaya Lama',
         ]);

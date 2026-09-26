@@ -52,6 +52,7 @@
                             <option value="{{ $kat }}">{{ $kat }}</option>
                         @endforeach
                     </select>
+                    <p class="text-[11px] text-on-surface-variant mt-1">Investor/Modal = omzet saja (tidak masuk saldo tarik).</p>
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Keterangan <span class="text-error">*</span></label>
