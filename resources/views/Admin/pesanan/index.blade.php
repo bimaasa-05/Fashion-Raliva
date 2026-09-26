@@ -198,32 +198,13 @@
                                     <button type="button" data-modal-open="modal-proses-{{ $pesanan->order_id }}"
                                         class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Proses</button>
                                 @endif
-                                @if (in_array(
-                                        $pesanan->status,
-                                        [
-                                            \App\Models\Order::STATUS_DIBAYAR,
-                                            \App\Models\Order::STATUS_MENUNGGU_PRODUKSI,
-                                            \App\Models\Order::STATUS_DIPROSES,
-                                        ],
-                                        true) && !$pesanan->isPaymentVerified())
-                                    <button type="button" data-modal-open="modal-batalkan-{{ $pesanan->order_id }}"
-                                        class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Batalkan</button>
-                                @endif
                                 @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM && $pesanan->isAmbil())
                                     <button type="button" data-modal-open="modal-selesai-{{ $pesanan->order_id }}"
                                         class="px-3 py-1.5 ml-1 bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-[10px] uppercase rounded hover:bg-secondary-container/30 transition-colors">Selesai</button>
                                 @endif
 
-                                @if (
-                                    !in_array(
-                                        $pesanan->status,
-                                        [
-                                            \App\Models\Order::STATUS_DIKIRIM,
-                                            \App\Models\Order::STATUS_SELESAI,
-                                            \App\Models\Order::STATUS_DIBATALKAN,
-                                            \App\Models\Order::STATUS_REFUND,
-                                        ],
-                                        true) && $pesanan->shipments->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->isEmpty())
+                                @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM
+                                    && $pesanan->shipments->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->isEmpty())
                                     <button type="button" data-modal-open="modal-alihkan-{{ $pesanan->order_id }}"
                                         class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors"
                                         title="{{ $pesanan->isAmbil() ? 'Alihkan ke diantar kurir' : 'Alihkan ke ambil di toko' }}">Alihkan</button>
@@ -349,32 +330,13 @@
                             <button type="button" data-modal-open="modal-proses-{{ $pesanan->order_id }}"
                                 class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Proses</button>
                         @endif
-                        @if (in_array(
-                                $pesanan->status,
-                                [
-                                    \App\Models\Order::STATUS_DIBAYAR,
-                                    \App\Models\Order::STATUS_MENUNGGU_PRODUKSI,
-                                    \App\Models\Order::STATUS_DIPROSES,
-                                ],
-                                true) && !$pesanan->isPaymentVerified())
-                            <button type="button" data-modal-open="modal-batalkan-{{ $pesanan->order_id }}"
-                                class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Batalkan</button>
-                        @endif
                         @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM && $pesanan->isAmbil())
                             <button type="button" data-modal-open="modal-selesai-{{ $pesanan->order_id }}"
                                 class="px-3 py-1.5 ml-1 bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-[10px] uppercase rounded hover:bg-secondary-container/30 transition-colors">Selesai</button>
                         @endif
 
-                        @if (
-                            !in_array(
-                                $pesanan->status,
-                                [
-                                    \App\Models\Order::STATUS_DIKIRIM,
-                                    \App\Models\Order::STATUS_SELESAI,
-                                    \App\Models\Order::STATUS_DIBATALKAN,
-                                    \App\Models\Order::STATUS_REFUND,
-                                ],
-                                true) && $pesanan->shipments->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->isEmpty())
+                        @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM
+                            && $pesanan->shipments->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->isEmpty())
                             <button type="button" data-modal-open="modal-alihkan-{{ $pesanan->order_id }}"
                                 class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors"
                                 title="{{ $pesanan->isAmbil() ? 'Alihkan ke diantar kurir' : 'Alihkan ke ambil di toko' }}">Alihkan</button>
@@ -573,39 +535,6 @@
                 </form>
             </div>
         @endif
-        @if (in_array(
-                $pesanan->status,
-                [
-                    \App\Models\Order::STATUS_DIBAYAR,
-                    \App\Models\Order::STATUS_MENUNGGU_PRODUKSI,
-                    \App\Models\Order::STATUS_DIPROSES,
-                ],
-                true) && !$pesanan->isPaymentVerified())
-            <div id="modal-batalkan-{{ $pesanan->order_id }}" data-modal
-                class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
-                <div class="absolute inset-0 bg-black/50" data-modal-close></div>
-                <form method="POST" action="{{ route('admin.pesanan.batalkan', $pesanan->order_id) }}"
-                    class="relative mx-auto w-[calc(100%-2rem)] max-w-md bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl p-8">
-                    @csrf
-                    <div
-                        class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
-                        <span class="material-symbols-outlined text-error text-[28px]">cancel</span>
-                    </div>
-                    <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Batalkan Pesanan</h3>
-                    <p class="text-on-surface-variant text-sm text-center mb-4">Pesanan <span
-                            class="font-mono font-bold text-on-surface">{{ $pesanan->nomor_order ?? '#' . $pesanan->order_id }}</span>
-                        akan dibatalkan dan Customer dinotifikasi.</p>
-                    <textarea name="alasan" required minlength="10" maxlength="1000" rows="3" class="raliva-textarea"
-                        placeholder="Alasan pembatalan... (minimal 10 karakter)"></textarea>
-                    <div class="flex space-x-3 mt-4">
-                        <button type="button" data-modal-close
-                            class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg">Batal</button>
-                        <button type="submit"
-                            class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Konfirmasi</button>
-                    </div>
-                </form>
-            </div>
-        @endif
         @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM && $pesanan->isAmbil())
             <div id="modal-selesai-{{ $pesanan->order_id }}" data-modal
                 class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
@@ -635,16 +564,8 @@
                 </form>
             </div>
         @endif
-        @if (
-            !in_array(
-                $pesanan->status,
-                [
-                    \App\Models\Order::STATUS_DIKIRIM,
-                    \App\Models\Order::STATUS_SELESAI,
-                    \App\Models\Order::STATUS_DIBATALKAN,
-                    \App\Models\Order::STATUS_REFUND,
-                ],
-                true) && $pesanan->shipments->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->isEmpty())
+        @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM
+            && $pesanan->shipments->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->isEmpty())
             @php
                 $ongkirLama = (float) ($pesanan->total_ongkir ?? 0);
                 $grandBaru = max(0, (float) $pesanan->grand_total - $ongkirLama);
