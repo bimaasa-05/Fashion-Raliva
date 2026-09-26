@@ -78,9 +78,9 @@ class ProductFormPolishTest extends TestCase
         $response->assertOk();
         $this->assertTrue(strpos($html, 'id="edit-nama-produk"') < strpos($html, 'id="edit-kategori-hidden"'));
         $this->assertTrue(strpos($html, 'id="edit-kategori-hidden"') < strpos($html, 'id="edit-tipe-produk"'));
-        $this->assertTrue(strpos($html, 'id="edit-tipe-produk"') < strpos($html, 'id="edit-harga-dasar"'));
-        $this->assertTrue(strpos($html, 'id="edit-harga-dasar"') < strpos($html, 'id="edit-hpp"'));
-        $this->assertTrue(strpos($html, 'id="edit-hpp"') < strpos($html, 'id="edit-deskripsi"'));
+        $this->assertTrue(strpos($html, 'id="edit-tipe-produk"') < strpos($html, 'id="edit-hpp"'));
+        $this->assertTrue(strpos($html, 'id="edit-hpp"') < strpos($html, 'id="edit-harga-dasar"'));
+        $this->assertTrue(strpos($html, 'id="edit-harga-dasar"') < strpos($html, 'id="edit-deskripsi"'));
         $this->assertStringContainsString('data-ribuan-int', $html);
         $this->assertStringContainsString('data-rupiah', $html);
     }
