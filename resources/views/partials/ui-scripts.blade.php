@@ -309,6 +309,17 @@
         });
     });
 
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-pw-toggle]');
+        if (!btn) return;
+        const input = document.getElementById(btn.dataset.pwToggle);
+        if (!input) return;
+        const show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        const icon = btn.querySelector('.material-symbols-outlined');
+        if (icon) icon.textContent = show ? 'visibility_off' : 'visibility';
+    });
+
     document.querySelectorAll('form[data-toast-message]').forEach((form) => {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
