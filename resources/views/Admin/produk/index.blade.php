@@ -80,7 +80,7 @@
                     };
                     $fotosA = $p->images->map(fn ($img) => $normFotoA($img->file_gambar))->values()->all();
                     $editFotosJson = json_encode($p->images->map(fn ($img) => ['id' => $img->product_image_id, 'url' => $normFotoA($img->file_gambar)])->values()->all());
-                    $editVarianJson = json_encode($p->variants->map(fn ($v) => ['id' => $v->product_variant_id, 'ukuran' => $v->ukuran, 'warna' => $v->warna, 'hex' => (\App\Support\WarnaPalet::resolve($v->warna_hex, $v->warna) ?? ''), 'stok' => (int) $v->warehouseStocks->sum('jumlah_stok'), 'min' => (int) ($v->warehouseStocks->min('stok_minimum') ?? 0)])->values()->all());
+                    $editVarianJson = json_encode($p->variants->map(fn ($v) => ['id' => $v->product_variant_id, 'ukuran' => $v->ukuran, 'warna' => $v->warna, 'hex' => (\App\Support\WarnaPalet::resolve($v->warna_hex, $v->warna) ?? ''), 'stok' => (int) $v->warehouseStocks->sum('jumlah_stok')])->values()->all());
                     $resepRows = $p->materialRequirements->map(fn ($row) => [
                         'nama' => $row->nama_bahan,
                         'satuan' => $row->satuan,
@@ -377,15 +377,9 @@
                             ${wr === null ? '' : `<span class="w-4 h-4 rounded-full border border-outline-variant shrink-0 inline-block" style="background-color: ${warnaSwatch(wr)}"></span>`}
                             <span class="text-xs font-bold text-on-surface truncate">${escapeHtml(uk)}${wr === null ? '' : ` · ${escapeHtml(wr)}`}${ex ? '' : ' <span class="text-gold-accent font-normal">(baru)</span>'}</span>
                         </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Stok</label>
-                                <input type="text" inputmode="numeric" data-ribuan-int placeholder="10.000" name="varian_stok[${i}][stok]" value="${ex ? ex.stok : 0}" class="raliva-input text-sm" />
-                            </div>
-                            <div>
-                                <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Ambang Menipis</label>
-                                <input type="text" inputmode="numeric" data-ribuan-int placeholder="10.000" name="varian_stok[${i}][stok_minimum]" value="${ex ? ex.min : 0}" class="raliva-input text-sm" />
-                            </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Stok</label>
+                            <input type="text" inputmode="numeric" data-ribuan-int placeholder="10.000" name="varian_stok[${i}][stok]" value="${ex ? ex.stok : 0}" class="raliva-input text-sm" />
                         </div>
                     `;
                     grid.appendChild(row);
@@ -950,7 +944,6 @@
                 <div id="varian-stok-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
                 <div id="varian-stok-empty" class="mt-2 p-4 border border-dashed border-outline-variant rounded-lg text-center text-xs text-on-surface-variant">Belum ada varian. Pilih ukuran di atas untuk mengatur stok per varian.</div>
                 <input type="hidden" name="stok_awal" id="fp-stok-synced" value="0" />
-                <input type="hidden" name="stok_minimum" id="fp-min-restock-synced" value="0" />
             </div>
         </div>
 
@@ -1013,15 +1006,9 @@ function renderVarianStok() {
                     ${wr === null ? '' : `<span class="w-4 h-4 rounded-full border border-outline-variant shrink-0 inline-block" style="background-color: ${warnaSwatch(wr)}"></span>`}
                     <span class="text-xs font-bold text-on-surface truncate">${escapeHtml(uk)}${wr === null ? '' : ` · ${escapeHtml(wr)}`}</span>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Stok</label>
-                        <input type="text" inputmode="numeric" data-ribuan-int placeholder="10.000" name="varian_stok[${i}][stok]" value="0" class="raliva-input text-sm" />
-                    </div>
-                    <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Ambang Menipis</label>
-                        <input type="text" inputmode="numeric" data-ribuan-int placeholder="10.000" name="varian_stok[${i}][stok_minimum]" value="0" class="raliva-input text-sm" />
-                    </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Stok</label>
+                    <input type="text" inputmode="numeric" data-ribuan-int placeholder="10.000" name="varian_stok[${i}][stok]" value="0" class="raliva-input text-sm" />
                 </div>
             `;
             grid.appendChild(row);
@@ -1032,12 +1019,7 @@ function renderVarianStok() {
     // sync hidden total (backward compat)
     const total = Array.from(grid.querySelectorAll('[name$="[stok]"]')).reduce((s, el)=> s + (window.parseRibuanInt(el.value)), 0);
     const syncTotal = document.getElementById('fp-stok-synced');
-    const syncMin = document.getElementById('fp-min-restock-synced');
     if (syncTotal) syncTotal.value = total;
-    if (syncMin) {
-        const mins = Array.from(grid.querySelectorAll('[name$="[stok_minimum]"]')).map(el=>window.parseRibuanInt(el.value));
-        syncMin.value = mins.length ? Math.min(...mins) : 0;
-    }
 }
 
 function escapeHtml(str) {
@@ -1485,8 +1467,6 @@ function parseRibuanDecimal(raw) {
         if (!rows.length) return fail('Wajib: isi stok tiap varian (pilih ukuran dulu).', document.getElementById('varian-stok-empty'));
         const kosong = rows.find(i => i.value === '' || window.parseRibuanInt(i.value) < 1);
         if (kosong) return fail('Wajib: stok tiap varian minimal 1.', kosong);
-        const minKosong = Array.from(document.querySelectorAll('#varian-stok-grid [name$="[stok_minimum]"]')).find(i => i.value === '');
-        if (minKosong) return fail('Wajib: ambang menipis tiap varian harus diisi.', minKosong);
     });
 })();
 
