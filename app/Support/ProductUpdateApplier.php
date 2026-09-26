@@ -120,7 +120,7 @@ class ProductUpdateApplier
                         if ($warehouse) {
                             WarehouseStock::updateOrCreate(
                                 ['warehouse_id' => $warehouse->warehouse_id, 'product_variant_id' => $variant->product_variant_id],
-                                ['jumlah_stok' => (int) ($detail['stok'] ?? 0), 'jumlah_direservasi' => 0, 'stok_minimum' => (int) ($detail['stok_minimum'] ?? 0)]
+                                ['jumlah_stok' => (int) ($detail['stok'] ?? 0), 'jumlah_direservasi' => 0, 'stok_minimum' => 10]
                             );
                         }
                     }
