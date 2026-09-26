@@ -275,6 +275,7 @@
                                 <option value="{{ $kat }}">{{ $kat }}</option>
                             @endforeach
                         </select>
+                        <p class="text-[11px] text-on-surface-variant mt-1">Investor/Modal tercatat sebagai omzet (tidak masuk saldo tarik).</p>
                     </div>
                     <div>
                         <label class="block raliva-label mb-2">Nominal (Rp)</label>
@@ -286,7 +287,7 @@
                                 style="border-top-left-radius:0;border-bottom-left-radius:0;" />
                         </div>
                     </div>
-                    <div class="md:col-span-2">
+                    <div>
                         <label class="block raliva-label mb-2">Tanggal</label>
                         <input name="tanggal" type="date" required value="{{ date('Y-m-d') }}"
                             class="raliva-input" />
@@ -298,25 +299,69 @@
                         </button>
                     </div>
                 </form>
-                <div class="mt-8">
-                    <h3 class="font-title-md text-sm mb-4">Riwayat Pemasukan</h3>
-                    <div class="space-y-2">
-                        @php $mutCol = $mutations instanceof \Illuminate\Pagination\AbstractPaginator ? $mutations->getCollection() : $mutations; @endphp
-                        @forelse($mutCol->whereIn('jenis_transaksi', ['penjualan_masuk','komisi_masuk','pemasukan']) as $m)
-                            <div
-                                class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg border border-muted-border">
-                                <div>
-                                    <p class="text-sm text-on-surface">{{ $m->keterangan ?? $m->jenis_transaksi }}</p>
-                                    <p class="text-xs text-on-surface-variant">
-                                        {{ $m->created_at?->translatedFormat('d M Y H:i') }}</p>
+            </section>
+
+            <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium"
+                data-table-scope>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Pemasukan</h2>
+                    <form method="GET" action="{{ route('owner.keuangan') }}#pemasukan" class="flex items-center gap-2">
+                        <select name="kat_in" onchange="this.form.submit()" class="raliva-select text-xs py-2 w-auto">
+                            <option value="">Semua Kategori</option>
+                            @foreach (($katInList ?? []) as $kat)
+                                <option value="{{ $kat }}" @selected(($filterKatIn ?? '') === $kat)>{{ $kat }}</option>
+                            @endforeach
+                        </select>
+                        @if(($filterKatIn ?? '') !== '')
+                            <a href="{{ route('owner.keuangan') }}#pemasukan" class="text-xs text-on-surface-variant hover:text-gold-accent underline">Reset</a>
+                        @endif
+                    </form>
+                </div>
+                <div class="hidden md:block">
+                <div data-table-wrap class="overflow-x-auto">
+                    <table class="premium-table w-full min-w-[720px] font-body-md text-sm">
+                        <thead>
+                            <tr class="border-b border-muted-border text-left">
+                                <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tanggal</th>
+                                <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Keterangan</th>
+                                <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Kategori</th>
+                                <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Nominal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse (($pemasukanList ?? collect()) as $m)
+                                <tr data-table-row class="border-b border-muted-border last:border-0">
+                                    <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">
+                                        {{ $m->created_at?->translatedFormat('d M Y') ?? '-' }}</td>
+                                    <td class="py-3.5 px-4 text-on-surface">{{ $m->keterangan ?? $m->jenis_transaksi }}</td>
+                                    <td class="py-3.5 px-4 text-on-surface-variant">{{ $m->kategori ?? '-' }}</td>
+                                    <td class="py-3.5 px-4 text-right font-bold text-secondary whitespace-nowrap">+
+                                        {{ $fmt($m->jumlah) }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="py-8 text-center text-on-surface-variant">Belum ada
+                                        pemasukan tercatat.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+                <div class="md:hidden space-y-3">
+                    @forelse (($pemasukanList ?? collect()) as $m)
+                        <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <p class="font-bold text-on-surface truncate">{{ $m->keterangan ?? $m->jenis_transaksi }}</p>
+                                    <p class="text-xs text-on-surface-variant mt-0.5">{{ $m->kategori ?? '-' }} • {{ $m->created_at?->translatedFormat('d M Y') ?? '-' }}</p>
                                 </div>
-                                <span class="text-sm font-bold text-secondary">+ Rp
-                                    {{ number_format($m->jumlah, 0, ',', '.') }}</span>
+                                <p class="font-bold text-secondary whitespace-nowrap shrink-0">+ {{ $fmt($m->jumlah) }}</p>
                             </div>
-                        @empty
-                            <p class="text-sm text-on-surface-variant text-center py-4">Belum ada pemasukan tercatat.</p>
-                        @endforelse
-                    </div>
+                        </article>
+                    @empty
+                        <p class="py-8 text-center text-on-surface-variant">Belum ada pemasukan tercatat.</p>
+                    @endforelse
                 </div>
             </section>
         </div>
