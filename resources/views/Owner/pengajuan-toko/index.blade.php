@@ -66,7 +66,7 @@
 
         {{-- Timeline Real — center --}}
         <div class="mt-10 overflow-x-auto pb-2 flex justify-start md:justify-center">
-            <ol class="flex min-w-0 md:min-w-[640px] max-w-3xl w-full items-center justify-center">
+            <ol class="flex min-w-0 md:min-w-[640px] w-full items-center justify-center">
                 @php
                     $steps = [
                         ['Pengajuan Dikirim', $hasStore ? optional($store->created_at)->translatedFormat('d M Y') : '-', $step1Done],
