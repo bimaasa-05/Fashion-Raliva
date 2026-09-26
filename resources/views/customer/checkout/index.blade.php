@@ -595,7 +595,7 @@
                                 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $address->alamat }}<br/>{{ $address->kota }}, {{ $address->provinsi }} {{ $address->kode_pos }}</p>
                                 <p class="font-label-sm text-label-sm text-on-surface-variant/70 flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">location_on</span> {{ __('Alamat diisi otomatis dari alamat tersimpan.') }}</p>
                             </div>
-                            <a href="{{ route('customer.address.index') }}" class="shrink-0 flex items-center gap-xs text-secondary font-label-sm text-label-sm hover:opacity-75 transition-opacity">
+                            <a href="{{ route('customer.address.index', array_filter(['back' => 'checkout', 'buy' => $buyId > 0 ? $buyId : null])) }}" class="shrink-0 flex items-center gap-xs text-secondary font-label-sm text-label-sm hover:opacity-75 transition-opacity">
                                 <span class="material-symbols-outlined text-[18px]">settings</span> {{ __('Kelola Alamat') }}
                             </a>
                         </div>
