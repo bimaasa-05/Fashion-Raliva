@@ -283,7 +283,7 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 <!-- Review Text -->
 <section class="pt-lg mt-lg border-t border-outline-variant">
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Your Review') }}</h3>
-<textarea class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors resize-none {{ $errors->has('ulasan') ? 'border-error' : '' }}" id="review-text" name="ulasan" placeholder="Share your experience with this product..." rows="5">{{ old('ulasan', $review->ulasan) }}</textarea>
+<textarea class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors resize-none {{ $errors->has('ulasan') ? 'border-error' : '' }}" id="review-text" name="ulasan" placeholder="{{ __('Share your experience with this product...') }}" rows="5">{{ old('ulasan', $review->ulasan) }}</textarea>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Minimum 20 characters. Be honest and helpful for other shoppers.') }}</p>
 @error('ulasan')
 <p class="text-error text-label-sm mt-xs">{{ $message }}</p>
