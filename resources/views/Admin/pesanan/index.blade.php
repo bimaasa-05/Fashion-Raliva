@@ -177,6 +177,11 @@
                                     <span
                                         class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-gold-accent/10 border-gold-accent/25 text-gold-accent">Offline</span>
                                 @endif
+                                @if ($pesanan->isAmbil())
+                                    <span
+                                        class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-secondary/10 border-secondary/25 text-secondary">Ambil
+                                        di Toko</span>
+                                @endif
                                 @if ($pesanan->checkout?->payment?->status === \App\Models\Payment::STATUS_DITOLAK)
                                     <span
                                         class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-error/10 border-error/20 text-error">Bayar
@@ -204,7 +209,7 @@
                                     <button type="button" data-modal-open="modal-batalkan-{{ $pesanan->order_id }}"
                                         class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Batalkan</button>
                                 @endif
-                                @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+                                @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM && $pesanan->isAmbil())
                                     <button type="button" data-modal-open="modal-selesai-{{ $pesanan->order_id }}"
                                         class="px-3 py-1.5 ml-1 bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-[10px] uppercase rounded hover:bg-secondary-container/30 transition-colors">Selesai</button>
                                 @endif
@@ -221,7 +226,7 @@
                                         true) && $pesanan->shipments->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->isEmpty())
                                     <button type="button" data-modal-open="modal-alihkan-{{ $pesanan->order_id }}"
                                         class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors"
-                                        title="{{ $pesanan->isOffline() ? 'Alihkan ke kirim kurir' : 'Alihkan ke ambil di toko' }}">Alihkan</button>
+                                        title="{{ $pesanan->isAmbil() ? 'Alihkan ke diantar kurir' : 'Alihkan ke ambil di toko' }}">Alihkan</button>
                                 @endif
                                 @if ($pesanan->qc_perlu_admin_pada && $pesanan->status === \App\Models\Order::STATUS_MENUNGGU_QC)
                                     <button type="button" data-modal-open="modal-qctanggapan-{{ $pesanan->order_id }}"
@@ -309,6 +314,11 @@
                                 <span
                                     class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-gold-accent/10 border-gold-accent/25 text-gold-accent">Offline</span>
                             @endif
+                            @if ($pesanan->isAmbil())
+                                <span
+                                    class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-secondary/10 border-secondary/25 text-secondary">Ambil
+                                    di Toko</span>
+                            @endif
                             @if ($pesanan->checkout?->payment?->status === \App\Models\Payment::STATUS_DITOLAK)
                                 <span
                                     class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-error/10 border-error/20 text-error">Bayar
@@ -350,7 +360,7 @@
                             <button type="button" data-modal-open="modal-batalkan-{{ $pesanan->order_id }}"
                                 class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Batalkan</button>
                         @endif
-                        @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+                        @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM && $pesanan->isAmbil())
                             <button type="button" data-modal-open="modal-selesai-{{ $pesanan->order_id }}"
                                 class="px-3 py-1.5 ml-1 bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-[10px] uppercase rounded hover:bg-secondary-container/30 transition-colors">Selesai</button>
                         @endif
@@ -367,7 +377,7 @@
                                 true) && $pesanan->shipments->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->isEmpty())
                             <button type="button" data-modal-open="modal-alihkan-{{ $pesanan->order_id }}"
                                 class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors"
-                                title="{{ $pesanan->isOffline() ? 'Alihkan ke kirim kurir' : 'Alihkan ke ambil di toko' }}">Alihkan</button>
+                                title="{{ $pesanan->isAmbil() ? 'Alihkan ke diantar kurir' : 'Alihkan ke ambil di toko' }}">Alihkan</button>
                         @endif
                         @if ($pesanan->qc_perlu_admin_pada && $pesanan->status === \App\Models\Order::STATUS_MENUNGGU_QC)
                             <button type="button" data-modal-open="modal-qctanggapan-{{ $pesanan->order_id }}"
@@ -596,7 +606,7 @@
                 </form>
             </div>
         @endif
-        @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM)
+        @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM && $pesanan->isAmbil())
             <div id="modal-selesai-{{ $pesanan->order_id }}" data-modal
                 class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
                 <div class="absolute inset-0 bg-black/50" data-modal-close></div>
@@ -609,7 +619,7 @@
                     </div>
                     <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Selesai — Sudah Diambil</h3>
                     <p class="text-on-surface-variant text-sm text-center mb-4">Pesanan
-                        {{ $pesanan->isOffline() ? 'offline' : 'online (diambil langsung)' }} <span
+                        {{ $pesanan->isOffline() ? 'offline' : 'online' }} <span
                             class="font-mono font-bold text-on-surface">{{ $pesanan->nomor_order ?? '#' . $pesanan->order_id }}</span>
                         akan ditandai <b>Selesai</b> dan dana penjualan masuk ke saldo toko. Konfirmasi bahwa customer sudah
                         mengambil barangnya.</p>
@@ -652,7 +662,7 @@
                     <h3 class="font-title-md text-title-md text-on-surface mb-1 text-center">Ubah Tipe Pengiriman</h3>
                     <p class="text-on-surface-variant text-sm text-center font-mono mb-3">
                         {{ $pesanan->nomor_order ?? '#' . $pesanan->order_id }}</p>
-                    @if (!$pesanan->isOffline())
+                    @if (!$pesanan->isAmbil())
                         <p class="text-on-surface-variant text-sm text-center mb-4">Pilih <b>Ambil di Toko</b> — ongkir Rp
                             {{ number_format($ongkirLama, 0, ',', '.') }} akan <b>dibatalkan</b> dan total jadi <b>Rp
                                 {{ number_format($grandBaru, 0, ',', '.') }}</b>. Customer dinotifikasi.</p>
@@ -662,13 +672,13 @@
                             dinotifikasi.</p>
                     @endif
                     <div class="flex flex-wrap gap-3 mt-4">
-                        <button type="submit" name="tipe" value="{{ \App\Models\Order::TIPE_PESANAN_ONLINE }}"
-                            @disabled($pesanan->isOffline() === false)
-                            class="flex-1 min-w-[7.5rem] {{ $pesanan->isOffline() ? 'bg-gold-accent/90 text-deep-onyx btn-premium' : 'bg-surface-container-low border border-muted-border text-on-surface-variant cursor-not-allowed opacity-60' }} font-label-sm text-label-sm py-3 uppercase tracking-widest rounded-lg transition-opacity">Diantar
+                        <button type="submit" name="fulfillment" value="diantar"
+                            @disabled(!$pesanan->isAmbil())
+                            class="flex-1 min-w-[7.5rem] {{ !$pesanan->isAmbil() ? 'bg-surface-container-low border border-muted-border text-on-surface-variant cursor-not-allowed opacity-60' : 'bg-gold-accent/90 text-deep-onyx btn-premium' }} font-label-sm text-label-sm py-3 uppercase tracking-widest rounded-lg transition-opacity">Diantar
                             (Kurir)</button>
-                        <button type="submit" name="tipe" value="{{ \App\Models\Order::TIPE_PESANAN_OFFLINE }}"
-                            @disabled($pesanan->isOffline())
-                            class="flex-1 min-w-[7.5rem] {{ $pesanan->isOffline() ? 'bg-surface-container-low border border-muted-border text-on-surface-variant cursor-not-allowed opacity-60' : 'bg-gold-accent/90 text-deep-onyx btn-premium' }} font-label-sm text-label-sm py-3 uppercase tracking-widest rounded-lg transition-opacity">Ambil
+                        <button type="submit" name="fulfillment" value="ambil"
+                            @disabled($pesanan->isAmbil())
+                            class="flex-1 min-w-[7.5rem] {{ $pesanan->isAmbil() ? 'bg-surface-container-low border border-muted-border text-on-surface-variant cursor-not-allowed opacity-60' : 'bg-gold-accent/90 text-deep-onyx btn-premium' }} font-label-sm text-label-sm py-3 uppercase tracking-widest rounded-lg transition-opacity">Ambil
                             di Toko</button>
                         <button type="button" data-modal-close
                             class="flex-1 min-w-[7.5rem] bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg">Batal</button>
@@ -724,30 +734,48 @@
                 class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
                 <div>
                     <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Pesanan</h3>
-                    <p class="text-on-surface-variant text-sm mt-1">Buat pesanan <b>Kirim</b> (diantar kurir ke alamat
-                        customer) atau <b>Ambil di Toko</b> (customer ambil sendiri, tanpa ongkir).</p>
+                    <p class="text-on-surface-variant text-sm mt-1">Pilih status customer (<b>Online</b> = user terdaftar,
+                        <b>Offline</b> = tamu) dan cara terima barang (<b>Diantar</b> kurir atau <b>Ambil</b> di toko).</p>
                 </div>
                 <button type="button" data-modal-close
                     class="text-on-surface-variant hover:text-on-surface transition-colors"><span
                         class="material-symbols-outlined">close</span></button>
             </div>
             <div class="p-6 space-y-5">
-                {{-- Fulfillment: Kirim / Ambil --}}
+                {{-- Status customer: Online / Offline --}}
                 <div>
-                    <span class="raliva-label">Fulfillment</span>
+                    <span class="raliva-label">Status Customer</span>
                     <div class="grid grid-cols-2 gap-3 mt-2">
                         <label
                             class="flex flex-col items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                             <input type="radio" class="sr-only" name="tipe_pesanan" value="online" checked
-                                onchange="toggleTipePesanan()" /> Kirim <span
-                                class="text-[9px] normal-case font-normal opacity-70 mt-0.5">diantar kurir (online)</span>
+                                onchange="toggleTipePesanan()" /> Online <span
+                                class="text-[9px] normal-case font-normal opacity-70 mt-0.5">user terdaftar</span>
                         </label>
                         <label
                             class="flex flex-col items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                             <input type="radio" class="sr-only" name="tipe_pesanan" value="offline"
-                                onchange="toggleTipePesanan()" /> Ambil <span
-                                class="text-[9px] normal-case font-normal opacity-70 mt-0.5">diambil di toko
-                                (offline)</span>
+                                onchange="toggleTipePesanan()" /> Offline <span
+                                class="text-[9px] normal-case font-normal opacity-70 mt-0.5">tamu / walk-in</span>
+                        </label>
+                    </div>
+                </div>
+
+                {{-- Cara terima barang: Diantar / Ambil (berlaku untuk online maupun offline) --}}
+                <div>
+                    <span class="raliva-label">Cara Terima Barang</span>
+                    <div class="grid grid-cols-2 gap-3 mt-2">
+                        <label
+                            class="flex flex-col items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
+                            <input type="radio" class="sr-only" name="fulfillment" value="diantar" checked /> Diantar
+                            <span class="text-[9px] normal-case font-normal opacity-70 mt-0.5">diantar kurir (input
+                                resi)</span>
+                        </label>
+                        <label
+                            class="flex flex-col items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
+                            <input type="radio" class="sr-only" name="fulfillment" value="ambil" /> Ambil <span
+                                class="text-[9px] normal-case font-normal opacity-70 mt-0.5">ambil sendiri di
+                                toko</span>
                         </label>
                     </div>
                 </div>
