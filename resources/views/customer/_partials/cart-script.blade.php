@@ -1,4 +1,15 @@
 {{-- GLOBAL CART AJAX HANDLER (used on all customer pages) --}}
+@php
+$i18nCart = [
+    'Anda belum login.' => __('Anda belum login.'),
+    'Pilih warna & ukuran terlebih dahulu.' => __('Pilih warna & ukuran terlebih dahulu.'),
+    'CART' => __('CART'),
+];
+@endphp
+<script>
+window.RALIVA_I18N = Object.assign(window.RALIVA_I18N || {}, @json($i18nCart));
+window.ralivaT = window.ralivaT || function (s) { var m = window.RALIVA_I18N || {}; return m[s] || s; };
+</script>
 <script>
 (function () {
     var ADD_URL = '{{ route("customer.cart.add") }}';
@@ -49,13 +60,13 @@
             e.stopPropagation();
 
             if (IS_GUEST_CART) {
-                showToast('Anda belum login.');
+                showToast(window.ralivaT('Anda belum login.'));
                 return;
             }
 
             var variantId = addBtn.getAttribute('data-variant-id');
             if (!variantId) {
-                showToast('Pilih warna & ukuran terlebih dahulu.');
+                showToast(window.ralivaT('Pilih warna & ukuran terlebih dahulu.'));
                 return;
             }
 
@@ -179,7 +190,7 @@
         if (total && data.total !== undefined) total.textContent = rupiah(data.total);
         if (subItems && data.count !== undefined) subItems.textContent = data.count;
         if (cartTitle && data.count !== undefined) {
-            cartTitle.textContent = 'CART (' + data.count + ')';
+            cartTitle.textContent = window.ralivaT('CART') + ' (' + data.count + ')';
         }
     }
 
