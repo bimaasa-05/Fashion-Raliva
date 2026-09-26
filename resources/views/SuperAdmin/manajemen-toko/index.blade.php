@@ -78,6 +78,32 @@
     <div id="store-list-holder">
         @include('SuperAdmin.manajemen-toko.partials.store-list', ['stores' => $stores])
     </div>
+    <div id="toko-loading" class="hidden grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        @for ($i = 0; $i < 6; $i++)
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden animate-pulse">
+                <div class="h-1 bg-surface-container-high"></div>
+                <div class="p-6 space-y-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-surface-container-high"></div>
+                        <div class="flex-1 space-y-2">
+                            <div class="h-3 bg-surface-container-high rounded w-3/4"></div>
+                            <div class="h-2 bg-surface-container-high rounded w-1/2"></div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        @for ($j = 0; $j < 3; $j++)
+                            <div class="rounded-lg py-3">
+                                <div class="h-4 bg-surface-container-high rounded w-8 mx-auto"></div>
+                                <div class="h-2 bg-surface-container-high rounded w-12 mx-auto mt-2"></div>
+                            </div>
+                        @endfor
+                    </div>
+                    <div class="h-2 bg-surface-container-high rounded w-full"></div>
+                    <div class="h-2 bg-surface-container-high rounded w-1/3"></div>
+                </div>
+            </div>
+        @endfor
+    </div>
 </section>
 @endsection
 
@@ -591,17 +617,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    let storeAjaxCtrl = null;
+
+    const loadingEl = document.getElementById('toko-loading');
+
+    function setListLoading(on) {
+        holder.classList.toggle('opacity-60', on);
+        holder.classList.toggle('pointer-events-none', on);
+        if (loadingEl) loadingEl.classList.toggle('hidden', !on);
+    }
+
     async function loadStoreList(url) {
         const u = new URL(url, window.location.origin);
         u.searchParams.set('partial', '1');
+        if (storeAjaxCtrl) storeAjaxCtrl.abort();
+        storeAjaxCtrl = new AbortController();
+        setListLoading(true);
         try {
-            const res = await fetch(u.toString(), { headers: { 'Accept': 'text/html' } });
+            const res = await fetch(u.toString(), { headers: { 'Accept': 'text/html' }, signal: storeAjaxCtrl.signal });
             if (!res.ok) throw new Error(res.status);
             holder.innerHTML = await res.text();
+            setListLoading(false);
             bindStoreListFresh();
             applyStoreFilter();
             syncStoreViews();
         } catch (err) {
+            if (err.name === 'AbortError') return;
+            setListLoading(false);
             if (window.showRalivaToast) showRalivaToast('Gagal memuat data toko. Silakan coba lagi.', 'error');
         }
     }
@@ -631,6 +673,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.toko-filter-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
+            if (btn.getAttribute('data-status') === currentStoreStatus) return;
             currentStoreStatus = btn.getAttribute('data-status');
             setFilterButtonState();
             const url = currentStoreStatus === 'semua'
