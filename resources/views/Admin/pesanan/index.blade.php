@@ -1088,4 +1088,5 @@
             });
         });
     </script>
+    @include('partials.countdown-produksi')
 @endpush

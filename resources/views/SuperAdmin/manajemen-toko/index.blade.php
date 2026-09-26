@@ -75,102 +75,35 @@
 </div>
 
 <section data-table-scope class="px-gutter md:px-container-margin py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        @forelse ($stores as $item)
-            @php
-                $store = $item->model;
-                $badge = $badgeMap[$store->status] ?? $badgeMap[\App\Models\Store::STATUS_PENDING];
-                $isSuspended = $store->status === \App\Models\Store::STATUS_NONAKTIF;
-                $isPending = $store->status === \App\Models\Store::STATUS_PENDING;
-            @endphp
-            <article
-                data-table-row
-                data-search="{{ strtolower($store->nama_toko.' '.($item->owner_nama ?? '').' '.($item->location ?? '').' '.($store->deskripsi ?? '').' '.($store->nomor_telepon ?? '')) }}"
-                data-id="{{ $store->store_id }}"
-                data-status="{{ $store->status }}"
-                data-name="{{ $store->nama_toko }}"
-                data-initial="{{ $item->initial }}"
-                data-owner="{{ $item->owner_nama }}"
-                data-joined="{{ $item->joined }}"
-                data-location="{{ $item->location }}"
-                data-products="{{ $item->products_count }}"
-                data-orders="{{ $item->orders_count }}"
-                data-rating="{{ $item->rating ?? '--' }}"
-                data-desc="{{ $store->deskripsi }}"
-                data-reason="{{ $store->alasan_penolakan }}"
-                data-phone="{{ $store->nomor_telepon ?? '-' }}"
-                data-sampai="{{ $item->ditangguhkan_sampai ?? '' }}"
-                data-dokumen='{{ $item->dokumen->map(fn ($d) => ["id" => $d->store_document_id, "jenis" => $d->jenis, "status" => $d->status, "path" => $d->path, "catatan" => $d->catatan])->toJson() }}'
-                onclick="openStoreModal(this)"
-                class="toko-card group bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden cursor-pointer card-premium">
-                <div class="h-1 w-full {{ $isSuspended || $store->status === \App\Models\Store::STATUS_DITOLAK
-                    ? 'bg-gradient-to-r from-error/50 via-error/20 to-transparent'
-                    : 'bg-gradient-to-r from-gold-accent via-gold-accent/40 to-transparent' }}"></div>
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="flex items-center gap-4 min-w-0">
-                            <div class="w-14 h-14 rounded-2xl overflow-hidden ring-2 ring-gold-accent/25 flex-shrink-0 {{ $isSuspended ? 'bg-surface-container-high ring-error/25 grayscale flex items-center justify-center' : ($store->logo ? '' : 'bg-surface-container-high ring-gold-accent/25 flex items-center justify-center') }}">
-                                @if ($store->logo)
-                                    <img class="w-full h-full object-cover" alt="Logo {{ $store->nama_toko }}" src="{{ photo_url($store->logo) }}" onerror="this.style.display='none'" />
-                                @else
-                                    <span class="font-title-md text-on-surface-variant">{{ $item->initial }}</span>
-                                @endif
-                            </div>
-                            <div class="min-w-0">
-                                <h3 class="font-title-md text-title-md text-on-surface truncate {{ $isSuspended ? 'line-through decoration-on-surface-variant' : '' }}">{{ $store->nama_toko }}</h3>
-                                <p class="text-label-sm font-label-sm text-on-surface-variant uppercase mt-1 flex items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full {{ $isPending ? 'bg-gold-accent animate-pulse' : ($isSuspended ? 'bg-error' : 'bg-secondary') }}"></span>{{ $item->owner_nama }}
-                                </p>
-                            </div>
-                        </div>
-                        <span data-badge class="inline-flex items-center px-2.5 py-1 text-[10px] font-bold tracking-widest uppercase border rounded-full shrink-0 {{ $badge['class'] }}">{{ $badge['label'] }}</span>
-                    </div>
-                    @if ($isSuspended)
-                        <div class="flex items-start gap-2 mb-4 rounded-lg px-3 py-2 bg-error/5 border border-error/20 text-error">
-                            <span class="material-symbols-outlined text-[16px] mt-0.5 shrink-0">{{ $item->ditangguhkan_sampai ? 'schedule' : 'block' }}</span>
-                            <p class="text-[11px] font-label-sm leading-snug">
-                                @if ($item->ditangguhkan_sampai)
-                                    Ditangguhkan sementara · aktif kembali <span class="font-bold">{{ $item->ditangguhkan_sampai }}</span>
-                                @else
-                                    Ditangguhkan tanpa batas waktu
-                                @endif
-                            </p>
-                        </div>
-                    @endif
-                    <div class="grid grid-cols-3 gap-3 mb-5">
-                        <div class="bg-surface-container-low rounded-lg py-3 text-center">
-                            <span class="block font-title-md {{ $isSuspended ? 'text-on-surface-variant' : 'text-on-surface' }}">{{ $item->products_count }}</span>
-                            <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-0.5">Produk</span>
-                        </div>
-                        <div class="bg-surface-container-low rounded-lg py-3 text-center">
-                            <span class="block font-title-md {{ $isSuspended ? 'text-on-surface-variant' : 'text-on-surface' }}">{{ $item->orders_count }}</span>
-                            <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-0.5">Pesanan</span>
-                        </div>
-                        <div class="bg-surface-container-low rounded-lg py-3 text-center">
-                            <span class="block font-title-md {{ $isSuspended ? 'text-on-surface-variant' : 'text-on-surface' }} flex items-center justify-center gap-1">{{ $item->rating ?? '--' }} @if($item->rating)<span class="material-symbols-outlined text-[14px] filled text-secondary">star</span>@endif</span>
-                            <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-0.5">Rating</span>
-                        </div>
-                    </div>
-                    @if ($item->update_request)
-                        <button type="button" onclick="event.stopPropagation()" data-modal-open="modal-perubahan-{{ $item->update_request->store_update_request_id }}" class="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gold-accent/10 border border-gold-accent/30 text-gold-accent font-label-sm text-[11px] uppercase tracking-widest hover:bg-gold-accent/20 transition-colors">
-                            <span class="material-symbols-outlined text-[16px]">edit_note</span>Perubahan Data Menunggu
-                        </button>
-                    @endif
-                    <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                        <span class="toko-detail-hint font-label-sm text-[11px] uppercase tracking-widest text-gold-accent inline-flex items-center gap-1">Lihat Detail <span class="material-symbols-outlined text-[14px]">arrow_forward</span></span>
-                        <span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">place</span>{{ $item->location }}</span>
-                        <span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">call</span>{{ $item->model->nomor_telepon ?? '-' }}</span>
-                    </div>
-                </div>
-            </article>
-        @empty
-            <p id="toko-kosong" class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada toko pada status ini.</p>
-        @endforelse
+    <div id="store-list-holder">
+        @include('SuperAdmin.manajemen-toko.partials.store-list', ['stores' => $stores])
     </div>
-    <p id="toko-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada toko yang cocok.</p>
-    @if ($stores->hasPages())
-        <div class="mt-6 flex justify-center">{{ $stores->links() }}</div>
-    @endif
+    <div id="toko-loading" class="hidden grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        @for ($i = 0; $i < 6; $i++)
+            <div class="bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden animate-pulse">
+                <div class="h-1 bg-surface-container-high"></div>
+                <div class="p-6 space-y-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-surface-container-high"></div>
+                        <div class="flex-1 space-y-2">
+                            <div class="h-3 bg-surface-container-high rounded w-3/4"></div>
+                            <div class="h-2 bg-surface-container-high rounded w-1/2"></div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        @for ($j = 0; $j < 3; $j++)
+                            <div class="rounded-lg py-3">
+                                <div class="h-4 bg-surface-container-high rounded w-8 mx-auto"></div>
+                                <div class="h-2 bg-surface-container-high rounded w-12 mx-auto mt-2"></div>
+                            </div>
+                        @endfor
+                    </div>
+                    <div class="h-2 bg-surface-container-high rounded w-full"></div>
+                    <div class="h-2 bg-surface-container-high rounded w-1/3"></div>
+                </div>
+            </div>
+        @endfor
+    </div>
 </section>
 @endsection
 
@@ -684,17 +617,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    let storeAjaxCtrl = null;
+
+    const loadingEl = document.getElementById('toko-loading');
+
+    function setListLoading(on) {
+        holder.classList.toggle('opacity-60', on);
+        holder.classList.toggle('pointer-events-none', on);
+        if (loadingEl) loadingEl.classList.toggle('hidden', !on);
+    }
+
     async function loadStoreList(url) {
         const u = new URL(url, window.location.origin);
         u.searchParams.set('partial', '1');
+        if (storeAjaxCtrl) storeAjaxCtrl.abort();
+        storeAjaxCtrl = new AbortController();
+        setListLoading(true);
         try {
-            const res = await fetch(u.toString(), { headers: { 'Accept': 'text/html' } });
+            const res = await fetch(u.toString(), { headers: { 'Accept': 'text/html' }, signal: storeAjaxCtrl.signal });
             if (!res.ok) throw new Error(res.status);
             holder.innerHTML = await res.text();
+            setListLoading(false);
             bindStoreListFresh();
             applyStoreFilter();
             syncStoreViews();
         } catch (err) {
+            if (err.name === 'AbortError') return;
+            setListLoading(false);
             if (window.showRalivaToast) showRalivaToast('Gagal memuat data toko. Silakan coba lagi.', 'error');
         }
     }
@@ -724,6 +673,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.toko-filter-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
+            if (btn.getAttribute('data-status') === currentStoreStatus) return;
             currentStoreStatus = btn.getAttribute('data-status');
             setFilterButtonState();
             const url = currentStoreStatus === 'semua'
