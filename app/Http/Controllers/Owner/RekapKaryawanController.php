@@ -14,7 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class RekapKaryawanController extends Controller
 {
-    public const ROLE_FILTERS = ['admin', 'produksi', 'gudang'];
+    public const ROLE_FILTERS = ['owner', 'admin', 'produksi', 'gudang'];
 
     public function __construct(
         protected KaryawanReportService $report,
@@ -24,6 +24,7 @@ class RekapKaryawanController extends Controller
     public static function roleKey(?int $roleId, ?string $namaRole): string
     {
         return match ($namaRole) {
+            Role::OWNER => 'owner',
             Role::ADMIN => 'admin',
             Role::PRODUKSI => 'produksi',
             Role::GUDANG => 'gudang',
@@ -36,9 +37,9 @@ class RekapKaryawanController extends Controller
         $storeId = OwnerContext::firstStoreId();
         $storeIds = $storeId ? [$storeId] : [];
 
-        $roleFilter = $request->query('role', 'admin');
+        $roleFilter = $request->query('role', 'owner');
         if (! in_array($roleFilter, self::ROLE_FILTERS, true)) {
-            $roleFilter = 'admin';
+            $roleFilter = 'owner';
         }
         $dari = $request->query('dari');
         $sampai = $request->query('sampai');
@@ -105,9 +106,9 @@ class RekapKaryawanController extends Controller
      */
     private function siapkanExport(Request $request, int $storeId): array
     {
-        $roleFilter = $request->query('role', 'admin');
+        $roleFilter = $request->query('role', 'owner');
         if (! in_array($roleFilter, self::ROLE_FILTERS, true)) {
-            $roleFilter = 'admin';
+            $roleFilter = 'owner';
         }
         $dari = $request->query('dari');
         $sampai = $request->query('sampai');
@@ -163,6 +164,35 @@ class RekapKaryawanController extends Controller
             })
             ->when($roleFilter !== 'semua', fn ($rows) => $rows->filter(fn ($r) => $r['role'] === $roleFilter))
             ->values();
+
+        if ($roleFilter === 'owner' && $storeIds !== []) {
+            $pemilik = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', Role::OWNER))
+                ->whereHas('ownedStores', fn ($q) => $q->whereIn('store_id', $storeIds))
+                ->with('role')
+                ->get();
+            $barisPemilik = $pemilik->map(function ($user) use ($storeIds, $range) {
+                $ringkasan = $this->report->ringkasanKeuangan($storeIds, $range);
+                $base = [
+                    'user_id' => (int) $user->user_id,
+                    'nama' => $user->nama_lengkap ?? '-',
+                    'email' => $user->email ?? '-',
+                    'role' => 'owner',
+                    'status' => $user->status ?? '-',
+                ];
+                $keuangan = $this->report->rekapKaryawan((int) $user->user_id, $storeIds);
+
+                return array_merge($base, $keuangan, [
+                    'pendapatan' => (float) ($ringkasan['revenue'] ?? 0),
+                    'investasi' => (float) ($ringkasan['investasi'] ?? 0),
+                    'bersih' => (float) ($ringkasan['bersih'] ?? 0),
+                    'customers' => (int) ($ringkasan['customers'] ?? 0),
+                    'roi' => $ringkasan['roi'] ?? null,
+                ]);
+            });
+            $rows = $rows->concat($barisPemilik)->values();
+        }
+
+        return $rows;
     }
 
     private function rekapKosong(): array
@@ -170,7 +200,9 @@ class RekapKaryawanController extends Controller
         return [
             'pesanan' => 0, 'pendapatan' => 0.0, 'refund' => 0.0, 'expense' => 0.0,
             'pengeluaran' => 0.0, 'bersih' => 0.0,
-            'diverifikasi' => 0, 'ditolak' => 0, 'cr' => null, 'aov' => null,
+            'diverifikasi' => 0, 'ditolak' => 0, 'prospek' => 0, 'cr' => null, 'aov' => null,
+            'customers' => 0, 'ltv' => null,
+            'investasi' => 0.0, 'roi' => null,
             'rating' => null, 'rating_count' => 0,
             'ditugaskan' => 0, 'selesai' => 0, 'sukses_persen' => null,
             'rata_unit_diminta' => null, 'rata_output_layak' => null,
@@ -183,23 +215,40 @@ class RekapKaryawanController extends Controller
 
     private function hitungTotal(Collection $rows, string $roleFilter): array
     {
+        if ($roleFilter === 'owner') {
+            $n = $rows->count();
+            $pendapatan = (float) $rows->sum('pendapatan');
+            $investasi = (float) $rows->sum('investasi');
+            $bersih = (float) $rows->sum('bersih');
+
+            return [
+                'roi' => $investasi > 0 ? round($bersih / $investasi * 100, 2) : null,
+                'pendapatan' => $pendapatan,
+                'investasi' => $investasi,
+                'bersih' => $bersih,
+                'karyawan' => $n,
+            ];
+        }
+
         if ($roleFilter === 'admin') {
             $n = $rows->count();
-            $diverifikasi = (int) $rows->sum('diverifikasi');
-            $ditangani = $diverifikasi + (int) $rows->sum('ditolak');
+            $prospek = (int) $rows->sum('prospek');
             $pendapatan = (float) $rows->sum('pendapatan');
             $pesanan = (int) $rows->sum('pesanan');
+            $customers = (int) $rows->sum('customers');
             $ratingCount = (int) $rows->sum('rating_count');
 
             return [
-                'cr' => $ditangani > 0 ? round($diverifikasi / $ditangani * 100, 2) : null,
+                'cr' => $prospek > 0 ? round($pesanan / $prospek * 100, 2) : null,
                 'aov' => $pesanan > 0 ? round($pendapatan / $pesanan, 2) : null,
+                'ltv' => $customers > 0 ? round($pendapatan / $customers, 2) : null,
                 'rating' => $ratingCount > 0
                     ? round($rows->sum(fn ($r) => ($r['rating'] ?? 0) * $r['rating_count']) / $ratingCount, 2)
                     : null,
                 'rating_count' => $ratingCount,
                 'pesanan' => $pesanan,
                 'pendapatan' => $pendapatan,
+                'customers' => $customers,
                 'karyawan' => $n,
             ];
         }
