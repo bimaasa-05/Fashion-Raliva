@@ -31,6 +31,7 @@ class ProductRecipeTest extends TestCase
         [$admin, $product] = $this->createMaster('Produk Uji HPP');
 
         $this->assertSame(65000.0, (float) $product->fresh()->modal_produksi);
+        $this->assertSame(10, (int) $product->variants()->firstOrFail()->warehouseStocks()->value('stok_minimum'));
 
         $response = $this->actingAs($admin)->get(route('admin.produk'));
 
