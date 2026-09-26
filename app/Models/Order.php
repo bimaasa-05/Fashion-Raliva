@@ -51,6 +51,11 @@ class Order extends Model
 
     public const TIPE_PESANAN_OFFLINE = 'offline';
 
+    // Cara terima barang — independen dari status customer (online/offline).
+    public const FULFILLMENT_AMBIL = 'ambil';
+
+    public const FULFILLMENT_DIANTAR = 'diantar';
+
     protected $fillable = [
         'checkout_id',
         'store_id',
@@ -63,6 +68,7 @@ class Order extends Model
         'grand_total',
         'status',
         'tipe_pesanan',
+        'metode_fulfillment',
         'diambil_pada',
         'tgl_mulai_produksi',
         'tgl_berakhir_produksi',
@@ -99,6 +105,16 @@ class Order extends Model
     public function isOffline(): bool
     {
         return $this->tipe_pesanan === self::TIPE_PESANAN_OFFLINE;
+    }
+
+    public function isDiantar(): bool
+    {
+        return ($this->metode_fulfillment ?? self::FULFILLMENT_DIANTAR) === self::FULFILLMENT_DIANTAR;
+    }
+
+    public function isAmbil(): bool
+    {
+        return ! $this->isDiantar();
     }
 
     /**
