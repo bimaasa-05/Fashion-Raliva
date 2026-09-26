@@ -94,7 +94,7 @@ class ProductFormPolishTest extends TestCase
         $categoryId = Category::where('status', 'aktif')->value('category_id');
         SlotGrant::create([
             'store_id' => $storeId,
-            'jumlah_slot' => 5,
+            'jumlah_slot' => 50,
             'tipe' => SlotGrant::TIPE_MANUAL,
             'keterangan' => 'Slot uji format form produk.',
             'created_by' => $admin->user_id,
