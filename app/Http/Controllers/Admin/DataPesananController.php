@@ -153,7 +153,6 @@ class DataPesananController extends Controller
             'items.*.product_variant_id' => ['required', 'exists:product_variants,product_variant_id'],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:100'],
             'tipe_pesanan' => ['required', 'in:online,offline'],
-            'fulfillment' => ['required', 'in:ambil,diantar'],
             'user_id' => ['required_if:tipe_pesanan,online', 'nullable', 'exists:users,user_id'],
             'nama_penerima' => ['required_if:tipe_pesanan,offline', 'nullable', 'string', 'max:150'],
             'nomor_telepon' => ['required_if:tipe_pesanan,offline', 'nullable', 'string', 'max:30'],
@@ -168,7 +167,6 @@ class DataPesananController extends Controller
             'items.min' => 'Pilih minimal 1 produk.',
             'items.*.product_variant_id.required' => 'Pilih produk untuk setiap baris.',
             'items.*.quantity.min' => 'Qty minimal 1.',
-            'fulfillment.required' => 'Pilih cara terima barang (ambil/diantar).',
             'nomor_telepon.required_if' => 'Nomor telepon wajib diisi untuk pesanan offline.',
             'nama_penerima.required_if' => 'Nama penerima wajib diisi untuk pesanan offline.',
             'alamat.required_if' => 'Alamat wajib diisi untuk pesanan offline.',
@@ -280,7 +278,7 @@ class DataPesananController extends Controller
                 'grand_total' => $grand,
                 'status' => Order::STATUS_PENDING_PAYMENT,
                 'tipe_pesanan' => $isOffline ? Order::TIPE_PESANAN_OFFLINE : Order::TIPE_PESANAN_ONLINE,
-                'metode_fulfillment' => $data['fulfillment'],
+                'metode_fulfillment' => $isOffline ? Order::FULFILLMENT_AMBIL : Order::FULFILLMENT_DIANTAR,
                 'catatan' => $data['catatan'] ?? null,
             ]);
 
