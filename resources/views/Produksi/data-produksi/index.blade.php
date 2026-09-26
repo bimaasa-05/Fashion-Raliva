@@ -154,7 +154,8 @@
                                 @if ($hasDates)
                                     <p class="text-xs font-bold text-on-surface">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
                                     <div class="progress-track mt-1.5">
-                                        <div class="progress-bar-fill {{ $selesaiTepat ? 'bg-secondary' : ($selesaiP ? 'bg-error' : ($isBelumMulai ? 'bg-surface-container-high' : ($isTerlambat ? 'bg-error' : 'bg-gold-accent'))) }}" style="width: {{ $progressPct }}%"></div>
+                                        <div class="progress-bar-fill transition-[width] duration-300 {{ $selesaiTepat ? 'bg-secondary' : ($selesaiP ? 'bg-error' : ($isBelumMulai ? 'bg-surface-container-high' : ($isTerlambat ? 'bg-error' : 'bg-gold-accent'))) }}" style="width: {{ $progressPct }}%"
+                                        @if (!$selesaiP) data-countdown-bar data-countdown-start="{{ $o->tgl_mulai_produksi->timestamp }}" data-countdown-end="{{ $o->tgl_berakhir_produksi->timestamp }}" @endif></div>
                                     </div>
                                     @if ($selesaiTepat)
                                         <p class="text-xs font-bold mt-1 countdown-badge text-on-surface">Selesai tepat waktu</p>
@@ -280,7 +281,8 @@
                         <div class="mt-3">
                             <p class="text-xs font-bold text-on-surface">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
                             <div class="progress-track mt-1.5">
-                                <div class="progress-bar-fill {{ $selesaiTepat ? 'bg-secondary' : ($selesaiP ? 'bg-error' : ($isBelumMulai ? 'bg-surface-container-high' : ($isTerlambat ? 'bg-error' : 'bg-gold-accent'))) }}" style="width: {{ $progressPct }}%"></div>
+                                <div class="progress-bar-fill transition-[width] duration-300 {{ $selesaiTepat ? 'bg-secondary' : ($selesaiP ? 'bg-error' : ($isBelumMulai ? 'bg-surface-container-high' : ($isTerlambat ? 'bg-error' : 'bg-gold-accent'))) }}" style="width: {{ $progressPct }}%"
+                                        @if (!$selesaiP) data-countdown-bar data-countdown-start="{{ $o->tgl_mulai_produksi->timestamp }}" data-countdown-end="{{ $o->tgl_berakhir_produksi->timestamp }}" @endif></div>
                             </div>
                             @if ($selesaiTepat)
                                 <p class="text-xs font-bold mt-1 countdown-badge text-on-surface">Selesai tepat waktu</p>
