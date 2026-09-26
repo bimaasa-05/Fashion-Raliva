@@ -262,18 +262,20 @@
                         </select>
                     </div>
                 </div>
-                <div>
-                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Harga Dasar (Rp) *</label>
-                    <div class="flex items-stretch">
-                        <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
-                        <input type="text" id="edit-harga-dasar" name="harga_dasar" required inputmode="numeric" data-rupiah placeholder="949.000" class="raliva-input w-full" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">HPP / Modal (Rp) *</label>
+                        <div class="flex items-stretch">
+                            <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
+                            <input type="text" id="edit-hpp" name="hpp" required inputmode="numeric" data-rupiah placeholder="650.000" class="raliva-input w-full" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">HPP / Modal (Rp) *</label>
-                    <div class="flex items-stretch">
-                        <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
-                        <input type="text" id="edit-hpp" name="hpp" required inputmode="numeric" data-rupiah placeholder="650.000" class="raliva-input w-full" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                    <div>
+                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Harga Jual (Rp) *</label>
+                        <div class="flex items-stretch">
+                            <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
+                            <input type="text" id="edit-harga-dasar" name="harga_dasar" required inputmode="numeric" data-rupiah placeholder="949.000" class="raliva-input w-full" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -605,6 +607,7 @@
             const { kept, baru } = editFotoCount();
             if (kept + baru > 5) {
                 e.preventDefault();
+                if (window.__restoreStripped) window.__restoreStripped(document.getElementById('form-edit-produk'));
                 window.showRalivaToast('Maksimal total 5 foto (sekarang ' + (kept + baru) + ').', 'gpp_bad');
                 return;
             }
@@ -864,18 +867,20 @@
                     </select>
                 </div>
             </div>
-            <div>
-                <label for="fp-hpp" class="block raliva-label mb-2">HPP / Modal (Rp) <span class="text-error">*</span></label>
-                <div class="flex items-stretch">
-                    <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
-                    <input id="fp-hpp" name="hpp" type="text" inputmode="numeric" data-rupiah-harga placeholder="650.000" required class="raliva-input" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
+                <div>
+                    <label for="fp-hpp" class="block raliva-label mb-2">HPP / Modal (Rp) <span class="text-error">*</span></label>
+                    <div class="flex items-stretch">
+                        <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
+                        <input id="fp-hpp" name="hpp" type="text" inputmode="numeric" data-rupiah-harga placeholder="650.000" required class="raliva-input" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                    </div>
                 </div>
-            </div>
-            <div>
-                <label for="fp-harga" class="block raliva-label mb-2">Harga Jual (Rp) <span class="text-error">*</span></label>
-                <div class="flex items-stretch">
-                    <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
-                    <input id="fp-harga" name="harga_dasar" type="text" inputmode="numeric" data-rupiah-harga placeholder="949.000" required class="raliva-input" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                <div>
+                    <label for="fp-harga" class="block raliva-label mb-2">Harga Jual (Rp) <span class="text-error">*</span></label>
+                    <div class="flex items-stretch">
+                        <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
+                        <input id="fp-harga" name="harga_dasar" type="text" inputmode="numeric" data-rupiah-harga placeholder="949.000" required class="raliva-input" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
+                    </div>
                 </div>
             </div>
             <div>
@@ -1403,16 +1408,60 @@ function parseRibuanDecimal(raw) {
         const rpTarget = event.target.closest?.('[data-rupiah], [data-rupiah-harga]');
         if (rpTarget) fmtRp(rpTarget);
     });
-    const stripRp = (el) => { el.value = el.value.replace(/\./g, ''); };
+    // Strip saat submit TANPA merusak tampilan: nilai polos dikirim via hidden clone,
+    // input tampil tetap berformat (disabled + tanpa name agar tidak ikut terkirim).
+    const stripForSubmit = (form) => {
+        form.querySelectorAll('[data-rupiah-harga], #edit-harga-dasar, [data-rupiah], [data-ribuan-int]').forEach((el) => {
+            if (!el.name || el.dataset.stripped === '1') return;
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = el.name;
+            hidden.value = el.value.replace(/\./g, '');
+            hidden.setAttribute('data-strip-clone', '');
+            el.setAttribute('data-orig-name', el.name);
+            el.removeAttribute('name');
+            el.disabled = true;
+            el.dataset.stripped = '1';
+            el.after(hidden);
+        });
+        form.querySelectorAll('[data-ribuan-decimal]').forEach((el) => {
+            if (!el.name || el.dataset.stripped === '1') return;
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = el.name;
+            hidden.value = String(el.value ?? '').replace(/\./g, '').replace(',', '.');
+            hidden.setAttribute('data-strip-clone', '');
+            el.setAttribute('data-orig-name', el.name);
+            el.removeAttribute('name');
+            el.disabled = true;
+            el.dataset.stripped = '1';
+            el.after(hidden);
+        });
+    };
+    const restoreStripped = (form) => {
+        form.querySelectorAll('[data-strip-clone]').forEach((h) => h.remove());
+        form.querySelectorAll('[data-stripped="1"]').forEach((el) => {
+            el.name = el.getAttribute('data-orig-name') || el.name;
+            el.removeAttribute('data-orig-name');
+            el.disabled = false;
+            delete el.dataset.stripped;
+        });
+        if (window.__reformatRp) window.__reformatRp(form);
+    };
+    window.__restoreStripped = restoreStripped;
     ['form-produk', 'form-edit-produk'].forEach((id) => {
         document.getElementById(id)?.addEventListener('submit', function () {
-            this.querySelectorAll('[data-rupiah-harga], #edit-harga-dasar, [data-rupiah], [data-ribuan-int]').forEach(stripRp);
-            this.querySelectorAll('[data-ribuan-decimal]').forEach((el) => {
-                el.value = String(el.value ?? '').replace(/\./g, '').replace(',', '.');
-            });
+            stripForSubmit(this);
         });
     });
     window.__fmtRpHarga = fmtRp;
+    window.__reformatRp = (scope) => {
+        const root = scope || document;
+        root.querySelectorAll('[data-rupiah], [data-rupiah-harga]').forEach(fmtRp);
+        root.querySelectorAll('[data-ribuan-int]').forEach(fmtRibuanInt);
+        root.querySelectorAll('[data-ribuan-decimal]').forEach(fmtRibuanDecimal);
+    };
+    window.__reformatRp();
     window.parseRibuanInt = parseRibuanInt;
     window.parseRibuanDecimal = parseRibuanDecimal;
 })();
@@ -1424,6 +1473,7 @@ function parseRibuanDecimal(raw) {
     form.addEventListener('submit', (e) => {
         const fail = (msg, target) => {
             e.preventDefault();
+            if (window.__restoreStripped) window.__restoreStripped(form);
             window.showRalivaToast(msg, 'gpp_bad');
             target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         };
