@@ -77,7 +77,7 @@ class DataProdukController extends Controller
             'varian_stok' => 'required|array|min:1',
             'varian_stok.*.ukuran' => 'required|string|max:255',
             'varian_stok.*.warna' => 'nullable|string|max:100',
-            'varian_stok.*.stok' => 'required|integer|min:1',
+            'varian_stok.*.stok' => 'required|integer|min:10',
             'warna' => 'nullable|array',
             'warna_hex' => 'nullable|array',
         ], [
@@ -98,7 +98,7 @@ class DataProdukController extends Controller
             'varian_stok.required' => 'Isi stok untuk setiap varian.',
             'varian_stok.min' => 'Isi stok untuk setiap varian.',
             'varian_stok.*.stok.required' => 'Stok tiap varian wajib diisi.',
-            'varian_stok.*.stok.min' => 'Stok tiap varian minimal 1.',
+            'varian_stok.*.stok.min' => 'Stok tiap varian minimal 10.',
         ]);
 
         // Warna satu lapis dengan validasi utama (melempar ValidationException yang sama).
