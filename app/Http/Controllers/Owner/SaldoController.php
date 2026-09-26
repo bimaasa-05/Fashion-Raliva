@@ -182,13 +182,17 @@ class SaldoController extends Controller
             'net' => $netProfit,
         ];
 
+        $roiKeuangan = (new \App\Services\KaryawanReportService())
+            ->ringkasanKeuangan([$store->store_id])['roi'] ?? null;
+
         return view('Owner.keuangan.index', compact(
             'wallet', 'bankAccounts', 'totalDicairkan',
             'mutations', 'withdrawals', 'refunds', 'summary', 'chart',
             'expenses', 'margin', 'store', 'period',
             'kategoriList', 'jenisList', 'filterKategori', 'filterJenis',
             'katExpList', 'filterKatExp', 'grafik',
-            'pemasukanList', 'katInList', 'filterKatIn'
+            'pemasukanList', 'katInList', 'filterKatIn',
+            'roiKeuangan'
         ));
     }
 
