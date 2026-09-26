@@ -420,5 +420,11 @@
     "< 1 menit": "< 1 minute",
     "Menunggu Pembayaran": "Waiting for Payment",
     "Dibatalkan": "Cancelled",
-    "Refund": "Refund"
+    "Refund": "Refund",
+    "Kurangi": "Decrease",
+    "Tambah": "Increase",
+    "Stok": "Stock",
+    "Stok tersisa :n": "Only :n left in stock",
+    "Jumlah minimal 1.": "Minimum quantity is 1.",
+    "Gagal memperbarui keranjang.": "Failed to update cart."
 }
