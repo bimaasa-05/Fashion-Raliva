@@ -173,13 +173,13 @@
                                         <span class="material-symbols-outlined text-[14px] leading-none">block</span>
                                         Tolak
                                     </button>
-                                    <button type="button" data-modal-open="modal-setujui-{{ $refund->refund_id }}"
+                                    <button type="button" onclick="openRefundConfirm({{ $refund->refund_id }})"
                                         class="ml-1 inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
                                         <span class="material-symbols-outlined text-[14px] leading-none">task_alt</span>
                                         Setujui
                                     </button>
                                 @elseif ($refund->status === 'disetujui')
-                                    <button type="button" data-modal-open="modal-selesaikan-{{ $refund->refund_id }}"
+                                    <button type="button" onclick="openRefundConfirm({{ $refund->refund_id }})"
                                         class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
                                         <span class="material-symbols-outlined text-[14px] leading-none">payments</span>
                                         Selesaikan
@@ -261,12 +261,12 @@
                                 <span class="material-symbols-outlined text-[16px] leading-none">block</span>
                                 Tolak
                             </button>
-                            <button type="button" data-modal-open="modal-setujui-{{ $refund->refund_id }}" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
+                            <button type="button" onclick="openRefundConfirm({{ $refund->refund_id }})" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
                                 <span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>
                                 Setujui
                             </button>
                         @elseif ($refund->status === 'disetujui')
-                            <button type="button" data-modal-open="modal-selesaikan-{{ $refund->refund_id }}" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
+                            <button type="button" onclick="openRefundConfirm({{ $refund->refund_id }})" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
                                 <span class="material-symbols-outlined text-[16px] leading-none">payments</span>
                                 Selesaikan
                             </button>
@@ -297,7 +297,7 @@
     @if ($refund->status === 'requested')
     @component('SuperAdmin.partials.premium-confirm', [
         'id' => 'modal-setujui-' . $refund->refund_id,
-        'dataModal' => true,
+        'close' => 'closeRefundConfirm',
         'icon' => 'task_alt',
         'iconBox' => 'bg-white/10 border-white/20',
         'iconColor' => 'text-white',
@@ -339,7 +339,7 @@
         </form>
         @slot('footer')
             <div class="flex gap-3">
-                <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1">
+                <button type="button" onclick="closeRefundConfirm()" class="btn-modal btn-modal-ghost flex-1">
                     <span class="material-symbols-outlined text-[16px] leading-none">close</span>
                     Batal
                 </button>
@@ -353,7 +353,7 @@
     @elseif ($refund->status === 'disetujui')
     @component('SuperAdmin.partials.premium-confirm', [
         'id' => 'modal-selesaikan-' . $refund->refund_id,
-        'dataModal' => true,
+        'close' => 'closeRefundConfirm',
         'icon' => 'payments',
         'iconBox' => 'bg-white/10 border-white/20',
         'iconColor' => 'text-white',
@@ -384,7 +384,7 @@
         </form>
         @slot('footer')
             <div class="flex gap-3">
-                <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1">
+                <button type="button" onclick="closeRefundConfirm()" class="btn-modal btn-modal-ghost flex-1">
                     <span class="material-symbols-outlined text-[16px] leading-none">close</span>
                     Batal
                 </button>
@@ -444,23 +444,49 @@
         document.body.style.overflow = '';
     }
 
+    /* Modal Setujui / Selesaikan — pola sama seperti modal premium SA lain:
+       buka/tutup in-place, kunci scroll cukup di body (tanpa portal & tanpa
+       sentuh <html>) agar sidebar sticky tidak meloncat ke atas. */
+    let openRefundConfirmModalId = null;
+
+    function openRefundConfirm(id) {
+        const modal = document.getElementById('modal-setujui-' + id) || document.getElementById('modal-selesaikan-' + id);
+        if (!modal) return;
+        openRefundConfirmModalId = modal.id;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+
+        ['setujui', 'selesaikan'].forEach((prefix) => {
+            const file = document.getElementById(prefix + '-file-' + id);
+            const desc = document.getElementById(prefix + '-deskripsi-' + id);
+            const submit = document.getElementById(prefix + '-submit-' + id);
+            if (file) file.value = '';
+            if (desc) desc.value = '';
+            if (submit && submit.dataset.proofRequired) submit.disabled = true;
+        });
+    }
+
+    function closeRefundConfirm() {
+        if (openRefundConfirmModalId) {
+            const modal = document.getElementById(openRefundConfirmModalId);
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+        openRefundConfirmModalId = null;
+        document.body.style.overflow = '';
+    }
+
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeRejectRefund();
+        if (e.key === 'Escape') {
+            closeRejectRefund();
+            closeRefundConfirm();
+        }
     });
 
     document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('[data-modal-open^="modal-setujui-"]').forEach((btn) => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-modal-open').replace('modal-setujui-', '');
-                const file = document.getElementById('setujui-file-' + id);
-                const desc = document.getElementById('setujui-deskripsi-' + id);
-                const submit = document.getElementById('setujui-submit-' + id);
-                if (file) file.value = '';
-                if (desc) desc.value = '';
-                if (submit && submit.dataset.proofRequired) submit.disabled = true;
-            });
-        });
-
         const scope = document.querySelector('[data-table-scope]');
         if (!scope) return;
 
